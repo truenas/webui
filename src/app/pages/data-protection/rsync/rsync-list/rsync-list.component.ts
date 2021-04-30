@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
@@ -26,8 +27,8 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 })
 export class RsyncListComponent implements InputTableConf, OnDestroy {
   title = T('Rsync Tasks');
-  queryCall = 'rsynctask.query';
-  wsDelete = 'rsynctask.delete';
+  queryCall: ApiMethod = 'rsynctask.query';
+  wsDelete: ApiMethod = 'rsynctask.delete';
   route_add: string[] = ['tasks', 'rsync', 'add'];
   route_add_tooltip = 'Add Rsync Task';
   route_edit: string[] = ['tasks', 'rsync', 'edit'];

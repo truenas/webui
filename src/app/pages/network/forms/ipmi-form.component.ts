@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Option } from 'app/interfaces/option.interface';
 
 import * as _ from 'lodash';
@@ -19,7 +20,7 @@ import { T } from '../../../translate-marker';
 })
 export class IPMIFromComponent {
   title = 'IMPI';
-  protected queryCall = 'ipmi.query';
+  protected queryCall: ApiMethod = 'ipmi.query';
 
   protected entityEdit: any;
   is_ha = false;

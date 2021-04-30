@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -35,11 +36,11 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
 })
 export class CloudsyncListComponent implements InputTableConf, OnDestroy {
   title = T('Cloud Sync Tasks');
-  queryCall = 'cloudsync.query';
+  queryCall: ApiMethod = 'cloudsync.query';
   route_add: string[] = ['tasks', 'cloudsync', 'add'];
   route_add_tooltip = 'Add Cloud Sync Task';
   route_edit: string[] = ['tasks', 'cloudsync', 'edit'];
-  wsDelete = 'cloudsync.delete';
+  wsDelete: ApiMethod = 'cloudsync.delete';
   entityList: EntityTableComponent;
   asyncView = true;
 

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -38,8 +39,8 @@ interface AlertCategory {
 export class AlertConfigComponent implements OnInit {
   formEvents: Subject<CoreEvent>;
   protected route_success = ['system', 'alertsettings'];
-  protected queryCall = 'alertclasses.config';
-  protected editCall = 'alertclasses.update';
+  protected queryCall: ApiMethod = 'alertclasses.config';
+  protected editCall: ApiMethod = 'alertclasses.update';
   protected isEntity = true;
   fieldSets: FieldSets;
   fieldConfig: FieldConfig[] = [];

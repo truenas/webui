@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 import { SystemGeneralService, DialogService, WebSocketService } from '../../../services';
 import { EntityFormComponent } from '../../common/entity/entity-form';
@@ -16,8 +17,8 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
   styleUrls: ['./kmip.component.css'],
 })
 export class KmipComponent {
-  protected queryCall = 'kmip.config';
-  protected editCall = 'kmip.update';
+  protected queryCall: ApiMethod = 'kmip.config';
+  protected editCall: ApiMethod = 'kmip.update';
   isEntity = false;
 
   entityForm: any;

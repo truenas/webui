@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 import * as _ from 'lodash';
 
@@ -26,8 +27,8 @@ import { EntityUtils } from '../../../common/entity/utils';
 export class VMwareSnapshotFormComponent {
   protected route_success: string[] = ['storage', 'vmware-Snapshots'];
   protected isEntity = true;
-  queryCall = 'vmware.query';
-  addCall = 'vmware.create';
+  queryCall: ApiMethod = 'vmware.query';
+  addCall: ApiMethod = 'vmware.create';
   protected pk: any;
   formGroup: FormGroup;
 

@@ -13,6 +13,7 @@ import { Router, NavigationStart } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import * as _ from 'lodash';
 import {
   fromEvent as observableFromEvent, Observable, of, Subscription,
@@ -44,7 +45,7 @@ export interface InputTableConf {
   columns: any[];
   columnFilter?: boolean;
   hideTopActions?: boolean;
-  queryCall?: string;
+  queryCall?: ApiMethod;
   queryCallOption?: any;
   queryCallJob?: any;
   resource_name?: string;
@@ -64,7 +65,7 @@ export interface InputTableConf {
   detailRowHeight?: any;
   cardHeaderComponent?: any;
   asyncView?: boolean;
-  wsDelete?: string;
+  wsDelete?: ApiMethod;
   noAdd?: boolean;
   actionsConfig?: { actionType: any; actionConfig: any };
   disableActionsConfig?: boolean;

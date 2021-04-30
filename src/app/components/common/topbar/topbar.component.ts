@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { CoreEvent } from 'app/core/services/core.service';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { Subscription, interval, Subject } from 'rxjs';
 import { FailoverDisabledReason } from '../../../enums/failover-disabled-reason.enum';
@@ -90,8 +91,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   protected dialogRef: any;
   protected tcConnected = false;
-  protected tc_queryCall = 'truecommand.config';
-  protected tc_updateCall = 'truecommand.update';
+  protected tc_queryCall: ApiMethod = 'truecommand.config';
+  protected tc_updateCall: ApiMethod = 'truecommand.update';
   protected isTcStatusOpened = false;
   protected tcStatusDialogRef: MatDialogRef<TruecommandComponent>;
   tcStatus: any;

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import * as _ from 'lodash';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -20,8 +21,8 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
   providers: [EntityFormService],
 })
 export class CertificateAcmeAddComponent {
-  protected addCall = 'certificate.create';
-  protected queryCall = 'certificate.query';
+  protected addCall: ApiMethod = 'certificate.create';
+  protected queryCall: ApiMethod = 'certificate.query';
   protected isEntity = true;
   protected isNew = true;
   private csrOrg: any;

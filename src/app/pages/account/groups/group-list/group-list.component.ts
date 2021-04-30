@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -19,8 +20,8 @@ import { GroupFormComponent } from '../group-form/group-form.component';
 })
 export class GroupListComponent implements OnDestroy {
   title = 'Groups';
-  protected queryCall = 'group.query';
-  protected wsDelete = 'group.delete';
+  protected queryCall: ApiMethod = 'group.query';
+  protected wsDelete: ApiMethod = 'group.delete';
   protected route_add: string[] = ['account', 'groups', 'add'];
   protected route_add_tooltip = T('Add Group');
   protected route_edit: string[] = ['account', 'groups', 'edit'];

@@ -4,6 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { helptext_system_email } from 'app/helptext/system/email';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import * as _ from 'lodash';
 import { ProductType } from '../../../enums/product-type.enum';
 import {
@@ -30,8 +31,8 @@ interface OAuthData {
   `,
 })
 export class EmailComponent implements OnDestroy {
-  queryCall = 'mail.config';
-  updateCall = 'mail.update';
+  queryCall: ApiMethod = 'mail.config';
+  updateCall: ApiMethod = 'mail.update';
   entityEdit: any;
   rootEmail: string;
   private oauthCreds: BehaviorSubject<OAuthData> = new BehaviorSubject({});

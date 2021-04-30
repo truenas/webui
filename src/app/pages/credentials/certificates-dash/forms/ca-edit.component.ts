@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import {
@@ -18,8 +19,8 @@ import { helptext_system_certificates } from 'app/helptext/system/certificates';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class CertificateAuthorityEditComponent {
-  protected queryCall = 'certificateauthority.query';
-  protected editCall = 'certificateauthority.update';
+  protected queryCall: ApiMethod = 'certificateauthority.query';
+  protected editCall: ApiMethod = 'certificateauthority.update';
   protected isEntity = true;
   protected queryCallOption: any[];
   private getRow = new Subscription();

@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import * as _ from 'lodash';
@@ -27,11 +28,11 @@ import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interf
 })
 export class JailFormComponent implements OnInit, AfterViewInit {
   isReady = false;
-  protected queryCall = 'jail.query';
-  protected updateCall = 'jail.update';
-  protected upgradeCall = 'jail.upgrade';
+  protected queryCall: ApiMethod = 'jail.query';
+  protected updateCall: ApiMethod = 'jail.update';
+  protected upgradeCall: ApiMethod = 'jail.upgrade';
 
-  protected addCall = 'jail.create';
+  protected addCall: ApiMethod = 'jail.create';
   route_success: string[] = ['jails'];
   protected route_conf: string[] = ['jails', 'configuration'];
 

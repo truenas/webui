@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
@@ -19,9 +20,9 @@ import { selectedOptionValidator } from 'app/pages/common/entity/entity-form/val
   providers: [IscsiService],
 })
 export class PortalFormComponent {
-  protected addCall = 'iscsi.portal.create';
-  protected queryCall = 'iscsi.portal.query';
-  protected editCall = 'iscsi.portal.update';
+  protected addCall: ApiMethod = 'iscsi.portal.create';
+  protected queryCall: ApiMethod = 'iscsi.portal.query';
+  protected editCall: ApiMethod = 'iscsi.portal.update';
   protected route_success: string[] = ['sharing', 'iscsi', 'portals'];
   protected customFilter: any[] = [[['id', '=']]];
   protected isEntity = true;

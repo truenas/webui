@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
@@ -24,7 +25,7 @@ import { CoreEvent, CoreService } from 'app/core/services/core.service';
   styleUrls: ['../../../common/entity/entity-form/entity-form.component.scss'],
 })
 export class DeviceAddComponent implements OnInit, OnDestroy {
-  protected addCall = 'vm.device.create';
+  protected addCall: ApiMethod = 'vm.device.create';
   protected route_success: string[];
   vmid: any;
   vmname: any;

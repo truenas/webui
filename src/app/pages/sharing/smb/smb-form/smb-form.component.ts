@@ -297,7 +297,7 @@ export class SMBFormComponent implements OnDestroy {
     private sysGeneralService: SystemGeneralService,
   ) {
     combineLatest(
-      this.ws.call<any[]>('sharing.smb.query', []),
+      this.ws.call('sharing.smb.query', []),
       this.activatedRoute.paramMap,
     )
       .pipe(

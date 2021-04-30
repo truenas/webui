@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
@@ -17,9 +18,9 @@ import { helptext_sharing_iscsi } from 'app/helptext/sharing';
   providers: [IscsiService],
 })
 export class AssociatedTargetFormComponent {
-  protected addCall = 'iscsi.targetextent.create';
-  protected queryCall = 'iscsi.targetextent.query';
-  protected editCall = 'iscsi.targetextent.update';
+  protected addCall: ApiMethod = 'iscsi.targetextent.create';
+  protected queryCall: ApiMethod = 'iscsi.targetextent.query';
+  protected editCall: ApiMethod = 'iscsi.targetextent.update';
   protected route_success: string[] = ['sharing', 'iscsi', 'associatedtarget'];
   protected isEntity = true;
   protected customFilter: any[] = [[['id', '=']]];

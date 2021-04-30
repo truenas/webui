@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 
 import { helptext_system_ca } from 'app/helptext/system/ca';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import * as _ from 'lodash';
 import { SystemGeneralService, WebSocketService } from '../../../../services';
 import { ModalService } from 'app/services/modal.service';
@@ -21,7 +22,7 @@ import { EntityWizardComponent } from '../../../common/entity/entity-wizard/enti
 })
 
 export class CertificateAuthorityAddComponent {
-  protected addWsCall = 'certificateauthority.create';
+  protected addWsCall: ApiMethod = 'certificateauthority.create';
   protected isEntity = true;
   private title: string;
   hideCancel = true;

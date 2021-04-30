@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 import * as _ from 'lodash';
 import { WebSocketService, AppLoaderService, DialogService } from '../../../../services';
@@ -17,11 +18,11 @@ import helptext from '../../../../helptext/system/alert-service';
   providers: [EntityFormService],
 })
 export class AlertServiceComponent {
-  protected addCall = 'alertservice.create';
-  protected queryCall = 'alertservice.query';
+  protected addCall: ApiMethod = 'alertservice.create';
+  protected queryCall: ApiMethod = 'alertservice.query';
   protected queryCallOption: any[] = [['id', '=']];
-  protected editCall = 'alertservice.update';
-  protected testCall = 'alertservice.test';
+  protected editCall: ApiMethod = 'alertservice.update';
+  protected testCall: ApiMethod = 'alertservice.test';
   route_success: string[] = ['system', 'alertservice'];
 
   protected isEntity = true;

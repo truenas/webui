@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataSource } from '@angular/cdk/collections';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 
 import { iXObject } from 'app/core/classes/ix-object';
@@ -81,7 +82,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
       rpc = this.conf.toggleStop;
     }
 
-    this.busy = this.ws.call(rpc, [row.id]).subscribe((res) => {
+    this.busy = this.ws.call(rpc as ApiMethod, [row.id]).subscribe((res) => {
       if (res) {
         row[this.conf.toggleProp] = 'RUNNING';
       } else {

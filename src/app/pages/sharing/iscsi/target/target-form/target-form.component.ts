@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 
@@ -15,9 +16,9 @@ import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.
   providers: [IscsiService],
 })
 export class TargetFormComponent {
-  protected queryCall = 'iscsi.target.query';
-  protected addCall = 'iscsi.target.create';
-  protected editCall = 'iscsi.target.update';
+  protected queryCall: ApiMethod = 'iscsi.target.query';
+  protected addCall: ApiMethod = 'iscsi.target.create';
+  protected editCall: ApiMethod = 'iscsi.target.update';
   route_success: string[] = ['sharing', 'iscsi', 'target'];
   protected customFilter: any[] = [[['id', '=']]];
   protected isEntity = true;

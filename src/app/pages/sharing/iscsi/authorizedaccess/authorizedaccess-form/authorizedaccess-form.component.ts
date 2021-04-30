@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { matchOtherValidator, doesNotEqual } from 'app/pages/common/entity/entity-form/validators/password-validation';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
@@ -15,9 +16,9 @@ import * as _ from 'lodash';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class AuthorizedAccessFormComponent {
-  protected addCall = 'iscsi.auth.create';
-  protected queryCall = 'iscsi.auth.query';
-  protected editCall = 'iscsi.auth.update';
+  protected addCall: ApiMethod = 'iscsi.auth.create';
+  protected queryCall: ApiMethod = 'iscsi.auth.query';
+  protected editCall: ApiMethod = 'iscsi.auth.update';
   // protected resource_name: string = 'services/iscsi/authcredential';
   protected route_success: string[] = ['sharing', 'iscsi', 'auth'];
   protected isEntity = true;

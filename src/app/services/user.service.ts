@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { map } from 'rxjs/operators';
 import { RestService } from './rest.service';
@@ -7,10 +8,10 @@ import { WebSocketService } from './ws.service';
 @Injectable()
 export class UserService {
   static VALIDATOR_NAME = /^[a-zA-Z0-9_][a-zA-Z0-9_\.-]*[$]?$/;
-  protected uncachedUserQuery = 'dscache.get_uncached_user';
-  protected uncachedGroupQuery = 'dscache.get_uncached_group';
-  protected userQuery = 'user.query';
-  protected groupQuery = 'group.query';
+  protected uncachedUserQuery: ApiMethod = 'dscache.get_uncached_user';
+  protected uncachedGroupQuery: ApiMethod = 'dscache.get_uncached_group';
+  protected userQuery: ApiMethod = 'user.query';
+  protected groupQuery: ApiMethod = 'group.query';
   protected queryOptions = { extra: { search_dscache: true }, limit: 50 };
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {}

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
@@ -22,7 +23,7 @@ import { DialogService } from '../../../../services/dialog.service';
   styleUrls: ['./device-edit.component.scss'],
 })
 export class DeviceEditComponent implements OnInit {
-  protected updateCall = 'vm.device.update';
+  protected updateCall: ApiMethod = 'vm.device.update';
   protected route_success: string[];
   deviceid: any;
   vmname: any;
