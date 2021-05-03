@@ -500,6 +500,7 @@ export class VMListComponent implements OnDestroy {
                 new EntityUtils().handleError(this, err);
               });
             } else {
+              this.loader.close();
               const display_device = _.find(display_devices_res, { id: display_devices_res[0].id });
               this.showPasswordDialog(display_vm, display_device);
             }
@@ -616,14 +617,16 @@ export class VMListComponent implements OnDestroy {
         ).subscribe((pass_res: { [displayId: number]: DisplayWebUri }) => {
           this.loader.close();
           if (pass_res[display_device.id].error) {
-            return this.dialogService.Info('Error', pass_res[display_device.id].error);
+            passDialog.formGroup.controls['password'].reset();
+            return pass_conf.fieldConfig[0].warnings = pass_res[display_device.id].error;
           }
+          passDialog.dialogRef.close();
           window.open(pass_res[display_device.id].uri, '_blank');
         }, (err) => {
+          passDialog.dialogRef.close();
           this.loader.close();
           new EntityUtils().handleError(this, err);
         });
-        passDialog.dialogRef.close();
       },
     };
     this.dialogService.dialogForm(pass_conf);
