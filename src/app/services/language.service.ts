@@ -382,10 +382,6 @@ export class LanguageService {
   }
 
   setLanguageFromMiddleware(): Observable<void> {
-    if (this.currentLanguage) {
-      return EMPTY;
-    }
-
     return this.ws.call(this.queryCall, []).pipe(switchMap((res) => {
       if (res && res.language) {
         return this.setLanguage(res.language);
