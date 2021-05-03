@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { TranslationsLoadedGuard } from 'app/core/guards/translations-loaded.guard';
 
 import { AdminLayoutComponent } from './components/common/layouts/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from './components/common/layouts/auth-layout/auth-layout.component';
@@ -13,6 +14,7 @@ export const rootRouterConfig: Routes = [{
 {
   path: '',
   component: AuthLayoutComponent,
+  canActivate: [TranslationsLoadedGuard],
   children: [{
     path: 'sessions',
     loadChildren: './views/sessions/sessions.module#SessionsModule',
@@ -27,7 +29,7 @@ export const rootRouterConfig: Routes = [{
 {
   path: '',
   component: AdminLayoutComponent,
-  canActivate: [AuthService],
+  canActivate: [AuthService, TranslationsLoadedGuard],
   children: [{
     path: 'dashboard',
     loadChildren: './pages/dashboard/dashboard.module#DashboardModule',

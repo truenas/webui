@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { LanguageService } from '../../../../services/language.service';
 import { Theme, DefaultTheme } from 'app/services/theme/theme.service';
 
 @Component({
@@ -10,11 +9,6 @@ import { Theme, DefaultTheme } from 'app/services/theme/theme.service';
 })
 export class AuthLayoutComponent implements OnInit {
   private theme: Theme = DefaultTheme;
-
-  constructor(public language: LanguageService) {
-    // Translator init
-    language.getBrowserLanguage();
-  }
 
   ngOnInit() {
     this.setCssVars(this.theme);

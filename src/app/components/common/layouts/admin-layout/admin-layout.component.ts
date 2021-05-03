@@ -73,7 +73,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     });
 
     // Translator init
-    language.getMiddlewareLanguage();
+    language.setLanguageFromMiddleware();
 
     // Subscribe to Theme Changes
     core.register({
