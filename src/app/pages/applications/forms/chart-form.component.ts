@@ -49,7 +49,7 @@ export class ChartFormComponent {
     this.title = title;
   }
 
-  parseSchema(catalogApp: any, isEdit = false) {
+  parseSchema(catalogApp: any) {
     try {
       this.catalogApp = catalogApp;
       this.title = this.catalogApp.name;
@@ -65,7 +65,8 @@ export class ChartFormComponent {
               placeholder: helptext.chartForm.release_name.placeholder,
               tooltip: helptext.chartForm.release_name.tooltip,
               required: true,
-              readonly: isEdit,
+              disabled: true,
+              readonly: true,
             },
           ],
           colspan: 2,
@@ -83,6 +84,15 @@ export class ChartFormComponent {
         const fieldSet = this.fieldSets.find((fieldSet: any) => fieldSet.name == question.group);
         if (fieldSet) {
           const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(question);
+
+          const imageConfig = _.find(fieldConfigs, { name: 'image' });
+          if (imageConfig) {
+            const repositoryConfig = _.find(imageConfig.subFields, { name: 'repository' });
+            if (repositoryConfig) {
+              repositoryConfig.readonly = true;
+            }
+          }
+
           fieldSet.config = fieldSet.config.concat(fieldConfigs);
         }
       });
@@ -103,24 +113,13 @@ export class ChartFormComponent {
       schema: data.chart_schema.schema,
     };
 
-    this.parseSchema(chartSchema, true);
+    this.parseSchema(chartSchema);
     this.name = data.name;
 
     data.config['release_name'] = data.name;
     data.config['changed_schema'] = true;
 
     return data.config;
-  }
-
-  afterInit(entityEdit: any) {
-    if (this.rowName) {
-      entityEdit.setDisabled('release_name', true, false);
-    }
-
-    const repositoryConfig = _.find(this.fieldConfig, { name: 'image_repository' });
-    if (repositoryConfig) {
-      repositoryConfig.readonly = true;
-    }
   }
 
   customSubmit(data: any) {
