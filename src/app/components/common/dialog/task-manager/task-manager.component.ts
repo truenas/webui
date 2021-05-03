@@ -4,20 +4,22 @@ import {
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
-import { TranslateService } from '@ngx-translate/core';
-import { LocaleService } from 'app/services/locale.service';
-import { Observable, Subscription } from 'rxjs';
 import {
   animate, state, style, transition, trigger,
 } from '@angular/animations';
 import { HttpClient } from '@angular/common/http';
 
+import * as _ from 'lodash';
+import { Observable, Subscription } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+
+import { LocaleService } from 'app/services/locale.service';
 import {
   WebSocketService, JobService, SystemGeneralService, DialogService, StorageService,
-} from '../../../../services';
-import { T } from '../../../../translate-marker';
-import { EntityUtils } from '../../../../pages/common/entity/utils';
-import * as _ from 'lodash';
+} from 'app/services';
+import { T } from 'app/translate-marker';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'task-manager',
@@ -33,13 +35,14 @@ import * as _ from 'lodash';
   ],
 })
 export class TaskManagerComponent implements OnInit, OnDestroy {
-  dataSource: MatTableDataSource<any>;
   @ViewChild('taskTable', { static: true }) taskTable: MatTable<any>;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  dataSource: MatTableDataSource<any>;
   displayedColumns = ['state', 'method', 'percent'];
-  private subscrition: Subscription;
   expandedElement: any | null;
   timeZone: string;
+  private subscrition: Subscription;
+  readonly EntityJobState = EntityJobState;
 
   constructor(
     public dialogRef: MatDialogRef<TaskManagerComponent>,

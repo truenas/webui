@@ -88,7 +88,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
       return;
     }
 
-    this.setupEnclosureEvents();
+    this.setupEnclosureEvents(enclosure);
 
     // Slight adjustment to align with external html elements
     this.container.setTransform(-30);
@@ -99,7 +99,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
   }
 
   stackPositions(log = false) {
-    const result = this.enclosure.driveTrayObjects.map((dt: DriveTray, index: number) => {
+    const result = this.enclosure.driveTrayObjects.map((dt, index) => {
       const disk = this.findDiskBySlotNumber(index + 1);
       return dt.container.getGlobalPosition();
     });

@@ -41,6 +41,7 @@ import { ModalService } from 'app/services/modal.service';
 import { VolumesListControlsComponent } from './volumes-list-controls.component';
 import { ZvolFormComponent } from '../zvol/zvol-form';
 import { DatasetFormComponent } from '../datasets/dataset-form';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 export interface ZfsPoolData {
   pool: string;
@@ -275,7 +276,7 @@ export class VolumesListTableConfig implements InputTableConf {
                           }
                           new EntityUtils().handleWSError(this, res, self.dialogService);
                         }
-                        if (res.state === 'SUCCESS') {
+                        if (res.state === EntityJobState.Success) {
                           self.loader.close();
                           entityDialog.dialogRef.close(true);
                           self.parentVolumesListComponent.repaintMe();
@@ -981,7 +982,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     }
                     new EntityUtils().handleWSError(this, res, parent.dialogService, conf.fieldConfig);
                   }
-                  if (res.state === 'SUCCESS') {
+                  if (res.state === EntityJobState.Success) {
                     if (entityDialog) {
                       entityDialog.dialogRef.close(true);
                     }

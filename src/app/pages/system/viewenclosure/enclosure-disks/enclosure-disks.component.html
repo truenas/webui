@@ -2,7 +2,7 @@
   class="view-card rackmount"
   [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}"
   id="{{currentTab.alias}}"
-  (window:resize)="onResize()"
+  (window:resize)="onResize($event)"
   ngClass.gt-md="gt-md"
   ngClass.md="md"
   ngClass.sm="sm"
@@ -50,20 +50,31 @@
           <div class="content">
 
             <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
-              <div *ngFor="let pool of enclosurePools; let i=index"><div class="swatch"
-              [style.background]="subenclosure ? theme[theme.accentColors[subenclosure.poolKeys[pool]]] : theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]">
-              </div>
-              {{pool}} 
-              <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]] || !system.pools[selectedEnclosure.poolKeys[pool]].healthy">
-                <mat-icon fontSet="mdi-set" role="img" fontIcon="mdi-alert"></mat-icon>
-              </span>
+              <div *ngFor="let pool of enclosurePools; let i=index">
+                <div class="swatch"
+                  [style.background]="subenclosure ? theme[theme.accentColors[subenclosure.poolKeys[pool]]] : theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]">
+                </div>
+                {{pool}} 
+                <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]] || !system.pools[selectedEnclosure.poolKeys[pool]].healthy">
+                  <mat-icon fontSet="mdi-set" role="img" fontIcon="mdi-alert"></mat-icon>
+                </span>
               </div>
 
+              <!-- UNASSIGNED DISKS -->
+              <div>
+                <div class="swatch" style="background:#999999;"></div>
+                Unassigned
+              </div>
             </div>
 
             <ng-template #noPools>
               <div class="legend">
                 <div>No pools on this enclosure.</div>
+                <!-- UNASSIGNED DISKS -->
+                <div>
+                  <div class="swatch" style="background:#999999;"></div>
+                  Unassigned
+                </div>
               </div>
             </ng-template>
 

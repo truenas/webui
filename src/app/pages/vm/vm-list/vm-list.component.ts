@@ -24,9 +24,8 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
-import { ThrowStmt } from '@angular/compiler/public_api';
-import { withLatestFrom } from 'rxjs/operators';
 import { Validators } from '@angular/forms';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 
 @Component({
   selector: 'vm-list',
@@ -129,13 +128,13 @@ export class VMListComponent implements OnDestroy {
     this.entityList = entityList;
     this.eventSubscription = this.ws.subscribe('vm.query').subscribe((event) => {
       const changedRow = (this.entityList.rows as any[]).find((o) => o.id === event.id);
-      if (event.fields.state === 'RUNNING') {
-        changedRow.state = 'RUNNING';
-        changedRow.status.state = 'RUNNING';
+      if (event.fields.state === ServiceStatus.Running) {
+        changedRow.state = ServiceStatus.Running;
+        changedRow.status.state = ServiceStatus.Running;
         changedRow.status.domain_state = event.fields.state;
       } else {
-        changedRow.state = 'STOPPED';
-        changedRow.status.state = 'STOPPED';
+        changedRow.state = ServiceStatus.Stopped;
+        changedRow.status.state = ServiceStatus.Stopped;
         changedRow.status.domain_state = event.fields.state;
       }
     });
@@ -191,7 +190,7 @@ export class VMListComponent implements OnDestroy {
 
   onSliderChange(row: any) {
     let method: ApiMethod;
-    if (row['status']['state'] === 'RUNNING') {
+    if (row['status']['state'] === ServiceStatus.Running) {
       method = this.wsMethods.stop;
       const parent = this;
       const stopDialog: DialogFormConfiguration = {
@@ -556,12 +555,12 @@ export class VMListComponent implements OnDestroy {
   }
 
   isActionVisible(actionId: string, row: any) {
-    if (actionId === 'DISPLAY' && (row['status']['state'] !== 'RUNNING' || !this.checkDisplay(row))) {
+    if (actionId === 'DISPLAY' && (row['status']['state'] !== ServiceStatus.Running || !this.checkDisplay(row))) {
       return false;
     } if ((actionId === 'POWER_OFF' || actionId === 'STOP' || actionId === 'RESTART'
-            || actionId === 'SERIAL') && row['status']['state'] !== 'RUNNING') {
+            || actionId === 'SERIAL') && row['status']['state'] !== ServiceStatus.Running) {
       return false;
-    } if (actionId === 'START' && row['status']['state'] === 'RUNNING') {
+    } if (actionId === 'START' && row['status']['state'] === ServiceStatus.Running) {
       return false;
     }
     return true;

@@ -4,13 +4,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 import * as _ from 'lodash';
-import { WebSocketService, AppLoaderService, DialogService } from '../../../../services';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
-import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { EntityUtils } from '../../../common/entity/utils';
-import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/system/alert-service';
+
+import { WebSocketService, AppLoaderService, DialogService } from 'app/services/';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { T } from 'app/translate-marker';
+import helptext from 'app/helptext/system/alert-service';
+import { AlertLevel } from 'app/enums/alert-level.enum';
 
 @Component({
   selector: 'app-alertservice',
@@ -95,15 +97,15 @@ export class AlertServiceComponent {
           placeholder: helptext.level_placeholder,
           tooltip: helptext.level_tooltip,
           options: [
-            { label: 'Info', value: 'INFO' },
-            { label: 'Notice', value: 'NOTICE' },
-            { label: 'Warning', value: 'WARNING' },
-            { label: 'Error', value: 'ERROR' },
-            { label: 'Critical', value: 'CRITICAL' },
-            { label: 'Alert', value: 'ALERT' },
-            { label: 'Emergency', value: 'EMERGENCY' },
+            { label: T('Info'), value: AlertLevel.Info },
+            { label: T('Notice'), value: AlertLevel.Notice },
+            { label: T('Warning'), value: AlertLevel.Warning },
+            { label: T('Error'), value: AlertLevel.Error },
+            { label: T('Critical'), value: AlertLevel.Critical },
+            { label: T('Alert'), value: AlertLevel.Alert },
+            { label: T('Emergency'), value: AlertLevel.Emergency },
           ],
-          value: 'WARNING',
+          value: AlertLevel.Warning,
         },
       ],
     },

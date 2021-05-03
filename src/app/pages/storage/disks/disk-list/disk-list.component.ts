@@ -6,6 +6,7 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 import { T } from '../../../../translate-marker';
 import * as _ from 'lodash';
 import { StorageService, DialogService, WebSocketService } from '../../../../services';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { LocaleService } from 'app/services/locale.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -118,7 +119,7 @@ export class DiskListComponent {
 
   protected unused: any[] = [];
   constructor(protected ws: WebSocketService, protected router: Router, public diskbucket: StorageService, protected dialogService: DialogService,
-    protected localeService: LocaleService, private dialog: MatDialog) {
+    protected localeService: LocaleService, private dialog: MatDialog, private core: CoreService) {
     this.ws.call('disk.get_unused', []).subscribe((unused_res) => {
       this.unused = unused_res;
     }, (err) => new EntityUtils().handleWSError(this, err));
@@ -256,8 +257,11 @@ export class DiskListComponent {
   }
 
   afterInit(entityList: any) {
-    this.ws.subscribe('disk.query').subscribe((res) => {
-      if (res) {
+    this.core.register({
+      observerClass: this,
+      eventName: 'DisksChanged',
+    }).subscribe((evt: CoreEvent) => {
+      if (evt) {
         entityList.needTableResize = false;
         entityList.getData();
       }
