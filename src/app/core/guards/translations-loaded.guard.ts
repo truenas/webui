@@ -3,7 +3,9 @@ import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angul
 import { LanguageService } from 'app/services/language.service';
 import { of } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
-import { catchError, defaultIfEmpty, timeout } from 'rxjs/operators';
+import {
+  catchError, defaultIfEmpty, map, timeout,
+} from 'rxjs/operators';
 import { WebSocketService } from 'app/services/ws.service';
 
 /**
@@ -31,6 +33,7 @@ export class TranslationsLoadedGuard implements CanActivate {
 
     return waitForTranslations.pipe(
       timeout(this.maxLanguageLoadingTime),
+      map(() => true),
       defaultIfEmpty<boolean>(true),
       catchError((error) => {
         console.error('Error loading translations: ', error);
