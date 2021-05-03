@@ -383,10 +383,6 @@ export class LanguageService {
   }
 
   setLanguageFromMiddleware(): Observable<void> {
-    if (this.currentLanguage) {
-      return EMPTY;
-    }
-
     return this.sysGeneralService.getGeneralConfig.pipe(switchMap((res) => {
       if (res?.language) {
         return this.setLanguage(res.language);
