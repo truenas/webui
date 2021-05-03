@@ -170,7 +170,7 @@ export class LocalizationFormComponent implements OnDestroy {
 
   afterSubmit(value: any) {
     this.setTimeOptions(value.timezone);
-    this.language.setLang(value.language);
+    this.language.setLanguage(value.language);
   }
 
   customSubmit(body: any) {

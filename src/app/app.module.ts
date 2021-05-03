@@ -9,7 +9,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgxWebstorageModule } from 'ngx-webstorage';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 
-import { MaterialModule } from './appMaterial.module'; // customized MaterialModule
+import { MaterialModule } from './appMaterial.module';
 import { rootRouterConfig } from './app.routes';
 import { AppCommonModule } from './components/common/app-common.module';
 import { AppComponent } from './app.component';
@@ -109,7 +109,8 @@ export function createTranslateLoader(http: HttpClient) {
     AppLoaderService,
     NotificationsService,
     ErdService,
-    ENV_PROVIDERS],
+    ENV_PROVIDERS,
+  ],
   bootstrap: [
     AppComponent,
   ],
@@ -137,9 +138,9 @@ export function createTranslateLoader(http: HttpClient) {
 })
 export class AppModule {
   /**
-   *      * Allows for retrieving singletons using `AppModule.injector.get(MyService)`
-   *           * This is good to prevent injecting the service as constructor parameter.
-   *                */
+   * Allows for retrieving singletons using `AppModule.injector.get(MyService)`
+   * This is good to prevent injecting the service as constructor parameter.
+   * */
   static injector: Injector;
   constructor(injector: Injector) {
     setCoreServiceInjector(injector);
