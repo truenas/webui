@@ -273,8 +273,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   setLang(lang) {
-    this.language.currentLang = lang;
-    this.onLangChange.emit(this.language.currentLang);
+    this.language.currentLanguage = lang;
+    this.onLangChange.emit(this.language.currentLanguage);
   }
 
   toggleNotific() {

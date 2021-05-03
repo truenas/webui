@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, Subject, Subscription } from 'rxjs/Rx';
+import { EMPTY } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
+import { Observable } from 'rxjs/Rx';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 
@@ -8,7 +9,7 @@ import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class LanguageService {
-  currentLang = '';
+  currentLanguage: string = null;
   availableLangs = [
     {
       code: 'af',
@@ -366,45 +367,54 @@ export class LanguageService {
   queryCall = 'system.general.config';
   updateCall = 'system.general.update';
 
-  constructor(protected translate: TranslateService, protected ws: WebSocketService) {
-  }
+  constructor(
+    protected translate: TranslateService,
+    protected ws: WebSocketService,
+  ) {}
 
-  getBrowserLanguage() {
-    if (this.currentLang === '') { // we only want it to grab the browser language once
-      const browserLang = this.translate.getBrowserLang();
-      this.setLang(browserLang);
+  setLanguageFromBrowser(): Observable<void> {
+    if (this.currentLanguage) {
+      return EMPTY;
     }
+
+    const browserLang = this.translate.getBrowserLang();
+    return this.setLanguage(browserLang);
   }
 
-  getMiddlewareLanguage() {
-    this.ws.call(this.queryCall, []).subscribe((res) => {
+  setLanguageFromMiddleware(): Observable<void> {
+    return this.ws.call(this.queryCall, []).pipe(switchMap((res) => {
       if (res && res.language) {
-        this.setLang(res.language);
-      } else {
-        this.getBrowserLanguage();
+        return this.setLanguage(res.language);
       }
-    });
+
+      this.setLanguageFromBrowser();
+      return EMPTY;
+    }));
   }
 
-  setMiddlewareLanguage(lang: any) {
+  setMiddlewareLanguage(lang: any): void {
     this.ws.call(this.updateCall,
       [{ language: lang }]).subscribe(
-      (res) => {
-      },
+      () => {},
       (err) => {
         console.log(err);
       },
     );
-    this.setLang(lang);
+    this.setLanguage(lang);
   }
 
-  setLang(lang: any) {
+  /**
+   * @return Observable that completes when translations have been loaded.
+   */
+  setLanguage(lang: string): Observable<void> {
     if (_.find(this.availableLangs, { code: lang })) {
-      this.currentLang = lang;
+      this.currentLanguage = lang;
     } else {
-      this.currentLang = 'en';
+      this.currentLanguage = 'en';
     }
 
-    this.translate.use(this.currentLang);
+    return this.translate.use(this.currentLanguage).pipe(
+      map(() => undefined),
+    );
   }
 }
