@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Observable, Subject, Subscription } from 'rxjs';
 
 import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class CloudCredentialService {
-  protected credentialProviders: ApiMethod = 'cloudsync.providers';
+  protected credentialProviders: 'cloudsync.providers' = 'cloudsync.providers';
   protected byteMap = {
     T: 1024 ** 4,
     G: 1024 ** 3,

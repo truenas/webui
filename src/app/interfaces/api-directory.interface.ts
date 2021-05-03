@@ -1,5 +1,7 @@
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { QueryParams } from 'app/interfaces/query-api.interface';
+import { User } from 'app/interfaces/user';
 
 export type ApiDirectory = {
   // Active Directory
@@ -489,7 +491,7 @@ export type ApiDirectory = {
 
   // User
   'user.update': { params: any; response: any };
-  'user.query': { params: any; response: any };
+  'user.query': { params: QueryParams<User>; response: User[] };
   'user.set_root_password': { params: any; response: any };
   'user.delete': { params: any; response: any };
   'user.get_user_obj': { params: any; response: any };
@@ -518,4 +520,11 @@ export type ApiDirectory = {
   'zfs.snapshot.delete': { params: any; response: any };
 };
 
+/**
+ * Prefer typing like this:
+ * ```
+ * queryCall: 'user.query' = 'user.query'
+ * ```
+ * instead of using ApiMethod.
+ */
 export type ApiMethod = keyof ApiDirectory;

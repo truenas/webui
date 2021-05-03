@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
@@ -20,9 +19,9 @@ import { ipv4or6OptionalCidrValidator } from '../../../../common/entity/entity-f
   providers: [FieldRelationService, NetworkService],
 })
 export class InitiatorFormComponent implements OnInit {
-  protected addCall: ApiMethod = 'iscsi.initiator.create';
-  protected queryCall: ApiMethod = 'iscsi.initiator.query';
-  protected editCall: ApiMethod = 'iscsi.initiator.update';
+  protected addCall: 'iscsi.initiator.create' = 'iscsi.initiator.create';
+  protected queryCall: 'iscsi.initiator.query' = 'iscsi.initiator.query';
+  protected editCall: 'iscsi.initiator.update' = 'iscsi.initiator.update';
   protected customFilter: any[] = [[['id', '=']]];
   route_success: string[] = ['sharing', 'iscsi', 'initiator'];
   protected pk: any;

@@ -1,7 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -22,8 +21,8 @@ import { User } from 'app/interfaces/user';
 })
 export class GroupListComponent implements OnDestroy {
   title = 'Groups';
-  protected queryCall: ApiMethod = 'group.query';
-  protected wsDelete: ApiMethod = 'group.delete';
+  protected queryCall: 'group.query' = 'group.query';
+  protected wsDelete: 'group.delete' = 'group.delete';
   protected route_add: string[] = ['account', 'groups', 'add'];
   protected route_add_tooltip = T('Add Group');
   protected route_edit: string[] = ['account', 'groups', 'edit'];
@@ -143,7 +142,7 @@ export class GroupListComponent implements OnDestroy {
           const self = this;
           this.loader.open();
           self.ws.call('user.query', [[['group.id', '=', members_delete.id]]]).subscribe(
-            (usersInGroup: User[]) => {
+            (usersInGroup) => {
               this.loader.close();
 
               const conf: DialogFormConfiguration = {

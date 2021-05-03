@@ -5,7 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
 import * as _ from 'lodash';
@@ -47,10 +46,10 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   temp: any[] = [];
 
   name: string;
-  addCall: ApiMethod = 'pool.create';
-  editCall: ApiMethod = 'pool.update';
-  queryCall: ApiMethod = 'pool.query';
-  datasetQueryCall: ApiMethod = 'pool.dataset.query';
+  addCall: 'pool.create' = 'pool.create';
+  editCall: 'pool.update' = 'pool.update';
+  queryCall: 'pool.query' = 'pool.query';
+  datasetQueryCall: 'pool.dataset.query' = 'pool.dataset.query';
   pk: any;
   isNew = true;
   vol_encrypt = 0;

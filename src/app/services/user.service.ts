@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { User } from 'app/interfaces/user';
+import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
 import { RestService } from './rest.service';
 import { WebSocketService } from './ws.service';
@@ -8,17 +10,21 @@ import { WebSocketService } from './ws.service';
 @Injectable()
 export class UserService {
   static VALIDATOR_NAME = /^[a-zA-Z0-9_][a-zA-Z0-9_\.-]*[$]?$/;
-  protected uncachedUserQuery: ApiMethod = 'dscache.get_uncached_user';
-  protected uncachedGroupQuery: ApiMethod = 'dscache.get_uncached_group';
-  protected userQuery: ApiMethod = 'user.query';
-  protected groupQuery: ApiMethod = 'group.query';
+  protected uncachedUserQuery: 'dscache.get_uncached_user' = 'dscache.get_uncached_user';
+  protected uncachedGroupQuery: 'dscache.get_uncached_group' = 'dscache.get_uncached_group';
+  protected userQuery: 'user.query' = 'user.query';
+  protected groupQuery: 'group.query' = 'group.query';
   protected queryOptions = { extra: { search_dscache: true }, limit: 50 };
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {}
 
-  listUsers() { return this.ws.call(this.userQuery, { limit: 50 }); }
+  listUsers() {
+    return this.ws.call(this.userQuery, { limit: 50 } as any);
+  }
 
-  listGroups() { return this.ws.call(this.groupQuery, { limit: 50 }); }
+  listGroups() {
+    return this.ws.call(this.groupQuery, { limit: 50 });
+  }
 
   groupQueryDSCache(search = '', hideBuiltIn = false, offset = 0) {
     // TODO: Proper type for query API.
@@ -41,8 +47,8 @@ export class UserService {
     return this.ws.call(this.uncachedGroupQuery, [group]);
   }
 
-  userQueryDSCache(search = '', offset = 0) {
-    let queryArgs: any[] = [];
+  userQueryDSCache(search = '', offset = 0): Observable<User[]> {
+    let queryArgs: QueryFilter<User>[] = [];
     search = search.trim();
     if (search.length > 0) {
       queryArgs = [['username', '^', search]];

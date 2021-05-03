@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { DialogService, WebSocketService } from '../../../../../services';
@@ -14,7 +13,7 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
 })
 export class LicenseComponent {
   private queryCall = 'none';
-  private updateCall: ApiMethod = 'system.license_update';
+  private updateCall: 'system.license_update' = 'system.license_update';
   protected isOneColumnForm = true;
   fieldSets: FieldSet[] = [
     {

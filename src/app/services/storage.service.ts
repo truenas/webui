@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { SortDirection } from '@angular/material/sort';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { WebSocketService } from './ws.service';
 import { RestService } from './rest.service';
 
@@ -11,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class StorageService {
-  protected diskResource: ApiMethod = 'disk.query';
+  protected diskResource: 'disk.query' = 'disk.query';
 
   ids: any;
   diskNames: any;

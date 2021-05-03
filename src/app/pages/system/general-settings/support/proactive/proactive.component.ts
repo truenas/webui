@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 import { WebSocketService } from 'app/services/';
@@ -16,7 +15,7 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
 })
 export class ProactiveComponent {
   entityEdit: any;
-  protected queryCall: ApiMethod = 'support.config';
+  protected queryCall: 'support.config' = 'support.config';
   contacts: any;
   controls: any;
   save_button_enabled: boolean;

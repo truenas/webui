@@ -2,7 +2,6 @@ import { Component, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -46,8 +45,8 @@ import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-tabl
 })
 export class ReplicationListComponent implements InputTableConf, OnDestroy {
   title = T('Replication Tasks');
-  queryCall: ApiMethod = 'replication.query';
-  wsDelete: ApiMethod = 'replication.delete';
+  queryCall: 'replication.query' = 'replication.query';
+  wsDelete: 'replication.delete' = 'replication.delete';
   route_add: string[] = ['tasks', 'replication', 'wizard'];
   route_edit: string[] = ['tasks', 'replication', 'edit'];
   route_success: string[] = ['tasks', 'replication'];

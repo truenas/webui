@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
@@ -33,8 +32,8 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
   styleUrls: ['./network.component.css'],
 })
 export class NetworkComponent extends ViewControllerComponent implements OnInit, OnDestroy {
-  protected summayCall: ApiMethod = 'network.general.summary';
-  protected configCall: ApiMethod = 'network.configuration.config';
+  protected summayCall: 'network.general.summary' = 'network.general.summary';
+  protected configCall: 'network.configuration.config' = 'network.configuration.config';
 
   protected reportEvent: Subscription;
   formEvents: Subject<CoreEvent>;

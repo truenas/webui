@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -30,8 +29,8 @@ export class DeviceListComponent {
   vm: string;
   sub: Subscription;
   private entityList: any;
-  wsDelete: ApiMethod = 'datastore.delete';
-  queryCall: ApiMethod = 'vm.device.query';
+  wsDelete: 'datastore.delete' = 'datastore.delete';
+  queryCall: 'vm.device.query' = 'vm.device.query';
   protected queryCallOption: any[] = [[['vm', '=']]];
   busy: Subscription;
   protected loaderOpen = false;

@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { DialogService } from 'app/services';
@@ -28,14 +27,14 @@ export class BootEnvironmentListComponent implements OnDestroy {
 
   title = T('Boot Environments');
   protected resource_name = 'system/bootenv';
-  protected queryCall: ApiMethod = 'bootenv.query';
+  protected queryCall: 'bootenv.query' = 'bootenv.query';
   protected route_add: string[] = ['system', 'boot', 'create'];
   protected route_delete: string[] = ['system', 'boot', 'delete'];
-  protected wsDelete: ApiMethod = 'bootenv.delete';
-  protected wsMultiDelete: ApiMethod = 'core.bulk';
+  protected wsDelete: 'bootenv.delete' = 'bootenv.delete';
+  protected wsMultiDelete: 'core.bulk' = 'core.bulk';
   protected entityList: EntityTableComponent;
-  protected wsActivate: ApiMethod = 'bootenv.activate';
-  protected wsKeep: ApiMethod = 'bootenv.set_attribute';
+  protected wsActivate: 'bootenv.activate' = 'bootenv.activate';
+  protected wsKeep: 'bootenv.set_attribute' = 'bootenv.set_attribute';
   protected loaderOpen = false;
   busy: Subscription;
   size_consumed: string;

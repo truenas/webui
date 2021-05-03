@@ -1,4 +1,3 @@
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { EmptyConfig, EmptyType } from '../../../common/entity/entity-empty/entity-empty.component';

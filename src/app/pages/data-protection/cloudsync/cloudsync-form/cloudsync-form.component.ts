@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { filter, take } from 'rxjs/operators';
 
 import * as _ from 'lodash';
@@ -23,11 +22,11 @@ import { ModalService } from 'app/services/modal.service';
   providers: [CloudCredentialService, JobService],
 })
 export class CloudsyncFormComponent {
-  protected addCall: ApiMethod = 'cloudsync.create';
-  protected editCall: ApiMethod = 'cloudsync.update';
+  protected addCall: 'cloudsync.create' = 'cloudsync.create';
+  protected editCall: 'cloudsync.update' = 'cloudsync.update';
   protected entityForm: EntityFormComponent;
   protected isEntity = true;
-  protected queryCall = 'cloudsync.query';
+  protected queryCall: 'cloudsync.query' = 'cloudsync.query';
   protected queryPayload: any[] = [];
   protected customFilter: any[] = [];
   protected title: string;

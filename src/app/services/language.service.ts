@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -365,7 +364,7 @@ export class LanguageService {
       code: 'zh-hans',
     },
   ];
-  updateCall: ApiMethod = 'system.general.update';
+  updateCall: 'system.general.update' = 'system.general.update';
 
   constructor(protected translate: TranslateService, protected ws: WebSocketService,
     private sysGeneralService: SystemGeneralService) {

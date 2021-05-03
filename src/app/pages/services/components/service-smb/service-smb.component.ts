@@ -298,7 +298,7 @@ export class ServiceSMBComponent {
       }
     });
 
-    this.ws.call('user.query').subscribe((res: any[]) => {
+    this.ws.call('user.query').subscribe((res) => {
       this.cifs_srv_guest = otherColTwoSet.config.find((config) => config.name === 'guest');
       res.forEach((user) => {
         this.cifs_srv_guest.options.push({ label: user.username, value: user.username });

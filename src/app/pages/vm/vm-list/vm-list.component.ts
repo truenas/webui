@@ -39,8 +39,8 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 })
 export class VMListComponent implements OnDestroy {
   title = 'Virtual Machines';
-  protected queryCall: ApiMethod = 'vm.query';
-  protected wsDelete: ApiMethod = 'vm.delete';
+  protected queryCall: 'vm.query' = 'vm.query';
+  protected wsDelete: 'vm.delete' = 'vm.delete';
   protected route_add: string[] = ['vm', 'wizard'];
   protected route_edit: string[] = ['vm', 'edit'];
   protected dialogRef: any;

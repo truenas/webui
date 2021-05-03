@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
 
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -32,8 +31,8 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
 export class AlertConfigComponent implements OnInit {
   formEvents: Subject<CoreEvent>;
   protected route_success = ['system', 'alertsettings'];
-  protected queryCall: ApiMethod = 'alertclasses.config';
-  protected editCall: ApiMethod = 'alertclasses.update';
+  protected queryCall: 'alertclasses.config' = 'alertclasses.config';
+  protected editCall: 'alertclasses.update' = 'alertclasses.update';
   protected isEntity = true;
   fieldSets: FieldSets;
   fieldConfig: FieldConfig[] = [];

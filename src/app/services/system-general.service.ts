@@ -1,5 +1,4 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Subject, Observable } from 'rxjs';
 import * as _ from 'lodash';
 import { map } from 'rxjs/operators';
@@ -8,8 +7,8 @@ import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class SystemGeneralService {
-  protected certificateList: ApiMethod = 'certificate.query';
-  protected caList: ApiMethod = 'certificateauthority.query';
+  protected certificateList: 'certificate.query' = 'certificate.query';
+  protected caList: 'certificateauthority.query' = 'certificateauthority.query';
 
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();

@@ -1,7 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { T } from '../../../../translate-marker';
 import {
@@ -33,8 +32,8 @@ export class UserListComponent implements OnDestroy {
   protected usr_lst: any[] = [];
   protected grp_lst: any[] = [];
   protected hasDetails = true;
-  protected queryCall: ApiMethod = 'user.query';
-  protected wsDelete: ApiMethod = 'user.delete';
+  protected queryCall: 'user.query' = 'user.query';
+  protected wsDelete: 'user.delete' = 'user.delete';
   // protected queryCallOption = [['OR', [['uid', '=', 0], ['builtin', '=', false]]]];
   protected globalConfig = {
     id: 'config',

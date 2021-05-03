@@ -1,6 +1,5 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import * as _ from 'lodash';
 import { DialogService } from '../../../services';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -21,8 +20,8 @@ import {
 })
 
 export class NISComponent {
-  queryCall: ApiMethod = 'nis.config';
-  protected addCall: ApiMethod = 'nis.update';
+  queryCall: 'nis.config' = 'nis.config';
+  protected addCall: 'nis.update' = 'nis.update';
   custActions: any[] = [
     {
       id: helptext.nis_custactions_clearcache_id,

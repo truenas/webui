@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators, FormControl, ValidationErrors } from '@angular/forms';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -23,9 +22,9 @@ import globalHelptext from 'app/helptext/global-helptext';
   providers: [IscsiService, StorageService],
 })
 export class ExtentFormComponent {
-  protected addCall: ApiMethod = 'iscsi.extent.create';
-  protected queryCall: ApiMethod = 'iscsi.extent.query';
-  protected editCall: ApiMethod = 'iscsi.extent.update';
+  protected addCall: 'iscsi.extent.create' = 'iscsi.extent.create';
+  protected queryCall: 'iscsi.extent.query' = 'iscsi.extent.query';
+  protected editCall: 'iscsi.extent.update' = 'iscsi.extent.update';
   protected customFilter: any[] = [[['id', '=']]];
   // protected resource_name: string = 'services/iscsi/extent';
   protected route_success: string[] = ['sharing', 'iscsi', 'extent'];
