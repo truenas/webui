@@ -512,7 +512,6 @@ export class VMListComponent implements OnDestroy {
               fieldConfig: [{
                 type: 'radio',
                 name: 'display_device',
-                placeholder: T('Display Device'),
                 options: display_devices_res.map((d) => ({ label: d.attributes.type, value: d.id })),
                 validation: [Validators.required],
               }],
