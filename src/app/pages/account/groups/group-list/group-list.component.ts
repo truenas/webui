@@ -13,7 +13,7 @@ import { T } from '../../../../translate-marker';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { GroupFormComponent } from '../group-form/group-form.component';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { User } from 'app/interfaces/user';
+import { User } from 'app/interfaces/user.interface';
 
 @Component({
   selector: 'app-group-list',

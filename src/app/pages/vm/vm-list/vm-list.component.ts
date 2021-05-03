@@ -28,6 +28,11 @@ import { withLatestFrom } from 'rxjs/operators';
 import { Validators } from '@angular/forms';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 
+interface DisplayWebUri {
+  error: string;
+  uri: string;
+}
+
 @Component({
   selector: 'vm-list',
   template: `
@@ -477,9 +482,18 @@ export class VMListComponent implements OnDestroy {
         this.loader.open();
         this.ws.call('vm.get_display_devices', [display_vm.id]).subscribe((display_devices_res: any[]) => {
           if (display_devices_res.length === 1 && !display_devices_res[0].attributes.password_configured) {
-            this.ws.call('vm.get_display_web_uri', [display_vm.id, this.extractHostname(window.origin)]).subscribe((web_uri_res) => {
+            this.ws.call(
+              'vm.get_display_web_uri',
+              [
+                display_vm.id,
+                this.extractHostname(window.origin),
+              ],
+            ).subscribe((web_uri_res: { [displayId: number]: DisplayWebUri }) => {
               this.loader.close();
-              window.open(web_uri_res[display_devices_res[0].id], '_blank');
+              if (web_uri_res[display_devices_res[0].id].error) {
+                return this.dialogService.Info('Error', web_uri_res[display_devices_res[0].id].error);
+              }
+              window.open(web_uri_res[display_devices_res[0].id].uri, '_blank');
             }, (err) => {
               this.loader.close();
               new EntityUtils().handleError(this, err);
@@ -515,9 +529,26 @@ export class VMListComponent implements OnDestroy {
                     parent: this,
                     customSubmit: (passDialog: EntityDialogComponent) => {
                       this.loader.open();
-                      this.ws.call('vm.get_display_web_uri', [display_vm.id, this.extractHostname(window.origin), { devices_passwords: [{ device_id: display_device.id, password: passDialog.formValue.password }] }]).subscribe((pass_res) => {
+                      this.ws.call(
+                        'vm.get_display_web_uri',
+                        [
+                          display_vm.id,
+                          this.extractHostname(window.origin),
+                          {
+                            devices_passwords: [
+                              {
+                                device_id: display_device.id,
+                                password: passDialog.formValue.password,
+                              },
+                            ],
+                          },
+                        ],
+                      ).subscribe((pass_res: { [displayId: number]: DisplayWebUri }) => {
                         this.loader.close();
-                        window.open(pass_res[display_device.id], '_blank');
+                        if (pass_res[display_device.id].error) {
+                          return this.dialogService.Info('Error', pass_res[display_device.id].error);
+                        }
+                        window.open(pass_res[display_device.id].uri, '_blank');
                       }, (err) => {
                         this.loader.close();
                         new EntityUtils().handleError(this, err);
@@ -528,9 +559,18 @@ export class VMListComponent implements OnDestroy {
                   this.dialogService.dialogForm(pass_conf);
                 } else {
                   this.loader.open();
-                  this.ws.call('vm.get_display_web_uri', [display_vm.id, this.extractHostname(window.origin)]).subscribe((web_uris_res) => {
+                  this.ws.call(
+                    'vm.get_display_web_uri',
+                    [
+                      display_vm.id,
+                      this.extractHostname(window.origin),
+                    ],
+                  ).subscribe((web_uris_res: { [displayId: number]: DisplayWebUri }) => {
                     this.loader.close();
-                    window.open(web_uris_res[display_device.id], '_blank');
+                    if (web_uris_res[display_device.id].error) {
+                      return this.dialogService.Info('Error', web_uris_res[display_device.id].error);
+                    }
+                    window.open(web_uris_res[display_device.id].uri, '_blank');
                   }, (err) => {
                     this.loader.close();
                     new EntityUtils().handleError(this, err);

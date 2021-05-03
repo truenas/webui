@@ -22,6 +22,7 @@ interface DisplayDeviceAttributes {
   bind: string;
   password: string;
   port: number;
+  password_configured: boolean;
   resolution: string;
   type: string;
   wait: boolean;
