@@ -82,7 +82,4 @@ export interface FormConfiguration {
   customSubmit?: (value: any) => void;
   closeModalForm?(): Promise<boolean>;
   afterModalFormClosed?(): void; // function will called once the modal form closed
-  // values?: any;
-  // goBack?(): any;
-  // onSuccess?(res: any): any;
 }
