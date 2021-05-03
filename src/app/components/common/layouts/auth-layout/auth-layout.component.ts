@@ -13,7 +13,7 @@ export class AuthLayoutComponent implements OnInit {
 
   constructor(public language: LanguageService) {
     // Translator init
-    language.getBrowserLanguage();
+    language.setLanguageFromBrowser();
   }
 
   ngOnInit(): void {

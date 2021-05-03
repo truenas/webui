@@ -305,7 +305,7 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
           }
         });
     }
-    this.language.setLang(value.language);
+    this.language.setLanguage(value.language);
     this.modalService.refreshTable();
   }
 

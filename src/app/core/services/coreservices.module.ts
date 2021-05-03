@@ -1,6 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from 'app/core/services/api.service';
+import { LayoutService } from 'app/core/services/layout.service';
 import { StatsService } from 'app/core/services/stats.service';
 import { DiskStateService } from 'app/core/services/disk-state.service';
 import { DiskTemperatureService } from 'app/core/services/disk-temperature.service';
@@ -57,6 +58,7 @@ export class CoreServices {
         AnimationService,
         InteractionManagerService,
         PreferencesService,
+        LayoutService,
         ThemeService,
         ChartDataUtilsService,
         WebSocketService,
