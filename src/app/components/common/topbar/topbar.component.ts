@@ -19,7 +19,6 @@ import { EntityJobComponent } from '../../../pages/common/entity/entity-job/enti
 import { EntityUtils } from '../../../pages/common/entity/utils';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../services/dialog.service';
-import { LanguageService } from '../../../services/language.service';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
 import { RestService } from '../../../services/rest.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
@@ -48,7 +47,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   @Input() notificPanel: MatSidenav;
 
   notifications: NotificationAlert[] = [];
-  @Output() onLangChange = new EventEmitter<any>();
 
   interval: any;
   updateIsDone: Subscription;
@@ -104,7 +102,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     private router: Router,
     private notificationsService: NotificationsService,
     private ws: WebSocketService,
-    public language: LanguageService,
     private dialogService: DialogService,
     public sysGenService: SystemGeneralService,
     public dialog: MatDialog,
@@ -296,11 +293,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.webSocketOnClose.unsubscribe();
   }
 
-  setLang(lang: string): void {
-    this.language.currentLang = lang;
-    this.onLangChange.emit(this.language.currentLang);
-  }
-
   toggleNotificationPanel(): void {
     this.notificPanel.toggle();
   }
@@ -340,39 +332,32 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   onShutdown(): void {
-    const shutDownMessage = T('Shut down');
-    const shutDownPrompt = T('Shut down the system?');
-    this.translate.get([shutDownMessage, shutDownPrompt]).subscribe((translated: TranslatedMessages) => {
-      this.dialogService.confirm(
-        translated[shutDownMessage],
-        translated[shutDownPrompt],
-        false,
-        T('Shut Down'),
-      ).subscribe((res: boolean) => {
-        if (!res) {
-          return;
-        }
+    this.dialogService.confirm(
+      this.translate.instant('Shut down'),
+      this.translate.instant('Shut down the system?'),
+      false,
+      this.translate.instant('Shut Down'),
+    ).subscribe((res: boolean) => {
+      if (!res) {
+        return;
+      }
 
-        this.router.navigate(['/others/shutdown']);
-      });
+      this.router.navigate(['/others/shutdown']);
     });
   }
 
   onReboot(): void {
-    const restartMessage = T('Restart');
-    const restartPrompt = T('Restart the system?');
-    this.translate.get([restartMessage, restartPrompt]).subscribe((translated: TranslatedMessages) => {
-      this.dialogService.confirm(
-        translated[restartMessage], translated[restartPrompt],
-        false,
-        T('Restart'),
-      ).subscribe((res: boolean) => {
-        if (!res) {
-          return;
-        }
+    this.dialogService.confirm(
+      this.translate.instant('Restart'),
+      this.translate.instant('Restart the system?'),
+      false,
+      this.translate.instant('Restart'),
+    ).subscribe((res: any) => {
+      if (!res) {
+        return;
+      }
 
-        this.router.navigate(['/others/reboot']);
-      });
+      this.router.navigate(['/others/reboot']);
     });
   }
 
