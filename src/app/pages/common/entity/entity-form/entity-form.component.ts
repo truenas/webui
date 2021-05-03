@@ -396,8 +396,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                   if (current_field.type === 'array') {
                     this.setArrayValue(this.wsResponse[key], this.wsfg, key);
                   } else if (current_field.type === 'list') {
-                    this.setObjectListValue(this.wsResponse[key], this.wsfg, current_field)
-                  } else if (current_field.type === "dict") {
+                    this.setObjectListValue(this.wsResponse[key], this.wsfg, current_field);
+                  } else if (current_field.type === 'dict') {
                     this.wsfg.patchValue(this.wsResponse[key]);
                   } else if (!(current_field.type === 'select' && current_field.options.length == 0)) {
                     this.wsfg.setValue(this.wsResponse[key]);
@@ -649,9 +649,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.fb.control({ disabled, value }, validation);
   }
 
-  setDisabled(name: string, disable: boolean, hide?: boolean, status?:string) {
+  setDisabled(name: string, disable: boolean, hide?: boolean, status?: string) {
     const fieldConfig = this.fieldConfig.find((item) => item.name === name);
-    this.fieldRelationService.setDisabled(fieldConfig, this.formGroup, disable, hide, status);
+    if (fieldConfig) {
+      this.fieldRelationService.setDisabled(fieldConfig, this.formGroup, disable, hide, status);
+    }
   }
 
   setValue(name: string, value: any) {
@@ -714,16 +716,14 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       const value = values[i];
       const templateListField = _.cloneDeep(fieldConfig.templateListField);
 
-      templateListField.forEach(subFieldConfig => {
+      templateListField.forEach((subFieldConfig) => {
         if (subFieldConfig.type == 'list') {
           if (value[subFieldConfig.name]) {
             const subValues = value[subFieldConfig.name];
             this.createFieldConfigForList(subValues, subFieldConfig);
           }
-        } else {
-          if (value[subFieldConfig.name] !== undefined) {
-            subFieldConfig.value = value[subFieldConfig.name];
-          }
+        } else if (value[subFieldConfig.name] !== undefined) {
+          subFieldConfig.value = value[subFieldConfig.name];
         }
       });
       fieldConfig['listFields'].push(templateListField);
@@ -734,12 +734,12 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.createFieldConfigForList(values, fieldConfig);
 
     for (let i = 0; i < fieldConfig['listFields'].length; i++) {
-      const formGroup =  this.entityFormService.createFormGroup(fieldConfig['listFields'][i]);
+      const formGroup = this.entityFormService.createFormGroup(fieldConfig['listFields'][i]);
       formArray.push(formGroup);
     }
 
     for (let i = 0; i < fieldConfig['listFields'].length; i++) {
-      fieldConfig['listFields'][i].forEach(subFieldConfig => {
+      fieldConfig['listFields'][i].forEach((subFieldConfig) => {
         this.fieldRelationService.setRelation(subFieldConfig, formArray.at(i) as FormGroup);
       });
     }
