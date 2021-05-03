@@ -14,7 +14,10 @@ def browser():
     profile = webdriver.FirefoxProfile()
     profile.set_preference("browser.download.folderList", 2)
     profile.set_preference("browser.download.dir", "/tmp")
-    profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/json")
+    # this is the place to add file type to autosave
+    # application/x-tar is use for .tar
+    # application/gzip is use for .tgz
+    profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-tar,application/gzip")
     profile.set_preference("browser.download.manager.showWhenStarting", False)
     profile.set_preference("browser.link.open_newwindow", 3)
     binary = '/usr/bin/firefox' if system() == "Linux" else '/usr/local/bin/firefox'
@@ -33,6 +36,11 @@ web_driver = browser()
 @pytest.fixture
 def driver():
     return web_driver
+
+
+# Close firefox after all tests are completed
+def pytest_sessionfinish(session, exitstatus):
+    web_driver.quit()
 
 
 if os.path.exists('config.cfg'):

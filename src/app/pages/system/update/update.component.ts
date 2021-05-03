@@ -17,6 +17,7 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'app-update',
@@ -196,7 +197,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   checkForUpdateRunning() {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', 'RUNNING']]]).subscribe(
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).subscribe(
       (res) => {
         if (res && res.length > 0) {
           this.isUpdateRunning = true;
@@ -397,7 +398,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
   // Buttons in the template activate these three functions
   downloadUpdate() {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', 'RUNNING']]]).subscribe(
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).subscribe(
       (res) => {
         if (res[0]) {
           this.showRunningUpdate(res[0].id);

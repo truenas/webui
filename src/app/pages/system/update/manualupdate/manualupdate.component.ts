@@ -16,6 +16,7 @@ import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { EntityUtils } from '../../../common/entity/utils';
 import { take } from 'rxjs/operators';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'app-manualupdate',
@@ -237,7 +238,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
   }
 
   checkForUpdateRunning() {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', 'RUNNING']]]).subscribe(
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).subscribe(
       (res) => {
         if (res && res.length > 0) {
           this.isUpdateRunning = true;

@@ -18,6 +18,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { ModalService } from '../../../../services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'app-syslog-form',
@@ -151,7 +152,7 @@ export class SyslogFormComponent implements OnDestroy {
           }
           new EntityUtils().handleWSError(this, res);
         }
-        if (res.state === 'SUCCESS') {
+        if (res.state === EntityJobState.Success) {
           this.loader.close();
           this.entityForm.success = true;
           this.entityForm.formGroup.markAsPristine();

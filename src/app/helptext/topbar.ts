@@ -29,7 +29,6 @@ export default {
   },
 
   mat_tooltips: {
-    toggle_hide: T('Toggle Hide/Open'),
     toggle_collapse: T('Toggle Collapse'),
     tc_connect: T('Connecting to TrueCommand'),
     tc_status: T('Status of TrueCommand'),

@@ -19,6 +19,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T946.feature', 'Verify setting up HA works with a single failover group')
 def test_verify_setting_up_ha_works_with_a_single_failover_group(driver):
     """Verify setting up HA works with a single failover group."""
+    pass
 
 
 @given(parsers.parse('the browser is open navigate to "{nas_url}"'))
@@ -129,6 +130,7 @@ def we_should_be_returned_to_license_information(driver):
 def both_serials_should_show_under_system_serial_serial1_and_serial2(driver, serial1, serial2):
     """both serials should show under System Serial "serial1" and "serial2"."""
     # driver.find_element_by_xpath(f'//span[contains(.,"{serial1} / {serial2}")]')
+    pass
 
 
 @then('navigate to Network and on the Network page click on Global Configuration Settings')
@@ -164,27 +166,25 @@ def please_wait_should_appear_while_settings_are_being_applied_you_should_be_ret
     assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Network")]')
 
 
-@then('navigate to System then click Misc')
-def navigate_to_system_click_failover_click_disable_failover_click_save(driver):
-    """navigate to System then click Misc"""
+@then('navigate to System then click Failover')
+def navigate_to_system_then_click_failover(driver):
+    """navigate to System then click Failover"""
     assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__System Settings"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Misc"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Misc"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Failover"]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
 
 
-@then('the Miscellaneous page should open')
-def the_miscellaneous_page_should_open(driver):
-    """the Miscellaneous page should open."""
-    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Miscellaneous")]')
+@then('the Failover page should open')
+def the_failover_page_should_open(driver):
+    """the Failover page should open."""
+    assert wait_on_element(driver, 1, 7, '//h1[contains(.,"Failover")]')
 
 
-@then('click Failover, check disable failover, click save and confirm changes')
-def click_Failover_check_disable_failover_click_save_and_confirm_changes(driver):
-    """click Failover, check disable failover, click save and confirm changes."""
-    assert wait_on_element(driver, 0.5, 7, '//li[contains(.,"Failover")]')
-    driver.find_element_by_xpath('//li[contains(.,"Failover")]').click()
-    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Failover")]')
+@then('click the disable failover checkbox, click save and confirm changes')
+def click_the_disable_failover_checkbox_click_save_and_confirm_changes(driver):
+    """click the disable failover checkbox, click save and confirm changes."""
+    assert wait_on_element(driver, 0.5, 7, '//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
     element = driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
     global class_attribute
     class_attribute = element.get_attribute('class')
@@ -214,7 +214,8 @@ def navigate_to_network_then_under_interfacesclick_enp0s6f0(driver):
     assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Network")]')
     assert wait_on_element(driver, 0.5, 7, '//h3[contains(.,"Interfaces")]')
     assert wait_on_element(driver, 0.5, 7, '//td[contains(.,"enp0s6f0")]')
-    driver.find_element_by_xpath('//td[contains(.,"enp0s6f0")]').click()
+    assert wait_on_element(driver, 0.5, 7, '//mat-icon[@id="enp0s6f0"]')
+    driver.find_element_by_xpath('//mat-icon[@id="enp0s6f0"]').click()
 
 
 @then('the Edit Interface should appear')
@@ -232,7 +233,8 @@ def uncheck_dhcp_check_critical_select_1_for_failover_group_input_ip_address_thi
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Failover Group"]').click()
     assert wait_on_element(driver, 1, 5, '//mat-option[@ix-auto="option__Failover Group_1"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Failover Group_1"]').click()
-    assert wait_on_element(driver, 1, 5, '//mat-select[@ix-auto="select__Failover VHID"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__add-box_aliases"]').click()
+    assert wait_on_element(driver, 0.5, 5, '//input[@ix-auto="input__IP Address (This Controller)"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').send_keys(ip1)
     driver.find_element_by_xpath('//mat-select[@ix-auto="input__IP Address (This Controller)"]').click()
@@ -337,6 +339,12 @@ def enter_tank_for_pool_name_check_the_box_next_to_sda_press_under_data_vdev_cli
     driver.find_element_by_xpath(f'//mat-checkbox[@id="pool-manager__disks-{disk}"]').click()
     assert wait_on_element(driver, 0.5, 7, '//button[@id="vdev__add-button"]')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]')
+    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__force-submit-checkbox"]').click()
+    assert wait_on_element(driver, 1, 7, '//h1[contains(.,"Warning")]')
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__CONTINUE"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
     assert wait_on_element(driver, 0.5, 7, '//button[@name="create-button"]')
     driver.find_element_by_xpath('//button[@name="create-button"]').click()
     assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Warning")]')
@@ -348,18 +356,15 @@ def enter_tank_for_pool_name_check_the_box_next_to_sda_press_under_data_vdev_cli
 def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned_to_the_storage_page(driver):
     """Create Pool should appear while pool is being created. You should be returned to the Storage page."""
     assert wait_on_element(driver, 0.2, 7, '//h1[contains(.,"Create Pool")]')
-    driver.find_element_by_xpath('//h1[contains(.,"Create Pool")]')
-    assert wait_on_element_disappear(driver, 1, 30, '//h1[contains(.,"Create Pool")]')
+    assert wait_on_element_disappear(driver, 1, 120, '//h1[contains(.,"Create Pool")]')
     assert wait_on_element(driver, 1, 7, '//mat-panel-title[contains(.,"tank")]')
     driver.find_element_by_xpath('//td[contains(.,"tank")]')
 
 
-@then('click Failover, uncheck disable failover, click save and confirm changes')
-def click_failover_uncheck_disable_failover_click_save_and_confirm_changes(driver):
-    """click Failover, uncheck disable failover, click save and confirm changes."""
-    assert wait_on_element(driver, 0.5, 7, '//li[contains(.,"Failover")]')
-    driver.find_element_by_xpath('//li[contains(.,"Failover")]').click()
-    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Failover")]')
+@then('click disable failover to uncheck it, click save and confirm changes')
+def click_disable_failover_to_uncheck_it_click_save_and_confirm_changes(driver):
+    """click disable failover to uncheck it, click save and confirm changes."""
+    assert wait_on_element(driver, 0.5, 7, '//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
     element = driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
     global class_attribute
     class_attribute = element.get_attribute('class')

@@ -22,6 +22,7 @@ import { environment } from 'app/../environments/environment';
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'widget-sysinfo',
@@ -131,7 +132,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   checkForRunningUpdate() {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', 'RUNNING']]]).subscribe(
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).subscribe(
       (res) => {
         if (res && res.length > 0) {
           this.isUpdateRunning = true;

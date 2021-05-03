@@ -27,7 +27,7 @@
 }
 
 .branding .app-logo-text {
-  width: 96px; 
+  width: 96px;
   height: auto;
   top: 11px;
 }
@@ -88,4 +88,3 @@
 jw-modal {
     display: block;
 }
-

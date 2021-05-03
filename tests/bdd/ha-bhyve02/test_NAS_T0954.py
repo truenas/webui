@@ -20,6 +20,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T954.feature', 'Edit User enable Password')
 def test_edit_user_enable_password(driver):
     """Edit User enable Password."""
+    pass
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
