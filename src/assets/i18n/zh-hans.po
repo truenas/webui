@@ -746,6 +746,11 @@ msgstr "创建连接到启用<b>VNET</b>的监狱网络接口分隔列表。删�
 msgid "A stripe"
 msgstr ""
 
+msgid ""
+"A stripe log vdev may result in data loss if it fails combined with a power "
+"outage."
+msgstr ""
+
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
 msgstr "强烈反对使用为0的swap大小！"
 
@@ -825,6 +830,9 @@ msgstr ""
 
 msgid "AFP3 Unix Privs"
 msgstr "AFP3 UNIX 权限"
+
+msgid "ALERT"
+msgstr ""
 
 msgid "API Key"
 msgstr "API密钥"
@@ -2095,6 +2103,9 @@ msgstr "授权的主机和IP地址"
 msgid "Authorized Networks"
 msgstr "授权网络"
 
+msgid "Auto"
+msgstr ""
+
 msgid "Auto TRIM"
 msgstr ""
 
@@ -2539,6 +2550,9 @@ msgstr "处理器和内存"
 
 msgid "CPUs and Memory"
 msgstr "处理器和内存"
+
+msgid "CRITICAL"
+msgstr ""
 
 msgid "CRL Sign"
 msgstr "CRL签名"
@@ -3258,6 +3272,9 @@ msgstr ""
 msgid "Cloud Credentials"
 msgstr "云凭据"
 
+msgid "Cloud Sync Task"
+msgstr ""
+
 msgid "Cloud Sync Tasks"
 msgstr ""
 
@@ -3412,9 +3429,6 @@ msgstr "压缩级别"
 msgid "Computer Account OU"
 msgstr "电脑帐户OU"
 
-msgid "Conainter Images"
-msgstr ""
-
 msgid "Config could not be downloaded"
 msgstr "无法下载配置"
 
@@ -3516,6 +3530,9 @@ msgstr "确认密码"
 
 msgid "Confirm these settings."
 msgstr "确认这些设置。"
+
+msgid "Confirm to unset pool?"
+msgstr ""
 
 msgid "Connect Timeout"
 msgstr "连接超时"
@@ -3722,6 +3739,9 @@ msgstr "创建认证机构"
 msgid "Create Certificate"
 msgstr "创建证书"
 
+msgid "Create New"
+msgstr ""
+
 msgid "Create Passphrase"
 msgstr "创建密码"
 
@@ -3919,6 +3939,12 @@ msgstr ""
 "href=\"https://github.com/troglobit/inadyn#custom-ddns-providers\" "
 "target=\"_blank\"> In-A-Dyn文档</a>中。"
 
+msgid "DEBUG"
+msgstr ""
+
+msgid "DEFAULT"
+msgstr ""
+
 msgid "DELETE"
 msgstr "删除"
 
@@ -4077,6 +4103,9 @@ msgstr "每月的几号"
 
 msgid "Day of Week"
 msgstr "星期几"
+
+msgid "Day(s)"
+msgstr ""
 
 msgid "Days"
 msgstr "天数"
@@ -4952,7 +4981,13 @@ msgstr "EC曲线"
 msgid "EDIT"
 msgstr "编辑"
 
+msgid "EMERGENCY"
+msgstr ""
+
 msgid "ENABLED"
+msgstr ""
+
+msgid "ERROR"
 msgstr ""
 
 msgid "ERROR: Not Enough Memory"
@@ -7144,6 +7179,9 @@ msgstr "HA正在重新连接。"
 msgid "HDD Standby"
 msgstr "HDD休眠"
 
+msgid "HEX"
+msgstr ""
+
 msgid "HTTP Authentication"
 msgstr "HTTP身份验证"
 
@@ -7363,6 +7401,9 @@ msgstr "小时和分钟，系统必须在这个时间内停止创建快照。已
 msgid "Hour and minute when the system can begin  taking snapshots."
 msgstr "小时和分钟，系统可以开始拍摄快照的时间。"
 
+msgid "Hour(s)"
+msgstr ""
+
 msgid "Hourly"
 msgstr "每小时"
 
@@ -7449,6 +7490,12 @@ msgid "ID"
 msgstr ""
 
 msgid "IDMAP"
+msgstr ""
+
+msgid "IGNORE"
+msgstr ""
+
+msgid "INFO"
 msgstr ""
 
 msgid "INSTALL"
@@ -7604,6 +7651,9 @@ msgid ""
 msgstr ""
 "将此扩展标识为证书的关键扩展。关键扩展必须由使用证书的系统识别，否则此证书将被拒绝。使用证书的系统可以忽略标识为<i>非</i>"
 "关键的扩展，并且仍批准该证书的使用。"
+
+msgid "Idle"
+msgstr ""
 
 msgid "Idmap"
 msgstr "Idmap"
@@ -8037,6 +8087,11 @@ msgstr ""
 msgid "It seems you haven't setup any "
 msgstr ""
 
+msgid ""
+"It seems you haven't setup any SMB Shares yet. Please click the button "
+"below to add an SMB Share."
+msgstr ""
+
 msgid "Item"
 msgstr ""
 
@@ -8272,6 +8327,9 @@ msgstr "传统Web界面"
 msgid "LLDP"
 msgstr ""
 
+msgid "LOCAL"
+msgstr ""
+
 msgid "LOG (Write Cache) Overprovision Size in GiB"
 msgstr ""
 
@@ -8301,9 +8359,6 @@ msgstr "链路聚合协议"
 
 msgid "Language"
 msgstr "语言"
-
-msgid "Language code"
-msgstr "语言代码"
 
 msgid "Last Scrub Run on"
 msgstr "最后一次清理"
@@ -8959,6 +9014,9 @@ msgstr "监控用户"
 msgid "Month"
 msgstr "月"
 
+msgid "Month(s)"
+msgstr ""
+
 msgid "Monthly"
 msgstr "每月"
 
@@ -8967,6 +9025,9 @@ msgstr "月数"
 
 msgid "More Options"
 msgstr "更多选项"
+
+msgid "More info..."
+msgstr ""
 
 msgid "Mount Path"
 msgstr ""
@@ -9078,8 +9139,8 @@ msgstr "NIS服务器"
 msgid "NO"
 msgstr "否"
 
-msgid "NOT RUN SINCE LAST BOOT"
-msgstr "自上次启动以来未运行"
+msgid "NOTICE"
+msgstr ""
 
 msgid "NSS"
 msgstr ""
@@ -9419,6 +9480,9 @@ msgstr ""
 
 msgid "No Repositories"
 msgstr "没有资料库"
+
+msgid "No SMB Shares"
+msgstr ""
 
 msgid "No Safety Check (CAUTION)"
 msgstr "没有安全检查（注意）"
@@ -9969,17 +10033,23 @@ msgstr ""
 "。现有权限不会更改，但是所有权更改可能会使文件的原始所有者无法访问。此操作无法撤消！如果未设置，则必须将要通过WebDAV访问的文件的所有权手动设置为<"
 "samp> webdav </samp>或<samp> www </samp>用户/组。"
 
-msgid "PCI Passthru Device"
+msgid "PASSPHRASE"
 msgstr ""
 
-msgid "PENDING"
-msgstr "待处理"
+msgid "PCI Passthru Device"
+msgstr ""
 
 msgid "POST INSTALL NOTES"
 msgstr "安装说明"
 
 msgid "PROCEED"
 msgstr "继续"
+
+msgid "PULL"
+msgstr ""
+
+msgid "PUSH"
+msgstr ""
 
 msgid "PagerDuty client name."
 msgstr "PagerDuty客户端名称。"
@@ -10173,6 +10243,9 @@ msgstr "执行 DNS 反向解析"
 
 msgid "Performs authentication from an LDAP server."
 msgstr "从LDAP服务器执行身份验证。"
+
+msgid "Periodic Snapshot Task"
+msgstr ""
 
 msgid "Periodic Snapshot Tasks"
 msgstr "定期快照任务"
@@ -10399,6 +10472,9 @@ msgid "Power"
 msgstr "电源"
 
 msgid "Power Management"
+msgstr ""
+
+msgid "Power Mode"
 msgstr ""
 
 msgid "Power Off"
@@ -10655,6 +10731,12 @@ msgstr "刷新索引"
 
 msgid "REGISTER"
 msgstr "注册"
+
+msgid "REMOTE"
+msgstr ""
+
+msgid "REQUIRE"
+msgstr ""
 
 msgid "RESTART"
 msgstr "重新启动"
@@ -11035,6 +11117,15 @@ msgstr "复制 <i>"
 msgid "Replication Schedule"
 msgstr "复制计划"
 
+msgid "Replication Summary"
+msgstr ""
+
+msgid "Replication Task"
+msgstr ""
+
+msgid "Replication Task Wizard"
+msgstr ""
+
 msgid "Replication Tasks"
 msgstr ""
 
@@ -11336,6 +11427,9 @@ msgstr "Rsync模式"
 msgid "Rsync Module"
 msgstr ""
 
+msgid "Rsync Task"
+msgstr ""
+
 msgid "Rsync Tasks"
 msgstr ""
 
@@ -11423,6 +11517,9 @@ msgstr "SED密码"
 msgid "SEND TEST ALERT"
 msgstr "发送测试警告"
 
+msgid "SET"
+msgstr ""
+
 msgid "SFTP Log Facility"
 msgstr "SFTP日志功能"
 
@@ -11505,6 +11602,9 @@ msgstr "SSH用户名."
 
 msgid "SSH port number. Leave empty to use the default port <i>22</i>."
 msgstr "SSH端口号。保留为空以使用默认端口<i> 22 </i>。"
+
+msgid "SSH+NETCAT"
+msgstr ""
 
 msgid "SSL"
 msgstr "SSL"
@@ -13330,6 +13430,9 @@ msgid ""
 "configuring a custom Endpoint URL."
 msgstr "跳过对端点URL区域的自动检测。在配置自定义端点URL时进行设置。"
 
+msgid "Sleep"
+msgstr ""
+
 msgid "Snapshot"
 msgstr "快照"
 
@@ -13377,11 +13480,11 @@ msgstr ""
 msgid "Something went wrong"
 msgstr ""
 
-msgid "Sort languages by:"
-msgstr "语言排序方式："
-
 msgid "Source"
 msgstr "源"
+
+msgid "Source Dataset"
+msgstr ""
 
 msgid "Source Location"
 msgstr "源位置"
@@ -13730,6 +13833,9 @@ msgstr "在 GiB 中的交换大小"
 msgid "Switch Train"
 msgstr "切换分支"
 
+msgid "Switch to Wizard"
+msgstr ""
+
 msgid "Switch update trains?"
 msgstr "切换更新分支？"
 
@@ -13934,6 +14040,9 @@ msgstr "目标"
 msgid "Target Alias"
 msgstr "目标别名"
 
+msgid "Target Dataset"
+msgstr ""
+
 msgid "Target Global Configuration"
 msgstr ""
 
@@ -13954,9 +14063,6 @@ msgstr "任务名称"
 
 msgid "Task Started"
 msgstr "任务已开始"
-
-msgid "Task State"
-msgstr "任务状态"
 
 msgid "Task Stopped"
 msgstr "任务已停止"
@@ -14032,6 +14138,9 @@ msgid "Test network interface changes for "
 msgstr ""
 
 msgid "Test network interface changes? Network connectivity can be interrupted."
+msgstr ""
+
+msgid "Tests are only performed when <i>Never</i> is selected."
 msgstr ""
 
 msgid ""
@@ -14501,6 +14610,11 @@ msgid "The system could not retrieve any "
 msgstr ""
 
 msgid ""
+"The system could not retrieve any SMB Shares from the database. Please "
+"click the button below to add an SMB Share."
+msgstr ""
+
+msgid ""
 "The system dataset will be updated and the SMB service restarted. This will "
 "cause a temporary disruption of any active SMB connections."
 msgstr "系统数据集将被更新，SMB服务将重新启动。这将导致任何活动的SMB连接暂时中断。"
@@ -14939,9 +15053,6 @@ msgstr "切换折叠"
 msgid "Toggle Display"
 msgstr "切换显示"
 
-msgid "Toggle Hide/Open"
-msgstr "切换隐藏/打开"
-
 msgid "Toggle built-in groups"
 msgstr "切换内置组"
 
@@ -15233,6 +15344,9 @@ msgstr "正在解锁的数据集"
 
 msgid "Unselect All"
 msgstr "取消全选"
+
+msgid "Unset"
+msgstr ""
 
 msgid "Unset <i>Generate Encryption Key</i> to instead import a custom Hex key."
 msgstr ""
@@ -15912,6 +16026,9 @@ msgstr "视频，延迟小于10毫秒"
 msgid "View"
 msgstr "查看"
 
+msgid "View Enclosure"
+msgstr ""
+
 msgid "View Logs"
 msgstr "查看日志"
 
@@ -16059,6 +16176,9 @@ msgstr "Webhook URL"
 
 msgid "Wed"
 msgstr "周三"
+
+msgid "Week(s)"
+msgstr ""
 
 msgid "Weekly"
 msgstr "每周"
@@ -16282,6 +16402,9 @@ msgstr ""
 "Yandex <a "
 "href=\"https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/"
 "\"  target=\"_blank\">访问令牌</a> 。"
+
+msgid "Year(s)"
+msgstr ""
 
 msgid "Years"
 msgstr "年份"
@@ -16641,6 +16764,9 @@ msgstr "列表"
 msgid "login_flags"
 msgstr "login_flags"
 
+msgid "lz4 (fastest)"
+msgstr ""
+
 msgid "lz4 (recommended)"
 msgstr ""
 
@@ -16734,6 +16860,12 @@ msgstr "pbkdf2iters"
 msgid "pcpu"
 msgstr "PCPU"
 
+msgid "pigz (all rounder)"
+msgstr ""
+
+msgid "plzip (best compression)"
+msgstr ""
+
 msgid "pool options for "
 msgstr ""
 
@@ -16748,6 +16880,12 @@ msgstr "重置"
 
 msgid "resolver"
 msgstr "resolver"
+
+msgid "restartMessage"
+msgstr ""
+
+msgid "restartPrompt"
+msgstr ""
 
 msgid "rlimits"
 msgstr "rlimits"
@@ -16778,6 +16916,12 @@ msgstr "服务停止失败。"
 
 msgid "shmsize"
 msgstr "shmsize"
+
+msgid "shutDownMessage"
+msgstr ""
+
+msgid "shutDownPrompt"
+msgstr ""
 
 msgid "snapshot"
 msgstr ""
