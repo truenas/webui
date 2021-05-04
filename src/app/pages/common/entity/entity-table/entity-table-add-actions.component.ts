@@ -5,8 +5,6 @@ import { fromEvent as observableFromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 
-// import { EntityTableComponent } from './entity-table.component';
-
 @Component({
   selector: 'app-entity-table-add-actions',
   templateUrl: './entity-table-add-actions.component.html',
