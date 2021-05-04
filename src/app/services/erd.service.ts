@@ -8,8 +8,6 @@ import { Injectable } from '@angular/core';
  */
 @Injectable()
 export class ErdService {
-  constructor() {}
-
   /**
    * This method would typically be called in a component's
    * ngAfterViewInit() implementation.

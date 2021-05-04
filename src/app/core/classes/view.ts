@@ -7,6 +7,4 @@ export abstract class View {
   subViews?: any[]; // Component reference to child components
   viewController: Subject<CoreEvent>;// (Send actions back to ViewController via this Subject)
   data: any = <any>{};
-
-  constructor() {}
 }

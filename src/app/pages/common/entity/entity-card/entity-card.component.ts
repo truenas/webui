@@ -64,9 +64,8 @@ export class EntityCardComponent extends iXObject implements OnInit {
   ngAfterViewInit() {
     if (this.conf) {
       this.isFlipped = this.conf.isFlipped;
-      // console.log("conf exists!!")
     } else {
-      alert("conf doesn't exist!!");
+      console.error("Conf doesn't exist!");
     }
   }
 

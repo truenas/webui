@@ -548,10 +548,10 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.disknumError) {
       this.dialog.confirm(T('Warning'), disknumErr).subscribe((res: boolean) => {
         if (!res) {
-
-        } else {
-          this.doSubmit();
+          return;
         }
+
+        this.doSubmit();
       });
     } else {
       this.doSubmit();

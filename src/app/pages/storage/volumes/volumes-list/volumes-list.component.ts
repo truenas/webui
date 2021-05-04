@@ -786,7 +786,7 @@ export class VolumesListTableConfig implements InputTableConf {
                           self.parentVolumesListComponent.repaintMe();
                         });
                       });
-                    }),
+                    });
                     dialogRef.componentInstance.failure.subscribe((res: any) => {
                       let conditionalErrMessage = '';
                       if (res.error) {
@@ -1276,7 +1276,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 tooltip: helptext.snapshotDialog_name_tooltip,
                 validation: helptext.snapshotDialog_name_validation,
                 required: true,
-                value: 'manual' + '-' + this.getTimestamp(),
+                value: 'manual-' + this.getTimestamp(),
               },
               {
                 type: 'checkbox',

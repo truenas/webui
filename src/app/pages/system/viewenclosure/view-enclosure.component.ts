@@ -145,8 +145,6 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
         this.system_product = evt.data.system_product;
         this.system_manufacturer = evt.data.system_manufacturer.toLowerCase();
         this.supportedHardware = evt.data.features.enclosure;
-      } else {
-
       }
     });
 

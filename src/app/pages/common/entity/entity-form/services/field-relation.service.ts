@@ -16,8 +16,6 @@ import * as _ from 'lodash';
 import { EntityUtils, FORM_KEY_SEPERATOR } from '../../utils';
 @Injectable()
 export class FieldRelationService {
-  constructor() {}
-
   findActivationRelation(relGroups: RelationGroup[]): RelationGroup {
     return relGroups.find((rel) => rel.action === ACTION_DISABLE
                                  || rel.action === ACTION_ENABLE

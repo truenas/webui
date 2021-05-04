@@ -10,7 +10,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { AppBlankComponent } from './app-blank/app-blank.component';
 import { OthersRoutes } from './others.routing';
 import { FailoverComponent } from './failover/failover.component';
 import { RebootComponent } from './reboot/reboot.component';
@@ -33,6 +32,6 @@ import { ConfigResetComponent } from './config-reset/config-reset.component';
     TranslateModule,
     RouterModule.forChild(OthersRoutes),
   ],
-  declarations: [AppBlankComponent, RebootComponent, FailoverComponent, ShutdownComponent, ConfigResetComponent],
+  declarations: [RebootComponent, FailoverComponent, ShutdownComponent, ConfigResetComponent],
 })
 export class OthersModule { }

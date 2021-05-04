@@ -57,9 +57,6 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
 
   @Input() config: GaugeConfig;
 
-  constructor() {
-  }
-
   ngOnChanges(changes: SimpleChanges) {
     if (changes.config) {
       if (changes.config.currentValue && changes.config.currentValue.subtitle) {

@@ -5,14 +5,9 @@ import { Component, OnInit, Input } from '@angular/core';
   templateUrl: './temperature-meter.component.html',
   styleUrls: ['./temperature-meter.component.css'],
 })
-export class TemperatureMeterComponent implements OnInit {
+export class TemperatureMeterComponent {
   @Input('source') source: string;
   @Input('symbolText') symbolText: string;
   @Input('unit') unit: string;
   @Input('value') value: number;
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
 }

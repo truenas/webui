@@ -126,7 +126,7 @@ export class DeviceListComponent {
           self.dialogService.dialogForm(conf);
         });
       },
-    }),
+    });
     actions.push({
       id: row.id,
       name: 'details',

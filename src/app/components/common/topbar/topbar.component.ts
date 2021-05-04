@@ -369,9 +369,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
             T('I Agree'), false, null, '', null, null, true).subscribe((accept_eula: boolean) => {
             if (accept_eula) {
               window.localStorage.removeItem('upgrading_status');
-              this.ws.call('truenas.accept_eula')
-                .subscribe(),
-              (err: any) => { console.error(err); };
+              this.ws.call('truenas.accept_eula').subscribe();
             }
           });
         });
