@@ -16,8 +16,6 @@ import * as _ from 'lodash';
 
 @Injectable()
 export class FieldRelationService {
-  constructor() {}
-
   findActivationRelation(relGroups: RelationGroup[]): RelationGroup {
     return relGroups.find((rel) => rel.action === ACTION_DISABLE
                                  || rel.action === ACTION_ENABLE

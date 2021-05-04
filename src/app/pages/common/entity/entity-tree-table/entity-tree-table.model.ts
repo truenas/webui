@@ -1,3 +1,4 @@
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { TreeNode } from 'primeng/api';
 
 export class EntityTreeTableColumn {
@@ -12,5 +13,5 @@ export class EntityTreeTableColumn {
 export class EntityTreeTable {
   tableData?: TreeNode[];
   columns: EntityTreeTableColumn[];
-  queryCall?: string;
+  queryCall?: ApiMethod;
 }

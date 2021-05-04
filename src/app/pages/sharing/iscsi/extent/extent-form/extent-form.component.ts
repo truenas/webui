@@ -22,9 +22,9 @@ import globalHelptext from 'app/helptext/global-helptext';
   providers: [IscsiService, StorageService],
 })
 export class ExtentFormComponent {
-  protected addCall = 'iscsi.extent.create';
-  protected queryCall = 'iscsi.extent.query';
-  protected editCall = 'iscsi.extent.update';
+  protected addCall: 'iscsi.extent.create' = 'iscsi.extent.create';
+  protected queryCall: 'iscsi.extent.query' = 'iscsi.extent.query';
+  protected editCall: 'iscsi.extent.update' = 'iscsi.extent.update';
   protected customFilter: any[] = [[['id', '=']]];
   // protected resource_name: string = 'services/iscsi/extent';
   protected route_success: string[] = ['sharing', 'iscsi', 'extent'];

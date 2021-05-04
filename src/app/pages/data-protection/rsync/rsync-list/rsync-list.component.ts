@@ -26,8 +26,8 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 })
 export class RsyncListComponent implements InputTableConf, OnDestroy {
   title = T('Rsync Tasks');
-  queryCall = 'rsynctask.query';
-  wsDelete = 'rsynctask.delete';
+  queryCall: 'rsynctask.query' = 'rsynctask.query';
+  wsDelete: 'rsynctask.delete' = 'rsynctask.delete';
   route_add: string[] = ['tasks', 'rsync', 'add'];
   route_add_tooltip = 'Add Rsync Task';
   route_edit: string[] = ['tasks', 'rsync', 'edit'];

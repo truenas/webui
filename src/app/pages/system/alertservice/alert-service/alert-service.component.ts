@@ -19,11 +19,11 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
   providers: [EntityFormService],
 })
 export class AlertServiceComponent {
-  protected addCall = 'alertservice.create';
-  protected queryCall = 'alertservice.query';
+  protected addCall: 'alertservice.create' = 'alertservice.create';
+  protected queryCall: 'alertservice.query' = 'alertservice.query';
   protected queryCallOption: any[] = [['id', '=']];
-  protected editCall = 'alertservice.update';
-  protected testCall = 'alertservice.test';
+  protected editCall: 'alertservice.update' = 'alertservice.update';
+  protected testCall: 'alertservice.test' = 'alertservice.test';
   route_success: string[] = ['system', 'alertservice'];
 
   protected isEntity = true;

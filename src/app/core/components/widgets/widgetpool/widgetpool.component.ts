@@ -101,7 +101,7 @@ export interface VolumeData {
   templateUrl: './widgetpool.component.html',
   styleUrls: ['./widgetpool.component.css'],
 })
-export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
+export class WidgetPoolComponent extends WidgetComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() poolState: any;
   @Input() volumeData: any;// VolumeData;
   @ViewChild('carousel', { static: true }) carousel: ElementRef;
@@ -207,19 +207,9 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.poolState) {
-    }
-
     if (changes.volumeData) {
       this.getAvailableSpace();
     }
-  }
-
-  ngOnInit() {
-  }
-
-  ngAfterContentInit() {
-
   }
 
   ngAfterViewInit() {

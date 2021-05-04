@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { T } from 'app/translate-marker';
 import { filter } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -111,7 +112,7 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  select(title: string, options: any[], optionPlaceHolder: string, method: string, params?: any, message?: string) {
+  select(title: string, options: any[], optionPlaceHolder: string, method: ApiMethod, params?: any, message?: string) {
     let data: any;
     const dialogRef = this.dialog.open(SelectDialogComponent, { width: '300px' });
 

@@ -494,17 +494,21 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   onSubmit(event: Event) {
     if (this.conf.confirmSubmit && this.conf.confirmSubmitDialog) {
-      this.dialog.confirm(this.conf.confirmSubmitDialog['title'],
+      this.dialog.confirm(
+        this.conf.confirmSubmitDialog['title'],
         this.conf.confirmSubmitDialog['message'],
         this.conf.confirmSubmitDialog.hasOwnProperty('hideCheckbox')
-          ? this.conf.confirmSubmitDialog['hideCheckbox'] : false,
+          ? this.conf.confirmSubmitDialog['hideCheckbox']
+          : false,
         this.conf.confirmSubmitDialog.hasOwnProperty('button')
-          ? this.conf.confirmSubmitDialog['button'] : T('Ok')).subscribe((confirm: boolean) => {
+          ? this.conf.confirmSubmitDialog['button']
+          : T('Ok'),
+      ).subscribe((confirm: boolean) => {
         if (!confirm) {
-
-        } else {
-          this.doSubmit(event);
+          return;
         }
+
+        this.doSubmit(event);
       });
     } else {
       this.doSubmit(event);

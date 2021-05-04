@@ -81,7 +81,7 @@ export class NotificationsService {
 
     notifications.forEach((notification) => {
       notificationMap.set(notification.id, notification);
-      this.ws.call('alert.dismiss', [notification.id]).subscribe((res) => {
+      this.ws.call('alert.dismiss', [notification.id]).subscribe(() => {
         console.log('alert dismissed id:' + notification.id);
       });
     });

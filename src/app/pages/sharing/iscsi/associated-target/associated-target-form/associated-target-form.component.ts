@@ -17,9 +17,9 @@ import { helptext_sharing_iscsi } from 'app/helptext/sharing';
   providers: [IscsiService],
 })
 export class AssociatedTargetFormComponent {
-  protected addCall = 'iscsi.targetextent.create';
-  protected queryCall = 'iscsi.targetextent.query';
-  protected editCall = 'iscsi.targetextent.update';
+  protected addCall: 'iscsi.targetextent.create' = 'iscsi.targetextent.create';
+  protected queryCall: 'iscsi.targetextent.query' = 'iscsi.targetextent.query';
+  protected editCall: 'iscsi.targetextent.update' = 'iscsi.targetextent.update';
   protected route_success: string[] = ['sharing', 'iscsi', 'associatedtarget'];
   protected isEntity = true;
   protected customFilter: any[] = [[['id', '=']]];

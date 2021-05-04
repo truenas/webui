@@ -3,8 +3,9 @@
 import sys
 import os
 import getopt
-from subprocess import call
+from configparser import ConfigParser
 from platform import system
+from subprocess import run
 major_v = sys.version_info.major
 minor_v = sys.version_info.minor
 version = f"{major_v}" if system() == "Linux" else f"{major_v}.{minor_v}"
@@ -21,7 +22,8 @@ Options:
                                    for pytest-bdd.
 --test-suite                     - To specify the test suite to run ha-bhyve02
                                    is use by default.
-                                   test-suite options: ha-bhyve02, ha-tn09
+                                   test-suite options: ha-bhyve02, ha-tn09, scale
+
 """
 
 
@@ -31,12 +33,14 @@ option_list = [
     "ip=",
     'root-password=',
     'convert-feature',
-    'test-suite='
+    'test-suite=',
+    'iso-version='
 ]
 
 test_suite_list = [
     'ha-bhyve02',
-    'ha-tn09'
+    'ha-tn09',
+    'scale'
 ]
 
 
@@ -79,7 +83,7 @@ except getopt.GetoptError as e:
     sys.exit(1)
 
 global ip, password
-test_suite = 'ha-bhyve02'
+test_suite = 'scale'
 run_convert = False
 
 for output, arg in myopts:
@@ -95,6 +99,8 @@ for output, arg in myopts:
             for suite in test_suite_list:
                 print(f'    --test-suite {suite}')
             exit(1)
+    elif output == '--iso-version':
+        version = arg
     elif output == "--convert-feature":
         run_convert = True
     elif output == "--help":
@@ -103,24 +109,45 @@ for output, arg in myopts:
 
 
 def run_testing():
-    if 'ip' in globals() and 'password' in globals():
-        cfg = "[NAS_CONFIG]\n"
-        cfg += f"ip = {ip}\n"
-        cfg += f"password = {password}\n"
-        cfg_file = open("config.cfg", 'w')
-        cfg_file.write(cfg)
-        cfg_file.close()
+    # store ip and password in environment variable if test suite is core.
+    if 'ip' in globals() and 'password' in globals() and 'version' in globals() and test_suite == 'core':
+        os.environ["nas_ip"] = ip
+        os.environ["nas_password"] = password
+        os.environ["nas_version"] = version
+        os.environ['test_suite'] = test_suite
+    elif os.path.exists(f'{cwd}/config.cfg') and test_suite == 'core':
+        configs = ConfigParser()
+        configs.read('config.cfg')
+        os.environ["nas_ip"] = configs['NAS_CONFIG']['ip']
+        os.environ["nas_password"] = configs['NAS_CONFIG']['password']
+        os.environ["nas_version"] = configs['NAS_CONFIG']['version']
+        os.environ['test_suite'] = test_suite
+    elif not os.path.exists(f'{cwd}/config.cfg') and test_suite == 'core':
+        msg = 'Please use --ip and --nas-password or add confing.cfg ' \
+            'in this directory'
+        print(msg)
+        print('config.cfg example: ')
+        cfg_msg = "[NAS_CONFIG]\n"
+        cfg_msg += "ip = 0.0.0.0\n"
+        cfg_msg += "password = testing\n"
+        cfg_msg += "version = TrueNAS-12.0-U2\n"
+        print(cfg_msg)
+        exit(1)
+    else:
+        os.environ["nas_ip"] = 'None'
+        os.environ["nas_password"] = 'None'
+        os.environ["nas_version"] = 'None'
+        os.environ['test_suite'] = test_suite
 
     convert_jira_feature_file(test_suite)
-    pytestcmd = [
+    pytest_cmd = [
         f"pytest-{version}",
         "-v",
         test_suite,
         "--junitxml=results/junit/webui_test.xml",
         "--cucumber-json=results/cucumber/webui_test.json"
     ]
-
-    call(pytestcmd)
+    run(pytest_cmd)
 
 
 if run_convert is True:

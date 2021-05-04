@@ -15,9 +15,9 @@ import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.
   providers: [IscsiService],
 })
 export class TargetFormComponent {
-  protected queryCall = 'iscsi.target.query';
-  protected addCall = 'iscsi.target.create';
-  protected editCall = 'iscsi.target.update';
+  protected queryCall: 'iscsi.target.query' = 'iscsi.target.query';
+  protected addCall: 'iscsi.target.create' = 'iscsi.target.create';
+  protected editCall: 'iscsi.target.update' = 'iscsi.target.update';
   route_success: string[] = ['sharing', 'iscsi', 'target'];
   protected customFilter: any[] = [[['id', '=']]];
   protected isEntity = true;

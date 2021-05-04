@@ -10,8 +10,4 @@ import { ViewControl } from 'app/core/classes/viewcontrol';
 })
 export class ViewControlComponent extends ViewControl {
   readonly componentName = ViewControlComponent;
-
-  constructor() {
-    super();
-  }
 }

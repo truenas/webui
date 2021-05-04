@@ -20,8 +20,8 @@ import {
 })
 
 export class NISComponent {
-  queryCall = 'nis.config';
-  protected addCall = 'nis.update';
+  queryCall: 'nis.config' = 'nis.config';
+  protected addCall: 'nis.update' = 'nis.update';
   custActions: any[] = [
     {
       id: helptext.nis_custactions_clearcache_id,

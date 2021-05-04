@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -21,8 +22,8 @@ import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-tabl
 })
 export class ScrubListComponent implements InputTableConf, OnDestroy {
   title = T('Scrub Tasks');
-  queryCall = 'pool.scrub.query';
-  wsDelete = 'pool.scrub.delete';
+  queryCall: 'pool.scrub.query' = 'pool.scrub.query';
+  wsDelete: 'pool.scrub.delete' = 'pool.scrub.delete';
   route_add: string[] = ['tasks', 'scrub', 'add'];
   route_add_tooltip = 'Add Scrub Task';
   route_edit: string[] = ['tasks', 'scrub', 'edit'];

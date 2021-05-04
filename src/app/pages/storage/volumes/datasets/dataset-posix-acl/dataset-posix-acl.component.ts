@@ -590,7 +590,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
   }
 
   updateUserSearchOptions(value = '', parent: any, config: FieldConfig) {
-    parent.userService.userQueryDSCache(value).subscribe((items: any[]) => {
+    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -646,7 +646,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
   }
 
   loadMoreOptions(length: number, parent: any, searchText: string, config: FieldConfig) {
-    parent.userService.userQueryDSCache(searchText, length).subscribe((items: any[]) => {
+    (parent.userService as UserService).userQueryDSCache(searchText, length).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
