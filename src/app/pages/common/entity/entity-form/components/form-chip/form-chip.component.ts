@@ -43,7 +43,9 @@ export class FormChipComponent implements Field, OnInit, AfterViewChecked {
   }
 
   ngAfterViewChecked() {
-    this.chipLists = this.group.controls[this.config.name].value || [];
+    setTimeout(() => {
+      this.chipLists = this.group.controls[this.config.name].value || [];
+    }, 0);
   }
 
   add(event: MatChipInputEvent): void {
