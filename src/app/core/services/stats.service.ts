@@ -13,10 +13,6 @@ export class StatsService extends BaseService {
   protected realtimeEvents: Subscription;
   protected diskQueryEvents: Subscription;
 
-  constructor() {
-    super();
-  }
-
   protected onAuthenticated(evt: CoreEvent) {
     this.authenticated = true;
 

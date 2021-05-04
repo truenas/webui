@@ -15,8 +15,4 @@ export class ViewButtonComponent extends ViewControlComponent {
   tooltipEnabled = false;
   tooltipText: string;
   tooltipPlacement: string;
-
-  constructor() {
-    super();
-  }
 }

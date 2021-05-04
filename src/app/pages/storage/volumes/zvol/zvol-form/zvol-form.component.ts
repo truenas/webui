@@ -393,9 +393,6 @@ export class ZvolFormComponent implements Formconfiguration {
       data.name = this.parent + '/' + data.name;
     }
 
-    if (this.isBasicMode === true) {
-
-    }
     if (this.origHuman !== data.volsize) {
       data.volsize = this.storageService.convertHumanStringToNum(data.volsize, true);
     } else {

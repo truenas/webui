@@ -49,9 +49,6 @@ export class EntityFormConfigurationComponent implements Formconfiguration {
   target: Subject<CoreEvent>;
   data: any;
 
-  constructor() {
-  }
-
   preInit() {
   }
 

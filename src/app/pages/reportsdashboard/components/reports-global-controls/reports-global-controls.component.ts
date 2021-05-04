@@ -30,8 +30,6 @@ interface Tab {
 export class ReportsGlobalControlsComponent implements GlobalAction {
   config: any; // Reports page
 
-  constructor() {}
-
   applyConfig(conf: any) {
     this.config = conf;
   }

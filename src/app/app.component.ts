@@ -69,13 +69,13 @@ export class AppComponent {
       const cachedType = window.localStorage['product_type'].toLowerCase();
       path = 'assets/images/truenas_' + cachedType + '_favicon.png';
       if (darkScheme) {
-        path = 'assets/images/truenas_' + cachedType + '_ondark' + '_favicon.png';
+        path = 'assets/images/truenas_' + cachedType + '_ondark_favicon.png';
       }
     } else {
       this.sysGeneralService.getProductType.subscribe((res) => {
         path = 'assets/images/truenas_' + res.toLowerCase() + '_favicon.png';
         if (darkScheme) {
-          path = 'assets/images/truenas_' + res.toLowerCase() + '_ondark' + '_favicon.png';
+          path = 'assets/images/truenas_' + res.toLowerCase() + '_ondark_favicon.png';
         }
       });
     }

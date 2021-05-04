@@ -156,8 +156,6 @@ export class NavigationService {
   // navigation component has subscribed this Observable
   menuItems$ = this.menuItems.asObservable();
 
-  constructor() { }
-
   publishNavigationChange(menuType: string) {
     this.menuItems.next(this.defaultMenu);
   }
