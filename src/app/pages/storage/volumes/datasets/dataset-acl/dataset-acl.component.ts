@@ -823,7 +823,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
   }
 
   updateUserSearchOptions(value = '', parent: any, config: any) {
-    parent.userService.userQueryDSCache(value).subscribe((items: any[]) => {
+    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -879,7 +879,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
   }
 
   loadMoreOptions(length: number, parent: any, searchText: string, config: any) {
-    parent.userService.userQueryDSCache(searchText, length).subscribe((items: any[]) => {
+    (parent.userService as UserService).userQueryDSCache(searchText, length).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });

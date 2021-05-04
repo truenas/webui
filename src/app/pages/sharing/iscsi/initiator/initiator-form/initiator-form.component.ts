@@ -19,9 +19,9 @@ import { ipv4or6OptionalCidrValidator } from '../../../../common/entity/entity-f
   providers: [FieldRelationService, NetworkService],
 })
 export class InitiatorFormComponent implements OnInit {
-  protected addCall = 'iscsi.initiator.create';
-  protected queryCall = 'iscsi.initiator.query';
-  protected editCall = 'iscsi.initiator.update';
+  protected addCall: 'iscsi.initiator.create' = 'iscsi.initiator.create';
+  protected queryCall: 'iscsi.initiator.query' = 'iscsi.initiator.query';
+  protected editCall: 'iscsi.initiator.update' = 'iscsi.initiator.update';
   protected customFilter: any[] = [[['id', '=']]];
   route_success: string[] = ['sharing', 'iscsi', 'initiator'];
   protected pk: any;

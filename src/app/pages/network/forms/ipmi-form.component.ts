@@ -19,7 +19,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 export class IPMIFromComponent implements FormConfiguration {
   title = 'IMPI';
-  queryCall = 'ipmi.query';
+  queryCall: 'ipmi.query' = 'ipmi.query';
 
   protected entityEdit: any;
   is_ha = false;

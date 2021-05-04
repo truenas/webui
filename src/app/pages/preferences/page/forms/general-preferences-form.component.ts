@@ -36,7 +36,7 @@ interface UserPreferences {
   selector: 'general-preferences-form',
   template: '<entity-form-embedded *ngIf="preferences" #embeddedForm fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>',
 })
-export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
+export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
   @ViewChild('embeddedForm', { static: false }) embeddedForm: EntityFormEmbeddedComponent;
   target: Subject<CoreEvent> = new Subject();
   isWaiting = false;
@@ -92,15 +92,6 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
     });
 
     this.init();
-  }
-
-  ngAfterViewInit() {
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.baseTheme) {
-      alert('baseTheme Changed!');
-    }
   }
 
   ngOnDestroy() {

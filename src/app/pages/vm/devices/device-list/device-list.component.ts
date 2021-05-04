@@ -29,8 +29,8 @@ export class DeviceListComponent {
   vm: string;
   sub: Subscription;
   private entityList: any;
-  wsDelete = 'datastore.delete';
-  queryCall = 'vm.device.query';
+  wsDelete: 'datastore.delete' = 'datastore.delete';
+  queryCall: 'vm.device.query' = 'vm.device.query';
   protected queryCallOption: any[] = [[['vm', '=']]];
   busy: Subscription;
   protected loaderOpen = false;
@@ -126,7 +126,7 @@ export class DeviceListComponent {
           self.dialogService.dialogForm(conf);
         });
       },
-    }),
+    });
     actions.push({
       id: row.id,
       name: 'details',

@@ -21,8 +21,8 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 
 export class NISComponent implements FormConfiguration {
-  queryCall = 'nis.config';
-  addCall = 'nis.update';
+  queryCall: 'nis.config' = 'nis.config';
+  addCall: 'nis.update' = 'nis.update';
   custActions: any[] = [
     {
       id: helptext.nis_custactions_clearcache_id,

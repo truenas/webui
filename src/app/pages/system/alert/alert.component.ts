@@ -31,8 +31,8 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
 export class AlertConfigComponent implements OnInit {
   formEvents: Subject<CoreEvent>;
   protected route_success = ['system', 'alertsettings'];
-  protected queryCall = 'alertclasses.config';
-  protected editCall = 'alertclasses.update';
+  protected queryCall: 'alertclasses.config' = 'alertclasses.config';
+  protected editCall: 'alertclasses.update' = 'alertclasses.update';
   protected isEntity = true;
   fieldSets: FieldSets;
   fieldConfig: FieldConfig[] = [];

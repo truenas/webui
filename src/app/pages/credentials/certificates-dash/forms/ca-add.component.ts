@@ -19,9 +19,9 @@ import { EntityWizardComponent } from '../../../common/entity/entity-wizard/enti
 })
 
 export class CertificateAuthorityAddComponent {
-  protected addWsCall = 'certificateauthority.create';
-  isEntity = true;
-  title: string;
+  protected addWsCall: 'certificateauthority.create' = 'certificateauthority.create';
+  protected isEntity = true;
+  private title: string;
   hideCancel = true;
 
   private isLinear = true;

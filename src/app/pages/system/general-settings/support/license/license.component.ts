@@ -14,7 +14,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 export class LicenseComponent implements FormConfiguration {
   queryCall = 'none';
-  private updateCall = 'system.license_update';
+  updateCall: 'system.license_update' = 'system.license_update';
   protected isOneColumnForm = true;
   fieldSets: FieldSet[] = [
     {

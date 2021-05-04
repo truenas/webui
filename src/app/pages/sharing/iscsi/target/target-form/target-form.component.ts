@@ -16,9 +16,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [IscsiService],
 })
 export class TargetFormComponent implements FormConfiguration {
-  queryCall = 'iscsi.target.query';
-  addCall = 'iscsi.target.create';
-  editCall = 'iscsi.target.update';
+  queryCall: 'iscsi.target.query' = 'iscsi.target.query';
+  addCall: 'iscsi.target.create' = 'iscsi.target.create';
+  editCall: 'iscsi.target.update' = 'iscsi.target.update';
   route_success: string[] = ['sharing', 'iscsi', 'target'];
   customFilter: any[] = [[['id', '=']]];
   isEntity = true;

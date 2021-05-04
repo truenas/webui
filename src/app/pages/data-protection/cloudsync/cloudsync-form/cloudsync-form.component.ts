@@ -23,12 +23,12 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [CloudCredentialService, JobService],
 })
 export class CloudsyncFormComponent implements FormConfiguration {
-  addCall = 'cloudsync.create';
-  editCall = 'cloudsync.update';
-  protected entityForm: EntityFormComponent;
+  addCall: 'cloudsync.create' = 'cloudsync.create';
+  editCall: 'cloudsync.update' = 'cloudsync.update';
+  entityForm: EntityFormComponent;
   isEntity = true;
-  queryCall = 'cloudsync.query';
-  protected queryPayload: any[] = [];
+  queryCall: 'cloudsync.query' = 'cloudsync.query';
+  queryPayload: any[] = [];
   customFilter: any[] = [];
   title: string;
 

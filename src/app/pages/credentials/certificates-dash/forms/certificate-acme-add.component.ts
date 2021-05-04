@@ -21,8 +21,8 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [EntityFormService],
 })
 export class CertificateAcmeAddComponent implements FormConfiguration {
-  addCall = 'certificate.create';
-  queryCall = 'certificate.query';
+  addCall: 'certificate.create' = 'certificate.create';
+  queryCall: 'certificate.query' = 'certificate.query';
   isEntity = true;
   isNew = true;
   private csrOrg: any;

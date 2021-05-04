@@ -20,9 +20,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [IscsiService],
 })
 export class PortalFormComponent implements FormConfiguration {
-  addCall = 'iscsi.portal.create';
-  queryCall = 'iscsi.portal.query';
-  editCall = 'iscsi.portal.update';
+  addCall: 'iscsi.portal.create' = 'iscsi.portal.create';
+  queryCall: 'iscsi.portal.query' = 'iscsi.portal.query';
+  editCall: 'iscsi.portal.update' = 'iscsi.portal.update';
   route_success: string[] = ['sharing', 'iscsi', 'portals'];
   customFilter: any[] = [[['id', '=']]];
   isEntity = true;

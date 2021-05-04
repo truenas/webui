@@ -16,9 +16,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class AuthorizedAccessFormComponent implements FormConfiguration {
-  addCall = 'iscsi.auth.create';
-  queryCall = 'iscsi.auth.query';
-  editCall = 'iscsi.auth.update';
+  addCall: 'iscsi.auth.create' = 'iscsi.auth.create';
+  queryCall: 'iscsi.auth.query' = 'iscsi.auth.query';
+  editCall: 'iscsi.auth.update' = 'iscsi.auth.update';
   // protected resource_name: string = 'services/iscsi/authcredential';
   route_success: string[] = ['sharing', 'iscsi', 'auth'];
   isEntity = true;

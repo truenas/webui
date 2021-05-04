@@ -286,9 +286,6 @@ export class ZvolWizardComponent {
       data.name = this.parent + '/' + data.name;
     }
 
-    if (this.isBasicMode === true) {
-
-    }
     // TODO: Incorrect type comparison, probably a bug.
     if (this.origHuman !== (data.volsize as any)) {
       data.volsize = this.storageService.convertHumanStringToNum(data.volsize, true);

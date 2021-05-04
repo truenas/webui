@@ -18,9 +18,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [IscsiService],
 })
 export class AssociatedTargetFormComponent implements FormConfiguration {
-  addCall = 'iscsi.targetextent.create';
-  queryCall = 'iscsi.targetextent.query';
-  editCall = 'iscsi.targetextent.update';
+  addCall: 'iscsi.targetextent.create' = 'iscsi.targetextent.create';
+  queryCall: 'iscsi.targetextent.query' = 'iscsi.targetextent.query';
+  editCall: 'iscsi.targetextent.update' = 'iscsi.targetextent.update';
   route_success: string[] = ['sharing', 'iscsi', 'associatedtarget'];
   isEntity = true;
   customFilter: any[] = [[['id', '=']]];

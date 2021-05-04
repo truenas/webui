@@ -150,7 +150,7 @@ export class ServiceAFPComponent implements FormConfiguration {
   afterInit(entityEdit: any) {
     entityEdit.submitFunction = this.submitFunction;
     const self = this;
-    this.userService.listUsers().subscribe((res) => {
+    this.userService.listUsers().subscribe((res: any) => {
       self.guest_users = _.find(this.fieldSets, { name: helptext.afp_fieldset_access }).config.find((config) => config.name === 'guest_user');
       for (let i = 0; i < res.data.length; i++) {
         this.guest_users.options.push(

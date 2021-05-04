@@ -19,8 +19,8 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class CertificateAuthorityEditComponent implements FormConfiguration {
-  queryCall = 'certificateauthority.query';
-  editCall = 'certificateauthority.update';
+  queryCall: 'certificateauthority.query' = 'certificateauthority.query';
+  editCall: 'certificateauthority.update' = 'certificateauthority.update';
   isEntity = true;
   queryCallOption: any[];
   private getRow = new Subscription();

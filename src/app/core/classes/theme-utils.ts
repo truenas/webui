@@ -1,7 +1,4 @@
 export class ThemeUtils {
-  constructor() {
-  }
-
   textContrast(cssVar: string, bgVar: string) {
     let txtColor = '';
     // Convert hex value to RGB

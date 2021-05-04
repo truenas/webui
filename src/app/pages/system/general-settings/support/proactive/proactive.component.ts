@@ -16,7 +16,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 export class ProactiveComponent implements FormConfiguration {
   entityEdit: any;
-  queryCall = 'support.config';
+  queryCall: 'support.config' = 'support.config';
   contacts: any;
   controls: any;
   save_button_enabled: boolean;

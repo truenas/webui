@@ -5,7 +5,7 @@ import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class CloudCredentialService {
-  protected credentialProviders = 'cloudsync.providers';
+  protected credentialProviders: 'cloudsync.providers' = 'cloudsync.providers';
   protected byteMap = {
     T: 1024 ** 4,
     G: 1024 ** 3,

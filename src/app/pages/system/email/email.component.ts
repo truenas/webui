@@ -31,8 +31,8 @@ interface OAuthData {
   `,
 })
 export class EmailComponent implements FormConfiguration, OnDestroy {
-  queryCall = 'mail.config';
-  updateCall = 'mail.update';
+  queryCall: 'mail.config' = 'mail.config';
+  updateCall: 'mail.update' = 'mail.update';
   entityEdit: any;
   rootEmail: string;
   private oauthCreds: BehaviorSubject<OAuthData> = new BehaviorSubject({});
@@ -250,11 +250,7 @@ export class EmailComponent implements FormConfiguration, OnDestroy {
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
-    const payload = [];
-    payload.push('username');
-    payload.push('=');
-    payload.push('root');
-    this.ws.call('user.query', [[payload]]).subscribe((res) => {
+    this.ws.call('user.query', [[['username', '=', 'root']]]).subscribe((res) => {
       this.rootEmail = res[0].email;
     });
     this.pass = this.fieldSets.config('pass');

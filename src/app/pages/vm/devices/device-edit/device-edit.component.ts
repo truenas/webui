@@ -23,7 +23,7 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
   styleUrls: ['./device-edit.component.scss'],
 })
 export class DeviceEditComponent implements OnInit {
-  protected updateCall = 'vm.device.update';
+  protected updateCall: 'vm.device.update' = 'vm.device.update';
   protected route_success: string[];
   deviceid: any;
   vmname: any;

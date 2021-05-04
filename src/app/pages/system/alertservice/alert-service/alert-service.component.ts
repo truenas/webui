@@ -20,11 +20,11 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [EntityFormService],
 })
 export class AlertServiceComponent implements FormConfiguration {
-  addCall = 'alertservice.create';
-  queryCall = 'alertservice.query';
+  addCall: 'alertservice.create' = 'alertservice.create';
+  queryCall: 'alertservice.query' = 'alertservice.query';
   queryCallOption: any[] = [['id', '=']];
-  editCall = 'alertservice.update';
-  protected testCall = 'alertservice.test';
+  editCall: 'alertservice.update' = 'alertservice.update';
+  testCall: 'alertservice.test' = 'alertservice.test';
   route_success: string[] = ['system', 'alertservice'];
 
   isEntity = true;
