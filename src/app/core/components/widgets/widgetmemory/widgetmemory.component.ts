@@ -87,10 +87,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
 
   ngAfterViewInit() {
     this.data.subscribe((evt: CoreEvent) => {
-      if (evt.name == 'ZfsStats') {
-        if (evt.data.arc_size) {
-        }
-      }
       if (evt.name == 'MemoryStats') {
         if (evt.data.used) {
           this.setMemData(evt.data);

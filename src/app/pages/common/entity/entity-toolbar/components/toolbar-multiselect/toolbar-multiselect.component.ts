@@ -14,7 +14,7 @@ import { Control } from '../../models/control.interface';
   selector: 'toolbar-multiselect',
   templateUrl: './toolbar-multiselect.component.html',
 })
-export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnInit, OnChanges {
+export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnInit {
   @ViewChild('selectTrigger') mySel: MatSelect;
   @Input() config?: ControlConfig;
   @Input() controller: Subject<any>;
@@ -24,11 +24,6 @@ export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnI
 
   constructor(public translate: TranslateService) {
     super();
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.config) {
-    }
   }
 
   ngOnInit() {

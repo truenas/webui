@@ -194,13 +194,13 @@ export class SystemProfiler {
       } else if (vdev.children.length > 0) {
         vdev.children.forEach((disk, dIndex) => {
           if (!disk.device && disk.status == 'REMOVED') {
-
-          } else {
-            const spl = disk.disk.split('p'); // was disk.device
-            const name = spl[0];
-            v.disks[name] = dIndex;
-            stats[name] = disk.stats;
+            return;
           }
+
+          const spl = disk.disk.split('p'); // was disk.device
+          const name = spl[0];
+          v.disks[name] = dIndex;
+          stats[name] = disk.stats;
         });
       }
       this.storeVdevInfo(v, stats);

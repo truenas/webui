@@ -257,7 +257,7 @@ export class SupportFormLicensedComponent {
           dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
           dialogRef.componentInstance.success.subscribe(() => {
             this.resetForm();
-          }),
+          });
           dialogRef.componentInstance.failure.subscribe((res: any) => {
             dialogRef.componentInstance.setDescription(res.error);
           });

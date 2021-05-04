@@ -180,7 +180,7 @@ export class ServiceNFSComponent {
   resourceTransformIncomingRestData(data: any) {
     this.v4krbValue = data.v4_krb;
     // If validIps is slow to load, skip check on load (It's still done on save)
-    if (this.validBindIps, this.validBindIps.length) {
+    if (this.validBindIps?.length) {
       return this.compareBindIps(data);
     }
     return data;

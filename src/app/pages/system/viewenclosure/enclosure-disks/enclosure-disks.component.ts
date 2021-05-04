@@ -959,10 +959,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       const btn = styler(this.details.nativeElement.querySelector('#identify-btn'), {});
       const startShadow = btn.get('box-shadow');
 
-      // @ts-ignore
-      const elementBorder = value({ borderColor: '', borderWidth: 0 }, ({ borderColor, borderWidth }) => btn.set({
-        boxShadow: `0 0 0 ${borderWidth}px ${borderColor}`,
-      }));
+      const elementBorder = value(
+        { borderColor: '', borderWidth: 0 },
+        ({ borderColor, borderWidth }: { borderColor: string; borderWidth: number }) => btn.set({
+          boxShadow: `0 0 0 ${borderWidth}px ${borderColor}`,
+        }),
+      );
 
       // Convert color to rgb value
       const cc = this.hexToRGB(this.theme.cyan);

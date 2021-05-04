@@ -235,8 +235,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
       } else if (changes.report.previousValue.title !== changes.report.currentValue.title) {
         this.setupData(changes);
       }
-      if (changes.multipathTitle && changes.multipathTitle.currentValue) {
-      }
     }
   }
 

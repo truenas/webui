@@ -5,11 +5,6 @@ import { Component, Input, OnInit } from '@angular/core';
   templateUrl: './form-status.component.html',
   styleUrls: ['./form-status.component.css'],
 })
-export class FormStatusComponent implements OnInit {
+export class FormStatusComponent {
   @Input() statusIcon = 'checkmark';
-
-  constructor() { }
-
-  ngOnInit() {
-  }
 }
