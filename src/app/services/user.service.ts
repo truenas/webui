@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { User } from 'app/interfaces/user';
+import { User } from 'app/interfaces/user.interface';
 import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
 import { RestService } from './rest.service';

@@ -1,7 +1,8 @@
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { Group } from 'app/interfaces/group.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
-import { User } from 'app/interfaces/user';
+import { User } from 'app/interfaces/user.interface';
 
 export type ApiDirectory = {
   // Active Directory
@@ -231,8 +232,8 @@ export type ApiDirectory = {
   'ipmi.query': { params: any; response: any };
 
   // Group
-  'group.query': { params: any; response: any };
-  'group.update': { params: any; response: any };
+  'group.query': { params: any; response: Group[] };
+  'group.update': { params: [string, Partial<Group>]; response: void };
   'group.delete': { params: any; response: any };
   'group.get_group_obj': { params: any; response: any };
   'group.get_next_gid': { params: any; response: any };
