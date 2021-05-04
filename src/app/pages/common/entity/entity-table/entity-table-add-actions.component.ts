@@ -5,7 +5,7 @@ import { fromEvent as observableFromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 
-import { EntityTableComponent } from './entity-table.component';
+// import { EntityTableComponent } from './entity-table.component';
 
 @Component({
   selector: 'app-entity-table-add-actions',
@@ -13,7 +13,7 @@ import { EntityTableComponent } from './entity-table.component';
 })
 export class EntityTableAddActionsComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('filter', { static: false }) filter: ElementRef;
-  @Input('entity') entity: EntityTableComponent;
+  @Input('entity') entity: any; // EntityTableComponent;
   conf: any;
 
   actions: any[];
