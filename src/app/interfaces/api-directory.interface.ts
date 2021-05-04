@@ -1,6 +1,8 @@
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { Service } from 'app/interfaces/service.interface';
 import { User } from 'app/interfaces/user';
 
 export type ApiDirectory = {
@@ -428,10 +430,13 @@ export type ApiDirectory = {
 
   // Service
   'service.started': { params: any; response: any };
-  'service.query': { params: any; response: any };
-  'service.update': { params: any; response: any };
-  'service.start': { params: any; response: any };
-  'service.stop': { params: any; response: any };
+  'service.query': { params: QueryParams<Service>; response: Service[] };
+  'service.update': { params: [number, Partial<Service>]; response: number };
+  'service.start': { params: [ServiceName]; response: boolean };
+  'service.stop': {
+    params: [ServiceName];
+    response: boolean; // False indicates that service has been stopped.
+  };
   'service.restart': { params: any; response: any };
 
   // Sharing

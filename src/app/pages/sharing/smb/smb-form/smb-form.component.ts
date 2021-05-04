@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { helptext_sharing_smb, shared } from 'app/helptext/sharing';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -413,9 +414,9 @@ export class SMBFormComponent implements OnDestroy {
           this.router.navigate(['/'].concat(this.route_success));
         } else {
           /**
-     * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
-     * nav to SMB shares list view.
-     */
+           * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
+           * nav to SMB shares list view.
+           */
           const promptUserACLEdit = () =>
             this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
               switchMap((isTrivialACL: boolean) =>
@@ -442,7 +443,7 @@ export class SMBFormComponent implements OnDestroy {
           this.ws
             .call('service.query', [])
             .pipe(
-              map((response) => _.find(response, { service: 'cifs' })),
+              map((response) => _.find(response, { service: ServiceName.Cifs })),
               switchMap((cifsService) => {
                 if (cifsService.enable) {
                   return promptUserACLEdit();
