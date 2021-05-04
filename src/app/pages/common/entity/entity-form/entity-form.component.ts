@@ -381,9 +381,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
               this.wsResponse = this.conf.resourceTransformIncomingRestData(this.wsResponse);
               if (this.wsResponse['changed_schema']) {
-                setTimeout(() => {
-                  this.makeFormGroup();
-                }, 0);
+                this.makeFormGroup();
                 delete this.wsResponse['changed_schema'];
               }
             }
