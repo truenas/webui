@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class StorageService {
-  protected diskResource = 'disk.query';
+  protected diskResource: 'disk.query' = 'disk.query';
 
   ids: any;
   diskNames: any;

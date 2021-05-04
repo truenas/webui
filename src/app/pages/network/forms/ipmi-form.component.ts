@@ -19,7 +19,7 @@ import { T } from '../../../translate-marker';
 })
 export class IPMIFromComponent {
   title = 'IMPI';
-  protected queryCall = 'ipmi.query';
+  protected queryCall: 'ipmi.query' = 'ipmi.query';
 
   protected entityEdit: any;
   is_ha = false;

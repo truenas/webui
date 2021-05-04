@@ -19,9 +19,9 @@ import { selectedOptionValidator } from 'app/pages/common/entity/entity-form/val
   providers: [IscsiService],
 })
 export class PortalFormComponent {
-  protected addCall = 'iscsi.portal.create';
-  protected queryCall = 'iscsi.portal.query';
-  protected editCall = 'iscsi.portal.update';
+  protected addCall: 'iscsi.portal.create' = 'iscsi.portal.create';
+  protected queryCall: 'iscsi.portal.query' = 'iscsi.portal.query';
+  protected editCall: 'iscsi.portal.update' = 'iscsi.portal.update';
   protected route_success: string[] = ['sharing', 'iscsi', 'portals'];
   protected customFilter: any[] = [[['id', '=']]];
   protected isEntity = true;

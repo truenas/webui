@@ -13,7 +13,7 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
 })
 export class LicenseComponent {
   private queryCall = 'none';
-  private updateCall = 'system.license_update';
+  private updateCall: 'system.license_update' = 'system.license_update';
   protected isOneColumnForm = true;
   fieldSets: FieldSet[] = [
     {

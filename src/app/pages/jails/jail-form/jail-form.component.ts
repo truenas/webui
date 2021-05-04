@@ -27,15 +27,15 @@ import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interf
 })
 export class JailFormComponent implements OnInit, AfterViewInit {
   isReady = false;
-  protected queryCall = 'jail.query';
-  protected updateCall = 'jail.update';
-  protected upgradeCall = 'jail.upgrade';
+  protected queryCall: 'jail.query' = 'jail.query';
+  protected updateCall: 'jail.update' = 'jail.update';
+  protected upgradeCall: 'jail.upgrade' = 'jail.upgrade';
 
-  protected addCall = 'jail.create';
+  protected addCall: 'jail.create' = 'jail.create';
   route_success: string[] = ['jails'];
   protected route_conf: string[] = ['jails', 'configuration'];
 
-  protected pluginAddCall = 'plugin.create';
+  protected pluginAddCall: 'plugin.create' = 'plugin.create';
   plugin_route_success: string[] = ['plugins'];
 
   formGroup: any;

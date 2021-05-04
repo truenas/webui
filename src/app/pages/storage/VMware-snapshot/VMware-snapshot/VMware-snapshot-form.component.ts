@@ -26,8 +26,8 @@ import { EntityUtils } from '../../../common/entity/utils';
 export class VMwareSnapshotFormComponent {
   protected route_success: string[] = ['storage', 'vmware-Snapshots'];
   protected isEntity = true;
-  queryCall = 'vmware.query';
-  addCall = 'vmware.create';
+  queryCall: 'vmware.query' = 'vmware.query';
+  addCall: 'vmware.create' = 'vmware.create';
   protected pk: any;
   formGroup: FormGroup;
 

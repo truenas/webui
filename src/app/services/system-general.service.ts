@@ -7,8 +7,8 @@ import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class SystemGeneralService {
-  protected certificateList = 'certificate.query';
-  protected caList = 'certificateauthority.query';
+  protected certificateList: 'certificate.query' = 'certificate.query';
+  protected caList: 'certificateauthority.query' = 'certificateauthority.query';
 
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();

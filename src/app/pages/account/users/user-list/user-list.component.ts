@@ -32,8 +32,8 @@ export class UserListComponent implements OnDestroy {
   protected usr_lst: any[] = [];
   protected grp_lst: any[] = [];
   protected hasDetails = true;
-  protected queryCall = 'user.query';
-  protected wsDelete = 'user.delete';
+  protected queryCall: 'user.query' = 'user.query';
+  protected wsDelete: 'user.delete' = 'user.delete';
   // protected queryCallOption = [['OR', [['uid', '=', 0], ['builtin', '=', false]]]];
   protected globalConfig = {
     id: 'config',

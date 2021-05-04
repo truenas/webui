@@ -15,7 +15,7 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
 })
 export class ProactiveComponent {
   entityEdit: any;
-  protected queryCall = 'support.config';
+  protected queryCall: 'support.config' = 'support.config';
   contacts: any;
   controls: any;
   save_button_enabled: boolean;

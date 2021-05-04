@@ -2,6 +2,7 @@ import {
   Component, OnInit, Input, Output, EventEmitter, ElementRef, TemplateRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -79,7 +80,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
       rpc = this.conf.toggleStop;
     }
 
-    this.busy = this.ws.call(rpc, [row.id]).subscribe((res) => {
+    this.busy = this.ws.call(rpc as ApiMethod, [row.id]).subscribe((res) => {
       if (res) {
         row[this.conf.toggleProp] = ServiceStatus.Running;
       } else {

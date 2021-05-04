@@ -10,7 +10,7 @@ import { CoreEvent } from 'app/core/services/core.service';
 import { LayoutService } from 'app/core/services/layout.service';
 import { TranslatedMessages } from 'app/interfaces/translated-messages.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { Subscription, interval, Subject } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
 import { FailoverDisabledReason } from '../../../enums/failover-disabled-reason.enum';
 import { ProductType } from '../../../enums/product-type.enum';
 import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
@@ -89,8 +89,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   protected dialogRef: any;
   protected tcConnected = false;
-  protected tc_queryCall = 'truecommand.config';
-  protected tc_updateCall = 'truecommand.update';
+  protected tc_queryCall: 'truecommand.config' = 'truecommand.config';
+  protected tc_updateCall: 'truecommand.update' = 'truecommand.update';
   protected isTcStatusOpened = false;
   protected tcStatusDialogRef: MatDialogRef<TruecommandComponent>;
   tcStatus: any;

@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { User } from 'app/interfaces/user';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/account/user-form';
@@ -306,7 +308,7 @@ export class UserFormComponent {
     private modalService: ModalService) {
     this.ws.call('user.query').subscribe(
       (res) => {
-        this.namesInUse.push(...res.map((user: any) => user.username));
+        this.namesInUse.push(...res.map((user) => user.username));
       },
     );
   }
@@ -387,7 +389,7 @@ export class UserFormComponent {
     });
 
     /* list users */
-    const filter = ['id', '=', parseInt(this.pk, 10)];
+    const filter: QueryFilter<User> = ['id', '=', parseInt(this.pk, 10)];
     this.ws.call('user.query', [[filter]]).subscribe(async (res) => {
       if (res.length !== 0 && res[0].home !== '/nonexistent') {
         this.storageService.filesystemStat(res[0].home).subscribe((stat) => {

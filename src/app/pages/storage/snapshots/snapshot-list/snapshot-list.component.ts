@@ -22,10 +22,10 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 })
 export class SnapshotListComponent {
   title = 'Snapshots';
-  protected queryCall = 'zfs.snapshot.query';
+  protected queryCall: 'zfs.snapshot.query' = 'zfs.snapshot.query';
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
   protected route_add_tooltip = 'Add Snapshot';
-  protected wsDelete = 'zfs.snapshot.delete';
+  protected wsDelete: 'zfs.snapshot.delete' = 'zfs.snapshot.delete';
   protected loaderOpen = false;
   protected entityList: any;
   protected rollback: any;

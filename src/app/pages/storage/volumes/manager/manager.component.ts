@@ -46,10 +46,10 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   temp: any[] = [];
 
   name: string;
-  addCall = 'pool.create';
-  editCall = 'pool.update';
-  queryCall = 'pool.query';
-  datasetQueryCall = 'pool.dataset.query';
+  addCall: 'pool.create' = 'pool.create';
+  editCall: 'pool.update' = 'pool.update';
+  queryCall: 'pool.query' = 'pool.query';
+  datasetQueryCall: 'pool.dataset.query' = 'pool.dataset.query';
   pk: any;
   isNew = true;
   vol_encrypt = 0;

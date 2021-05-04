@@ -145,7 +145,7 @@ export class RYSNCConfigurationFormComponent {
     const accessSet = _.find(this.fieldSets, { name: helptext.rsyncd_fieldset_access });
 
     this.rsyncmod_user = accessSet.config.find((config) => config.name === 'user');
-    this.userService.userQueryDSCache().subscribe((users: any[]) => {
+    this.userService.userQueryDSCache().subscribe((users) => {
       users.forEach((user) => {
         this.rsyncmod_user.options.push({ label: user.username, value: user.username });
       });
@@ -195,7 +195,7 @@ export class RYSNCConfigurationFormComponent {
   }
 
   updateUserSearchOptions(value = '', parent: any) {
-    parent.userService.userQueryDSCache(value).subscribe((items: any[]) => {
+    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });

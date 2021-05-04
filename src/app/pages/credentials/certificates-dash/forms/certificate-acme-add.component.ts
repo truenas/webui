@@ -20,8 +20,8 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
   providers: [EntityFormService],
 })
 export class CertificateAcmeAddComponent {
-  protected addCall = 'certificate.create';
-  protected queryCall = 'certificate.query';
+  protected addCall: 'certificate.create' = 'certificate.create';
+  protected queryCall: 'certificate.query' = 'certificate.query';
   protected isEntity = true;
   protected isNew = true;
   private csrOrg: any;
