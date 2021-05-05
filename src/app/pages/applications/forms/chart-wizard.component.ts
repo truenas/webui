@@ -10,7 +10,7 @@ import { ModalService } from '../../../services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from '../../../helptext/apps/apps';
-import { EntityUtils, FORM_KEY_SEPERATOR, FORM_LABEL_KEY_PREFIX } from '../../common/entity/utils';
+import { EntityUtils } from '../../common/entity/utils';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import { Subject } from 'rxjs';
@@ -140,9 +140,6 @@ export class ChartWizardComponent implements OnDestroy {
     const apiCall = this.addCall;
     delete data.version;
 
-    const values = {};
-    new EntityUtils().parseFormControlValues(data, values);
-
     const payload = [];
     payload.push({
       catalog: this.catalogApp.catalog.id,
@@ -150,7 +147,7 @@ export class ChartWizardComponent implements OnDestroy {
       release_name: data.release_name,
       train: this.catalogApp.catalog.train,
       version: this.selectedVersionKey,
-      values,
+      values: data,
     });
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
