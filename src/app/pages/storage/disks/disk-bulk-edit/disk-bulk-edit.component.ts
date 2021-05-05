@@ -10,16 +10,17 @@ import { DialogService } from '../../../../services/dialog.service';
 import { StorageService } from '../../../../services/storage.service';
 import helptext from '../../../../helptext/storage/disks/disks';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-disk-bulk-edit',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class DiskBulkEditComponent {
-  protected route_success: string[] = ['storage', 'disks'];
-  protected isEntity = true;
+export class DiskBulkEditComponent implements FormConfiguration {
+  route_success: string[] = ['storage', 'disks'];
+  isEntity = true;
 
-  protected fieldConfig: FieldConfig[] = [];
+  fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
     {
       name: helptext.bulk_edit.title,

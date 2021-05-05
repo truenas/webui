@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
 import { EntityFormService } from '../../services/entity-form.service';
-import {FieldRelationService} from '../../services/field-relation.service';
+import { FieldRelationService } from '../../services/field-relation.service';
 
 @Component({
   selector: 'entity-form-list',
@@ -36,7 +36,7 @@ export class FormListComponent implements Field, OnInit {
     this.listsFromArray.push(formGroup);
     this.config.listFields.push(templateListField);
 
-    templateListField.forEach(subFieldConfig => {
+    templateListField.forEach((subFieldConfig) => {
       this.fieldRelationService.setRelation(subFieldConfig, formGroup);
     });
   }
@@ -45,5 +45,4 @@ export class FormListComponent implements Field, OnInit {
     this.listsFromArray.removeAt(id);
     this.config.listFields.splice(id, 1);
   }
-
 }

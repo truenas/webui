@@ -13,15 +13,16 @@ import {
 import {
   FieldConfig,
 } from '../../common/entity/entity-form/models/field-config.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-nis',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class NISComponent {
+export class NISComponent implements FormConfiguration {
   queryCall: 'nis.config' = 'nis.config';
-  protected addCall: 'nis.update' = 'nis.update';
+  addCall: 'nis.update' = 'nis.update';
   custActions: any[] = [
     {
       id: helptext.nis_custactions_clearcache_id,

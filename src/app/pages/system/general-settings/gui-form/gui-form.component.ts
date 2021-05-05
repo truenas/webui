@@ -16,15 +16,15 @@ import { ModalService } from '../../../../services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout/admin-layout.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-gui-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class GuiFormComponent implements OnDestroy {
-  protected queryCall = 'none';
-  protected updateCall = 'system.general.update';
+export class GuiFormComponent implements FormConfiguration, OnDestroy {
+  updateCall = 'system.general.update';
   sortLanguagesByName = true;
   languageList: Option[] = [];
   languageKey: string;
@@ -133,7 +133,7 @@ export class GuiFormComponent implements OnDestroy {
   private guicertificate: any;
   private entityForm: any;
   private configData: any;
-  protected title = helptext.guiPageTitle;
+  title = helptext.guiPageTitle;
 
   constructor(
     protected router: Router,

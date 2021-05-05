@@ -12,22 +12,23 @@ import { ViewControllerComponent } from 'app/core/components/viewcontroller/view
 import globalHelptext from '../../../helptext/global-helptext';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import isCidr, * as ipCidr from 'is-cidr';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-interfaces-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class InterfacesFormComponent extends ViewControllerComponent implements OnDestroy {
-  protected queryCall = 'interface.query';
-  protected addCall = 'interface.create';
-  protected editCall = 'interface.update';
-  protected queryKey = 'id';
-  protected isEntity = true;
+export class InterfacesFormComponent extends ViewControllerComponent implements FormConfiguration, OnDestroy {
+  queryCall: 'interface.query' = 'interface.query';
+  addCall: 'interface.create' = 'interface.create';
+  editCall: 'interface.update' = 'interface.update';
+  queryKey = 'id';
+  isEntity = true;
   protected is_ha = false;
   private aliases_fc: any;
   protected ipPlaceholder: string;
   protected failoverPlaceholder: string;
-  protected saveSubmitText = helptext.int_save_button;
+  saveSubmitText = helptext.int_save_button;
   protected offload_warned = false;
   protected offload_warning_sub: any;
 

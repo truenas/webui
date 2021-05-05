@@ -15,21 +15,22 @@ import helptext from '../../../../helptext/data-protection/cloudsync/cloudsync-f
 import { EntityUtils } from '../../../common/entity/utils';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { ModalService } from 'app/services/modal.service';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-cloudsync-add',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [CloudCredentialService, JobService],
 })
-export class CloudsyncFormComponent {
-  protected addCall: 'cloudsync.create' = 'cloudsync.create';
-  protected editCall: 'cloudsync.update' = 'cloudsync.update';
-  protected entityForm: EntityFormComponent;
-  protected isEntity = true;
-  protected queryCall: 'cloudsync.query' = 'cloudsync.query';
-  protected queryPayload: any[] = [];
-  protected customFilter: any[] = [];
-  protected title: string;
+export class CloudsyncFormComponent implements FormConfiguration {
+  addCall: 'cloudsync.create' = 'cloudsync.create';
+  editCall: 'cloudsync.update' = 'cloudsync.update';
+  entityForm: EntityFormComponent;
+  isEntity = true;
+  queryCall: 'cloudsync.query' = 'cloudsync.query';
+  queryPayload: any[] = [];
+  customFilter: any[] = [];
+  title: string;
 
   fieldSets: FieldSets = new FieldSets([
     {
@@ -371,7 +372,7 @@ export class CloudsyncFormComponent {
 
   formGroup: any;
   error: string;
-  protected pk: any;
+  pk: any;
   isNew = false;
   protected data: any;
 

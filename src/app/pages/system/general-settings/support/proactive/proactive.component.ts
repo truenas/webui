@@ -8,14 +8,15 @@ import { DialogService } from 'app/services/dialog.service';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-proactive',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class ProactiveComponent {
+export class ProactiveComponent implements FormConfiguration {
   entityEdit: any;
-  protected queryCall: 'support.config' = 'support.config';
+  queryCall: 'support.config' = 'support.config';
   contacts: any;
   controls: any;
   save_button_enabled: boolean;

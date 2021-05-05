@@ -16,6 +16,7 @@ import { T } from 'app/translate-marker';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 interface OAuthData {
   client_id?: string;
@@ -29,7 +30,7 @@ interface OAuthData {
   <entity-form [conf]="this"></entity-form>
   `,
 })
-export class EmailComponent implements OnDestroy {
+export class EmailComponent implements FormConfiguration, OnDestroy {
   queryCall: 'mail.config' = 'mail.config';
   updateCall: 'mail.update' = 'mail.update';
   entityEdit: any;

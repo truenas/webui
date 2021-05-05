@@ -6,21 +6,22 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import helptext from '../../../helptext/directoryservice/kerberosrealms-form-list';
 import { Subscription } from 'rxjs';
 import { ModalService } from '../../../services/modal.service';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-group-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class KerberosRealmsFormComponent {
-  protected title: string;
-  protected addCall = 'kerberos.realm.create';
-  protected editCall = 'kerberos.realm.update';
-  protected queryCall = 'kerberos.realm.query';
-  protected pk: any;
-  protected queryKey = 'id';
-  protected isEntity = true;
+export class KerberosRealmsFormComponent implements FormConfiguration {
+  title: string;
+  addCall: 'kerberos.realm.create' = 'kerberos.realm.create';
+  editCall: 'kerberos.realm.update' = 'kerberos.realm.update';
+  queryCall: 'kerberos.realm.query' = 'kerberos.realm.query';
+  pk: any;
+  queryKey = 'id';
+  isEntity = true;
   private getRow = new Subscription();
   protected isOneColumnForm = true;
-  protected fieldConfig: FieldConfig[] = [];
+  fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
     {
       name: helptext.kerb_form_heading,
