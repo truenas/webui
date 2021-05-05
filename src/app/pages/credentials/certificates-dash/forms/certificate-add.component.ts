@@ -781,8 +781,10 @@ export class CertificateAddComponent {
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (this.getField('key_type').value === 'RSA') {
           this.setDisabled('ec_curve', true);
+          this.hideField('ec_curve', true, entity);
         } else if (this.getField('key_type').value === 'EC') {
           this.setDisabled('key_length', true);
+          this.hideField('ec_curve', false, entity);
         }
       } else if (res == 'CERTIFICATE_CREATE_CSR') {
         for (const i in this.internalFields) {
@@ -803,8 +805,10 @@ export class CertificateAddComponent {
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (this.getField('key_type').value === 'RSA') {
           this.setDisabled('ec_curve', true);
+          this.hideField('ec_curve', true, entity);
         } else if (this.getField('key_type').value === 'EC') {
           this.setDisabled('key_length', true);
+          this.hideField('ec_curve', false, entity);
         }
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED') {
         for (const i in this.internalFields) {

@@ -40,4 +40,5 @@ export interface FieldConfig {
   customEventMethod?(data: any): void;
   onChangeOption?(data: any): void; hint?: string; loadMoreOptions?: any;
   enableTextWrapForOptions?: boolean; expandedHeight?: boolean; addInitialList?: boolean;
+  subFields?: FieldConfig[];
 }

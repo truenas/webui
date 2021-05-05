@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { ServiceName } from 'app/enums/service-name.enum';
 
 import { helptext_sharing_nfs, shared } from 'app/helptext/sharing';
 import { Option } from 'app/interfaces/option.interface';
@@ -381,8 +382,8 @@ export class NFSFormComponent implements FormConfiguration {
 
   afterSave(entityForm: any) {
     this.ws.call('service.query', [[]]).subscribe((res) => {
-      const service = _.find(res, { service: 'nfs' });
-      if (service['enable']) {
+      const service = _.find(res, { service: ServiceName.Nfs });
+      if (service.enable) {
         this.router.navigate(new Array('/').concat(
           this.route_success,
         ));
@@ -391,8 +392,8 @@ export class NFSFormComponent implements FormConfiguration {
           true, shared.dialog_button).subscribe((dialogRes: boolean) => {
           if (dialogRes) {
             entityForm.loader.open();
-            this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
-              this.ws.call('service.start', [service.service]).subscribe((startRes) => {
+            this.ws.call('service.update', [service.id, { enable: true }]).subscribe(() => {
+              this.ws.call('service.start', [service.service]).subscribe(() => {
                 entityForm.loader.close();
                 this.dialog.Info(T('NFS') + shared.dialog_started_title,
                   T('The NFS') + shared.dialog_started_message, '250px').subscribe(() => {

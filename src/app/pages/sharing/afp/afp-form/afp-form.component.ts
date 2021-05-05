@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ServiceName } from 'app/enums/service-name.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_afp, shared } from 'app/helptext/sharing';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -412,8 +413,8 @@ export class AFPFormComponent implements FormConfiguration, OnDestroy {
 
   afterSave(entityForm: any) {
     this.ws.call('service.query', []).subscribe((res) => {
-      const service = _.find(res, { service: 'afp' });
-      if (service['enable']) {
+      const service = _.find(res, { service: ServiceName.Afp });
+      if (service.enable) {
         this.router.navigate(new Array('/').concat(
           this.route_success,
         ));
@@ -422,8 +423,8 @@ export class AFPFormComponent implements FormConfiguration, OnDestroy {
           shared.dialog_message, true, shared.dialog_button).subscribe((dialogRes: boolean) => {
           if (dialogRes) {
             entityForm.loader.open();
-            this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
-              this.ws.call('service.start', [service.service]).subscribe((startRes) => {
+            this.ws.call('service.update', [service.id, { enable: true }]).subscribe(() => {
+              this.ws.call('service.start', [service.service]).subscribe(() => {
                 entityForm.loader.close();
                 this.dialog.Info(T('AFP') + shared.dialog_started_title,
                   T('The AFP') + shared.dialog_started_message, '250px').subscribe(() => {

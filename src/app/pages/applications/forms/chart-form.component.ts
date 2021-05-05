@@ -10,7 +10,7 @@ import { ModalService } from '../../../services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from '../../../helptext/apps/apps';
-import { EntityUtils, FORM_KEY_SEPERATOR, FORM_LABEL_KEY_PREFIX } from '../../common/entity/utils';
+import { EntityUtils } from '../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
@@ -50,7 +50,7 @@ export class ChartFormComponent implements FormConfiguration {
     this.title = title;
   }
 
-  parseSchema(catalogApp: any, isEdit = false) {
+  parseSchema(catalogApp: any) {
     try {
       this.catalogApp = catalogApp;
       this.title = this.catalogApp.name;
@@ -66,7 +66,8 @@ export class ChartFormComponent implements FormConfiguration {
               placeholder: helptext.chartForm.release_name.placeholder,
               tooltip: helptext.chartForm.release_name.tooltip,
               required: true,
-              readonly: isEdit,
+              disabled: true,
+              readonly: true,
             },
           ],
           colspan: 2,
@@ -84,6 +85,15 @@ export class ChartFormComponent implements FormConfiguration {
         const fieldSet = this.fieldSets.find((fieldSet: any) => fieldSet.name == question.group);
         if (fieldSet) {
           const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(question);
+
+          const imageConfig = _.find(fieldConfigs, { name: 'image' });
+          if (imageConfig) {
+            const repositoryConfig = _.find(imageConfig.subFields, { name: 'repository' });
+            if (repositoryConfig) {
+              repositoryConfig.readonly = true;
+            }
+          }
+
           fieldSet.config = fieldSet.config.concat(fieldConfigs);
         }
       });
@@ -104,31 +114,17 @@ export class ChartFormComponent implements FormConfiguration {
       schema: data.chart_schema.schema,
     };
 
-    this.parseSchema(chartSchema, true);
+    this.parseSchema(chartSchema);
     this.name = data.name;
-    const configData: any = {};
-    this.entityUtils.parseConfigData(data.config, null, configData);
-    configData['release_name'] = data.name;
-    configData['changed_schema'] = true;
 
-    return configData;
-  }
+    data.config['release_name'] = data.name;
+    data.config['changed_schema'] = true;
 
-  afterInit(entityEdit: any) {
-    if (this.rowName) {
-      entityEdit.setDisabled('release_name', true, false);
-    }
-
-    const repositoryConfig = _.find(this.fieldConfig, { name: 'image_repository' });
-    if (repositoryConfig) {
-      repositoryConfig.readonly = true;
-    }
+    return data.config;
   }
 
   customSubmit(data: any) {
     let apiCall = this.addCall;
-    const values = {};
-    this.entityUtils.parseFormControlValues(data, values);
 
     const payload = [];
     payload.push({
@@ -137,7 +133,7 @@ export class ChartFormComponent implements FormConfiguration {
       release_name: data.release_name,
       train: 'charts',
       version: 'latest',
-      values,
+      values: data,
     });
 
     if (this.rowName) {
