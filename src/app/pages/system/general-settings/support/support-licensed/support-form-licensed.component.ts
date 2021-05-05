@@ -19,8 +19,6 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 })
 export class SupportFormLicensedComponent implements FormConfiguration {
-  queryCall = 'none';
-
   entityEdit: any;
   screenshot: any;
   subs: any[];

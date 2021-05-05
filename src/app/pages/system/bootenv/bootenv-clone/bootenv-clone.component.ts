@@ -14,7 +14,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 export class BootEnvironmentCloneComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot'];
-  addCall = 'bootenv.create';
+  addCall: 'bootenv.create' = 'bootenv.create';
   pk: any;
   isNew = true;
   isEntity = true;

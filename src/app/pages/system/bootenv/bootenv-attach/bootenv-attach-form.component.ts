@@ -16,7 +16,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 export class BootEnvAttachFormComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot', 'status'];
   isEntity = true;
-  addCall = 'boot.attach';
+  addCall: 'boot.attach' = 'boot.attach';
   pk: any;
   isNew = true;
   protected dialogRef: any;

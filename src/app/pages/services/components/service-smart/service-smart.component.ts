@@ -22,7 +22,7 @@ enum PowerMode {
 })
 
 export class ServiceSMARTComponent implements FormConfiguration {
-  queryCall = 'smart.config';
+  queryCall: 'smart.config' = 'smart.config';
   route_success: string[] = ['services'];
   title = helptext.formTitle;
 

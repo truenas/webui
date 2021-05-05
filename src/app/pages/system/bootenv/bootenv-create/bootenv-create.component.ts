@@ -13,7 +13,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 export class BootEnvironmentCreateComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot'];
-  addCall = 'bootenv.create';
+  addCall: 'bootenv.create' = 'bootenv.create';
   pk: any;
   isNew = false;
   isEntity = true;

@@ -17,8 +17,8 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class CatalogEditFormComponent implements FormConfiguration {
-  queryCall = 'catalog.query';
-  editCall = 'catalog.update';
+  queryCall: 'catalog.query' = 'catalog.query';
+  editCall: 'catalog.update' = 'catalog.update';
   customFilter: any[];
   isEntity = true;
   isEditJob = false;

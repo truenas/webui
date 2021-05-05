@@ -20,8 +20,8 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 export class ServiceWebdavComponent implements FormConfiguration, OnDestroy {
   // protected resource_name: string = 'services/webdav';
-  queryCall = 'webdav.config';
-  editCall = 'webdav.update';
+  queryCall: 'webdav.config' = 'webdav.config';
+  editCall: 'webdav.update' = 'webdav.update';
   route_success: string[] = ['services'];
   title = helptext.formTitle;
 

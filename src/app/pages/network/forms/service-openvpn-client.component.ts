@@ -12,7 +12,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 
 export class OpenvpnClientComponent implements FormConfiguration {
-  queryCall = 'openvpn.client.config';
+  queryCall: 'openvpn.client.config' = 'openvpn.client.config';
   title = helptext.client.formTitle;
 
   fieldConfig: FieldConfig[] = [];

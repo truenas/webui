@@ -15,8 +15,8 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 export class DiskFormComponent implements FormConfiguration {
   route_success: string[] = ['storage', 'disks'];
-  queryCall = 'disk.query';
-  editCall = 'disk.update';
+  queryCall: 'disk.query' = 'disk.query';
+  editCall: 'disk.update' = 'disk.update';
   customFilter: any[] = [[['identifier', '=']]];
   isEntity = true;
 

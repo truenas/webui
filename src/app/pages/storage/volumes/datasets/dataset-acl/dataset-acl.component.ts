@@ -34,7 +34,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class DatasetAclComponent implements FormConfiguration, OnDestroy {
-  queryCall = 'filesystem.getacl';
+  queryCall: 'filesystem.getacl' = 'filesystem.getacl';
   updateCall = 'filesystem.setacl';
   isEntity = true;
   pk: string;

@@ -17,9 +17,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [TaskService],
 })
 export class SnapshotFormComponent implements FormConfiguration, OnDestroy {
-  queryCall = 'pool.snapshottask.query';
-  addCall = 'pool.snapshottask.create';
-  editCall = 'pool.snapshottask.update';
+  queryCall: 'pool.snapshottask.query' = 'pool.snapshottask.query';
+  addCall: 'pool.snapshottask.create' = 'pool.snapshottask.create';
+  editCall: 'pool.snapshottask.update' = 'pool.snapshottask.update';
   isEntity = true;
   pk: number;
   protected dataset: any;

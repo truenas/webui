@@ -14,10 +14,10 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class TunableFormComponent implements FormConfiguration {
-  queryCall = 'tunable.query';
+  queryCall: 'tunable.query' = 'tunable.query';
   queryKey = 'id';
-  editCall = 'tunable.update';
-  addCall = 'tunable.create';
+  editCall: 'tunable.update' = 'tunable.update';
+  addCall: 'tunable.create' = 'tunable.create';
   pk: any;
   title: string;
   protected isOneColumnForm = true;

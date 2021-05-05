@@ -21,7 +21,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 export class ServiceS3Component implements FormConfiguration, OnDestroy {
   // protected resource_name: string = 'services/s3';
-  queryCall = 's3.config';
+  queryCall: 's3.config' = 's3.config';
   updateCall = 's3.update';
   route_success: string[] = ['services'];
   private certificate: any;

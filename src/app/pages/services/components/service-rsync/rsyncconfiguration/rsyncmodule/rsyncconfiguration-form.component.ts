@@ -15,13 +15,13 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 
 export class RYSNCConfigurationFormComponent implements FormConfiguration {
-  queryCall = 'rsyncmod.query';
+  queryCall: 'rsyncmod.query' = 'rsyncmod.query';
   route_success: string[] = ['services', 'rsync', 'rsync-module'];
   isEntity = true;
   formGroup: FormGroup;
   pk: any;
   title = helptext.moduleFormTitle;
-  addCall = 'rsyncmod.create';
+  addCall: 'rsyncmod.create' = 'rsyncmod.create';
   isNew: boolean;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [

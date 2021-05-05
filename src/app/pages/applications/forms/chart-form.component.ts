@@ -18,11 +18,11 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ChartFormComponent implements FormConfiguration {
-  queryCall = 'chart.release.query';
+  queryCall: 'chart.release.query' = 'chart.release.query';
   queryCallOption: any[];
   customFilter: any[];
-  addCall = 'chart.release.create';
-  editCall = 'chart.release.update';
+  addCall: 'chart.release.create' = 'chart.release.create';
+  editCall: 'chart.release.update' = 'chart.release.update';
   isEntity = true;
   protected utils: CommonUtils;
 
@@ -124,8 +124,6 @@ export class ChartFormComponent implements FormConfiguration {
   }
 
   customSubmit(data: any) {
-    let apiCall = this.addCall;
-
     const payload = [];
     payload.push({
       catalog: this.catalogApp.catalog.id,
@@ -143,7 +141,6 @@ export class ChartFormComponent implements FormConfiguration {
       delete payload[0].train;
       delete payload[0].version;
       payload.unshift(this.name);
-      apiCall = this.editCall;
     }
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
@@ -153,7 +150,7 @@ export class ChartFormComponent implements FormConfiguration {
       },
       disableClose: true,
     });
-    this.dialogRef.componentInstance.setCall(apiCall, payload);
+    this.dialogRef.componentInstance.setCall(this.editCall, payload);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialogService.closeAllDialogs();

@@ -13,7 +13,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ServiceTFTPComponent implements FormConfiguration {
-  queryCall = 'tftp.config';
+  queryCall: 'tftp.config' = 'tftp.config';
   route_success: string[] = ['services'];
   title = helptext.formTitle;
 

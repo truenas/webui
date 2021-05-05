@@ -14,7 +14,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ServiceLLDPComponent implements FormConfiguration {
-  queryCall = 'lldp.config';
+  queryCall: 'lldp.config' = 'lldp.config';
   route_success: string[] = ['services'];
   title = helptext.formTitle;
 

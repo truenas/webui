@@ -19,9 +19,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 export class GroupFormComponent implements FormConfiguration {
   isEntity = true;
   protected namesInUse: string[] = [];
-  queryCall = 'group.query';
-  addCall = 'group.create';
-  editCall = 'group.update';
+  queryCall: 'group.query' = 'group.query';
+  addCall: 'group.create' = 'group.create';
+  editCall: 'group.update' = 'group.update';
   queryKey = 'id';
   title: string;
   protected isOneColumnForm = true;

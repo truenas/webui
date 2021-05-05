@@ -20,9 +20,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [UserService],
 })
 export class UserFormComponent implements FormConfiguration {
-  queryCall = 'user.query';
-  addCall = 'user.create';
-  editCall = 'user.update';
+  queryCall: 'user.query' = 'user.query';
+  addCall: 'user.create' = 'user.create';
+  editCall: 'user.update' = 'user.update';
   pk: string;
   queryKey = 'id';
   isEntity = true;

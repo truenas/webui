@@ -22,9 +22,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 export class AFPFormComponent implements FormConfiguration, OnDestroy {
   route_success = ['sharing', 'afp'];
-  queryCall = 'sharing.afp.query';
-  editCall = 'sharing.afp.update';
-  addCall = 'sharing.afp.create';
+  queryCall: 'sharing.afp.query' = 'sharing.afp.query';
+  editCall: 'sharing.afp.update' = 'sharing.afp.update';
+  addCall: 'sharing.afp.create' = 'sharing.afp.create';
   pk: number;
   queryKey = 'id';
   isEntity = true;

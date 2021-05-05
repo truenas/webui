@@ -13,7 +13,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 export class BootEnvironmentRenameComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot'];
-  editCall = 'bootenv.update';
+  editCall: 'bootenv.update' = 'bootenv.update';
   pk: any;
   isNew = false;
   isEntity = true;

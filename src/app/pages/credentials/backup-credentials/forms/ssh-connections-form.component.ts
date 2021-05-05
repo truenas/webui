@@ -22,14 +22,14 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [KeychainCredentialService, ReplicationService],
 })
 export class SshConnectionsFormComponent implements FormConfiguration {
-  queryCall = 'keychaincredential.query';
+  queryCall: 'keychaincredential.query' = 'keychaincredential.query';
   queryCallOption: any[];
   protected sshCalls = {
-    manual: 'keychaincredential.create',
-    semiautomatic: 'keychaincredential.remote_ssh_semiautomatic_setup',
+    manual: 'keychaincredential.create' as 'keychaincredential.create',
+    semiautomatic: 'keychaincredential.remote_ssh_semiautomatic_setup' as 'keychaincredential.remote_ssh_semiautomatic_setup',
   };
-  addCall = this.sshCalls['manual'];
-  editCall = 'keychaincredential.update';
+  addCall: 'keychaincredential.create' | 'keychaincredential.remote_ssh_semiautomatic_setup' = this.sshCalls['manual'];
+  editCall: 'keychaincredential.update' = 'keychaincredential.update';
   isEntity = true;
   protected namesInUseConnection: string[] = [];
   protected namesInUse: string[] = [];

@@ -18,7 +18,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 export class ServiceAFPComponent implements FormConfiguration {
   route_success: string[] = ['services'];
-  queryCall = 'afp.config';
+  queryCall: 'afp.config' = 'afp.config';
   title = helptext.formTitle;
 
   fieldConfig: FieldConfig[] = [];

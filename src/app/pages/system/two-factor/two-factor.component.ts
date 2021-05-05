@@ -12,7 +12,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class TwoFactorComponent implements FormConfiguration {
-  queryCall = 'auth.twofactor.config';
+  queryCall: 'auth.twofactor.config' = 'auth.twofactor.config';
   private entityEdit: any;
   private TwoFactorEnabled: boolean;
   qrInfo: string;

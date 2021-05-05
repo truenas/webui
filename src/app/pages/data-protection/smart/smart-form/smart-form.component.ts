@@ -15,9 +15,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class SmartFormComponent implements FormConfiguration {
-  queryCall = 'smart.test.query';
-  addCall = 'smart.test.create';
-  editCall = 'smart.test.update';
+  queryCall: 'smart.test.query' = 'smart.test.query';
+  addCall: 'smart.test.create' = 'smart.test.create';
+  editCall: 'smart.test.update' = 'smart.test.update';
   customFilter: any[] = [];
   // protected route_success: string[] = ['tasks', 'smart'];
   protected entityForm: EntityFormComponent;

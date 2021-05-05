@@ -19,9 +19,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class InterfacesFormComponent extends ViewControllerComponent implements FormConfiguration, OnDestroy {
-  queryCall = 'interface.query';
-  addCall = 'interface.create';
-  editCall = 'interface.update';
+  queryCall: 'interface.query' = 'interface.query';
+  addCall: 'interface.create' = 'interface.create';
+  editCall: 'interface.update' = 'interface.update';
   queryKey = 'id';
   isEntity = true;
   protected is_ha = false;

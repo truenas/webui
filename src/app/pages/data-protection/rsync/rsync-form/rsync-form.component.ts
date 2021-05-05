@@ -18,9 +18,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [TaskService, UserService],
 })
 export class RsyncFormComponent implements FormConfiguration, OnDestroy {
-  addCall = 'rsynctask.create';
-  editCall = 'rsynctask.update';
-  queryCall = 'rsynctask.query';
+  addCall: 'rsynctask.create' = 'rsynctask.create';
+  editCall: 'rsynctask.update' = 'rsynctask.update';
+  queryCall: 'rsynctask.query' = 'rsynctask.query';
   queryKey = 'id';
   protected entityForm: EntityFormComponent;
   pk: number;

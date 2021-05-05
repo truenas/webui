@@ -22,8 +22,8 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 export class ActiveDirectoryComponent implements FormConfiguration {
   title: string = helptext.title;
-  queryCall = 'activedirectory.config';
-  updateCall = 'activedirectory.update';
+  queryCall: 'activedirectory.config' = 'activedirectory.config';
+  updateCall: 'activedirectory.update' = 'activedirectory.update';
   isEntity = false;
   isBasicMode = true;
   protected idmapBacked: any = null;

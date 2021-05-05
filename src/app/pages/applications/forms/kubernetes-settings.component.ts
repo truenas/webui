@@ -19,8 +19,8 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class KubernetesSettingsComponent implements FormConfiguration {
-  queryCall = 'kubernetes.config';
-  editCall = 'kubernetes.update';
+  queryCall: 'kubernetes.config' = 'kubernetes.config';
+  editCall: 'kubernetes.update' = 'kubernetes.update';
   isEditJob = true;
   private dialogRef: any;
   private newEnableContainerImageUpdate = true;

@@ -17,11 +17,11 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [TaskService],
 })
 export class ScrubFormComponent implements FormConfiguration {
-  queryCall = 'pool.scrub.query';
+  queryCall: 'pool.scrub.query' = 'pool.scrub.query';
   queryKey = 'id';
   pk: number;
-  editCall = 'pool.scrub.update';
-  addCall = 'pool.scrub.create';
+  editCall: 'pool.scrub.update' = 'pool.scrub.update';
+  addCall: 'pool.scrub.create' = 'pool.scrub.create';
   protected entityForm: EntityFormComponent;
   isEntity = true;
   protected preTaskName = 'scrub';

@@ -16,10 +16,10 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 
 export class WebdavFormComponent implements FormConfiguration {
-  queryCall = 'sharing.webdav.query';
+  queryCall: 'sharing.webdav.query' = 'sharing.webdav.query';
   queryKey = 'id';
-  addCall = 'sharing.webdav.create';
-  editCall = 'sharing.webdav.update';
+  addCall: 'sharing.webdav.create' = 'sharing.webdav.create';
+  editCall: 'sharing.webdav.update' = 'sharing.webdav.update';
   route_success: string[] = ['sharing', 'webdav'];
   isEntity = true;
 

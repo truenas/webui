@@ -14,7 +14,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 
 export class ServiceDDNSComponent implements FormConfiguration {
-  addCall = 'dyndns.update';
+  addCall: 'dyndns.update' = 'dyndns.update';
   title = helptext.formTitle;
   route_success: string[] = ['services'];
 

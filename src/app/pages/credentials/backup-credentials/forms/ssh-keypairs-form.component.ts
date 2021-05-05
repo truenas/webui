@@ -18,10 +18,10 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class SshKeypairsFormComponent implements FormConfiguration {
-  queryCall = 'keychaincredential.query';
+  queryCall: 'keychaincredential.query' = 'keychaincredential.query';
   queryCallOption: any[];
-  addCall = 'keychaincredential.create';
-  editCall = 'keychaincredential.update';
+  addCall: 'keychaincredential.create' = 'keychaincredential.create';
+  editCall: 'keychaincredential.update' = 'keychaincredential.update';
   isEntity = true;
   protected entityForm: any;
   protected isOneColumnForm = true;

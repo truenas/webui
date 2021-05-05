@@ -42,7 +42,7 @@ export class ZvolFormComponent implements FormConfiguration {
   pk: any;
   protected path: string;
   sub: Subscription;
-  queryCall = 'pool.dataset.query';
+  queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   protected compression: any;
   advanced_field: any[] = ['volblocksize'];
   isBasicMode = true;

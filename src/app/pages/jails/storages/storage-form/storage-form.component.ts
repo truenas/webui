@@ -27,7 +27,7 @@ interface MountPoint {
   template: '<entity-form *ngIf="isReady" [conf]="this"></entity-form>',
 })
 export class StorageFormComponent implements FormConfiguration, OnInit {
-  queryCall = 'jail.fstab';
+  queryCall: 'jail.fstab' = 'jail.fstab';
   route_success: string[] = ['jails', 'storage'];
   isEntity = true;
   pk: string;

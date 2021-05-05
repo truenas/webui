@@ -16,9 +16,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 export class InitshutdownFormComponent implements FormConfiguration {
   title: string;
-  queryCall = 'initshutdownscript.query';
-  addCall = 'initshutdownscript.create';
-  editCall = 'initshutdownscript.update';
+  queryCall: 'initshutdownscript.query' = 'initshutdownscript.query';
+  addCall: 'initshutdownscript.create' = 'initshutdownscript.create';
+  editCall: 'initshutdownscript.update' = 'initshutdownscript.update';
   customFilter: any[] = [];
   protected entityForm: EntityFormComponent;
   isEntity = true;

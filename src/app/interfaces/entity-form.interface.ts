@@ -4,6 +4,7 @@ import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-set
 import { Subject } from 'rxjs';
 import { CoreEvent } from 'app/core/services/core.service';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 export interface FormConfiguration {
   fieldSets?: FieldSets | FieldSet[];
@@ -12,10 +13,10 @@ export interface FormConfiguration {
   target?: Subject<CoreEvent>;
   resource_name?: string;
   isEntity?: boolean;
-  addCall?: string;
-  editCall?: string;
+  addCall?: ApiMethod;
+  editCall?: ApiMethod;
   isEditJob?: boolean;
-  queryCall?: string;
+  queryCall?: ApiMethod;
   queryCallOption?: any[];
   queryKey?: string; // use this to define your id for websocket call
   isNew?: boolean;

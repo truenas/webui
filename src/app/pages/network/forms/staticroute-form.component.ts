@@ -12,10 +12,10 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class StaticRouteFormComponent implements FormConfiguration {
-  queryCall = 'staticroute.query';
+  queryCall: 'staticroute.query' = 'staticroute.query';
   queryKey = 'id';
-  addCall = 'staticroute.create';
-  editCall = 'staticroute.update';
+  addCall: 'staticroute.create' = 'staticroute.create';
+  editCall: 'staticroute.update' = 'staticroute.update';
 
   isEntity = true;
   protected isOneColumnForm = true;

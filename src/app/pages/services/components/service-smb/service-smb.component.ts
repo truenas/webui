@@ -22,7 +22,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 
 export class ServiceSMBComponent implements FormConfiguration {
-  queryCall = 'smb.config';
+  queryCall: 'smb.config' = 'smb.config';
   route_success: string[] = ['services'];
   formGroup: any;
   error: string;

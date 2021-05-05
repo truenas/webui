@@ -18,8 +18,8 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class CertificateEditComponent implements FormConfiguration {
-  queryCall = 'certificate.query';
-  editCall = 'certificate.update';
+  queryCall: 'certificate.query' = 'certificate.query';
+  editCall: 'certificate.update' = 'certificate.update';
   isEntity = true;
   title = helptext_system_certificates.edit.title;
   private viewButtonText = helptext_system_certificates.viewButton.certificate;

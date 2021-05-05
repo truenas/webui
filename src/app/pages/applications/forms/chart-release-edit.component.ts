@@ -23,10 +23,10 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ChartReleaseEditComponent implements FormConfiguration {
-  queryCall = 'chart.release.query';
+  queryCall: 'chart.release.query' = 'chart.release.query';
   queryCallOption: any[];
   customFilter: any[];
-  editCall = 'chart.release.update';
+  editCall: 'chart.release.update' = 'chart.release.update';
   isEntity = true;
   protected entityForm: EntityFormComponent;
   private entityUtils = new EntityUtils();

@@ -13,9 +13,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 export class KerberosRealmsFormComponent implements FormConfiguration {
   title: string;
-  addCall = 'kerberos.realm.create';
-  editCall = 'kerberos.realm.update';
-  queryCall = 'kerberos.realm.query';
+  addCall: 'kerberos.realm.create' = 'kerberos.realm.create';
+  editCall: 'kerberos.realm.update' = 'kerberos.realm.update';
+  queryCall: 'kerberos.realm.query' = 'kerberos.realm.query';
   pk: any;
   queryKey = 'id';
   isEntity = true;

@@ -13,9 +13,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 export class KerberosKeytabsFormComponent implements FormConfiguration {
   title: string;
-  addCall = 'kerberos.keytab.create';
-  editCall = 'kerberos.keytab.update';
-  queryCall = 'kerberos.keytab.query';
+  addCall: 'kerberos.keytab.create' = 'kerberos.keytab.create';
+  editCall: 'kerberos.keytab.update' = 'kerberos.keytab.update';
+  queryCall: 'kerberos.keytab.query' = 'kerberos.keytab.query';
   pk: any;
   queryKey = 'id';
   isEntity = true;

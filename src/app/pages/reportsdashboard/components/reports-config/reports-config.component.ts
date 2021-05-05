@@ -11,7 +11,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 export class ReportsConfigComponent implements FormConfiguration {
   job: any = {};
-  queryCall = 'reporting.config';
+  queryCall: 'reporting.config' = 'reporting.config';
   title: string;
   isOneColumnForm: boolean;
   entityForm: any;

@@ -18,7 +18,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 export class ServiceSNMPComponent implements FormConfiguration {
   updateCall = 'snmp.update';
-  queryCall = 'snmp.config';
+  queryCall: 'snmp.config' = 'snmp.config';
   route_success: string[] = ['services'];
   title = helptext.formTitle;
   fieldConfig: FieldConfig[] = [];

@@ -13,7 +13,6 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [],
 })
 export class LicenseComponent implements FormConfiguration {
-  queryCall = 'none';
   updateCall: 'system.license_update' = 'system.license_update';
   protected isOneColumnForm = true;
   fieldSets: FieldSet[] = [

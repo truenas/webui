@@ -21,9 +21,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 export class CloudCredentialsFormComponent implements FormConfiguration {
   isEntity = true;
-  addCall = 'cloudsync.credentials.create';
-  queryCall = 'cloudsync.credentials.query';
-  editCall = 'cloudsync.credentials.update';
+  addCall: 'cloudsync.credentials.create' = 'cloudsync.credentials.create';
+  queryCall: 'cloudsync.credentials.query' = 'cloudsync.credentials.query';
+  editCall: 'cloudsync.credentials.update' = 'cloudsync.credentials.update';
   queryCallOption: any[];
   protected formGroup: FormGroup;
   protected id: any;

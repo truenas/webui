@@ -20,8 +20,8 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 export class ConfigurationComponent implements FormConfiguration {
   // protected resource_name: string = 'network/globalconfiguration/';
-  queryCall = 'network.configuration.config';
-  updateCall = 'network.configuration.update';
+  queryCall: 'network.configuration.config' = 'network.configuration.config';
+  updateCall: 'network.configuration.update' = 'network.configuration.update';
   isEntity = false;
   fieldConfig: FieldConfig[] = [];
   fieldSets = new FieldSets([

@@ -24,7 +24,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 export class LdapComponent implements FormConfiguration {
   title: string = helptext.title;
   isEntity = false;
-  queryCall = 'ldap.config';
+  queryCall: 'ldap.config' = 'ldap.config';
   upodateCall = 'ldap.update';
   isBasicMode = true;
   protected idmapBacked: any;

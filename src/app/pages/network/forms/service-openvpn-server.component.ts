@@ -15,7 +15,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 
 export class OpenvpnServerComponent implements FormConfiguration {
-  queryCall = 'openvpn.server.config';
+  queryCall: 'openvpn.server.config' = 'openvpn.server.config';
   protected certID: number;
   protected serverAddress: string;
   protected entityEdit: any;

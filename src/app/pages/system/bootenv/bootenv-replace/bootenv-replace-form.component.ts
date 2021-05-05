@@ -14,7 +14,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 export class BootEnvReplaceFormComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot', 'status'];
   isEntity = true;
-  addCall = 'boot.replace';
+  addCall: 'boot.replace' = 'boot.replace';
   pk: any;
   isNew = true;
 

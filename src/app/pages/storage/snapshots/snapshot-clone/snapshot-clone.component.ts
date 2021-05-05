@@ -23,7 +23,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 export class SnapshotCloneComponent implements FormConfiguration {
   route_success: string[] = ['storage', 'pools'];
   route_cancel: string[] = ['storage', 'snapshots'];
-  addCall = 'zfs.snapshot.clone';
+  addCall: 'zfs.snapshot.clone' = 'zfs.snapshot.clone';
   pk: any;
   isEntity = true;
   isNew = true;

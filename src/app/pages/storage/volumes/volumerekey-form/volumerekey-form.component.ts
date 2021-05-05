@@ -17,7 +17,7 @@ import helptext from '../../../../helptext/storage/volumes/volume-key';
 export class VolumeRekeyFormComponent implements FormConfiguration {
   saveSubmitText = T('Reset Encryption');
 
-  queryCall = 'pool.query';
+  queryCall: 'pool.query' = 'pool.query';
   queryKey = 'id';
   route_success: string[] = ['storage', 'pools'];
   isNew = false;

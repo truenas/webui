@@ -24,8 +24,8 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 })
 export class VmFormComponent implements FormConfiguration {
-  queryCall = 'vm.query';
-  editCall = 'vm.update';
+  queryCall: 'vm.query' = 'vm.query';
+  editCall: 'vm.update' = 'vm.update';
   isEntity = true;
   route_success: string[] = ['vm'];
   protected entityForm: any;

@@ -232,7 +232,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
       this.makeFormGroup();
 
-      if (this.conf.queryCall === 'none') {
+      if (!this.conf.queryCall) {
         this.getFunction = this.noGetFunction();
       } else if (this.conf.queryCall) {
         if (this.pk) {
@@ -263,7 +263,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         this.getFunction = this.rest.get(getQuery, {}, this.conf.route_usebaseUrl);
       }
 
-      if (!this.isNew && this.conf.queryCall !== 'none' && this.getFunction) {
+      if (!this.isNew && this.conf.queryCall && this.getFunction) {
         this.loader.open();
         this.loaderOpen = true;
         this.getFunction.subscribe((res: any) => {

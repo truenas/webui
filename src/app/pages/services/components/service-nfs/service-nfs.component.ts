@@ -17,7 +17,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 
 export class ServiceNFSComponent implements FormConfiguration {
-  queryCall = 'nfs.config';
+  queryCall: 'nfs.config' = 'nfs.config';
   route_success: string[] = ['services'];
   productType = window.localStorage.getItem('product_type') as ProductType;
   hideOnScale = ['servers', 'allow_nonroot', 'mountd_log', 'statd_lockd_log'];

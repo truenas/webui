@@ -26,9 +26,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 export class NFSFormComponent implements FormConfiguration {
   route_success: string[] = ['sharing', 'nfs'];
-  queryCall = 'sharing.nfs.query';
-  editCall = 'sharing.nfs.update';
-  addCall = 'sharing.nfs.create';
+  queryCall: 'sharing.nfs.query' = 'sharing.nfs.query';
+  editCall: 'sharing.nfs.update' = 'sharing.nfs.update';
+  addCall: 'sharing.nfs.create' = 'sharing.nfs.create';
   pk: number;
   queryKey = 'id';
   isEntity = true;

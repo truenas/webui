@@ -14,9 +14,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class CatalogAddFormComponent implements FormConfiguration {
-  queryCall = 'catalog.query';
+  queryCall: 'catalog.query' = 'catalog.query';
   customFilter: any[];
-  addCall = 'catalog.create';
+  addCall: 'catalog.create' = 'catalog.create';
   isEntity = true;
   protected entityForm: EntityFormComponent;
   title = helptext.catalogForm.title;

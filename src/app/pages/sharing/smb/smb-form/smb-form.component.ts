@@ -25,9 +25,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class SMBFormComponent implements FormConfiguration, OnDestroy {
-  queryCall = 'sharing.smb.query';
-  addCall = 'sharing.smb.create';
-  editCall = 'sharing.smb.update';
+  queryCall: 'sharing.smb.query' = 'sharing.smb.query';
+  addCall: 'sharing.smb.create' = 'sharing.smb.create';
+  editCall: 'sharing.smb.update' = 'sharing.smb.update';
   pk: number;
   queryKey = 'id';
   route_success: string[] = ['sharing', 'smb'];

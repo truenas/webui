@@ -19,7 +19,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 
 export class FailoverComponent implements FormConfiguration, OnDestroy {
-  queryCall = 'failover.config';
+  queryCall: 'failover.config' = 'failover.config';
   updateCall = 'failover.update';
   entityForm: any;
   protected failoverDisableSubscription: any;

@@ -13,7 +13,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 
 export class CconfigureRYSNCComponent implements FormConfiguration {
-  queryCall = 'rsyncd.config';
+  queryCall: 'rsyncd.config' = 'rsyncd.config';
   title = helptext.configureFormTitle;
 
   route_success: string[] = ['services'];

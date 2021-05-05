@@ -18,8 +18,8 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [SystemGeneralService],
 })
 export class ServiceFTPComponent implements FormConfiguration, OnInit {
-  editCall = 'ftp.update';
-  queryCall = 'ftp.config';
+  editCall: 'ftp.update' = 'ftp.update';
+  queryCall: 'ftp.config' = 'ftp.config';
   route_success: string[] = ['services'];
 
   isBasicMode = true;

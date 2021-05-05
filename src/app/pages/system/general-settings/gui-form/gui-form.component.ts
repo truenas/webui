@@ -24,7 +24,6 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [],
 })
 export class GuiFormComponent implements FormConfiguration, OnDestroy {
-  queryCall = 'none';
   updateCall = 'system.general.update';
   sortLanguagesByName = true;
   languageList: Option[] = [];

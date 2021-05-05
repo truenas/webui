@@ -23,7 +23,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [],
 })
 export class KernelFormComponent implements FormConfiguration, OnDestroy {
-  queryCall = 'system.advanced.config';
+  queryCall: 'system.advanced.config' = 'system.advanced.config';
   updateCall = 'system.advanced.update';
   protected isOneColumnForm = true;
   private getDataFromDash: Subscription;

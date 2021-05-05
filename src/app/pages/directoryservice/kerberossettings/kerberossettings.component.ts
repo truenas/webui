@@ -11,9 +11,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 export class KerberosSettingsComponent implements FormConfiguration {
   title = helptext.ks_label;
-  queryCall = 'kerberos.config';
-  addCall = 'kerberos.update';
-  editCall = 'kerberos.update';
+  queryCall: 'kerberos.config' = 'kerberos.config';
+  addCall: 'kerberos.update' = 'kerberos.update';
+  editCall: 'kerberos.update' = 'kerberos.update';
   protected isOneColumnForm = true;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [

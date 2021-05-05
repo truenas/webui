@@ -12,9 +12,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class NTPServerFormComponent implements FormConfiguration {
-  addCall = 'system.ntpserver.create';
-  editCall = 'system.ntpserver.update';
-  queryCall = 'system.ntpserver.query';
+  addCall: 'system.ntpserver.create' = 'system.ntpserver.create';
+  editCall: 'system.ntpserver.update' = 'system.ntpserver.update';
+  queryCall: 'system.ntpserver.query' = 'system.ntpserver.query';
   isEntity = true;
   title = helptext.header;
   protected isOneColumnForm = true;

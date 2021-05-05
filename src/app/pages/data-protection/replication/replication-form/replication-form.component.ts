@@ -42,10 +42,10 @@ export class ReplicationFormComponent implements FormConfiguration {
     type: 'notice',
     content: '',
   };
-  queryCall = 'replication.query';
+  queryCall: 'replication.query' = 'replication.query';
   queryCallOption: any[] = [];
-  addCall = 'replication.create';
-  editCall = 'replication.update';
+  addCall: 'replication.create' = 'replication.create';
+  editCall: 'replication.update' = 'replication.update';
   isEntity = true;
   protected entityForm: any;
   protected queryRes: any;

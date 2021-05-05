@@ -19,7 +19,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 export class ServiceSSHComponent implements FormConfiguration, OnInit {
   // Form Layout
   isBasicMode = true;
-  queryCall = 'ssh.config';
+  queryCall: 'ssh.config' = 'ssh.config';
   title = helptext.formTitle;
   route_success: string[] = ['services'];
 

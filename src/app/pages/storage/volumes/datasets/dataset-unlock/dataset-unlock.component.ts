@@ -26,7 +26,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
-  queryCall = 'pool.dataset.encryption_summary';
+  queryCall: 'pool.dataset.encryption_summary' = 'pool.dataset.encryption_summary';
   updateCall = 'pool.dataset.unlock';
   route_success: string[] = ['storage'];
   isEntity = true;

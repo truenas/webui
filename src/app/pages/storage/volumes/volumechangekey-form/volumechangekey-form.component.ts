@@ -26,7 +26,7 @@ import helptext from '../../../../helptext/storage/volumes/volume-key';
 export class VolumeChangekeyFormComponent implements FormConfiguration {
   saveSubmitText = T('Change Passphrase');
 
-  queryCall = 'pool.query';
+  queryCall: 'pool.query' = 'pool.query';
   queryKey = 'id';
   route_return: string[] = ['storage', 'pools'];
   isNew = false;

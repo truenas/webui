@@ -20,7 +20,6 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [],
 })
 export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
-  queryCall = 'none';
   protected updateCall = 'system.general.update';
   sortLanguagesByName = true;
   languageList: any = [];

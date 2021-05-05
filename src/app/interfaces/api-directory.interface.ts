@@ -13,9 +13,12 @@ export type ApiDirectory = {
 
   // AFP
   'afp.bindip_choices': { params: any; response: any };
+  'afp.config': { params: any; response: any };
 
   // Acme
   'acme.dns.authenticator.query': { params: any; response: any };
+  'acme.dns.authenticator.create': { params: any; response: any };
+  'acme.dns.authenticator.update': { params: any; response: any };
   'acme.dns.authenticator.authenticator_schemas': { params: any; response: any };
 
   // Alert
@@ -52,6 +55,7 @@ export type ApiDirectory = {
   'boot.replace': { params: any; response: any };
   'boot.get_state': { params: any; response: any };
   'boot.detach': { params: any; response: any };
+  'boot.attach': { params: any; response: any };
 
   // Bootenv
   'bootenv.create': { params: any; response: any };
@@ -64,12 +68,15 @@ export type ApiDirectory = {
 
   // Catalog
   'catalog.query': { params: any; response: any };
+  'catalog.update': { params: any; response: any };
+  'catalog.create': { params: any; response: any };
   'catalog.items': { params: any; response: any };
   'catalog.sync': { params: any; response: any };
 
   // Certificate
   'certificate.create': { params: any; response: any };
   'certificate.query': { params: any; response: any };
+  'certificate.update': { params: any; response: any };
   'certificate.ec_curve_choices': { params: any; response: any };
   'certificate.country_choices': { params: any; response: any };
   'certificate.extended_key_usage_choices': { params: any; response: any };
@@ -86,6 +93,8 @@ export type ApiDirectory = {
   // Chart
   'chart.release.pod_logs_choices': { params: any; response: any };
   'chart.release.query': { params: any; response: any };
+  'chart.release.create': { params: any; response: any };
+  'chart.release.update': { params: any; response: any };
   'chart.release.scale': { params: any; response: any };
   'chart.release.pod_console_choices': { params: any; response: any };
   'chart.release.nic_choices': { params: any; response: any };
@@ -104,6 +113,8 @@ export type ApiDirectory = {
   // Cloudsync
   'cloudsync.providers': { params: any; response: any };
   'cloudsync.credentials.query': { params: any; response: any };
+  'cloudsync.credentials.create': { params: any; response: any };
+  'cloudsync.credentials.update': { params: any; response: any };
   'cloudsync.credentials.verify': { params: any; response: any };
   'cloudsync.onedrive_list_drives': { params: any; response: any };
   'cloudsync.list_buckets': { params: any; response: any };
@@ -119,18 +130,22 @@ export type ApiDirectory = {
   // Container
   'container.config': { params: any; response: any };
   'container.update': { params: any; response: any };
+  'container.image.query': { params: any; response: any };
+  'container.image.pull': { params: any; response: any };
 
   // Docker
   'docker.images.query': { params: any; response: any };
 
   // DynDNS
   'dyndns.provider_choices': { params: any; response: any };
+  'dyndns.update': { params: any; response: any };
 
   // Datastore
   'datastore.delete': { params: any; response: any };
 
   // Disk
   'disk.query': { params: any; response: any };
+  'disk.update': { params: any; response: any };
   'disk.get_unused': { params: any; response: any };
   'disk.get_encrypted': { params: any; response: any };
   'disk.temperatures': { params: any; response: any };
@@ -159,6 +174,7 @@ export type ApiDirectory = {
   'failover.get_ips': { params: any; response: string[] };
   'failover.node': { params: any; response: any };
   'failover.disabled_reasons': { params: void; response: FailoverDisabledReason[] };
+  'failover.config': { params: any; response: any };
 
   // FCPort
   'fcport.update': { params: any; response: any };
@@ -170,6 +186,7 @@ export type ApiDirectory = {
   // Keychain Credential
   'keychaincredential.create': { params: any; response: any };
   'keychaincredential.query': { params: any; response: any };
+  'keychaincredential.update': { params: any; response: any };
   'keychaincredential.generate_ssh_key_pair': { params: any; response: any };
   'keychaincredential.remote_ssh_host_key_scan': { params: any; response: any };
   'keychaincredential.delete': { params: any; response: any };
@@ -177,6 +194,7 @@ export type ApiDirectory = {
 
   // Kubernetes
   'kubernetes.config': { params: any; response: any };
+  'kubernetes.update': { params: any; response: any };
   'kubernetes.bindip_choices': { params: any; response: any };
 
   // Multipath
@@ -188,6 +206,9 @@ export type ApiDirectory = {
 
   // idmap
   'idmap.backend_options': { params: any; response: any };
+  'idmap.query': { params: any; response: any };
+  'idmap.create': { params: any; response: any };
+  'idmap.update': { params: any; response: any };
 
   // Interface
   'interface.websocket_local_ip': { params: any; response: any };
@@ -199,6 +220,8 @@ export type ApiDirectory = {
   'interface.lag_ports_choices': { params: any; response: any };
   'interface.vlan_parent_interface_choices': { params: any; response: any };
   'interface.query': { params: any; response: any };
+  'interface.create': { params: any; response: any };
+  'interface.update': { params: any; response: any };
   'interface.has_pending_changes': { params: any; response: any };
   'interface.checkin_waiting': { params: any; response: any };
   'interface.checkin': { params: any; response: any };
@@ -212,6 +235,8 @@ export type ApiDirectory = {
   'iscsi.extent.query': { params: any; response: any };
   'iscsi.auth.query': { params: any; response: any };
   'iscsi.global.sessions': { params: any; response: any };
+  'iscsi.global.config': { params: any; response: any };
+  'iscsi.global.update': { params: any; response: any };
   'iscsi.targetextent.create': { params: any; response: any };
   'iscsi.targetextent.query': { params: any; response: any };
   'iscsi.targetextent.update': { params: any; response: any };
@@ -234,6 +259,7 @@ export type ApiDirectory = {
 
   // Group
   'group.query': { params: any; response: any };
+  'group.create': { params: any; response: any };
   'group.update': { params: any; response: any };
   'group.delete': { params: any; response: any };
   'group.get_group_obj': { params: any; response: any };
@@ -264,9 +290,15 @@ export type ApiDirectory = {
 
   // Kerberos
   'kerberos.realm.query': { params: any; response: any };
+  'kerberos.realm.create': { params: any; response: any };
+  'kerberos.realm.update': { params: any; response: any };
   'kerberos.keytab.has_nfs_principal': { params: any; response: any };
   'kerberos.config': { params: any; response: any };
+  'kerberos.update': { params: any; response: any };
   'kerberos.keytab.kerberos_principal_choices': { params: any; response: any };
+  'kerberos.keytab.create': { params: any; response: any };
+  'kerberos.keytab.update': { params: any; response: any };
+  'kerberos.keytab.query': { params: any; response: any };
 
   'kmip.update': { params: any; response: any };
   'kmip.config': { params: any; response: any };
@@ -283,6 +315,7 @@ export type ApiDirectory = {
   // LLDP
   'lldp.country_choices': { params: any; response: any };
   'lldp.update': { params: any; response: any };
+  'lldp.config': { params: any; response: any };
 
   // NIS
   'nis.update': { params: any; response: any };
@@ -303,6 +336,7 @@ export type ApiDirectory = {
   'openvpn.server.authentication_algorithm_choices': { params: any; response: any };
   'openvpn.server.client_configuration_generation': { params: any; response: any };
   'openvpn.server.update': { params: any; response: any };
+  'openvpn.server.config': { params: any; response: any };
 
   // Plugin
   'plugin.defaults': { params: any; response: any };
@@ -330,6 +364,8 @@ export type ApiDirectory = {
   'pool.dataset.query': { params: any; response: any[] };
   'pool.scrub.delete': { params: any; response: any };
   'pool.scrub.query': { params: any; response: any };
+  'pool.scrub.update': { params: any; response: any };
+  'pool.scrub.create': { params: any; response: any };
   'pool.dataset.compression_choices': { params: any; response: any };
   'pool.dataset.encryption_algorithm_choices': { params: any; response: any };
   'pool.offline': { params: any; response: any };
@@ -349,6 +385,10 @@ export type ApiDirectory = {
   'pool.dataset.update': { params: any; response: any };
   'pool.dataset.create': { params: any; response: any };
   'pool.is_upgraded': { params: any; response: any };
+  'pool.dataset.encryption_summary': { params: any; response: any };
+  'pool.dataset.unlock': { params: any; response: any };
+  'pool.resilver.config': { params: any; response: any };
+  'pool.resilver.update': { params: any; response: any };
 
   // Replication
   'replication.list_datasets': { params: any; response: any };
@@ -365,31 +405,41 @@ export type ApiDirectory = {
   // Rsync
   'rsynctask.run': { params: any; response: any };
   'rsynctask.query': { params: any; response: any };
+  'rsynctask.create': { params: any; response: any };
+  'rsynctask.update': { params: any; response: any };
   'rsynctask.delete': { params: any; response: any };
 
   // Rsyncd
   'rsyncd.update': { params: any; response: any };
+  'rsyncd.config': { params: any; response: any };
 
   // Rsyncmod
   'rsyncmod.query': { params: any; response: any };
   'rsyncmod.update': { params: any; response: any };
+  'rsyncmod.create': { params: any; response: any };
 
   // Reporting
   'reporting.get_data': { params: any; response: any };
   'reporting.update': { params: any; response: any };
+  'reporting.config': { params: any; response: any };
 
   // S3
   's3.bindip_choices': { params: any; response: any };
+  's3.config': { params: any; response: any };
+  's3.update': { params: any; response: any };
 
   // SMB
   'smb.bindip_choices': { params: any; response: any };
   'smb.unixcharset_choices': { params: any; response: any };
   'smb.get_smb_ha_mode': { params: any; response: any };
   'smb.update': { params: any; response: any };
+  'smb.config': { params: any; response: any };
   'smb.sharesec.query': { params: any; response: any };
+  'smb.sharesec.update': { params: any; response: any };
 
   // SSH
   'ssh.update': { params: any; response: any };
+  'ssh.config': { params: any; response: any };
   'ssh.bindiface_choices': { params: any; response: any };
 
   // System
@@ -403,6 +453,8 @@ export type ApiDirectory = {
   'system.general.update': { params: any; response: any };
   'system.ntpserver.delete': { params: any; response: any };
   'system.ntpserver.query': { params: any; response: any };
+  'system.ntpserver.create': { params: any; response: any };
+  'system.ntpserver.update': { params: any; response: any };
   'system.general.config': { params: any; response: any };
   'system.general.kbdmap_choices': { params: any; response: any };
   'system.general.language_choices': { params: any; response: any };
@@ -422,7 +474,11 @@ export type ApiDirectory = {
   // SMART
   'smart.test.disk_choices': { params: any; response: any };
   'smart.update': { params: any; response: any };
+  'smart.config': { params: any; response: any };
   'smart.test.manual_test': { params: any; response: any };
+  'smart.test.query': { params: any; response: any };
+  'smart.test.create': { params: any; response: any };
+  'smart.test.update': { params: any; response: any };
 
   // SystemDataset
   'systemdataset.pool_choices': { params: any; response: any };
@@ -441,14 +497,32 @@ export type ApiDirectory = {
 
   // Sharing
   'sharing.smb.query': { params: any; response: any[] };
+  'sharing.smb.create': { params: any; response: any[] };
+  'sharing.smb.update': { params: any; response: any[] };
   'sharing.smb.presets': { params: any; response: any[] };
   'sharing.afp.query': { params: any; response: any };
+  'sharing.afp.update': { params: any; response: any };
+  'sharing.afp.create': { params: any; response: any };
+  'sharing.nfs.query': { params: any; response: any };
+  'sharing.nfs.update': { params: any; response: any };
+  'sharing.nfs.create': { params: any; response: any };
+  'sharing.webdav.query': { params: any; response: any };
+  'sharing.webdav.update': { params: any; response: any };
+  'sharing.webdav.create': { params: any; response: any };
 
   // Tunable
   'tunable.tunable_type_choices': { params: any; response: any };
+  'tunable.query': { params: any; response: any };
+  'tunable.update': { params: any; response: any };
+  'tunable.create': { params: any; response: any };
 
   // TFTP
   'tftp.update': { params: any; response: any };
+  'tftp.config': { params: any; response: any };
+
+  // FTP
+  'ftp.update': { params: any; response: any };
+  'ftp.config': { params: any; response: any };
 
   // Truecommand
   'truecommand.config': { params: any; response: any };
@@ -496,6 +570,7 @@ export type ApiDirectory = {
 
   // User
   'user.update': { params: any; response: any };
+  'user.create': { params: any; response: any };
   'user.query': { params: QueryParams<User>; response: User[] };
   'user.set_root_password': { params: any; response: any };
   'user.delete': { params: any; response: any };
@@ -507,6 +582,7 @@ export type ApiDirectory = {
 
   // UPS
   'ups.update': { params: any; response: any };
+  'ups.config': { params: any; response: any };
   'ups.driver_choices': { params: any; response: any };
   'ups.port_choices': { params: any; response: any };
 
@@ -523,6 +599,25 @@ export type ApiDirectory = {
   'zfs.dataset.query': { params: any; response: any };
   'zfs.snapshot.query': { params: any; response: any };
   'zfs.snapshot.delete': { params: any; response: any };
+  'zfs.snapshot.clone': { params: any; response: any };
+
+  // staticroute
+  'staticroute.query': { params: any; response: any };
+  'staticroute.create': { params: any; response: any };
+  'staticroute.update': { params: any; response: any };
+
+  // SNMP
+  'snmp.config': { params: any; response: any };
+  'snmp.update': { params: any; response: any };
+
+  // WEBDAV
+  'webdav.config': { params: any; response: any };
+  'webdav.update': { params: any; response: any };
+
+  // InitShutdownScript
+  'initshutdownscript.query': { params: any; response: any };
+  'initshutdownscript.create': { params: any; response: any };
+  'initshutdownscript.update': { params: any; response: any };
 };
 
 /**

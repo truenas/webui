@@ -14,9 +14,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class AcmednsFormComponent implements FormConfiguration {
-  addCall = 'acme.dns.authenticator.create';
-  queryCall = 'acme.dns.authenticator.query';
-  editCall = 'acme.dns.authenticator.update';
+  addCall: 'acme.dns.authenticator.create' = 'acme.dns.authenticator.create';
+  queryCall: 'acme.dns.authenticator.query' = 'acme.dns.authenticator.query';
+  editCall: 'acme.dns.authenticator.update' = 'acme.dns.authenticator.update';
   isEntity = true;
   protected isOneColumnForm = true;
   title: string;

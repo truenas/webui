@@ -15,8 +15,8 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [TaskService],
 })
 export class ResilverComponent implements FormConfiguration {
-  queryCall = 'pool.resilver.config';
-  editCall = 'pool.resilver.update';
+  queryCall: 'pool.resilver.config' = 'pool.resilver.config';
+  editCall: 'pool.resilver.update' = 'pool.resilver.update';
   route_success: string[] = ['storage'];
 
   fieldSets: FieldSet[] = [
