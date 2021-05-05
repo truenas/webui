@@ -1,30 +1,35 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { CoreEvent } from 'app/core/services/core.service';
+import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
+import { Service } from 'app/interfaces/service.interface';
+import * as ipRegex from 'ip-regex';
+import { Subject } from 'rxjs';
 import { Subscription } from 'rxjs/Subscription';
 import { ProductType } from '../../enums/product-type.enum';
+import helptext from '../../helptext/network/interfaces/interfaces-list';
 
 import {
-  WebSocketService, NetworkService, DialogService, StorageService,
-  AppLoaderService, ServicesService,
+  AppLoaderService,
+  DialogService,
+  NetworkService,
+  ServicesService,
+  StorageService,
+  WebSocketService,
 } from '../../services';
-import { T } from '../../translate-marker';
-import helptext from '../../helptext/network/interfaces/interfaces-list';
-import { CardWidgetConf } from './card-widget/card-widget.component';
 import { ModalService } from '../../services/modal.service';
+import { T } from '../../translate-marker';
+import { EntityUtils } from '../common/entity/utils';
+import { CardWidgetConf } from './card-widget/card-widget.component';
 import { ConfigurationComponent } from './forms/configuration.component';
 import { InterfacesFormComponent } from './forms/interfaces-form.component';
-import { StaticRouteFormComponent } from './forms/staticroute-form.component';
 import { IPMIFromComponent } from './forms/ipmi-form.component';
 import { OpenvpnClientComponent } from './forms/service-openvpn-client.component';
 import { OpenvpnServerComponent } from './forms/service-openvpn-server.component';
-import { CoreEvent } from 'app/core/services/core.service';
-import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { EntityUtils } from '../common/entity/utils';
-import * as ipRegex from 'ip-regex';
-import { ServiceStatus } from 'app/enums/service-status.enum';
+import { StaticRouteFormComponent } from './forms/staticroute-form.component';
 
 @Component({
   selector: 'app-interfaces-list',
@@ -154,10 +159,10 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     dataSourceHelper: this.openvpnDataSourceHelper,
     getActions: this.getOpenVpnActions.bind(this),
     isActionVisible: this.isOpenVpnActionVisible,
-    edit(row: any) {
-      if (row.service === 'openvpn_client') {
+    edit(row: Service) {
+      if (row.service === ServiceName.OpenVpnClient) {
         this.parent.modalService.open('slide-in-form', this.parent.openvpnClientComponent, row.id);
-      } else if (row.service === 'openvpn_server') {
+      } else if (row.service === ServiceName.OpenVpnServer) {
         this.parent.modalService.open('slide-in-form', this.parent.openvpnServerComponent, row.id);
       }
     },
