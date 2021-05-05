@@ -74,6 +74,8 @@ tests/bdd/screenshot/core/*.txt
 tests/bdd/screenshot/core/*.png
 tests/bdd/screenshot/scale/*.txt
 tests/bdd/screenshot/scale/*.png
+tests/bdd/screenshot/scale-validation/*.txt
+tests/bdd/screenshot/scale-validation/*.png
 tests/bdd/screenshot/ha-bhyve02/*.txt
 tests/bdd/screenshot/ha-tn09/*.txt
 tests/bdd/screenshot/ha-bhyve02/*.png
