@@ -7,21 +7,22 @@ import * as _ from 'lodash';
 import helptext from '../../../../../../helptext/services/components/service-rsync';
 import { UserService, WebSocketService } from '../../../../../../services';
 import { FieldConfig } from '../../../../../common/entity/entity-form/models/field-config.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-rsync-configuration-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class RYSNCConfigurationFormComponent {
-  protected queryCall = 'rsyncmod.query';
-  protected route_success: string[] = ['services', 'rsync', 'rsync-module'];
-  protected isEntity = true;
+export class RYSNCConfigurationFormComponent implements FormConfiguration {
+  queryCall: 'rsyncmod.query' = 'rsyncmod.query';
+  route_success: string[] = ['services', 'rsync', 'rsync-module'];
+  isEntity = true;
   formGroup: FormGroup;
-  protected pk: any;
+  pk: any;
   title = helptext.moduleFormTitle;
-  protected addCall = 'rsyncmod.create';
-  protected isNew: boolean;
+  addCall: 'rsyncmod.create' = 'rsyncmod.create';
+  isNew: boolean;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
     {
@@ -133,7 +134,7 @@ export class RYSNCConfigurationFormComponent {
   private rsyncmod_group: any;
   private rsyncmod_user: any;
   protected entityForm: any;
-  protected customFilter: any;
+  customFilter: any;
   constructor(protected ws: WebSocketService, protected router: Router,
     protected userService: UserService, protected route: ActivatedRoute) {
   }

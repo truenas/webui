@@ -19,16 +19,14 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
 
 import { RestService, WebSocketService, SystemGeneralService } from '../../../../services';
-import { CoreEvent } from 'app/core/services/core.service';
-import { Subject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { ModalService } from '../../../../services/modal.service';
 import { EntityTemplateDirective } from '../entity-template.directive';
 import { EntityUtils } from '../utils';
-
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from './models/field-config.interface';
 import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
@@ -36,75 +34,7 @@ import { FieldRelationService } from './services/field-relation.service';
 import { DialogService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 
-export interface Formconfiguration {
-  prerequisite?: any;
-  fieldSets?: any;
-  fieldSetDisplay?: any;
-  values?: any;
-  saveSubmitText?: any;
-  preInit?: any;
-  target?: Subject<CoreEvent>;
-  resource_name?: any;
-  isEntity?: any;
-  addCall?: any;
-  editCall?: any;
-  isEditJob?: any;
-  queryCall?: any;
-  queryCallOption?: any;
-  queryKey?: any; // use this to define your id for websocket call
-  isNew?: any;
-  pk?: any;
-  rowid?: any;
-  custom_get_query?: any;
-  fieldConfig?: FieldConfig[];
-  resourceTransformIncomingRestData?: any;
-  route_usebaseUrl?: any;
-  afterInit?: any;
-  initial?: any;
-  dataHandler?: any;
-  dataAttributeHandler?: any;
-  route_cancel?: any;
-  route_success?: any;
-  route_delete?: any;
-  custom_edit_query?: any;
-  custom_add_query?: any;
-  custActions?: any[];
-  compactCustomActions?: any[];
-  customFilter?: any[];
-  confirmSubmit?: any;
-  confirmSubmitDialog?: any;
-  afterSave?: any;
-  blurEvent?: any;
-  customEditCall?: any;
-  save_button_enabled?: any;
-  hideSaveBtn?: boolean;
-  form_message?: {
-    type: string; // info || warning
-    content: string;
-  };
-
-  afterSubmit?: any;
-  beforeSubmit?: any;
-  customSubmit?: any;
-  clean?: any;
-  errorReport?: any;
-  hide_fileds?: any;
-  isBasicMode?: any;
-  advanced_field?: any;
-  basic_field?: any;
-  route_conf?: any;
-  preHandler?: any;
-  initialCount?: any;
-  initialCount_default?: any;
-  responseOnSubmit?: any;
-  title?: any;
-  columnsOnForm?: number;
-
-  closeModalForm?(): any;
-  afterModalFormClosed?(): any; // function will called once the modal form closed
-  goBack?(): any;
-  onSuccess?(res: any): any;
-}
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'entity-form',
@@ -113,7 +43,7 @@ export interface Formconfiguration {
   providers: [EntityFormService, FieldRelationService],
 })
 export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit, AfterViewChecked {
-  @Input('conf') conf: Formconfiguration;
+  @Input('conf') conf: FormConfiguration;
 
   pk: any;
   fieldSetDisplay = 'default';
@@ -149,8 +79,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   templates: QueryList<EntityTemplateDirective>;
 
   @ViewChildren('component') components: any[];
-
-  busy: Subscription;
 
   sub: any;
   error: string;
@@ -194,7 +122,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (this.conf.fieldSets) {
       this.fieldConfig = [];
       /* Temp patch to support both FieldSet approaches */
-      this.fieldSets = this.conf.fieldSets.list ? this.conf.fieldSets.list() : this.conf.fieldSets;
+      this.fieldSets = (this.conf.fieldSets instanceof FieldSets) ? this.conf.fieldSets.list() : this.conf.fieldSets;
       for (let i = 0; i < this.fieldSets.length; i++) {
         const fieldset = this.fieldSets[i];
         if (!fieldset.divider) {
@@ -304,7 +232,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
       this.makeFormGroup();
 
-      if (this.conf.queryCall === 'none') {
+      if (!this.conf.queryCall) {
         this.getFunction = this.noGetFunction();
       } else if (this.conf.queryCall) {
         if (this.pk) {
@@ -335,7 +263,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         this.getFunction = this.rest.get(getQuery, {}, this.conf.route_usebaseUrl);
       }
 
-      if (!this.isNew && this.conf.queryCall !== 'none' && this.getFunction) {
+      if (!this.isNew && this.conf.queryCall && this.getFunction) {
         this.loader.open();
         this.loaderOpen = true;
         this.getFunction.subscribe((res: any) => {
@@ -547,11 +475,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
 
     if (this.conf.customSubmit) {
-      this.busy = this.conf.customSubmit(value);
+      this.conf.customSubmit(value);
     } else {
       this.loader.open();
       this.loaderOpen = true;
-      this.busy = this.submitFunction(value)
+      this.submitFunction(value)
         .subscribe(
           (res) => {
             this.loader.close();
@@ -678,13 +606,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
 
     data.forEach((value, index) => {
-      if (this.conf.initialCount.hasOwnProperty(name)) {
-        this.conf.initialCount[name] += 1;
-        this.conf.initialCount_default[name] += 1;
-      } else {
-        this.conf.initialCount += 1;
-        this.conf.initialCount_default += 1;
-      }
+      this.conf.initialCount += 1;
+      this.conf.initialCount_default += 1;
 
       const formGroup = this.entityFormService.createFormGroup(array_controls);
       for (const i in value) {

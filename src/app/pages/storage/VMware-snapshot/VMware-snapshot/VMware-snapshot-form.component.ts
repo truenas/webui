@@ -17,18 +17,19 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import helptext from '../../../../helptext/storage/VMware-snapshot/VMware-snapshot';
 import { first } from 'rxjs/operators';
 import { EntityUtils } from '../../../common/entity/utils';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-vmware-snapshot-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class VMwareSnapshotFormComponent {
-  protected route_success: string[] = ['storage', 'vmware-Snapshots'];
-  protected isEntity = true;
+export class VMwareSnapshotFormComponent implements FormConfiguration {
+  route_success: string[] = ['storage', 'vmware-Snapshots'];
+  isEntity = true;
   queryCall: 'vmware.query' = 'vmware.query';
   addCall: 'vmware.create' = 'vmware.create';
-  protected pk: any;
+  pk: any;
   formGroup: FormGroup;
 
   protected entityForm: any;
@@ -37,7 +38,7 @@ export class VMwareSnapshotFormComponent {
   private dataListComplete: any[];
   private fileSystemList: any[];
 
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
       name: helptext.fieldset_vmsnapshot,

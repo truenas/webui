@@ -10,6 +10,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/jails/storage';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 interface MountPoint {
   action: string;
@@ -25,13 +26,13 @@ interface MountPoint {
   selector: 'app-storage-add',
   template: '<entity-form *ngIf="isReady" [conf]="this"></entity-form>',
 })
-export class StorageFormComponent implements OnInit {
-  protected queryCall = 'jail.fstab';
-  protected route_success: string[] = ['jails', 'storage'];
-  protected isEntity = true;
-  protected pk: string;
+export class StorageFormComponent implements FormConfiguration, OnInit {
+  queryCall: 'jail.fstab' = 'jail.fstab';
+  route_success: string[] = ['jails', 'storage'];
+  isEntity = true;
+  pk: string;
   protected mountpointId: string;
-  protected queryCallOption: any;
+  queryCallOption: any;
   protected mountPointAdd: MountPoint = {
     action: 'ADD',
     source: '',
@@ -97,7 +98,7 @@ export class StorageFormComponent implements OnInit {
 
   isReady = false;
   protected mountpoint: string;
-  protected save_button_enabled: boolean;
+  save_button_enabled: boolean;
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected jailService: JailService, protected loader: AppLoaderService, protected ws: WebSocketService,
     private dialog: DialogService) {}

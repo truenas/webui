@@ -10,25 +10,26 @@ import {
   DialogService, RestService, SystemGeneralService, WebSocketService, StorageService,
 } from '../../../../services';
 import { T } from '../../../../translate-marker';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'ftp-edit',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [SystemGeneralService],
 })
-export class ServiceFTPComponent implements OnInit {
-  protected editCall = 'ftp.update';
-  protected queryCall = 'ftp.config';
-  protected route_success: string[] = ['services'];
+export class ServiceFTPComponent implements FormConfiguration, OnInit {
+  editCall: 'ftp.update' = 'ftp.update';
+  queryCall: 'ftp.config' = 'ftp.config';
+  route_success: string[] = ['services'];
 
-  protected isBasicMode = true;
+  isBasicMode = true;
   protected entityForm: any;
 
   protected rootlogin_fg: any;
   protected rootloginSubscription: any;
   protected warned = false;
   protected rootlogin: boolean;
-  protected fieldConfig: any;
+  fieldConfig: any;
   title = helptext.formTitle;
 
   protected bwFields = ['localuserbw', 'localuserdlbw', 'anonuserbw', 'anonuserdlbw'];
@@ -367,7 +368,7 @@ export class ServiceFTPComponent implements OnInit {
     { name: 'divider', divider: true },
   ]);
 
-  protected advanced_field = this.fieldSets.advancedFields;
+  advanced_field = this.fieldSets.advancedFields;
 
   custActions: any[] = [
     {

@@ -11,24 +11,25 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { WebSocketService, DialogService, StorageService } from '../../../../services';
 import { ModalService } from 'app/services/modal.service';
 import { atLeastOne } from 'app/pages/common/entity/entity-form/validators/at-least-one-validation';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-ssh-keypairs-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class SshKeypairsFormComponent {
-  protected queryCall = 'keychaincredential.query';
-  protected queryCallOption: any[];
-  protected addCall = 'keychaincredential.create';
-  protected editCall = 'keychaincredential.update';
-  protected isEntity = true;
+export class SshKeypairsFormComponent implements FormConfiguration {
+  queryCall: 'keychaincredential.query' = 'keychaincredential.query';
+  queryCallOption: any[];
+  addCall: 'keychaincredential.create' = 'keychaincredential.create';
+  editCall: 'keychaincredential.update' = 'keychaincredential.update';
+  isEntity = true;
   protected entityForm: any;
   protected isOneColumnForm = true;
   private rowNum: any;
   title = helptext.formTitle;
   private getRow = new Subscription();
 
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
       name: helptext.fieldset_basic,
@@ -87,7 +88,7 @@ export class SshKeypairsFormComponent {
     },
   ];
 
-  protected compactCustomActions = [
+  compactCustomActions = [
     {
       id: 'download_private',
       name: helptext.download_private,

@@ -14,18 +14,18 @@ import global_helptext from '../../../helptext/global-helptext';
 import { ModalService } from '../../../services/modal.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-activedirectory',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class ActiveDirectoryComponent {
-  protected title: string = helptext.title;
-  protected queryCall = 'activedirectory.config';
-  protected updateCall = 'activedirectory.update';
+export class ActiveDirectoryComponent implements FormConfiguration {
+  title: string = helptext.title;
+  queryCall: 'activedirectory.config' = 'activedirectory.config';
+  updateCall: 'activedirectory.update' = 'activedirectory.update';
   isEntity = false;
-  protected isBasicMode = true;
+  isBasicMode = true;
   protected idmapBacked: any = null;
   protected kerberos_realm: any;
   protected kerberos_principal: any;
@@ -281,7 +281,7 @@ export class ActiveDirectoryComponent {
     },
   ];
 
-  protected advanced_field: any[] = helptext.activedirectory_advanced_fields;
+  advanced_field: any[] = helptext.activedirectory_advanced_fields;
 
   isCustActionVisible(actionname: string) {
     if (actionname === 'advanced_mode' && this.isBasicMode === false) {

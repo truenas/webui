@@ -6,18 +6,19 @@ import * as _ from 'lodash';
 import { RestService, WebSocketService, DialogService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'bootenv-attach-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class BootEnvAttachFormComponent {
-  protected route_success: string[] = ['system', 'boot', 'status'];
-  protected isEntity = true;
-  protected addCall = 'boot.attach';
-  protected pk: any;
-  protected isNew = true;
+export class BootEnvAttachFormComponent implements FormConfiguration {
+  route_success: string[] = ['system', 'boot', 'status'];
+  isEntity = true;
+  addCall: 'boot.attach' = 'boot.attach';
+  pk: any;
+  isNew = true;
   protected dialogRef: any;
 
   protected entityForm: any;

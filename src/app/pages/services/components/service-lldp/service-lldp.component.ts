@@ -8,14 +8,14 @@ import * as _ from 'lodash';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/services/components/service-lldp';
 import { RestService, WebSocketService, ServicesService } from '../../../../services';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'lldp-edit',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class ServiceLLDPComponent {
-  protected queryCall = 'lldp.config';
-  protected route_success: string[] = ['services'];
+export class ServiceLLDPComponent implements FormConfiguration {
+  queryCall: 'lldp.config' = 'lldp.config';
+  route_success: string[] = ['services'];
   title = helptext.formTitle;
 
   fieldConfig: FieldConfig[] = [];

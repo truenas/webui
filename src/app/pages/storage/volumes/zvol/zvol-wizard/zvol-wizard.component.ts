@@ -44,7 +44,7 @@ export class ZvolWizardComponent {
   protected pk: any;
   protected path: string;
   sub: Subscription;
-  queryCall = 'pool.dataset.query';
+  queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   protected compression: any;
   protected advanced_field: any[] = ['volblocksize'];
   protected isBasicMode = true;

@@ -8,19 +8,20 @@ import { IscsiService, WebSocketService, AppLoaderService } from '../../../../..
 import { EntityUtils } from '../../../../common/entity/utils';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-iscsi-target-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [IscsiService],
 })
-export class TargetFormComponent {
-  protected queryCall: 'iscsi.target.query' = 'iscsi.target.query';
-  protected addCall: 'iscsi.target.create' = 'iscsi.target.create';
-  protected editCall: 'iscsi.target.update' = 'iscsi.target.update';
+export class TargetFormComponent implements FormConfiguration {
+  queryCall: 'iscsi.target.query' = 'iscsi.target.query';
+  addCall: 'iscsi.target.create' = 'iscsi.target.create';
+  editCall: 'iscsi.target.update' = 'iscsi.target.update';
   route_success: string[] = ['sharing', 'iscsi', 'target'];
-  protected customFilter: any[] = [[['id', '=']]];
-  protected isEntity = true;
+  customFilter: any[] = [[['id', '=']]];
+  isEntity = true;
 
   fieldSets: FieldSet[] = [
     {
@@ -141,7 +142,7 @@ export class TargetFormComponent {
   ];
   fieldConfig: FieldConfig[];
 
-  private pk: any;
+  pk: any;
   protected entityForm: any;
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,

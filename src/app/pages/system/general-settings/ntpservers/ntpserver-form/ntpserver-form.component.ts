@@ -6,22 +6,22 @@ import { ModalService } from 'app/services/modal.service';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { greaterThan } from 'app/pages/common/entity/entity-form/validators/compare-validation';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-ntpserver-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class NTPServerFormComponent {
-  protected addCall = 'system.ntpserver.create';
-  protected editCall = 'system.ntpserver.update';
-  protected queryCall = 'system.ntpserver.query';
-  protected isEntity = true;
+export class NTPServerFormComponent implements FormConfiguration {
+  addCall: 'system.ntpserver.create' = 'system.ntpserver.create';
+  editCall: 'system.ntpserver.update' = 'system.ntpserver.update';
+  queryCall: 'system.ntpserver.query' = 'system.ntpserver.query';
+  isEntity = true;
   title = helptext.header;
   protected isOneColumnForm = true;
 
-  protected pk: any;
-  protected queryKey = 'id';
-  protected fieldConfig: FieldConfig[] = [];
+  pk: any;
+  queryKey = 'id';
+  fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
     {
       name: helptext.header,

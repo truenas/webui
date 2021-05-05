@@ -5,21 +5,22 @@ import { BootEnvService, RestService, WebSocketService } from '../../../../servi
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-bootenv-add',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [BootEnvService],
 })
-export class BootEnvironmentCloneComponent {
-  protected route_success: string[] = ['system', 'boot'];
-  protected addCall = 'bootenv.create';
-  protected pk: any;
-  protected isNew = true;
-  protected isEntity = true;
+export class BootEnvironmentCloneComponent implements FormConfiguration {
+  route_success: string[] = ['system', 'boot'];
+  addCall: 'bootenv.create' = 'bootenv.create';
+  pk: any;
+  isNew = true;
+  isEntity = true;
 
-  protected fieldConfig: FieldConfig[] = [];
-  protected fieldSets: FieldSet[] = [];
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSet[] = [];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService, protected bootEnvService: BootEnvService) {}

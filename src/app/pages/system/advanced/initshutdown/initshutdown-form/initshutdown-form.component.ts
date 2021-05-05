@@ -8,22 +8,23 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import helptext from '../../../../../helptext/system/initshutdown';
 import { ModalService } from 'app/services/modal.service';
 import { take } from 'rxjs/operators';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-cron-initshutdown-add',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class InitshutdownFormComponent {
-  protected title: string;
-  protected queryCall = 'initshutdownscript.query';
-  protected addCall = 'initshutdownscript.create';
-  protected editCall = 'initshutdownscript.update';
-  protected customFilter: any[] = [];
+export class InitshutdownFormComponent implements FormConfiguration {
+  title: string;
+  queryCall: 'initshutdownscript.query' = 'initshutdownscript.query';
+  addCall: 'initshutdownscript.create' = 'initshutdownscript.create';
+  editCall: 'initshutdownscript.update' = 'initshutdownscript.update';
+  customFilter: any[] = [];
   protected entityForm: EntityFormComponent;
-  protected isEntity = true;
+  isEntity = true;
   protected isOneColumnForm = true;
   protected type_control: any;
-  protected pk: any;
+  pk: any;
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [

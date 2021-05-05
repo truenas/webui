@@ -11,26 +11,27 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from '../../../helptext/apps/apps';
 import { EntityUtils } from '../../common/entity/utils';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'chart-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class ChartFormComponent {
-  protected queryCall = 'chart.release.query';
-  protected queryCallOption: any[];
-  protected customFilter: any[];
-  protected addCall = 'chart.release.create';
-  protected editCall = 'chart.release.update';
-  protected isEntity = true;
+export class ChartFormComponent implements FormConfiguration {
+  queryCall: 'chart.release.query' = 'chart.release.query';
+  queryCallOption: any[];
+  customFilter: any[];
+  addCall: 'chart.release.create' = 'chart.release.create';
+  editCall: 'chart.release.update' = 'chart.release.update';
+  isEntity = true;
   protected utils: CommonUtils;
 
-  private title: string;
+  title: string;
   private name: string;
   private getRow = new Subscription();
   private rowName: string;
   private dialogRef: any;
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [];
   private catalogApp: any;
   private entityUtils = new EntityUtils();
@@ -123,8 +124,6 @@ export class ChartFormComponent {
   }
 
   customSubmit(data: any) {
-    let apiCall = this.addCall;
-
     const payload = [];
     payload.push({
       catalog: this.catalogApp.catalog.id,
@@ -142,7 +141,6 @@ export class ChartFormComponent {
       delete payload[0].train;
       delete payload[0].version;
       payload.unshift(this.name);
-      apiCall = this.editCall;
     }
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
@@ -152,7 +150,7 @@ export class ChartFormComponent {
       },
       disableClose: true,
     });
-    this.dialogRef.componentInstance.setCall(apiCall, payload);
+    this.dialogRef.componentInstance.setCall(this.editCall, payload);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialogService.closeAllDialogs();

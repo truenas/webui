@@ -11,6 +11,7 @@ import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/services/components/service-s3';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { map } from 'rxjs/operators';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 's3-edit',
@@ -18,11 +19,11 @@ import { map } from 'rxjs/operators';
   providers: [SystemGeneralService],
 })
 
-export class ServiceS3Component implements OnDestroy {
+export class ServiceS3Component implements FormConfiguration, OnDestroy {
   // protected resource_name: string = 'services/s3';
-  protected queryCall = 's3.config';
-  protected updateCall = 's3.update';
-  protected route_success: string[] = ['services'];
+  queryCall: 's3.config' = 's3.config';
+  updateCall = 's3.update';
+  route_success: string[] = ['services'];
   private certificate: any;
   private ip_address: any;
   private initial_path: any;
