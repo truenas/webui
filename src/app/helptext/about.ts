@@ -17,7 +17,7 @@ export default {
   contactA: T('Does your business need'),
   contactB: T('Enterprise level'),
   contactC: T('support and services? Contact'),
-  contactD: T('iXsystems for more information.'),
+  contactD: T('iXsystems for more information'),
 
   opensourceA: T('is Free and'),
   opensourceB: T('Open Source'),
