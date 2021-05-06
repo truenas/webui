@@ -83,7 +83,6 @@ export class ChartWizardComponent implements OnDestroy {
           name: 'release_name',
           placeholder: helptext.chartForm.release_name.placeholder,
           tooltip: helptext.chartForm.release_name.tooltip,
-          validation: helptext.chartForm.release_name.validation,
           required: true,
         },
         {
@@ -164,6 +163,13 @@ export class ChartWizardComponent implements OnDestroy {
       this.dialogService.closeAllDialogs();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
+    });
+    this.dialogRef.componentInstance.failure.subscribe((res: any) => {
+      if (res.exc_info && res.exc_info.extra) {
+        new EntityUtils().handleWSError(this, res);
+      } else {
+        this.dialogRef.errorReport('Error', res.error, res.exception);
+      }
     });
   }
 

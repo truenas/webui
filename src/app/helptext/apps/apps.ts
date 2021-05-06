@@ -1,6 +1,5 @@
 import { T } from '../../translate-marker';
 import { Validators } from '@angular/forms';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 
 export default {
   choosePool: {
@@ -198,7 +197,6 @@ export default {
       name: T('Name'),
       placeholder: T('Application Name'),
       tooltip: T(''),
-      validation: [regexValidator(/^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/)],
     },
     train: {
       placeholder: T('Train'),
