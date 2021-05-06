@@ -119,6 +119,7 @@
   "Dedup VDev": "",
   "Default behaviour is for pod to inherit the name resolution configuration  from the node that the pods run on. If <i>None</i> is specified, it allows a Pod to ignore DNS  settings from the Kubernetes environment.": "",
   "Delete Children": "",
+  "Deleted {n, plural, one {# snapsho": "",
   "Deleted {n, plural, one {# snapshot} other {# snapshots}}": "",
   "Deleting Snapshots": "",
   "Deployments": "",

@@ -247,6 +247,7 @@
   "Delete User ": "",
   "Delete iSCSI extent ": "",
   "Delete user primary group ": "",
+  "Deleted {n, plural, one {# snapsho": "",
   "Deleted {n, plural, one {# snapshot} other {# snapshots}}": "",
   "Deleting Snapshots": "",
   "Deleting...": "",

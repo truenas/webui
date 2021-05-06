@@ -4,3 +4,4 @@
 yarn lint-staged
 yarn extract
 yarn validate-translations
+git add

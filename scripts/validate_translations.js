@@ -10,7 +10,7 @@ fs.readdir(translationDir, function (err, files) {
     process.exit(1);
   }
 
-  const hadErrors = false;
+  let hadErrors = false;
 
   files.forEach(function (file) {
     if (!file.match(/\.json$/)) {
@@ -26,6 +26,7 @@ fs.readdir(translationDir, function (err, files) {
         parse(key);
         parse(translation);
       } catch (error) {
+        hadErrors = true;
         console.error("Error parsing translation string. You may need to escape { } to '{' '}'. Offending string:");
         console.error(`${language}: "${key}"`);
       }
