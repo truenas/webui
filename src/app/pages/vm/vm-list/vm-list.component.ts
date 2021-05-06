@@ -591,6 +591,7 @@ export class VMListComponent implements OnDestroy {
       fieldConfig: [{
         type: 'input',
         name: 'password',
+        togglePw: true,
         inputType: 'password',
         placeholder: T('Password'),
         validation: [Validators.required],

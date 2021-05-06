@@ -292,6 +292,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       placeholder: helptext.password_placeholder,
       tooltip: helptext.password_tooltip,
       type: 'input',
+      togglePw: true,
       inputType: 'password',
       validation: helptext.password_validation,
     },
