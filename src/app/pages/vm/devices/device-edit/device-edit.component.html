@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card class="mat-card-padded">
   <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" #entityForm="ngForm">
     <div class="mat-card-title" *ngIf="vminfo">{{ 'Edit' | translate }} {{vminfo.dtype}} {{ vminfo.id }}</div>
     <div class="fieldset-container fieldset-display-default" *ngIf="fieldSets">
