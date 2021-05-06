@@ -234,6 +234,8 @@ export class ZvolFormComponent implements Formconfiguration {
           ],
           validation: helptext.zvol_deduplication_validation,
           required: true,
+          disabled: true,
+          isHidden: true,
         },
         {
           type: 'checkbox',
@@ -707,6 +709,18 @@ export class ZvolFormComponent implements Formconfiguration {
 
     if (this.deduplication_collection) {
       deduplication.options = this.deduplication_collection.concat(deduplication.options);
+    }
+
+    const productType = window.localStorage.getItem('product_type');
+
+    if (productType.includes('ENTERPRISE')) {
+      this.ws.call('system.info').subscribe((res) => {
+        if (res.license && res.license.features.indexOf('DEDUP') > -1) {
+          this.entityForm.setDisabled('deduplication', false, false);
+        }
+      });
+    } else {
+      this.entityForm.setDisabled('deduplication', false, false);
     }
 
     this.entityForm.formGroup.controls['volblocksize'].valueChanges.subscribe((res) => {
