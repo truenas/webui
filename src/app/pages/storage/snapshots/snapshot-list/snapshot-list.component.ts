@@ -314,7 +314,6 @@ export class SnapshotListComponent {
 
         this.dialogService.errorReport(errorTitle, '', errorMessage);
       } else {
-        this.translate.instant('Deleted {n, plural, one {# snapsho');
         this.dialogService.Info(
           this.translate.instant('Deleted {n, plural, one {# snapshot} other {# snapshots}}', { n: jobSuccess.length }),
           '',

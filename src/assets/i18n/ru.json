@@ -205,7 +205,6 @@
   "Define whether the control channel,  data channel, both channels, or neither channel of an FTP  session must occur over SSL/TLS. The policies are described  <a href=\"http://www.proftpd.org/docs/directives/linked/config_ref_TLSRequired.html\" target=\"_blank\">here</a>": "",
   "Delete Children": "",
   "Delete Server": "",
-  "Deleted {n, plural, one {# snapsho": "",
   "Deleting Snapshots": "",
   "Deleting...": "",
   "Deny": "",

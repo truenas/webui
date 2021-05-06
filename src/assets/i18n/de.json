@@ -512,7 +512,6 @@
   "Delete files in the destination directory                that do not exist in the source directory.": "",
   "Delete the passphrase from  the encryption key. Invalidates an existing pool recovery key file. A  dialog prompts to back up the encryption key.": "",
   "Delete user primary group ": "",
-  "Deleted {n, plural, one {# snapsho": "",
   "Deleted {n, plural, one {# snapshot} other {# snapshots}}": "",
   "Deleting Snapshots": "",
   "Deleting...": "",

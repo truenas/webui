@@ -4,4 +4,4 @@
 yarn lint-staged
 yarn extract
 yarn validate-translations
-git add
+git add src/assets/i18n

@@ -765,7 +765,6 @@
   "Delete the passphrase from  the encryption key. Invalidates an existing pool recovery key file. A  dialog prompts to back up the encryption key.": "",
   "Delete this path.": "",
   "Delete user primary group ": "",
-  "Deleted {n, plural, one {# snapsho": "",
   "Deleted {n, plural, one {# snapshot} other {# snapshots}}": "",
   "Deleting Snapshots": "",
   "Deleting the <b>": "",

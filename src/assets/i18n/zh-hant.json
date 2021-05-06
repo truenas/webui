@@ -738,7 +738,6 @@
   "Delete the passphrase from  the encryption key. Invalidates an existing pool recovery key file. A  dialog prompts to back up the encryption key.": "",
   "Delete the selected item?": "",
   "Delete user primary group ": "",
-  "Deleted {n, plural, one {# snapsho": "",
   "Deleted {n, plural, one {# snapshot} other {# snapshots}}": "",
   "Deleting Snapshots": "",
   "Deleting interfaces while HA is enabled is not allowed.": "",
