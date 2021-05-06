@@ -12,19 +12,20 @@ import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-v
 
 import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
 import { selectedOptionValidator } from 'app/pages/common/entity/entity-form/validators/invalid-option-selected';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-iscsi-portal-add',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [IscsiService],
 })
-export class PortalFormComponent {
-  protected addCall: 'iscsi.portal.create' = 'iscsi.portal.create';
-  protected queryCall: 'iscsi.portal.query' = 'iscsi.portal.query';
-  protected editCall: 'iscsi.portal.update' = 'iscsi.portal.update';
-  protected route_success: string[] = ['sharing', 'iscsi', 'portals'];
-  protected customFilter: any[] = [[['id', '=']]];
-  protected isEntity = true;
+export class PortalFormComponent implements FormConfiguration {
+  addCall: 'iscsi.portal.create' = 'iscsi.portal.create';
+  queryCall: 'iscsi.portal.query' = 'iscsi.portal.query';
+  editCall: 'iscsi.portal.update' = 'iscsi.portal.update';
+  route_success: string[] = ['sharing', 'iscsi', 'portals'];
+  customFilter: any[] = [[['id', '=']]];
+  isEntity = true;
 
   protected getValidOptions = this.iscsiService.getIpChoices().toPromise().then((res) => {
     const options: Option[] = [];
@@ -125,8 +126,8 @@ export class PortalFormComponent {
     },
   ];
 
-  protected fieldConfig: FieldConfig[];
-  protected pk: any;
+  fieldConfig: FieldConfig[];
+  pk: any;
   protected authgroup_field: any;
   protected entityForm: any;
   protected ip: any;

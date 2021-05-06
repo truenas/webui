@@ -14,7 +14,7 @@ import {
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { MatDialog } from '@angular/material/dialog';
-import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-key';
@@ -23,10 +23,10 @@ import helptext from '../../../../helptext/storage/volumes/volume-key';
   selector: 'app-addkey-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class VolumeAddkeyFormComponent implements Formconfiguration {
+export class VolumeAddkeyFormComponent implements FormConfiguration {
   saveSubmitText = T('Add Recovery Key');
 
-  queryCall = 'pool.query';
+  queryCall: 'pool.query' = 'pool.query';
   queryKey = 'id';
   route_return: string[] = ['storage', 'pools'];
   isNew = false;

@@ -7,16 +7,17 @@ import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.int
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { TaskService } from '../../../../services';
 import helptext from '../../../../helptext/storage/resilver/resilver';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'resilver-priority',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [TaskService],
 })
-export class ResilverComponent {
-  protected queryCall = 'pool.resilver.config';
-  protected editCall = 'pool.resilver.update';
-  protected route_success: string[] = ['storage'];
+export class ResilverComponent implements FormConfiguration {
+  queryCall: 'pool.resilver.config' = 'pool.resilver.config';
+  editCall: 'pool.resilver.update' = 'pool.resilver.update';
+  route_success: string[] = ['storage'];
 
   fieldSets: FieldSet[] = [
     {

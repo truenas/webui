@@ -16,27 +16,28 @@ import helptext from '../../../helptext/apps/apps';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormListComponent } from '../../common/entity/entity-form/components/form-list/form-list.component';
 import { EntityUtils } from '../../common/entity/utils';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-chart-release-edit',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class ChartReleaseEditComponent {
-  protected queryCall = 'chart.release.query';
-  protected queryCallOption: any[];
-  protected customFilter: any[];
-  protected editCall = 'chart.release.update';
-  protected isEntity = true;
+export class ChartReleaseEditComponent implements FormConfiguration {
+  queryCall: 'chart.release.query' = 'chart.release.query';
+  queryCallOption: any[];
+  customFilter: any[];
+  editCall: 'chart.release.update' = 'chart.release.update';
+  isEntity = true;
   protected entityForm: EntityFormComponent;
   private entityUtils = new EntityUtils();
 
-  private title = helptext.chartForm.editTitle;
+  title = helptext.chartForm.editTitle;
   private name: string;
   private getRow = new Subscription();
   private rowName: string;
   private interfaceList: Option[] = [];
   private dialogRef: any;
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
       name: 'Name',
@@ -166,7 +167,6 @@ export class ChartReleaseEditComponent {
           name: 'externalInterfaces',
           width: '100%',
           box: true,
-          customEventMethod: this.onChangeExternalInterfaces,
           templateListField: [
             {
               type: 'select',
@@ -193,18 +193,18 @@ export class ChartReleaseEditComponent {
                   name: 'staticIP',
                   placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
                   // isHidden: true,
-                  relation: [
-                    {
-                      action: 'ENABLE',
-                      when: [{
-                        name: 'ipam',
-                        value: 'static',
-                      }],
-                    },
-                  ],
                 },
               ],
               listFields: [],
+              relation: [
+                {
+                  action: 'SHOW',
+                  when: [{
+                    name: 'ipam',
+                    value: 'static',
+                  }],
+                },
+              ],
             },
             {
               type: 'list',
@@ -224,6 +224,15 @@ export class ChartReleaseEditComponent {
                 },
               ],
               listFields: [],
+              relation: [
+                {
+                  action: 'SHOW',
+                  when: [{
+                    name: 'ipam',
+                    value: 'static',
+                  }],
+                },
+              ],
             },
 
           ],
@@ -443,37 +452,13 @@ export class ChartReleaseEditComponent {
       });
     }
 
-    if (data.gpuConfiguration) {
-      this.entityUtils.parseConfigData(data.gpuConfiguration, 'gpuConfiguration', data.config);
-    }
-
     const hasGpuConfig = this.parseSchema(data.chart_schema.schema);
     data.config['changed_schema'] = hasGpuConfig;
 
     return data.config;
   }
 
-  onChangeExternalInterfaces(listComponent: FormListComponent) {
-    listComponent.listsFromArray.controls.forEach((externalInterface, index) => {
-      const staticRoutesFC = _.find(listComponent.config.listFields[index], { name: 'staticRoutes' });
-      const staticIPConfigurationsFC = _.find(listComponent.config.listFields[index], { name: 'staticIPConfigurations' });
-
-      (<FormGroup>externalInterface).controls['ipam'].valueChanges.subscribe((value) => {
-        if (value === 'static') {
-          staticIPConfigurationsFC.isHidden = false;
-          staticRoutesFC.isHidden = false;
-        } else {
-          staticIPConfigurationsFC.isHidden = true;
-          staticRoutesFC.isHidden = true;
-        }
-      });
-    });
-  }
-
   customSubmit(data: any) {
-    const parsedData: any = {};
-    this.entityUtils.parseFormControlValues(data, parsedData);
-
     let envVars = [];
     if (data.containerEnvironmentVariables && data.containerEnvironmentVariables.length > 0 && data.containerEnvironmentVariables[0].name) {
       envVars = data.containerEnvironmentVariables;
@@ -555,8 +540,8 @@ export class ChartReleaseEditComponent {
       },
     }];
 
-    if (parsedData['gpuConfiguration']) {
-      (payload[1] as any)['values']['gpuConfiguration'] = parsedData['gpuConfiguration'];
+    if (data['gpuConfiguration']) {
+      (payload[1] as any)['values']['gpuConfiguration'] = data['gpuConfiguration'];
     }
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {

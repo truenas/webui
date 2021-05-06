@@ -6,16 +6,17 @@ import { RestService, WebSocketService, ValidationService } from '../../../../se
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/services/components/service-dynamic-dns';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'dynamicdns-edit',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class ServiceDDNSComponent {
-  protected addCall = 'dyndns.update';
+export class ServiceDDNSComponent implements FormConfiguration {
+  addCall: 'dyndns.update' = 'dyndns.update';
   title = helptext.formTitle;
-  protected route_success: string[] = ['services'];
+  route_success: string[] = ['services'];
 
   fieldSets = new FieldSets([
     {

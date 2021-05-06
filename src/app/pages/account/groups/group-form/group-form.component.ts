@@ -10,24 +10,25 @@ import { ModalService } from 'app/services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-group-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class GroupFormComponent {
-  protected isEntity = true;
+export class GroupFormComponent implements FormConfiguration {
+  isEntity = true;
   protected namesInUse: string[] = [];
-  protected queryCall = 'group.query';
-  protected addCall = 'group.create';
-  protected editCall = 'group.update';
-  protected queryKey = 'id';
+  queryCall: 'group.query' = 'group.query';
+  addCall: 'group.create' = 'group.create';
+  editCall: 'group.update' = 'group.update';
+  queryKey = 'id';
   title: string;
   protected isOneColumnForm = true;
-  protected fieldConfig: FieldConfig[] = [];
+  fieldConfig: FieldConfig[] = [];
 
   fieldSetDisplay = 'default';
-  protected fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext.fieldset_name,
       class: 'group-configuration-form',

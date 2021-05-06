@@ -12,14 +12,14 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { EntityUtils } from '../../common/entity/utils';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { T } from '../../../translate-marker';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-ipmi',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class IPMIFromComponent {
+export class IPMIFromComponent implements FormConfiguration {
   title = 'IMPI';
-  protected queryCall: 'ipmi.query' = 'ipmi.query';
+  queryCall: 'ipmi.query' = 'ipmi.query';
 
   protected entityEdit: any;
   is_ha = false;
@@ -154,7 +154,7 @@ export class IPMIFromComponent {
 
   queryKey = 'id';
   channelValue: any;
-  protected isEntity = true;
+  isEntity = true;
 
   constructor(
     protected ws: WebSocketService,

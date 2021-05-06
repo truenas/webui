@@ -37,8 +37,6 @@ export class FormColorpickerComponent implements Field, OnInit {
     this.group.controls[this.config.name].setValue(val);
   }
 
-  constructor() {}
-
   ngOnInit() {
     this.config.value = this.group.value[this.config.name];
   }

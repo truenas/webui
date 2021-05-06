@@ -8,12 +8,13 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { WebSocketService } from 'app/services/';
 import { ModalService } from '../../../../../services/modal.service';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-support-form-unlicensed',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class SupportFormUnlicensedComponent {
+export class SupportFormUnlicensedComponent implements FormConfiguration {
   entityEdit: any;
   password: any;
   username: any;

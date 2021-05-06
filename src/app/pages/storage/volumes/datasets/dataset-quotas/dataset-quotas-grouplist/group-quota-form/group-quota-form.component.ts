@@ -9,19 +9,20 @@ import {
   DialogService, StorageService, WebSocketService, AppLoaderService, UserService,
 } from 'app/services';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-group-quota-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class GroupQuotaFormComponent {
+export class GroupQuotaFormComponent implements FormConfiguration {
   isEntity = true;
   entityForm: any;
   pk: string;
-  protected route_success: string[];
+  route_success: string[];
   searchedEntries: any[] = [];
   entryField: FieldConfig;
-  private isNew = true;
+  isNew = true;
   private dq: string;
   private oq: string;
   private selectedEntriesField: any;

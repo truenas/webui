@@ -9,23 +9,23 @@ import { FieldSets } from '../../../common/entity/entity-form/classes/field-sets
 import helptext from '../../../../helptext/data-protection/smart/smart';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { take } from 'rxjs/operators';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-smart-test-add',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class SmartFormComponent {
-  protected queryCall = 'smart.test.query';
-  protected addCall = 'smart.test.create';
-  protected editCall = 'smart.test.update';
-  protected customFilter: any[] = [];
+export class SmartFormComponent implements FormConfiguration {
+  queryCall: 'smart.test.query' = 'smart.test.query';
+  addCall: 'smart.test.create' = 'smart.test.create';
+  editCall: 'smart.test.update' = 'smart.test.update';
+  customFilter: any[] = [];
   // protected route_success: string[] = ['tasks', 'smart'];
   protected entityForm: EntityFormComponent;
-  protected isEntity = true;
-  protected isNew = false;
+  isEntity = true;
+  isNew = false;
   protected disk_field: any;
-  protected pk: number;
-  protected title: string;
+  pk: number;
+  title: string;
   protected isOneColumnForm = true;
 
   fieldSets: FieldSets = new FieldSets([

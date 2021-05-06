@@ -203,10 +203,10 @@ export class ChartReleasesComponent implements OnInit {
         app.count = `${evt.fields.pod_status.available}/${evt.fields.pod_status.desired}`;
         app.desired = evt.fields.pod_status.desired;
         app.catalog = evt.fields.catalog;
-        app.update_available = evt.fields.update_available,
-        app.container_images_update_available = evt.fields.container_images_update_available,
-        app.human_version = evt.fields.human_version,
-        app.human_latest_version = evt.fields.human_latest_version,
+        app.update_available = evt.fields.update_available;
+        app.container_images_update_available = evt.fields.container_images_update_available;
+        app.human_version = evt.fields.human_version;
+        app.human_latest_version = evt.fields.human_latest_version;
         app.latest_version = evt.fields.chart_metadata.latest_chart_version;
         app.repository = evt.fields.config.image.repository;
         app.tag = evt.fields.config.image.tag;
@@ -276,7 +276,8 @@ export class ChartReleasesComponent implements OnInit {
                 if (chart.used_ports) {
                   chart.used_ports.forEach((item: any) => {
                     ports.push(`${item.port}\\${item.protocol}`);
-                  })(chartObj as any)['used_ports'] = ports.join(', ');
+                  });
+                  (chartObj as any)['used_ports'] = ports.join(', ');
                   this.chartItems[chartObj.name] = chartObj;
                 }
               });

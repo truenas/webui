@@ -14,22 +14,23 @@ import * as _ from 'lodash';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-ssh-connections-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [KeychainCredentialService, ReplicationService],
 })
-export class SshConnectionsFormComponent {
-  protected queryCall = 'keychaincredential.query';
-  protected queryCallOption: any[];
+export class SshConnectionsFormComponent implements FormConfiguration {
+  queryCall: 'keychaincredential.query' = 'keychaincredential.query';
+  queryCallOption: any[];
   protected sshCalls = {
-    manual: 'keychaincredential.create',
-    semiautomatic: 'keychaincredential.remote_ssh_semiautomatic_setup',
+    manual: 'keychaincredential.create' as 'keychaincredential.create',
+    semiautomatic: 'keychaincredential.remote_ssh_semiautomatic_setup' as 'keychaincredential.remote_ssh_semiautomatic_setup',
   };
-  protected addCall = this.sshCalls['manual'];
-  protected editCall = 'keychaincredential.update';
-  protected isEntity = true;
+  addCall: 'keychaincredential.create' | 'keychaincredential.remote_ssh_semiautomatic_setup' = this.sshCalls['manual'];
+  editCall: 'keychaincredential.update' = 'keychaincredential.update';
+  isEntity = true;
   protected namesInUseConnection: string[] = [];
   protected namesInUse: string[] = [];
   title = helptext.formTitle;
@@ -37,7 +38,7 @@ export class SshConnectionsFormComponent {
   private rowNum: any;
   private getRow = new Subscription();
 
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
       name: helptext.fieldset_basic,

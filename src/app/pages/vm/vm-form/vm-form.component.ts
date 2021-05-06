@@ -15,6 +15,7 @@ import {
   WebSocketService, StorageService, VmService, ValidationService,
 } from '../../../services';
 import { Validators } from '@angular/forms';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-vm',
@@ -22,19 +23,19 @@ import { Validators } from '@angular/forms';
   providers: [StorageService],
 
 })
-export class VmFormComponent {
-  protected queryCall = 'vm.query';
-  protected editCall = 'vm.update';
-  protected isEntity = true;
-  protected route_success: string[] = ['vm'];
+export class VmFormComponent implements FormConfiguration {
+  queryCall: 'vm.query' = 'vm.query';
+  editCall: 'vm.update' = 'vm.update';
+  isEntity = true;
+  route_success: string[] = ['vm'];
   protected entityForm: any;
-  protected save_button_enabled: boolean;
+  save_button_enabled: boolean;
   vcpus: number;
   cores: number;
   threads: number;
   private maxVCPUs: number;
   private productType = window.localStorage.getItem('product_type') as ProductType;
-  protected queryCallOption: any[] = [];
+  queryCallOption: any[] = [];
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [

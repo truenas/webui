@@ -6,6 +6,4 @@ import { Component, Input } from '@angular/core';
 })
 export class SysImageComponent {
   @Input() product_image: string;
-
-  constructor() { }
 }

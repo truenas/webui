@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { ServiceName } from 'app/enums/service-name.enum';
 
 import { helptext_sharing_nfs, shared } from 'app/helptext/sharing';
 import { Option } from 'app/interfaces/option.interface';
@@ -16,21 +17,22 @@ import { EntityFormService } from '../../../common/entity/entity-form/services/e
 import { ipv4or6cidrValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import globalHelptext from 'app/helptext/global-helptext';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-nfs-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [NetworkService],
 })
-export class NFSFormComponent {
-  protected route_success: string[] = ['sharing', 'nfs'];
-  protected queryCall = 'sharing.nfs.query';
-  protected editCall = 'sharing.nfs.update';
-  protected addCall = 'sharing.nfs.create';
-  protected pk: number;
-  protected queryKey = 'id';
-  protected isEntity = true;
-  protected isBasicMode = true;
+export class NFSFormComponent implements FormConfiguration {
+  route_success: string[] = ['sharing', 'nfs'];
+  queryCall: 'sharing.nfs.query' = 'sharing.nfs.query';
+  editCall: 'sharing.nfs.update' = 'sharing.nfs.update';
+  addCall: 'sharing.nfs.create' = 'sharing.nfs.create';
+  pk: number;
+  queryKey = 'id';
+  isEntity = true;
+  isBasicMode = true;
   entityForm: EntityFormComponent;
   save_button_enabled = true;
   productType = window.localStorage.getItem('product_type') as ProductType;
@@ -214,7 +216,7 @@ export class NFSFormComponent {
     { name: 'divider', divider: true },
   ]);
 
-  protected advanced_field: any[] = [
+  advanced_field: any[] = [
     'ro',
     'networks',
     'hosts',
@@ -380,8 +382,8 @@ export class NFSFormComponent {
 
   afterSave(entityForm: any) {
     this.ws.call('service.query', [[]]).subscribe((res) => {
-      const service = _.find(res, { service: 'nfs' });
-      if (service['enable']) {
+      const service = _.find(res, { service: ServiceName.Nfs });
+      if (service.enable) {
         this.router.navigate(new Array('/').concat(
           this.route_success,
         ));
@@ -390,8 +392,8 @@ export class NFSFormComponent {
           true, shared.dialog_button).subscribe((dialogRes: boolean) => {
           if (dialogRes) {
             entityForm.loader.open();
-            this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
-              this.ws.call('service.start', [service.service]).subscribe((startRes) => {
+            this.ws.call('service.update', [service.id, { enable: true }]).subscribe(() => {
+              this.ws.call('service.start', [service.service]).subscribe(() => {
                 entityForm.loader.close();
                 this.dialog.Info(T('NFS') + shared.dialog_started_title,
                   T('The NFS') + shared.dialog_started_message, '250px').subscribe(() => {

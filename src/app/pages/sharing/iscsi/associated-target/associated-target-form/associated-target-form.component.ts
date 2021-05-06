@@ -10,19 +10,20 @@ import { IscsiService, WebSocketService } from '../../../../../services';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-iscsi-associated-target-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [IscsiService],
 })
-export class AssociatedTargetFormComponent {
-  protected addCall: 'iscsi.targetextent.create' = 'iscsi.targetextent.create';
-  protected queryCall: 'iscsi.targetextent.query' = 'iscsi.targetextent.query';
-  protected editCall: 'iscsi.targetextent.update' = 'iscsi.targetextent.update';
-  protected route_success: string[] = ['sharing', 'iscsi', 'associatedtarget'];
-  protected isEntity = true;
-  protected customFilter: any[] = [[['id', '=']]];
+export class AssociatedTargetFormComponent implements FormConfiguration {
+  addCall: 'iscsi.targetextent.create' = 'iscsi.targetextent.create';
+  queryCall: 'iscsi.targetextent.query' = 'iscsi.targetextent.query';
+  editCall: 'iscsi.targetextent.update' = 'iscsi.targetextent.update';
+  route_success: string[] = ['sharing', 'iscsi', 'associatedtarget'];
+  isEntity = true;
+  customFilter: any[] = [[['id', '=']]];
 
   fieldSets: FieldSet[] = [
     {
@@ -64,11 +65,11 @@ export class AssociatedTargetFormComponent {
     },
   ];
 
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
 
   protected target_control: any;
   protected extent_control: any;
-  protected pk: any;
+  pk: any;
   protected entityForm: any;
 
   constructor(protected router: Router, protected iscsiService: IscsiService, protected aroute: ActivatedRoute,

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 import { T } from 'app/translate-marker';
 import { filter } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -13,6 +14,7 @@ import { GeneralDialogComponent, GeneralDialogConfig } from '../pages/common/gen
 import { SelectDialogComponent } from '../pages/common/select-dialog/select-dialog.component';
 import { AppLoaderService } from './app-loader/app-loader.service';
 import { WebSocketService } from './ws.service';
+import * as _ from 'lodash';
 
 @Injectable()
 export class DialogService {
@@ -23,48 +25,68 @@ export class DialogService {
     this.ws.onCloseSubject.pipe(filter((didClose) => !!didClose)).subscribe(() => this.closeAllDialogs());
   }
 
+  confirm(confirmOptions: ConfirmOptions): Observable<boolean>
+  confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): MatDialogRef<ConfirmDialog, unknown>
+  /**
+   * @deprecated Replace with newer syntax that uses options object.
+   */
   confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean,
     secondaryCheckBoxMsg?: string, method?: string, data?: any, tooltip?: any, hideCancel?: boolean, cancelMsg?: string,
-    disableClose = false, textToCopy?: string, keyTextArea?: boolean): any {
-    const dialogRef = this.dialog.open(ConfirmDialog, { disableClose });
-
-    dialogRef.componentInstance.title = title;
-    dialogRef.componentInstance.message = message;
-
-    if (buttonMsg) {
-      dialogRef.componentInstance.buttonMsg = buttonMsg;
+    disableClose?: boolean, textToCopy?: string, keyTextArea?: boolean): any
+  confirm(...args: any[]): any {
+    let options: ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox;
+    if (typeof args[0] === 'object') {
+      options = args[0];
+    } else {
+      options = _.zipObject(
+        [
+          'title', 'message', 'hideCheckBox', 'buttonMsg', 'secondaryCheckBox', 'secondaryCheckBoxMsg',
+          'method', 'data', 'tooltip', 'hideCancel', 'cancelMsg', 'disableClose', 'textToCopy', 'keyTextArea',
+        ],
+        args,
+      ) as ConfirmOptionsWithSecondaryCheckbox;
     }
 
-    if (hideCheckBox) {
-      dialogRef.componentInstance.hideCheckBox = hideCheckBox;
+    const dialogRef = this.dialog.open(ConfirmDialog, { disableClose: options.disableClose || false });
+
+    dialogRef.componentInstance.title = options.title;
+    dialogRef.componentInstance.message = options.message;
+
+    if (options.buttonMsg) {
+      dialogRef.componentInstance.buttonMsg = options.buttonMsg;
     }
 
-    if (tooltip) {
-      dialogRef.componentInstance.tooltip = tooltip;
+    if (options.hideCheckBox) {
+      dialogRef.componentInstance.hideCheckBox = options.hideCheckBox;
     }
 
-    if (hideCancel) {
-      dialogRef.componentInstance.hideCancel = hideCancel;
-      dialogRef.disableClose = hideCancel;
-    }
-    if (cancelMsg) {
-      dialogRef.componentInstance.cancelMsg = cancelMsg;
+    if (options.tooltip) {
+      dialogRef.componentInstance.tooltip = options.tooltip;
     }
 
-    if (textToCopy) {
-      dialogRef.componentInstance.keyTextArea = keyTextArea;
+    if (options.hideCancel) {
+      dialogRef.componentInstance.hideCancel = options.hideCancel;
+      dialogRef.disableClose = options.hideCancel;
+    }
+    if (options.cancelMsg) {
+      dialogRef.componentInstance.cancelMsg = options.cancelMsg;
     }
 
-    if (keyTextArea) {
-      dialogRef.componentInstance.textToCopy = textToCopy;
+    if (options.textToCopy) {
+      dialogRef.componentInstance.keyTextArea = options.keyTextArea;
     }
 
-    if (secondaryCheckBox) {
-      dialogRef.componentInstance.secondaryCheckBox = secondaryCheckBox;
-      dialogRef.componentInstance.secondaryCheckBoxMsg = secondaryCheckBoxMsg;
-      dialogRef.componentInstance.data = data;
-      dialogRef.componentInstance.method = method;
+    if (options.keyTextArea) {
+      dialogRef.componentInstance.textToCopy = options.textToCopy;
+    }
+
+    if ('secondaryCheckBox' in options && options.secondaryCheckBox) {
+      dialogRef.componentInstance.secondaryCheckBox = options.secondaryCheckBox;
+      dialogRef.componentInstance.secondaryCheckBoxMsg = options.secondaryCheckBoxMsg;
+      dialogRef.componentInstance.data = options.data;
+      dialogRef.componentInstance.method = options.method;
       dialogRef.componentInstance.switchSelectionEmitter.subscribe((selection: any) => {
+        const data = (options as ConfirmOptionsWithSecondaryCheckbox).data;
         if (selection) {
           if (data[0] && data[0].hasOwnProperty('reboot')) {
             data[0].reboot = !data[0].reboot;

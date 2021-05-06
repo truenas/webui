@@ -457,7 +457,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
       const daySchedule: any[] = [];
       const spl = this.crontab.split(' ');
       // Modified crontab so we can find days;
-      const crontabDays = '0 0 ' + ' ' + spl[1] + ' ' + spl[2] + ' ' + spl[3] + ' ' + spl[4];
+      const crontabDays = '0 0  ' + spl[1] + ' ' + spl[2] + ' ' + spl[3] + ' ' + spl[4];
       const intervalDays = parser.parseExpression(crontabDays, {
         currentDate: moment(this.minDate).subtract(1, 'seconds').toDate(),
         endDate: this.maxDate as any,

@@ -13,6 +13,7 @@ import {
   IdmapService, RestService, ServicesService, UserService, WebSocketService,
 } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'smb-edit',
@@ -20,15 +21,15 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
   providers: [ServicesService, IdmapService],
 })
 
-export class ServiceSMBComponent {
-  protected queryCall = 'smb.config';
-  protected route_success: string[] = ['services'];
+export class ServiceSMBComponent implements FormConfiguration {
+  queryCall: 'smb.config' = 'smb.config';
+  route_success: string[] = ['services'];
   formGroup: any;
   error: string;
-  protected query_call = 'directoryservice.idmap_';
+  query_call = 'directoryservice.idmap_';
   protected idmap_type = 'tdb';
   protected targetDS = '5';
-  protected isBasicMode = true;
+  isBasicMode = true;
 
   private cifs_srv_bindip: any;
   private cifs_srv_guest: any;
@@ -41,7 +42,7 @@ export class ServiceSMBComponent {
   private validBindIps: any;
   title = helptext.formTitle;
 
-  protected advanced_field = [
+  advanced_field = [
     'unixcharset',
     'loglevel',
     'syslog',

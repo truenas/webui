@@ -11,21 +11,22 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-certificate-edit',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class CertificateEditComponent {
-  protected queryCall = 'certificate.query';
-  protected editCall = 'certificate.update';
-  protected isEntity = true;
-  private title = helptext_system_certificates.edit.title;
+export class CertificateEditComponent implements FormConfiguration {
+  queryCall: 'certificate.query' = 'certificate.query';
+  editCall: 'certificate.update' = 'certificate.update';
+  isEntity = true;
+  title = helptext_system_certificates.edit.title;
   private viewButtonText = helptext_system_certificates.viewButton.certificate;
   protected isCSR: boolean;
-  protected queryCallOption: any[];
+  queryCallOption: any[];
 
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
       name: helptext_system_certificates.edit.fieldset_certificate,
@@ -220,7 +221,7 @@ export class CertificateEditComponent {
     return data;
   }
 
-  protected custActions = [
+  custActions = [
     {
       id: 'create_ACME',
       name: helptext_system_certificates.list.action_create_acme_certificate,

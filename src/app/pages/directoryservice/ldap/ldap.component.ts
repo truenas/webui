@@ -15,17 +15,18 @@ import helptext from '../../../helptext/directoryservice/ldap';
 import global_helptext from '../../../helptext/global-helptext';
 import { T } from 'app/translate-marker';
 import { ModalService } from '../../../services/modal.service';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-ldap',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class LdapComponent {
-  protected title: string = helptext.title;
-  protected isEntity = false;
-  protected queryCall = 'ldap.config';
-  protected upodateCall = 'ldap.update';
-  protected isBasicMode = true;
+export class LdapComponent implements FormConfiguration {
+  title: string = helptext.title;
+  isEntity = false;
+  queryCall: 'ldap.config' = 'ldap.config';
+  upodateCall = 'ldap.update';
+  isBasicMode = true;
   protected idmapBacked: any;
   protected ldap_kerberos_realm: any;
   protected ldap_kerberos_principal: any;
@@ -209,7 +210,7 @@ export class LdapComponent {
     },
   ];
 
-  protected advanced_field: any[] = helptext.ldap_advanced_fields;
+  advanced_field: any[] = helptext.ldap_advanced_fields;
 
   isCustActionVisible(actionId: string) {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {

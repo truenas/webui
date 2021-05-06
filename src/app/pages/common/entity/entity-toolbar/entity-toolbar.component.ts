@@ -47,6 +47,7 @@ export class EntityToolbarComponent implements OnDestroy, OnChanges, GlobalActio
   init() {
     this.controller.subscribe((evt: Control) => {
       const clone = Object.assign([], this.values);
+      clone[evt.name] = evt.value;
       this.values = clone;
       clone['event_control'] = evt.name;
       this.config.target.next({ name: 'ToolbarChanged', data: clone });

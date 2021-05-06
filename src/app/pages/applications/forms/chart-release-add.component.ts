@@ -137,7 +137,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
           label: 'Add External Interface',
           box: true,
           width: '100%',
-          customEventMethod: this.onChangeExternalInterfaces,
           templateListField: [
             {
               type: 'select',
@@ -162,18 +161,18 @@ export class ChartReleaseAddComponent implements OnDestroy {
                   type: 'ipwithnetmask',
                   name: 'staticIP',
                   placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
-                  relation: [
-                    {
-                      action: 'ENABLE',
-                      when: [{
-                        name: 'ipam',
-                        value: 'static',
-                      }],
-                    },
-                  ],
                 },
               ],
               listFields: [],
+              relation: [
+                {
+                  action: 'SHOW',
+                  when: [{
+                    name: 'ipam',
+                    value: 'static',
+                  }],
+                },
+              ],
             },
             {
               type: 'list',
@@ -192,6 +191,15 @@ export class ChartReleaseAddComponent implements OnDestroy {
                 },
               ],
               listFields: [],
+              relation: [
+                {
+                  action: 'SHOW',
+                  when: [{
+                    name: 'ipam',
+                    value: 'static',
+                  }],
+                },
+              ],
             },
 
           ],
@@ -375,23 +383,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
     }
   }
 
-  onChangeExternalInterfaces(listComponent: FormListComponent) {
-    listComponent.listsFromArray.controls.forEach((externalInterface, index) => {
-      const staticRoutesFC = _.find(listComponent.config.listFields[index], { name: 'staticRoutes' });
-      const staticIPConfigurationsFC = _.find(listComponent.config.listFields[index], { name: 'staticIPConfigurations' });
-
-      (<FormGroup>externalInterface).controls['ipam'].valueChanges.subscribe((value) => {
-        if (value === 'static') {
-          staticIPConfigurationsFC.isHidden = false;
-          staticRoutesFC.isHidden = false;
-        } else {
-          staticIPConfigurationsFC.isHidden = true;
-          staticRoutesFC.isHidden = true;
-        }
-      });
-    });
-  }
-
   makeSummary(step: string | number, fieldName: string | number, label: string | number) {
     (< FormGroup > this.entityWizard.formArray.get([step]).get(fieldName)).valueChanges
       .pipe(
@@ -409,9 +400,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
   }
 
   customSubmit(data: any) {
-    const parsedData: any = {};
-    this.entityUtils.parseFormControlValues(data, parsedData);
-
     let envVars = [];
     if (data.containerEnvironmentVariables && data.containerEnvironmentVariables.length > 0 && data.containerEnvironmentVariables[0].name) {
       envVars = data.containerEnvironmentVariables;
@@ -498,8 +486,8 @@ export class ChartReleaseAddComponent implements OnDestroy {
       },
     }];
 
-    if (parsedData['gpuConfiguration']) {
-      (payload[0].values as any)['gpuConfiguration'] = parsedData['gpuConfiguration'];
+    if (data['gpuConfiguration']) {
+      (payload[0] as any).values['gpuConfiguration'] = data['gpuConfiguration'];
     }
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {

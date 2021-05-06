@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { helptext_sharing_smb, shared } from 'app/helptext/sharing';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -17,20 +18,21 @@ import {
 } from '../../../../services';
 import { Validators } from '@angular/forms';
 import globalHelptext from 'app/helptext/global-helptext';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-smb-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class SMBFormComponent implements OnDestroy {
-  protected queryCall = 'sharing.smb.query';
-  protected addCall = 'sharing.smb.create';
-  protected editCall = 'sharing.smb.update';
-  protected pk: number;
-  protected queryKey = 'id';
-  protected route_success: string[] = ['sharing', 'smb'];
-  protected isEntity = true;
-  protected isBasicMode = true;
+export class SMBFormComponent implements FormConfiguration, OnDestroy {
+  queryCall: 'sharing.smb.query' = 'sharing.smb.query';
+  addCall: 'sharing.smb.create' = 'sharing.smb.create';
+  editCall: 'sharing.smb.update' = 'sharing.smb.update';
+  pk: number;
+  queryKey = 'id';
+  route_success: string[] = ['sharing', 'smb'];
+  isEntity = true;
+  isBasicMode = true;
   isTimeMachineOn = false;
   title = helptext_sharing_smb.formTitle;
   namesInUse: string[] = [];
@@ -42,7 +44,7 @@ export class SMBFormComponent implements OnDestroy {
   private mangle: boolean;
   private getAdvancedConfig: Subscription;
 
-  protected fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext_sharing_smb.fieldset_basic,
       class: 'basic',
@@ -241,7 +243,7 @@ export class SMBFormComponent implements OnDestroy {
 
   private cifs_vfsobjects: any;
 
-  protected advanced_field: any[] = [
+  advanced_field: any[] = [
     'acl',
     'ro',
     'browsable',
@@ -413,9 +415,9 @@ export class SMBFormComponent implements OnDestroy {
           this.router.navigate(['/'].concat(this.route_success));
         } else {
           /**
-     * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
-     * nav to SMB shares list view.
-     */
+           * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
+           * nav to SMB shares list view.
+           */
           const promptUserACLEdit = () =>
             this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
               switchMap((isTrivialACL: boolean) =>
@@ -442,7 +444,7 @@ export class SMBFormComponent implements OnDestroy {
           this.ws
             .call('service.query', [])
             .pipe(
-              map((response) => _.find(response, { service: 'cifs' })),
+              map((response) => _.find(response, { service: ServiceName.Cifs })),
               switchMap((cifsService) => {
                 if (cifsService.enable) {
                   return promptUserACLEdit();
