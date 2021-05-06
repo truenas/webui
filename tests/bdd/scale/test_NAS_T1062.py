@@ -22,7 +22,7 @@ def test_verify_ssh_access_with_root_works(driver):
     pass
 
 
-@given('the browser is open, navigate to the SCALE URL')
+@given('the browser is open, navigate to the SCALE URL, and login')
 def the_browser_is_open_navigate_to_the_scale_url(driver, nas_ip, root_password):
     """the browser is open, navigate to the SCALE URL."""
     if nas_ip not in driver.current_url:
@@ -39,49 +39,91 @@ def the_browser_is_open_navigate_to_the_scale_url(driver, nas_ip, root_password)
     else:
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
+@then('on the dashboard, verify the Welcome box is loaded, click Close')
+def on_the_dashboard_verify_the_welcome_box_is_loaded_click_close(driver):
+    """on the dashboard, verify the Welcome box is loaded, click Close."""
+    assert wait_on_element(driver, 5, '//h1[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__I AGREE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+    assert wait_on_element(driver, 5, '//div[contains(.,"Welcome to your new NAS")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
-@when('on the login page, enter the root user and is password')
-def on_the_login_page_enter_the_root_user_and_is_password(driver):
-    """on the login page, enter the root user and is password."""
 
-
-@then('on the dashboard click on the System Settings side menu, then click services')
+@when('on the dashboard click on the System Settings side menu, then click services')
 def on_the_dashboard_click_on_the_system_settings_side_menu_then_click_services(driver):
     """on the dashboard click on the System Settings side menu, then click services."""
+    assert wait_on_element(driver, 10, '//li[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System Settings"]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Services"]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
 
 
 @then('on the service page, press on configure(pencil) SSH')
 def on_the_service_page_press_on_configurepencil_ssh(driver):
     """on the service page, press on configure(pencil) SSH."""
-
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__S3_Actions"]')
+    # Scroll to SSH service
+    element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(1)
+    driver.find_element_by_xpath('//button[@ix-auto="action__Configure_SSH"]').click()
 
 @then('the SSH General Options page should open')
 def the_ssh_general_options_page_should_open(driver):
     """the SSH General Options page should open."""
-
+    assert wait_on_element(driver, 5, '//h4[contains(text(),"General Options")]')
 
 @then('click the checkbox "Log in as root with password"')
 def click_the_checkbox_log_in_as_root_with_password(driver):
     """click the checkbox "Log in as root with password"."""
-
+    value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Log in as Root with Password"]', 'class', 'mat-checkbox-checked')
+    if not value_exist:
+        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Log in as Root with Password"]').click()
 
 @then('verify the checkbox works and click Save')
 def verify_the_checkbox_works_and_click_save(driver):
     """verify the checkbox works and click Save."""
-
+    wait_for_value = wait_for_attribute_value(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Log in as Root with Password"]', 'class', 'mat-checkbox-checked')
+    assert wait_for_value
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
 
 @then('click the Start Automatically SSH checkbox and enable the SSH service')
 def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
     """click the Start Automatically SSH checkbox and enable the SSH service."""
-
+    assert wait_on_element(driver, 5, '//li[contains(.,"Services")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__S3_Actions"]')
+    # Scroll to SSH service
+    element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(1)
+    driver.find_element_by_xpath('//div[@ix-auto="value__SSH"]')
+    value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__enable__SSH"]', 'class', 'mat-checkbox-checked')
+    if not value_exist:
+        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__enable__SSH"]').click()
+    value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="overlay__SSH_Running"]', 'class', 'mat-checked')
+    if not value_exist:
+        driver.find_element_by_xpath('//div[@ix-auto="slider__state__SSH"]').click()
+    time.sleep(1)
 
 @then('the service should be enabled with no errors')
 def the_service_should_be_enabled_with_no_errors(driver):
     """the service should be enabled with no errors."""
-
+    wait_for_value = wait_for_attribute_value(driver, 7, '//mat-slide-toggle[@ix-auto="overlay__SSH_Running"]', 'class', 'mat-checked')
+    assert wait_for_value
+    # scroll back up the mat-list-item
+    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 @then('ssh to a NAS with root and the root password should work')
 def ssh_to_a_nas_with_root_and_the_root_password_should_work(driver):
     """ssh to a NAS with root and the root password should work."""
-
-
+    global ssh_result
+    ssh_result = ssh_cmd('ls', 'root', root_password, nas_ip)
+    assert ssh_result['result'], ssh_result['output']
+    assert '#' in ssh_result['output'], ssh_result['output']
