@@ -4,8 +4,14 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import {
+  TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
+} from '@ngx-translate/core';
+import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
+import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
+import {
+  TranslateMessageFormatCompiler,
+} from 'ngx-translate-messageformat-compiler';
 import { NgxWebstorageModule } from 'ngx-webstorage';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 
@@ -55,10 +61,6 @@ import { FormSelectComponent } from './pages/common/entity/entity-form/component
 import { FormParagraphComponent } from './pages/common/entity/entity-form/components/form-paragraph/form-paragraph.component';
 import { EntityModule } from './pages/common/entity/entity.module';
 
-export function createTranslateLoader(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
-}
-
 @NgModule({
   imports: [
     BrowserModule,
@@ -68,11 +70,21 @@ export function createTranslateLoader(http: HttpClient) {
     HttpClientModule,
     AppCommonModule,
     TranslateModule.forRoot({
+      defaultLanguage: 'en',
       loader: {
         provide: TranslateLoader,
         useFactory: (createTranslateLoader),
         deps: [HttpClient],
       },
+      compiler: {
+        provide: TranslateCompiler,
+        useClass: TranslateMessageFormatCompiler,
+      },
+      missingTranslationHandler: {
+        provide: MissingTranslationHandler,
+        useClass: IcuMissingTranslationHandler,
+      },
+      useDefaultLang: false,
     }),
     MaterialModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),

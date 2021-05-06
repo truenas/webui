@@ -69,7 +69,7 @@ export const helptext_sharing_smb = {
  prevent excessive space usage, files larger than 20 MiB are deleted \
  rather than moved. Adjust the <i>Auxiliary Parameter</i> \
  <samp>crossrename:sizelimit=</samp> setting to allow larger files. \
- For example, <samp>crossrename:sizelimit={50}</samp> allows moves of \
+ For example, <samp>crossrename:sizelimit=\'{\'50\'}\'</samp> allows moves of \
  files up to 50 MiB in size. This means files can be permanently \
  deleted or moved from the recycle bin. <b>This is not a replacement \
  for ZFS snapshots.</b>'),

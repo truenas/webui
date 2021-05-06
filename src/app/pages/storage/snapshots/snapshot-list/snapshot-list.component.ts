@@ -2,6 +2,7 @@ import {
   ApplicationRef, Component, Injector, Type,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { WebSocketService, StorageService, DialogService } from 'app/services';
 import { PreferencesService } from 'app/core/services/preferences.service';
@@ -141,7 +142,8 @@ export class SnapshotListComponent {
     protected ws: WebSocketService, protected localeService: LocaleService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected storageService: StorageService, protected dialogService: DialogService,
-    protected prefService: PreferencesService, protected dialog: MatDialog) {
+    protected prefService: PreferencesService, protected dialog: MatDialog,
+    protected translate: TranslateService) {
     if (window.localStorage.getItem('snapshotXtraCols') === 'true') {
       this.queryCallOption = this.queryCallOptionShow;
       this.rowDetailComponent = null;
@@ -312,9 +314,14 @@ export class SnapshotListComponent {
 
         this.dialogService.errorReport(errorTitle, '', errorMessage);
       } else {
-        let infoTitle: string = T('Deleted') + ' ' + jobSuccess.length + ' ';
-        infoTitle += jobSuccess.length > 1 ? T('snapshots') : T('snapshot');
-        this.dialogService.Info(infoTitle, '', '320px', 'info', true);
+        this.translate.instant('Deleted {n, plural, one {# snapsho');
+        this.dialogService.Info(
+          this.translate.instant('Deleted {n, plural, one {# snapshot} other {# snapshots}}', { n: jobSuccess.length }),
+          '',
+          '320px',
+          'info',
+          true,
+        );
       }
     });
 

@@ -80,10 +80,6 @@ tests/bdd/screenshot/ha-bhyve02/*.png
 tests/bdd/screenshot/ha-tn09/*.png
 tests/screenshot/*.png
 
-# generated json files
-/src/assets/i18n/*.mo
-/src/assets/i18n/*.json
-
 # generated license text
 /src/assets/disclaimer.txt
 /src/assets/licenses.json
