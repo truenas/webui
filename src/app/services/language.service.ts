@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EMPTY } from 'rxjs';
+import { of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs/Rx';
 import { TranslateService } from '@ngx-translate/core';
@@ -372,23 +372,22 @@ export class LanguageService {
     protected ws: WebSocketService,
   ) {}
 
-  setLanguageFromBrowser(): Observable<void> {
+  setLanguageFromBrowser(): Observable<boolean> {
     if (this.currentLanguage) {
-      return EMPTY;
+      return of(true);
     }
 
     const browserLang = this.translate.getBrowserLang();
     return this.setLanguage(browserLang);
   }
 
-  setLanguageFromMiddleware(): Observable<void> {
+  setLanguageFromMiddleware(): Observable<boolean> {
     return this.ws.call(this.queryCall, []).pipe(switchMap((res) => {
       if (res && res.language) {
         return this.setLanguage(res.language);
       }
 
-      this.setLanguageFromBrowser();
-      return EMPTY;
+      return this.setLanguageFromBrowser();
     }));
   }
 
@@ -404,9 +403,9 @@ export class LanguageService {
   }
 
   /**
-   * @return Observable that completes when translations have been loaded.
+   * @return Observable that returns true when translations have been loaded.
    */
-  setLanguage(lang: string): Observable<void> {
+  setLanguage(lang: string): Observable<boolean> {
     if (_.find(this.availableLangs, { code: lang })) {
       this.currentLanguage = lang;
     } else {
@@ -414,7 +413,7 @@ export class LanguageService {
     }
 
     return this.translate.use(this.currentLanguage).pipe(
-      map(() => undefined),
+      map(() => true),
     );
   }
 }

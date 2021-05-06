@@ -4,7 +4,7 @@ import { LanguageService } from 'app/services/language.service';
 import { of } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import {
-  catchError, defaultIfEmpty, map, timeout,
+  catchError, map, timeout,
 } from 'rxjs/operators';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -22,7 +22,7 @@ export class TranslationsLoadedGuard implements CanActivate {
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    let waitForTranslations: Observable<void>;
+    let waitForTranslations: Observable<boolean>;
 
     if (!this.ws.connected) {
       // Cannot load translations for an unauthorized user.
@@ -34,7 +34,6 @@ export class TranslationsLoadedGuard implements CanActivate {
     return waitForTranslations.pipe(
       timeout(this.maxLanguageLoadingTime),
       map(() => true),
-      defaultIfEmpty<boolean>(true),
       catchError((error) => {
         console.error('Error loading translations: ', error);
         return of(true);
