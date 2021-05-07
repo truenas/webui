@@ -51,6 +51,12 @@ export interface InputTableConf {
   cardHeaderComponent?: any;
   asyncView?: boolean;
   wsDelete?: string;
+
+  /**
+   * This is a new way of calculating available space and setting table height
+   * to only include as many rows as would fit on screen.
+   */
+  autoFillWindowHeight?: boolean;
   wsDeleteParams?(row, id): any;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
@@ -61,7 +67,7 @@ export interface InputTableConf {
   getActions?(row: any): EntityTableAction[];
   getAddActions?(): any [];
   rowValue?(row, attr): any;
-  wsMultiDelete?(resp): any;
+  wsMultiDelete?: any;
   wsMultiDeleteParams?(selected): any;
   updateMultiAction?(selected): any;
   doAdd?();
@@ -150,6 +156,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   cardHeaderReady = false;
   showActions = true;
   entityTableRowDetailsComponent = EntityTableRowDetailsComponent;
+  readonly footerHeight = 50;
+
   private _multiActionsIconsOnly = false;
   get multiActionsIconsOnly() {
     return this._multiActionsIconsOnly;
@@ -401,12 +409,18 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.zoomLevel = Math.round(window.devicePixelRatio * 100);
       // Browser zoom of exacly 175% causes pagination anomalies; Dropping row size to 49 fixes it
       this.zoomLevel === 175 ? this.rowHeight = 49 : this.rowHeight = 50;
-      const x = window.innerHeight;
-      const y = x - 840;
-      if (this.selected && this.selected.length > 0) {
-        this.paginationPageSize = rowNum - n + Math.floor(y / this.rowHeight) + addRows - 3;
+      const hasSelectedRows = this.selected && this.selected.length > 0;
+
+      if (this.conf.autoFillWindowHeight) {
+        // This special case was introduced to avoid breaking existing behaviour (see `else` case).
+        const rowsOffsetInViewport = document.querySelector('datatable-body').getBoundingClientRect().top;
+        const extraMargin = 20;
+        const y = window.innerHeight - rowsOffsetInViewport - this.footerHeight - extraMargin;
+        this.paginationPageSize = Math.floor(y / this.rowHeight);
       } else {
-        this.paginationPageSize = rowNum - n + Math.floor(y / this.rowHeight) + addRows;
+        const x = window.innerHeight;
+        const y = x - 840;
+        this.paginationPageSize = rowNum - n + Math.floor(y / this.rowHeight) + addRows - (hasSelectedRows ? 3 : 0);
       }
 
       if (this.paginationPageSize < 2) {

@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 import {
   WebSocketService, StorageService, AppLoaderService, DialogService,
@@ -25,12 +26,14 @@ import { Subscription } from 'rxjs';
     <entity-table [title]='title' [conf]='this'></entity-table>`,
   styleUrls: ['./vm-list.component.css'],
 })
-export class VMListComponent implements OnDestroy {
+export class VMListComponent implements OnDestroy, InputTableConf {
   title = 'Virtual Machines';
-  protected queryCall = 'vm.query';
-  protected wsDelete = 'vm.delete';
-  protected route_add: string[] = ['vm', 'wizard'];
-  protected route_edit: string[] = ['vm', 'edit'];
+  queryCall = 'vm.query';
+  wsDelete = 'vm.delete';
+  route_add: string[] = ['vm', 'wizard'];
+  route_edit: string[] = ['vm', 'edit'];
+
+  autoFillWindowHeight = true;
   protected dialogRef: any;
   private eventSubscription: Subscription;
 
@@ -283,7 +286,7 @@ export class VMListComponent implements OnDestroy {
     this.doRowAction(row, this.wsMethods.update, [row.id, { autostart: row.autostart }]);
   }
 
-  getActions(row) {
+  getActions(row): EntityTableAction[] {
     return [{
       id: 'START',
       icon: 'play_arrow',
@@ -439,7 +442,7 @@ export class VMListComponent implements OnDestroy {
       onClick: (vm) => {
         this.router.navigate(new Array('').concat(['vm', 'serial', vm.id]));
       },
-    }];
+    }] as EntityTableAction[];
   }
 
   isActionVisible(actionId: string, row: any) {
