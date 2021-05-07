@@ -319,6 +319,44 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.erdService.attachResizeEventToElement('entity-table-component');
   }
 
+  getFilteredRows() {
+    const filterValue: string = this.filter.nativeElement.value;
+    let newData: any[] = [];
+
+    if (filterValue.length > 0) {
+      this.expandedRows = 0; // TODO: Make this unnecessary by figuring out how to keep expanded rows expanded when filtering
+      this.rows.forEach((dataElement) => {
+        for (const dataElementProp of this.filterColumns) {
+          let value: any = dataElement[dataElementProp.prop];
+
+          if (typeof (value) === 'boolean' || typeof (value) === 'number') {
+            value = String(value).toLowerCase();
+          }
+          if (Array.isArray(value)) {
+            let tempStr = '';
+            value.forEach((item) => {
+              if (typeof (item) === 'string') {
+                tempStr += ' ' + item;
+              } else if (typeof (value) === 'boolean' || typeof (value) === 'number') {
+                tempStr += String(value);
+              }
+            });
+            value = tempStr.toLowerCase();
+          }
+          if (typeof (value) === 'string' && value.length > 0
+          && (<string>value.toLowerCase()).indexOf(filterValue.toLowerCase()) >= 0) {
+            newData.push(dataElement);
+            break;
+          }
+        }
+      });
+    } else {
+      newData = this.rows;
+    }
+
+    return newData;
+  }
+
   ngAfterViewInit() {
     if (this.filter) {
       observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
@@ -326,41 +364,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         distinctUntilChanged(),
       )
         .subscribe((evt) => {
-          const filterValue: string = this.filter.nativeElement.value;
-          let newData: any[] = [];
-
-          if (filterValue.length > 0) {
-            this.expandedRows = 0; // TODO: Make this unnecessary by figuring out how to keep expanded rows expanded when filtering
-            this.rows.forEach((dataElement) => {
-              for (const dataElementProp of this.filterColumns) {
-                let value: any = dataElement[dataElementProp.prop];
-
-                if (typeof (value) === 'boolean' || typeof (value) === 'number') {
-                  value = String(value).toLowerCase();
-                }
-                if (Array.isArray(value)) {
-                  let tempStr = '';
-                  value.forEach((item) => {
-                    if (typeof (item) === 'string') {
-                      tempStr += ' ' + item;
-                    } else if (typeof (value) === 'boolean' || typeof (value) === 'number') {
-                      tempStr += String(value);
-                    }
-                  });
-                  value = tempStr.toLowerCase();
-                }
-                if (typeof (value) === 'string' && value.length > 0
-                && (<string>value.toLowerCase()).indexOf(filterValue.toLowerCase()) >= 0) {
-                  newData.push(dataElement);
-                  break;
-                }
-              }
-            });
-          } else {
-            newData = this.rows;
-          }
-
-          this.currentRows = newData;
+          this.currentRows = this.getFilteredRows();
           this.paginationPageIndex = 0;
           this.setPaginationInfo();
         });
@@ -526,8 +530,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.conf.addRows) {
       this.conf.addRows(this);
     }
+
+    this.currentRows = this.getFilteredRows();
+
     if (!this.showDefaults) {
-      this.currentRows = this.filter.nativeElement.value === '' ? this.rows : this.currentRows;
       this.paginationPageIndex = 0;
       this.setPaginationInfo();
       this.showDefaults = true;
