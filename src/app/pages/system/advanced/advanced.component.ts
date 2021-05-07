@@ -54,39 +54,39 @@ export class AdvancedComponent implements OnDestroy {
         }
         this.dialog.confirm(helptext_system_advanced.dialog_generate_debug_title, helptext_system_advanced.dialog_generate_debug_message, true, helptext_system_advanced.dialog_button_ok).subscribe((ires) => {
           if (ires) {
-            this.ws.call('core.download', ['system.debug', [], fileName]).subscribe(
+            this.ws.call('core.download', ['system.debug', [], fileName, true]).subscribe(
               (res) => {
                 const url = res[1];
-                let failed = false;
-                this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe((file) => {
-                  this.storage.downloadBlob(file, fileName);
-                }, (err) => {
-                  failed = true;
-                  if (this.dialogRef) {
-                    this.dialogRef.close();
-                  }
-                  if (err instanceof HttpErrorResponse) {
-                    this.dialog.errorReport(helptext_system_advanced.debug_download_failed_title, helptext_system_advanced.debug_download_failed_message, err.message);
-                  } else {
-                    this.dialog.errorReport(helptext_system_advanced.debug_download_failed_title, helptext_system_advanced.debug_download_failed_message, err);
+                let downloaded = false;
+                let reported = false; // prevent error from popping up multiple times
+                this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Saving Debug') }, disableClose: true });
+                this.dialogRef.componentInstance.jobId = res[0];
+                this.dialogRef.componentInstance.wsshow();
+                this.dialogRef.componentInstance.success.subscribe((save_debug) => {
+                  this.dialogRef.close();
+                  if (!downloaded) {
+                    downloaded = true;
+                    this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe((file) => {
+                      this.storage.downloadBlob(file, fileName);
+                    }, (err) => {
+                      if (this.dialogRef) {
+                        this.dialogRef.close();
+                      }
+                      if (err instanceof HttpErrorResponse) {
+                        this.dialog.errorReport(helptext_system_advanced.debug_download_failed_title, helptext_system_advanced.debug_download_failed_message, err.message);
+                      } else {
+                        this.dialog.errorReport(helptext_system_advanced.debug_download_failed_title, helptext_system_advanced.debug_download_failed_message, err);
+                      }
+                    });
                   }
                 });
-                if (!failed) {
-                  let reported = false; // prevent error from popping up multiple times
-                  this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Saving Debug') }, disableClose: true });
-                  this.dialogRef.componentInstance.jobId = res[0];
-                  this.dialogRef.componentInstance.wsshow();
-                  this.dialogRef.componentInstance.success.subscribe((save_debug) => {
-                    this.dialogRef.close();
-                  });
-                  this.dialogRef.componentInstance.failure.subscribe((save_debug_err) => {
-                    this.dialogRef.close();
-                    if (!reported) {
-                      new EntityUtils().handleWSError(this, save_debug_err, this.dialog);
-                      reported = true;
-                    }
-                  });
-                }
+                this.dialogRef.componentInstance.failure.subscribe((save_debug_err) => {
+                  this.dialogRef.close();
+                  if (!reported) {
+                    new EntityUtils().handleWSError(this, save_debug_err, this.dialog);
+                    reported = true;
+                  }
+                });
               },
               (err) => {
                 new EntityUtils().handleWSError(this, err, this.dialog);
