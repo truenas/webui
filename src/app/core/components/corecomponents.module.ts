@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { MaterialModule } from '../../appMaterial.module';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
@@ -59,6 +60,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     FormsModule,
     TranslateModule,
     CommonDirectivesModule,
+    RouterModule,
   ],
   declarations: [
     ContextMenuComponent,
