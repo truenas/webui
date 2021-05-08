@@ -6,7 +6,8 @@ import { Router } from '@angular/router';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { Pool } from 'app/interfaces/pool.interface';
+import { VDevType } from 'app/enums/v-dev-type.enum';
+import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
@@ -142,8 +143,8 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   get totalDisks() {
     if (this.poolState && this.poolState.topology) {
       let total = 0;
-      this.poolState.topology.data.forEach((item: any) => {
-        if (item.type == 'DISK') {
+      this.poolState.topology.data.forEach((item) => {
+        if (item.type == VDevType.Disk) {
           total++;
         } else {
           total += item.children.length;
@@ -159,7 +160,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     if (this.poolState && this.poolState.topology) {
       const unhealthy: any[] = []; // Disks with errors
       this.poolState.topology.data.forEach((item: any) => {
-        if (item.type == 'DISK') {
+        if (item.type == VDevType.Disk) {
           const diskErrors = item.read_errors + item.write_errors + item.checksum_errors;
 
           if (diskErrors > 0) {
@@ -373,7 +374,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     };
   }
 
-  updateSlide(name: string, verified: boolean, slideIndex: number, dataIndex?: number, topology?: string, vdev?: any) {
+  updateSlide(name: string, verified: boolean, slideIndex: number, dataIndex?: number, topology?: PoolTopologyCategory, vdev?: any) {
     if (name !== 'overview' && !verified) { return; }
     const dataSource = vdev || { children: this.poolState.topology[topology] };
     const direction = parseInt(this.currentSlide) < slideIndex ? 'forward' : 'back';
@@ -420,6 +421,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
   checkVolumeHealth() {
     switch (this.poolState.status as string) {
+      // TODO: Unexpected statuses, possibly introduced on frontend
       case 'HEALTHY':
         break;
       case 'LOCKED':

@@ -9,10 +9,12 @@ export interface VDev {
   guid: string;
   status: string;
   children: this[];
-  device?: string;
-  disk?: string;
   unavail_disk: any;
   stats: VDevStats;
+
+  // TODO: These fields are not present in pool.query response
+  device?: string;
+  disk?: string;
 }
 
 export interface VDevStats {

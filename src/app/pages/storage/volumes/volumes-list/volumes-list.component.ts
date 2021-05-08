@@ -1913,6 +1913,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.ws.call('pool.query', []),
       this.ws.call(this.datasetQuery, this.datasetQueryOptions),
     ]).subscribe(async ([pools, datasets]: [any[], any[]]) => {
+      // TODO: Additional fields added on frontend.
       if (pools.length > 0) {
         for (const pool of pools) {
           pool.is_upgraded = await this.ws.call('pool.is_upgraded', [pool.id]).toPromise();

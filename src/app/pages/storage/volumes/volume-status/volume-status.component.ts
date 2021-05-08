@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { Option } from 'app/interfaces/option.interface';
-import { Pool, PoolScan } from 'app/interfaces/pool.interface';
+import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
+import { VDev } from 'app/interfaces/storage.interface';
 import {
   WebSocketService, RestService, AppLoaderService, DialogService,
 } from '../../../../services';
@@ -583,7 +584,7 @@ export class VolumeStatusComponent implements OnInit {
     return item;
   }
 
-  parseTopolgy(data: any, category: any, vdev_type?: any): TreeNode {
+  parseTopolgy(data: VDev, category: PoolTopologyCategory, vdev_type?: any): TreeNode {
     const node: TreeNode = {};
     node.data = this.parseData(data, category, vdev_type);
     node.expanded = true;
@@ -594,7 +595,7 @@ export class VolumeStatusComponent implements OnInit {
         const extend_action = this.extendAction();
         node.data.actions.push(extend_action[0]);
       }
-      vdev_type = data.name;
+      vdev_type = (data as any).name;
       for (let i = 0; i < data.children.length; i++) {
         node.children.push(this.parseTopolgy(data.children[i], category, vdev_type));
       }
@@ -609,7 +610,8 @@ export class VolumeStatusComponent implements OnInit {
     node.expanded = true;
     node.children = [];
 
-    for (const category in pool.topology) {
+    let category: PoolTopologyCategory;
+    for (category in pool.topology) {
       const topoNode: TreeNode = {};
       topoNode.data = {
         name: category,

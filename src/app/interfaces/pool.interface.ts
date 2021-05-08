@@ -1,27 +1,17 @@
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { VDev, VDevStats } from 'app/interfaces/storage.interface';
 
 export interface Pool {
   autotrim: {
-    value: any; // 'on'
-    rawvalue: any;
-    parsed: any;
-    source: any;
+    // TODO: Confirm types
+    value: any; // 'on', 'off'
+    rawvalue: any; // 'on', 'off'
+    parsed: any; // 'on', 'off',
+    source: any; // 'DEFAULT';
   };
-
-  /**
-   * @deprecated
-   */
   encrypt: number;
-
-  /**
-   * @deprecated
-   */
   encryptkey: string;
-
-  /**
-   * @deprecated
-   */
   encryptkey_path: string;
   guid: string;
   healthy: boolean;
@@ -32,8 +22,19 @@ export interface Pool {
   scan: PoolScan;
   status: PoolStatus;
   status_detail: any;
-  topology: any;
+  topology: PoolTopology;
 }
+
+export interface PoolTopology {
+  cache: VDev[];
+  data: VDev[];
+  dedup: VDev[];
+  log: VDev[];
+  spare: VDev[];
+  special: VDev[];
+}
+
+export type PoolTopologyCategory = keyof PoolTopology;
 
 export interface PoolScan {
   bytes_issued: number;
