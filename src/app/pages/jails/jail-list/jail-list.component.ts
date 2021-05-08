@@ -2,17 +2,18 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { PoolStatus } from 'app/enums/pool-status.enum';
+import { Pool } from 'app/interfaces/pool.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import * as _ from 'lodash';
-import { DialogService } from '../../../services';
-import { RestService, WebSocketService } from '../../../services';
+import helptext from '../../../helptext/jails/jails-list';
+import { DialogService, RestService, WebSocketService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { StorageService } from '../../../services/storage.service';
 import { T } from '../../../translate-marker';
+import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import helptext from '../../../helptext/jails/jails-list';
 
 @Component({
   selector: 'app-jail-list',
@@ -23,7 +24,7 @@ export class JailListComponent {
   isPoolActivated: boolean;
   selectedPool: any;
   activatedPool: any;
-  availablePools: any;
+  availablePools: Pool[];
   title = 'Jails';
   protected queryCall: 'jail.query' = 'jail.query';
   protected wsDelete: 'jail.delete' = 'jail.delete';
@@ -203,13 +204,13 @@ export class JailListComponent {
 
   prerequisite(): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
-      await this.ws.call('pool.query').toPromise().then((res) => {
-        if (res.length === 0) {
+      await this.ws.call('pool.query').toPromise().then((pools) => {
+        if (pools.length === 0) {
           resolve(true);
           this.noPoolDialog();
           return;
         }
-        this.availablePools = res;
+        this.availablePools = pools;
       }, (err) => {
         resolve(false);
         new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
@@ -252,10 +253,10 @@ export class JailListComponent {
           type: 'select',
           name: 'selectedPool',
           placeholder: helptext.activatePoolDialog.selectedPool_placeholder,
-          options: this.availablePools ? this.availablePools.map((pool: any) => ({
-            label: pool.name + (pool.is_decrypted ? (pool.status === 'ONLINE' ? '' : ` (${pool.status})`) : ' (Locked)'),
+          options: this.availablePools ? this.availablePools.map((pool) => ({
+            label: pool.name + (pool.is_decrypted ? (pool.status === PoolStatus.Online ? '' : ` (${pool.status})`) : ' (Locked)'),
             value: pool.name,
-            disable: !pool.is_decrypted || pool.status !== 'ONLINE',
+            disable: !pool.is_decrypted || pool.status !== PoolStatus.Online,
           })) : [],
           value: this.activatedPool,
         },

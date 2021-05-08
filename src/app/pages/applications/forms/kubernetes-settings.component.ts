@@ -104,7 +104,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
   preInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     const pool_control = _.find(this.fieldSets[0].config, { name: 'pool' });
-    this.appService.getPoolList().subscribe((pools: any[]) => {
+    this.appService.getPoolList().subscribe((pools) => {
       pools.forEach((pool) => {
         pool_control.options.push({ label: pool.name, value: pool.name });
       });

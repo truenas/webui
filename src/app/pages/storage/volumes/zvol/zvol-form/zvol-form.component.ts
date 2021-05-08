@@ -418,7 +418,10 @@ export class ZvolFormComponent implements FormConfiguration {
     }
 
     const root = this.parent.split('/')[0];
-    combineLatest(this.ws.call('pool.query', [[['name', '=', root]]]), this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]])).subscribe(([pk_pool, pk_dataset]) => {
+    combineLatest([
+      this.ws.call('pool.query', [[['name', '=', root]]]),
+      this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]),
+    ]).subscribe(([pk_pool, pk_dataset]) => {
       if (pk_pool[0].encrypt !== 0) {
         this.legacy_encryption = true;
       }

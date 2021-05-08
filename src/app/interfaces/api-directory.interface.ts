@@ -1,8 +1,11 @@
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { Disk, DiskQueryOptions, DiskUpdate } from 'app/interfaces/storage.interface';
 import { User } from 'app/interfaces/user';
 
 export type ApiDirectory = {
@@ -144,8 +147,8 @@ export type ApiDirectory = {
   'datastore.delete': { params: any; response: any };
 
   // Disk
-  'disk.query': { params: any; response: any };
-  'disk.update': { params: any; response: any };
+  'disk.query': { params: QueryParams<Disk, DiskQueryOptions>; response: Disk[] };
+  'disk.update': { params: [string, DiskUpdate]; response: Disk }; // TODO: Response is a job
   'disk.get_unused': { params: any; response: any };
   'disk.get_encrypted': { params: any; response: any };
   'disk.temperatures': { params: any; response: any };
@@ -155,7 +158,14 @@ export type ApiDirectory = {
   'directoryservices.get_state': { params: any; response: any };
 
   // Filesystem
-  'filesystem.acl_is_trivial': { params: any; response: any };
+  'filesystem.acl_is_trivial': {
+    params: [string];
+    /**
+     * Returns True if the ACL can be fully expressed as a file mode without losing any access rules,
+     * or if the path does not support NFSv4 ACLs (for example a path on a tmpfs filesystem).
+     */
+    response: boolean;
+  };
   'filesystem.listdir': { params: any; response: any };
   'filesystem.stat': { params: any; response: any };
   'filesystem.default_acl_choices': { params: any; response: any };
@@ -345,7 +355,7 @@ export type ApiDirectory = {
   'plugin.official_repositories': { params: any; response: any };
 
   // Pool
-  'pool.query': { params: any; response: any };
+  'pool.query': { params: QueryParams<Pool>; response: Pool[] };
   'pool.update': { params: any; response: any };
   'pool.create': { params: any; response: any };
   'pool.dataset.path_in_locked_datasets': { params: any; response: any };
@@ -363,7 +373,7 @@ export type ApiDirectory = {
   'pool.snapshottask.delete': { params: any; response: any };
   'pool.dataset.query': { params: any; response: any[] };
   'pool.scrub.delete': { params: any; response: any };
-  'pool.scrub.query': { params: any; response: any };
+  'pool.scrub.query': { params: QueryParams<PoolScrub>; response: PoolScrub[] };
   'pool.scrub.update': { params: any; response: any };
   'pool.scrub.create': { params: any; response: any };
   'pool.dataset.compression_choices': { params: any; response: any };

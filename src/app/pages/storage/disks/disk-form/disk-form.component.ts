@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { DiskStandby } from 'app/enums/disk-standby.enum';
 import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../services';
@@ -110,7 +111,7 @@ export class DiskFormComponent implements FormConfiguration {
               when: [
                 {
                   name: 'hddstandby',
-                  value: 'ALWAYS ON',
+                  value: DiskStandby.AlwaysOn,
                 },
               ],
             },
@@ -215,7 +216,7 @@ export class DiskFormComponent implements FormConfiguration {
 
   afterInit(entityEdit: any) {
     entityEdit.formGroup.controls['hddstandby'].valueChanges.subscribe((value: any) => {
-      if (value === 'ALWAYS ON') {
+      if (value === DiskStandby.AlwaysOn) {
         entityEdit.formGroup.controls['hddstandby_force'].setValue(false);
       }
     });

@@ -5,6 +5,8 @@ import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
+import { PoolStatus } from 'app/enums/pool-status.enum';
+import { Pool } from 'app/interfaces/pool.interface';
 
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
@@ -102,7 +104,7 @@ export interface VolumeData {
   styleUrls: ['./widgetpool.component.css'],
 })
 export class WidgetPoolComponent extends WidgetComponent implements AfterViewInit, OnDestroy, OnChanges {
-  @Input() poolState: any;
+  @Input() poolState: Pool;
   @Input() volumeData: any;// VolumeData;
   @ViewChild('carousel', { static: true }) carousel: ElementRef;
   @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef;
@@ -417,22 +419,22 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   }
 
   checkVolumeHealth() {
-    switch (this.poolState.status) {
+    switch (this.poolState.status as string) {
       case 'HEALTHY':
         break;
       case 'LOCKED':
         this.updateVolumeHealth('Pool status is ' + this.poolState.status, false, 'locked');
         break;
       case 'UNKNOWN':
-      case 'OFFLINE':
+      case PoolStatus.Offline:
         this.updateVolumeHealth('Pool status is ' + this.poolState.status, false, 'unknown');
         break;
-      case 'DEGRADED':
+      case PoolStatus.Degraded:
         this.updateVolumeHealth('Pool status is ' + this.poolState.status, false, 'degraded');
         break;
-      case 'FAULTED':
-      case 'UNAVAIL':
-      case 'REMOVED':
+      case PoolStatus.Faulted:
+      case PoolStatus.Unavailable:
+      case PoolStatus.Removed:
         this.updateVolumeHealth('Pool status is ' + this.poolState.status, true, 'faulted');
         break;
     }
