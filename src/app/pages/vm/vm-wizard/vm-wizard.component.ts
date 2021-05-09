@@ -26,7 +26,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import globalHelptext from '../../../helptext/global-helptext';
 import { combineLatest, forkJoin, Observable } from 'rxjs';
-import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { MatStepper } from '@angular/material/stepper';
 
@@ -948,7 +948,7 @@ export class VMWizardComponent {
   }
 
   getFormArrayIndexFromFieldName(fieldName: string, parent: VMWizardComponent = this): number {
-    return parent.wizardConfig.findIndex((conf: Formconfiguration) => conf.fieldConfig.findIndex((fieldConf: FieldConfig) => fieldConf.name === fieldName) >= 0);
+    return parent.wizardConfig.findIndex((conf: FormConfiguration) => conf.fieldConfig.findIndex((fieldConf: FieldConfig) => fieldConf.name === fieldName) >= 0);
   }
 
   async customSubmit(value: any) {

@@ -8,17 +8,17 @@ import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-set
 import { T } from 'app/translate-marker';
 import _ from 'lodash';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-isolated-pcis-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class IsolatedGpuPcisFormComponent implements Formconfiguration {
-  queryCall = 'system.advanced.config';
-  updateCall = 'system.advanced.update';
+export class IsolatedGpuPcisFormComponent implements FormConfiguration {
+  queryCall: 'system.advanced.config' = 'system.advanced.config';
+  updateCall: 'system.advanced.update' = 'system.advanced.update';
   isOneColumnForm = true;
   private advancedConfig: AdvancedConfig;
 
