@@ -46,7 +46,7 @@ export class SmartResultsComponent {
 
   callGetFunction(entityList) {
     entityList.ws.call(this.queryCall, this.queryCallOption).subscribe((res) => {
-      entityList.conf.handleData(res);
+      entityList.handleData(res);
     }, (err) => {
       if (entityList.showSpinner) {
         entityList.showSpinner = false;
