@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { helptext_sharing_webdav, shared } from '../../../../helptext/sharing';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -7,19 +8,20 @@ import * as _ from 'lodash';
 import { DialogService, WebSocketService } from '../../../../services';
 import { Router } from '@angular/router';
 import { T } from 'app/translate-marker';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-user-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class WebdavFormComponent {
-  protected queryCall = 'sharing.webdav.query';
-  protected queryKey = 'id';
-  protected addCall = 'sharing.webdav.create';
-  protected editCall = 'sharing.webdav.update';
-  protected route_success: string[] = ['sharing', 'webdav'];
-  protected isEntity = true;
+export class WebdavFormComponent implements FormConfiguration {
+  queryCall: 'sharing.webdav.query' = 'sharing.webdav.query';
+  queryKey = 'id';
+  addCall: 'sharing.webdav.create' = 'sharing.webdav.create';
+  editCall: 'sharing.webdav.update' = 'sharing.webdav.update';
+  route_success: string[] = ['sharing', 'webdav'];
+  isEntity = true;
 
   confirmSubmit = true;
   confirmSubmitDialog = {
@@ -30,7 +32,7 @@ export class WebdavFormComponent {
 
   fieldConfig: FieldConfig[] = [];
   fieldSetDisplay = 'default';
-  protected fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext_sharing_webdav.fieldset_name,
       class: 'webdav-configuration-form',
@@ -94,18 +96,18 @@ export class WebdavFormComponent {
 
   afterSave(entityForm: any) {
     this.ws.call('service.query', [[]]).subscribe((res) => {
-      const service = _.find(res, { service: 'webdav' });
-      if (service['enable']) {
+      const service = _.find(res, { service: ServiceName.WebDav });
+      if (service.enable) {
         this.router.navigate(new Array('/').concat(
           this.route_success,
         ));
       } else {
         this.dialog.confirm(shared.dialog_title, shared.dialog_message,
-          true, shared.dialog_button).subscribe((dialogRes: any) => {
+          true, shared.dialog_button).subscribe((dialogRes: boolean) => {
           if (dialogRes) {
             entityForm.loader.open();
-            this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
-              this.ws.call('service.start', [service.service]).subscribe((startRes) => {
+            this.ws.call('service.update', [service.id, { enable: true }]).subscribe(() => {
+              this.ws.call('service.start', [service.service]).subscribe(() => {
                 entityForm.loader.close();
                 this.dialog.Info(T('WebDAV') + shared.dialog_started_title,
                   T('The WebDAV') + shared.dialog_started_message, '250px').subscribe(() => {

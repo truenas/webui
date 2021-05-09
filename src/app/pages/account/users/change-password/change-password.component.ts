@@ -7,13 +7,14 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/account/user-change-pw';
 import { EntityUtils } from '../../../common/entity/utils';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class ChangePasswordComponent {
+export class ChangePasswordComponent implements FormConfiguration {
   // protected resource_name = 'account/users/1/password/';
-  protected isEntity = true;
+  isEntity = true;
   protected entityForm: EntityFormComponent;
 
   fieldConfig: FieldConfig[] = [];

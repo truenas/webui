@@ -12,19 +12,21 @@ import { DialogService } from '../../../services/index';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../services';
 import { EntityUtils } from '../../common/entity/utils';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+
 @Component({
   selector: 'app-kubernetes-settings',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class KubernetesSettingsComponent {
-  protected queryCall = 'kubernetes.config';
-  protected editCall = 'kubernetes.update';
-  protected isEditJob: Boolean = true;
+export class KubernetesSettingsComponent implements FormConfiguration {
+  queryCall: 'kubernetes.config' = 'kubernetes.config';
+  editCall: 'kubernetes.update' = 'kubernetes.update';
+  isEditJob = true;
   private dialogRef: any;
   private newEnableContainerImageUpdate = true;
-  private title = helptext.kubForm.title;
+  title = helptext.kubForm.title;
   private entityEdit: any;
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
       name: 'kubernetes_settings',

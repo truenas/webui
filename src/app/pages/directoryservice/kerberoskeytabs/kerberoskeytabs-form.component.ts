@@ -6,21 +6,22 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import helptext from '../../../helptext/directoryservice/kerberoskeytabs-form-list';
 import { Subscription } from 'rxjs';
 import { ModalService } from '../../../services/modal.service';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-kerberos-keytbas-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class KerberosKeytabsFormComponent {
-  protected title: string;
-  protected addCall = 'kerberos.keytab.create';
-  protected editCall = 'kerberos.keytab.update';
-  protected queryCall = 'kerberos.keytab.query';
-  protected pk: any;
-  protected queryKey = 'id';
-  protected isEntity = true;
+export class KerberosKeytabsFormComponent implements FormConfiguration {
+  title: string;
+  addCall: 'kerberos.keytab.create' = 'kerberos.keytab.create';
+  editCall: 'kerberos.keytab.update' = 'kerberos.keytab.update';
+  queryCall: 'kerberos.keytab.query' = 'kerberos.keytab.query';
+  pk: any;
+  queryKey = 'id';
+  isEntity = true;
   private getRow = new Subscription();
   protected isOneColumnForm = true;
-  protected fieldConfig: FieldConfig[] = [];
+  fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
     {
       name: helptext.kkt_heading,

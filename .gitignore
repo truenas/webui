@@ -55,14 +55,32 @@ config.py
 auto_config.py
 geckodriver.log
 vm_config
+tests/config.cfg
 tests/bdd/config.cfg
 *.feature
+tests/bdd/*.html*
+firefox.core
+code-oss.core
+chrome.core
 
 # Junit results for Jenkins
 tests/bdd/results/junit/*.xml
+
 # Json Cucumber results for Jira
 tests/bdd/results/cucumber/*.json
 
+# generated screenshot files
+tests/bdd/screenshot/core/*.txt
+tests/bdd/screenshot/core/*.png
+tests/bdd/screenshot/scale/*.txt
+tests/bdd/screenshot/scale/*.png
+tests/bdd/screenshot/scale-validation/*.txt
+tests/bdd/screenshot/scale-validation/*.png
+tests/bdd/screenshot/ha-bhyve02/*.txt
+tests/bdd/screenshot/ha-tn09/*.txt
+tests/bdd/screenshot/ha-bhyve02/*.png
+tests/bdd/screenshot/ha-tn09/*.png
+tests/screenshot/*.png
 
 # generated json files
 /src/assets/i18n/*.mo
@@ -73,14 +91,6 @@ tests/bdd/results/cucumber/*.json
 /src/assets/licenses.json
 licenses.txt
 
-# generated screenshot files
-tests/bdd/screenshot/core/*.txt
-tests/bdd/screenshot/core/*.png
-tests/bdd/screenshot/ha-bhyve02/*.txt
-tests/bdd/screenshot/ha-tn09/*.txt
-tests/bdd/screenshot/ha-bhyve02/*.png
-tests/bdd/screenshot/ha-tn09/*.png
-tests/screenshot/*.png
 .vs/slnx.sqlite
 
 # generated polyfills

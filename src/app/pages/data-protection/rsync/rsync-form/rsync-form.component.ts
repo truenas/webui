@@ -11,22 +11,22 @@ import { TaskService, UserService } from '../../../../services';
 import { ModalService } from '../../../../services/modal.service';
 import helptext from '../../../../helptext/data-protection/resync/resync-form';
 import { FieldSets } from '../../../common/entity/entity-form/classes/field-sets';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-rsync-task-add',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [TaskService, UserService],
 })
-export class RsyncFormComponent implements OnDestroy {
-  protected addCall = 'rsynctask.create';
-  protected editCall = 'rsynctask.update';
-  protected queryCall = 'rsynctask.query';
-  protected queryKey = 'id';
+export class RsyncFormComponent implements FormConfiguration, OnDestroy {
+  addCall: 'rsynctask.create' = 'rsynctask.create';
+  editCall: 'rsynctask.update' = 'rsynctask.update';
+  queryCall: 'rsynctask.query' = 'rsynctask.query';
+  queryKey = 'id';
   protected entityForm: EntityFormComponent;
-  protected pk: number;
-  protected isEntity = true;
-  protected title: string;
-  protected isNew: boolean;
+  pk: number;
+  isEntity = true;
+  title: string;
+  isNew: boolean;
 
   protected preTaskName = 'rsync';
   fieldConfig: FieldConfig[] = [];
@@ -289,7 +289,7 @@ export class RsyncFormComponent implements OnDestroy {
   }
 
   updateUserSearchOptions(value = '', parent: any) {
-    parent.userService.userQueryDSCache(value).subscribe((items: any) => {
+    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });

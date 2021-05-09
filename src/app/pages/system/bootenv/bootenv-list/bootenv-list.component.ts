@@ -27,14 +27,14 @@ export class BootEnvironmentListComponent implements OnDestroy {
 
   title = T('Boot Environments');
   protected resource_name = 'system/bootenv';
-  protected queryCall = 'bootenv.query';
+  protected queryCall: 'bootenv.query' = 'bootenv.query';
   protected route_add: string[] = ['system', 'boot', 'create'];
   protected route_delete: string[] = ['system', 'boot', 'delete'];
-  protected wsDelete = 'bootenv.delete';
-  protected wsMultiDelete = 'core.bulk';
+  protected wsDelete: 'bootenv.delete' = 'bootenv.delete';
+  protected wsMultiDelete: 'core.bulk' = 'core.bulk';
   protected entityList: EntityTableComponent;
-  protected wsActivate = 'bootenv.activate';
-  protected wsKeep = 'bootenv.set_attribute';
+  protected wsActivate: 'bootenv.activate' = 'bootenv.activate';
+  protected wsKeep: 'bootenv.set_attribute' = 'bootenv.set_attribute';
   protected loaderOpen = false;
   busy: Subscription;
   size_consumed: string;

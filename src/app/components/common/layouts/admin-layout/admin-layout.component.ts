@@ -6,12 +6,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, Router } from '@angular/router';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { LayoutService } from 'app/core/services/layout.service';
 import { Subscription } from 'rxjs';
 import { ProductType } from '../../../../enums/product-type.enum';
 import * as domHelper from '../../../../helpers/dom.helper';
 import { RestService, WebSocketService, SystemGeneralService } from '../../../../services';
 import { LanguageService } from '../../../../services/language.service';
-import { ThemeService } from '../../../../services/theme/theme.service';
+import { Theme, ThemeService } from '../../../../services/theme/theme.service';
 import { ModalService } from '../../../../services/modal.service';
 import { ConsolePanelModalDialog } from '../../dialog/consolepanel/consolepanel-dialog.component';
 import globalHelptext from '../../../../helptext/global-helptext';
@@ -19,19 +20,19 @@ import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'app-admin-layout',
-  templateUrl: './admin-layout.template.html',
+  templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.css'],
 })
 export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   private isMobile: boolean;
   screenSizeWatcher: Subscription;
   getAdvancedConfig: Subscription;
-  isSidenavOpen: Boolean = true;
+  isSidenavOpen = true;
   isSidenavCollapsed = false;
   sidenavMode = 'over';
-  isShowFooterConsole: Boolean = false;
-  isSidenotOpen: Boolean = false;
-  consoleMsg: String = '';
+  isShowFooterConsole = false;
+  isSidenotOpen = false;
+  consoleMsg = '';
   hostname: string;
   consoleMSgList: any[] = [];
   product_type = window.localStorage['product_type'] as ProductType;
@@ -49,13 +50,10 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   @ViewChild(MatSidenav, { static: false }) private sideNave: MatSidenav;
   @ViewChild('footerBarScroll', { static: true }) private footerBarScroll: ElementRef;
-  freenasThemes: any;
+  freenasThemes: Theme[];
 
-  get sidenavWidth(): string {
-    return this.getSidenavWidth();
-  }
-
-  constructor(private router: Router,
+  constructor(
+    private router: Router,
     public core: CoreService,
     public cd: ChangeDetectorRef,
     public themeService: ThemeService,
@@ -64,8 +62,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     protected ws: WebSocketService,
     public language: LanguageService,
     public modalService: ModalService,
-    public dialog: MatDialog, private sysGeneralService: SystemGeneralService,
-    private localeService: LocaleService) {
+    public dialog: MatDialog,
+    private sysGeneralService: SystemGeneralService,
+    private localeService: LocaleService,
+    private layoutService: LayoutService,
+  ) {
     // detect server type
     sysGeneralService.getProductType.subscribe((res) => {
       this.product_type = res as ProductType;
@@ -79,14 +80,10 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     });
     // Watches screen size and open/close sidenav
     this.screenSizeWatcher = media.media$.subscribe((change: MediaChange) => {
-      this.isMobile = window.innerWidth < 960;
-      // this.isMobile = (change.mqAlias == 'xs') || (change.mqAlias == 'sm');
+      this.isMobile = this.layoutService.isMobile;
       this.updateSidenav();
       core.emit({ name: 'MediaChange', data: change, sender: this });
     });
-
-    // Translator init
-    language.getMiddlewareLanguage();
 
     // Subscribe to Theme Changes
     core.register({
@@ -152,6 +149,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     }
     this.checkIfConsoleMsgShows();
 
+    this.isSidenavCollapsed = this.layoutService.isMenuCollapsed;
+
     this.core.emit({ name: 'SysInfoRequest', sender: this });
   }
 
@@ -164,7 +163,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.isSidenavOpen = force == 'open';
       this.isSidenotOpen = force != 'open';
       if (force == 'close') {
-        domHelper.removeClass(document.body, 'collapsed-menu');
+        this.layoutService.isMenuCollapsed = false;
       }
       return;
     }
@@ -172,14 +171,12 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     this.isSidenavOpen = !this.isMobile;
     this.isSidenotOpen = false;
     this.sidenavMode = this.isMobile ? 'over' : 'side';
-    if (this.isMobile) {
-      domHelper.removeClass(document.body, 'collapsed-menu');
-    }
+    this.layoutService.isMenuCollapsed = false;
     this.cd.detectChanges();
   }
 
-  getSidenavWidth(): string {
-    const iconified = domHelper.hasClass(document.body, 'collapsed-menu');
+  get sidenavWidth(): string {
+    const iconified = this.layoutService.isMenuCollapsed;
     if (this.isSidenavOpen && iconified && this.sidenavMode == 'side') {
       return '48px';
     } if (this.isSidenavOpen && !iconified && this.sidenavMode == 'side') {
@@ -249,18 +246,10 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       dialogRef.componentInstance.consoleMsg = this.accumulateConsoleMsg('', 500);
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe(() => {
       clearInterval(dialogRef.componentInstance.intervalPing);
       sub.unsubscribe();
     });
-  }
-
-  onOpenNav(): void {
-    this.isSidenavOpen = true;
-  }
-
-  onCloseNav(): void {
-    this.isSidenavOpen = false;
   }
 
   onOpenNotify(): void {

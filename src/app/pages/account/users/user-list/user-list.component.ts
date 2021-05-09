@@ -32,8 +32,8 @@ export class UserListComponent implements OnDestroy {
   protected usr_lst: any[] = [];
   protected grp_lst: any[] = [];
   protected hasDetails = true;
-  protected queryCall = 'user.query';
-  protected wsDelete = 'user.delete';
+  protected queryCall: 'user.query' = 'user.query';
+  protected wsDelete: 'user.delete' = 'user.delete';
   // protected queryCallOption = [['OR', [['uid', '=', 0], ['builtin', '=', false]]]];
   protected globalConfig = {
     id: 'config',
@@ -231,24 +231,28 @@ export class UserListComponent implements OnDestroy {
   }
 
   toggleBuiltins() {
-    let show;
-    this.prefService.preferences.hide_builtin_users ? show = helptext.builtins_dialog.show
-      : show = helptext.builtins_dialog.hide;
-    this.translate.get(show).subscribe((action: string) => {
-      this.translate.get(helptext.builtins_dialog.title).subscribe((title: string) => {
-        this.translate.get(helptext.builtins_dialog.message).subscribe((message: string) => {
-          this.dialogService.confirm(action + title,
-            action + message, true, action)
-            .subscribe((res: boolean) => {
-              if (res) {
-                this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
-                this.prefService.savePreferences();
-                this.entityList.needTableResize = false;
-                this.entityList.getData();
-              }
-            });
-        });
-      });
+    const toggleAction = this.prefService.preferences.hide_builtin_users
+      ? helptext.builtins_dialog.show
+      : helptext.builtins_dialog.hide;
+
+    const action = this.translate.instant(toggleAction);
+    const title = this.translate.instant(helptext.builtins_dialog.title);
+    const message = this.translate.instant(helptext.builtins_dialog.message);
+
+    this.dialogService.confirm({
+      title: action + title,
+      message: action + message,
+      hideCheckBox: true,
+      buttonMsg: action,
+    }).subscribe((result) => {
+      if (!result) {
+        return;
+      }
+
+      this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
+      this.prefService.savePreferences();
+      this.entityList.needTableResize = false;
+      this.entityList.getData();
     });
   }
 

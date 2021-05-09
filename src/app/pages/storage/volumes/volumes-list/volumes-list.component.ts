@@ -786,7 +786,7 @@ export class VolumesListTableConfig implements InputTableConf {
                           self.parentVolumesListComponent.repaintMe();
                         });
                       });
-                    }),
+                    });
                     dialogRef.componentInstance.failure.subscribe((res: any) => {
                       let conditionalErrMessage = '';
                       if (res.error) {
@@ -1276,7 +1276,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 tooltip: helptext.snapshotDialog_name_tooltip,
                 validation: helptext.snapshotDialog_name_validation,
                 required: true,
-                value: 'manual' + '-' + this.getTimestamp(),
+                value: 'manual-' + this.getTimestamp(),
               },
               {
                 type: 'checkbox',
@@ -1836,7 +1836,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   protected editDatasetFormComponent: DatasetFormComponent;
   protected aroute: ActivatedRoute;
   private refreshTableSubscription: any;
-  private datasetQuery = 'pool.dataset.query';
+  private datasetQuery: 'pool.dataset.query' = 'pool.dataset.query';
   /*
    * Please note that extra options are special in that they are passed directly to ZFS.
    * This is why 'encryptionroot' is included in order to get 'encryption_root' in the response
@@ -1912,7 +1912,10 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       });
     }
 
-    combineLatest([this.ws.call('pool.query', []), this.ws.call<any[]>(this.datasetQuery, this.datasetQueryOptions)]).subscribe(async ([pools, datasets]) => {
+    combineLatest([
+      this.ws.call('pool.query', []),
+      this.ws.call(this.datasetQuery, this.datasetQueryOptions),
+    ]).subscribe(async ([pools, datasets]) => {
       if (pools.length > 0) {
         for (const pool of pools) {
           pool.is_upgraded = await this.ws.call('pool.is_upgraded', [pool.id]).toPromise();

@@ -6,20 +6,21 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { helptext_sharing_smb } from 'app/helptext/sharing/smb/smb';
 import * as _ from 'lodash';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-smb-acl',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class SMBAclComponent {
-  protected queryCall = 'smb.sharesec.query';
-  protected editCall = 'smb.sharesec.update';
+export class SMBAclComponent implements FormConfiguration {
+  queryCall: 'smb.sharesec.query' = 'smb.sharesec.query';
+  editCall: 'smb.sharesec.update' = 'smb.sharesec.update';
 
-  protected route_success: string[] = ['sharing', 'smb'];
-  protected isEntity = true;
-  protected customFilter: any[] = [[['id', '=']]];
+  route_success: string[] = ['sharing', 'smb'];
+  isEntity = true;
+  customFilter: any[] = [[['id', '=']]];
 
-  protected fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext_sharing_smb.share_acl_basic,
       label: true,

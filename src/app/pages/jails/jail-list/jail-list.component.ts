@@ -25,9 +25,9 @@ export class JailListComponent {
   activatedPool: any;
   availablePools: any;
   title = 'Jails';
-  protected queryCall = 'jail.query';
-  protected wsDelete = 'jail.delete';
-  protected wsMultiDelete = 'core.bulk';
+  protected queryCall: 'jail.query' = 'jail.query';
+  protected wsDelete: 'jail.delete' = 'jail.delete';
+  protected wsMultiDelete: 'core.bulk' = 'core.bulk';
   entityList: any;
   protected route_add = ['jails', 'add', 'wizard'];
   protected route_add_tooltip = 'Add Jail';

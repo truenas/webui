@@ -14,7 +14,7 @@ import { Control } from '../../models/control.interface';
   styleUrls: ['toolbar-multimenu.component.scss'],
   templateUrl: 'toolbar-multimenu.component.html',
 })
-export class ToolbarMultimenuComponent extends iXAbstractObject implements OnInit, OnChanges {
+export class ToolbarMultimenuComponent extends iXAbstractObject implements OnInit {
   @Input() config?: ControlConfig;
   @Input() controller: Subject<any>;
   allSelected = false;
@@ -22,11 +22,6 @@ export class ToolbarMultimenuComponent extends iXAbstractObject implements OnIni
   private selectStates: boolean [] = [];
   constructor(public translate: TranslateService) {
     super();
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.config) {
-    }
   }
 
   ngOnInit() {

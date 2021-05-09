@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
+import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { LocalStorage } from 'ngx-webstorage';
 import { Observable, Observer, Subject } from 'rxjs';
 
@@ -186,7 +187,7 @@ export class WebSocketService {
     });
   }
 
-  call<R = any>(method: string, params?: any, debug = false): Observable<R> {
+  call<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<ApiDirectory[K]['response']> {
     const uuid = UUID.UUID();
     const payload = {
       id: uuid, msg: 'method', method, params,
@@ -303,7 +304,7 @@ export class WebSocketService {
   }
 
   logout() {
-    this.call('auth.logout').subscribe((res) => {
+    this.call('auth.logout').subscribe(() => {
       this.clearCredentials();
       this.socket.close();
       this._router.navigate(['/sessions/signin']);

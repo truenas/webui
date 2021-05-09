@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { User } from 'app/interfaces/user';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/account/user-form';
@@ -10,24 +12,25 @@ import {
 import { ModalService } from 'app/services/modal.service';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-user-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [UserService],
 })
-export class UserFormComponent {
-  protected queryCall = 'user.query';
-  protected addCall = 'user.create';
-  protected editCall = 'user.update';
-  protected pk: string;
-  protected queryKey = 'id';
-  protected isEntity = true;
-  protected isNew: boolean;
+export class UserFormComponent implements FormConfiguration {
+  queryCall: 'user.query' = 'user.query';
+  addCall: 'user.create' = 'user.create';
+  editCall: 'user.update' = 'user.update';
+  pk: string;
+  queryKey = 'id';
+  isEntity = true;
+  isNew: boolean;
   entityForm: any;
   protected namesInUse: string[] = [];
   private homeSharePath: string;
-  protected columnsOnForm = 2;
+  columnsOnForm = 2;
   title: string;
 
   fieldSetDisplay = 'default';// default | carousel | stepper
@@ -277,7 +280,7 @@ export class UserFormComponent {
     },
   ]);
 
-  protected custActions = [
+  custActions = [
     {
       id: 'download_sshpubkey',
       name: helptext.user_form_download_key,
@@ -306,7 +309,7 @@ export class UserFormComponent {
     private modalService: ModalService) {
     this.ws.call('user.query').subscribe(
       (res) => {
-        this.namesInUse.push(...res.map((user: any) => user.username));
+        this.namesInUse.push(...res.map((user) => user.username));
       },
     );
   }
@@ -387,7 +390,7 @@ export class UserFormComponent {
     });
 
     /* list users */
-    const filter = ['id', '=', parseInt(this.pk, 10)];
+    const filter: QueryFilter<User> = ['id', '=', parseInt(this.pk, 10)];
     this.ws.call('user.query', [[filter]]).subscribe(async (res) => {
       if (res.length !== 0 && res[0].home !== '/nonexistent') {
         this.storageService.filesystemStat(res[0].home).subscribe((stat) => {

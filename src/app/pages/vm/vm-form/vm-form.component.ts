@@ -21,6 +21,7 @@ import { GpuDevice } from 'app/interfaces/gpu-device.interface';
 import { combineLatest, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-vm',
@@ -28,13 +29,13 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
   providers: [StorageService],
 
 })
-export class VmFormComponent {
-  protected queryCall = 'vm.query';
-  protected editCall = 'vm.update';
-  protected isEntity = true;
-  protected route_success: string[] = ['vm'];
+export class VmFormComponent implements FormConfiguration {
+  queryCall: 'vm.query' = 'vm.query';
+  editCall: 'vm.update' = 'vm.update';
+  isEntity = true;
+  route_success: string[] = ['vm'];
   protected entityForm: EntityFormComponent;
-  protected save_button_enabled: boolean;
+  save_button_enabled: boolean;
   private rawVmData: any;
   vcpus: number;
   cores: number;
@@ -43,7 +44,7 @@ export class VmFormComponent {
   private isolatedGpuPciIds: string[];
   private maxVCPUs: number;
   private productType = window.localStorage.getItem('product_type') as ProductType;
-  protected queryCallOption: any[] = [];
+  queryCallOption: any[] = [];
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [

@@ -15,15 +15,16 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { ModalService } from '../../../../services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-kernel-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class KernelFormComponent implements OnDestroy {
-  protected queryCall = 'system.advanced.config';
-  protected updateCall = 'system.advanced.update';
+export class KernelFormComponent implements FormConfiguration, OnDestroy {
+  queryCall: 'system.advanced.config' = 'system.advanced.config';
+  updateCall = 'system.advanced.update';
   protected isOneColumnForm = true;
   private getDataFromDash: Subscription;
   fieldConfig: FieldConfig[] = [];
@@ -56,7 +57,7 @@ export class KernelFormComponent implements OnDestroy {
 
   private entityForm: any;
   private configData: any;
-  protected title = helptext_system_advanced.fieldset_kernel;
+  title = helptext_system_advanced.fieldset_kernel;
 
   constructor(
     protected router: Router,

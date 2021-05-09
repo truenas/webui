@@ -259,12 +259,12 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
         this.failover_status = res;
         this.ha_info_ready = true;
         if (res !== 'SINGLE') {
-          this.ws.call<string[]>('failover.get_ips').subscribe((ips) => {
+          this.ws.call('failover.get_ips').subscribe((ips) => {
             this.failover_ips = ips;
           }, (err) => {
             console.log(err);
           });
-          this.ws.call<FailoverDisabledReason[]>('failover.disabled_reasons').subscribe((reasons) => {
+          this.ws.call('failover.disabled_reasons').subscribe((reasons) => {
             this.checking_status = false;
             this.ha_disabled_reasons = reasons;
             this.show_reasons = false;

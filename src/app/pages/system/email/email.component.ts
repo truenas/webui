@@ -16,6 +16,7 @@ import { T } from 'app/translate-marker';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 interface OAuthData {
   client_id?: string;
@@ -29,9 +30,9 @@ interface OAuthData {
   <entity-form [conf]="this"></entity-form>
   `,
 })
-export class EmailComponent implements OnDestroy {
-  queryCall = 'mail.config';
-  updateCall = 'mail.update';
+export class EmailComponent implements FormConfiguration, OnDestroy {
+  queryCall: 'mail.config' = 'mail.config';
+  updateCall: 'mail.update' = 'mail.update';
   entityEdit: any;
   rootEmail: string;
   private oauthCreds: BehaviorSubject<OAuthData> = new BehaviorSubject({});
@@ -249,11 +250,7 @@ export class EmailComponent implements OnDestroy {
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
-    const payload = [];
-    payload.push('username');
-    payload.push('=');
-    payload.push('root');
-    this.ws.call('user.query', [[payload]]).subscribe((res) => {
+    this.ws.call('user.query', [[['username', '=', 'root']]]).subscribe((res) => {
       this.rootEmail = res[0].email;
     });
     this.pass = this.fieldSets.config('pass');

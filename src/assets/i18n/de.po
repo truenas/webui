@@ -733,6 +733,11 @@ msgstr ""
 msgid "A stripe"
 msgstr ""
 
+msgid ""
+"A stripe log vdev may result in data loss if it fails combined with a power "
+"outage."
+msgstr ""
+
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
 msgstr ""
 
@@ -814,6 +819,9 @@ msgstr ""
 
 msgid "AFP3 Unix Privs"
 msgstr "AFP3 Unix Privs"
+
+msgid "ALERT"
+msgstr ""
 
 msgid "API Key"
 msgstr "API Schlüssel"
@@ -2017,6 +2025,9 @@ msgstr "Autorisierte Hosts und IP-Adressen"
 msgid "Authorized Networks"
 msgstr "Autorisierte Netzwerke"
 
+msgid "Auto"
+msgstr ""
+
 msgid "Auto TRIM"
 msgstr ""
 
@@ -2464,6 +2475,9 @@ msgstr "CPU und Arbeitsspeicher"
 
 msgid "CPUs and Memory"
 msgstr "CPUs und Arbeitsspeicher"
+
+msgid "CRITICAL"
+msgstr ""
 
 msgid "CRL Sign"
 msgstr ""
@@ -3164,6 +3178,9 @@ msgstr ""
 msgid "Cloud Credentials"
 msgstr "Cloud-Anmeldeinformationen"
 
+msgid "Cloud Sync Task"
+msgstr ""
+
 msgid "Cloud Sync Tasks"
 msgstr ""
 
@@ -3311,9 +3328,6 @@ msgstr "Kompressionslevel"
 msgid "Computer Account OU"
 msgstr ""
 
-msgid "Conainter Images"
-msgstr ""
-
 msgid "Config could not be downloaded"
 msgstr "Die Konfiguration konnte nicht heruntergeladen werden"
 
@@ -3425,6 +3439,9 @@ msgstr "Passwort bestätigen"
 
 msgid "Confirm these settings."
 msgstr "Diese Einstellungen bestätigen."
+
+msgid "Confirm to unset pool?"
+msgstr ""
 
 msgid "Connect Timeout"
 msgstr "Zeitüberschreitung"
@@ -3616,6 +3633,9 @@ msgstr "CA erstellen"
 msgid "Create Certificate"
 msgstr "Zertifikat erstellen"
 
+msgid "Create New"
+msgstr ""
+
 msgid "Create Passphrase"
 msgstr "Passphrase erstellen"
 
@@ -3801,6 +3821,12 @@ msgid ""
 "target=\"_blank\">In-A-Dyn documentation</a>."
 msgstr ""
 
+msgid "DEBUG"
+msgstr ""
+
+msgid "DEFAULT"
+msgstr ""
+
 msgid "DELETE"
 msgstr "LÖSCHEN"
 
@@ -3957,6 +3983,9 @@ msgstr "Monatstag"
 
 msgid "Day of Week"
 msgstr "Wochentag"
+
+msgid "Day(s)"
+msgstr ""
 
 msgid "Days"
 msgstr "Tage"
@@ -4799,7 +4828,13 @@ msgstr ""
 msgid "EDIT"
 msgstr "BEARBEITEN"
 
+msgid "EMERGENCY"
+msgstr ""
+
 msgid "ENABLED"
+msgstr ""
+
+msgid "ERROR"
 msgstr ""
 
 msgid "ERROR: Not Enough Memory"
@@ -6946,6 +6981,9 @@ msgstr "HA stellt die Verbindung wieder her."
 msgid "HDD Standby"
 msgstr ""
 
+msgid "HEX"
+msgstr ""
+
 msgid "HTTP Authentication"
 msgstr "HTTP-Authentifizierung"
 
@@ -7161,6 +7199,9 @@ msgstr ""
 msgid "Hour and minute when the system can begin  taking snapshots."
 msgstr ""
 
+msgid "Hour(s)"
+msgstr ""
+
 msgid "Hourly"
 msgstr ""
 
@@ -7246,6 +7287,12 @@ msgstr "ID"
 
 msgid "IDMAP"
 msgstr "IDMAP"
+
+msgid "IGNORE"
+msgstr ""
+
+msgid "INFO"
+msgstr ""
 
 msgid "INSTALL"
 msgstr "INSTALLIEREN"
@@ -7387,6 +7434,9 @@ msgid ""
 "certificate will be rejected. Extensions identified as <i>not</i> critical "
 "can be ignored by the certificate-using system and the certificate still "
 "approved."
+msgstr ""
+
+msgid "Idle"
 msgstr ""
 
 msgid "Idmap"
@@ -7811,6 +7861,11 @@ msgstr ""
 msgid "It seems you haven't setup any "
 msgstr ""
 
+msgid ""
+"It seems you haven't setup any SMB Shares yet. Please click the button "
+"below to add an SMB Share."
+msgstr ""
+
 msgid "Item"
 msgstr ""
 
@@ -8045,6 +8100,9 @@ msgstr "LEGACY WEB-SCHNITTSTELLE"
 msgid "LLDP"
 msgstr ""
 
+msgid "LOCAL"
+msgstr ""
+
 msgid "LOG (Write Cache) Overprovision Size in GiB"
 msgstr ""
 
@@ -8074,9 +8132,6 @@ msgstr "Lagg Protokoll"
 
 msgid "Language"
 msgstr "Sprache"
-
-msgid "Language code"
-msgstr "Sprachcode"
 
 msgid "Last Scrub Run on"
 msgstr "Letzt Srub Lauf um"
@@ -8704,6 +8759,9 @@ msgstr "Monitor Benutzer"
 msgid "Month"
 msgstr "Monat"
 
+msgid "Month(s)"
+msgstr ""
+
 msgid "Monthly"
 msgstr "Monatlich"
 
@@ -8712,6 +8770,9 @@ msgstr "Monate"
 
 msgid "More Options"
 msgstr "Mehr Optionen"
+
+msgid "More info..."
+msgstr ""
 
 msgid "Mount Path"
 msgstr ""
@@ -8813,7 +8874,7 @@ msgstr ""
 msgid "NO"
 msgstr "NEIN"
 
-msgid "NOT RUN SINCE LAST BOOT"
+msgid "NOTICE"
 msgstr ""
 
 msgid "NSS"
@@ -9147,6 +9208,9 @@ msgstr ""
 
 msgid "No Repositories"
 msgstr "Keine Repositories"
+
+msgid "No SMB Shares"
+msgstr ""
 
 msgid "No Safety Check (CAUTION)"
 msgstr ""
@@ -9666,16 +9730,22 @@ msgid ""
 "the <samp>webdav</samp> or  <samp>www</samp> user/group."
 msgstr ""
 
-msgid "PCI Passthru Device"
+msgid "PASSPHRASE"
 msgstr ""
 
-msgid "PENDING"
+msgid "PCI Passthru Device"
 msgstr ""
 
 msgid "POST INSTALL NOTES"
 msgstr ""
 
 msgid "PROCEED"
+msgstr ""
+
+msgid "PULL"
+msgstr ""
+
+msgid "PUSH"
 msgstr ""
 
 msgid "PagerDuty client name."
@@ -9848,6 +9918,9 @@ msgid "Perform Reverse DNS Lookups"
 msgstr ""
 
 msgid "Performs authentication from an LDAP server."
+msgstr ""
+
+msgid "Periodic Snapshot Task"
 msgstr ""
 
 msgid "Periodic Snapshot Tasks"
@@ -10079,6 +10152,9 @@ msgid "Power"
 msgstr "Energie"
 
 msgid "Power Management"
+msgstr ""
+
+msgid "Power Mode"
 msgstr ""
 
 msgid "Power Off"
@@ -10376,6 +10452,12 @@ msgstr "REFRESH-INDEX"
 
 msgid "REGISTER"
 msgstr "REGISTRIEREN"
+
+msgid "REMOTE"
+msgstr ""
+
+msgid "REQUIRE"
+msgstr ""
 
 msgid "RESTART"
 msgstr "NEUSTART"
@@ -10792,6 +10874,15 @@ msgstr "Repliziere <i>"
 msgid "Replication Schedule"
 msgstr "Replikationszeitplan"
 
+msgid "Replication Summary"
+msgstr ""
+
+msgid "Replication Task"
+msgstr ""
+
+msgid "Replication Task Wizard"
+msgstr ""
+
 msgid "Replication Tasks"
 msgstr ""
 
@@ -11110,6 +11201,9 @@ msgstr "Rsync-Modus"
 msgid "Rsync Module"
 msgstr ""
 
+msgid "Rsync Task"
+msgstr ""
+
 msgid "Rsync Tasks"
 msgstr ""
 
@@ -11203,6 +11297,9 @@ msgstr "SED Passwort"
 msgid "SEND TEST ALERT"
 msgstr "SENDEN VON TESTWARNUNGEN"
 
+msgid "SET"
+msgstr ""
+
 msgid "SFTP Log Facility"
 msgstr "SFTP-Protokoll-Einrichtung"
 
@@ -11287,6 +11384,9 @@ msgstr "SSH Benutername."
 
 msgid "SSH port number. Leave empty to use the default port <i>22</i>."
 msgstr "SSH-Portnummer. Lassen Sie leer, um den Standardport <i>22</i> zu verwenden."
+
+msgid "SSH+NETCAT"
+msgstr ""
 
 msgid "SSL"
 msgstr "SSL"
@@ -13406,6 +13506,9 @@ msgstr ""
 "Stellen Sie dies ein, wenn Sie eine benutzerdefinierte Endpunkt-URL "
 "konfigurieren."
 
+msgid "Sleep"
+msgstr ""
+
 msgid "Snapshot"
 msgstr "Snapshot"
 
@@ -13451,11 +13554,11 @@ msgstr ""
 msgid "Something went wrong"
 msgstr ""
 
-msgid "Sort languages by:"
-msgstr "Sprachen sortieren nach:"
-
 msgid "Source"
 msgstr "Quelle"
+
+msgid "Source Dataset"
+msgstr ""
 
 msgid "Source Location"
 msgstr ""
@@ -13800,6 +13903,9 @@ msgstr ""
 msgid "Switch Train"
 msgstr ""
 
+msgid "Switch to Wizard"
+msgstr ""
+
 msgid "Switch update trains?"
 msgstr ""
 
@@ -14002,6 +14108,9 @@ msgstr "Ziel"
 msgid "Target Alias"
 msgstr ""
 
+msgid "Target Dataset"
+msgstr ""
+
 msgid "Target Global Configuration"
 msgstr ""
 
@@ -14022,9 +14131,6 @@ msgstr "Task Name"
 
 msgid "Task Started"
 msgstr "Task gestartet"
-
-msgid "Task State"
-msgstr "Task Status"
 
 msgid "Task Stopped"
 msgstr "Task gestoppt"
@@ -14099,6 +14205,9 @@ msgid "Test network interface changes? Network connectivity can be interrupted."
 msgstr ""
 "Änderungen an der Netzwerkschnittstelle testen? Die Netzwerkkonnektivität "
 "kann unterbrochen werden."
+
+msgid "Tests are only performed when <i>Never</i> is selected."
+msgstr ""
 
 msgid ""
 "Tests the server connection and verifies the chosen <b>Certificate</b>  "
@@ -14611,6 +14720,11 @@ msgid "The system could not retrieve any "
 msgstr ""
 
 msgid ""
+"The system could not retrieve any SMB Shares from the database. Please "
+"click the button below to add an SMB Share."
+msgstr ""
+
+msgid ""
 "The system dataset will be updated and the SMB service restarted. This will "
 "cause a temporary disruption of any active SMB connections."
 msgstr ""
@@ -15055,9 +15169,6 @@ msgstr ""
 msgid "Toggle Display"
 msgstr ""
 
-msgid "Toggle Hide/Open"
-msgstr ""
-
 msgid "Toggle built-in groups"
 msgstr ""
 
@@ -15358,6 +15469,9 @@ msgstr ""
 
 msgid "Unselect All"
 msgstr "Alles abwählen"
+
+msgid "Unset"
+msgstr ""
 
 msgid "Unset <i>Generate Encryption Key</i> to instead import a custom Hex key."
 msgstr ""
@@ -16023,6 +16137,9 @@ msgstr "Video, < 10ms Latenz"
 msgid "View"
 msgstr "Anzeigen"
 
+msgid "View Enclosure"
+msgstr ""
+
 msgid "View Logs"
 msgstr "Logs anzeigen"
 
@@ -16178,6 +16295,9 @@ msgstr "Webhook URL"
 
 msgid "Wed"
 msgstr "Mittwoch"
+
+msgid "Week(s)"
+msgstr ""
 
 msgid "Weekly"
 msgstr "Wöchentlich"
@@ -16381,6 +16501,9 @@ msgstr ""
 "Yandex  <a "
 "href=\"https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/"
 "\"  target=\"_blank\">Zugangsschlüssel</a>."
+
+msgid "Year(s)"
+msgstr ""
 
 msgid "Years"
 msgstr "Jahre"
@@ -16735,6 +16858,9 @@ msgstr ""
 msgid "login_flags"
 msgstr ""
 
+msgid "lz4 (fastest)"
+msgstr ""
+
 msgid "lz4 (recommended)"
 msgstr "lz4 (empfohlen)"
 
@@ -16828,6 +16954,12 @@ msgstr ""
 msgid "pcpu"
 msgstr ""
 
+msgid "pigz (all rounder)"
+msgstr ""
+
+msgid "plzip (best compression)"
+msgstr ""
+
 msgid "pool options for "
 msgstr ""
 
@@ -16841,6 +16973,12 @@ msgid "reset"
 msgstr "zurücksetzen"
 
 msgid "resolver"
+msgstr ""
+
+msgid "restartMessage"
+msgstr ""
+
+msgid "restartPrompt"
 msgstr ""
 
 msgid "rlimits"
@@ -16871,6 +17009,12 @@ msgid "service failed to stop."
 msgstr "Der Dienst konnte nicht gestoppt werden."
 
 msgid "shmsize"
+msgstr ""
+
+msgid "shutDownMessage"
+msgstr ""
+
+msgid "shutDownPrompt"
 msgstr ""
 
 msgid "snapshot"

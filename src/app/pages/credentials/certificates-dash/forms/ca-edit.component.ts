@@ -12,23 +12,24 @@ import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.int
 import { EntityUtils } from '../../../common/entity/utils';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-ca-edit',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class CertificateAuthorityEditComponent {
-  protected queryCall = 'certificateauthority.query';
-  protected editCall = 'certificateauthority.update';
-  protected isEntity = true;
-  protected queryCallOption: any[];
+export class CertificateAuthorityEditComponent implements FormConfiguration {
+  queryCall: 'certificateauthority.query' = 'certificateauthority.query';
+  editCall: 'certificateauthority.update' = 'certificateauthority.update';
+  isEntity = true;
+  queryCallOption: any[];
   private getRow = new Subscription();
   private rowNum: any;
-  private title: string;
+  title: string;
   private incomingData: any;
   private unsignedCAs: any[] = [];
 
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
       name: helptext_system_certificates.edit.fieldset_certificate,
@@ -231,7 +232,7 @@ export class CertificateAuthorityEditComponent {
     parent: this,
   };
 
-  protected custActions = [
+  custActions = [
     {
       id: 'sign_CSR',
       name: helptext_system_certificates.edit.signCSR,

@@ -39,6 +39,7 @@ import { FormIpWithNetmaskComponent } from './entity-form/components/form-ipwith
 import { FormListComponent } from './entity-form/components/form-list/form-list.component';
 import { FormChipComponent } from './entity-form/components/form-chip/form-chip.component';
 import { FormErrorsComponent } from './entity-form/components/form-errors/form-errors.component';
+import { FormDictComponent } from './entity-form/components/form-dict/form-dict.component';
 
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
@@ -166,6 +167,7 @@ import { TableComponent } from './table/table.component';
     TableComponent,
     EntityDashboardComponent,
     EntityEmptyComponent,
+    FormDictComponent,
   ],
   exports: [
     EntityTemplateDirective,
@@ -234,6 +236,7 @@ import { TableComponent } from './table/table.component';
     EntitySnackbarComponent,
     EntityTableRowDetailsComponent,
     TaskScheduleListComponent,
+    FormDictComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

@@ -1,13 +1,49 @@
 # !/usr/bin/env python3
 
-import pytest
 import os
+import pytest
 import time
 from configparser import ConfigParser
 from platform import system
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.common.exceptions import NoSuchElementException
+
+
+@pytest.fixture
+def nas_ip():
+    if os.environ.get("nas_ip"):
+        return os.environ.get("nas_ip")
+    elif os.path.exists('config.cfg'):
+        configs = ConfigParser()
+        configs.read('config.cfg')
+        return configs['NAS_CONFIG']['ip']
+    else:
+        return 'none'
+
+
+@pytest.fixture
+def root_password():
+    if os.environ.get("nas_password"):
+        return os.environ.get("nas_password")
+    elif os.path.exists('config.cfg'):
+        configs = ConfigParser()
+        configs.read('config.cfg')
+        return configs['NAS_CONFIG']['password']
+    else:
+        return 'none'
+
+
+@pytest.fixture
+def iso_version():
+    if os.environ.get("nas_version"):
+        return os.environ.get("nas_version")
+    elif os.path.exists('config.cfg'):
+        configs = ConfigParser()
+        configs.read('config.cfg')
+        return configs['NAS_CONFIG']['version']
+    else:
+        return 'none'
 
 
 def browser():
@@ -26,6 +62,7 @@ def browser():
     firefox_capabilities['firefox_profile'] = profile.encoded
     firefox_capabilities['binary'] = binary
     web_driver = webdriver.Firefox(capabilities=firefox_capabilities)
+    web_driver.set_window_size(1920, 1080)
     web_driver.implicitly_wait(2)
     return web_driver
 
@@ -41,23 +78,6 @@ def driver():
 # Close firefox after all tests are completed
 def pytest_sessionfinish(session, exitstatus):
     web_driver.quit()
-
-
-if os.path.exists('config.cfg'):
-    configs = ConfigParser()
-    configs.read('config.cfg')
-    ip = configs['NAS_CONFIG']['ip']
-    password = configs['NAS_CONFIG']['password']
-
-    @pytest.fixture
-    def ui_url():
-        global url
-        url = f"http://{ip}"
-        return url
-
-    @pytest.fixture
-    def root_password():
-        return password
 
 
 @pytest.mark.hookwrapper
@@ -138,4 +158,3 @@ def enable_failover():
             web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    # wait_on_element(1, 90, '//mat-icon[@svgicon="ha_enabled"]')

@@ -9,19 +9,20 @@ import {
   DialogService, StorageService, WebSocketService, AppLoaderService, UserService,
 } from 'app/services';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-user-quota-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class UserQuotaFormComponent {
+export class UserQuotaFormComponent implements FormConfiguration {
   isEntity = true;
   entityForm: any;
   pk: string;
-  protected route_success: string[];
+  route_success: string[];
   searchedEntries: any[] = [];
   entryField: FieldConfig;
-  private isNew = true;
+  isNew = true;
   private dq: string;
   private oq: string;
   private selectedEntriesField: any;
@@ -144,7 +145,7 @@ export class UserQuotaFormComponent {
     this.entryField = _.find(this.fieldSets.find((set) => set.name === helptext.users.user_title).config,
       { name: 'searched_entries' });
 
-    this.ws.call('user.query').subscribe((res: any[]) => {
+    this.ws.call('user.query').subscribe((res) => {
       res.map((entry) => {
         this.selectedEntriesField.options.push({ label: entry.username, value: entry.uid });
       });
@@ -194,7 +195,7 @@ export class UserQuotaFormComponent {
   }
 
   updateSearchOptions(value = '', parent: any) {
-    parent.userService.userQueryDSCache(value).subscribe((items: any[]) => {
+    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const entries: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         entries.push({ label: items[i].username, value: items[i].username });

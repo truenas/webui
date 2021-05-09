@@ -230,7 +230,7 @@ export class VolumeImportWizardComponent {
       dialogRef.close(false);
       this.getImportableDisks();
       stepper.next();
-    }),
+    });
     dialogRef.componentInstance.failure.subscribe((res: any) => {
       dialogRef.close(false);
       this.dialogService.errorReport(T('Error decrypting disks'), res.error, res.exception);
@@ -328,7 +328,7 @@ export class VolumeImportWizardComponent {
         dialogRef.close(false);
         this.modalService.close('slide-in-form');
         this.modalService.refreshTable();
-      }),
+      });
       dialogRef.componentInstance.failure.subscribe((res: any) => {
         dialogRef.close(false);
         this.errorReport(res);

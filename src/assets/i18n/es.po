@@ -653,6 +653,11 @@ msgstr ""
 msgid "A stripe"
 msgstr ""
 
+msgid ""
+"A stripe log vdev may result in data loss if it fails combined with a power "
+"outage."
+msgstr ""
+
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
 msgstr ""
 
@@ -727,6 +732,9 @@ msgid "AFP (Apple File Protocol)"
 msgstr ""
 
 msgid "AFP3 Unix Privs"
+msgstr ""
+
+msgid "ALERT"
 msgstr ""
 
 msgid "API Key"
@@ -1894,6 +1902,9 @@ msgstr ""
 msgid "Authorized Networks"
 msgstr "Redes autorizadas"
 
+msgid "Auto"
+msgstr ""
+
 msgid "Auto TRIM"
 msgstr ""
 
@@ -2330,6 +2341,9 @@ msgid "CPU and Memory"
 msgstr ""
 
 msgid "CPUs and Memory"
+msgstr ""
+
+msgid "CRITICAL"
 msgstr ""
 
 msgid "CRL Sign"
@@ -3001,6 +3015,9 @@ msgstr ""
 msgid "Cloud Credentials"
 msgstr ""
 
+msgid "Cloud Sync Task"
+msgstr ""
+
 msgid "Cloud Sync Tasks"
 msgstr ""
 
@@ -3148,9 +3165,6 @@ msgstr "Nivel de compresión"
 msgid "Computer Account OU"
 msgstr ""
 
-msgid "Conainter Images"
-msgstr ""
-
 msgid "Config could not be downloaded"
 msgstr ""
 
@@ -3251,6 +3265,9 @@ msgid "Confirm password"
 msgstr "Confirmar contraseña"
 
 msgid "Confirm these settings."
+msgstr ""
+
+msgid "Confirm to unset pool?"
 msgstr ""
 
 msgid "Connect Timeout"
@@ -3443,6 +3460,9 @@ msgstr "Crear CA"
 msgid "Create Certificate"
 msgstr "Crear Certificado"
 
+msgid "Create New"
+msgstr ""
+
 msgid "Create Passphrase"
 msgstr ""
 
@@ -3628,6 +3648,12 @@ msgid ""
 "target=\"_blank\">In-A-Dyn documentation</a>."
 msgstr ""
 
+msgid "DEBUG"
+msgstr ""
+
+msgid "DEFAULT"
+msgstr ""
+
 msgid "DELETE"
 msgstr "ELIMINAR"
 
@@ -3784,6 +3810,9 @@ msgstr "Día del mes"
 
 msgid "Day of Week"
 msgstr "Día de la semana"
+
+msgid "Day(s)"
+msgstr ""
 
 msgid "Days"
 msgstr "Días"
@@ -4606,7 +4635,13 @@ msgstr ""
 msgid "EDIT"
 msgstr "EDITAR"
 
+msgid "EMERGENCY"
+msgstr ""
+
 msgid "ENABLED"
+msgstr ""
+
+msgid "ERROR"
 msgstr ""
 
 msgid "ERROR: Not Enough Memory"
@@ -6655,6 +6690,9 @@ msgstr ""
 msgid "HDD Standby"
 msgstr ""
 
+msgid "HEX"
+msgstr ""
+
 msgid "HTTP Authentication"
 msgstr ""
 
@@ -6870,6 +6908,9 @@ msgstr ""
 msgid "Hour and minute when the system can begin  taking snapshots."
 msgstr ""
 
+msgid "Hour(s)"
+msgstr ""
+
 msgid "Hourly"
 msgstr ""
 
@@ -6954,6 +6995,12 @@ msgid "ID"
 msgstr ""
 
 msgid "IDMAP"
+msgstr ""
+
+msgid "IGNORE"
+msgstr ""
+
+msgid "INFO"
 msgstr ""
 
 msgid "INSTALL"
@@ -7096,6 +7143,9 @@ msgid ""
 "certificate will be rejected. Extensions identified as <i>not</i> critical "
 "can be ignored by the certificate-using system and the certificate still "
 "approved."
+msgstr ""
+
+msgid "Idle"
 msgstr ""
 
 msgid "Idmap"
@@ -7509,6 +7559,11 @@ msgstr ""
 msgid "It seems you haven't setup any "
 msgstr ""
 
+msgid ""
+"It seems you haven't setup any SMB Shares yet. Please click the button "
+"below to add an SMB Share."
+msgstr ""
+
 msgid "Item"
 msgstr ""
 
@@ -7735,6 +7790,9 @@ msgstr ""
 msgid "LLDP"
 msgstr ""
 
+msgid "LOCAL"
+msgstr ""
+
 msgid "LOG (Write Cache) Overprovision Size in GiB"
 msgstr ""
 
@@ -7764,9 +7822,6 @@ msgstr ""
 
 msgid "Language"
 msgstr "Idioma"
-
-msgid "Language code"
-msgstr ""
 
 msgid "Last Scrub Run on"
 msgstr ""
@@ -8388,6 +8443,9 @@ msgstr ""
 msgid "Month"
 msgstr "Mes"
 
+msgid "Month(s)"
+msgstr ""
+
 msgid "Monthly"
 msgstr ""
 
@@ -8395,6 +8453,9 @@ msgid "Months"
 msgstr "Meses"
 
 msgid "More Options"
+msgstr ""
+
+msgid "More info..."
 msgstr ""
 
 msgid "Mount Path"
@@ -8497,7 +8558,7 @@ msgstr ""
 msgid "NO"
 msgstr ""
 
-msgid "NOT RUN SINCE LAST BOOT"
+msgid "NOTICE"
 msgstr ""
 
 msgid "NSS"
@@ -8823,6 +8884,9 @@ msgid "No Recent Events"
 msgstr ""
 
 msgid "No Repositories"
+msgstr ""
+
+msgid "No SMB Shares"
 msgstr ""
 
 msgid "No Safety Check (CAUTION)"
@@ -9343,16 +9407,22 @@ msgid ""
 "the <samp>webdav</samp> or  <samp>www</samp> user/group."
 msgstr ""
 
-msgid "PCI Passthru Device"
+msgid "PASSPHRASE"
 msgstr ""
 
-msgid "PENDING"
-msgstr "PENDIENTE"
+msgid "PCI Passthru Device"
+msgstr ""
 
 msgid "POST INSTALL NOTES"
 msgstr ""
 
 msgid "PROCEED"
+msgstr ""
+
+msgid "PULL"
+msgstr ""
+
+msgid "PUSH"
 msgstr ""
 
 msgid "PagerDuty client name."
@@ -9525,6 +9595,9 @@ msgid "Perform Reverse DNS Lookups"
 msgstr ""
 
 msgid "Performs authentication from an LDAP server."
+msgstr ""
+
+msgid "Periodic Snapshot Task"
 msgstr ""
 
 msgid "Periodic Snapshot Tasks"
@@ -9748,6 +9821,9 @@ msgid "Power"
 msgstr ""
 
 msgid "Power Management"
+msgstr ""
+
+msgid "Power Mode"
 msgstr ""
 
 msgid "Power Off"
@@ -9989,6 +10065,12 @@ msgid "REFRESH INDEX"
 msgstr ""
 
 msgid "REGISTER"
+msgstr ""
+
+msgid "REMOTE"
+msgstr ""
+
+msgid "REQUIRE"
 msgstr ""
 
 msgid "RESTART"
@@ -10356,6 +10438,15 @@ msgstr ""
 msgid "Replication Schedule"
 msgstr ""
 
+msgid "Replication Summary"
+msgstr ""
+
+msgid "Replication Task"
+msgstr ""
+
+msgid "Replication Task Wizard"
+msgstr ""
+
 msgid "Replication Tasks"
 msgstr ""
 
@@ -10652,6 +10743,9 @@ msgstr ""
 msgid "Rsync Module"
 msgstr ""
 
+msgid "Rsync Task"
+msgstr ""
+
 msgid "Rsync Tasks"
 msgstr ""
 
@@ -10737,6 +10831,9 @@ msgstr "Contraseña SED"
 msgid "SEND TEST ALERT"
 msgstr ""
 
+msgid "SET"
+msgstr ""
+
 msgid "SFTP Log Facility"
 msgstr ""
 
@@ -10818,6 +10915,9 @@ msgid "SSH Username."
 msgstr ""
 
 msgid "SSH port number. Leave empty to use the default port <i>22</i>."
+msgstr ""
+
+msgid "SSH+NETCAT"
 msgstr ""
 
 msgid "SSL"
@@ -12533,6 +12633,9 @@ msgid ""
 "configuring a custom Endpoint URL."
 msgstr ""
 
+msgid "Sleep"
+msgstr ""
+
 msgid "Snapshot"
 msgstr ""
 
@@ -12578,10 +12681,10 @@ msgstr ""
 msgid "Something went wrong"
 msgstr ""
 
-msgid "Sort languages by:"
+msgid "Source"
 msgstr ""
 
-msgid "Source"
+msgid "Source Dataset"
 msgstr ""
 
 msgid "Source Location"
@@ -12927,6 +13030,9 @@ msgstr ""
 msgid "Switch Train"
 msgstr ""
 
+msgid "Switch to Wizard"
+msgstr ""
+
 msgid "Switch update trains?"
 msgstr ""
 
@@ -13129,6 +13235,9 @@ msgstr ""
 msgid "Target Alias"
 msgstr ""
 
+msgid "Target Dataset"
+msgstr ""
+
 msgid "Target Global Configuration"
 msgstr ""
 
@@ -13148,9 +13257,6 @@ msgid "Task Name"
 msgstr ""
 
 msgid "Task Started"
-msgstr ""
-
-msgid "Task State"
 msgstr ""
 
 msgid "Task Stopped"
@@ -13223,6 +13329,9 @@ msgid "Test network interface changes for "
 msgstr ""
 
 msgid "Test network interface changes? Network connectivity can be interrupted."
+msgstr ""
+
+msgid "Tests are only performed when <i>Never</i> is selected."
 msgstr ""
 
 msgid ""
@@ -13665,6 +13774,11 @@ msgid "The system could not retrieve any "
 msgstr ""
 
 msgid ""
+"The system could not retrieve any SMB Shares from the database. Please "
+"click the button below to add an SMB Share."
+msgstr ""
+
+msgid ""
 "The system dataset will be updated and the SMB service restarted. This will "
 "cause a temporary disruption of any active SMB connections."
 msgstr ""
@@ -14083,9 +14197,6 @@ msgstr ""
 msgid "Toggle Display"
 msgstr ""
 
-msgid "Toggle Hide/Open"
-msgstr ""
-
 msgid "Toggle built-in groups"
 msgstr ""
 
@@ -14367,6 +14478,9 @@ msgid "Unlocking datasets for "
 msgstr ""
 
 msgid "Unselect All"
+msgstr ""
+
+msgid "Unset"
 msgstr ""
 
 msgid "Unset <i>Generate Encryption Key</i> to instead import a custom Hex key."
@@ -15007,6 +15121,9 @@ msgstr ""
 msgid "View"
 msgstr "Ver"
 
+msgid "View Enclosure"
+msgstr ""
+
 msgid "View Logs"
 msgstr ""
 
@@ -15154,6 +15271,9 @@ msgstr ""
 
 msgid "Wed"
 msgstr "Mie"
+
+msgid "Week(s)"
+msgstr ""
 
 msgid "Weekly"
 msgstr "Semanal"
@@ -15353,6 +15473,9 @@ msgid ""
 "Yandex  <a "
 "href=\"https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/"
 "\"  target=\"_blank\">Access Token</a>."
+msgstr ""
+
+msgid "Year(s)"
 msgstr ""
 
 msgid "Years"
@@ -15708,6 +15831,9 @@ msgstr "lista"
 msgid "login_flags"
 msgstr ""
 
+msgid "lz4 (fastest)"
+msgstr ""
+
 msgid "lz4 (recommended)"
 msgstr ""
 
@@ -15801,6 +15927,12 @@ msgstr ""
 msgid "pcpu"
 msgstr ""
 
+msgid "pigz (all rounder)"
+msgstr ""
+
+msgid "plzip (best compression)"
+msgstr ""
+
 msgid "pool options for "
 msgstr ""
 
@@ -15814,6 +15946,12 @@ msgid "reset"
 msgstr ""
 
 msgid "resolver"
+msgstr ""
+
+msgid "restartMessage"
+msgstr ""
+
+msgid "restartPrompt"
 msgstr ""
 
 msgid "rlimits"
@@ -15844,6 +15982,12 @@ msgid "service failed to stop."
 msgstr ""
 
 msgid "shmsize"
+msgstr ""
+
+msgid "shutDownMessage"
+msgstr ""
+
+msgid "shutDownPrompt"
 msgstr ""
 
 msgid "snapshot"

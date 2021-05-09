@@ -12,21 +12,22 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
 import helptext from 'app/helptext/system/alert-service';
 import { AlertLevel } from 'app/enums/alert-level.enum';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-alertservice',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [EntityFormService],
 })
-export class AlertServiceComponent {
-  protected addCall = 'alertservice.create';
-  protected queryCall = 'alertservice.query';
-  protected queryCallOption: any[] = [['id', '=']];
-  protected editCall = 'alertservice.update';
-  protected testCall = 'alertservice.test';
+export class AlertServiceComponent implements FormConfiguration {
+  addCall: 'alertservice.create' = 'alertservice.create';
+  queryCall: 'alertservice.query' = 'alertservice.query';
+  queryCallOption: any[] = [['id', '=']];
+  editCall: 'alertservice.update' = 'alertservice.update';
+  testCall: 'alertservice.test' = 'alertservice.test';
   route_success: string[] = ['system', 'alertservice'];
 
-  protected isEntity = true;
+  isEntity = true;
   entityForm: any;
 
   fieldConfig: FieldConfig[];

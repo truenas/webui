@@ -11,15 +11,14 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { ModalService } from '../../../../../services/modal.service';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-support-form-licensed',
   template: '<entity-form [conf]="this"></entity-form>',
 
 })
-export class SupportFormLicensedComponent {
-  private queryCall = 'none';
-
+export class SupportFormLicensedComponent implements FormConfiguration {
   entityEdit: any;
   screenshot: any;
   subs: any[];
@@ -257,7 +256,7 @@ export class SupportFormLicensedComponent {
           dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
           dialogRef.componentInstance.success.subscribe(() => {
             this.resetForm();
-          }),
+          });
           dialogRef.componentInstance.failure.subscribe((res: any) => {
             dialogRef.componentInstance.setDescription(res.error);
           });

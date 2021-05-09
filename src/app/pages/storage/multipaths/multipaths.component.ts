@@ -15,5 +15,4 @@ export class MultipathsComponent {
     ],
     queryCall: 'multipath.query',
   };
-  constructor() {}
 }

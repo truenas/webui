@@ -44,7 +44,7 @@ export class ZvolWizardComponent {
   protected pk: any;
   protected path: string;
   sub: Subscription;
-  queryCall = 'pool.dataset.query';
+  queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   protected compression: any;
   protected advanced_field: any[] = ['volblocksize'];
   protected isBasicMode = true;
@@ -286,9 +286,6 @@ export class ZvolWizardComponent {
       data.name = this.parent + '/' + data.name;
     }
 
-    if (this.isBasicMode === true) {
-
-    }
     // TODO: Incorrect type comparison, probably a bug.
     if (this.origHuman !== (data.volsize as any)) {
       data.volsize = this.storageService.convertHumanStringToNum(data.volsize, true);

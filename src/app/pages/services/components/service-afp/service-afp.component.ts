@@ -8,6 +8,7 @@ import {
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/services/components/service-afp';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'afp-edit',
@@ -15,9 +16,9 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
   providers: [UserService, IscsiService],
 })
 
-export class ServiceAFPComponent {
-  protected route_success: string[] = ['services'];
-  protected queryCall = 'afp.config';
+export class ServiceAFPComponent implements FormConfiguration {
+  route_success: string[] = ['services'];
+  queryCall: 'afp.config' = 'afp.config';
   title = helptext.formTitle;
 
   fieldConfig: FieldConfig[] = [];
@@ -149,7 +150,7 @@ export class ServiceAFPComponent {
   afterInit(entityEdit: any) {
     entityEdit.submitFunction = this.submitFunction;
     const self = this;
-    this.userService.listUsers().subscribe((res) => {
+    this.userService.listUsers().subscribe((res: any) => {
       self.guest_users = _.find(this.fieldSets, { name: helptext.afp_fieldset_access }).config.find((config) => config.name === 'guest_user');
       for (let i = 0; i < res.data.length; i++) {
         this.guest_users.options.push(

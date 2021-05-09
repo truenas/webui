@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Observable, Subject, Subscription } from 'rxjs';
 
 import { EntityUtils } from '../pages/common/entity/utils';
@@ -43,7 +44,7 @@ export class ServicesService {
   renewStaticKey() {
     return this.ws.call('openvpn.server.renew_static_key');
   }
-  updateOpenVPN(call: string, body: any) {
+  updateOpenVPN(call: ApiMethod, body: any) {
     return this.ws.call(call, [body]);
   }
   getClientInfo() {

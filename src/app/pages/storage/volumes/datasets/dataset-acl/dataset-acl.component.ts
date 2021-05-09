@@ -27,16 +27,17 @@ import { MatDialog } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-dataset-acl',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class DatasetAclComponent implements OnDestroy {
-  protected queryCall = 'filesystem.getacl';
-  protected updateCall = 'filesystem.setacl';
-  protected isEntity = true;
-  protected pk: string;
+export class DatasetAclComponent implements FormConfiguration, OnDestroy {
+  queryCall: 'filesystem.getacl' = 'filesystem.getacl';
+  updateCall = 'filesystem.setacl';
+  isEntity = true;
+  pk: string;
   protected path: string;
   protected datasetId: string;
   private aclIsTrivial = false;
@@ -58,7 +59,7 @@ export class DatasetAclComponent implements OnDestroy {
   busy: Subscription;
   protected fs: any = (<any>window).filesize;
   protected dialogRef: any;
-  protected route_success: string[] = ['storage'];
+  route_success: string[] = ['storage'];
   save_button_enabled = true;
   private homeShare: boolean;
   private isTrivialMessageSent = false;
@@ -822,7 +823,7 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   updateUserSearchOptions(value = '', parent: any, config: any) {
-    parent.userService.userQueryDSCache(value).subscribe((items: any[]) => {
+    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -878,7 +879,7 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   loadMoreOptions(length: number, parent: any, searchText: string, config: any) {
-    parent.userService.userQueryDSCache(searchText, length).subscribe((items: any[]) => {
+    (parent.userService as UserService).userQueryDSCache(searchText, length).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });

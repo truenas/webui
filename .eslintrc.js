@@ -28,6 +28,10 @@ module.exports = {
         // TODO: Conflicts with ngx-translate-extract
         "prefer-template": "off",
 
+        // Consciously altered from Airbnb
+        "no-return-assign": "off",
+        "no-empty": ["error", { "allowEmptyCatch": true }],
+
         // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically
         "max-len": "off",
         "no-underscore-dangle": "off",
@@ -37,8 +41,6 @@ module.exports = {
         "no-console": "off",
         "eqeqeq": "off",
         "import/prefer-default-export": "off",
-        "@typescript-eslint/no-empty-function": "off",
-        "@typescript-eslint/no-useless-constructor": "off",
         "block-scoped-var": "off",
         "consistent-return": "off",
         "no-plusplus": "off",
@@ -49,16 +51,13 @@ module.exports = {
         "no-tabs": "off",
         "no-mixed-spaces-and-tabs": "off",
         "@typescript-eslint/no-unused-expressions": "off",
-        "no-sequences": "off",
         "prefer-destructuring": "off",
         "radix": "off",
-        "no-useless-concat": "off",
         "@typescript-eslint/no-loop-func": "off",
         "no-await-in-loop": "off",
         "no-nested-ternary": "off",
         "implicit-arrow-linebreak": "off",
         "@typescript-eslint/no-shadow": "off",
-        "no-return-assign": "off",
         "no-restricted-globals": "off",
         "no-case-declarations": "off",
         "no-multi-str": "off",
@@ -77,7 +76,6 @@ module.exports = {
         "no-prototype-builtins": "off",
         "prefer-promise-reject-errors": "off",
         "import/order": "off",
-        "no-empty": "off",
         "operator-assignment": "off",
         "no-continue": "off",
         "import/no-cycle": "off",
@@ -85,7 +83,6 @@ module.exports = {
         "no-self-assign": "off",
         "no-async-promise-executor": "off",
         "no-bitwise": "off",
-        "no-alert": "off",
         "import/no-duplicates": "off",
         "no-constant-condition": "off",
         "import/no-mutable-exports": "off",
@@ -100,7 +97,8 @@ module.exports = {
         "@typescript-eslint/no-inferrable-types": "error",
         "@typescript-eslint/ban-tslint-comment": "error",
         "@typescript-eslint/member-delimiter-style": "error",
-        "@typescript-eslint/type-annotation-spacing": "error"
+        "@typescript-eslint/type-annotation-spacing": "error",
+        "@typescript-eslint/ban-ts-comment": "error",
       }
     },
     {

@@ -18,8 +18,8 @@ import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-tabl
 })
 export class SnapshotListComponent implements InputTableConf, OnDestroy {
   title = T('Periodic Snapshot Tasks');
-  queryCall = 'pool.snapshottask.query';
-  wsDelete = 'pool.snapshottask.delete';
+  queryCall: 'pool.snapshottask.query' = 'pool.snapshottask.query';
+  wsDelete: 'pool.snapshottask.delete' = 'pool.snapshottask.delete';
   route_add: string[] = ['tasks', 'snapshot', 'add'];
   route_add_tooltip = 'Add Periodic Snapshot Task';
   route_edit: string[] = ['tasks', 'snapshot', 'edit'];

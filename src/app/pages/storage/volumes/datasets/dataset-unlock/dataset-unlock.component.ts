@@ -19,18 +19,19 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { UnlockDialogComponent } from './unlock-dialog/unlock-dialog.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-dataset-unlock',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class DatasetUnlockComponent implements OnDestroy {
-  protected queryCall = 'pool.dataset.encryption_summary';
-  protected updateCall = 'pool.dataset.unlock';
+export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
+  queryCall: 'pool.dataset.encryption_summary' = 'pool.dataset.encryption_summary';
+  updateCall = 'pool.dataset.unlock';
   route_success: string[] = ['storage'];
-  protected isEntity = true;
-  protected isNew = true;
-  protected pk: string;
+  isEntity = true;
+  isNew = true;
+  pk: string;
   protected path: string;
   protected entityForm: any;
   protected dialogOpen = false;
