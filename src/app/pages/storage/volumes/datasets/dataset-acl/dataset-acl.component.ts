@@ -24,7 +24,7 @@ import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-
 import { EntityUtils } from '../../../../common/entity/utils';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 
-import { AccessControlList } from 'app/interfaces/access-control-list';
+import { AccessControlList } from 'app/interfaces/access-control-list.interface';
 
 @Component({
   selector: 'app-dataset-acl',
@@ -484,12 +484,12 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(data: AccessControlList) {
-    this.aclData = {...data};
+    this.aclData = { ...data };
     if (data.acl.length > 0) {
       if (this.homeShare) {
-        this.ws.call('filesystem.get_default_acl', ['HOME']).subscribe(res => {
+        this.ws.call('filesystem.get_default_acl', ['HOME']).subscribe((res) => {
           data.acl = res;
-        })
+        });
       }
     }
 
@@ -609,22 +609,22 @@ export class DatasetAclComponent implements OnDestroy {
       }
     }
     this.loader.close();
-    
+
     if (this.aclIsTrivial && !this.isTrivialMessageSent && !this.homeShare) {
       this.showChoiceDialog();
     }
-    if(this.aclData.acl.length === 0 && !this.emptyAclWarningShown) {
+    if (this.aclData.acl.length === 0 && !this.emptyAclWarningShown) {
       const conf: DialogFormConfiguration = {
-        title: T("No Inheritable ACL Entries"),
-        fieldConfig:[],
-        warning: T("No inheritable ACL entries available. At least one inheritable ACL entry must be added."),
-        saveButtonText: T("OK"),
+        title: T('No Inheritable ACL Entries'),
+        fieldConfig: [],
+        warning: T('No inheritable ACL entries available. At least one inheritable ACL entry must be added.'),
+        saveButtonText: T('OK'),
         hideCancel: true,
         customSubmit: (entityDialog) => {
           entityDialog.dialogRef.close();
           this.emptyAclWarningShown = true;
-        }
-      }
+        },
+      };
       this.dialogService.dialogForm(conf);
     }
   }
