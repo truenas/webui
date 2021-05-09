@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { User } from 'app/interfaces/user';
+import { User } from 'app/interfaces/user.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/account/user-form';

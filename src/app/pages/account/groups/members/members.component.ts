@@ -1,5 +1,5 @@
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { User } from 'app/interfaces/user';
+import { User } from 'app/interfaces/user.interface';
 import { mergeMap } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
