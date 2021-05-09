@@ -374,7 +374,7 @@ export class VolumeStatusComponent implements OnInit {
               entityDialog.parent.getData();
               entityDialog.parent.getUnusedDisk();
               entityDialog.parent.dialogService.Info(helptext.replace_disk.title, helptext.replace_disk.info_dialog_content + name + '.', '', 'info', true);
-            }),
+            });
             dialogRef.componentInstance.failure.subscribe((res: any) => {
               dialogRef.close();
               entityDialog.dialogRef.close();
@@ -500,7 +500,7 @@ export class VolumeStatusComponent implements OnInit {
               entityDialog.parent.getData();
               entityDialog.parent.getUnusedDisk();
               entityDialog.parent.dialogService.Info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + name + '.', '', 'info', true);
-            }),
+            });
             dialogRef.componentInstance.failure.subscribe((res: any) => {
               dialogRef.close();
               entityDialog.dialogRef.close();

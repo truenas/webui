@@ -163,7 +163,7 @@ export class SystemProfileService extends BaseService {
       this.features.HA = true;
 
       // HA Status Change Call
-      this.websocket.call<FailoverDisabledReason[]>('failover.disabled_reasons').subscribe((res) => {
+      this.websocket.call('failover.disabled_reasons').subscribe((res) => {
         this.updateHA(res);
       });
     }

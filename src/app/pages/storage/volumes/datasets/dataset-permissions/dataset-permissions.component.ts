@@ -12,12 +12,13 @@ import {
 import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
 import { T } from '../../../../../translate-marker';
 import * as _ from 'lodash';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-dataset-permissions',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class DatasetPermissionsComponent implements OnDestroy {
+export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy {
   protected updateCall = 'pool.dataset.permission';
   protected datasetPath: string;
   protected datasetId: string;
@@ -25,8 +26,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
   protected recursive_subscription: any;
   formGroup: FormGroup;
   error: string;
-  protected route_success: string[] = ['storage'];
-  protected isEntity = true;
+  route_success: string[] = ['storage'];
+  isEntity = true;
   protected dialogRef: any;
   private entityForm: any;
   protected userField: any;
@@ -236,7 +237,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
   }
 
   updateUserSearchOptions(value = '', parent: any) {
-    parent.userService.userQueryDSCache(value).subscribe((items: any) => {
+    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -289,7 +290,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
   }
 
   loadMoreOptions(length: number, parent: any, searchText: string) {
-    parent.userService.userQueryDSCache(searchText, length).subscribe((items: any[]) => {
+    (parent.userService as UserService).userQueryDSCache(searchText, length).subscribe((items) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });

@@ -17,13 +17,14 @@ import { ViewControllerComponent } from 'app/core/components/viewcontroller/view
 import { EntityUtils } from '../../../common/entity/utils';
 import { take } from 'rxjs/operators';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-manualupdate',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [MessageService],
 })
-export class ManualUpdateComponent extends ViewControllerComponent {
+export class ManualUpdateComponent extends ViewControllerComponent implements FormConfiguration {
   formGroup: FormGroup;
   route_success: string[] = ['system', 'update'];
   protected dialogRef: any;
@@ -33,7 +34,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
   isUpdateRunning = false;
   updateMethod = 'update.update';
   saveSubmitText = T('Apply Update');
-  protected fieldConfig: FieldConfig[] = [
+  fieldConfig: FieldConfig[] = [
     {
       type: 'paragraph',
       name: 'version',

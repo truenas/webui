@@ -1,4 +1,5 @@
 import { Injectable, OnInit } from '@angular/core';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Subject } from 'rxjs';
 import { WebSocketService } from '../../services/ws.service';
 import { RestService } from '../../services/rest.service';
@@ -7,7 +8,7 @@ import { DialogService } from '../../services';
 // import { DataService } from './data.service';
 
 export interface ApiCall {
-  namespace: string; // namespace for ws and path for rest
+  namespace: ApiMethod; // namespace for ws and path for rest
   args?: any;
   operation?: string; // DEPRECATED - Used for REST calls only
   responseEvent?: any;// The event name of the response this service will send

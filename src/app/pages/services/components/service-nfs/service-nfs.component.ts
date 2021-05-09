@@ -9,15 +9,16 @@ import helptext from '../../../../helptext/services/components/service-nfs';
 import { RestService, WebSocketService, DialogService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'nfs-edit',
   template: ' <entity-form [conf]="this"></entity-form>',
 })
 
-export class ServiceNFSComponent {
-  protected queryCall = 'nfs.config';
-  protected route_success: string[] = ['services'];
+export class ServiceNFSComponent implements FormConfiguration {
+  queryCall: 'nfs.config' = 'nfs.config';
+  route_success: string[] = ['services'];
   productType = window.localStorage.getItem('product_type') as ProductType;
   hideOnScale = ['servers', 'allow_nonroot', 'mountd_log', 'statd_lockd_log'];
   title = helptext.formTitle;
@@ -180,7 +181,7 @@ export class ServiceNFSComponent {
   resourceTransformIncomingRestData(data: any) {
     this.v4krbValue = data.v4_krb;
     // If validIps is slow to load, skip check on load (It's still done on save)
-    if (this.validBindIps, this.validBindIps.length) {
+    if (this.validBindIps?.length) {
       return this.compareBindIps(data);
     }
     return data;

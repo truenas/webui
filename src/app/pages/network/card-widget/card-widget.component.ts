@@ -15,11 +15,6 @@ export interface CardWidgetConf {
   templateUrl: './card-widget.component.html',
   styleUrls: ['./card-widget.component.css'],
 })
-export class CardWidgetComponent implements OnInit {
+export class CardWidgetComponent {
   @Input('conf') widgetConf: CardWidgetComponent;
-
-  constructor() {}
-
-  ngOnInit() {
-  }
 }

@@ -17,7 +17,7 @@ import helptext from '../../../../../helptext/storage/volumes/zvol-form';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import globalHelptext from '../../../../../helptext/global-helptext';
 import { ModalService } from 'app/services/modal.service';
-import { Formconfiguration } from '../../../../common/entity/entity-form/entity-form.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 
 interface ZvolFormData {
@@ -38,11 +38,11 @@ interface ZvolFormData {
   selector: 'app-zvol-add',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class ZvolFormComponent implements Formconfiguration {
+export class ZvolFormComponent implements FormConfiguration {
   pk: any;
   protected path: string;
   sub: Subscription;
-  queryCall = 'pool.dataset.query';
+  queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   protected compression: any;
   advanced_field: any[] = ['volblocksize'];
   isBasicMode = true;
@@ -393,9 +393,6 @@ export class ZvolFormComponent implements Formconfiguration {
       data.name = this.parent + '/' + data.name;
     }
 
-    if (this.isBasicMode === true) {
-
-    }
     if (this.origHuman !== data.volsize) {
       data.volsize = this.storageService.convertHumanStringToNum(data.volsize, true);
     } else {

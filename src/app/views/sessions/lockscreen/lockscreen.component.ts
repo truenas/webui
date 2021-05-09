@@ -7,18 +7,13 @@ import { MatButton } from '@angular/material/button';
   templateUrl: './lockscreen.component.html',
   styleUrls: ['./lockscreen.component.css'],
 })
-export class LockscreenComponent implements OnInit {
+export class LockscreenComponent {
   @ViewChild(MatProgressBar, { static: false }) progressBar: MatProgressBar;
   @ViewChild(MatButton, { static: false }) submitButton: MatButton;
 
   lockscreenData = {
     password: '',
   };
-
-  constructor() { }
-
-  ngOnInit() {
-  }
 
   unlock() {
     console.log(this.lockscreenData);

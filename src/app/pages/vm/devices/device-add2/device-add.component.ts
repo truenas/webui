@@ -24,7 +24,7 @@ import { CoreEvent, CoreService } from 'app/core/services/core.service';
   styleUrls: ['../../../common/entity/entity-form/entity-form.component.scss'],
 })
 export class DeviceAddComponent implements OnInit, OnDestroy {
-  protected addCall = 'vm.device.create';
+  protected addCall: 'vm.device.create' = 'vm.device.create';
   protected route_success: string[];
   vmid: any;
   vmname: any;

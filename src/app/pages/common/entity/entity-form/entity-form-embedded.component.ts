@@ -32,7 +32,7 @@ import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
 import { FieldRelationService } from './services/field-relation.service';
 import { Subscription, Subject } from 'rxjs';
-import { Formconfiguration } from './entity-form.component';
+
 import { CoreEvent } from 'app/core/services/core.service';
 
 export interface FormConfig {

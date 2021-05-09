@@ -10,27 +10,28 @@ import { ModalService } from '../../../services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from '../../../helptext/apps/apps';
-import { EntityUtils, FORM_KEY_SEPERATOR, FORM_LABEL_KEY_PREFIX } from '../../common/entity/utils';
+import { EntityUtils } from '../../common/entity/utils';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'chart-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class ChartFormComponent {
-  protected queryCall = 'chart.release.query';
-  protected queryCallOption: any[];
-  protected customFilter: any[];
-  protected addCall = 'chart.release.create';
-  protected editCall = 'chart.release.update';
-  protected isEntity = true;
+export class ChartFormComponent implements FormConfiguration {
+  queryCall: 'chart.release.query' = 'chart.release.query';
+  queryCallOption: any[];
+  customFilter: any[];
+  addCall: 'chart.release.create' = 'chart.release.create';
+  editCall: 'chart.release.update' = 'chart.release.update';
+  isEntity = true;
   protected utils: CommonUtils;
 
-  private title: string;
+  title: string;
   private name: string;
   private getRow = new Subscription();
   private rowName: string;
   private dialogRef: any;
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [];
   private catalogApp: any;
   private entityUtils = new EntityUtils();
@@ -49,7 +50,7 @@ export class ChartFormComponent {
     this.title = title;
   }
 
-  parseSchema(catalogApp: any, isEdit = false) {
+  parseSchema(catalogApp: any) {
     try {
       this.catalogApp = catalogApp;
       this.title = this.catalogApp.name;
@@ -65,7 +66,8 @@ export class ChartFormComponent {
               placeholder: helptext.chartForm.release_name.placeholder,
               tooltip: helptext.chartForm.release_name.tooltip,
               required: true,
-              readonly: isEdit,
+              disabled: true,
+              readonly: true,
             },
           ],
           colspan: 2,
@@ -83,6 +85,15 @@ export class ChartFormComponent {
         const fieldSet = this.fieldSets.find((fieldSet: any) => fieldSet.name == question.group);
         if (fieldSet) {
           const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(question);
+
+          const imageConfig = _.find(fieldConfigs, { name: 'image' });
+          if (imageConfig) {
+            const repositoryConfig = _.find(imageConfig.subFields, { name: 'repository' });
+            if (repositoryConfig) {
+              repositoryConfig.readonly = true;
+            }
+          }
+
           fieldSet.config = fieldSet.config.concat(fieldConfigs);
         }
       });
@@ -103,32 +114,16 @@ export class ChartFormComponent {
       schema: data.chart_schema.schema,
     };
 
-    this.parseSchema(chartSchema, true);
+    this.parseSchema(chartSchema);
     this.name = data.name;
-    const configData: any = {};
-    this.entityUtils.parseConfigData(data.config, null, configData);
-    configData['release_name'] = data.name;
-    configData['changed_schema'] = true;
 
-    return configData;
-  }
+    data.config['release_name'] = data.name;
+    data.config['changed_schema'] = true;
 
-  afterInit(entityEdit: any) {
-    if (this.rowName) {
-      entityEdit.setDisabled('release_name', true, false);
-    }
-
-    const repositoryConfig = _.find(this.fieldConfig, { name: 'image_repository' });
-    if (repositoryConfig) {
-      repositoryConfig.readonly = true;
-    }
+    return data.config;
   }
 
   customSubmit(data: any) {
-    let apiCall = this.addCall;
-    const values = {};
-    this.entityUtils.parseFormControlValues(data, values);
-
     const payload = [];
     payload.push({
       catalog: this.catalogApp.catalog.id,
@@ -136,7 +131,7 @@ export class ChartFormComponent {
       release_name: data.release_name,
       train: 'charts',
       version: 'latest',
-      values,
+      values: data,
     });
 
     if (this.rowName) {
@@ -146,7 +141,6 @@ export class ChartFormComponent {
       delete payload[0].train;
       delete payload[0].version;
       payload.unshift(this.name);
-      apiCall = this.editCall;
     }
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
@@ -156,7 +150,7 @@ export class ChartFormComponent {
       },
       disableClose: true,
     });
-    this.dialogRef.componentInstance.setCall(apiCall, payload);
+    this.dialogRef.componentInstance.setCall(this.editCall, payload);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialogService.closeAllDialogs();

@@ -16,8 +16,8 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
   styleUrls: ['./kmip.component.css'],
 })
 export class KmipComponent {
-  protected queryCall = 'kmip.config';
-  protected editCall = 'kmip.update';
+  protected queryCall: 'kmip.config' = 'kmip.config';
+  protected editCall: 'kmip.update' = 'kmip.update';
   isEntity = false;
 
   entityForm: any;

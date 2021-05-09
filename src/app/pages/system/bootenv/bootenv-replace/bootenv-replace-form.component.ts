@@ -4,18 +4,19 @@ import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import * as _ from 'lodash';
 import { RestService, WebSocketService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'bootenv-replace-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class BootEnvReplaceFormComponent {
-  protected route_success: string[] = ['system', 'boot', 'status'];
-  protected isEntity = true;
-  protected addCall = 'boot.replace';
-  protected pk: any;
-  protected isNew = true;
+export class BootEnvReplaceFormComponent implements FormConfiguration {
+  route_success: string[] = ['system', 'boot', 'status'];
+  isEntity = true;
+  addCall: 'boot.replace' = 'boot.replace';
+  pk: any;
+  isNew = true;
 
   protected entityForm: any;
 

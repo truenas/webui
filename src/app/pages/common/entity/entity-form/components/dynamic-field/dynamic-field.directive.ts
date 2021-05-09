@@ -36,6 +36,7 @@ import { FormIpWithNetmaskComponent } from '../form-ipwithnetmask/form-ipwithnet
 import { FormListComponent } from '../form-list/form-list.component';
 import { FormChipComponent } from '../form-chip/form-chip.component';
 import { FormLabelComponent } from '../form-label/form-label.component';
+import { FormDictComponent } from '../form-dict/form-dict.component';
 
 const components: { [type: string]: Type<Field> } = {
   button: FormButtonComponent,
@@ -62,6 +63,7 @@ const components: { [type: string]: Type<Field> } = {
   ipwithnetmask: FormIpWithNetmaskComponent,
   list: FormListComponent,
   chip: FormChipComponent,
+  dict: FormDictComponent,
 };
 
 @Directive({ selector: '[dynamicField]' })

@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { ProductType } from '../../../enums/product-type.enum';
 
@@ -23,8 +24,6 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
-import { ThrowStmt } from '@angular/compiler/public_api';
-import { withLatestFrom } from 'rxjs/operators';
 import { Validators } from '@angular/forms';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 
@@ -45,8 +44,8 @@ interface DisplayWebUri {
 })
 export class VMListComponent implements OnDestroy {
   title = 'Virtual Machines';
-  protected queryCall = 'vm.query';
-  protected wsDelete = 'vm.delete';
+  protected queryCall: 'vm.query' = 'vm.query';
+  protected wsDelete: 'vm.delete' = 'vm.delete';
   protected route_add: string[] = ['vm', 'wizard'];
   protected route_edit: string[] = ['vm', 'edit'];
   protected dialogRef: any;
@@ -80,7 +79,7 @@ export class VMListComponent implements OnDestroy {
     },
   };
 
-  protected wsMethods = {
+  protected wsMethods: { [name: string]: ApiMethod } = {
     start: 'vm.start',
     restart: 'vm.restart',
     stop: 'vm.stop',
@@ -195,7 +194,7 @@ export class VMListComponent implements OnDestroy {
   }
 
   onSliderChange(row: any) {
-    let method: string;
+    let method: ApiMethod;
     if (row['status']['state'] === ServiceStatus.Running) {
       method = this.wsMethods.stop;
       const parent = this;
@@ -264,7 +263,7 @@ export class VMListComponent implements OnDestroy {
     return hostname;
   }
 
-  doRowAction(row: any, method: string, params = [row.id], updateTable = false) {
+  doRowAction(row: any, method: ApiMethod, params = [row.id], updateTable = false) {
     if (method === 'vm.stop') {
       this.dialogRef = this.dialog.open(EntityJobComponent,
         { data: { title: T('Stopping ' + row.name) }, disableClose: false });

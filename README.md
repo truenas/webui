@@ -6,7 +6,7 @@
 
 TrueNAS WebUI
 ================
-![CI](https://github.com/truenas/webui/workflows/CI/badge.svg?branch=master)
+[![Latest Docker Image - master](https://github.com/truenas/webui/actions/workflows/docker_latest.yml/badge.svg)](https://github.com/truenas/webui/actions/workflows/docker_latest.yml)
 
 
 This is the project for the Angular.io WebUI for TrueNAS CORE & TrueNAS SCALE.

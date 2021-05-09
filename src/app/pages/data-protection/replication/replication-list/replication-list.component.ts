@@ -45,8 +45,8 @@ import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-tabl
 })
 export class ReplicationListComponent implements InputTableConf, OnDestroy {
   title = T('Replication Tasks');
-  queryCall = 'replication.query';
-  wsDelete = 'replication.delete';
+  queryCall: 'replication.query' = 'replication.query';
+  wsDelete: 'replication.delete' = 'replication.delete';
   route_add: string[] = ['tasks', 'replication', 'wizard'];
   route_edit: string[] = ['tasks', 'replication', 'edit'];
   route_success: string[] = ['tasks', 'replication'];

@@ -10,7 +10,7 @@ import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_failover } from 'app/helptext/system/failover';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-system-failover',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -18,9 +18,9 @@ import { helptext_system_failover } from 'app/helptext/system/failover';
   providers: [],
 })
 
-export class FailoverComponent implements OnDestroy {
-  protected queryCall = 'failover.config';
-  protected updateCall = 'failover.update';
+export class FailoverComponent implements FormConfiguration, OnDestroy {
+  queryCall: 'failover.config' = 'failover.config';
+  updateCall = 'failover.update';
   entityForm: any;
   protected failoverDisableSubscription: any;
   alreadyDisabled = false;

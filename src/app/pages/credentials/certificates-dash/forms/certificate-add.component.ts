@@ -7,8 +7,6 @@ import * as _ from 'lodash';
 import { SystemGeneralService, WebSocketService } from '../../../../services';
 import { ModalService } from 'app/services/modal.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { helptext_system_ca } from 'app/helptext/system/ca';
@@ -22,7 +20,7 @@ import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'system-certificate-add',
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [SystemGeneralService],
 })
 
@@ -31,7 +29,7 @@ export class CertificateAddComponent {
   protected dialogRef: any;
   private entityForm: any;
   private CSRList: any[] = [];
-  private title = helptext_system_certificates.add.title;
+  title = helptext_system_certificates.add.title;
   private getType = new Subscription();
   private type: any;
   hideCancel = true;
@@ -783,8 +781,10 @@ export class CertificateAddComponent {
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (this.getField('key_type').value === 'RSA') {
           this.setDisabled('ec_curve', true);
+          this.hideField('ec_curve', true, entity);
         } else if (this.getField('key_type').value === 'EC') {
           this.setDisabled('key_length', true);
+          this.hideField('ec_curve', false, entity);
         }
       } else if (res == 'CERTIFICATE_CREATE_CSR') {
         for (const i in this.internalFields) {
@@ -805,8 +805,10 @@ export class CertificateAddComponent {
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (this.getField('key_type').value === 'RSA') {
           this.setDisabled('ec_curve', true);
+          this.hideField('ec_curve', true, entity);
         } else if (this.getField('key_type').value === 'EC') {
           this.setDisabled('key_length', true);
+          this.hideField('ec_curve', false, entity);
         }
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED') {
         for (const i in this.internalFields) {

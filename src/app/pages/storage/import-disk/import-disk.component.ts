@@ -17,7 +17,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { DialogService } from 'app/services/dialog.service';
 import { EntityUtils } from '../../common/entity/utils';
-import { Formconfiguration } from '../../common/entity/entity-form/entity-form.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { T } from '../../../translate-marker';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -29,7 +29,7 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
   <entity-form [conf]="this"></entity-form>
   </div>`,
 })
-export class ImportDiskComponent implements OnDestroy, Formconfiguration {
+export class ImportDiskComponent implements OnDestroy, FormConfiguration {
   initialized = true;
 
   fieldConfig: FieldConfig[];
