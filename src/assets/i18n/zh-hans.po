@@ -8366,9 +8366,6 @@ msgstr "最后一次清理"
 msgid "Last Snapshot"
 msgstr ""
 
-msgid "Launch"
-msgstr ""
-
 msgid "Launch Docker Image"
 msgstr ""
 
@@ -11572,6 +11569,9 @@ msgstr "SNMP v3支持"
 
 msgid "SNMPv3 Security Model"
 msgstr "SNMPv3安全模型"
+
+msgid "SPICE"
+msgstr ""
 
 msgid "SSH"
 msgstr ""
@@ -15951,6 +15951,9 @@ msgstr "虚拟机同步"
 msgid "VMware-Snapshots"
 msgstr ""
 
+msgid "VNC"
+msgstr ""
+
 msgid "VNET"
 msgstr "VNET"
 
@@ -16881,12 +16884,6 @@ msgstr "重置"
 msgid "resolver"
 msgstr "resolver"
 
-msgid "restartMessage"
-msgstr ""
-
-msgid "restartPrompt"
-msgstr ""
-
 msgid "rlimits"
 msgstr "rlimits"
 
@@ -16916,12 +16913,6 @@ msgstr "服务停止失败。"
 
 msgid "shmsize"
 msgstr "shmsize"
-
-msgid "shutDownMessage"
-msgstr ""
-
-msgid "shutDownPrompt"
-msgstr ""
 
 msgid "snapshot"
 msgstr ""

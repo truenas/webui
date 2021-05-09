@@ -7842,9 +7842,6 @@ msgstr "上一次 Scrub 執行於"
 msgid "Last Snapshot"
 msgstr ""
 
-msgid "Launch"
-msgstr ""
-
 msgid "Launch Docker Image"
 msgstr ""
 
@@ -10898,6 +10895,9 @@ msgid "SNMP v3 Support"
 msgstr "SNMP v3 支援"
 
 msgid "SNMPv3 Security Model"
+msgstr ""
+
+msgid "SPICE"
 msgstr ""
 
 msgid "SSH"
@@ -15059,6 +15059,9 @@ msgstr ""
 msgid "VMware-Snapshots"
 msgstr ""
 
+msgid "VNC"
+msgstr ""
+
 msgid "VNET"
 msgstr ""
 
@@ -15961,12 +15964,6 @@ msgstr ""
 msgid "resolver"
 msgstr ""
 
-msgid "restartMessage"
-msgstr ""
-
-msgid "restartPrompt"
-msgstr ""
-
 msgid "rlimits"
 msgstr ""
 
@@ -15995,12 +15992,6 @@ msgid "service failed to stop."
 msgstr "服務停止失敗。"
 
 msgid "shmsize"
-msgstr ""
-
-msgid "shutDownMessage"
-msgstr ""
-
-msgid "shutDownPrompt"
 msgstr ""
 
 msgid "snapshot"

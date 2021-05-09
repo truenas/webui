@@ -9170,9 +9170,6 @@ msgstr "Последний запуск проверки"
 msgid "Last Snapshot"
 msgstr ""
 
-msgid "Launch"
-msgstr ""
-
 msgid "Launch Docker Image"
 msgstr ""
 
@@ -12525,6 +12522,9 @@ msgstr "Поддержка SNMP v3"
 
 msgid "SNMPv3 Security Model"
 msgstr "Модель безопасности SNMPv3"
+
+msgid "SPICE"
+msgstr ""
 
 msgid "SSH"
 msgstr ""
@@ -17373,6 +17373,9 @@ msgstr "Синхронизация VMware"
 msgid "VMware-Snapshots"
 msgstr ""
 
+msgid "VNC"
+msgstr ""
+
 msgid "VNET"
 msgstr "VNET"
 
@@ -18319,12 +18322,6 @@ msgstr ""
 msgid "resolver"
 msgstr ""
 
-msgid "restartMessage"
-msgstr ""
-
-msgid "restartPrompt"
-msgstr ""
-
 msgid "rlimits"
 msgstr ""
 
@@ -18353,12 +18350,6 @@ msgid "service failed to stop."
 msgstr "служба не остановилась."
 
 msgid "shmsize"
-msgstr ""
-
-msgid "shutDownMessage"
-msgstr ""
-
-msgid "shutDownPrompt"
 msgstr ""
 
 msgid "snapshot"

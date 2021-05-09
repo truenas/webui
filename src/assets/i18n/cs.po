@@ -7914,9 +7914,6 @@ msgstr ""
 msgid "Last Snapshot"
 msgstr ""
 
-msgid "Launch"
-msgstr ""
-
 msgid "Launch Docker Image"
 msgstr ""
 
@@ -10970,6 +10967,9 @@ msgid "SNMP v3 Support"
 msgstr "Podpora SNMP v3"
 
 msgid "SNMPv3 Security Model"
+msgstr ""
+
+msgid "SPICE"
 msgstr ""
 
 msgid "SSH"
@@ -15131,6 +15131,9 @@ msgstr ""
 msgid "VMware-Snapshots"
 msgstr ""
 
+msgid "VNC"
+msgstr ""
+
 msgid "VNET"
 msgstr ""
 
@@ -16036,12 +16039,6 @@ msgstr ""
 msgid "resolver"
 msgstr "resolver"
 
-msgid "restartMessage"
-msgstr ""
-
-msgid "restartPrompt"
-msgstr ""
-
 msgid "rlimits"
 msgstr "rlimits"
 
@@ -16071,12 +16068,6 @@ msgstr "službu se nepodařilo zastavit."
 
 msgid "shmsize"
 msgstr "shmsize"
-
-msgid "shutDownMessage"
-msgstr ""
-
-msgid "shutDownPrompt"
-msgstr ""
 
 msgid "snapshot"
 msgstr ""

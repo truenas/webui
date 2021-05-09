@@ -9670,9 +9670,6 @@ msgstr "Le dernier scrub a été exécuté à"
 msgid "Last Snapshot"
 msgstr ""
 
-msgid "Launch"
-msgstr ""
-
 msgid "Launch Docker Image"
 msgstr ""
 
@@ -13221,6 +13218,9 @@ msgstr "Support SNMP v3"
 
 msgid "SNMPv3 Security Model"
 msgstr "Modèle de sécurité SNMPv3"
+
+msgid "SPICE"
+msgstr ""
 
 msgid "SSH"
 msgstr "SSH"
@@ -18565,6 +18565,9 @@ msgstr "VMWare Sync"
 msgid "VMware-Snapshots"
 msgstr "VMware-Snapshots"
 
+msgid "VNC"
+msgstr ""
+
 msgid "VNET"
 msgstr "VNET"
 
@@ -19568,12 +19571,6 @@ msgstr "réinitialiser"
 msgid "resolver"
 msgstr "résolveur"
 
-msgid "restartMessage"
-msgstr ""
-
-msgid "restartPrompt"
-msgstr ""
-
 msgid "rlimits"
 msgstr "rlimits"
 
@@ -19605,12 +19602,6 @@ msgstr "le service n'a pas réussi à s'arrêter."
 
 msgid "shmsize"
 msgstr "shmsize"
-
-msgid "shutDownMessage"
-msgstr ""
-
-msgid "shutDownPrompt"
-msgstr ""
 
 msgid "snapshot"
 msgstr "instantané"

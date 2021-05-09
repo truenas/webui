@@ -8139,9 +8139,6 @@ msgstr "Letzt Srub Lauf um"
 msgid "Last Snapshot"
 msgstr ""
 
-msgid "Launch"
-msgstr ""
-
 msgid "Launch Docker Image"
 msgstr ""
 
@@ -11354,6 +11351,9 @@ msgstr ""
 
 msgid "SNMPv3 Security Model"
 msgstr "SNMPv3-Sicherheitsmodell"
+
+msgid "SPICE"
+msgstr ""
 
 msgid "SSH"
 msgstr ""
@@ -16062,6 +16062,9 @@ msgstr "VMware Sync"
 msgid "VMware-Snapshots"
 msgstr ""
 
+msgid "VNC"
+msgstr ""
+
 msgid "VNET"
 msgstr "VNET"
 
@@ -16975,12 +16978,6 @@ msgstr "zurücksetzen"
 msgid "resolver"
 msgstr ""
 
-msgid "restartMessage"
-msgstr ""
-
-msgid "restartPrompt"
-msgstr ""
-
 msgid "rlimits"
 msgstr ""
 
@@ -17009,12 +17006,6 @@ msgid "service failed to stop."
 msgstr "Der Dienst konnte nicht gestoppt werden."
 
 msgid "shmsize"
-msgstr ""
-
-msgid "shutDownMessage"
-msgstr ""
-
-msgid "shutDownPrompt"
 msgstr ""
 
 msgid "snapshot"
