@@ -39,6 +39,7 @@ import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.compo
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { GpuDevice } from 'app/interfaces/gpu-device.interface';
 
 @Component({
   selector: 'app-advanced-settings',
@@ -226,7 +227,6 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
 
   afterInit(entityForm: EntityFormComponent) {
     this.entityForm = entityForm;
-    console.log('afterInit::entityEdit', entityForm);
 
     this.ws.call('failover.licensed').subscribe((is_ha) => {
       this.isHA = is_ha;
@@ -262,7 +262,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   getDataCardData() {
     this.getAdvancedConfig = this.ws.call('system.advanced.config').subscribe((advancedConfig: AdvancedConfig) => {
       this.configData = advancedConfig;
-      const isolatedGpuPciIdsStr = advancedConfig.isolated_gpu_pci_ids.join(', ');
+
       this.dataCards = [
         {
           title: helptext_system_advanced.fieldset_console,
@@ -345,12 +345,18 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
           title: helptext_system_advanced.fieldset_sysctl,
           tableConf: this.sysctlTableConf,
         },
-        {
-          title: T("Isolated GPU PCI Id's"),
-          id: 'isolated_gpu_pci_ids',
-          items: [{ label: T("Isolated GPU PCI Id's"), value: isolatedGpuPciIdsStr }],
-        },
       ];
+
+      this.ws.call('device.get_info', ['GPU']).subscribe((gpus: GpuDevice[]) => {
+        const isolatedGpus = gpus.filter((gpu: GpuDevice) => advancedConfig.isolated_gpu_pci_ids.findIndex(
+          (pciId: string) => pciId === gpu.addr.pci_slot,
+        ) > -1).map((gpu: GpuDevice) => gpu.description).join(', ');
+        this.dataCards.push({
+          title: T('Isolated GPU Device(s)'),
+          id: 'gpus',
+          items: [{ label: T('Isolated GPU Device(s)'), value: isolatedGpus }],
+        });
+      });
     });
   }
 
@@ -381,7 +387,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
       case 'initshutdown':
         addComponent = this.initShutdownFormComponent;
         break;
-      case 'isolated_gpu_pci_ids':
+      case 'gpus':
         addComponent = this.isolatedGpuPcisFormComponent;
         break;
       default:

@@ -29,6 +29,7 @@ import { combineLatest, forkJoin, Observable } from 'rxjs';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { MatStepper } from '@angular/material/stepper';
+import { GpuDevice } from 'app/interfaces/gpu-device.interface';
 
 @Component({
   selector: 'app-vm-wizard',
@@ -55,7 +56,7 @@ export class VMWizardComponent {
   title = helptext.formTitle;
   hideCancel = true;
   private maxVCPUs = 16;
-  private gpus: any;
+  private gpus: GpuDevice[];
   private isolatedGpuPciIds: string[];
 
   entityWizard: EntityWizardComponent;
