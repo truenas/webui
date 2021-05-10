@@ -7,13 +7,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { T } from 'app/translate-marker';
 import helptext from '../../../../helptext/services/components/service-smart';
 import { RestService, WebSocketService } from '../../../../services';
-
-enum PowerMode {
-  Never = 'NEVER',
-  Sleep = 'SLEEP',
-  Standby = 'STANDBY',
-  Idle = 'IDLE',
-}
+import { PowerMode } from 'app/enums/power-mode.enum';
 
 @Component({
   selector: 'smart-edit',
