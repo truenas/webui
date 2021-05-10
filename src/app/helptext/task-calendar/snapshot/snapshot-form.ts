@@ -24,11 +24,10 @@ export default {
 
   lifetime_placeholder: T('Snapshot Lifetime'),
   lifetime_tooltip: T('Define a length of time to retain the snapshot \
- on this system using a numeric value and a single lowercase letter for \
- units. Examples: <i>3h</i> is three hours, <i>1m</i> is one month, and \
- <i>1y</i> is one year. Does not accept Minute values. After the time \
- expires, the snapshot is removed. Snapshots which have been replicated \
- to other systems are not affected.'),
+ on this system using a numeric value and a word for duration. \
+ Examples: <i>3 HOURS, 2 WEEKS, 1 MONTH</i> or <i>1 YEAR</i>. \
+ Does not accept Minute values. After the time expires, the snapshot is removed. \
+ Snapshots which have been replicated to other systems are not affected.'),
 
   naming_schema_placeholder: T('Naming Schema'),
   naming_schema_tooltip: T('Snapshot name format string. The default \

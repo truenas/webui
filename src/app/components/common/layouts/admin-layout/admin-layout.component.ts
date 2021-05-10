@@ -72,9 +72,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       core.emit({ name: 'MediaChange', data: change, sender: this });
     });
 
-    // Translator init
-    language.getMiddlewareLanguage();
-
     // Subscribe to Theme Changes
     core.register({
       observerClass: this,

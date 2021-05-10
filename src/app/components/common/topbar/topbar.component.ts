@@ -273,8 +273,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   setLang(lang) {
-    this.language.currentLang = lang;
-    this.onLangChange.emit(this.language.currentLang);
+    this.language.currentLanguage = lang;
+    this.onLangChange.emit(this.language.currentLanguage);
   }
 
   toggleNotific() {
@@ -317,7 +317,12 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   onShutdown() {
     this.translate.get('Shut down').subscribe((shutdown: string) => {
       this.translate.get('Shut down the system?').subscribe((shutdown_prompt: string) => {
-        this.dialogService.confirm(shutdown, shutdown_prompt, false, T('Shut Down')).subscribe((res) => {
+        this.dialogService.confirm({
+          title: shutdown,
+          message: shutdown_prompt,
+          hideCheckBox: false,
+          buttonMsg: T('Shut Down'),
+        }).subscribe((res) => {
           if (res) {
             this.router.navigate(['/others/shutdown']);
           }

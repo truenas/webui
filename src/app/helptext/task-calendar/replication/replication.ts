@@ -102,10 +102,10 @@ export default {
   properties_exclude_placeholder: T('Properties Exclude'),
   properties_exclude_tooltip: T('List any dataset properties that will not be included with the replication.'),
 
-  replicate_placeholder: T('Full Filesystem Replication'),
+  replicate_placeholder: T('(Almost) Full Filesystem Replication'),
   replicate_tooltip: T('Completely replicate the selected dataset. The target \
-dataset will have all of the properties, snapshots, child datasets, and clones \
-from the source dataset.'),
+dataset will have all of the source dataset\'s properties, child datasets, \
+clones and snapshots that match the specified naming schema.'),
 
   periodic_snapshot_tasks_placeholder: T('Periodic Snapshot Tasks'),
   periodic_snapshot_tasks_tooltip: T('Snapshot schedule for this \

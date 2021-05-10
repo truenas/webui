@@ -55,25 +55,25 @@ export class EntityUtils {
     }
   }
 
-  handleWSError(entity: any, res: any, dialogService?: any, targetFieldConfig?: any) {
+  handleWSError(entity: any, wsError: any, dialogService?: any, targetFieldConfig?: any) {
     let dialog;
     if (dialogService) {
       dialog = dialogService;
     } else if (entity) {
       dialog = entity.dialog;
     }
-    if (res.exc_info && res.exc_info.extra) {
-      res.extra = res.exc_info.extra;
+    if (wsError.exc_info && wsError.exc_info.extra) {
+      wsError.extra = wsError.exc_info.extra;
     }
 
-    if (res.extra && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
+    if (wsError.extra && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
       let scroll = false;
-      if (res.extra.excerpt) {
-        this.errorReport(res, dialog);
+      if (wsError.extra.excerpt) {
+        this.errorReport(wsError, dialog);
       }
-      for (let i = 0; i < res.extra.length; i++) {
-        let field = res.extra[i][0].split('.');
-        const error = res.extra[i][1];
+      for (let i = 0; i < wsError.extra.length; i++) {
+        let field = wsError.extra[i][0].split('.');
+        const error = wsError.extra[i][1];
 
         field = field[1];
         let fc = _.find(entity.fieldConfig, { name: field }) || (entity.getErrorField ? entity.getErrorField(field) : undefined);
@@ -110,11 +110,11 @@ export class EntityUtils {
         } else if (entity.error) {
           entity.error = error;
         } else {
-          this.errorReport(res, dialog);
+          this.errorReport(wsError, dialog);
         }
       }
     } else {
-      this.errorReport(res, dialog);
+      this.errorReport(wsError, dialog);
     }
   }
 

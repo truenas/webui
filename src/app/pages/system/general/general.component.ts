@@ -529,7 +529,7 @@ export class GeneralComponent implements OnDestroy {
           }
         });
     }
-    this.language.setLang(value.language);
+    this.language.setLanguage(value.language);
   }
 
   saveConfigSubmit(entityDialog) {

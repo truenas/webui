@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 import { T } from '../../../../translate-marker';
 
@@ -30,9 +31,9 @@ export class SmartResultsComponent {
   protected noActions = true;
   protected disk: string;
 
-  constructor(private aroute: ActivatedRoute, protected translate: TranslateService) { }
+  constructor(private aroute: ActivatedRoute, protected translate: TranslateService, private ws: WebSocketService, private dialogService: DialogService, private router: Router) { }
 
-  preInit(entityList: any) {
+  preInit(entityList: EntityTableComponent) {
     this.aroute.params.subscribe((params) => {
       this.disk = params['pk'];
       this.translate.get(T('S.M.A.R.T Test Results of ')).subscribe(
@@ -44,29 +45,25 @@ export class SmartResultsComponent {
     });
   }
 
-  callGetFunction(entityList) {
-    entityList.ws.call(this.queryCall, this.queryCallOption).subscribe((res) => {
-      entityList.conf.handleData(res);
+  callGetFunction(entityList: EntityTableComponent) {
+    this.ws.call(this.queryCall, this.queryCallOption).subscribe((res) => {
+      entityList.handleData(res);
     }, (err) => {
-      if (entityList.showSpinner) {
-        entityList.showSpinner = false;
-      }
-      if (entityList.loaderOpen) {
-        entityList.conf.loader.close();
-        entityList.conf.loaderOpen = false;
-      }
+      entityList.setShowSpinner(false);
+      entityList.toggleLoader(false);
       if (err.trace && err.trace.class === 'MatchNotFound') {
-        entityList.dialogService.generalDialog({
-          title: T('No test results were found'),
+        this.dialogService.generalDialog({
+          title: T('No Reults'),
+          message: 'No test results were found',
           confirmBtnMsg: T('Back to disks'),
           hideCancel: true,
         }).subscribe((closed) => {
           if (closed) {
-            entityList.router.navigate(['/storage/disks']);
+            this.router.navigate(['/storage/disks']);
           }
         });
       } else if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace') && err.hasOwnProperty('type'))) {
-        entityList.dialogService.errorReport(err.type || err.trace.class, err.reason, err.trace.formatted);
+        this.dialogService.errorReport(err.type || err.trace.class, err.reason, err.trace.formatted);
       } else {
         new EntityUtils().handleError(this, err);
       }
