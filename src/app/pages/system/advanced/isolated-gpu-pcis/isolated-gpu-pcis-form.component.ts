@@ -76,12 +76,8 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
     });
 
     gpusFormControl.valueChanges.subscribe((gpusValue: string[]) => {
-      const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
-      for (const gpuValue of gpusValue) {
-        if (finalIsolatedPciIds.findIndex((pciId) => pciId === gpuValue) === -1) {
-          finalIsolatedPciIds.push(gpuValue);
-        }
-      }
+      const finalIsolatedPciIds = [...gpusValue];
+
       const gpusConf = this.fieldSets.config('gpus');
       if (finalIsolatedPciIds.length >= gpusConf.options.length) {
         const prevSelectedGpus = [];
