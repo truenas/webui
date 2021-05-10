@@ -223,6 +223,12 @@ export class ZvolFormComponent implements Formconfiguration {
           required: true,
         },
         {
+          type: 'paragraph',
+          name: 'dedup_warning',
+          paraText: T('ZFS Deduplication is an advanced option meant for experts only. Proceed carefully.'),
+          class: 'warning-text',
+        },
+        {
           type: 'select',
           name: 'deduplication',
           placeholder: helptext.zvol_deduplication_placeholder,
@@ -714,13 +720,17 @@ export class ZvolFormComponent implements Formconfiguration {
     const productType = window.localStorage.getItem('product_type');
 
     if (productType.includes('ENTERPRISE')) {
+      this.entityForm.setDisabled('dedup_warning', true, true);
       this.ws.call('system.info').subscribe((res) => {
         if (res.license && res.license.features.indexOf('DEDUP') > -1) {
           this.entityForm.setDisabled('deduplication', false, false);
+        } else {
+          this.dialogService.Info(T('ZFS Deduplication'), T('To enable ZFS Deduplication Contact iXSystems support.'));
         }
       });
     } else {
       this.entityForm.setDisabled('deduplication', false, false);
+      this.entityForm.setDisabled('dedup_warning', false, false);
     }
 
     this.entityForm.formGroup.controls['volblocksize'].valueChanges.subscribe((res) => {
