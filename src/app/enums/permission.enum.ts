@@ -13,7 +13,5 @@ export enum Permission {
   WriteAcl = 'WRITE_ACL',
   WriteOwner = 'WRITE_OWNER',
   Synchronize = 'SYNCHRONIZE',
-  Basic = 'Basic'
+  Basic = 'Basic',
 }
-
-export type Permissions = { [K in Permission]: boolean };

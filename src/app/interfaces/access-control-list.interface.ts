@@ -1,6 +1,6 @@
-import { Permissions } from './permissions';
-import { AclFlags } from './acl-flags';
-  
+import { Permissions } from './permissions.interface';
+import { AclFlags } from './acl-flags.interface';
+
 interface NFS41Flags {
   autoinherit: boolean;
   protected: boolean;

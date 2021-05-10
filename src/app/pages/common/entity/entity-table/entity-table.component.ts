@@ -420,8 +420,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-  setShowSpinner() {
-    this.showSpinner = true;
+  setShowSpinner(showSpinner = true) {
+    this.showSpinner = showSpinner;
   }
 
   getData() {
@@ -709,6 +709,18 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       deleteMsg = res;
     });
     return deleteMsg;
+  }
+
+  toggleLoader(toggle: boolean) {
+    if (!toggle) {
+      if (this.loaderOpen) {
+        this.loader.close();
+        this.loaderOpen = false;
+      }
+    } else {
+      this.loader.open();
+      this.loaderOpen = true;
+    }
   }
 
   doDelete(item, action?) {
