@@ -59,7 +59,7 @@ export class CatalogAddFormComponent implements FormConfiguration {
           name: 'branch',
           placeholder: helptext.catalogForm.branch.placeholder,
           tooltip: helptext.catalogForm.branch.tooltip,
-          value: 'master',
+          value: 'main',
         },
       ],
     },
