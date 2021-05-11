@@ -65,7 +65,39 @@ export class CloudCredentialsFormComponent {
         },
       ],
     },
-    { name: 'spacer', label: false, width: '2%' },
+    // show if provider support oauth
+    {
+      name: helptext.fieldset_oauth_authentication,
+      label: true,
+      class: 'oauth',
+      width: '100%',
+      config: [
+        {
+          type: 'button',
+          name: 'oauth_signin_button',
+          isHidden: true,
+          customEventActionLabel: T('Log in to Provider'),
+          value: '',
+          customEventMethod: () => {
+            this.logInToProvider();
+          },
+        },
+        {
+          type: 'input',
+          name: 'client_id',
+          placeholder: helptext.client_id.placeholder,
+          tooltip: helptext.client_id.tooltip,
+          isHidden: true,
+        },
+        {
+          type: 'input',
+          name: 'client_secret',
+          placeholder: helptext.client_secret.placeholder,
+          tooltip: helptext.client_secret.tooltip,
+          isHidden: true,
+        }],
+    },
+    { name: 'divider', divider: true },
     {
       name: helptext.fieldset_authentication,
       label: true,
@@ -1137,38 +1169,6 @@ export class CloudCredentialsFormComponent {
           ],
         },
       ],
-    },
-    // show if provider support oauth
-    {
-      name: helptext.fieldset_oauth_advanced_options,
-      label: true,
-      class: 'oauth',
-      width: '50%',
-      config: [
-        {
-          type: 'button',
-          name: 'oauth_signin_button',
-          isHidden: true,
-          customEventActionLabel: T('Log in to Provider'),
-          value: '',
-          customEventMethod: () => {
-            this.logInToProvider();
-          },
-        },
-        {
-          type: 'input',
-          name: 'client_id',
-          placeholder: helptext.client_id.placeholder,
-          tooltip: helptext.client_id.tooltip,
-          isHidden: true,
-        },
-        {
-          type: 'input',
-          name: 'client_secret',
-          placeholder: helptext.client_secret.placeholder,
-          tooltip: helptext.client_secret.tooltip,
-          isHidden: true,
-        }],
     },
   ];
 
