@@ -287,7 +287,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.selectedEnclosure) {
-      this.loadEnclosure(changes.selectedEnclosure.currentValue, 'front');
+      this.loadEnclosure(changes.selectedEnclosure.currentValue, 'front', true);
     }
   }
 
@@ -373,6 +373,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'R10':
         this.chassis = new R10();
         break;
+      case 'TRUENAS-R20A':
       case 'R20A':
         this.chassis = new R20A(true);
         break;
@@ -485,6 +486,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'R10':
         chassis = new R10();
         break;
+      case 'TRUENAS-R20A':
       case 'R20A':
         chassis = new R20A();
         break;
@@ -528,7 +530,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         chassis = new ES102();
         break;
       default:
-        console.log(this.system);
         this.controllerEvents.next({
           name: 'Error',
           data: {
