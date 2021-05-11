@@ -1,19 +1,21 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { PoolStatus } from 'app/enums/pool-status.enum';
+import { Pool } from 'app/interfaces/pool.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import * as _ from 'lodash';
 
 import * as myIP from 'what-is-my-ip-address';
-
-import { AvailablePluginsComponent } from './available-plugins/available-plugins.component';
-import { AppLoaderService, WebSocketService, DialogService } from '../../services';
-import { EntityUtils } from '../common/entity/utils';
+import jailHelptext from '../../helptext/jails/jails-list';
+import helptext from '../../helptext/plugins/plugins';
+import { AppLoaderService, DialogService, WebSocketService } from '../../services';
 import { T } from '../../translate-marker';
-import * as _ from 'lodash';
 import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityJobComponent } from '../common/entity/entity-job/entity-job.component';
-import helptext from '../../helptext/plugins/plugins';
-import jailHelptext from '../../helptext/jails/jails-list';
+import { EntityUtils } from '../common/entity/utils';
+
+import { AvailablePluginsComponent } from './available-plugins/available-plugins.component';
 
 @Component({
   selector: 'app-plugins-ui',
@@ -37,7 +39,7 @@ export class PluginsComponent {
   protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
 
-  availablePools: any[];
+  availablePools: Pool[];
   activatedPool: any;
 
   columns: any[] = [
@@ -253,9 +255,9 @@ export class PluginsComponent {
           name: 'selectedPool',
           placeholder: jailHelptext.activatePoolDialog.selectedPool_placeholder,
           options: this.availablePools ? this.availablePools.map((pool) => ({
-            label: pool.name + (pool.is_decrypted ? (pool.status === 'ONLINE' ? '' : ` (${pool.status})`) : ' (Locked)'),
+            label: pool.name + (pool.is_decrypted ? (pool.status === PoolStatus.Online ? '' : ` (${pool.status})`) : ' (Locked)'),
             value: pool.name,
-            disable: !pool.is_decrypted || pool.status !== 'ONLINE',
+            disable: !pool.is_decrypted || pool.status !== PoolStatus.Online,
           })) : [],
           value: this.activatedPool,
         },

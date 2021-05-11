@@ -1,5 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { Option } from 'app/interfaces/option.interface';
+import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
+import { VDev } from 'app/interfaces/storage.interface';
 import {
   WebSocketService, RestService, AppLoaderService, DialogService,
 } from '../../../../services';
@@ -46,7 +49,7 @@ interface poolDiskInfo {
 })
 export class VolumeStatusComponent implements OnInit {
   actionEvents: Subject<CoreEvent>;
-  poolScan: any;
+  poolScan: PoolScan;
   timeRemaining: any = {};
   treeTableConfig: EntityTreeTable = {
     tableData: [],
@@ -138,7 +141,9 @@ export class VolumeStatusComponent implements OnInit {
     disabled: true,
   }];
 
-  protected pool: any;
+  readonly PoolScanState = PoolScanState;
+
+  protected pool: Pool;
 
   constructor(protected aroute: ActivatedRoute,
     protected core: CoreService,
@@ -170,35 +175,31 @@ export class VolumeStatusComponent implements OnInit {
   }
 
   getData() {
-    this.ws.call('pool.query', [
-      [
-        ['id', '=', this.pk],
-      ],
-    ]).subscribe(
-      (res) => {
-        this.pool = res[0];
-        if (res[0]) {
-          // if pool is passphrase protected, abled passphrase field.
-          if (res[0].encrypt === 2) {
-            [this.replaceDiskFormFields, this.extendVdevFormFields].forEach((formFields) => {
-              _.find(formFields, { name: 'passphrase' })['isHidden'] = false;
-              _.find(formFields, { name: 'passphrase' }).disabled = false;
-              _.find(formFields, { name: 'passphrase2' })['isHidden'] = false;
-              _.find(formFields, { name: 'passphrase2' }).disabled = false;
-            });
-          }
-          this.poolScan = res[0].scan;
-          // subscribe zfs.pool.scan to get scrub job info
-          if (this.poolScan.state == 'SCANNING') {
-            this.getZfsPoolScan(res[0].name);
-          }
-          this.dataHandler(res[0]);
-        }
-      },
-      (err) => {
-        new EntityUtils().handleError(this, err);
-      },
-    );
+    this.ws.call('pool.query', [[['id', '=', this.pk]]]).subscribe((pools) => {
+      this.pool = pools[0];
+      if (!pools[0]) {
+        return;
+      }
+
+      // if pool is passphrase protected, abled passphrase field.
+      if (pools[0].encrypt === 2) {
+        [this.replaceDiskFormFields, this.extendVdevFormFields].forEach((formFields) => {
+          _.find(formFields, { name: 'passphrase' })['isHidden'] = false;
+          _.find(formFields, { name: 'passphrase' }).disabled = false;
+          _.find(formFields, { name: 'passphrase2' })['isHidden'] = false;
+          _.find(formFields, { name: 'passphrase2' }).disabled = false;
+        });
+      }
+      this.poolScan = pools[0].scan;
+      // subscribe zfs.pool.scan to get scrub job info
+      if (this.poolScan.state == PoolScanState.Scanning) {
+        this.getZfsPoolScan(pools[0].name);
+      }
+      this.dataHandler(pools[0]);
+    },
+    (err) => {
+      new EntityUtils().handleError(this, err);
+    });
   }
 
   getUnusedDisk() {
@@ -272,11 +273,7 @@ export class VolumeStatusComponent implements OnInit {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
 
-        this.ws.call('disk.query', [
-          [
-            ['devname', '=', diskName],
-          ],
-        ]).subscribe((res) => {
+        this.ws.call('disk.query', [[['devname', '=', diskName]]]).subscribe((res) => {
           this.onClickEdit(res[0].identifier);
         });
       },
@@ -587,7 +584,7 @@ export class VolumeStatusComponent implements OnInit {
     return item;
   }
 
-  parseTopolgy(data: any, category: any, vdev_type?: any): TreeNode {
+  parseTopolgy(data: VDev, category: PoolTopologyCategory, vdev_type?: any): TreeNode {
     const node: TreeNode = {};
     node.data = this.parseData(data, category, vdev_type);
     node.expanded = true;
@@ -598,7 +595,7 @@ export class VolumeStatusComponent implements OnInit {
         const extend_action = this.extendAction();
         node.data.actions.push(extend_action[0]);
       }
-      vdev_type = data.name;
+      vdev_type = (data as any).name;
       for (let i = 0; i < data.children.length; i++) {
         node.children.push(this.parseTopolgy(data.children[i], category, vdev_type));
       }
@@ -607,13 +604,14 @@ export class VolumeStatusComponent implements OnInit {
     return node;
   }
 
-  dataHandler(pool: any) {
+  dataHandler(pool: Pool) {
     const node: TreeNode = {};
     node.data = this.parseData(pool);
     node.expanded = true;
     node.children = [];
 
-    for (const category in pool.topology) {
+    let category: PoolTopologyCategory;
+    for (category in pool.topology) {
       const topoNode: TreeNode = {};
       topoNode.data = {
         name: category,

@@ -8,6 +8,7 @@ import {
 } from '@angular/router';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { Option } from 'app/interfaces/option.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import * as _ from 'lodash';
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -472,9 +473,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.visibleReports = visible;
   }
 
-  parseDisks(res: any[], multipathDisks: any[]) {
-    const uniqueNames = res.filter((disk) => !disk.devname.includes('multipath'))
-      .map((d) => d.devname);
+  parseDisks(disks: Disk[], multipathDisks: any[]) {
+    const uniqueNames = disks
+      .filter((disk) => !disk.devname.includes('multipath'))
+      .map((disk) => disk.devname);
 
     const activeDisks = multipathDisks.filter((disk) => disk.status == 'ACTIVE');
 

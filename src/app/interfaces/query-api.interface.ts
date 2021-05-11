@@ -2,7 +2,7 @@
  * If you are typing query API, you probably just need this, i.e. QueryParams<User>
  * https://github.com/truenas/middleware/blob/master/src/middlewared/middlewared/apidocs/templates/websocket/query.md
  */
-export type QueryParams<T> = [(QueryFilter<T>[] | ['OR', QueryFilter<T>[]])?, QueryOptions<T>?];
+export type QueryParams<T, ExtraOptions = {}> = [(QueryFilter<T>[] | ['OR', QueryFilter<T>[]])?, (QueryOptions<T> & ExtraOptions)?];
 
 /**
  * TODO: First element is not a string, but a property path of T.
@@ -12,7 +12,7 @@ export type QueryParams<T> = [(QueryFilter<T>[] | ['OR', QueryFilter<T>[]])?, Qu
  */
 export type QueryFilter<T> = [string, QueryOperator, unknown];
 
-export interface QueryOptions<T> {
+export type QueryOptions<T> = {
   /**
    * Get the number of results returned.
    */
@@ -38,7 +38,7 @@ export interface QueryOptions<T> {
    * TODO: Actually keyof T or `-${keyof T}` for reverse. Recheck after TS4.1
    */
   order_by?: string[];
-}
+};
 
 export type QueryOperator =
   | '='

@@ -10,18 +10,18 @@
   <div>
     <mat-list *ngIf="poolScan">
       <mat-list-item><b>{{poolScan.function || 'SCAN'}}</b></mat-list-item>
-      <mat-list-item>{{'Status' | translate}}: 
+      <mat-list-item>{{'Status' | translate}}:
         {{poolScan.pause != null ? 'PAUSED' : poolScan.state ? poolScan.state : 'None requested' | translate}}
       </mat-list-item>
-      <mat-list-item *ngIf="poolScan.state === 'SCANNING'">
+      <mat-list-item *ngIf="poolScan.state === PoolScanState.Scanning">
         {{ 'Completed' | translate }}: {{ poolScan.percentage | number:'2.0-2' }}%
       </mat-list-item>
-      <mat-list-item *ngIf="poolScan.total_secs_left != null">{{ 'Time Remaining' | translate }}: 
+      <mat-list-item *ngIf="poolScan.total_secs_left != null">{{ 'Time Remaining' | translate }}:
         <span class="time-remaining" *ngIf="timeRemaining.days > 0">
           {{ timeRemaining.days }} {{ timeRemaining.days === 1 ? 'day' : 'days' | translate }}, </span>
-        <span class="time-remaining" *ngIf="timeRemaining.hours > 0 || timeRemaining.days > 0"> 
+        <span class="time-remaining" *ngIf="timeRemaining.hours > 0 || timeRemaining.days > 0">
           {{timeRemaining.hours}} {{ timeRemaining.hours === 1 ? 'hour' : 'hours' | translate }}, </span>
-        <span class="time-remaining" *ngIf="timeRemaining.minutes > 0 || timeRemaining.hours > 0"> 
+        <span class="time-remaining" *ngIf="timeRemaining.minutes > 0 || timeRemaining.hours > 0">
           {{timeRemaining.minutes}} {{ timeRemaining.minutes === 1 ? 'minute' : 'minutes' | translate }}, </span>
         <span class="time-remaining" *ngIf="timeRemaining.seconds || timeRemaining.seconds === 0">
           {{timeRemaining.seconds}} {{ timeRemaining.seconds === 1 ? 'second' :'seconds' | translate }}</span>
