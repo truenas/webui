@@ -41,7 +41,7 @@ interface Tab {
 @Component({
   selector: 'reportsdashboard',
   styleUrls: ['./reportsdashboard.scss'],
-  templateUrl: './reportsdashboard.html',
+  templateUrl: './reportsdashboard.component.html',
   providers: [SystemGeneralService],
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleChartConfigDataFunc, */ AfterViewInit {
@@ -88,18 +88,17 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   actionsConfig: any;
   formComponent: ReportsConfigComponent;
 
-  constructor(private erdService: ErdService,
+  constructor(
+    private erdService: ErdService,
     public translate: TranslateService,
     public modalService: ModalService,
     public dialogService: DialogService,
     private router: Router,
     private core: CoreService,
-    private rs: ReportsService,
-    protected ws: WebSocketService, private sysGeneralService: SystemGeneralService) {
-
-    // EXAMPLE METHOD
-    // this.viewport.scrollToIndex(5);
-  }
+    private route: ActivatedRoute,
+    protected ws: WebSocketService,
+    private sysGeneralService: SystemGeneralService,
+  ) {}
 
   ngOnInit() {
     this.scrollContainer = document.querySelector('.rightside-content-hold ');// this.container.nativeElement;
@@ -210,9 +209,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   }
 
   activateTabFromUrl() {
-    const subpath = this.router.url.split('/reportsdashboard/');
-    const tabFound = this.allTabs.find((tab) => tab.value === subpath[1]);
-    this.updateActiveTab(tabFound);
+    const subpath = this.route.snapshot.url[0] && this.route.snapshot.url[0].path;
+    const tabFound = this.allTabs.find((tab) => tab.value === subpath);
+    this.updateActiveTab(tabFound || this.allTabs[0]);
   }
 
   isActiveTab(str: string) {
@@ -249,7 +248,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
     this.activateTab(tab.label);
 
-    if (tab.label == 'Disk') { this.diskReportBuilderSetup(); }
+    if (tab.label == 'Disk') {
+      const selectedDisks = this.route.snapshot.queryParams.disks;
+      this.diskReportBuilderSetup(selectedDisks);
+    }
   }
 
   navigateToTab(tabName: string) {
@@ -337,7 +339,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
   // Disk Report Filtering
 
-  diskReportBuilderSetup() {
+  diskReportBuilderSetup(selectedDisks: string[]) {
     this.generateValues();
 
     // Entity-Toolbar Config
@@ -352,8 +354,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
           placeholder: T('Devices'),
           disabled: false,
           multiple: true,
-          options: this.diskDevices.map((v) => v), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+          options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
           customTriggerValue: 'Select Disks',
+          value: this.diskDevices?.length && selectedDisks
+            ? this.diskDevices.filter((device) => selectedDisks.includes(device.value)) : null,
         },
         {
           type: 'multiselect',
@@ -363,7 +367,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
           customTriggerValue: T('Select Reports'),
           disabled: false,
           multiple: true,
-          options: this.diskMetrics ? this.diskMetrics.map((v) => v) : [T('Not Available')], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+          options: this.diskMetrics ? this.diskMetrics : [T('Not Available')], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+          value: selectedDisks ? this.diskMetrics : undefined,
         },
       ],
     };

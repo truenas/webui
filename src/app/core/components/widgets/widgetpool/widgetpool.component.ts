@@ -178,6 +178,37 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     return { totalErrors: 'Unknown', disks: [] as any[] };
   }
 
+  get allDiskNames(): string[] {
+    if (!this.poolState || !this.poolState.topology) {
+      return [];
+    }
+
+    const allDiskNames: string[] = [];
+    ['cache', 'data', 'dedup', 'log', 'spare', 'special'].forEach((categoryName) => {
+      const category: any[] = this.poolState.topology[categoryName];
+
+      if (!category || !category.length) {
+        return;
+      }
+
+      category.forEach((item) => {
+        if (item.type == 'DISK' && item.disk) {
+          allDiskNames.push(item.disk);
+        } else {
+          (item.children as any[]).forEach((device) => {
+            if (!device.disk) {
+              return;
+            }
+
+            allDiskNames.push(device.disk);
+          });
+        }
+      });
+    });
+
+    return allDiskNames;
+  }
+
   title: string = this.path.length > 0 && this.poolState && this.currentSlide !== '0' ? this.poolState.name : 'Pool';
   voldataavail = false;
   displayValue: any;
