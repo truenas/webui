@@ -110,16 +110,20 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
       });
     }
 
-    this.ws.call('pool.query').subscribe((pools: any[]) => {
-      if (pools) {
-        pools.forEach((pool) => {
-          if (pool.is_decrypted) {
-            _.find(this.fieldConfig, { name: 'filelocation' }).options.push({
-              label: '/mnt/' + pool.name, value: '/mnt/' + pool.name,
-            });
-          }
-        });
+    this.ws.call('pool.query').subscribe((pools) => {
+      if (!pools) {
+        return;
       }
+
+      pools.forEach((pool) => {
+        if (!pool.is_decrypted) {
+          return;
+        }
+
+        _.find(this.fieldConfig, { name: 'filelocation' }).options.push({
+          label: '/mnt/' + pool.name, value: '/mnt/' + pool.name,
+        });
+      });
     });
   }
   afterInit(entityForm: any) {

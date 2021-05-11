@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { QueryOptions } from 'app/interfaces/query-api.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { BaseService } from './base.service';
 import { CoreEvent } from './core.service';
 
@@ -13,7 +15,7 @@ export interface Temperature {
   providedIn: 'root',
 })
 export class DiskTemperatureService extends BaseService {
-  protected disks: any[] = [];
+  protected disks: Disk[] = [];
   protected broadcast: any;
   protected subscribers = 0;
 
@@ -38,7 +40,7 @@ export class DiskTemperatureService extends BaseService {
   protected onAuthenticated(evt: CoreEvent) {
     this.authenticated = true;
 
-    const queryOptions = { select: ['name', 'type'] };
+    const queryOptions: QueryOptions<Disk> = { select: ['name', 'type'] };
     this.websocket.call('disk.query', [[], queryOptions]).subscribe((res) => {
       this.disks = res;
       if (this.subscribers > 0) this.start();
@@ -47,7 +49,7 @@ export class DiskTemperatureService extends BaseService {
     this.core.register({
       observerClass: this,
       eventName: 'DisksChanged',
-    }).subscribe((evt: CoreEvent) => {
+    }).subscribe(() => {
       this.stop();
       this.websocket.call('disk.query', [[], queryOptions]).subscribe((res) => {
         this.disks = res;

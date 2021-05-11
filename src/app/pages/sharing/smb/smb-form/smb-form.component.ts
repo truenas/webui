@@ -420,7 +420,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
            */
           const promptUserACLEdit = () =>
             this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
-              switchMap((isTrivialACL: boolean) =>
+              switchMap((isTrivialACL) =>
               /* If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations */
                 (!isTrivialACL || !datasetId.includes('/') || this.productType.includes(ProductType.Scale)
                   ? combineLatest(of(false), of({}))
