@@ -78,12 +78,14 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   fieldSets: FieldSet[];
   diskReportConfigReady = false;
 
-  constructor(private erdService: ErdService,
+  constructor(
+    private erdService: ErdService,
     public translate: TranslateService,
     private router: Router,
     private core: CoreService,
-    private rs: ReportsService,
-    protected ws: WebSocketService) {
+    protected ws: WebSocketService,
+    private route: ActivatedRoute,
+  ) {
 
     // EXAMPLE METHOD
     // this.viewport.scrollToIndex(5);
@@ -198,9 +200,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   }
 
   activateTabFromUrl() {
-    const subpath = this.router.url.split('/reportsdashboard/');
-    const tabFound = this.allTabs.find((tab) => tab.value === subpath[1]);
-    this.updateActiveTab(tabFound);
+    const subpath = this.route.snapshot.url[0] && this.route.snapshot.url[0].path;
+    const tabFound = this.allTabs.find((tab) => tab.value === subpath);
+    this.updateActiveTab(tabFound || this.allTabs[0]);
   }
 
   isActiveTab(str: string) {
@@ -237,7 +239,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
     this.activateTab(tab.label);
 
-    if (tab.label == 'Disk') { this.diskReportBuilderSetup(); }
+    if (tab.label == 'Disk') {
+      const selectedDisks = this.route.snapshot.queryParams.disks;
+      this.diskReportBuilderSetup(selectedDisks);
+    }
   }
 
   navigateToTab(tabName) {
@@ -325,7 +330,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
   // Disk Report Filtering
 
-  diskReportBuilderSetup() {
+  diskReportBuilderSetup(selectedDisks: string[]) {
     this.generateValues();
 
     // Entity-Toolbar Config
@@ -335,14 +340,15 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
         name: 'devices',
         label: T('Devices'),
         disabled: false,
-        options: this.diskDevices.map((v) => v), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+        options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+        value: this.diskDevices && selectedDisks ? this.diskDevices.filter((device) => selectedDisks.includes(device.value)) : null,
       },
       {
         type: 'multimenu',
         name: 'metrics',
         label: T('Metrics'),
         disabled: false,
-        options: this.diskMetrics ? this.diskMetrics.map((v) => v) : [T('Not Available')], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+        options: this.diskMetrics ? this.diskMetrics : [T('Not Available')], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
       },
     ];
 

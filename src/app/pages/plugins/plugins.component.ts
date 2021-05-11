@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 import * as myIP from 'what-is-my-ip-address';
 
@@ -18,9 +19,9 @@ import jailHelptext from '../../helptext/jails/jails-list';
   selector: 'app-plugins-ui',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class PluginsComponent {
+export class PluginsComponent implements InputTableConf {
   title = 'Plugins';
-  protected globalConfig = {
+  globalConfig = {
     id: 'config',
     tooltip: jailHelptext.globalConfig.tooltip,
     onClick: () => {
@@ -31,13 +32,15 @@ export class PluginsComponent {
       });
     },
   };
-  protected queryCall = 'plugin.query';
-  protected wsDelete = 'jail.delete';
-  protected wsMultiDelete = 'core.bulk';
+  queryCall = 'plugin.query';
+  wsDelete = 'jail.delete';
+  wsMultiDelete = 'core.bulk';
   protected entityList: any;
 
   availablePools: any;
   activatedPool: any;
+
+  autoFillWindowHeight = true;
 
   columns: any[] = [
     {
@@ -70,7 +73,7 @@ export class PluginsComponent {
     },
   };
 
-  protected cardHeaderComponent = AvailablePluginsComponent;
+  cardHeaderComponent = AvailablePluginsComponent;
   protected availablePlugins;
   protected allPlugins;
 
@@ -394,7 +397,7 @@ export class PluginsComponent {
     return params;
   }
 
-  getActions(parentrow) {
+  getActions(parentrow): EntityTableAction[] {
     const actions = [{
       name: parentrow.name,
       id: 'start',
@@ -557,7 +560,7 @@ export class PluginsComponent {
         },
       });
     }
-    return actions;
+    return actions as unknown as EntityTableAction[];
   }
 
   isActionVisible(actionId: string, row: any) {
