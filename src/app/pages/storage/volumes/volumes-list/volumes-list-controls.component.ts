@@ -35,8 +35,7 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
   templateUrl: './volumes-list-controls.component.html',
   providers: [MessageService],
 })
-export class VolumesListControlsComponent
-implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
+export class VolumesListControlsComponent implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
   @ViewChild('filter', { static: false }) filter: ElementRef;
   @Input() entity: any; // Can't specify VolumesListComponent without creating circular dependency;
 
@@ -50,7 +49,6 @@ implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
   poolList: any[] = [];
 
   private poolValue: string;
-  private dialogRef: any;
   private filterSubscription: Subscription;
   private poolChoicesSubscription: Subscription;
   private poolConfigSubscription: Subscription;
@@ -61,17 +59,16 @@ implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
   }
 
   constructor(
-    protected translate: TranslateService,
-    public router: Router,
-    public core: CoreService,
-    public modalService: ModalService,
-    protected rest: RestService,
-    protected ws: WebSocketService,
-    protected loader: AppLoaderService,
-    protected dialog: MatDialog,
-    protected dialogService: DialogService,
-    protected http: HttpClient,
-    public messageService: MessageService,
+    private router: Router,
+    private core: CoreService,
+    private modalService: ModalService,
+    private rest: RestService,
+    private ws: WebSocketService,
+    private loader: AppLoaderService,
+    private dialog: MatDialog,
+    private dialogService: DialogService,
+    private http: HttpClient,
+    private messageService: MessageService,
   ) {}
 
   ngOnInit() {
@@ -79,31 +76,25 @@ implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.filterSubscription) {
-      this.filterSubscription.unsubscribe();
-    }
-    if (this.poolChoicesSubscription) {
-      this.poolChoicesSubscription.unsubscribe();
-    }
-    if (this.poolConfigSubscription) {
-      this.poolConfigSubscription.unsubscribe();
-    }
+    this.filterSubscription?.unsubscribe();
+    this.poolChoicesSubscription?.unsubscribe();
+    this.poolConfigSubscription?.unsubscribe();
   }
 
   ngAfterViewInit() {
-    if (this.filter) {
-      this.filterSubscription = observableFromEvent(
-        this.filter.nativeElement,
-        'keyup',
-      )
-        .pipe(debounceTime(250), distinctUntilChanged())
-        .subscribe(() => {
-          this.filterValue = this.filter.nativeElement.value
-            ? this.filter.nativeElement.value
-            : '';
-          this.filterDatasets(this.filterValue);
-        });
+    if (!this.filter) {
+      return;
     }
+
+    this.filterSubscription = observableFromEvent(
+      this.filter.nativeElement,
+      'keyup',
+    )
+      .pipe(debounceTime(250), distinctUntilChanged())
+      .subscribe(() => {
+        this.filterValue = this.filter.nativeElement.value || '';
+        this.filterDatasets(this.filterValue);
+      });
   }
 
   applyConfig(config: any) {
@@ -116,17 +107,18 @@ implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  navigate(path: string) {
+  // TODO: Candidate for removal
+  navigate(path: string): void {
     this.router.navigate(path.split('/'));
   }
 
-  resetDatasetFilter() {
+  resetDatasetFilter(): void {
     this.filterValue = '';
     this.filter.nativeElement.value = '';
     this.filterDatasets('');
   }
 
-  filterDatasets(value: string) {
+  filterDatasets(value: string): void {
     this.core.emit({
       name: 'TreeTableGlobalFilter',
       data: { column: 'name', value },
@@ -134,7 +126,7 @@ implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  onClickImport() {
+  onClickImport(): void {
     this.modalService.open(
       'slide-in-form',
       new VolumeImportWizardComponent(
