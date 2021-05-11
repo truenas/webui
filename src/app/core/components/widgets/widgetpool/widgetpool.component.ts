@@ -5,6 +5,9 @@ import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
+import { PoolStatus } from 'app/enums/pool-status.enum';
+import { VDevType } from 'app/enums/v-dev-type.enum';
+import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
@@ -102,7 +105,7 @@ export interface VolumeData {
   styleUrls: ['./widgetpool.component.css'],
 })
 export class WidgetPoolComponent extends WidgetComponent implements AfterViewInit, OnDestroy, OnChanges {
-  @Input() poolState: any;
+  @Input() poolState: Pool;
   @Input() volumeData: any;// VolumeData;
   @ViewChild('carousel', { static: true }) carousel: ElementRef;
   @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef;
@@ -140,8 +143,8 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   get totalDisks() {
     if (this.poolState && this.poolState.topology) {
       let total = 0;
-      this.poolState.topology.data.forEach((item: any) => {
-        if (item.type == 'DISK') {
+      this.poolState.topology.data.forEach((item) => {
+        if (item.type == VDevType.Disk) {
           total++;
         } else {
           total += item.children.length;
@@ -157,7 +160,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     if (this.poolState && this.poolState.topology) {
       const unhealthy: any[] = []; // Disks with errors
       this.poolState.topology.data.forEach((item: any) => {
-        if (item.type == 'DISK') {
+        if (item.type == VDevType.Disk) {
           const diskErrors = item.read_errors + item.write_errors + item.checksum_errors;
 
           if (diskErrors > 0) {
@@ -176,6 +179,37 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       return { totalErrors: unhealthy.length/* errors.toString() */, disks: unhealthy };
     }
     return { totalErrors: 'Unknown', disks: [] as any[] };
+  }
+
+  get allDiskNames(): string[] {
+    if (!this.poolState || !this.poolState.topology) {
+      return [];
+    }
+
+    const allDiskNames: string[] = [];
+    ['cache', 'data', 'dedup', 'log', 'spare', 'special'].forEach((categoryName) => {
+      const category: any[] = this.poolState.topology[categoryName];
+
+      if (!category || !category.length) {
+        return;
+      }
+
+      category.forEach((item) => {
+        if (item.type == 'DISK' && item.disk) {
+          allDiskNames.push(item.disk);
+        } else {
+          (item.children as any[]).forEach((device) => {
+            if (!device.disk) {
+              return;
+            }
+
+            allDiskNames.push(device.disk);
+          });
+        }
+      });
+    });
+
+    return allDiskNames;
   }
 
   title: string = this.path.length > 0 && this.poolState && this.currentSlide !== '0' ? this.poolState.name : 'Pool';
@@ -371,7 +405,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     };
   }
 
-  updateSlide(name: string, verified: boolean, slideIndex: number, dataIndex?: number, topology?: string, vdev?: any) {
+  updateSlide(name: string, verified: boolean, slideIndex: number, dataIndex?: number, topology?: PoolTopologyCategory, vdev?: any) {
     if (name !== 'overview' && !verified) { return; }
     const dataSource = vdev || { children: this.poolState.topology[topology] };
     const direction = parseInt(this.currentSlide) < slideIndex ? 'forward' : 'back';
@@ -417,22 +451,23 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   }
 
   checkVolumeHealth() {
-    switch (this.poolState.status) {
+    switch (this.poolState.status as string) {
+      // TODO: Unexpected statuses, possibly introduced on frontend
       case 'HEALTHY':
         break;
       case 'LOCKED':
         this.updateVolumeHealth('Pool status is ' + this.poolState.status, false, 'locked');
         break;
       case 'UNKNOWN':
-      case 'OFFLINE':
+      case PoolStatus.Offline:
         this.updateVolumeHealth('Pool status is ' + this.poolState.status, false, 'unknown');
         break;
-      case 'DEGRADED':
+      case PoolStatus.Degraded:
         this.updateVolumeHealth('Pool status is ' + this.poolState.status, false, 'degraded');
         break;
-      case 'FAULTED':
-      case 'UNAVAIL':
-      case 'REMOVED':
+      case PoolStatus.Faulted:
+      case PoolStatus.Unavailable:
+      case PoolStatus.Removed:
         this.updateVolumeHealth('Pool status is ' + this.poolState.status, true, 'faulted');
         break;
     }

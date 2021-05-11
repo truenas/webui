@@ -1,4 +1,4 @@
-import { Preferences } from './preferences';
+import { Preferences } from './preferences.interface';
 
 export interface User {
   id: number;

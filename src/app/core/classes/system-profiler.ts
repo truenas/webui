@@ -1,3 +1,4 @@
+import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import {
   Disk, Enclosure, EnclosureSlot, VDev, VDevStats,
 } from 'app/interfaces/storage.interface';
@@ -23,7 +24,8 @@ interface VDevMetadata {
   diskEnclosures?: any; // {devname: index} Only for mirrors and RAIDZ
   poolIndex: number;
   vdevIndex: number;
-  topology?: string;
+
+  topology?: PoolTopologyCategory;
   selectedDisk?: string;
   slots?: any;
 }
@@ -54,12 +56,12 @@ export class SystemProfiler {
     this._enclosures = enclosures;
   }
 
-  private _pools: any;
+  private _pools: Pool[];
   get pools() {
     return this._pools;
   }
-  set pools(obj) {
-    this._pools = obj;
+  set pools(pools) {
+    this._pools = pools;
     this.parsePoolsData(this._pools);
   }
 
@@ -161,8 +163,8 @@ export class SystemProfiler {
     }
   }
 
-  private parsePoolsData(obj: any) {
-    obj.forEach((pool: any, poolIndex: number) => {
+  private parsePoolsData(pools: Pool[]) {
+    pools.forEach((pool, poolIndex) => {
       if (!pool.topology) {
         return;
       }
@@ -174,8 +176,8 @@ export class SystemProfiler {
     });
   }
 
-  private parseByTopology(role: string, pool: any, poolIndex: number) {
-    pool.topology[role].forEach((vdev: VDev, vIndex: number) => {
+  private parseByTopology(role: PoolTopologyCategory, pool: Pool, poolIndex: number) {
+    pool.topology[role].forEach((vdev, vIndex) => {
       const v: VDevMetadata = {
         pool: pool.name,
         type: vdev.type,

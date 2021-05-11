@@ -17,6 +17,26 @@ import helptext from '../../../../helptext/vm/devices/device-add-edit';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { DialogService } from '../../../../services/dialog.service';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+
+interface DisplayDeviceAttributes {
+  bind: string;
+  password: string;
+  port: number;
+  password_configured: boolean;
+  resolution: string;
+  type: string;
+  wait: boolean;
+  web: boolean;
+}
+
+interface Device {
+  attributes: DisplayDeviceAttributes;
+  dtype: string;
+  id: number;
+  order: number;
+  vm: number;
+}
+
 @Component({
   selector: 'app-device-edit',
   templateUrl: './device-edit.component.html',
@@ -41,6 +61,7 @@ export class DeviceEditComponent implements OnInit {
   displayFormGroup: any;
   rootpwd: any;
   vminfo: any;
+  vmId: number;
   boot: any;
   error: string;
   private productType = window.localStorage.getItem('product_type') as ProductType;
@@ -282,8 +303,7 @@ export class DeviceEditComponent implements OnInit {
       placeholder: helptext.resolution_placeholder,
       tooltip: helptext.resolution_tooltip,
       type: 'select',
-      options: helptext.resolution_options,
-      isHidden: true,
+      options: [],
     },
     {
       name: 'bind',
@@ -297,8 +317,18 @@ export class DeviceEditComponent implements OnInit {
       placeholder: helptext.password_placeholder,
       tooltip: helptext.password_tooltip,
       type: 'input',
+      togglePw: true,
       inputType: 'password',
       validation: helptext.password_validation,
+    },
+    {
+      name: 'type',
+      placeholder: helptext.type_placeholder,
+      type: 'select',
+      options: [
+        { label: T('VNC'), value: 'VNC' },
+        { label: T('SPICE'), value: 'SPICE' },
+      ],
     },
     {
       name: 'web',
@@ -340,6 +370,13 @@ export class DeviceEditComponent implements OnInit {
       }
     });
 
+    this.ws.call('vm.resolution_choices').subscribe((res) => {
+      const resolution = _.find(this.displayFieldConfig, { name: 'resolution' });
+      for (const key in res) {
+        resolution.options.push({ label: key, value: res[key] });
+      }
+    });
+
     // nic
     this.networkService.getVmNicChoices().subscribe((res) => {
       this.nic_attach = _.find(this.nicFieldConfig, { name: 'nic_attach' });
@@ -369,8 +406,6 @@ export class DeviceEditComponent implements OnInit {
       const fg = activeformgroup.controls[value];
       if (typeof fg !== 'undefined') {
         fg.setValue(deviceInformation[value]);
-      } else {
-        console.log(deviceInformation, value, activeformgroup);
       }
     }
   }
@@ -379,6 +414,7 @@ export class DeviceEditComponent implements OnInit {
     this.aroute.params.subscribe((params) => {
       this.deviceid = parseInt(params['pk'], 10);
       this.vmname = params['name'];
+      this.vmId = params['vmid'];
       this.route_success = ['vm', params['vmid'], 'devices', this.vmname];
     });
 
@@ -447,6 +483,13 @@ export class DeviceEditComponent implements OnInit {
       } else if (res === 'DISPLAY') {
         this.activeFormGroup = this.displayFormGroup;
         this.isCustActionVisible = false;
+        this.ws.call('vm.get_display_devices', [this.vmId]).subscribe((devices: Device[]) => {
+          if (devices.length > 1) {
+            _.find(this.displayFieldConfig, { name: 'type' }).isHidden = true;
+          }
+        }, (err) => {
+          new EntityUtils().handleWSError(this, err, this.dialogService);
+        });
       }
       this.setgetValues(this.activeFormGroup, deviceInformation);
     });
@@ -460,7 +503,6 @@ export class DeviceEditComponent implements OnInit {
 
     if (!this.productType.includes(ProductType.Scale)) {
       _.find(this.displayFieldConfig, { name: 'wait' }).isHidden = false;
-      _.find(this.displayFieldConfig, { name: 'resolution' }).isHidden = false;
     }
 
     this.afterInit();

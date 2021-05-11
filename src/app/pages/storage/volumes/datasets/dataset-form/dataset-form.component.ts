@@ -1044,7 +1044,10 @@ export class DatasetFormComponent implements FormConfiguration {
         this.minimum_recommended_dataset_recordsize = res;
         this.recommended_size_number = parseInt((this.reverseRecordSizeMap as any)[this.minimum_recommended_dataset_recordsize], 0);
       });
-      combineLatest(this.ws.call('pool.query', [[['name', '=', root]]]), this.ws.call('pool.dataset.query', [[['id', '=', this.pk]]])).subscribe(
+      combineLatest([
+        this.ws.call('pool.query', [[['name', '=', root]]]),
+        this.ws.call('pool.dataset.query', [[['id', '=', this.pk]]]),
+      ]).subscribe(
         ([pk_pool, pk_dataset]) => {
           if (pk_pool[0].encrypt !== 0) {
             this.legacy_encryption = true;
