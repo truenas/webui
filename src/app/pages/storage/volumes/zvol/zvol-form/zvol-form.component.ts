@@ -724,8 +724,6 @@ export class ZvolFormComponent implements Formconfiguration {
       this.ws.call('system.info').subscribe((res) => {
         if (res.license && res.license.features.indexOf('DEDUP') > -1) {
           this.entityForm.setDisabled('deduplication', false, false);
-        } else {
-          this.dialogService.Info(T('ZFS Deduplication'), T('To enable ZFS Deduplication Contact iXSystems support.'));
         }
       });
     } else {
