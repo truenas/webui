@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import * as _ from 'lodash';
 import { DialogService } from '../../../services';
 import { RestService, WebSocketService } from '../../../services';
@@ -18,19 +19,21 @@ import helptext from '../../../helptext/jails/jails-list';
   template: '<entity-table [title]="title" [conf]="this" ></entity-table>',
   providers: [DialogService, StorageService],
 })
-export class JailListComponent {
+export class JailListComponent implements InputTableConf {
   isPoolActivated: boolean;
   selectedPool;
   activatedPool: any;
   availablePools: any;
   title = 'Jails';
-  protected queryCall = 'jail.query';
-  protected wsDelete = 'jail.delete';
-  protected wsMultiDelete = 'core.bulk';
+  queryCall = 'jail.query';
+  wsDelete = 'jail.delete';
+  wsMultiDelete = 'core.bulk';
   entityList;
-  protected route_add = ['jails', 'add', 'wizard'];
+  route_add = ['jails', 'add', 'wizard'];
   protected route_add_tooltip = 'Add Jail';
   toActivatePool = false;
+
+  autoFillWindowHeight = true;
 
   columns: any[] = [
     { name: T('JID'), prop: 'jid' },
@@ -167,7 +170,7 @@ export class JailListComponent {
   },
   ];
 
-  protected globalConfig = {
+  globalConfig = {
     id: 'config',
     tooltip: helptext.globalConfig.tooltip,
     onClick: () => {
@@ -288,7 +291,7 @@ export class JailListComponent {
     }
   }
 
-  getActions(parentRow) {
+  getActions(parentRow): EntityTableAction[] {
     return [{
       name: parentRow.host_hostuuid,
       icon: 'edit',
@@ -299,7 +302,7 @@ export class JailListComponent {
           new Array('').concat(['jails', 'edit', row.host_hostuuid]),
         );
       },
-    },
+    } as unknown as EntityTableAction,
     {
       name: parentRow.host_hostuuid,
       icon: 'device_hub',
@@ -408,7 +411,7 @@ export class JailListComponent {
         this.entityList.doDelete(row);
       },
     },
-    ];
+    ] as EntityTableAction[];
   }
 
   isActionVisible(actionId: string, row): boolean {
