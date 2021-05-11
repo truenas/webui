@@ -1,5 +1,4 @@
 import { Preferences } from './preferences.interface';
-import { Group } from './group.interface';
 
 export interface User {
   id: number;
@@ -20,9 +19,20 @@ export interface User {
   microsoft_account: boolean;
   attributes: { preferences: Preferences };
   email: string;
-  group: Group;
+  group: UserGroup;
   groups: { [property: string]: any }[];
   sshpubkey: string;
   local: boolean;
   id_type_both: boolean;
+}
+
+export interface UserGroup {
+  id: number;
+  bsdgrp_gid: number;
+  bsdgrp_group: string;
+  bsdgrp_builtin: boolean;
+  bsdgrp_sudo: boolean;
+  bsdgrp_sudo_nopasswd: boolean;
+  bsdgrp_sudo_commands: { [property: string]: any }[];
+  bsdgrp_smb: boolean;
 }

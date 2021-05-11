@@ -187,7 +187,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     }
 
     const allDiskNames: string[] = [];
-    ['cache', 'data', 'dedup', 'log', 'spare', 'special'].forEach((categoryName) => {
+    (['cache', 'data', 'dedup', 'log', 'spare', 'special'] as PoolTopologyCategory[]).forEach((categoryName) => {
       const category: any[] = this.poolState.topology[categoryName];
 
       if (!category || !category.length) {

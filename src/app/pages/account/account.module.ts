@@ -9,8 +9,8 @@ import { EntityModule } from '../common/entity/entity.module';
 import { StorageService } from '../../services/storage.service';
 
 import { routing } from './account.routing';
-import { GroupListComponent } from './groups/group-list';
-import { GroupFormComponent } from './groups/group-form';
+import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
+import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { UserListComponent } from './users/user-list';
 import { UserFormComponent } from './users/user-form';
 import { ChangePasswordComponent } from './users/change-password';

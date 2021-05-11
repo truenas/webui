@@ -3,6 +3,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { Group } from 'app/interfaces/group.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { Disk, DiskQueryOptions, DiskUpdate } from 'app/interfaces/storage.interface';
@@ -268,9 +269,9 @@ export type ApiDirectory = {
   'ipmi.query': { params: any; response: any };
 
   // Group
-  'group.query': { params: any; response: any };
+  'group.query': { params: any; response: Group[] };
   'group.create': { params: any; response: any };
-  'group.update': { params: any; response: any };
+  'group.update': { params: [string, Partial<Group>]; response: void };
   'group.delete': { params: any; response: any };
   'group.get_group_obj': { params: any; response: any };
   'group.get_next_gid': { params: any; response: any };
