@@ -1,5 +1,5 @@
-import { Preferences } from './preferences';
-import { Group } from './group';
+import { Preferences } from './preferences.interface';
+import { Group } from './group.interface';
 
 export interface User {
   id: number;
