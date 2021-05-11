@@ -177,6 +177,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         this.formGroup.setControl(fieldConfig.name, formControl);
       }
     });
+
+    this.fieldConfig = this.fieldConfig.concat(fieldSet.config);
+    this.conf.fieldConfig = this.fieldConfig;
   }
 
   async ngOnInit() {
@@ -342,6 +345,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                 this.wsResponseIdx = this.wsResponse[key];
                 if (this.wsfg) {
                   const current_field = this.fieldConfig.find((control) => control.name === key);
+                  console.log('current=', key, current_field);
                   if (current_field.type === 'array') {
                     this.setArrayValue(this.wsResponse[key], this.wsfg, key);
                   } else if (current_field.type === 'list') {
