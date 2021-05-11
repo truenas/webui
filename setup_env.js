@@ -8,9 +8,9 @@ program
 
 var proxy_config_json = './proxy.config.json';
 var environment_ts = './src/environments/environment.ts';
-var ip = program.ip;
+var hostname = (program.ip || '').match(/^(?:https?:\/\/)?(?:[^@\n]+@)?([^:\/\n?]+)/);
 
-if (ip == null) {
+if (!hostname || !hostname[1]) {
   program.outputHelp();
   process.exit(2);
 }
@@ -21,7 +21,7 @@ var copySkel = function(file) {
     if (err) {
       return console.log(err);
     }
-    var result = data.replace(/\$SERVER\$/g, ip);
+    var result = data.replace(/\$SERVER\$/g, hostname[1]);
 
     fs.writeFile(file, result, 'utf8', function (err) {
        if (err) return console.log(err);
