@@ -16,7 +16,7 @@
     "start:prod:aot": "yarn run ie-support && yarn run po2json && ng serve --prod --aot",
     "build": "yarn run ie-support && yarn run generate_licenses && yarn run po2json && yarn run clean:dist && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build",
     "build:prod": "node scripts/setup_prod.js && yarn run build -- --prod",
-    "build:prod:aot": "yarn run build:prod --aot --source-map --base-href /ui/",
+    "build:prod:aot": "yarn run build:prod --aot --source-map --base-href /ui/ && node scripts/verify_build.js",
     "test": "ng test",
     "lint": "ng lint",
     "snyk": "snyk test",
