@@ -8,6 +8,9 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { Service } from 'app/interfaces/service.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
@@ -37,15 +40,11 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 })
 export class VolumesListControlsComponent implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
   @ViewChild('filter', { static: false }) filter: ElementRef;
-  @Input() entity: any; // Can't specify VolumesListComponent without creating circular dependency;
+  @Input() entity: VolumesListComponent;
 
   conf: any;
   filterValue = '';
   actions: any[];
-  menuTriggerMessage = 'Click for options';
-  spin = true;
-  direction = 'left';
-  animationMode = 'fling';
   poolList: any[] = [];
 
   private poolValue: string;
@@ -71,17 +70,17 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
     private messageService: MessageService,
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.getSystemDatasetPool();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.filterSubscription?.unsubscribe();
     this.poolChoicesSubscription?.unsubscribe();
     this.poolConfigSubscription?.unsubscribe();
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     if (!this.filter) {
       return;
     }
@@ -97,7 +96,7 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
       });
   }
 
-  applyConfig(config: any) {
+  applyConfig(config: VolumesListComponent): void {
     if (config) {
       this.actions = config.getAddActions();
       this.conf = config.conf;
@@ -146,11 +145,10 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
   onChooseSystemDatasetPool() {
     this.poolChoicesSubscription = this.ws
       .call('systemdataset.pool_choices')
-      .subscribe((res: { [key: string]: string }) => {
-        this.poolList = [];
-        Object.keys(res).forEach((pool) => {
-          this.poolList.push({ label: res[pool], value: pool });
-        });
+      .subscribe((poolOptions) => {
+        this.poolList = Object.entries(poolOptions)
+          .map(([label, value]) => ({ label, value }));
+
         this.dialogService.dialogForm(
           this.getSystemDatasetPoolDialogConfiguration(),
           true,
@@ -158,7 +156,7 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
       });
   }
 
-  getSystemDatasetPoolDialogConfiguration(): DialogFormConfiguration {
+  getSystemDatasetPoolDialogConfiguration(): DialogFormConfiguration<this> {
     return {
       title: helptext.choosePool.title,
       fieldConfig: [
@@ -178,7 +176,7 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
     };
   }
 
-  getSystemDatasetPool() {
+  getSystemDatasetPool(): void {
     this.poolConfigSubscription = this.ws
       .call('systemdataset.config')
       .subscribe((res) => {
@@ -186,10 +184,10 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
       });
   }
 
-  customSubmitSystemDatasetPool(entityDialog: any) {
+  customSubmitSystemDatasetPool(entityDialog: EntityDialogComponent<VolumesListControlsComponent>): void {
     const self = entityDialog.parent;
     self.loader.open();
-    self.ws.call('service.query').subscribe((services: any) => {
+    self.ws.call('service.query').subscribe((services) => {
       const smbService = _.find(services, { service: 'cifs' });
       if (smbService.state === ServiceStatus.Running) {
         self.loader.close();
@@ -212,7 +210,7 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
     });
   }
 
-  updateSystemDatasetPool(entityDialog: any) {
+  updateSystemDatasetPool(entityDialog: any): void {
     const self = entityDialog.parent;
     const pool = entityDialog.formGroup.controls['pools'].value;
     self.dialogRef = self.dialog.open(EntityJobComponent, {

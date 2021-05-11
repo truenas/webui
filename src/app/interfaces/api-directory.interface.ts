@@ -491,8 +491,9 @@ export type ApiDirectory = {
   'smart.test.update': { params: any; response: any };
 
   // SystemDataset
-  'systemdataset.pool_choices': { params: any; response: any };
+  'systemdataset.pool_choices': { params: void; response: { [key: string]: string } };
   'systemdataset.config': { params: any; response: any };
+  'systemdataset.update': { params: [{ [poolName: string]: string }]; response: any };
 
   // Service
   'service.started': { params: any; response: any };
