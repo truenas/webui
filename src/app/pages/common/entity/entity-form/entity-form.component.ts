@@ -162,23 +162,36 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
   }
 
-  addFormControls(fieldSet: FieldSet) {
-    if (!fieldSet.divider) {
-      if (fieldSet.maxWidth) {
-        fieldSet.width = '100%';
-      } else {
-        fieldSet.width = this.conf.columnsOnForm === 1 || fieldSet.colspan === 2 ? '100%' : '50%';
+  addFormControls(fieldSets: FieldSet[]) {
+    this.fieldSets = this.fieldSets.concat(fieldSets);
+
+    let fieldConfigs: FieldConfig[] = [];
+    fieldSets.forEach((fieldSet) => {
+      if (!fieldSet.divider) {
+        if (fieldSet.maxWidth) {
+          fieldSet.width = '100%';
+        } else {
+          fieldSet.width = this.conf.columnsOnForm === 1 || fieldSet.colspan === 2 ? '100%' : '50%';
+        }
+      }
+
+      fieldSet.config.forEach((fieldConfig) => {
+        const formControl = this.entityFormService.createFormControl(fieldConfig);
+        if (formControl) {
+          this.formGroup.setControl(fieldConfig.name, formControl);
+        }
+      });
+      fieldConfigs = fieldConfigs.concat(fieldSet.config);
+    });
+
+    for (const i in fieldConfigs) {
+      const config = fieldConfigs[i];
+      if (config.relation?.length > 0) {
+        this.fieldRelationService.setRelation(config, this.formGroup);
       }
     }
 
-    fieldSet.config.forEach((fieldConfig) => {
-      const formControl = this.entityFormService.createFormControl(fieldConfig);
-      if (formControl) {
-        this.formGroup.setControl(fieldConfig.name, formControl);
-      }
-    });
-
-    this.fieldConfig = this.fieldConfig.concat(fieldSet.config);
+    this.fieldConfig = this.fieldConfig.concat(fieldConfigs);
     this.conf.fieldConfig = this.fieldConfig;
   }
 
@@ -291,11 +304,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.data = res.data;
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
               this.data = this.conf.resourceTransformIncomingRestData(this.data);
-              const extraFieldSet = this.data['extra_fieldset'];
-              if (extraFieldSet) {
-                this.fieldSets.push(extraFieldSet);
-                this.addFormControls(extraFieldSet);
-                delete this.data['extra_fieldset'];
+              const extraFieldSets = this.data['extra_fieldsets'];
+              if (extraFieldSets) {
+                this.addFormControls(extraFieldSets);
+                delete this.data['extra_fieldsets'];
               }
             }
             for (const key in this.data) {
@@ -330,11 +342,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
               this.wsResponse = this.conf.resourceTransformIncomingRestData(this.wsResponse);
-              const extraFieldSet = this.wsResponse['extra_fieldset'];
-              if (extraFieldSet) {
-                this.fieldSets.push(extraFieldSet);
-                this.addFormControls(extraFieldSet);
-                delete this.wsResponse['extra_fieldset'];
+              const extraFieldSets = this.wsResponse['extra_fieldsets'];
+              if (extraFieldSets) {
+                this.addFormControls(extraFieldSets);
+                delete this.wsResponse['extra_fieldsets'];
               }
             }
             if (this.conf.dataHandler) {

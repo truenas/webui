@@ -450,7 +450,7 @@ export class ChartReleaseEditComponent implements FormConfiguration {
 
     const gpuFieldSet = this.parseSchema(data.chart_schema.schema);
     if (gpuFieldSet) {
-      data.config['extra_fieldset'] = gpuFieldSet;
+      data.config['extra_fieldsets'] = [gpuFieldSet];
     }
     return data.config;
   }
