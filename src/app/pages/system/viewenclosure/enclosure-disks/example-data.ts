@@ -26,6 +26,10 @@
 
  */
 
+import { DiskAcousticLevel } from 'app/enums/disk-acoustic-level.enum';
+import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
+import { DiskStandby } from 'app/enums/disk-standby.enum';
+
 interface Template {
   slots: number;
   id: number;
@@ -56,14 +60,14 @@ export class ExampleData {
           subsystem: 'da',
           number: tally,
           serial: 'K5H5G09A',
-          size: '2000398934016',
+          size: 2000398934016,
           multipath_name: '',
           multipath_member: '',
           description: '',
           transfermode: 'Auto',
-          hddstandby: 'ALWAYS ON',
-          advpowermgmt: 'DISABLED',
-          acousticlevel: 'DISABLED',
+          hddstandby: DiskStandby.AlwaysOn,
+          advpowermgmt: DiskPowerLevel.Disabled,
+          acousticlevel: DiskAcousticLevel.Disabled,
           togglesmart: true,
           smartoptions: '',
           expiretime: null as string,

@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
+import { VDev } from 'app/interfaces/storage.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
 import * as _ from 'lodash';
@@ -32,8 +33,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   suggestable_disks: any[] = [];
   can_suggest = false;
   selected: any[] = [];
-  vdevs:
-  any = {
+  vdevs: any = {
     data: [{}], cache: [], spares: [], log: [], special: [], dedup: [],
   };
   original_vdevs: any = {};
@@ -260,7 +260,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         this.first_data_vdev_disknum = res[0].topology.data[0].children.length;
 
-        let first_disk;
+        let first_disk: VDev;
         if (this.first_data_vdev_disknum === 0
               && this.first_data_vdev_type === 'disk') {
           this.first_data_vdev_disknum = 1;

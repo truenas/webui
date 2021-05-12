@@ -19,7 +19,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 })
 export class DiskListComponent {
   title = T('Disks');
-  protected queryCall = 'disk.query';
+  protected queryCall: 'disk.query' = 'disk.query';
   protected queryCallOption = [[] as any, { extra: { pools: true } }];
   noAdd = true;
 
