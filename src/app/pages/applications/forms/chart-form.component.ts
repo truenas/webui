@@ -32,7 +32,24 @@ export class ChartFormComponent implements FormConfiguration {
   private rowName: string;
   private dialogRef: any;
   fieldConfig: FieldConfig[];
-  fieldSets: FieldSet[] = [];
+  fieldSets: FieldSet[] = [
+    {
+      name: helptext.chartForm.release_name.name,
+      width: '100%',
+      config: [
+        {
+          type: 'input',
+          name: 'release_name',
+          placeholder: helptext.chartForm.release_name.placeholder,
+          tooltip: helptext.chartForm.release_name.tooltip,
+          required: true,
+          disabled: true,
+          readonly: true,
+        },
+      ],
+      colspan: 2,
+    },
+  ];
   private catalogApp: any;
   private entityUtils = new EntityUtils();
 
@@ -51,30 +68,13 @@ export class ChartFormComponent implements FormConfiguration {
   }
 
   parseSchema(catalogApp: any) {
+    let fieldSets: FieldSet[] = [];
     try {
       this.catalogApp = catalogApp;
       this.title = this.catalogApp.name;
 
-      this.fieldSets = [
-        {
-          name: helptext.chartForm.release_name.name,
-          width: '100%',
-          config: [
-            {
-              type: 'input',
-              name: 'release_name',
-              placeholder: helptext.chartForm.release_name.placeholder,
-              tooltip: helptext.chartForm.release_name.tooltip,
-              required: true,
-              disabled: true,
-              readonly: true,
-            },
-          ],
-          colspan: 2,
-        },
-      ];
       this.catalogApp.schema.groups.forEach((group: any) => {
-        this.fieldSets.push({
+        fieldSets.push({
           name: group.name,
           label: true,
           config: [],
@@ -82,7 +82,7 @@ export class ChartFormComponent implements FormConfiguration {
         });
       });
       this.catalogApp.schema.questions.forEach((question: any) => {
-        const fieldSet = this.fieldSets.find((fieldSet: any) => fieldSet.name == question.group);
+        const fieldSet = fieldSets.find((fieldSet: any) => fieldSet.name == question.group);
         if (fieldSet) {
           const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(question);
 
@@ -98,10 +98,12 @@ export class ChartFormComponent implements FormConfiguration {
         }
       });
 
-      this.fieldSets = this.fieldSets.filter((fieldSet) => fieldSet.config.length > 0);
+      fieldSets = fieldSets.filter((fieldSet) => fieldSet.config.length > 0);
     } catch (error) {
-      return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
+      this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
+
+    return fieldSets;
   }
 
   resourceTransformIncomingRestData(data: any) {
@@ -114,11 +116,10 @@ export class ChartFormComponent implements FormConfiguration {
       schema: data.chart_schema.schema,
     };
 
-    this.parseSchema(chartSchema);
     this.name = data.name;
 
     data.config['release_name'] = data.name;
-    data.config['changed_schema'] = true;
+    data.config['extra_fieldsets'] = this.parseSchema(chartSchema);
 
     return data.config;
   }
