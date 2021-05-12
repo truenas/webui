@@ -1,3 +1,6 @@
+import { DiskAcousticLevel } from 'app/enums/disk-acoustic-level.enum';
+import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
+import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { T } from '../../../translate-marker';
 
 export default {
@@ -21,17 +24,17 @@ export default {
  target="_blank">forum post</a> describes identifying spun down drives. Temperature monitoring is disabled for standby disks.'),
 
   disk_form_hddstandby_options: [
-    { label: T('Always On'), value: 'ALWAYS ON' },
-    { label: '5', value: '5' },
-    { label: '10', value: '10' },
-    { label: '20', value: '20' },
-    { label: '30', value: '30' },
-    { label: '60', value: '60' },
-    { label: '120', value: '120' },
-    { label: '180', value: '180' },
-    { label: '240', value: '240' },
-    { label: '300', value: '300' },
-    { label: '330', value: '330' },
+    { label: T('Always On'), value: DiskStandby.AlwaysOn },
+    { label: '5', value: DiskStandby.Minutes5 },
+    { label: '10', value: DiskStandby.Minutes10 },
+    { label: '20', value: DiskStandby.Minutes20 },
+    { label: '30', value: DiskStandby.Minutes30 },
+    { label: '60', value: DiskStandby.Minutes60 },
+    { label: '120', value: DiskStandby.Minutes120 },
+    { label: '180', value: DiskStandby.Minutes180 },
+    { label: '240', value: DiskStandby.Minutes240 },
+    { label: '300', value: DiskStandby.Minutes300 },
+    { label: '330', value: DiskStandby.Minutes330 },
   ],
 
   force_hdd_standby: {
@@ -43,13 +46,13 @@ export default {
   disk_form_advpowermgmt_placeholder: T('Advanced Power Management'),
   disk_form_advpowermgmt_tooltip: T('Select a power management profile from the menu.'),
   disk_form_advpowermgmt_options: [
-    { label: T('Disabled'), value: 'DISABLED' },
-    { label: T('Level 1 - Minimum power usage with Standby (spindown)'), value: '1' },
-    { label: T('Level 64 - Intermediate power usage with Standby'), value: '64' },
-    { label: T('Level 127 - Maximum power usage with Standby'), value: '127' },
-    { label: T('Level 128 - Minimum power usage without Standby (no spindown)'), value: '128' },
-    { label: T('Level 192 - Intermediate power usage without Standby'), value: '192' },
-    { label: T('Level 254 - Maximum performance, maximum power usage'), value: '254' },
+    { label: T('Disabled'), value: DiskPowerLevel.Disabled },
+    { label: T('Level 1 - Minimum power usage with Standby (spindown)'), value: DiskPowerLevel.Level1 },
+    { label: T('Level 64 - Intermediate power usage with Standby'), value: DiskPowerLevel.Level64 },
+    { label: T('Level 127 - Maximum power usage with Standby'), value: DiskPowerLevel.Level127 },
+    { label: T('Level 128 - Minimum power usage without Standby (no spindown)'), value: DiskPowerLevel.Level128 },
+    { label: T('Level 192 - Intermediate power usage without Standby'), value: DiskPowerLevel.Level192 },
+    { label: T('Level 254 - Maximum performance, maximum power usage'), value: DiskPowerLevel.Level254 },
   ],
 
   disk_form_acousticlevel_placeholder: T('Acoustic Level'),
@@ -57,10 +60,10 @@ export default {
  href="https://en.wikipedia.org/wiki/Automatic_acoustic_management"\
  target="_blank">AAM</a>.'),
   disk_form_acousticlevel_options: [
-    { label: T('Disabled'), value: 'DISABLED' },
-    { label: T('Minimum'), value: 'MINIMUM' },
-    { label: T('Medium'), value: 'MEDIUM' },
-    { label: T('Maximum'), value: 'MAXIMUM' },
+    { label: T('Disabled'), value: DiskAcousticLevel.Disabled },
+    { label: T('Minimum'), value: DiskAcousticLevel.Minimum },
+    { label: T('Medium'), value: DiskAcousticLevel.Medium },
+    { label: T('Maximum'), value: DiskAcousticLevel.Maximum },
   ],
 
   disk_form_togglesmart_placeholder: T('Enable S.M.A.R.T.'),

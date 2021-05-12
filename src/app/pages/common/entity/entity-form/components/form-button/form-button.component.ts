@@ -10,7 +10,8 @@ import { Field } from '../../models/field.interface';
   template: `
     <div
       class="dynamic-field form-element"
-      [formGroup]="group">
+      [formGroup]="group"
+      *ngIf="!config['isHidden']">
 
       <button
         mat-button
@@ -18,7 +19,6 @@ import { Field } from '../../models/field.interface';
         [color]="config.buttonColor ? config.buttonColor : default" type="button"
         (click)="config.customEventMethod($event)"
         [disabled]="config.disabled"
-        *ngIf="!config['isHidden']"
         ix-auto ix-auto-type="button" ix-auto-identifier="{{config.customEventActionLabel}}">
           {{config.customEventActionLabel | translate}}
       </button>

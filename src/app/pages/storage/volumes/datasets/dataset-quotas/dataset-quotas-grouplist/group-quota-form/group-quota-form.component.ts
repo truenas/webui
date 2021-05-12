@@ -145,9 +145,9 @@ export class GroupQuotaFormComponent implements FormConfiguration {
     this.entryField = _.find(this.fieldSets.find((set) => set.name === helptext.groups.group_title).config,
       { name: 'searched_entries' });
 
-    this.ws.call('group.query').subscribe((res: any[]) => {
-      res.map((entry) => {
-        this.selectedEntriesField.options.push({ label: entry.group, value: entry.gid });
+    this.ws.call('group.query').subscribe((groups) => {
+      groups.forEach((group) => {
+        this.selectedEntriesField.options.push({ label: group.group, value: group.gid });
       });
     });
 

@@ -4,6 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { Option } from 'app/interfaces/option.interface';
 import { Subject, Subscription } from 'rxjs';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
@@ -23,11 +24,6 @@ import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from '../../../helptext/apps/apps';
 import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
 
-interface SelectOption {
-  label: string;
-  value: string;
-}
-
 @Component({
   selector: 'app-catalog',
   templateUrl: './catalog.component.html',
@@ -42,7 +38,7 @@ export class CatalogComponent implements OnInit {
   filteredCatalogApps: any[] = [];
   filterString = '';
   private dialogRef: any;
-  private poolList: SelectOption[] = [];
+  private poolList: Option[] = [];
   private selectedPool = '';
   settingsEvent: Subject<CoreEvent>;
   private kubernetesForm: KubernetesSettingsComponent;
@@ -185,8 +181,8 @@ export class CatalogComponent implements OnInit {
   }
 
   selectPool() {
-    this.appService.getPoolList().subscribe((res) => {
-      if (res.length === 0) {
+    this.appService.getPoolList().subscribe((pools) => {
+      if (pools.length === 0) {
         this.dialogService.confirm(helptext.noPool.title, helptext.noPool.message, true,
           helptext.noPool.action).subscribe((res: any) => {
           if (res) {
@@ -195,7 +191,7 @@ export class CatalogComponent implements OnInit {
         });
       } else {
         this.poolList.length = 0;
-        res.forEach((pool: any) => {
+        pools.forEach((pool) => {
           this.poolList.push({ label: pool.name, value: pool.name });
         });
         if (this.selectedPool) {

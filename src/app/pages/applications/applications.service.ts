@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
+import { Pool } from 'app/interfaces/pool.interface';
+import { Observable } from 'rxjs/Observable';
 import { WebSocketService } from '../../services/index';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
   constructor(private ws: WebSocketService) {}
 
-  getPoolList() {
+  getPoolList(): Observable<Pool[]> {
     return this.ws.call('pool.query');
   }
 
