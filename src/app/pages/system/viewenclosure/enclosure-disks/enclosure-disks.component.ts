@@ -15,6 +15,7 @@ import { Chassis } from 'app/core/classes/hardware/chassis';
 import { ChassisView } from 'app/core/classes/hardware/chassis-view';
 import { R10 } from 'app/core/classes/hardware/r10';
 import { R20 } from 'app/core/classes/hardware/r20';
+import { R20A } from 'app/core/classes/hardware/r20a';
 import { R40 } from 'app/core/classes/hardware/r40';
 import { R50 } from 'app/core/classes/hardware/r50';
 import { M50 } from 'app/core/classes/hardware/m50';
@@ -286,7 +287,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.selectedEnclosure) {
-      this.loadEnclosure(changes.selectedEnclosure.currentValue, 'front');
+      this.loadEnclosure(changes.selectedEnclosure.currentValue, 'front', true);
     }
   }
 
@@ -371,6 +372,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     switch (enclosure.model) {
       case 'R10':
         this.chassis = new R10();
+        break;
+      case 'TRUENAS-R20A':
+      case 'R20A':
+        this.chassis = new R20A(true);
         break;
       case 'R20':
         this.chassis = new R20(true);
@@ -481,6 +486,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'R10':
         chassis = new R10();
         break;
+      case 'TRUENAS-R20A':
+      case 'R20A':
+        chassis = new R20A();
+        break;
       case 'R20':
         chassis = new R20();
         break;
@@ -521,7 +530,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         chassis = new ES102();
         break;
       default:
-        console.log(this.system);
         this.controllerEvents.next({
           name: 'Error',
           data: {
@@ -1032,7 +1040,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     if (view !== this.view) {
       this.selectedDisk = null;
       this.clearDisk();
-      this.loadEnclosure(this.selectedEnclosure, view);
+      this.loadEnclosure(this.selectedEnclosure, view, true);
     }
   }
 
