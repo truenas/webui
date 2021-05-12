@@ -20,6 +20,7 @@ import helptext from '../../../helptext/apps/apps';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Router } from '@angular/router';
 import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 
 @Component({
   selector: 'app-charts',
@@ -134,7 +135,7 @@ export class ChartReleasesComponent implements OnInit {
     parent: this,
   };
 
-  constructor(private mdDialog: MatDialog,
+  constructor(private mdDialog: MatDialog, private appLoaderService: AppLoaderService,
     private dialogService: DialogService, private translate: TranslateService,
     private appService: ApplicationsService, private modalService: ModalService,
     private sysGeneralService: SystemGeneralService, private router: Router,
@@ -513,7 +514,9 @@ export class ChartReleasesComponent implements OnInit {
     this.podList = [];
     this.podDetails = {};
     this.selectedAppName = name;
+    this.appLoaderService.open();
     this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).subscribe((res) => {
+      this.appLoaderService.close();
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
       if (this.podList.length == 0) {
@@ -531,6 +534,8 @@ export class ChartReleasesComponent implements OnInit {
         }));
         this.dialogService.dialogForm(this.choosePod, true);
       }
+    }, (err) => {
+      this.appLoaderService.close();
     });
   }
 
@@ -538,7 +543,9 @@ export class ChartReleasesComponent implements OnInit {
     this.podList = [];
     this.podDetails = {};
     this.selectedAppName = name;
+    this.appLoaderService.open();
     this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).subscribe((res) => {
+      this.appLoaderService.close();
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
       if (this.podList.length == 0) {
@@ -556,6 +563,8 @@ export class ChartReleasesComponent implements OnInit {
         }));
         this.dialogService.dialogForm(this.choosePodForLogs, true);
       }
+    }, (err) => {
+      this.appLoaderService.close();
     });
   }
 
