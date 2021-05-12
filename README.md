@@ -92,14 +92,22 @@ This should bring the yarn environment back to a useable state.
 
 # Translating Text to Other Languages
 
-All PO files for translating TrueNAS's web interface are included in this repository under [src/assets/i18n](https://github.com/truenas/webui/tree/master/src/assets/i18n).
-These can be edited with any offline PO editor, such as [Poedit](https://poedit.net/), or via the GitHub Web based code editing system.
+All JSON files for translating TrueNAS's web interface are included in this repository under [src/assets/i18n](https://github.com/truenas/webui/tree/master/src/assets/i18n). \
+These can be edited using your editor of choice or directly via the GitHub Web based code editing system.
 
-To extract all of the strings from the project to be translated run:
-```yarn run extract```
+Some strings may use [ICU Message Format](https://formatjs.io/docs/core-concepts/icu-syntax/#plural-format) for pluralization.\
+You can move tokens around and adjust them for your language.
 
-This will update all of the PO files located in the [src/assets/i18n](https://github.com/truenas/webui/tree/master/src/assets/i18n) directory.
+For example:
+```
+Deleted {n, plural, one {# snapshot} other {# snapshots}}
+```
+can be translated in Russian as:
+```
+{n, plural, =1 {Снимок удален} few{# снимка удалено} other {# снимков удалено}}
+```
 
+You can test your strings in an [online editor](http://format-message.github.io/icu-message-format-for-translators/editor.html).
 
 
 Stock images used on the dashboard UI are courtesy of Pixabay.com and are subject to the Simplified Pixabay License. 
