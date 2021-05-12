@@ -25,8 +25,7 @@ import { UnlockDialogComponent } from './volumes/datasets/dataset-unlock/unlock-
 import { ImportDiskComponent } from './import-disk/import-disk.component';
 
 import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager';
-// import { VolumesEditComponent } from './volumes/volumes-edit/';
-import { VolumesListComponent } from './volumes/volumes-list';
+import { VolumesListComponent } from './volumes/volumes-list/volumes-list.component';
 import { VolumesListControlsComponent } from './volumes/volumes-list/volumes-list-controls.component';
 import { VolumeStatusComponent } from './volumes/volume-status';
 import { MultipathsComponent } from './multipaths/multipaths.component';

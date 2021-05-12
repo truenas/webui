@@ -8,8 +8,11 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { ServiceName } from 'app/enums/service-name.enum';
+import { Option } from 'app/interfaces/option.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -42,10 +45,10 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
   @ViewChild('filter', { static: false }) filter: ElementRef;
   @Input() entity: VolumesListComponent;
 
-  conf: any;
+  conf: InputTableConf;
   filterValue = '';
   actions: any[];
-  poolList: any[] = [];
+  poolList: Option[] = [];
 
   private poolValue: string;
   private filterSubscription: Subscription;
@@ -68,6 +71,7 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
     private dialogService: DialogService,
     private http: HttpClient,
     private messageService: MessageService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -142,7 +146,7 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
     );
   }
 
-  onChooseSystemDatasetPool() {
+  onChooseSystemDatasetPool(): void {
     this.poolChoicesSubscription = this.ws
       .call('systemdataset.pool_choices')
       .subscribe((poolOptions) => {
@@ -179,8 +183,8 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
   getSystemDatasetPool(): void {
     this.poolConfigSubscription = this.ws
       .call('systemdataset.config')
-      .subscribe((res) => {
-        this.poolValue = res.pool;
+      .subscribe((config) => {
+        this.poolValue = config.pool;
       });
   }
 
@@ -188,21 +192,23 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
     const self = entityDialog.parent;
     self.loader.open();
     self.ws.call('service.query').subscribe((services) => {
-      const smbService = _.find(services, { service: 'cifs' });
+      const smbService = _.find(services, { service: ServiceName.Cifs });
       if (smbService.state === ServiceStatus.Running) {
         self.loader.close();
-        self.dialogService
-          .confirm(
-            T('Restart SMB Service'),
-            T('The system dataset will be updated and the SMB service restarted. This will cause a temporary disruption of any active SMB connections.'),
-            false,
-            T('Continue'),
-          )
-          .subscribe((confirmed: boolean) => {
-            if (confirmed) {
-              self.updateSystemDatasetPool(entityDialog);
-            }
-          });
+        self.dialogService.confirm({
+          title: this.translate.instant('Restart SMB Service'),
+          message: this.translate.instant(
+            'The system dataset will be updated and the SMB service restarted. This will cause a temporary disruption of any active SMB connections.',
+          ),
+          hideCheckBox: false,
+          buttonMsg: this.translate.instant('Continue'),
+        }).subscribe((confirmed) => {
+          if (!confirmed) {
+            return;
+          }
+
+          self.updateSystemDatasetPool(entityDialog);
+        });
       } else {
         self.loader.close();
         self.updateSystemDatasetPool(entityDialog);
@@ -210,32 +216,32 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
     });
   }
 
-  updateSystemDatasetPool(entityDialog: any): void {
+  updateSystemDatasetPool(entityDialog: EntityDialogComponent<VolumesListControlsComponent>): void {
     const self = entityDialog.parent;
     const pool = entityDialog.formGroup.controls['pools'].value;
-    self.dialogRef = self.dialog.open(EntityJobComponent, {
+    const dialogRef = self.dialog.open(EntityJobComponent, {
       data: { title: helptext.choosePool.jobTitle },
       disableClose: true,
     });
-    self.dialogRef.componentInstance.setCall('systemdataset.update', [
+    dialogRef.componentInstance.setCall('systemdataset.update', [
       { pool },
     ]);
-    self.dialogRef.componentInstance.submit();
-    self.dialogRef.componentInstance.success.subscribe((res: any) => {
-      if (res.error) {
-        if (res.exc_info && res.exc_info.extra) {
-          res.extra = res.exc_info.extra;
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.subscribe((job: any) => {
+      if (job.error) {
+        if (job.exc_info && job.exc_info.extra) {
+          job.extra = job.exc_info.extra;
         }
-        new EntityUtils().handleWSError(this, res);
+        new EntityUtils().handleWSError(this, job);
       }
-      if (res.state === EntityJobState.Success) {
+      if (job.state === EntityJobState.Success) {
         self.poolValue = pool;
         self.entity.systemdatasetPool = pool;
         self.dialogService.closeAllDialogs();
-        self.translate.get(helptext.choosePool.message).subscribe((msg: string) => {
+        self.translate.get(helptext.choosePool.message).subscribe((msg) => {
           self.dialogService.Info(
             helptext.choosePool.success,
-            msg + res.result.pool,
+            msg + job.result.pool,
             '500px',
             'info',
             true,
@@ -243,7 +249,7 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
         });
       }
     });
-    self.dialogRef.componentInstance.failure.subscribe((err: any) => {
+    dialogRef.componentInstance.failure.subscribe((err: any) => {
       new EntityUtils().handleWSError(self, err, self.dialogService);
     });
   }

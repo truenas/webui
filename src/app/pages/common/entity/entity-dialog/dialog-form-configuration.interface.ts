@@ -20,4 +20,5 @@ export interface DialogFormConfiguration<P = any> {
   parent?: P;
   confirmCheckbox?: boolean;
   hideCancel?: boolean;
+  confirmInstructions?: boolean;
 }

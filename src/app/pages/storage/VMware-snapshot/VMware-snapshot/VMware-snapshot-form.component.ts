@@ -25,7 +25,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 
 export class VMwareSnapshotFormComponent implements FormConfiguration {
-  route_success: string[] = ['storage', 'vmware-Snapshots'];
+  route_success: string[] = ['storage', 'vmware-snapshots'];
   isEntity = true;
   queryCall: 'vmware.query' = 'vmware.query';
   addCall: 'vmware.create' = 'vmware.create';

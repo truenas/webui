@@ -6,6 +6,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { Disk, DiskQueryOptions, DiskUpdate } from 'app/interfaces/storage.interface';
+import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { User } from 'app/interfaces/user.interface';
 
 export type ApiDirectory = {
@@ -40,6 +41,12 @@ export type ApiDirectory = {
   'alertservice.create': { params: any; response: any };
   'alertservice.query': { params: any; response: any };
   'alertservice.test': { params: any; response: any };
+
+  // Api Key
+  'api_key.create': { params: any; response: any };
+  'api_key.update': { params: any; response: any };
+  'api_key.delete': { params: any; response: any };
+  'api_key.query': { params: any; response: any };
 
   // Auth
   'auth.generate_token': { params: any; response: any };
@@ -92,6 +99,7 @@ export type ApiDirectory = {
   'certificateauthority.query': { params: any; response: any };
   'certificateauthority.update': { params: any; response: any };
   'certificateauthority.profiles': { params: any; response: any };
+  'certificateauthority.ca_sign_csr': { params: any; response: any };
 
   // Chart
   'chart.release.pod_logs_choices': { params: any; response: any };
@@ -102,6 +110,7 @@ export type ApiDirectory = {
   'chart.release.pod_console_choices': { params: any; response: any };
   'chart.release.nic_choices': { params: any; response: any };
   'chart.release.events': { params: any; response: any };
+  'chart.release.rollback': { params: any; response: any };
 
   // CRON
   'cronjob.run': { params: any; response: any };
@@ -112,6 +121,10 @@ export type ApiDirectory = {
   'core.job_abort': { params: any; response: any };
   'core.bulk': { params: any; response: any };
   'core.resize_shell': { params: any; response: any };
+
+  // Config
+  'config.upload': { params: any; response: any };
+  'config.reset': { params: any; response: any };
 
   // Cloudsync
   'cloudsync.providers': { params: any; response: any };
@@ -492,7 +505,7 @@ export type ApiDirectory = {
 
   // SystemDataset
   'systemdataset.pool_choices': { params: void; response: { [key: string]: string } };
-  'systemdataset.config': { params: any; response: any };
+  'systemdataset.config': { params: void; response: SystemDatasetConfig };
   'systemdataset.update': { params: [{ [poolName: string]: string }]; response: any };
 
   // Service
@@ -611,6 +624,7 @@ export type ApiDirectory = {
   'zfs.snapshot.query': { params: any; response: any };
   'zfs.snapshot.delete': { params: any; response: any };
   'zfs.snapshot.clone': { params: any; response: any };
+  'zfs.snapshot.rollback': { params: any; response: any };
 
   // staticroute
   'staticroute.query': { params: any; response: any };

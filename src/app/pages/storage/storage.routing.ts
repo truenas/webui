@@ -9,7 +9,7 @@ import { SnapshotCloneComponent } from './snapshots/snapshot-clone';
 import { SnapshotListComponent } from './snapshots/snapshot-list';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form';
 import { ManagerComponent } from './volumes/manager';
-import { VolumesListComponent } from './volumes/volumes-list';
+import { VolumesListComponent } from './volumes/volumes-list/volumes-list.component';
 import { ZvolFormComponent } from './volumes/zvol/zvol-form';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
@@ -171,7 +171,7 @@ export const routes: Routes = [
         ],
       },
       {
-        path: 'vmware-Snapshots',
+        path: 'vmware-snapshots',
         data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots', icon: 'camera_alt' },
         children: [
           {

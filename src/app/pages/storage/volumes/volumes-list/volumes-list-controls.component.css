@@ -1,0 +1,21 @@
+.entity-add-actions-wrapper .menu-toggle {
+  height: 37px;
+  margin-top: -1px;
+}
+
+.reset-filter-icon {
+  opacity: 0.5;
+  cursor: pointer;
+  user-select: none;
+}
+
+.reset-filter-icon mat-icon {
+  font-size: 150%;
+}
+
+/* TODO */
+::ng-deep .menu-label {
+  padding-left: 14px;
+  font-size: 10px;
+  opacity: 0.7;
+}
