@@ -23,7 +23,7 @@ export class ManageCatalogsComponent implements OnDestroy {
   title = 'Catalogs';
   protected entityList: any;
   protected loaderOpen = false;
-  protected queryCall = 'catalog.query';
+  protected queryCall: 'catalog.query' = 'catalog.query';
   protected wsDelete = 'catalog.delete';
   protected queryCallOption = [[] as any, { extra: { item_details: true } }];
   protected disableActionsConfig = true;
