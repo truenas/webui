@@ -452,7 +452,6 @@ export class ChartReleaseEditComponent implements FormConfiguration {
     if (gpuFieldSet) {
       data.config['extra_fieldset'] = gpuFieldSet;
     }
-
     return data.config;
   }
 
