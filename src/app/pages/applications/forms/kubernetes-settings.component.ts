@@ -101,29 +101,53 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     private dialogService: DialogService, private modalService: ModalService,
     private appService: ApplicationsService) { }
 
-  preInit(entityEdit: any) {
-    this.entityEdit = entityEdit;
-    const pool_control = _.find(this.fieldSets[0].config, { name: 'pool' });
-    this.appService.getPoolList().subscribe((pools) => {
-      pools.forEach((pool) => {
-        pool_control.options.push({ label: pool.name, value: pool.name });
+  async prerequisite(): Promise<boolean> {
+    const promise1 = new Promise((resolve, reject) => {
+      const pool_control = _.find(this.fieldSets[0].config, { name: 'pool' });
+      this.appService.getPoolList().toPromise().then((pools) => {
+        pools.forEach((pool) => {
+          pool_control.options.push({ label: pool.name, value: pool.name });
+        });
+        resolve(true);
+      },
+      (err) => {
+        resolve(false);
       });
     });
-    const node_ip_control = _.find(this.fieldSets[0].config, { name: 'node_ip' });
-    this.appService.getBindIPChoices().subscribe((ips) => {
-      for (const ip in ips) {
-        node_ip_control.options.push({ label: ip, value: ip });
-      }
-    });
-    const v4_interface_control = _.find(this.fieldSets[1].config, { name: 'route_v4_interface' });
-    this.appService.getInterfaces().subscribe((interfaces: any[]) => {
-      interfaces.forEach((i) => {
-        v4_interface_control.options.push({ label: i.name, value: i.name });
+
+    const promise2 = new Promise((resolve, reject) => {
+      const node_ip_control = _.find(this.fieldSets[0].config, { name: 'node_ip' });
+      this.appService.getBindIPChoices().toPromise().then((ips) => {
+        for (const ip in ips) {
+          node_ip_control.options.push({ label: ip, value: ip });
+        }
+        resolve(true);
+      },
+      (err) => {
+        resolve(false);
       });
     });
+
+    const promise3 = new Promise((resolve, reject) => {
+      const v4_interface_control = _.find(this.fieldSets[1].config, { name: 'route_v4_interface' });
+      this.appService.getInterfaces().toPromise().then((interfaces: any[]) => {
+        interfaces.forEach((i) => {
+          v4_interface_control.options.push({ label: i.name, value: i.name });
+        });
+        resolve(true);
+      },
+      (err) => {
+        resolve(false);
+      });
+    });
+
+    return await Promise.all([promise1, promise2, promise3]).then(
+      (res) => true,
+    );
   }
 
   afterInit(entityEdit: any) {
+    this.entityEdit = entityEdit;
     this.appService.getContainerConfig().subscribe((res) => {
       if (res) {
         this.entityEdit.formGroup.controls['enable_container_image_update'].setValue(res.enable_image_updates);

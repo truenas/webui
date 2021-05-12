@@ -182,6 +182,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (this.conf.saveSubmitText) {
       this.saveSubmitText = this.conf.saveSubmitText;
     }
+
+    this.makeFormGroup();
+
     if (this.conf.prerequisite) {
       await this.conf.prerequisite();
     }
@@ -229,8 +232,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       } else {
         this.fieldSetDisplay = 'default';
       }
-
-      this.makeFormGroup();
 
       if (!this.conf.queryCall) {
         this.getFunction = this.noGetFunction();
