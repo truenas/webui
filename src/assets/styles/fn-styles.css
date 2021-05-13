@@ -397,9 +397,7 @@ samp {
     font-size: 13px;
     line-height: 16px;
 }
-.ql-container .ql-editor {
-    min-height: 200px;
-}
+
 .chart {
     display: block;
     width: 100%;
@@ -482,7 +480,7 @@ samp {
     margin-left: 5px !important;
     margin-bottom: 4px !important;
 }
-/*---- Third pirty adjust -----*/
+/*---- Third party adjust -----*/
 /*--------- Material ---------*/
 mat-list a[mat-list-item] .mat-list-item-content,
 mat-list mat-list-item .mat-list-item-content,
@@ -492,14 +490,6 @@ mat-nav-list mat-list-item .mat-list-item-content,
 .mat-option,
 body .mat-select-trigger {
     font-size: .875rem !important;
-}
-/*------- quill rich text editor ----------*/
-.p-0.mat-card-content .ql-container {
-    border: 0 !important;
-}
-.p-0.mat-card-content .ql-toolbar.ql-snow {
-    border: 0;
-    border-bottom: 1px solid rgba(0, 0, 0, .12);
 }
 
 .datatable-header-cell-wrapper{
