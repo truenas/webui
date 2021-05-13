@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { chartsTrain, latestVersion } from 'app/constants/catalog.constants';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { DialogService } from '../../../services/index';
@@ -129,8 +130,8 @@ export class ChartFormComponent implements FormConfiguration {
       catalog: this.catalogApp.catalog.id,
       item: this.catalogApp.name,
       release_name: data.release_name,
-      train: 'charts',
-      version: 'latest',
+      train: chartsTrain,
+      version: latestVersion,
       values: data,
     });
 
