@@ -21,10 +21,10 @@ export interface Catalog {
 }
 
 export interface CatalogTrain {
-  [application: string]: CatalogItem;
+  [application: string]: CatalogApp;
 }
 
-export interface CatalogItem {
+export interface CatalogApp {
   app_readme: string;
   categories: string[];
   healthy: boolean;
@@ -32,10 +32,10 @@ export interface CatalogItem {
   icon_url: string;
   location: string;
   name: string;
-  versions: { [version: string]: CatalogItemVersion };
+  versions: { [version: string]: CatalogAppVersion };
 }
 
-export interface CatalogItemVersion {
+export interface CatalogAppVersion {
   app_readme: string;
   changelog: string;
   chart_metadata: ChartMetadata;

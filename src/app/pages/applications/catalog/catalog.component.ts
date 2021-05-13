@@ -119,7 +119,7 @@ export class CatalogComponent implements OnInit {
         });
       });
       this.refreshToolbarMenus();
-      this.filerApps();
+      this.filterApps();
     });
   }
 
@@ -139,20 +139,13 @@ export class CatalogComponent implements OnInit {
       this.doInstall('ix-chart');
     } else if (evt.data.event_control == 'filter') {
       this.filterString = evt.data.filter;
-      this.filerApps();
+      this.filterApps();
     } else if (evt.data.event_control == 'refresh_all') {
       this.syncAll();
     } else if (evt.data.event_control == 'catalogs') {
-      this.filteredCatalogNames = [];
-      if (evt.data.catalogs) {
-        evt.data.catalogs.forEach((catalog: any) => {
-          if (catalog) {
-            this.filteredCatalogNames.push(catalog.value);
-          }
-        });
-      }
+      this.filteredCatalogNames = evt.data.catalogs.map((catalog: any) => catalog.value);
 
-      this.filerApps();
+      this.filterApps();
     }
   }
 
@@ -280,18 +273,15 @@ export class CatalogComponent implements OnInit {
     }
   }
 
-  filerApps(): void {
+  filterApps(): void {
     if (this.filterString) {
       this.filteredCatalogApps = this.catalogApps.filter((app) => app.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1);
     } else {
       this.filteredCatalogApps = this.catalogApps;
     }
 
-    if (this.filteredCatalogNames.length > 0) {
-      this.filteredCatalogApps = this.filteredCatalogApps.filter((app) => this.filteredCatalogNames.includes(app.catalog.label));
-    }
-
-    this.filteredCatalogApps = this.filteredCatalogApps.filter((app) => app.name !== 'ix-chart');
+    this.filteredCatalogApps = this.filteredCatalogApps.filter((app) =>
+      this.filteredCatalogNames.includes(app.catalog.label) && app.name !== 'ix-chart');
   }
 
   showSummaryDialog(name: string, catalog = 'OFFICIAL', train = 'charts'): void {

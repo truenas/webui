@@ -1,7 +1,7 @@
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { Catalog } from 'app/interfaces/catalog-item.interface';
+import { Catalog } from 'app/interfaces/catalog.interface';
 import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Group } from 'app/interfaces/group.interface';
@@ -75,6 +75,7 @@ export type ApiDirectory = {
   'catalog.query': { params: QueryParams<any, { extra: { item_details: boolean } }>; response: Catalog[] };
   'catalog.update': { params: any; response: any };
   'catalog.create': { params: any; response: any };
+  'catalog.delete': { params: any; response: any };
   'catalog.items': { params: any; response: any };
   'catalog.sync': { params: any; response: any };
 
