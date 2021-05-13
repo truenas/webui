@@ -4,6 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { Subject, Subscription } from 'rxjs';
@@ -136,7 +137,7 @@ export class CatalogComponent implements OnInit {
           break;
       }
     } else if (evt.data.event_control == 'launch') {
-      this.doInstall('ix-chart');
+      this.doInstall(ixChartApp);
     } else if (evt.data.event_control == 'filter') {
       this.filterString = evt.data.filter;
       this.filterApps();
@@ -260,9 +261,9 @@ export class CatalogComponent implements OnInit {
     });
   }
 
-  doInstall(name: string, catalog = 'OFFICIAL', train = 'charts'): void {
+  doInstall(name: string, catalog = officialCatalog, train = chartsTrain): void {
     const catalogApp = this.catalogApps.find((app) => app.name == name && app.catalog.id == catalog && app.catalog.train == train);
-    if (catalogApp && catalogApp.name != 'ix-chart') {
+    if (catalogApp && catalogApp.name != ixChartApp) {
       const chartWizardComponent = new ChartWizardComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
       chartWizardComponent.setCatalogApp(catalogApp);
       this.modalService.open('slide-in-form', chartWizardComponent);
@@ -281,10 +282,10 @@ export class CatalogComponent implements OnInit {
     }
 
     this.filteredCatalogApps = this.filteredCatalogApps.filter((app) =>
-      this.filteredCatalogNames.includes(app.catalog.label) && app.name !== 'ix-chart');
+      this.filteredCatalogNames.includes(app.catalog.label) && app.name !== ixChartApp);
   }
 
-  showSummaryDialog(name: string, catalog = 'OFFICIAL', train = 'charts'): void {
+  showSummaryDialog(name: string, catalog = officialCatalog, train = chartsTrain): void {
     const catalogApp = this.catalogApps.find((app) => app.name == name && app.catalog.id == catalog && app.catalog.train == train);
     if (!catalogApp) {
       return;

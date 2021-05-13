@@ -1,6 +1,7 @@
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -137,7 +138,7 @@ export type ApiDirectory = {
   'container.config': { params: any; response: any };
   'container.update': { params: any; response: any };
   'container.image.query': { params: any; response: any };
-  'container.image.pull': { params: any; response: any };
+  'container.image.pull': { params: [PullContainerImageParams]; response: any };
 
   // Docker
   'docker.images.query': { params: any; response: any };

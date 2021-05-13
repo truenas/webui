@@ -1,5 +1,8 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import {
+  chartsTrain, ixChartApp, latestVersion, officialCatalog,
+} from 'app/constants/catalog.constants';
 import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
 import { FormGroup } from '@angular/forms';
@@ -63,7 +66,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
           name: 'tag',
           placeholder: helptext.chartForm.image.tag.placeholder,
           tooltip: helptext.chartForm.image.tag.tooltip,
-          value: 'latest',
+          value: latestVersion,
         },
         {
           type: 'select',
@@ -454,11 +457,11 @@ export class ChartReleaseAddComponent implements OnDestroy {
     }
 
     const payload = [{
-      catalog: 'OFFICIAL',
-      item: 'ix-chart',
+      catalog: officialCatalog,
+      item: ixChartApp,
       release_name: data.release_name,
-      train: 'charts',
-      version: 'latest',
+      train: chartsTrain,
+      version: latestVersion,
       values: {
         containerArgs: data.containerArgs,
         containerCommand: data.containerCommand,
