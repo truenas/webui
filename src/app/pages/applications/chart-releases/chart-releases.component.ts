@@ -21,7 +21,7 @@ import helptext from '../../../helptext/apps/apps';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Router } from '@angular/router';
 import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 @Component({
   selector: 'app-charts',
