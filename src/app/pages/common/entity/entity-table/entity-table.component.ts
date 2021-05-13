@@ -97,8 +97,8 @@ export interface InputTableConf {
   callGetFunction?(entity: EntityTableComponent): any;
   prerequisiteFailedHandler?(entity: EntityTableComponent): void;
   afterDelete?(): void;
-  addComponent?(): void;
-  editComponent?(): void;
+  addComponent?: any;
+  editComponent?: any;
   onRowClick?(row: any): any;
 }
 
