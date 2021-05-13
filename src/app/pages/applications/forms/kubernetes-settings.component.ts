@@ -13,7 +13,8 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { WebSocketService } from '../../../services';
 import { EntityUtils } from '../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-
+import { forkJoin, of } from 'rxjs';
+import { tap, map, catchError } from 'rxjs/operators';
 @Component({
   selector: 'app-kubernetes-settings',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -102,48 +103,41 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     private appService: ApplicationsService) { }
 
   async prerequisite(): Promise<boolean> {
-    const promise1 = new Promise((resolve, reject) => {
-      const pool_control = _.find(this.fieldSets[0].config, { name: 'pool' });
-      this.appService.getPoolList().toPromise().then((pools) => {
+    const setPoolControl = this.appService.getPoolList().pipe(
+      tap((pools) => {
+        const pool_control = _.find(this.fieldSets[0].config, { name: 'pool' });
         pools.forEach((pool) => {
           pool_control.options.push({ label: pool.name, value: pool.name });
         });
-        resolve(true);
-      },
-      (err) => {
-        resolve(false);
-      });
-    });
+      }),
+    );
 
-    const promise2 = new Promise((resolve, reject) => {
-      const node_ip_control = _.find(this.fieldSets[0].config, { name: 'node_ip' });
-      this.appService.getBindIPChoices().toPromise().then((ips) => {
+    const setNodeIpControl = this.appService.getBindIPChoices().pipe(
+      tap((ips) => {
+        const node_ip_control = _.find(this.fieldSets[0].config, { name: 'node_ip' });
         for (const ip in ips) {
           node_ip_control.options.push({ label: ip, value: ip });
         }
-        resolve(true);
-      },
-      (err) => {
-        resolve(false);
-      });
-    });
+      }),
+    );
 
-    const promise3 = new Promise((resolve, reject) => {
-      const v4_interface_control = _.find(this.fieldSets[1].config, { name: 'route_v4_interface' });
-      this.appService.getInterfaces().toPromise().then((interfaces: any[]) => {
+    const setV4InterfaceControl = this.appService.getInterfaces().pipe(
+      tap((interfaces: any[]) => {
+        const v4_interface_control = _.find(this.fieldSets[1].config, { name: 'route_v4_interface' });
         interfaces.forEach((i) => {
           v4_interface_control.options.push({ label: i.name, value: i.name });
         });
-        resolve(true);
-      },
-      (err) => {
-        resolve(false);
-      });
-    });
-
-    return await Promise.all([promise1, promise2, promise3]).then(
-      (res) => true,
+      }),
     );
+
+    return forkJoin([setPoolControl, setNodeIpControl, setV4InterfaceControl]).pipe(
+      map(() => true),
+      // catchError may not be needed if you want to fail when something hasn't been loaded.
+      catchError((error) => {
+        console.log(error);
+        return of(false);
+      }),
+    ).toPromise();
   }
 
   afterInit(entityEdit: any) {
