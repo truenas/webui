@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Catalog } from 'app/interfaces/catalog.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Observable } from 'rxjs/Observable';
 import { WebSocketService } from '../../services/index';
@@ -19,7 +20,7 @@ export class ApplicationsService {
     return this.ws.call('service.started', ['kubernetes']);
   }
 
-  getAllCatalogItems() {
+  getAllCatalogItems(): Observable<Catalog[]> {
     return this.ws.call('catalog.query', [[], { extra: { item_details: true } }]);
   }
 

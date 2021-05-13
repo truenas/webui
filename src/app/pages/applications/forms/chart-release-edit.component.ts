@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { latestVersion } from 'app/constants/catalog.constants';
 import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -70,7 +71,7 @@ export class ChartReleaseEditComponent implements FormConfiguration {
           name: 'tag',
           placeholder: helptext.chartForm.image.tag.placeholder,
           tooltip: helptext.chartForm.image.tag.tooltip,
-          value: 'latest',
+          value: latestVersion,
         },
         {
           type: 'select',

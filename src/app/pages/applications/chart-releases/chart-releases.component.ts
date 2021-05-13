@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
+import { ixChartApp } from 'app/constants/catalog.constants';
 import { Subject, Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
@@ -375,7 +376,7 @@ export class ChartReleasesComponent implements OnInit {
 
   edit(name: string, id: string) {
     const catalogApp = this.chartItems[name];
-    if (catalogApp && catalogApp.chart_name != 'ix-chart') {
+    if (catalogApp && catalogApp.chart_name != ixChartApp) {
       const chartFormComponent = new ChartFormComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
       chartFormComponent.setTitle(catalogApp.chart_name);
       this.modalService.open('slide-in-form', chartFormComponent, name);
