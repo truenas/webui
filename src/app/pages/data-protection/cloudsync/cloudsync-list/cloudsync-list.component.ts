@@ -130,7 +130,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  getActions(parentrow: any) {
+  getActions(parentrow: any): any[] {
     return [
       {
         actionName: parentrow.description,
