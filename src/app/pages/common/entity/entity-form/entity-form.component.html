@@ -4,31 +4,31 @@
 </p>
 <mat-card class="form-card">
   <!-- <div *ngIf="conf.title" class="mat-toolbar mat-card-toolbar" fxLayoutAlign="space-between center">
-    {{ conf.title | translate }}  
+    {{ conf.title | translate }}
   </div> -->
     <div class="mat-content">
 
-        <mat-spinner 
-            [diameter]='40' 
+        <mat-spinner
+            [diameter]='40'
             id="entity-table-spinner"
             *ngIf="showSpinner" #entityspinner>
-          </mat-spinner> 
-        
+          </mat-spinner>
+
         <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm">
                 <div class="fieldset-container fieldset-display-default" *ngIf="fieldSets">
             <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
               <div [ngClass]="[fieldSet.class ? fieldSet.class : '', isFieldsetAvailabel(fieldSet) ? '' : 'empty-fieldset']" class="fieldset divider-{{fieldSet.divider}}"
-                  fxLayout="row wrap" fxLayoutGap="24px" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSets[i].width}} - 16px)">
+                  fxLayout="row wrap" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSets[i].width?fieldSets[i].width:'100%'}} - 16px)">
                 <mat-divider *ngIf="fieldSets[i].divider && i > 0"></mat-divider>
                   <h4 *ngIf="fieldSet.label && isFieldsetAvailabel(fieldSet)" class="fieldset-label">{{fieldSet.name | translate}}</h4>
-                  <div *ngFor="let field of fieldSet.config; let ii = index" fxFlex="100%" fxFlex.gt-xs="calc({{field.width}} - 16px)"
+                  <div *ngFor="let field of fieldSet.config; let ii = index" fxFlex="100%" fxFlex.gt-xs="calc({{field.width?field.width:'100%'}} - 16px)"
                     [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{fieldSet.name}}-{{ii}}">
                     <div id="form_field_{{field.name}}" dynamicField [config]="field" [group]="formGroup" [fieldShow]="isShow(field.name) ? 'show' :'hide'"></div>
                   </div>
               </div>
             </ng-container>
               <mat-card-actions class="buttons">
-                <button id="save_button" *ngIf="!conf.hideSaveBtn" class="btn btn-block btn-warning mat-primary" type="submit" mat-button color="primary" [disabled]="!entityForm.form.valid || !conf.save_button_enabled" 
+                <button id="save_button" *ngIf="!conf.hideSaveBtn" class="btn btn-block btn-warning mat-primary" type="submit" mat-button color="primary" [disabled]="!entityForm.form.valid || !conf.save_button_enabled"
                   [ix-auto]=""
                   ix-auto-type="button"
                   ix-auto-identifier="{{saveSubmitText | uppercase}}"
@@ -41,9 +41,9 @@
                 <!-- </div> -->
                 <!-- <div class="btn-group btn-group-justified"> -->
                 <span *ngFor="let custBtn of conf.custActions">
-                  <button id="cust_button_{{custBtn.name}}" [color]="custBtn.buttonColor ? custBtn.buttonColor : default"  mat-button class="mat-basic" 
-                    *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" 
-                    [disabled]="conf.isCustActionDisabled !== undefined ? conf.isCustActionDisabled(custBtn.id) : custBtn.disabled" 
+                  <button id="cust_button_{{custBtn.name}}" [color]="custBtn.buttonColor ? custBtn.buttonColor : default"  mat-button class="mat-basic"
+                    *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)"
+                    [disabled]="conf.isCustActionDisabled !== undefined ? conf.isCustActionDisabled(custBtn.id) : custBtn.disabled"
                     [type]="custBtn.buttonType ? custBtn.buttonType : 'button'" (click)="custBtn['function'] ? custBtn['function']() : null"
                     [ix-auto]=""
                     ix-auto-type="button"
@@ -59,10 +59,10 @@
                       <span *ngFor="let action of conf.compactCustomActions">
                           <button name="action.id" mat-menu-item (click)="action['function']()"
                           ix-auto ix-auto-type="option" ix-auto-identifier="action.name"
-                          *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(action.id)" 
+                          *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(action.id)"
                           [disabled]="conf.isCustActionDisabled !== undefined ? conf.isCustActionDisabled(action.id) : action.disabled"
                           >
-                          {{ action.name | translate}}</button>                        
+                          {{ action.name | translate}}</button>
                       </span>
                   </mat-menu>
                 </span>
@@ -83,4 +83,3 @@
         <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error"></div></mat-error>
     </div>
 </mat-card>
-

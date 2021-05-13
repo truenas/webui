@@ -19,10 +19,6 @@
   max-width: 100%;
 }
 
-.form-line:last-child {
-  margin-right: 24px;
-}
-
 .form-inline {
 	flex: 1 1 33.33%;
     box-sizing: border-box;
@@ -74,7 +70,7 @@
   display:flex;
   flex-flow:row wrap;
   -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal; 
+  -webkit-box-direction: normal;
 }
 
 .fieldset.divider-true{
