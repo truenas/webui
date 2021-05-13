@@ -22,7 +22,6 @@ export class KubernetesSettingsComponent implements FormConfiguration {
   queryCall: 'kubernetes.config' = 'kubernetes.config';
   editCall: 'kubernetes.update' = 'kubernetes.update';
   isEditJob = true;
-  private dialogRef: any;
   private newEnableContainerImageUpdate = true;
   title = helptext.kubForm.title;
   private entityEdit: any;

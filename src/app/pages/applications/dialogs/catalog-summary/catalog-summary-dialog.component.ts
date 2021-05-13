@@ -2,10 +2,8 @@ import {
   OnInit, Component, ViewEncapsulation, Inject,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ApplicationsService } from '../../applications.service';
 import helptext from '../../../../helptext/apps/apps';
 import { LocaleService } from 'app/services/locale.service';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 @Component({
   selector: 'catalog-summary-dialog',
@@ -25,8 +23,6 @@ export class CatalogSummaryDialog implements OnInit {
     public dialogRef: MatDialogRef<CatalogSummaryDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     protected localeService: LocaleService,
-    private loader: AppLoaderService,
-    private appService: ApplicationsService,
   ) {
     this.catalogApp = data;
   }

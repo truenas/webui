@@ -56,7 +56,7 @@ export class CatalogEditFormComponent implements FormConfiguration {
     });
   }
 
-  afterModalFormClosed() {
+  afterModalFormClosed(): void {
     this.modalService.refreshTable();
   }
 

@@ -27,7 +27,6 @@ export class ChartWizardComponent implements OnDestroy {
   protected addCall = 'chart.release.create';
   protected isEntity = true;
   protected utils: CommonUtils;
-  private isLinear = true;
   summary = {};
   isAutoSummary = true;
   hideCancel = true;
