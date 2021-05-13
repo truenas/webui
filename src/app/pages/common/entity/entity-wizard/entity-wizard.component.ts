@@ -197,6 +197,7 @@ export class EntityWizardComponent implements OnInit {
       value = this.conf.beforeSubmit(value);
     }
 
+    this.clearErrors();
     if (this.conf.customSubmit) {
       this.busy = this.conf.customSubmit(value);
     } else {
@@ -286,5 +287,15 @@ export class EntityWizardComponent implements OnInit {
     }
 
     return result;
+  }
+
+  clearErrors() {
+    for (const i in this.conf.wizardConfig) {
+      for (const j in this.conf.wizardConfig[i].fieldConfig) {
+        const config = this.conf.wizardConfig[i].fieldConfig[j];
+        config['errors'] = '';
+        config['hasErrors'] = false;
+      }
+    }
   }
 }

@@ -164,6 +164,13 @@ export class ChartWizardComponent implements OnDestroy {
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
+    this.dialogRef.componentInstance.failure.subscribe((res: any) => {
+      if (res.exc_info && res.exc_info.extra) {
+        new EntityUtils().handleWSError(this, res);
+      } else {
+        this.dialogRef.errorReport('Error', res.error, res.exception);
+      }
+    });
   }
 
   ngOnDestroy() {
