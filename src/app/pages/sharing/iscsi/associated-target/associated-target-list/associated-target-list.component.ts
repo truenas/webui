@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 import { IscsiService } from '../../../../../services';
 import * as _ from 'lodash';
@@ -49,11 +50,11 @@ export class AssociatedTargetListComponent {
   protected entityList: any;
   constructor(protected router: Router, protected iscsiService: IscsiService) {}
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
   }
 
-  dataHandler(entityList: any) {
+  dataHandler(entityList: any): void {
     this.iscsiService.getTargets().subscribe((targets) => {
       const target_list = targets;
       this.iscsiService.getExtents().subscribe((res) => {
@@ -66,7 +67,8 @@ export class AssociatedTargetListComponent {
       });
     });
   }
-  getActions(row: any) {
+
+  getActions(row: any): any[] {
     return [{
       id: row.target,
       name: 'edit',

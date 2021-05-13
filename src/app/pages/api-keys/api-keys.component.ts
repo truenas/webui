@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { DialogService, WebSocketService } from '../../services';
@@ -98,17 +99,17 @@ export class ApiKeysComponent {
     private localeService: LocaleService,
   ) { }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
   }
-  resourceTransformIncomingRestData(data: any[]) {
+  resourceTransformIncomingRestData(data: any[]): any[] {
     return data.map((item) => {
       item['created_time'] = this.localeService.formatDateTime(item.created_at.$date);
       return item;
     });
   }
 
-  doSubmit(entityDialogForm: any) {
+  doSubmit(entityDialogForm: any): void {
     const that = entityDialogForm.parent;
     if (that.currItem) {
       that.ws.call(that.editCall, [that.currItem.id, entityDialogForm.formValue]).subscribe(
@@ -137,7 +138,7 @@ export class ApiKeysComponent {
     }
   }
 
-  displayKey(key: string) {
+  displayKey(key: string): void {
     const self = this;
     const dialogRef = this.dialog.open(ConfirmDialog, { disableClose: true });
     dialogRef.componentInstance.title = helptext.apikeyCopyDialog.title;
@@ -152,7 +153,8 @@ export class ApiKeysComponent {
       self.clipboard.copy(key);
     };
   }
-  getActions() {
+
+  getActions(): EntityTableAction[] {
     return [{
       name: helptext.action_edit,
       id: 'edit',
@@ -173,6 +175,6 @@ export class ApiKeysComponent {
       onClick: (rowinner: any) => {
         this.entityList.doDelete(rowinner);
       },
-    }];
+    }] as EntityTableAction[];
   }
 }

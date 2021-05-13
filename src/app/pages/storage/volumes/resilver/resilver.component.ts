@@ -95,7 +95,7 @@ export class ResilverComponent implements FormConfiguration {
     }
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     entityForm.submitFunction = entityForm.editCall;
   }
 }

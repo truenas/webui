@@ -88,13 +88,13 @@ export class WebdavFormComponent implements FormConfiguration {
   constructor(protected router: Router,
     protected ws: WebSocketService, private dialog: DialogService) {}
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     entityForm.formGroup.controls['perm'].valueChanges.subscribe((value: any) => {
       value ? this.confirmSubmit = true : this.confirmSubmit = false;
     });
   }
 
-  afterSave(entityForm: any) {
+  afterSave(entityForm: any): void {
     this.ws.call('service.query', [[]]).subscribe((res) => {
       const service = _.find(res, { service: ServiceName.WebDav });
       if (service.enable) {

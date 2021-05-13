@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy,
+  Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy, AfterViewInit,
 } from '@angular/core';
 import { ApplicationsService } from './applications.service';
 import { ModalService } from '../../services/modal.service';
@@ -23,7 +23,7 @@ import { DockerImagesComponent } from './docker-images/docker-images.component';
   encapsulation: ViewEncapsulation.None,
 })
 
-export class ApplicationsComponent implements OnInit, OnDestroy {
+export class ApplicationsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(CatalogComponent, { static: false }) private catalogTab: CatalogComponent;
   @ViewChild(ChartReleasesComponent, { static: false }) private chartTab: ChartReleasesComponent;
   @ViewChild(ManageCatalogsComponent, { static: false }) private manageCatalogTab: ManageCatalogsComponent;
@@ -55,7 +55,7 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     // If the route parameter "tabIndex" is 1, switch tab to "Installed applications".
     this.aroute.params.subscribe((params) => {
       if (params['tabIndex'] == 1) {

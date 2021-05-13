@@ -25,7 +25,7 @@ export class BootEnvironmentCloneComponent implements FormConfiguration {
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService, protected bootEnvService: BootEnvService) {}
 
-  preInit(entityForm: any) {
+  preInit(): void {
     this.route.params.subscribe((params) => {
       this.pk = params['pk'];
       this.fieldSets = [

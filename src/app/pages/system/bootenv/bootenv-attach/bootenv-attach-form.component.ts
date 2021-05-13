@@ -46,14 +46,14 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected dialog: MatDialog, protected dialogService: DialogService) {}
 
-  preInit(entityForm: any) {
+  preInit(entityForm: any): void {
     this.route.params.subscribe((params) => {
       this.pk = params['pk'];
     });
     this.entityForm = entityForm;
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     let disksize = 0;
     this.entityForm = entityForm;
     this.diskChoice = _.find(this.fieldConfig, { name: 'dev' });
@@ -67,7 +67,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(entityForm: any) {
+  customSubmit(entityForm: any): void {
     const payload: any = {};
     payload['expand'] = entityForm.expand;
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Attach Device' }, disableClose: true });

@@ -55,7 +55,7 @@ export class PreferencesPage implements OnDestroy {
     private core: CoreService,
   ) {}
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 }

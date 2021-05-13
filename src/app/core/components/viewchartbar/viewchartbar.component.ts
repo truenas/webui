@@ -79,7 +79,7 @@ export class ViewChartBarComponent implements AfterViewInit, OnChanges {
     this.render();
   }
 
-  get data() {
+  get data(): any {
     return this._data;
   }
 

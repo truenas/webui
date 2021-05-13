@@ -28,8 +28,10 @@ export class SmartResultsComponent {
   protected noActions = true;
 
   protected disk: string;
+
   constructor(private aroute: ActivatedRoute, protected translate: TranslateService) { }
-  preInit(entityForm: any) {
+
+  preInit(): void {
     this.aroute.params.subscribe((params) => {
       this.disk = params['pk'];
       this.translate.get(T('S.M.A.R.T Test Results of ')).subscribe(

@@ -56,11 +56,11 @@ export class CatalogEditFormComponent implements FormConfiguration {
     });
   }
 
-  afterModalFormClosed() {
+  afterModalFormClosed(): void {
     this.modalService.refreshTable();
   }
 
-  resourceTransformIncomingRestData(d: any) {
+  resourceTransformIncomingRestData(d: any): any {
     const data = Object.assign([], d);
     const trains = Object.keys(d.trains);
 

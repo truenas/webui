@@ -139,7 +139,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy {
     );
   }
 
-  abort(element: any) {
+  abort(element: any): void {
     this.dialogService.confirm(T('Abort the task'), `<pre>${element.method}</pre>`, true, T('Abort'),
       false, '', '', '', '', false, T('Close'), true).subscribe(
       (dialog_res: boolean) => {

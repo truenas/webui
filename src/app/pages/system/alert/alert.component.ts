@@ -61,7 +61,7 @@ export class AlertConfigComponent implements OnInit {
     public dialog: DialogService,
   ) {}
 
-  async ngOnInit() {
+  ngOnInit(): void {
     this.loader.open();
     this.ws.call('alert.list_policies', []).subscribe(
       (res) => {
@@ -163,7 +163,7 @@ export class AlertConfigComponent implements OnInit {
       });
   }
 
-  addButtons(categories: any[]) {
+  addButtons(categories: any[]): void {
     const options: Option[] = [];
     categories.forEach((category, index) => {
       options.push({ label: category.title, value: index });

@@ -13,7 +13,7 @@ export class GuideComponent implements OnInit {
 
   constructor(public sanitizer: DomSanitizer) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl('//' + environment.remote + '//docs/freenas.html');
   }
 }

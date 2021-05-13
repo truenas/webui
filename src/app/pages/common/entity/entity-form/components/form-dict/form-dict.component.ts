@@ -21,7 +21,7 @@ export class FormDictComponent implements Field, OnInit {
 
   constructor(private entityFormService: EntityFormService, protected fieldRelationService: FieldRelationService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.dictFormGroup = this.group.controls[this.config.name] as FormGroup;
   }
 }
