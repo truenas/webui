@@ -40,37 +40,43 @@ export class EntityFormService {
 
     if (controls) {
       for (let i = 0; i < controls.length; i++) {
-        if (controls[i].formarray) {
-          if (controls[i].initialCount == null) {
-            controls[i].initialCount = 1;
-          }
+        const formControl = this.createFormControl(controls[i]);
 
-          const formArray = this.createFormArray(controls[i].formarray,
-            controls[i].initialCount);
-          formGroup[controls[i].name] = formArray;
-        } else if (controls[i].listFields) {
-          const formArray = this.formBuilder.array([]);
-          controls[i].listFields.forEach((listField) => {
-            formArray.push(this.createFormGroup(listField));
-          });
-          formGroup[controls[i].name] = formArray;
-        } else if (controls[i].subFields) {
-          const subformGroup = this.createFormGroup(controls[i].subFields);
-          formGroup[controls[i].name] = subformGroup;
-        } else if (controls[i].type == 'label') {
-          continue;
-        } else {
-          formGroup[controls[i].name] = new FormControl(
-            { value: controls[i].value, disabled: controls[i].disabled },
-            controls[i].type === 'input-list' ? [] : controls[i].validation, controls[i].asyncValidation,
-          );
+        if (formControl) {
+          formGroup[controls[i].name] = formControl;
         }
-
         controls[i].relation = Array.isArray(controls[i].relation) ? controls[i].relation : [];
       }
     }
 
     return this.formBuilder.group(formGroup);
+  }
+
+  createFormControl(fieldConfig: FieldConfig): AbstractControl {
+    let formControl: AbstractControl;
+
+    if (fieldConfig) {
+      if (fieldConfig.formarray) {
+        if (fieldConfig.initialCount == null) {
+          fieldConfig.initialCount = 1;
+        }
+        formControl = this.createFormArray(fieldConfig.formarray, fieldConfig.initialCount);
+      } else if (fieldConfig.listFields) {
+        formControl = this.formBuilder.array([]);
+        fieldConfig.listFields.forEach((listField) => {
+          (formControl as FormArray).push(this.createFormGroup(listField));
+        });
+      } else if (fieldConfig.subFields) {
+        formControl = this.createFormGroup(fieldConfig.subFields);
+      } else if (fieldConfig.type != 'label') {
+        formControl = new FormControl(
+          { value: fieldConfig.value, disabled: fieldConfig.disabled },
+          fieldConfig.type === 'input-list' ? [] : fieldConfig.validation, fieldConfig.asyncValidation,
+        );
+      }
+    }
+
+    return formControl;
   }
 
   createFormArray(controls: FieldConfig[], initialCount: number) {
