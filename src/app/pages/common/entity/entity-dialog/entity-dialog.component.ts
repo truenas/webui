@@ -22,7 +22,7 @@ import { T } from '../../../../translate-marker';
   styleUrls: ['./entity-dialog.component.css'],
   providers: [EntityFormService, DatePipe, FieldRelationService],
 })
-export class EntityDialogComponent implements OnInit {
+export class EntityDialogComponent<P = any> implements OnInit {
   @Input() conf: any;
 
   title: string;
@@ -36,7 +36,7 @@ export class EntityDialogComponent implements OnInit {
   error: string;
   formValue: any;
   showPassword = false;
-  parent: any;
+  parent: P;
   submitEnabled = true;
   instructions: string;
   confirmCheckbox = false;

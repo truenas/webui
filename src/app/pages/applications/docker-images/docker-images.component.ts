@@ -1,4 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { latestVersion } from 'app/constants/catalog.constants';
+import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { ApplicationsService } from '../applications.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService, StorageService, ValidationService } from 'app/services';
@@ -155,15 +157,14 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     const self = entityDialog.parent;
     const tag = entityDialog.formGroup.controls['tag'].value;
     const params = tag.split(':');
-    const payload = [{
+    const payload: [PullContainerImageParams] = [{
       from_image: params[0],
-      tag: params.length > 1 ? params[1] : 'latest',
+      tag: params.length > 1 ? params[1] : latestVersion,
     }];
 
     self.dialogRef = self.mdDialog.open(EntityJobComponent, {
       data: {
-        title: (
-          helptext.dockerImages.pulling),
+        title: helptext.dockerImages.pulling,
       },
       disableClose: true,
     });
