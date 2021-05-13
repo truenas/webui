@@ -125,6 +125,7 @@ export class ChartReleaseEditComponent implements FormConfiguration {
           type: 'list',
           name: 'containerEnvironmentVariables',
           width: '100%',
+          label: 'Add Container Environment Variables',
           box: true,
           templateListField: [
             {
