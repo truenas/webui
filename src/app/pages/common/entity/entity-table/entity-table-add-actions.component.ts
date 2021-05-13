@@ -11,7 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class EntityTableAddActionsComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('filter', { static: false }) filter: ElementRef;
-  @Input('entity') entity: any; // EntityTableComponent;
+  @Input('entity') entity: EntityTableComponent;
   conf: any;
 
   actions: any[];
