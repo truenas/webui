@@ -63,16 +63,16 @@ export class WidgetControllerComponent extends WidgetComponent implements AfterV
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).subscribe((evt: CoreEvent) => {
     });
   }
 
-  nameFromIdentifier(identifier: string) {
+  nameFromIdentifier(identifier: string): string {
     const spl = identifier.split(',');
     const key = spl[0];
     const value = spl[1];
@@ -83,11 +83,11 @@ export class WidgetControllerComponent extends WidgetComponent implements AfterV
     return '';
   }
 
-  launchWidget(widget: DashConfigItem) {
+  launchWidget(widget: DashConfigItem): void {
     this.launcher.emit(widget);
   }
 
-  triggerConfigure() {
+  triggerConfigure(): void {
     this.actionsConfig.target.next({ name: 'ToolbarChanged' });
   }
 }
