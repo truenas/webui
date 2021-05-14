@@ -92,7 +92,7 @@
 div.tooltiptext{
   background-color: var(--primary) !important;
   color: var(--primary-txt) !important;
-  
+
   padding: 40px 16px 6px;
   z-index:100;
 }
@@ -196,9 +196,3 @@ div.tooltiptext.center-left:before{
   filter: drop-shadow(0 4px 4px rgba(0,0,0, 0.5));
   z-index:100;
 }
-
-.tooltip-container.wizard{
-  position:fixed;
-}
-
-
