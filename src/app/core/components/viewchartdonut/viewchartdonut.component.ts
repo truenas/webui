@@ -51,7 +51,7 @@ export class ViewChartDonutComponent extends ViewChartComponent implements OnIni
     this.showLegendValues = true;
   }
 
-  makeConfig() {
+  makeConfig(): any {
     this.chartConfig = {
       bindto: '#' + this._chartId,
       data: {

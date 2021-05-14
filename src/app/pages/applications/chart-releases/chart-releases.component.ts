@@ -190,7 +190,7 @@ export class ChartReleasesComponent implements OnInit {
     this.emptyPageConf.message = message;
   }
 
-  getChartItems() {
+  getChartItems(): any {
     return Object.values(this.chartItems);
   }
 

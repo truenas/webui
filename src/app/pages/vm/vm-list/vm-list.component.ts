@@ -109,7 +109,7 @@ export class VMListComponent implements OnDestroy {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.refreshVMWizard();
     this.modalService.refreshForm$.subscribe(() => {
       this.refreshVMWizard();
@@ -122,13 +122,13 @@ export class VMListComponent implements OnDestroy {
     );
   }
 
-  refreshVMWizard() {
+  refreshVMWizard(): void {
     this.addComponent = new VMWizardComponent(this.rest, this.ws, this.vmService, this.networkService, this.loader,
       this.dialog, this.messageService, this.dialogService, this.storageService, this.prefService,
       this.translate, this.modalService);
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.checkMemory();
     this.entityList = entityList;
     this.eventSubscription = this.ws.subscribe('vm.query').subscribe((event) => {
@@ -145,7 +145,7 @@ export class VMListComponent implements OnDestroy {
     });
   }
 
-  resourceTransformIncomingRestData(vms: any[]) {
+  resourceTransformIncomingRestData(vms: any[]): any[] {
     for (let vm_index = 0; vm_index < vms.length; vm_index++) {
       vms[vm_index]['state'] = vms[vm_index]['status']['state'];
       vms[vm_index]['com_port'] = `/dev/nmdm${vms[vm_index]['id']}B`;
@@ -163,7 +163,7 @@ export class VMListComponent implements OnDestroy {
     return vms;
   }
 
-  checkDisplay(vm: any) {
+  checkDisplay(vm: any): boolean {
     const devices = vm.devices;
     if (!devices || devices.length === 0) {
       return false;
@@ -178,7 +178,7 @@ export class VMListComponent implements OnDestroy {
     }
   }
 
-  displayPort(vm: any) {
+  displayPort(vm: any): boolean {
     const devices = vm.devices;
     if (!devices || devices.length === 0) {
       return false;
@@ -193,7 +193,7 @@ export class VMListComponent implements OnDestroy {
     }
   }
 
-  onSliderChange(row: any) {
+  onSliderChange(row: any): void {
     let method: ApiMethod;
     if (row['status']['state'] === ServiceStatus.Running) {
       method = this.wsMethods.stop;
@@ -226,7 +226,7 @@ export class VMListComponent implements OnDestroy {
     }
   }
 
-  onMemoryError(row: any) {
+  onMemoryError(row: any): void {
     const memoryDialog = this.dialogService.confirm(
       helptext.memory_dialog.title,
       helptext.memory_dialog.message,
@@ -263,7 +263,7 @@ export class VMListComponent implements OnDestroy {
     return hostname;
   }
 
-  doRowAction(row: any, method: ApiMethod, params = [row.id], updateTable = false) {
+  doRowAction(row: any, method: ApiMethod, params = [row.id], updateTable = false): void {
     if (method === 'vm.stop') {
       this.dialogRef = this.dialog.open(EntityJobComponent,
         { data: { title: T('Stopping ' + row.name) }, disableClose: false });
@@ -336,7 +336,7 @@ export class VMListComponent implements OnDestroy {
     });
   }
 
-  onCheckboxChange(row: any) {
+  onCheckboxChange(row: any): void {
     row.autostart = !row.autostart;
     this.doRowAction(row, this.wsMethods.update, [row.id, { autostart: row.autostart }]);
   }
@@ -583,7 +583,7 @@ export class VMListComponent implements OnDestroy {
     }];
   }
 
-  showPasswordDialog(display_vm: any, display_device: any) {
+  showPasswordDialog(display_vm: any, display_device: any): void {
     const pass_conf: DialogFormConfiguration = {
       title: T('Enter password'),
       message: T('Enter password to unlock this display device'),
@@ -631,7 +631,7 @@ export class VMListComponent implements OnDestroy {
     this.dialogService.dialogForm(pass_conf);
   }
 
-  isActionVisible(actionId: string, row: any) {
+  isActionVisible(actionId: string, row: any): boolean {
     if (actionId === 'DISPLAY' && (row['status']['state'] !== ServiceStatus.Running || !this.checkDisplay(row))) {
       return false;
     } if ((actionId === 'POWER_OFF' || actionId === 'STOP' || actionId === 'RESTART'
@@ -643,17 +643,17 @@ export class VMListComponent implements OnDestroy {
     return true;
   }
 
-  checkMemory() {
+  checkMemory(): void {
     this.ws.call(this.wsMethods.getAvailableMemory).subscribe((res) => {
       this.availMem = this.storageService.convertBytestoHumanReadable(res);
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.eventSubscription.unsubscribe();
   }
 
-  doAdd() {
+  doAdd(): void {
     this.modalService.open('slide-in-form', this.addComponent);
   }
 }

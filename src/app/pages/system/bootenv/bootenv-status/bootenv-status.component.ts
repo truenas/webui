@@ -92,7 +92,7 @@ export class BootStatusListComponent implements OnInit {
     );
   }
 
-  parseData(data: any, category?: any, boot_pool_data?: any) {
+  parseData(data: any, category?: any, boot_pool_data?: any): any {
     let stats: any = {
       read_errors: 0,
       write_errors: 0,
