@@ -1,6 +1,8 @@
 # coding=utf-8
 """Core UI feature tests."""
 
+import random
+import string
 import time
 from function import (
     wait_on_element,
@@ -15,6 +17,9 @@ from pytest_bdd import (
     when,
     parsers
 )
+
+# random hostname
+hostname = f'uitest{"".join(random.choices(string.digits, k=3))}'
 
 
 @scenario('features/NAS-T984.feature', 'Setting interface from dhcp to a static ip')
@@ -76,11 +81,13 @@ def input_Nameserver_1_and_input_Nameserver_2(driver, ad_nameserver1, ad_nameser
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 2"]').send_keys(ad_nameserver2)
 
 
-@then(parsers.parse('input Nameserver 3 "{ad_nameserver3}" and click SAVE'))
+@then(parsers.parse('input Nameserver 3 "{ad_nameserver3}", input a hostname and click SAVE'))
 def input_Nameserver_3_and_click_save(driver, ad_nameserver3):
     """input Nameserver 3 "ad_nameserver3" and click SAVE."""
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 3"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 3"]').send_keys(ad_nameserver3)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').send_keys(hostname)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
