@@ -20,7 +20,6 @@ export class CatalogAddFormComponent implements FormConfiguration {
   isEntity = true;
   protected entityForm: EntityFormComponent;
   title = helptext.catalogForm.title;
-  private dialogRef: any;
   fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {

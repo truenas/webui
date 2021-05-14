@@ -545,8 +545,7 @@ export class ChartReleaseEditComponent implements FormConfiguration {
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
-        title: (
-          helptext.installing),
+        title: helptext.installing,
       },
       disableClose: true,
     });
