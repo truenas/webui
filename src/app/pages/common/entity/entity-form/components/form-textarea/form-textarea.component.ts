@@ -25,13 +25,13 @@ export class FormTextareaComponent implements Field {
 
   constructor(public translate: TranslateService) {}
 
-  blurEvent() {
+  blurEvent(): void {
     if (this.config.blurStatus) {
       this.config.blurEvent(this.config.parent);
     }
   }
 
-  onPaste(event: ClipboardEvent) {
+  onPaste(event: ClipboardEvent): void {
     this.hasPasteEvent = true;
     const clipboardData = event.clipboardData;
     const pastedText = clipboardData.getData('text');
@@ -42,7 +42,7 @@ export class FormTextareaComponent implements Field {
     }
   }
 
-  onInput() {
+  onInput(): void {
     if (this.hasPasteEvent) {
       this.hasPasteEvent = false;
     } else {
@@ -54,7 +54,7 @@ export class FormTextareaComponent implements Field {
     this.readFile($event.target);
   }
 
-  readFile(inputValue: any) {
+  readFile(inputValue: any): void {
     var file: File = inputValue.files[0];
     var fReader: FileReader = new FileReader();
 
@@ -69,7 +69,7 @@ export class FormTextareaComponent implements Field {
     }
   }
 
-  contents(result: any) {
+  contents(result: any): void {
     if (this.config.fileType == 'binary') {
       this.group.controls[this.config.name].setValue(btoa(result));
     } else {
@@ -77,7 +77,7 @@ export class FormTextareaComponent implements Field {
     }
   }
 
-  fileBtnClick() {
+  fileBtnClick(): void {
     this.fileInput.nativeElement.click();
   }
 }

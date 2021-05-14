@@ -165,11 +165,11 @@ export class FieldRelationService {
     return result;
   }
 
-  checkStatusConditionIsTrue(condition: any, control: any) {
+  checkStatusConditionIsTrue(condition: any, control: any): boolean {
     return control && condition.status === control.status;
   }
 
-  setRelation(config: FieldConfig, formGroup: FormGroup) {
+  setRelation(config: FieldConfig, formGroup: FormGroup): void {
     if (config.relation && config.relation.length > 0) {
       const activations = this.findActivationRelation(config.relation);
       if (activations) {
@@ -195,7 +195,7 @@ export class FieldRelationService {
     }
   }
 
-  setDisabled(fieldConfig: FieldConfig, formGroup: FormGroup, disable: boolean, hide?: boolean, status?: string) {
+  setDisabled(fieldConfig: FieldConfig, formGroup: FormGroup, disable: boolean, hide?: boolean, status?: string): void {
     // if field is hidden, disable it too
     if (hide) {
       disable = hide;
@@ -212,13 +212,13 @@ export class FieldRelationService {
     }
   }
 
-  relationUpdate(config: FieldConfig, activations: any, formGroup: FormGroup) {
+  relationUpdate(config: FieldConfig, activations: any, formGroup: FormGroup): void {
     const tobeDisabled = this.isFormControlToBeDisabled(activations, formGroup);
     const tobeHide = this.isFormControlToBeHide(activations, formGroup);
     this.setDisabled(config, formGroup, tobeDisabled, tobeHide);
   }
 
-  isDeepEqual(data1: any, data2: any) {
+  isDeepEqual(data1: any, data2: any): boolean {
     if (this.getDataType(data1) != this.getDataType(data2)) {
       return false;
     }
@@ -272,11 +272,11 @@ export class FieldRelationService {
     return 'basic';
   }
 
-  isRelationEqual(x: any, y: any) {
+  isRelationEqual(x: any, y: any): boolean {
     return this.isDeepEqual(x, y);
   }
 
-  isRelationGreaterThan(x: any, y: any) {
+  isRelationGreaterThan(x: any, y: any): boolean {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
@@ -318,7 +318,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationGreaterThanOrEqual(x: any, y: any) {
+  isRelationGreaterThanOrEqual(x: any, y: any): boolean {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
@@ -360,7 +360,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationLessThan(x: any, y: any) {
+  isRelationLessThan(x: any, y: any): boolean {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
@@ -402,7 +402,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationLessThanOrEqual(x: any, y: any) {
+  isRelationLessThanOrEqual(x: any, y: any): boolean {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
@@ -444,7 +444,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationRegMatch(x: any, y: any) {
+  isRelationRegMatch(x: any, y: any): boolean {
     let result = false;
     if (typeof x == 'string' && typeof y == 'string') {
       result = !!x.match(y);
@@ -453,7 +453,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationStartsWith(x: any, y: any) {
+  isRelationStartsWith(x: any, y: any): boolean {
     let result = false;
     if (typeof x == 'string' && typeof y == 'string') {
       result = x.startsWith(y);
@@ -462,7 +462,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationEndsWith(x: any, y: any) {
+  isRelationEndsWith(x: any, y: any): boolean {
     let result = false;
     if (typeof x == 'string' && typeof y == 'string') {
       result = x.endsWith(y);
@@ -471,7 +471,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationIn(x: any, y: any) {
+  isRelationIn(x: any, y: any): boolean {
     let result = false;
 
     if (y !== null) {

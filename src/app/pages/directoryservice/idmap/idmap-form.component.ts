@@ -299,7 +299,7 @@ export class IdmapFormComponent implements FormConfiguration {
     return data;
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.title = entityEdit.isNew ? helptext.title_add : helptext.title_edit;
     this.entityForm = entityEdit;
     this.optionsFields.forEach((option) => {
@@ -361,13 +361,13 @@ export class IdmapFormComponent implements FormConfiguration {
     }, 500);
   }
 
-  hideField(fieldName: any, show: boolean, entity: any) {
+  hideField(fieldName: any, show: boolean, entity: any): void {
     const target = _.find(this.fieldConfig, { name: fieldName });
     target['isHidden'] = show;
     entity.setDisabled(fieldName, show, show);
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     if (data.dns_domain_name === null) {
       delete data.dns_domain_name;
     }
@@ -387,7 +387,7 @@ export class IdmapFormComponent implements FormConfiguration {
     data['options'] = options;
   }
 
-  afterSubmit() {
+  afterSubmit(): void {
     this.modalService.refreshTable();
     this.dialogService.confirm(helptext.idmap.clear_cache_dialog.title, helptext.idmap.clear_cache_dialog.message,
       true)

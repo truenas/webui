@@ -92,7 +92,7 @@ export class GroupFormComponent implements FormConfiguration {
     return data;
   }
 
-  getNamesInUse(currentName?: string) {
+  getNamesInUse(currentName?: string): void {
     this.ws.call('group.query').subscribe((groups) => {
       if (currentName) {
         _.remove(groups, (group) => group.group == currentName);
@@ -101,7 +101,7 @@ export class GroupFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.bsdgrp_gid = _.find(this.fieldSets[0].config, { name: 'gid' });
 
     if (!entityForm.isNew) {
@@ -119,7 +119,7 @@ export class GroupFormComponent implements FormConfiguration {
     }
   }
 
-  afterSubmit() {
+  afterSubmit(): void {
     this.modalService.refreshTable();
   }
 }

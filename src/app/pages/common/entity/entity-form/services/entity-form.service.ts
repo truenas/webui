@@ -79,7 +79,7 @@ export class EntityFormService {
     return formControl;
   }
 
-  createFormArray(controls: FieldConfig[], initialCount: number) {
+  createFormArray(controls: FieldConfig[], initialCount: number): FormArray {
     const formArray = this.formBuilder.array([]);
 
     for (let i = 0; i < initialCount; i++) {
@@ -89,13 +89,12 @@ export class EntityFormService {
     return formArray;
   }
 
-  insertFormArrayGroup(index: number, formArray: FormArray,
-    controls: FieldConfig[]) {
+  insertFormArrayGroup(index: number, formArray: FormArray, controls: FieldConfig[]): void {
     const formGroup = this.createFormGroup(controls);
     formArray.insert(index, formGroup);
   }
 
-  removeFormArrayGroup(index: number, formArray: FormArray) {
+  removeFormArrayGroup(index: number, formArray: FormArray): void {
     formArray.removeAt(index);
   }
 
@@ -146,7 +145,7 @@ export class EntityFormService {
     });
   }
 
-  getDatasetsAndZvolsListChildren(node: any) {
+  getDatasetsAndZvolsListChildren(node: any): void {
     const children = [];
 
     // if we ever need this we should convert to websocket
@@ -191,7 +190,7 @@ export class EntityFormService {
     });
   }
 
-  clearFormError(fieldConfig: any[]) {
+  clearFormError(fieldConfig: any[]): void {
     for (let f = 0; f < fieldConfig.length; f++) {
       fieldConfig[f]['errors'] = '';
       fieldConfig[f]['hasErrors'] = false;
@@ -246,7 +245,7 @@ export class EntityFormService {
     return NaN;
   }
 
-  getHumanReadableUnit(num: number, unit: string, type: UnitType) {
+  getHumanReadableUnit(num: number, unit: string, type: UnitType): string {
     if (type === UnitType.duration) {
       let readableUnit = unit.length > 1 ? unit : (this.shortDurationUnit as any)[unit];
       if (num <= 1 && _.endsWith(readableUnit, 'S')) {
