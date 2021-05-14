@@ -84,7 +84,7 @@ export class NISComponent implements FormConfiguration {
     protected systemGeneralService: SystemGeneralService,
     private dialogservice: DialogService) {}
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     entityForm.submitFunction = (body: any) => this.ws.call(this.addCall, [body]);
   }
 }

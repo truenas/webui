@@ -17,12 +17,12 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   columns: any[] = [];
   actions: EntityTableAction[] = [];
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.buildColumns();
     this.actions = this.getActions();
   }
 
-  ngOnChanges() {
+  ngOnChanges(): void {
     this.buildColumns();
     this.actions = this.getActions();
   }

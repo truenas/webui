@@ -41,14 +41,14 @@ export class AlertServiceListComponent {
     protected dialogService: DialogService,
   ) { }
 
-  isActionVisible(actionId: string, row: any) {
+  isActionVisible(actionId: string, row: any): boolean {
     if (actionId === 'edit' && this.providerList.indexOf(row.type) === -1) {
       return false;
     }
     return true;
   }
 
-  onCheckboxChange(row: any) {
+  onCheckboxChange(row: any): void {
     row.enabled = !row.enabled;
     this.ws.call('alertservice.update', [row.id, { enabled: row.enabled }])
       .subscribe(

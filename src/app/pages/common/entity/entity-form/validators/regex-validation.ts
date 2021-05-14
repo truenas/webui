@@ -1,7 +1,7 @@
-import { AbstractControl } from '@angular/forms';
+import { AbstractControl, ValidatorFn } from '@angular/forms';
 import { FormControl, FormGroup } from '@angular/forms';
 
-export function regexValidator(regexString: RegExp) {
+export function regexValidator(regexString: RegExp): ValidatorFn {
   let thisControl: FormControl;
 
   return function regexValidate(control: FormControl) {

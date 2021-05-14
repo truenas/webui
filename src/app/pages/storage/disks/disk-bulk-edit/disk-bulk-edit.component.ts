@@ -112,13 +112,13 @@ export class DiskBulkEditComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     if (!this.diskBucket.ids) {
       this._router.navigate(this.route_success);
     }
   }
 
-  customSubmit(event: any) {
+  customSubmit(event: any): void {
     this.loader.open();
     const req = [];
     const data = {

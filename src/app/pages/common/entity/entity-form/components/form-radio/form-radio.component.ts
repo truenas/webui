@@ -22,15 +22,16 @@ export class FormRadioComponent implements Field {
   valueChangesSubscription: Subscription;
 
   constructor(public translate: TranslateService) {}
-  ngOnInit() {
+
+  ngOnInit(): void {
     this.valueChangesSubscription = this.group.controls[this.config.name].valueChanges.subscribe((res) => this.radioValue = res);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.valueChangesSubscription.unsubscribe();
   }
 
-  onChangeRadio($event: MatRadioChange) {
+  onChangeRadio($event: MatRadioChange): void {
     if (this.config.onChange !== undefined && this.config.onChange != null) {
       this.config.onChange({ event: $event });
     }

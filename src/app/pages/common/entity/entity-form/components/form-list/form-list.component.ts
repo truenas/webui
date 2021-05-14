@@ -21,7 +21,7 @@ export class FormListComponent implements Field, OnInit {
 
   constructor(private entityFormService: EntityFormService, protected fieldRelationService: FieldRelationService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     setTimeout(() => {
       this.listsFromArray = this.group.controls[this.config.name] as FormArray;
       if (this.config.addInitialList && this.listsFromArray.length === 0) {
@@ -30,7 +30,7 @@ export class FormListComponent implements Field, OnInit {
     }, 0);
   }
 
-  add() {
+  add(): void {
     const templateListField = _.cloneDeep(this.config.templateListField);
     const formGroup = this.entityFormService.createFormGroup(templateListField);
     this.listsFromArray.push(formGroup);
@@ -41,7 +41,7 @@ export class FormListComponent implements Field, OnInit {
     });
   }
 
-  delete(id: number) {
+  delete(id: number): void {
     this.listsFromArray.removeAt(id);
     this.config.listFields.splice(id, 1);
   }

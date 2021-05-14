@@ -29,7 +29,7 @@ import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary
 @Component({
   selector: 'app-catalog',
   templateUrl: './catalog.component.html',
-  styleUrls: ['../applications.component.scss'],
+  styleUrls: ['../applications.component.scss', 'catalog.component.scss'],
 })
 export class CatalogComponent implements OnInit {
   @Output() updateTab = new EventEmitter();
@@ -108,12 +108,13 @@ export class CatalogComponent implements OnInit {
                 train,
               },
               icon_url: item.icon_url ? item.icon_url : '/assets/images/ix-original.png',
-              latest_version: latestDetails.human_version,
-              info: latestDetails.app_readme,
+              latest_version: latestDetails?.human_version,
+              info: latestDetails?.app_readme,
               categories: item.categories,
               healthy: item.healthy,
+              healthy_error: item.healthy_error,
               versions: item.versions,
-              schema: latestDetails.schema,
+              schema: latestDetails?.schema,
             };
             this.catalogApps.push(catalogItem);
           }

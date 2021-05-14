@@ -210,7 +210,7 @@ export class IPMIFromComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.channelValue = entityEdit.pk;
     this.entityEdit = entityEdit;
 
@@ -244,7 +244,7 @@ export class IPMIFromComponent implements FormConfiguration {
     }
   }
 
-  setErrorStatus(status: any, field: any) {
+  setErrorStatus(status: any, field: any): void {
     status === 'INVALID' ? field.hasErrors = true : field.hasErrors = false;
   }
 
@@ -264,7 +264,7 @@ export class IPMIFromComponent implements FormConfiguration {
     });
   }
 
-  loadData(filter: any[] = []) {
+  loadData(filter: any[] = []): void {
     let query = this.ws.call(this.queryCall, filter);
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
       query = this.ws.call('failover.call_remote', [this.queryCall, [filter]]);

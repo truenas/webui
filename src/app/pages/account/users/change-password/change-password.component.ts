@@ -55,7 +55,7 @@ export class ChangePasswordComponent implements FormConfiguration {
     protected loader: AppLoaderService, protected dialog: DialogService) {
   }
 
-  preInit(entityForm: EntityFormComponent) {
+  preInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
   }
 

@@ -67,7 +67,7 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
     this.actions = this.parent.conf.getActions();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.getGenConfig.unsubscribe();
   }
 }

@@ -15,7 +15,7 @@ export class LockscreenComponent {
     password: '',
   };
 
-  unlock() {
+  unlock(): void {
     console.log(this.lockscreenData);
 
     this.submitButton.disabled = true;

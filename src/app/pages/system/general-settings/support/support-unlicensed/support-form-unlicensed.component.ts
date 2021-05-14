@@ -138,11 +138,11 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
   constructor(protected ws: WebSocketService, protected dialog: MatDialog,
     private modalService: ModalService) { }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
   }
 
-  blurEvent(parent: any) {
+  blurEvent(parent: any): void {
     this.password_fc = _.find(parent.fieldConfig, { name: 'password' });
     this.username_fc = _.find(parent.fieldConfig, { name: 'username' });
     this.category = _.find(parent.fieldConfig, { name: 'category' });
@@ -198,7 +198,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     this.openDialog(payload);
   }
 
-  openDialog(payload: any) {
+  openDialog(payload: any): void {
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Ticket'), CloseOnClickOutside: true } });
     let url: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
@@ -236,14 +236,14 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     });
   }
 
-  resetForm() {
+  resetForm(): void {
     this.entityEdit.formGroup.reset();
     this.entityEdit.formGroup.controls['type'].setValue('BUG');
     this.subs = [];
     this.modalService.close('slide-in-form');
   }
 
-  updater(file: any, parent: any) {
+  updater(file: any, parent: any): void {
     parent.subs = [];
     const fileBrowser = file.fileInput.nativeElement;
     this.screenshot = _.find(parent.fieldConfig, { name: 'screenshot' });

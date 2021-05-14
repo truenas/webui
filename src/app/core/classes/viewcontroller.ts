@@ -19,7 +19,7 @@ export abstract class ViewController {
     }
   }
 
-  setControlEvents(subj?: Subject<CoreEvent>) {
+  setControlEvents(subj?: Subject<CoreEvent>): void {
     if (subj) {
       this.controlEvents = subj;
     } else {

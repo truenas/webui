@@ -127,13 +127,13 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
 
   }
 
-  preInit(entityForm: any) {
+  preInit(): void {
     this.route.params.subscribe((params) => {
       this.pk = params['pk'];
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     entityForm.formGroup.controls['remove_passphrase'].valueChanges.subscribe((res: any) => {
       if (res) {
         entityForm.setDisabled('passphrase', true);
@@ -150,7 +150,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     let success_msg: string;
     if (value.remove_passphrase) {
       value.passphrase = null;

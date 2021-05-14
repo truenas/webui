@@ -567,7 +567,7 @@ export class CertificateAuthorityAddComponent {
     protected loader: AppLoaderService, private dialogService: DialogService,
     protected systemGeneralService: SystemGeneralService) {}
 
-  preInit(entityWizard: EntityWizardComponent) {
+  preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
     this.systemGeneralService.getUnsignedCAs().subscribe((res: any[]) => {
       this.signedby = this.getTarget('signedby');
@@ -609,7 +609,7 @@ export class CertificateAuthorityAddComponent {
     });
   }
 
-  customNext(stepper: any) {
+  customNext(stepper: any): void {
     stepper.next();
     this.currentStep = stepper._selectedIndex;
   }
@@ -625,7 +625,7 @@ export class CertificateAuthorityAddComponent {
     return value;
   }
 
-  addToSummary(fieldName: string) {
+  addToSummary(fieldName: string): void {
     const fieldConfig = this.getTarget(fieldName);
     if (!fieldConfig.isHidden) {
       const fieldName = fieldConfig.name;
@@ -638,12 +638,12 @@ export class CertificateAuthorityAddComponent {
     }
   }
 
-  removeFromSummary(fieldName: string) {
+  removeFromSummary(fieldName: string): void {
     const fieldConfig = this.getTarget(fieldName);
     delete this.summary[fieldConfig.placeholder];
   }
 
-  setSummary() {
+  setSummary(): void {
     this.summary = {};
     this.wizardConfig.forEach((stepConfig) => {
       stepConfig.fieldConfig.forEach((fieldConfig) => {
@@ -652,7 +652,7 @@ export class CertificateAuthorityAddComponent {
     });
   }
 
-  afterInit(entity: any) {
+  afterInit(entity: any): void {
     this.entityForm = entity;
     this.title = helptext_system_ca.add.title;
 
@@ -774,7 +774,7 @@ export class CertificateAuthorityAddComponent {
     this.setSummary();
   }
 
-  loadProfiels(value: any, reset?: any) {
+  loadProfiels(value: any, reset?: any): void {
     if (value) {
       Object.keys(value).forEach((item) => {
         if (item === 'cert_extensions') {
@@ -841,12 +841,12 @@ export class CertificateAuthorityAddComponent {
     return null;
   }
 
-  hideField(fieldName: any, show: boolean, entity: any) {
+  hideField(fieldName: any, show: boolean, entity: any): void {
     this.getTarget(fieldName).isHidden = show;
     this.setDisabled(fieldName, show);
   }
 
-  setDisabled(fieldName: any, disable: boolean) {
+  setDisabled(fieldName: any, disable: boolean): void {
     const target = this.getField(fieldName);
     if (disable) {
       target.disable();
@@ -896,7 +896,7 @@ export class CertificateAuthorityAddComponent {
     return data;
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     this.loader.open();
     this.ws.call(this.addWsCall, [data]).subscribe((vm_res) => {
       this.loader.close();

@@ -99,7 +99,7 @@ export class FibreChannelPortComponent implements OnInit {
     );
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     for (let i = 0; i < this.fieldSets.length; i++) {
       const fieldset = this.fieldSets[i];
       if (fieldset.config) {
@@ -126,14 +126,14 @@ export class FibreChannelPortComponent implements OnInit {
     }
   }
 
-  isShow(field: string) {
+  isShow(field: string): boolean {
     if (field === 'target' || field == 'initiators') {
       return this.formGroup.controls['mode'].value == 'TARGET';
     }
     return true;
   }
 
-  onSubmit() {
+  onSubmit(): void {
     const value = _.cloneDeep(this.formGroup.value);
     delete value['initiators'];
 

@@ -49,7 +49,7 @@ export class EntityTaskComponent implements OnInit {
     protected loader: AppLoaderService,
     protected rest: RestService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.conf.preInit) {
       this.conf.preInit();
     }
@@ -227,7 +227,7 @@ export class EntityTaskComponent implements OnInit {
     setTimeout(() => { this.setShowDefaults(); }, 500);
   }
 
-  setShowDefaults() {
+  setShowDefaults(): void {
     this.showDefaults = true;
   }
 
@@ -240,11 +240,11 @@ export class EntityTaskComponent implements OnInit {
     return true;
   }
 
-  goBack() {
+  goBack(): void {
     this.router.navigate(new Array('').concat(this.conf.route_success));
   }
 
-  onSubmit(event: Event) {
+  onSubmit(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
     this.error = null;

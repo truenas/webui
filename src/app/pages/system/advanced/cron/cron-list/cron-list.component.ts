@@ -67,7 +67,7 @@ export class CronListComponent {
     public userService: UserService,
   ) {}
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
 
     this.modalService.onClose$.subscribe(() => {
@@ -77,11 +77,11 @@ export class CronListComponent {
     });
   }
 
-  doAdd(id?: number) {
+  doAdd(id?: number): void {
     this.modalService.open('slide-in-form', new CronFormComponent(this.userService, this.modalService), id);
   }
 
-  doEdit(id: number) {
+  doEdit(id: number): void {
     this.doAdd(id);
   }
 

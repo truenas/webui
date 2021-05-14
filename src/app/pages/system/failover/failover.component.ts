@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import * as _ from 'lodash';
+import { Subscription } from 'rxjs/Subscription';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../services/dialog.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -134,7 +135,7 @@ export class FailoverComponent implements FormConfiguration, OnDestroy {
     private router: Router,
   ) {}
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
     this.failoverDisableSubscription = this.entityForm.formGroup.controls['disabled'].valueChanges.subscribe((res: boolean) => {
       if (!this.alreadyDisabled) {
@@ -160,7 +161,7 @@ export class FailoverComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  customSubmit(body: any) {
+  customSubmit(body: any): Subscription {
     this.load.open();
     return this.ws.call('failover.update', [body]).subscribe(() => {
       this.alreadyDisabled = body['disabled'];
@@ -176,13 +177,13 @@ export class FailoverComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  resourceTransformIncomingRestData(value: any) {
+  resourceTransformIncomingRestData(value: any): any {
     this.alreadyDisabled = value['disabled'];
     value['master'] = true;
     return value;
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.failoverDisableSubscription.unsubscribe();
   }
 }

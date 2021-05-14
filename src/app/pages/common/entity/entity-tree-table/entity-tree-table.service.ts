@@ -14,7 +14,7 @@ export class EntityTreeTableService {
   constructor(private ws: WebSocketService) {}
 
   // Do we still need this?
-  buildTree(data: any) {
+  buildTree(data: any): TreeNode[] {
     const tree: TreeNode[] = [];
     for (let i = 0; i < data.length; i++) {
       const node = this.getNode(data[i]);
@@ -23,7 +23,7 @@ export class EntityTreeTableService {
     return tree;
   }
 
-  buildTable(data: any, expandAll = false) {
+  buildTable(data: any, expandAll = false): TreeNode[] {
     // Converts a Tree structure to a flat list
     const flatList: TreeNode[] = [];
 
@@ -34,7 +34,7 @@ export class EntityTreeTableService {
     return flatList;
   }
 
-  walk(tree: TreeNode[], rows: TreeNode[], parentIndexPath?: number[], expandAll?: boolean) {
+  walk(tree: TreeNode[], rows: TreeNode[], parentIndexPath?: number[], expandAll?: boolean): void {
     tree.forEach((node, nodeIndex) => {
       if (expandAll && node.children.length > 0) {
         node.expanded = true;

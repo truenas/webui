@@ -20,19 +20,19 @@ export class FormCheckboxComponent implements Field {
 
   constructor(public translate: TranslateService) {}
 
-  checkboxUpdate() {
+  checkboxUpdate(): void {
     if (this.config.updater && this.config.parent) {
       this.config.updater(this.config.parent);
     }
   }
 
-  onChangeCheckbox($event: MatCheckboxChange) {
+  onChangeCheckbox($event: MatCheckboxChange): void {
     if (this.config.onChange !== undefined && this.config.onChange != null) {
       this.config.onChange({ event: $event });
     }
   }
 
-  preventClick($event: MouseEvent) {
+  preventClick($event: MouseEvent): boolean {
     $event.preventDefault();
     return true;
   }

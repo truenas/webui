@@ -617,7 +617,7 @@ export class ApiService {
     this.registerDefinitions();
   }
 
-  registerDefinitions() {
+  registerDefinitions(): void {
     // DEBUG: console.log("APISERVICE: Registering API Definitions");
     for (var def in this.apiDefinitions) {
       // DEBUG: console.log("def = " + def);
@@ -645,7 +645,7 @@ export class ApiService {
     }
   }
 
-  private callRest(evt: any, def: any) {
+  private callRest(evt: any, def: any): void {
     const baseUrl = '/api/v' + def.apiCall.version + '/';
     const cloneDef = { ...def };
     if (evt.data) {
@@ -693,7 +693,7 @@ export class ApiService {
     }
   }
 
-  async callWebsocket(evt: CoreEvent, def: any) {
+  async callWebsocket(evt: CoreEvent, def: any): Promise<void> {
     const cloneDef = { ...def };
     const async_calls = [
       'vm.start',

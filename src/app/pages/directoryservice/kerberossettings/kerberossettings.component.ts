@@ -38,7 +38,7 @@ export class KerberosSettingsComponent implements FormConfiguration {
     },
   ];
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     return data;
   }
 }

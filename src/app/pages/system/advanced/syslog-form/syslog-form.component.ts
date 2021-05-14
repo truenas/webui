@@ -120,7 +120,7 @@ export class SyslogFormComponent implements FormConfiguration, OnDestroy {
     );
   }
 
-  reconnect(href: string) {
+  reconnect(href: string): void {
     if (this.entityForm.ws.connected) {
       this.loader.close();
       // ws is connected
@@ -132,7 +132,7 @@ export class SyslogFormComponent implements FormConfiguration, OnDestroy {
     }
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
     this.getDatasetConfig = this.ws.call('systemdataset.config').subscribe((res) => {
       entityEdit.formGroup.controls.syslog.setValue(res.syslog);

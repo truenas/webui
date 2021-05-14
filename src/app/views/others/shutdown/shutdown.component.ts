@@ -31,7 +31,7 @@ export class ShutdownComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.ws.call('system.shutdown', {}).subscribe(
       (res) => {
       },

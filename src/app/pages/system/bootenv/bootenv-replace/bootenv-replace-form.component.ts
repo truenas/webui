@@ -2,6 +2,7 @@ import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs/Observable';
 import { RestService, WebSocketService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -35,14 +36,14 @@ export class BootEnvReplaceFormComponent implements FormConfiguration {
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
-  preInit(entityForm: any) {
+  preInit(entityForm: any): void {
     this.route.params.subscribe((params) => {
       this.pk = params['pk'];
     });
     this.entityForm = entityForm;
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.entityForm = entityForm;
     this.diskChoice = _.find(this.fieldConfig, { name: 'dev' });
     this.ws.call('disk.get_unused').subscribe((res: any[]) => {
@@ -52,7 +53,8 @@ export class BootEnvReplaceFormComponent implements FormConfiguration {
     });
     entityForm.submitFunction = this.submitFunction;
   }
-  submitFunction(entityForm: any) {
+
+  submitFunction(entityForm: any): Observable<any> {
     const payload = this.pk.substring(5, this.pk.length);
     return this.ws.call('boot.replace', [payload, entityForm.dev]);
   }

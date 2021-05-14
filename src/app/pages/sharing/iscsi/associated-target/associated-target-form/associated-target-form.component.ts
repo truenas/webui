@@ -75,7 +75,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
   constructor(protected router: Router, protected iscsiService: IscsiService, protected aroute: ActivatedRoute,
     protected loader: AppLoaderService, protected ws: WebSocketService) {}
 
-  preInit() {
+  preInit(): void {
     this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
@@ -84,7 +84,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
@@ -105,13 +105,13 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     if (value['lunid'] === '') {
       delete value['lunid'];
     }
   }
 
-  customEditCall(value: any) {
+  customEditCall(value: any): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
       (res) => {
