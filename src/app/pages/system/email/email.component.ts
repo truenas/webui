@@ -248,7 +248,7 @@ export class EmailComponent implements FormConfiguration, OnDestroy {
     return data;
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
     this.ws.call('user.query', [[['username', '=', 'root']]]).subscribe((res) => {
       this.rootEmail = res[0].email;
@@ -278,7 +278,7 @@ export class EmailComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  checkForOauthCreds() {
+  checkForOauthCreds(): void {
     if (this.oauthCreds.getValue().client_id) {
       this.entityEdit.setDisabled('oauth_applied', false, false);
       this.entityEdit.setDisabled('oauth_not_applied', true, true);
@@ -288,11 +288,12 @@ export class EmailComponent implements FormConfiguration, OnDestroy {
     }
   }
 
-  toggleSmtpAuthControls() {
+  toggleSmtpAuthControls(): void {
     this.entityEdit.setDisabled('user', !this.sendMailMethod.value || !this.smtp.value, !this.sendMailMethod.value || !this.smtp.value);
     this.entityEdit.setDisabled('pass', !this.sendMailMethod.value || !this.smtp.value, !this.sendMailMethod.value || !this.smtp.value);
   }
-  toggleSmtpControls() {
+
+  toggleSmtpControls(): void {
     this.entityEdit.setDisabled('outgoingserver', !this.sendMailMethod.value, !this.sendMailMethod.value);
     this.entityEdit.setDisabled('port', !this.sendMailMethod.value, !this.sendMailMethod.value);
     this.entityEdit.setDisabled('security', !this.sendMailMethod.value, !this.sendMailMethod.value);
@@ -300,7 +301,7 @@ export class EmailComponent implements FormConfiguration, OnDestroy {
     this.entityEdit.setDisabled('login-gmail', this.sendMailMethod.value, this.sendMailMethod.value);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.sendMailMethodSubscription.unsubscribe();
     this.smtpSubscription.unsubscribe();
   }

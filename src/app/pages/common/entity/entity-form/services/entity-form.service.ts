@@ -35,7 +35,7 @@ export class EntityFormService {
   constructor(@Inject(FormBuilder) private formBuilder: FormBuilder,
     protected ws: WebSocketService, private rest: RestService) {}
 
-  createFormGroup(controls: FieldConfig[]) {
+  createFormGroup(controls: FieldConfig[]): FormGroup {
     const formGroup: { [id: string]: AbstractControl } = {};
 
     if (controls) {

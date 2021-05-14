@@ -339,7 +339,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     private modalService: ModalService,
     private storageService: StorageService) {}
 
-  preInit() {
+  preInit(): void {
     // Display
     this.ws.call('vm.device.bind_choices').subscribe((res) => {
       if (res && Object.keys(res).length > 0) {
@@ -399,7 +399,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.aroute.params.subscribe((params) => {
       this.vmid = params['pk'];
       this.vmname = params['name'];
@@ -477,7 +477,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.afterInit();
   }
 
-  async afterInit() {
+  async afterInit(): Promise<void> {
     this.ws.call('pool.dataset.query', [[['type', '=', 'VOLUME']]]).subscribe((zvols: any[]) => {
       zvols.forEach((zvol) => {
         _.find(this.diskFieldConfig, { name: 'path' }).options.push(
@@ -538,11 +538,11 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.displayFormGroup.controls['bind'].setValue('0.0.0.0');
   }
 
-  goBack() {
+  goBack(): void {
     this.router.navigate(new Array('/').concat(this.route_success));
   }
 
-  onSubmit(event: Event) {
+  onSubmit(event: Event): void {
     this.error = '';
     this.aroute.params.subscribe((params) => {
       const device = _.cloneDeep(this.formGroup.value);
@@ -574,11 +574,11 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     });
   }
 
-  addZvol() {
+  addZvol(): void {
     this.modalService.open('slide-in-form', this.addZvolComponent);
   }
 
-  updateZvolSearchOptions(value = '', parent: any) {
+  updateZvolSearchOptions(value = '', parent: any): void {
     parent.ws.call('pool.dataset.query', [[['type', '=', 'VOLUME'], ['id', '^', value]]]).subscribe((zvols: any[]) => {
       const searchedZvols = [];
       zvols.forEach((zvol) => {
@@ -595,7 +595,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 }

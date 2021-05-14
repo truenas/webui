@@ -202,7 +202,7 @@ export class DiskFormComponent implements FormConfiguration {
     return data;
   }
 
-  preInit() {
+  preInit(): void {
     this.aroute.params.subscribe((params) => {
       /*
        * Make sure the route is "storage/disks" before
@@ -214,7 +214,7 @@ export class DiskFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     entityEdit.formGroup.controls['hddstandby'].valueChanges.subscribe((value: any) => {
       if (value === DiskStandby.AlwaysOn) {
         entityEdit.formGroup.controls['hddstandby_force'].setValue(false);
@@ -222,7 +222,7 @@ export class DiskFormComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     if (!value.hddstandby_force) {
       value.hddstandby_force = false;
     }
@@ -243,7 +243,7 @@ export class DiskFormComponent implements FormConfiguration {
     value.informational = value.informational === '' ? null : value.informational;
   }
 
-  inIt(pk: string) {
+  inIt(pk: string): void {
     this.title = helptext.disk_form_title;
 
     delete this.route_success;

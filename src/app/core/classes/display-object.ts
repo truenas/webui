@@ -111,7 +111,7 @@ export class DisplayObject {
     this.elevateOnSelect = false;
   }
 
-  get id() {
+  get id(): string {
     return this._id;
   }
 
@@ -189,7 +189,7 @@ export class DisplayObject {
     }
   }
 
-  get interactive() {
+  get interactive(): boolean {
     return this._interactive;
   }
 
@@ -202,7 +202,7 @@ export class DisplayObject {
     }
   }
 
-  private createTarget() {
+  private createTarget(): void {
     const parent = this.rawElement.parentNode;
     const fragment = document.createDocumentFragment();
     const wrapper = document.createElement('div');
@@ -220,14 +220,15 @@ export class DisplayObject {
     // parent.(fragment);
     this.id = this.rawElement.id;
   }
-  private destroyTarget() {
+
+  private destroyTarget(): void {
     const originalParent = this.rawElement.parentNode.parentNode;
     const wrapper = this.rawElement.parentNode;
     originalParent.appendChild(this.rawElement);
     originalParent.removeChild(wrapper);
   }
 
-  get moveable() {
+  get moveable(): boolean {
     return this._moveable;
   }
 
@@ -259,7 +260,7 @@ export class DisplayObject {
     this._moveable = value;
   }
 
-  get resizeable() {
+  get resizeable(): boolean {
     return this._resizeable;
   }
 
@@ -291,7 +292,7 @@ export class DisplayObject {
   }
 
   // Move/Drag methods
-  start() {
+  start(): void {
     this.messageBus.emit({ name: 'DisplayObjectSelected', sender: this });
     this.isDragging = true;
     this.elevate(true);
@@ -337,7 +338,7 @@ export class DisplayObject {
     }
   }
 
-  stop(eventType: string) {
+  stop(eventType: string): void {
     if (this.hasFocus && this.isDragging) {
       if (eventType == 'drag' || eventType == 'exit') {
         this.rawTarget.classList.remove(eventType);
@@ -378,15 +379,15 @@ export class DisplayObject {
     } */
   }
 
-  mouseExit() {
+  mouseExit(): void {
     this.stop('exit');
   }
 
-  stopDrag() {
+  stopDrag(): void {
     this.stop('drag');
   }
 
-  unfocus(value: any) {
+  unfocus(value: any): void {
     // console.log("ManagerNotification: value = ")
     console.log('unfocus method');
     let blurValue = value.y / 5 * -1;
@@ -399,7 +400,8 @@ export class DisplayObject {
     // document.querySelector('.panel').style.filter = "blur(" + blurValue + "px)";
     (<any>document).querySelector('.desktop').style.filter = 'blur(' + blurValue + 'px)';
   }
-  refocus() {
+
+  refocus(): void {
   }
 
   elevate(set: boolean): void {
@@ -444,7 +446,7 @@ export class DisplayObject {
   }
 
   // Resize Methods
-  startResizeTop() {
+  startResizeTop(): void {
     // console.log("Start Resizing!");
     this.messageBus.emit({ name: 'ResizeStarted' + this.id });
     const element = styler(this.rawElement, {});
@@ -463,7 +465,7 @@ export class DisplayObject {
     })).start(this.anchorXY);
   }
 
-  startResizeBottom() {
+  startResizeBottom(): void {
     // console.log("Start Resizing!");
     this.messageBus.emit({ name: 'ResizeStarted' + this.id });
     const element = styler(this.rawElement, {});
@@ -484,7 +486,7 @@ export class DisplayObject {
     })).start(this.anchorXY);
   }
 
-  startResizeLeft() {
+  startResizeLeft(): void {
     console.log('Start Resizing!');
     this.messageBus.emit({ name: 'ResizeStarted' + this.id });
     const element = styler(this.rawElement, {});
@@ -512,7 +514,7 @@ export class DisplayObject {
     })).start(this.anchorXY);
   }
 
-  startResizeRight() {
+  startResizeRight(): void {
     // console.log("Start Resizing!");
     this.messageBus.emit({ name: 'ResizeStarted' + this.id });
     const element = styler(this.rawElement, {});
@@ -538,7 +540,7 @@ export class DisplayObject {
     })).start(this.anchorXY);
   }
 
-  stopResize() {
+  stopResize(): void {
     // console.log("Stop Resizing!");
     // this.anchorXY.stop();
     this.stop('resize');

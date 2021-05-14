@@ -313,7 +313,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     protected loader: AppLoaderService, protected dialog: MatDialog,
     private translate: TranslateService) {}
 
-  isCustActionVisible(actionId: string) {
+  isCustActionVisible(actionId: string): boolean {
     if (actionId === 'show_defaults') {
       return true;
     }
@@ -323,7 +323,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     return actionId === 'strip_acl';
   }
 
-  preInit(entityEdit: any) {
+  preInit(entityEdit: any): void {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('homeShare')) {
       this.homeShare = true;
@@ -368,7 +368,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value: boolean) => {
@@ -468,9 +468,8 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  chooseDefaultSetting(value: string) {
-    let num;
-    value === 'RESTRICTED' ? num = 2 : num = 3;
+  chooseDefaultSetting(value: string): void {
+    const num = value === 'RESTRICTED' ? 2 : 3;
     while (this.aces.controls.length > num) {
       this.aces.removeAt(num);
     }
@@ -479,7 +478,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  setDisabled(fieldConfig: FieldConfig, formControl: FormControl, disable: boolean, hide: boolean) {
+  setDisabled(fieldConfig: FieldConfig, formControl: FormControl, disable: boolean, hide: boolean): void {
     fieldConfig.disabled = disable;
     fieldConfig['isHidden'] = hide;
     if (formControl && formControl.disabled !== disable) {
@@ -503,7 +502,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     }
   }
 
-  handleEmptyACL() {
+  handleEmptyACL(): void {
     this.loader.close();
     this.dialogService.errorReport(helptext.empty_acl_dialog.title, helptext.empty_acl_dialog.message)
       .subscribe(() => {
@@ -627,9 +626,8 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     }
   }
 
-  showChoiceDialog(presetsOnly = false) {
-    let msg1; let
-      msg2;
+  showChoiceDialog(presetsOnly = false): void {
+    let msg1; let msg2;
     this.translate.get(helptext.type_dialog.radio_preset_tooltip).subscribe((m1) => {
       this.translate.get(helptext.preset_dialog.message).subscribe((m2) => {
         msg1 = m1;
@@ -691,12 +689,12 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     this.dialogService.dialogForm(conf);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.recursive_subscription.unsubscribe();
     this.aces_subscription.unsubscribe();
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     const dacl = [];
     for (let i = 0; i < data.aces.length; i++) {
       const d: any = {};
@@ -832,7 +830,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  doStripACL() {
+  doStripACL(): void {
     const conf: DialogFormConfiguration = {
       title: helptext.stripACL_dialog.title,
       message: helptext.stripACL_dialog.message,
@@ -878,7 +876,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     this.dialogService.dialogFormWide(conf);
   }
 
-  loadMoreOptions(length: number, parent: any, searchText: string, config: any) {
+  loadMoreOptions(length: number, parent: any, searchText: string, config: any): void {
     (parent.userService as UserService).userQueryDSCache(searchText, length).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
@@ -892,7 +890,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  loadMoreGroupOptions(length: number, parent: any, searchText: string, config: any) {
+  loadMoreGroupOptions(length: number, parent: any, searchText: string, config: any): void {
     parent.userService.groupQueryDSCache(searchText, false, length).subscribe((items: any[]) => {
       const groups: Option[] = [];
       for (let i = 0; i < items.length; i++) {

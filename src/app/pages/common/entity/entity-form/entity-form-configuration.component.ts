@@ -32,7 +32,7 @@ export class EntityFormConfigurationComponent implements FormConfiguration {
   formType: string;
 
   _isOneColumnForm = false;
-  get isOneColumnForm() {
+  get isOneColumnForm(): boolean {
     return this._isOneColumnForm;
   }
 
@@ -50,10 +50,7 @@ export class EntityFormConfigurationComponent implements FormConfiguration {
   target: Subject<CoreEvent>;
   data: any;
 
-  preInit() {
-  }
-
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
     if (this.formType == 'EntityFormComponent' && this.target && !this.customSubmit) {
       this.customSubmit = (values: any) => {
