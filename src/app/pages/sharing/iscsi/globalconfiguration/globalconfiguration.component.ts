@@ -69,7 +69,7 @@ export class GlobalconfigurationComponent implements FormConfiguration {
     private sysGeneralService: SystemGeneralService,
   ) {}
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     entityForm.submitFunction = entityForm.editCall;
     this.getProdType = this.sysGeneralService.getProductType.subscribe((res) => {
       if (res === ProductType.Enterprise) {
@@ -79,13 +79,13 @@ export class GlobalconfigurationComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     if (value.pool_avail_threshold == '') {
       value.pool_avail_threshold = null;
     }
   }
 
-  afterSubmit() {
+  afterSubmit(): void {
     this.ws.call('service.query', [[]]).subscribe((service_res) => {
       const service = _.find(service_res, { service: ServiceName.Iscsi });
       if (!service.enable) {

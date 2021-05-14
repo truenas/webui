@@ -48,7 +48,7 @@ export class EntityWizardComponent implements OnInit {
 
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.conf.showSpinner) {
       this.showSpinner = true;
     }
@@ -67,7 +67,7 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  resetFields() {
+  resetFields(): void {
     const wizardformArray = this.formBuilder.array([]);
     for (const i in this.conf.wizardConfig) {
       // Fallback if no fieldsets are defined
@@ -125,7 +125,7 @@ export class EntityWizardComponent implements OnInit {
     return true;
   }
 
-  goBack() {
+  goBack(): void {
     if (this.conf.customCancel) {
       return this.conf.customCancel();
     }
@@ -136,7 +136,7 @@ export class EntityWizardComponent implements OnInit {
     this.router.navigate(new Array('/').concat(route));
   }
 
-  setRelation(config: FieldConfig, stepIndex: any) {
+  setRelation(config: FieldConfig, stepIndex: any): void {
     const activations = this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(activations, < FormGroup > this.formArray.get(stepIndex));
@@ -152,7 +152,7 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  setDisabled(name: string, disable: boolean, stepIndex: any, hide?: boolean) {
+  setDisabled(name: string, disable: boolean, stepIndex: any, hide?: boolean): void {
     if (hide) {
       disable = hide;
     } else {
@@ -175,7 +175,7 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  relationUpdate(config: FieldConfig, activations: any, stepIndex: any) {
+  relationUpdate(config: FieldConfig, activations: any, stepIndex: any): void {
     const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
       activations, < FormGroup > this.formArray.get(stepIndex),
     );
@@ -185,7 +185,7 @@ export class EntityWizardComponent implements OnInit {
     this.setDisabled(config.name, tobeDisabled, stepIndex, tobeHide);
   }
 
-  onSubmit() {
+  onSubmit(): void {
     let value = {};
     for (const i in this.formGroup.value.formArray) {
       value = _.merge(value, _.cloneDeep(this.formGroup.value.formArray[i]));
@@ -224,7 +224,7 @@ export class EntityWizardComponent implements OnInit {
 
   originalOrder = function () {};
 
-  isFieldsetAvailabel(fieldset: any) {
+  isFieldsetAvailabel(fieldset: any): boolean {
     if (fieldset.config) {
       for (let i = 0; i < fieldset.config.length; i++) {
         if (!fieldset.config[i].isHidden) {
@@ -235,18 +235,18 @@ export class EntityWizardComponent implements OnInit {
     return false;
   }
 
-  handleNext(currentStep: any) {
+  handleNext(currentStep: any): void {
     currentStep.stepControl.markAllAsTouched();
     if (this.conf.customNext !== undefined) {
       this.conf.customNext(this.stepper);
     }
   }
 
-  selectionChange(event: StepperSelectionEvent) {
-    /**
-     * This function is for update summary data whenever step changes
-     * We use isAutoSummary flag to generate summary automatically
-     */
+  /**
+   * This function is for update summary data whenever step changes
+   * We use isAutoSummary flag to generate summary automatically
+   */
+  selectionChange(event: StepperSelectionEvent): void {
     if (this.conf.isAutoSummary) {
       if (event.selectedIndex == this.conf.wizardConfig.length) {
         this.conf.summary = [];
@@ -289,7 +289,7 @@ export class EntityWizardComponent implements OnInit {
     return result;
   }
 
-  clearErrors() {
+  clearErrors(): void {
     for (const i in this.conf.wizardConfig) {
       for (const j in this.conf.wizardConfig[i].fieldConfig) {
         const config = this.conf.wizardConfig[i].fieldConfig[j];

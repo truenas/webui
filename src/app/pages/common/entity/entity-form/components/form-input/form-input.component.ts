@@ -31,7 +31,7 @@ export class FormInputComponent implements Field {
     this.readFile($event.target);
   }
 
-  readFile(inputValue: any) {
+  readFile(inputValue: any): void {
     var file: File = inputValue.files[0];
     var fReader: FileReader = new FileReader();
 
@@ -46,7 +46,7 @@ export class FormInputComponent implements Field {
     }
   }
 
-  contents(result: any) {
+  contents(result: any): void {
     if (this.config.fileType == 'binary') {
       this.group.controls[this.config.name].setValue(btoa(result));
     } else {
@@ -54,18 +54,18 @@ export class FormInputComponent implements Field {
     }
   }
 
-  blurEvent() {
+  blurEvent(): void {
     if (this.config.blurStatus) {
       this.config.blurEvent(this.config.parent);
     }
   }
 
-  togglePW() {
+  togglePW(): void {
     this.config.inputType = this.config.inputType === 'password' ? '' : 'password';
     this.showPassword = !this.showPassword;
   }
 
-  valueChange() {
+  valueChange(): void {
     if (this.config.inputUnit) {
       const phrasedValue = this.formService.phraseInputData(this.group.controls[this.config.name].value, this.config.inputUnit);
       if (isNaN(phrasedValue)) {
@@ -89,19 +89,19 @@ export class FormInputComponent implements Field {
     }
   }
 
-  hasValue() {
+  hasValue(): boolean {
     return this.group.controls[this.config.name].value && this.group.controls[this.config.name].value.toString().length;
   }
 
-  shouldShowResetInput() {
+  shouldShowResetInput(): boolean {
     return this.hasValue() && !this.config.readonly && !this.config.togglePw && this.config.inputType !== 'password';
   }
 
-  resetInput() {
+  resetInput(): void {
     this.group.controls[this.config.name].setValue('');
   }
 
-  onPaste(event: ClipboardEvent) {
+  onPaste(event: ClipboardEvent): void {
     if (!this.config.inputType || this.config.inputType !== 'password') {
       this.hasPasteEvent = true;
       const clipboardData = event.clipboardData;
@@ -114,7 +114,7 @@ export class FormInputComponent implements Field {
     }
   }
 
-  onInput() {
+  onInput(): void {
     if (this.hasPasteEvent) {
       this.hasPasteEvent = false;
     } else {

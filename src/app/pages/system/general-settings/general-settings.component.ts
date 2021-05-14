@@ -166,7 +166,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
   }
 
-  getDataCardData() {
+  getDataCardData(): void {
     this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe((res) => {
       this.configData = res;
       this.dataCards = [
@@ -212,7 +212,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  doAdd(name: string, id?: number) {
+  doAdd(name: string, id?: number): void {
     let addComponent;
     switch (name) {
       case 'gui':
@@ -228,7 +228,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     this.modalService.open('slide-in-form', addComponent, id);
   }
 
-  doNTPDelete(server: any) {
+  doNTPDelete(server: any): void {
     this.dialog.confirm(helptext.deleteServer.title, `${helptext.deleteServer.message} ${server.address}?`,
       false, helptext.deleteServer.message).subscribe((res: boolean) => {
       if (res) {
@@ -244,14 +244,14 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getNTPData() {
+  getNTPData(): void {
     this.ws.call('system.ntpserver.query').subscribe((res) => {
       this.dataSource = res;
       this.displayedColumns = ['address', 'burst', 'iburst', 'prefer', 'minpoll', 'maxpoll', 'actions'];
     });
   }
 
-  saveConfigSubmit(entityDialog: any) {
+  saveConfigSubmit(entityDialog: any): void {
     parent = entityDialog.parent;
     entityDialog.loader.open();
     entityDialog.ws.call('system.info', []).subscribe((res: any) => {
@@ -299,14 +299,14 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  updater(file: any, parent: any) {
+  updater(file: any, parent: any): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
     }
   }
 
-  uploadConfigSubmit(entityDialog: EntityDialogComponent) {
+  uploadConfigSubmit(entityDialog: EntityDialogComponent): void {
     const parent = entityDialog.conf.fieldConfig[0].parent;
     const formData: FormData = new FormData();
 
@@ -328,12 +328,12 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  resetConfigSubmit(entityDialog: EntityDialogComponent) {
+  resetConfigSubmit(entityDialog: EntityDialogComponent): void {
     const parent = entityDialog.parent;
     parent.router.navigate(new Array('').concat(['others', 'config-reset']));
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.refreshCardData.unsubscribe();
     this.refreshTable.unsubscribe();
     this.getGenConfig.unsubscribe();
