@@ -487,7 +487,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     }
   }
 
-  resourceTransformIncomingRestData(data: any): void {
+  resourceTransformIncomingRestData(data: any): any {
     if (data.acl.length === 0) {
       setTimeout(() => {
         this.handleEmptyACL();

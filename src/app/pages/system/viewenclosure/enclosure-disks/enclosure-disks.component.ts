@@ -981,7 +981,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
   }
 
-  hexToRGB(str: string): { hex: string; rgb: string } {
+  hexToRGB(str: string): { hex: string; rgb: number[] } {
     var spl = str.split('#');
     var hex = spl[1];
     if (hex.length == 3) {

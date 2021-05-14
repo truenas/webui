@@ -197,7 +197,7 @@ export class EntityFormService {
     }
   }
 
-  phraseInputData(value: any, config: InputUnitConfig): string | number {
+  phraseInputData(value: any, config: InputUnitConfig): any {
     if (!value) {
       return value;
     }
