@@ -104,6 +104,8 @@ export interface InputTableConf {
 
 export interface EntityTableAction {
   id: string | number;
+  // TODO: Either name or actionName may be unnecessary
+  name: string;
   actionName: string;
   icon: string;
   label: string;

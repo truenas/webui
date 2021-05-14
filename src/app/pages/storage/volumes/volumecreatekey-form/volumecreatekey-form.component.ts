@@ -117,13 +117,13 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
     private encryptionService: EncryptionService,
   ) {}
 
-  preInit(entityForm: any) {
+  preInit(): void {
     this.route.params.subscribe((params) => {
       this.pk = params['pk'];
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     entityForm.formGroup.controls['adminpw'].valueChanges.subscribe((res: string) => {
       this.admin_pw = res;
       const btn = <HTMLInputElement> document.getElementById('cust_button_Download Encryption Key');
@@ -131,7 +131,7 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     this.ws.call('auth.check_user', ['root', value.adminpw]).subscribe((res) => {
       if (res) {
         this.encryptionService.setPassphrase(this.pk, value.passphrase, value.adminpw,

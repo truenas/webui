@@ -13,7 +13,7 @@ export class StatsService extends BaseService {
   protected realtimeEvents: Subscription;
   protected diskQueryEvents: Subscription;
 
-  protected onAuthenticated(evt: CoreEvent) {
+  protected onAuthenticated(evt: CoreEvent): void {
     this.authenticated = true;
 
     // TODO: use disk.query to detect drive change events

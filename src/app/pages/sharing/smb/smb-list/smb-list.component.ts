@@ -60,7 +60,7 @@ export class SMBListComponent {
   constructor(private ws: WebSocketService, private router: Router,
     private dialogService: DialogService, private translate: TranslateService) {}
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
   }
 
@@ -147,7 +147,7 @@ export class SMBListComponent {
     return rows;
   }
 
-  lockedPathDialog(path: string) {
+  lockedPathDialog(path: string): void {
     this.translate.get(helptext_sharing_smb.action_edit_acl_dialog.message1).subscribe((msg1) => {
       this.translate.get(helptext_sharing_smb.action_edit_acl_dialog.message2).subscribe((msg2) => {
         this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,

@@ -15,8 +15,6 @@ export class RoutePartsService {
   routeParts: IRoutePart[];
   constructor(private activatedRoute: ActivatedRoute, private router: Router) {}
 
-  ngOnInit() {
-  }
   generateRouteParts(snapshot: ActivatedRouteSnapshot): IRoutePart[] {
     var routeParts = <any[]>[];
     if (snapshot) {

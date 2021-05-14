@@ -37,9 +37,6 @@ export class CardComponent extends ViewControllerComponent {
    * private primaryAction?: ViewFabButton
    * Methods
    * addHeaderTitle(title: string);
-   * addHeaderOptions(); // adds Options menu to header
-   * addFooterControls(ViewButton[]);
-   * addPrimaryAction(btn:  ViewFabButton);
    */
 
   // @ViewChild('display', { static: true}) display; // Already created in base class by default
@@ -60,10 +57,7 @@ export class CardComponent extends ViewControllerComponent {
   getHeaderTitle(): string {
     return this.headerTitle;
   }
-  setHeaderTitle(title: string) {
+  setHeaderTitle(title: string): void {
     this.headerTitle = title;
   }
-  addHeaderOptions() {} // adds Options menu to header
-  addFooterControls(controls: any /* ViewButton[] */) {}
-  addPrimaryAction(fab: any/* ViewFabButton */) {}
 }

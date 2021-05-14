@@ -1,8 +1,6 @@
 import {
-  Component, OnInit, AfterViewInit, Input, ElementRef, NgZone, OnDestroy,
+  Component, Input,
 } from '@angular/core';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { MaterialModule } from 'app/appMaterial.module';
 
 @Component({
   selector: 'tab-content',
@@ -10,15 +8,6 @@ import { MaterialModule } from 'app/appMaterial.module';
   styleUrls: ['./tab-content.component.css'],
 })
 
-export class TabContentComponent implements AfterViewInit, OnDestroy {
+export class TabContentComponent {
   @Input() data: any;
-
-  constructor(public el: ElementRef/* , private ngZone: NgZone */) {
-  }
-
-  ngAfterViewInit() {
-  }
-
-  ngOnDestroy() {
-  }
 }

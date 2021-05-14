@@ -23,6 +23,6 @@ export class IcuTranslationsLoader extends TranslateHttpLoader {
   }
 }
 
-export function createTranslateLoader(http: HttpClient) {
+export function createTranslateLoader(http: HttpClient): IcuTranslationsLoader {
   return new IcuTranslationsLoader(http, './assets/i18n/', '.json');
 }

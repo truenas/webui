@@ -34,7 +34,7 @@ export class MINIXLPLUS extends Chassis {
     });
   }
 
-  onLoaded() {
+  onLoaded(): void {
     // Scale the Chassis
     const chassis = this.front.container.getChildAt(0);
     const backY = 100;

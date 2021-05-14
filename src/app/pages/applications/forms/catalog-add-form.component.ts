@@ -69,7 +69,7 @@ export class CatalogAddFormComponent implements FormConfiguration {
     private modalService: ModalService) {
   }
 
-  afterModalFormClosed() {
+  afterModalFormClosed(): void {
     this.modalService.refreshTable();
   }
 }

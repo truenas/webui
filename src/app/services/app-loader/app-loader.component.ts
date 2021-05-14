@@ -55,7 +55,7 @@ export class AppLoaderComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.getAdvancedConfig.unsubscribe();
   }
 }

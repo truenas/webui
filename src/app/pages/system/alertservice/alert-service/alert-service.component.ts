@@ -703,7 +703,7 @@ export class AlertServiceComponent implements FormConfiguration {
     protected dialogService: DialogService,
   ) { }
 
-  preInit() {
+  preInit(): void {
     this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.queryCallOption[0].push(Number(params['pk']));
@@ -711,12 +711,12 @@ export class AlertServiceComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
   }
 
-  dataAttributeHandler(entityForm: any) {
+  dataAttributeHandler(entityForm: any): void {
     const type = entityForm.formGroup.controls['type'].value;
     for (const i in entityForm.wsResponseIdx) {
       const field_name = type + '-' + i;
@@ -729,7 +729,7 @@ export class AlertServiceComponent implements FormConfiguration {
     }
   }
 
-  generateTelegramChatIdsPayload(data: any, i: string) {
+  generateTelegramChatIdsPayload(data: any, i: string): string[] {
     const wrongChatIds: string[] = [];
     // Telegram chat IDs must be an array of integer
     const arrayChatIds: [] = data[i].map((strChatId: string) => {
@@ -747,7 +747,7 @@ export class AlertServiceComponent implements FormConfiguration {
     return Array.from(new Set(arrayChatIds));
   }
 
-  generatePayload(data: any) {
+  generatePayload(data: any): any {
     const payload: any = { attributes: {} };
 
     for (const i in data) {
@@ -765,7 +765,7 @@ export class AlertServiceComponent implements FormConfiguration {
     return payload;
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     this.entityFormService.clearFormError(this.fieldConfig);
     const payload = this.generatePayload(value);
 
@@ -795,7 +795,7 @@ export class AlertServiceComponent implements FormConfiguration {
     }
   }
 
-  getErrorField(field: string) {
+  getErrorField(field: string): FieldConfig {
     return _.find(this.fieldConfig, { name: this.entityForm.formGroup.controls['type'].value + '-' + field });
   }
 }

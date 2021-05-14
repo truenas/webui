@@ -37,7 +37,7 @@ export class CconfigureRYSNCComponent implements FormConfiguration {
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService) {}
 
-  afterInit(entityEdit: EntityFormComponent) {
+  afterInit(entityEdit: EntityFormComponent): void {
     entityEdit.submitFunction = (body) => this.ws.call('rsyncd.update', [body]);
   }
 }

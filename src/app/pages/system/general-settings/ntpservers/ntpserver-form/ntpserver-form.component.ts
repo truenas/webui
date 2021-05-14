@@ -87,7 +87,7 @@ export class NTPServerFormComponent implements FormConfiguration {
     private modalService: ModalService,
   ) {}
 
-  afterSubmit() {
+  afterSubmit(): void {
     this.modalService.refreshTable();
   }
 }

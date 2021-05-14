@@ -11,7 +11,8 @@ export class AppAccordionDirective implements OnInit {
   parentLi: HTMLElement;
 
   constructor(private el: ElementRef) { }
-  ngOnInit() {
+
+  ngOnInit(): void {
     setTimeout(() => {
       this.el.nativeElement.className += 'accordion-handle';
       if (domHelper.hasClass(this.el.nativeElement, 'app-accordion')) {
@@ -23,11 +24,11 @@ export class AppAccordionDirective implements OnInit {
   }
 
   @HostListener('click')
-  onClick() {
+  onClick(): void {
     this.toggleOpen();
   }
 
-  private toggleOpen() {
+  private toggleOpen(): void {
     var accordionItems = document.getElementsByClassName('app-accordion');
     if (domHelper.hasClass(this.parentLi, 'open')) {
       domHelper.removeClass(accordionItems, 'open');
