@@ -104,34 +104,33 @@ export class KubernetesSettingsComponent implements FormConfiguration {
   async prerequisite(): Promise<boolean> {
     const setPoolControl = this.appService.getPoolList().pipe(
       tap((pools) => {
-        const pool_control = _.find(this.fieldSets[0].config, { name: 'pool' });
+        const poolControl = _.find(this.fieldSets[0].config, { name: 'pool' });
         pools.forEach((pool) => {
-          pool_control.options.push({ label: pool.name, value: pool.name });
+          poolControl.options.push({ label: pool.name, value: pool.name });
         });
       }),
     );
 
     const setNodeIpControl = this.appService.getBindIPChoices().pipe(
       tap((ips) => {
-        const node_ip_control = _.find(this.fieldSets[0].config, { name: 'node_ip' });
+        const nodeIpControl = _.find(this.fieldSets[0].config, { name: 'node_ip' });
         for (const ip in ips) {
-          node_ip_control.options.push({ label: ip, value: ip });
+          nodeIpControl.options.push({ label: ip, value: ip });
         }
       }),
     );
 
     const setV4InterfaceControl = this.appService.getInterfaces().pipe(
       tap((interfaces: any[]) => {
-        const v4_interface_control = _.find(this.fieldSets[1].config, { name: 'route_v4_interface' });
+        const v4InterfaceControl = _.find(this.fieldSets[1].config, { name: 'route_v4_interface' });
         interfaces.forEach((i) => {
-          v4_interface_control.options.push({ label: i.name, value: i.name });
+          v4InterfaceControl.options.push({ label: i.name, value: i.name });
         });
       }),
     );
 
     return forkJoin([setPoolControl, setNodeIpControl, setV4InterfaceControl]).pipe(
       map(() => true),
-      // catchError may not be needed if you want to fail when something hasn't been loaded.
       catchError((error) => {
         console.log(error);
         return of(false);
