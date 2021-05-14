@@ -7,7 +7,13 @@ from configparser import ConfigParser
 from platform import system
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    TimeoutException
+)
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
 
 
 @pytest.fixture
@@ -108,6 +114,10 @@ def pytest_runtest_makereport(item):
             if 'T0905' in screenshot_name or 'T0919' in screenshot_name or 'T0920' in screenshot_name or 'T0922' in screenshot_name:
                 if element_exist('//mat-icon[@svgicon="ha_disabled"]'):
                     enable_failover()
+            if 'T1010' in screenshot_name:
+                disable_active_directory()
+            if 'T1013' in screenshot_name:
+                disable_ldap()
 
 
 def save_screenshot(name):
@@ -128,11 +138,43 @@ def element_exist(xpath):
         return False
 
 
-def wait_on_element(wait, loop, xpath):
-    for _ in range(loop):
-        time.sleep(wait)
-        if element_exist(xpath):
+def wait_on_element(wait, xpath, condition=None):
+    if condition == 'clickable':
+        try:
+            WebDriverWait(web_driver, wait).until(ec.element_to_be_clickable((By.XPATH, xpath)))
             return True
+        except TimeoutException:
+            return False
+    if condition == 'presence':
+        try:
+            WebDriverWait(web_driver, wait).until(ec.presence_of_element_located((By.XPATH, xpath)))
+            return True
+        except TimeoutException:
+            return False
+    else:
+        try:
+            WebDriverWait(web_driver, wait).until(ec.visibility_of_element_located((By.XPATH, xpath)))
+            return True
+        except TimeoutException:
+            return False
+
+
+def wait_on_element_disappear(wait, xpath):
+    timeout = time.time() + wait
+    while time.time() <= timeout:
+        if not element_exist(xpath):
+            return True
+        # this just to slow down the loop
+        time.sleep(0.1)
+    else:
+        return False
+
+
+def attribute_value_exist(xpath, attribute, value):
+    element = web_driver.find_element_by_xpath(xpath)
+    class_attribute = element.get_attribute(attribute)
+    if value in class_attribute:
+        return True
     else:
         return False
 
@@ -143,16 +185,16 @@ def enable_failover():
     web_driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
-    wait_on_element(0.5, 5, '//mat-list-item[@ix-auto="option__Failover"]')
+    wait_on_element(5, '//mat-list-item[@ix-auto="option__Failover"]')
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
-    wait_on_element(0.5, 5, '//h4[contains(.,"Failover Configuration")]')
+    wait_on_element(5, '//h4[contains(.,"Failover Configuration")]')
     element = web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
     class_attribute = element.get_attribute('class')
     if 'mat-checkbox-checked' in class_attribute:
         web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
-        wait_on_element(0.5, 5, '//button[@ix-auto="button__SAVE"]')
+        wait_on_element(5, '//button[@ix-auto="button__SAVE"]')
         web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-        wait_on_element(0.5, 4, '//h1[contains(.,"Settings saved")]')
+        wait_on_element(5, '//h1[contains(.,"Settings saved")]')
         if element_exist('//button[@ix-auto="button__CLOSE"]'):
             web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
@@ -161,4 +203,37 @@ def enable_failover():
     web_driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    wait_on_element(1, 90, '//mat-icon[@svgicon="ha_enabled"]')
+    wait_on_element(90, '//mat-icon[@svgicon="ha_enabled"]')
+
+
+def disable_active_directory():
+    wait_on_element(7, '//mat-list-item[@ix-auto="option__Directory Services"]')
+    web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
+    wait_on_element(7, '//mat-list-item[@ix-auto="option__Active Directory"]')
+    web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Active Directory"]').click()
+    wait_on_element(5, '//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]')
+    value_exist = attribute_value_exist('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]', 'class', 'mat-checkbox-checked')
+    if value_exist:
+        web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
+    wait_on_element(7, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    if wait_on_element_disappear(120, '//h6[contains(.,"Please wait")]') is False:
+        web_driver.refresh()
+
+
+def disable_ldap():
+    wait_on_element(5, '//span[contains(.,"root")]')
+    element = web_driver.find_element_by_xpath('//span[contains(.,"root")]')
+    web_driver.execute_script("arguments[0].scrollIntoView();", element)
+    wait_on_element(7, '//mat-list-item[@ix-auto="option__Directory Services"]')
+    web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
+    wait_on_element(7, '//mat-list-item[@ix-auto="option__LDAP"]')
+    web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__LDAP"]').click()
+    wait_on_element(5, '//mat-checkbox[@ix-auto="checkbox__Enable"]')
+    value_exist = attribute_value_exist('//mat-checkbox[@ix-auto="checkbox__Enable"]', 'class', 'mat-checkbox-checked')
+    if value_exist:
+        web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable"]').click()
+    wait_on_element(5, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    if wait_on_element_disappear(60, '//h6[contains(.,"Please wait")]') is False:
+        web_driver.refresh()
