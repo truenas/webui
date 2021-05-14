@@ -19,6 +19,10 @@
   max-width: 100%;
 }
 
+.entity-form .form-line:last-child {
+  margin-right: 24px;
+}
+
 .form-inline {
 	flex: 1 1 33.33%;
     box-sizing: border-box;
