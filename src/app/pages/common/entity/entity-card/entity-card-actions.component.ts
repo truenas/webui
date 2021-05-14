@@ -22,14 +22,14 @@ export class EntityCardActionsComponent implements OnInit {
 
   constructor(public translate: TranslateService) {}
 
-  menuActionVisible(id: string) {
+  menuActionVisible(id: string): boolean {
     if (id == 'edit' || id == 'delete') {
-      false;
+      return false;
     }
     return true;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.actions = this.entity.getCardActions();
     for (let i = 0; i < this.actions.length; i++) {
       if (this.entity.conf.isActionVisible) {

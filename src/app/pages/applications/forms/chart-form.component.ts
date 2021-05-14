@@ -64,7 +64,7 @@ export class ChartFormComponent implements FormConfiguration {
     this.utils = new CommonUtils();
   }
 
-  setTitle(title: string) {
+  setTitle(title: string): void {
     this.title = title;
   }
 

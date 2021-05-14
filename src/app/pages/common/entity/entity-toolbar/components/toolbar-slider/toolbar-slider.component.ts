@@ -28,7 +28,7 @@ export class ToolbarSliderComponent extends iXAbstractObject {
     super();
   }
 
-  onChange(event: MatSliderChange) {
+  onChange(event: MatSliderChange): void {
     this.config.value = event.value;
     this.controller.next({ name: this.config.name, value: this.config.value });
   }

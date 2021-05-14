@@ -33,7 +33,7 @@ export class FormChipComponent implements Field, OnInit {
 
   constructor(public translate: TranslateService) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.chipLists = this.group.controls[this.config.name].value || [];
     this.group.controls[this.config.name].valueChanges.subscribe((res) => {
       if (this.chipLists !== this.group.controls[this.config.name].value && typeof this.group.controls[this.config.name].value === 'object') {
@@ -71,7 +71,7 @@ export class FormChipComponent implements Field, OnInit {
     this.chipCtrl.setValue(null);
   }
 
-  updateSearchOptions(value: any) {
+  updateSearchOptions(value: any): void {
     if (this.config.updater && this.config.parent) {
       if (this.config.updateLocal) {
         this.config.updater(value, this.config.parent, this.config);

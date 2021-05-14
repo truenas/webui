@@ -36,7 +36,7 @@ export class PasswordDialog {
     protected sysGeneralService: SystemGeneralService,
   ) {}
 
-  submit() {
+  submit(): void {
     this.sysGeneralService.checkRootPW(this.password).subscribe(
       (res) => {
         if (res) {
@@ -51,12 +51,12 @@ export class PasswordDialog {
     );
   }
 
-  togglePW() {
+  togglePW(): void {
     this.inputType = this.inputType === 'password' ? '' : 'password';
     this.showPassword = !this.showPassword;
   }
 
-  isDisabled() {
+  isDisabled(): boolean {
     return this.password === '';
   }
 }

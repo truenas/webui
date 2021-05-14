@@ -45,7 +45,7 @@ export class ISCSI implements OnInit {
   fcEnabled = false;
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected ws: WebSocketService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.ws.call('system.info').subscribe(
       (res) => {
         if (res.license && res.license.features.indexOf('FIBRECHANNEL') > -1) {
@@ -62,7 +62,7 @@ export class ISCSI implements OnInit {
     });
   }
 
-  gotoWizard() {
+  gotoWizard(): void {
     this.router.navigate(new Array('/').concat(this.route_wizard));
   }
 }

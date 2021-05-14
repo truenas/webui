@@ -29,7 +29,7 @@ export class ToolbarCheckboxComponent extends iXAbstractObject {
     super();
   }
 
-  onChange(event: MatCheckboxChange) {
+  onChange(event: MatCheckboxChange): void {
     this.controller.next({ name: this.config.name, value: event.checked });
   }
 }

@@ -82,7 +82,7 @@ export class DynamicFieldDirective implements Field, OnChanges, OnInit {
   constructor(private resolver: ComponentFactoryResolver,
     private container: ViewContainerRef) {}
 
-  ngOnChanges() {
+  ngOnChanges(): void {
     if (this.component) {
       this.component.instance.config = this.config;
       this.component.instance.group = this.group;
@@ -90,7 +90,7 @@ export class DynamicFieldDirective implements Field, OnChanges, OnInit {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (!components[this.config.type]) {
       const supportedTypes = Object.keys(components).join(', ');
       throw new Error(`Trying to use an unsupported type (${this.config.type}).

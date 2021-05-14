@@ -32,7 +32,7 @@ export class VMwareSnapshotListComponent {
 
   constructor(private _router: Router, _eRef: ElementRef) {}
 
-  isActionVisible(actionId: string, row: any) {
+  isActionVisible(actionId: string, row: any): boolean {
     if (actionId == 'edit' || actionId == 'add') {
       return false;
     }

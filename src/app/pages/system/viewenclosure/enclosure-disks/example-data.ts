@@ -38,7 +38,7 @@ interface Template {
 export class ExampleData {
   private templates: Template[] = [];
 
-  addEnclosure(slots: number) {
+  addEnclosure(slots: number): void {
     const template = {
       id: this.templates.length,
       slots,

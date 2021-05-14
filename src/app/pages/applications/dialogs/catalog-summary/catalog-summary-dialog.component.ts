@@ -31,11 +31,11 @@ export class CatalogSummaryDialog implements OnInit {
     this.catalogApp = data;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.filteredVersions = this.catalogApp.versions;
   }
 
-  onStatusOptionChanged() {
+  onStatusOptionChanged(): void {
     this.filteredVersions = {};
     Object.keys(this.catalogApp.versions).forEach((key) => {
       const version = this.catalogApp.versions[key];
@@ -45,11 +45,11 @@ export class CatalogSummaryDialog implements OnInit {
     });
   }
 
-  hasFilterResult() {
+  hasFilterResult(): boolean {
     return Object.keys(this.filteredVersions).length > 0;
   }
 
-  versionStatusLabel(version: any) {
+  versionStatusLabel(version: any): string {
     let label = '';
     if (this.selectedStatus == this.statusOptions[0]) {
       if (version.value.healthy) {

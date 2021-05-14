@@ -144,7 +144,7 @@ export class ServiceSSHComponent implements FormConfiguration, OnInit {
 
   protected ssh_bindiface: any;
 
-  isCustActionVisible(actionId: string) {
+  isCustActionVisible(actionId: string): boolean {
     if (actionId == 'advanced_mode' && this.isBasicMode == false) {
       return false;
     } if (actionId == 'basic_mode' && this.isBasicMode == true) {
@@ -163,11 +163,11 @@ export class ServiceSSHComponent implements FormConfiguration, OnInit {
     protected networkService: NetworkService,
   ) {}
 
-  afterInit(entityEdit: EntityFormComponent) {
+  afterInit(entityEdit: EntityFormComponent): void {
     entityEdit.submitFunction = (body) => this.ws.call('ssh.update', [body]);
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.ws.call('ssh.bindiface_choices').subscribe((res) => {
       this.ssh_bindiface = this.fieldSets
         .find((set) => set.name === globalHelptext.fieldset_other_options)
