@@ -13,7 +13,7 @@ export class EulaComponent implements OnInit {
 
   constructor(private ws: WebSocketService, private router: Router) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     const product_type = window.localStorage.getItem('product_type') as ProductType;
     if (product_type === ProductType.Core) {
       this.router.navigate(['']);
@@ -24,7 +24,7 @@ export class EulaComponent implements OnInit {
     }
   }
 
-  goToSupport() {
+  goToSupport(): void {
     this.router.navigate(['/system/support']);
   }
 }

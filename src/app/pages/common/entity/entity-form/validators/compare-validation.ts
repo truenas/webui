@@ -1,6 +1,6 @@
-import { FormControl } from '@angular/forms';
+import { FormControl, ValidatorFn } from '@angular/forms';
 
-export function greaterThan(otherControlName: string, fieldPlaceholers: [string]) {
+export function greaterThan(otherControlName: string, fieldPlaceholers: [string]): ValidatorFn {
   let thisControl: FormControl;
   let otherControl: FormControl;
 

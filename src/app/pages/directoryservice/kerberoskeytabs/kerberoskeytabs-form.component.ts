@@ -57,11 +57,11 @@ export class KerberosKeytabsFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.title = entityEdit.isNew ? helptext.title_add : helptext.title_edit;
   }
 
-  afterSubmit() {
+  afterSubmit(): void {
     this.modalService.refreshTable();
   }
 }

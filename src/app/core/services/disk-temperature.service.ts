@@ -37,7 +37,7 @@ export class DiskTemperatureService extends BaseService {
     });
   }
 
-  protected onAuthenticated(evt: CoreEvent) {
+  protected onAuthenticated(evt: CoreEvent): void {
     this.authenticated = true;
 
     const queryOptions: QueryOptions<Disk> = { select: ['name', 'type'] };
@@ -58,7 +58,7 @@ export class DiskTemperatureService extends BaseService {
     });
   }
 
-  start() {
+  start(): void {
     let tally = 0;
     this.broadcast = setInterval(() => {
       this.fetch(this.disks.map((v) => v.name));
@@ -66,12 +66,12 @@ export class DiskTemperatureService extends BaseService {
     }, 2000);
   }
 
-  stop() {
+  stop(): void {
     clearInterval(this.broadcast);
     delete this.broadcast;
   }
 
-  fetch(disks: string[]) {
+  fetch(disks: string[]): void {
     this.websocket.call('disk.temperatures', [disks]).subscribe((res) => {
       const data: Temperature = {
         keys: Object.keys(res),

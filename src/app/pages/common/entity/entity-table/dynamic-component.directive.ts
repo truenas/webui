@@ -16,7 +16,7 @@ export class DynamicComponentDirective implements OnInit {
   constructor(private resolver: ComponentFactoryResolver,
     private container: ViewContainerRef) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     const tempComponent = this.resolver.resolveComponentFactory(this.component);
     this.component = this.container.createComponent(tempComponent);
     this.component.instance.config = this.config;
