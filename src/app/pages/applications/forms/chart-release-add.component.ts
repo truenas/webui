@@ -361,7 +361,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
     });
   }
 
-  afterInit(entityWizard: EntityWizardComponent) {
+  afterInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
     this.summaryItems.forEach((item) => {
       this.makeSummary(item.step, item.fieldName, item.label);
@@ -386,7 +386,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
     }
   }
 
-  makeSummary(step: string | number, fieldName: string | number, label: string | number) {
+  makeSummary(step: string | number, fieldName: string | number, label: string | number): void {
     (< FormGroup > this.entityWizard.formArray.get([step]).get(fieldName)).valueChanges
       .pipe(
         takeUntil(this.destroy$),
@@ -396,7 +396,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
       });
   }
 
-  hideField(fieldName: any, show: boolean, entity: any) {
+  hideField(fieldName: any, show: boolean, entity: any): void {
     const target = _.find(this.fieldConfig, { name: fieldName });
     target['isHidden'] = show;
     entity.setDisabled(fieldName, show, show);
@@ -509,7 +509,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }

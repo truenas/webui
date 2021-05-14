@@ -74,7 +74,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
     });
   }
 
-  getCards() {
+  getCards(): void {
     this.cards = [
       {
         name: 'certificates',
@@ -216,7 +216,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
     return res;
   }
 
-  refreshForms() {
+  refreshForms(): void {
     this.certificateAddComponent = new CertificateAddComponent(
       this.ws, this.dialog, this.systemGeneralService, this.modalService, this.loader, this.dialogService,
     );
@@ -340,7 +340,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
     parent: this,
   };
 
-  doSignCSR(entityDialog: any) {
+  doSignCSR(entityDialog: any): void {
     const self = entityDialog.parent;
     const payload = {
       ca_id: self.caId,
@@ -358,7 +358,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.message.unsubscribe();
     this.refreshTable.unsubscribe();
     this.refreshForm.unsubscribe();

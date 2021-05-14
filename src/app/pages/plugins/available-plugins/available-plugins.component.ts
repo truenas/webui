@@ -56,7 +56,7 @@ export class AvailablePluginsComponent implements OnInit {
     );
   }
 
-  getInstances() {
+  getInstances(): void {
     this.ws.call('plugin.query').subscribe(
       (res) => {
         for (const item of res) {
@@ -69,12 +69,12 @@ export class AvailablePluginsComponent implements OnInit {
     );
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.getInstances();
     this.getPlugin();
   }
 
-  getPlugin(cache = true) {
+  getPlugin(cache = true): void {
     this.parent.cardHeaderReady = false;
     this.queryCallOption['plugin_repository'] = this.selectedRepo;
     this.queryCallOption['cache'] = cache;
@@ -112,14 +112,14 @@ export class AvailablePluginsComponent implements OnInit {
     );
   }
 
-  switchRepo() {
+  switchRepo(): void {
     this.parent.loader.open();
     this.parent.loaderOpen = true;
     this.queryCallOption['plugin_repository'] = this.selectedRepo;
     this.getPlugin();
   }
 
-  install(plugin: any) {
+  install(plugin: any): void {
     if (!plugin.official) {
       this.parent.dialogService.confirm(
         T('Warning'),
@@ -139,7 +139,7 @@ export class AvailablePluginsComponent implements OnInit {
     }
   }
 
-  updatePreference() {
+  updatePreference(): void {
     this.expand = !this.expand;
     this.prefService.preferences.expandAvailablePlugins = this.expand;
     this.prefService.savePreferences();

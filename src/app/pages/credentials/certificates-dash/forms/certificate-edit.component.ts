@@ -233,18 +233,18 @@ export class CertificateEditComponent implements FormConfiguration {
     },
   ];
 
-  isCustActionVisible(actionname: string) {
+  isCustActionVisible(actionname: string): boolean {
     if (actionname === 'create_ACME' && !this.isCSR) {
       return false;
     }
     return true;
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
   }
 
-  setForm() {
+  setForm(): void {
     const fields = ['country', 'state', 'city', 'organization', 'organizational_unit', 'email', 'common', 'DN', 'cert_type',
       'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'revoked', 'signed_by', 'lifetime'];
     fields.forEach((field) => {
@@ -262,7 +262,7 @@ export class CertificateEditComponent implements FormConfiguration {
     _.find(this.fieldConfig, { name: 'certificate_view' }).customEventActionLabel = this.viewButtonText;
   }
 
-  exportCertificate() {
+  exportCertificate(): void {
     const path = this.incomingData.CSR ? this.incomingData.csr_path : this.incomingData.certificate_path;
     const fileName = this.incomingData.name + '.crt'; // is this right for a csr?
     this.ws.call('core.download', ['filesystem.get', [path], fileName]).subscribe(
@@ -282,7 +282,7 @@ export class CertificateEditComponent implements FormConfiguration {
     );
   }
 
-  exportKey() {
+  exportKey(): void {
     const fileName = this.incomingData.name + '.key';
     this.ws.call('core.download', ['filesystem.get', [this.incomingData.privatekey_path], fileName]).subscribe(
       (res) => {
@@ -301,7 +301,7 @@ export class CertificateEditComponent implements FormConfiguration {
     );
   }
 
-  viewCertificate() {
+  viewCertificate(): void {
     if (this.incomingData.CSR) {
       this.dialog.confirm(this.incomingData.name, this.incomingData.CSR, true,
         helptext_system_certificates.viewDialog.download, false, '',
@@ -321,7 +321,7 @@ export class CertificateEditComponent implements FormConfiguration {
     }
   }
 
-  viewKey() {
+  viewKey(): void {
     this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true,
       helptext_system_certificates.viewDialog.download, false, '',
       '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.privatekey, true).subscribe((res: boolean) => {
@@ -331,7 +331,7 @@ export class CertificateEditComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: 'Updating Identifier' } });
     this.dialogRef.componentInstance.setCall(this.editCall, [this.rowNum, { name: value['name'] }]);
     this.dialogRef.componentInstance.submit();

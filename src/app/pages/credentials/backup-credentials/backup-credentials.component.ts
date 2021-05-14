@@ -160,7 +160,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     }];
   }
 
-  refreshForms() {
+  refreshForms(): void {
     this.sshConnections = new SshConnectionsFormComponent(this.aroute, this.keychainCredentialService,
       this.ws, this.loader, this.dialogService, this.replicationService, this.modalService);
     this.sshKeypairs = new SshKeypairsFormComponent(this.aroute, this.ws, this.loader,
@@ -169,7 +169,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
       this.cloudCredentialsService, this.dialogService, this.replicationService, this.modalService);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.refreshTable.unsubscribe();
     this.refreshForm.unsubscribe();
 

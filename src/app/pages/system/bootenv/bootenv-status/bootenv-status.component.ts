@@ -50,7 +50,7 @@ export class BootStatusListComponent implements OnInit {
 
   }
 
-  getData() {
+  getData(): void {
     this.ws.call('boot.get_state').subscribe(
       (res) => {
         if (res.groups.data[0].type === 'disk') {
@@ -67,14 +67,14 @@ export class BootStatusListComponent implements OnInit {
     );
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.aroute.params.subscribe((params) => {
       this.pk = parseInt(params['pk'], 10);
       this.getData();
     });
   }
 
-  detach(disk: any) {
+  detach(disk: any): void {
     disk = disk.substring(5, disk.length);
     this.loader.open();
     this.busy = this.ws.call('boot.detach', [disk]).subscribe(
@@ -183,7 +183,7 @@ export class BootStatusListComponent implements OnInit {
     return node;
   }
 
-  dataHandler(pool: any) {
+  dataHandler(pool: any): void {
     this.treeTableConfig.tableData = [];
     const node: TreeNode = {};
     node.data = this.parseData(pool);
@@ -200,7 +200,7 @@ export class BootStatusListComponent implements OnInit {
     this.treeTableConfig = config;
   }
 
-  getReadableDate(data: any) {
+  getReadableDate(data: any): Date {
     if (data != null) {
       return new Date(data.$date);
     }

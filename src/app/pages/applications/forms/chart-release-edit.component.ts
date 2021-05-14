@@ -457,7 +457,7 @@ export class ChartReleaseEditComponent implements FormConfiguration {
     return data.config;
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     let envVars = [];
     if (data.containerEnvironmentVariables && data.containerEnvironmentVariables.length > 0 && data.containerEnvironmentVariables[0].name) {
       envVars = data.containerEnvironmentVariables;
