@@ -113,9 +113,7 @@ export class ConsoleFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  preInit() {}
-
-  reconnect(href: string) {
+  reconnect(href: string): void {
     if (this.entityForm.ws.connected) {
       this.loader.close();
       // ws is connected
@@ -127,7 +125,7 @@ export class ConsoleFormComponent implements FormConfiguration, OnDestroy {
     }
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
 
     this.serialPortChoicesSubscription = this.ws.call('system.advanced.serial_port_choices').subscribe((serial_port_choices) => {
@@ -160,7 +158,7 @@ export class ConsoleFormComponent implements FormConfiguration, OnDestroy {
     return Object.keys(object).find((key) => object[key] === value);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.getDataFromDash.unsubscribe();
     this.serialPortChoicesSubscription.unsubscribe();
   }

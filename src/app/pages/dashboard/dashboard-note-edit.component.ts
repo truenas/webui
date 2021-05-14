@@ -60,7 +60,7 @@ export class DashboardNoteEditComponent implements OnInit {
     protected loader: AppLoaderService,
     protected entityFormService: EntityFormService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.generateFieldConfig();
     if (!this.isNew) {
       _.find(this.fieldConfig, { name: 'title' }).readonly = true;
@@ -78,7 +78,7 @@ export class DashboardNoteEditComponent implements OnInit {
     }
   }
 
-  generateFieldConfig() {
+  generateFieldConfig(): void {
     for (const i in this.fieldSets) {
       for (const ii in this.fieldSets[i].config) {
         this.fieldConfig.push(this.fieldSets[i].config[ii]);
@@ -86,12 +86,12 @@ export class DashboardNoteEditComponent implements OnInit {
     }
   }
 
-  goBack() {
+  goBack(): void {
     const result: { flipState: boolean } = { flipState: false };
     this.cancel.emit(result); // <-- bool = isFlipped State
   }
 
-  onSuccess(message?: any) {
+  onSuccess(message?: any): void {
     const result: { flipState: boolean;id?: any } = { flipState: false, id: message };
     if (message.data) {
       result.id = message.data.id;
@@ -103,14 +103,14 @@ export class DashboardNoteEditComponent implements OnInit {
     }
   }
 
-  clearErrors() {
+  clearErrors(): void {
     for (let f = 0; f < this.fieldConfig.length; f++) {
       this.fieldConfig[f]['errors'] = '';
       this.fieldConfig[f]['hasErrors'] = false;
     }
   }
 
-  onSubmit(event: Event) {
+  onSubmit(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
     this.error = null;
