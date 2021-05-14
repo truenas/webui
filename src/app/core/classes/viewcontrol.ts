@@ -11,7 +11,7 @@ export abstract class ViewControl {
   isEnabled = true;
   layout: any;
 
-  sendAction() {
+  sendAction(): void {
     this.target.next(this.action);
   }
 }

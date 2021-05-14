@@ -139,7 +139,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
     protected userService: UserService, protected route: ActivatedRoute) {
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.entityForm = entityForm;
     this.isNew = entityForm.isNew;
 
@@ -185,7 +185,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
     }
   }
 
-  updateGroupSearchOptions(value = '', parent: any) {
+  updateGroupSearchOptions(value = '', parent: any): void {
     parent.userService.groupQueryDSCache(value).subscribe((items: any[]) => {
       const groups: Option[] = [];
       for (let i = 0; i < items.length; i++) {
@@ -195,7 +195,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
     });
   }
 
-  updateUserSearchOptions(value = '', parent: any) {
+  updateUserSearchOptions(value = '', parent: any): void {
     (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {

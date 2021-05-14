@@ -56,18 +56,18 @@ export class SnapshotCloneComponent implements FormConfiguration {
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
-  preInit(entityForm: any) {
+  preInit(entityForm: any): void {
     this.route.params.subscribe((params) => {
       this.pk = params['pk'];
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     entityForm.formGroup.controls['dataset_dst'].setValue(this.setName(this.pk));
     entityForm.formGroup.controls['snapshot'].setValue(this.pk);
   }
 
-  setName(name: string) {
+  setName(name: string): string {
     let value;
     if (name.indexOf('/') !== -1) {
       value = name.replace('@', '-') + '-clone';

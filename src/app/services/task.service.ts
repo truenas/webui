@@ -112,7 +112,7 @@ export class TaskService {
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {}
 
-  getTimeOptions() {
+  getTimeOptions(): Option[] {
     return this.time_options;
   }
 

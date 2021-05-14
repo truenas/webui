@@ -37,7 +37,7 @@ export class InitshutdownListComponent {
 
   constructor(public modalService: ModalService) {}
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
 
     this.modalService.onClose$.subscribe(() => {
@@ -47,11 +47,11 @@ export class InitshutdownListComponent {
     });
   }
 
-  doAdd(id?: number) {
+  doAdd(id?: number): void {
     this.modalService.open('slide-in-form', new InitshutdownFormComponent(this.modalService), id);
   }
 
-  doEdit(id: number) {
+  doEdit(id: number): void {
     this.doAdd(id);
   }
 }

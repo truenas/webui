@@ -23,7 +23,7 @@ export class FormTextareaButtonComponent implements Field {
 
   constructor(public translate: TranslateService) {}
 
-  customEventMethod($event: MouseEvent) {
+  customEventMethod($event: MouseEvent): void {
     if (this.config.customEventMethod !== undefined && this.config.customEventMethod != null) {
       this.config.customEventMethod({ event: $event, textAreaSSH: this.textAreaSSH });
     }

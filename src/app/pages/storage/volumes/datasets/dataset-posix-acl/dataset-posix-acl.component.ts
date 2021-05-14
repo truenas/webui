@@ -253,14 +253,14 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
     protected storageService: StorageService, protected dialogService: DialogService,
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
-  isCustActionVisible(actionId: string) {
+  isCustActionVisible(actionId: string): boolean {
     if (this.aclIsTrivial) {
       return actionId === 'use_perm_editor';
     }
     return actionId === 'strip_acl';
   }
 
-  preInit(entityEdit: any) {
+  preInit(entityEdit: any): void {
     this.sub = this.aroute.params.subscribe((params) => {
       this.datasetId = params['path'];
       this.path = '/mnt/' + params['path'];
@@ -296,7 +296,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value: any) => {
@@ -359,7 +359,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  setDisabled(fieldConfig: FieldConfig, formControl: FormControl, disable: boolean, hide: boolean) {
+  setDisabled(fieldConfig: FieldConfig, formControl: FormControl, disable: boolean, hide: boolean): void {
     fieldConfig.disabled = disable;
     fieldConfig['isHidden'] = hide;
     if (formControl && formControl.disabled !== disable) {
@@ -377,7 +377,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
     return { aces: [] as any };
   }
 
-  handleEmptyACL() {
+  handleEmptyACL(): void {
     this.loader.close();
     this.dialogService.errorReport(helptext.empty_acl_dialog.title, helptext.empty_acl_dialog.message)
       .subscribe(() => {
@@ -470,12 +470,12 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
     this.loader.close();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.recursive_subscription.unsubscribe();
     this.aces_subscription.unsubscribe();
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     const dacl = [];
     for (let i = 0; i < data.aces.length; i++) {
       const d: any = {};
@@ -580,7 +580,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  updateGroupSearchOptions(value = '', parent: any, config: FieldConfig) {
+  updateGroupSearchOptions(value = '', parent: any, config: FieldConfig): void {
     parent.userService.groupQueryDSCache(value).subscribe((items: any[]) => {
       const groups: Option[] = [];
       for (let i = 0; i < items.length; i++) {
@@ -590,7 +590,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  updateUserSearchOptions(value = '', parent: any, config: FieldConfig) {
+  updateUserSearchOptions(value = '', parent: any, config: FieldConfig): void {
     (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
@@ -600,7 +600,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  doStripACL() {
+  doStripACL(): void {
     const conf: DialogFormConfiguration = {
       title: helptext.stripACL_dialog.title,
       message: helptext.stripACL_dialog.message,
@@ -660,7 +660,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  loadMoreGroupOptions(length: number, parent: any, searchText: string, config: FieldConfig) {
+  loadMoreGroupOptions(length: number, parent: any, searchText: string, config: FieldConfig): void {
     parent.userService.groupQueryDSCache(searchText, false, length).subscribe((items: any[]) => {
       const groups: Option[] = [];
       for (let i = 0; i < items.length; i++) {

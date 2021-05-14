@@ -36,7 +36,7 @@ export class RSYNCconfigurationListComponent {
     sorting: { columns: this.columns },
   };
 
-  dataHandler(res: any) {
+  dataHandler(res: any): void {
     const rows = res.rows;
     for (let i = 0; i < rows.length; i++) {
       rows[i].details = [];

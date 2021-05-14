@@ -122,7 +122,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected loader: AppLoaderService,
     protected ws: WebSocketService) {}
 
-  preInit() {
+  preInit(): void {
     this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
@@ -131,7 +131,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     const secretControl = entityForm.formGroup.controls['secret'] as FormControl;
     const peersecretControl = entityForm.formGroup.controls['peersecret'] as FormControl;
     const peeruserFieldset = _.find(this.fieldSets, { class: 'peeruser' });
@@ -186,12 +186,12 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     delete value['secret_confirm'];
     delete value['peersecret_confirm'];
   }
 
-  customEditCall(value: any) {
+  customEditCall(value: any): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
       (res) => {

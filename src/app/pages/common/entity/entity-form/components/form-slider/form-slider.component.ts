@@ -20,14 +20,14 @@ export class FormSliderComponent implements Field, OnInit {
 
   constructor(public translate: TranslateService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.value = this.config.min;
     this.group.controls[this.config.name].valueChanges.subscribe((res) => {
       this.value = res;
     });
   }
 
-  updateValue($event: MatSliderChange) {
+  updateValue($event: MatSliderChange): void {
     this.value = $event.value;
   }
 }

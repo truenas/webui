@@ -109,7 +109,7 @@ export class CronFormComponent {
 
   constructor(protected userService: UserService, protected modalService: ModalService) {}
 
-  updateUserSearchOptions(value = '', parent: any) {
+  updateUserSearchOptions(value = '', parent: any): void {
     (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
@@ -119,7 +119,7 @@ export class CronFormComponent {
     });
   }
 
-  async afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.pk = entityForm.pk;
     this.isNew = entityForm.isNew;
@@ -143,7 +143,7 @@ export class CronFormComponent {
     return data;
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     const spl = value.cron_picker.split(' ');
     delete value.cron_picker;
     const schedule: any = {};

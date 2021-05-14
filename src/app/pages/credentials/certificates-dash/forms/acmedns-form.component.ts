@@ -90,19 +90,19 @@ export class AcmednsFormComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     for (const item in data.attributes) {
       data[item] = data.attributes[item];
     }
     return data;
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
     this.title = this.rowNum ? helptext_system_acme.edit_title : helptext_system_acme.add_title;
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     const attributes: any = {};
     for (const item in value) {
       if (item != 'name' && item != 'authenticator') {
@@ -117,7 +117,7 @@ export class AcmednsFormComponent implements FormConfiguration {
     }
   }
 
-  afterSubmit() {
+  afterSubmit(): void {
     this.modalService.refreshTable();
   }
 }

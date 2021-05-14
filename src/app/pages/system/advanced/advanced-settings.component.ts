@@ -220,7 +220,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
     console.log('afterInit::entityEdit', entityEdit);
 
@@ -233,7 +233,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     return helptext_system_advanced.sysloglevel.options.find((option) => option.value === level).label;
   }
 
-  getDatasetData() {
+  getDatasetData(): void {
     this.getDatasetConfig = this.ws.call('systemdataset.config').subscribe((res) => {
       if (res) {
         this.syslog = res.syslog;
@@ -243,7 +243,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateSyslogOnTable() {
+  updateSyslogOnTable(): void {
     this.dataCards.forEach((card) => {
       if (card.id === 'syslog') {
         card.items.forEach((item: any) => {
@@ -255,7 +255,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getDataCardData() {
+  getDataCardData(): void {
     this.getAdvancedConfig = this.ws.call('system.advanced.config').subscribe((res) => {
       this.configData = res;
       this.dataCards = [
@@ -344,7 +344,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  doAdd(name: string, id?: number) {
+  doAdd(name: string, id?: number): void {
     let addComponent: TunableFormComponent
     | ConsoleFormComponent
     | SyslogFormComponent
@@ -393,7 +393,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     }
   }
 
-  saveDebug() {
+  saveDebug(): void {
     this.ws.call('system.info', []).subscribe((res) => {
       let fileName = '';
       let mimetype = 'application/gzip';
@@ -473,7 +473,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  refreshTables() {
+  refreshTables(): void {
     this.dataCards.forEach((card) => {
       if (card.tableConf?.tableComponent) {
         card.tableConf.tableComponent.getData();
@@ -481,7 +481,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  refreshForms() {
+  refreshForms(): void {
     this.tunableFormComponent = new TunableFormComponent(this.ws, this.sysGeneralService);
     this.consoleFormComponent = new ConsoleFormComponent(
       this.router,
@@ -520,7 +520,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     this.initShutdownFormComponent = new InitshutdownFormComponent(this.modalService);
   }
 
-  cronDataSourceHelper(data: any[]) {
+  cronDataSourceHelper(data: any[]): any[] {
     return data.map((job) => {
       job.cron_schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
 
@@ -533,7 +533,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.refreshCardData.unsubscribe();
     this.refreshTable.unsubscribe();
     this.refreshForm.unsubscribe();

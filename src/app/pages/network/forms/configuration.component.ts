@@ -221,7 +221,7 @@ export class ConfigurationComponent implements FormConfiguration {
   constructor(protected router: Router,
     protected ws: WebSocketService) { }
 
-  preInit() {
+  preInit(): void {
     const outbound_network_value_field = this.fieldSets.config('outbound_network_value');
     this.ws.call('network.configuration.activity_choices').subscribe(
       (res) => {
@@ -231,7 +231,8 @@ export class ConfigurationComponent implements FormConfiguration {
       },
     );
   }
-  afterInit(entityEdit: any) {
+
+  afterInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
     if ([ProductType.Enterprise, ProductType.ScaleEnterprise].includes(window.localStorage.getItem('product_type') as ProductType)) {
       this.ws.call('failover.licensed').subscribe((is_ha) => { // fixme, stupid race condition makes me need to call this again
@@ -281,7 +282,7 @@ export class ConfigurationComponent implements FormConfiguration {
     return this.ws.call('network.configuration.update', [body]);
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     if (data['outbound_network_activity'] === 'ALLOW' || data['outbound_network_activity'] === 'DENY') {
       data['activity'] = { type: data['outbound_network_activity'], activities: [] };
     } else {

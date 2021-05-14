@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, AfterViewChecked, ElementRef, ViewChild,
+  Component, OnInit, ElementRef, ViewChild,
 } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
@@ -16,7 +16,7 @@ import { Field } from '../../models/field.interface';
   templateUrl: './form-chip.component.html',
   styleUrls: ['../dynamic-field/dynamic-field.css', './form-chip.component.css'],
 })
-export class FormChipComponent implements Field, OnInit, AfterViewChecked {
+export class FormChipComponent implements Field, OnInit {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
@@ -33,19 +33,13 @@ export class FormChipComponent implements Field, OnInit, AfterViewChecked {
 
   constructor(public translate: TranslateService) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.chipLists = this.group.controls[this.config.name].value || [];
     this.group.controls[this.config.name].valueChanges.subscribe((res) => {
       if (this.chipLists !== this.group.controls[this.config.name].value && typeof this.group.controls[this.config.name].value === 'object') {
         this.chipLists = this.group.controls[this.config.name].value;
       }
     });
-  }
-
-  ngAfterViewChecked() {
-    setTimeout(() => {
-      this.chipLists = this.group.controls[this.config.name].value || [];
-    }, 0);
   }
 
   add(event: MatChipInputEvent): void {
@@ -77,7 +71,7 @@ export class FormChipComponent implements Field, OnInit, AfterViewChecked {
     this.chipCtrl.setValue(null);
   }
 
-  updateSearchOptions(value: any) {
+  updateSearchOptions(value: any): void {
     if (this.config.updater && this.config.parent) {
       if (this.config.updateLocal) {
         this.config.updater(value, this.config.parent, this.config);

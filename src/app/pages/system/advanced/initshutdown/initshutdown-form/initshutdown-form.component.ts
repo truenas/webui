@@ -126,7 +126,7 @@ export class InitshutdownFormComponent implements FormConfiguration {
     });
   }
 
-  async afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.entityForm = entityForm;
     this.pk = entityForm.pk;
     this.title = entityForm.isNew ? helptext.ini_add : helptext.ini_edit;
@@ -138,7 +138,7 @@ export class InitshutdownFormComponent implements FormConfiguration {
     this.type_control.setValue('COMMAND');
   }
 
-  formUpdate(type: any) {
+  formUpdate(type: any): void {
     const isCommand = type == 'COMMAND';
 
     this.entityForm.setDisabled('script', isCommand, isCommand);

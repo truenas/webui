@@ -130,7 +130,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  getActions(parentrow: any) {
+  getActions(parentrow: any): any[] {
     return [
       {
         actionName: parentrow.description,
@@ -321,7 +321,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
     ];
   }
 
-  isActionVisible(actionId: string, row: any) {
+  isActionVisible(actionId: string, row: any): boolean {
     if (actionId === 'run_now' && row.job && row.job.state === EntityJobState.Running) {
       return false;
     } if (actionId === 'stop' && (row.job ? row.job && row.job.state !== EntityJobState.Running : true)) {
@@ -330,11 +330,11 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
     return true;
   }
 
-  onButtonClick(row: any) {
+  onButtonClick(row: any): void {
     this.stateButton(row);
   }
 
-  stateButton(row: any) {
+  stateButton(row: any): void {
     if (row.job) {
       if (row.state.state === EntityJobState.Running) {
         this.entityList.runningStateButton(row.job.id);
@@ -346,7 +346,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
     }
   }
 
-  doAdd(id?: number) {
+  doAdd(id?: number): void {
     this.modalService.open(
       'slide-in-form',
       new CloudsyncFormComponent(
@@ -364,7 +364,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
     );
   }
 
-  doEdit(id: number) {
+  doEdit(id: number): void {
     this.doAdd(id);
   }
 

@@ -41,7 +41,7 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
 
   constructor(public translate: TranslateService) {}
 
-  toggleOwnerRead() {
+  toggleOwnerRead(): void {
     if (this.ownerRead) {
       this.ownerRead = false;
       this.owner -= 4;
@@ -52,7 +52,7 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
     this.refreshPermissions();
   }
 
-  toggleOwnerWrite() {
+  toggleOwnerWrite(): void {
     if (this.ownerWrite) {
       this.ownerWrite = false;
       this.owner -= 2;
@@ -63,7 +63,7 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
     this.refreshPermissions();
   }
 
-  toggleOwnerExec() {
+  toggleOwnerExec(): void {
     if (this.ownerExec) {
       this.ownerExec = false;
       this.owner -= 1;
@@ -74,7 +74,7 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
     this.refreshPermissions();
   }
 
-  toggleGroupRead() {
+  toggleGroupRead(): void {
     if (this.groupRead) {
       this.groupRead = false;
       this.grp -= 4;
@@ -85,7 +85,7 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
     this.refreshPermissions();
   }
 
-  toggleGroupWrite() {
+  toggleGroupWrite(): void {
     if (this.groupWrite) {
       this.groupWrite = false;
       this.grp -= 2;
@@ -96,7 +96,7 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
     this.refreshPermissions();
   }
 
-  toggleGroupExec() {
+  toggleGroupExec(): void {
     if (this.groupExec) {
       this.groupExec = false;
       this.grp -= 1;
@@ -107,7 +107,7 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
     this.refreshPermissions();
   }
 
-  toggleOtherRead() {
+  toggleOtherRead(): void {
     if (this.otherRead) {
       this.otherRead = false;
       this.other -= 4;
@@ -118,7 +118,7 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
     this.refreshPermissions();
   }
 
-  toggleOtherWrite() {
+  toggleOtherWrite(): void {
     if (this.otherWrite) {
       this.otherWrite = false;
       this.other -= 2;
@@ -129,7 +129,7 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
     this.refreshPermissions();
   }
 
-  toggleOtherExec() {
+  toggleOtherExec(): void {
     if (this.otherExec) {
       this.otherExec = false;
       this.other -= 1;
@@ -140,13 +140,12 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
     this.refreshPermissions();
   }
 
-  refreshPermissions() {
-    this.value = this.owner.toString()
-        + this.grp.toString() + this.other.toString();
+  refreshPermissions(): void {
+    this.value = this.owner.toString() + this.grp.toString() + this.other.toString();
     this.group.controls[this.config.name].setValue(this.value);
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.control = this.group.controls[this.config.name];
     this.control.valueChanges.subscribe((data: any) => {
       if (this.value != data) {
@@ -162,12 +161,12 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
     this.refreshPermissions();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
 
-  setValue(value = '000') {
+  setValue(value = '000'): void {
     if (this.config.value && this.formatRe.test(this.config.value)) {
       this.value = this.config.value;
     } else if (value && this.formatRe.test(value)) {

@@ -10,7 +10,7 @@ import { EntitySnackbarComponent } from 'app/pages/common/entity/entity-snackbar
 export class SnackbarService {
   constructor(private snackbar: MatSnackBar) { }
 
-  open(message: string, action?: string, config?: MatSnackBarConfig) {
+  open(message: string, action?: string, config?: MatSnackBarConfig): void {
     EntitySnackbarComponent.message = message;
     EntitySnackbarComponent.action = action;
 

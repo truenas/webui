@@ -93,7 +93,7 @@ export class ScrubFormComponent implements FormConfiguration {
 
   constructor(protected taskService: TaskService, protected modalService: ModalService) {}
 
-  async afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.pk = entityForm.pk;
     this.isNew = entityForm.isNew;
@@ -120,7 +120,7 @@ export class ScrubFormComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     const spl = value.scrub_picker.split(' ');
     value.schedule = {};
     value.schedule['minute'] = spl[0];

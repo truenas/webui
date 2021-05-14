@@ -35,7 +35,7 @@ export class GeneralDialogComponent {
     protected translate: TranslateService,
   ) { }
 
-  isDisabled() {
+  isDisabled(): boolean {
     return this.conf.confirmCheckbox ? !this.confirmed : false;
   }
 }

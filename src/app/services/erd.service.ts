@@ -14,7 +14,7 @@ export class ErdService {
    *
    * @param elementId - Name of element on view to attach to.
    */
-  attachResizeEventToElement(elementId: string) {
+  attachResizeEventToElement(elementId: string): void {
     setTimeout(() => {
       let erd: any = null;
 

@@ -138,7 +138,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     });
   }
 
-  preInit(entityForm: EntityFormComponent) {
+  preInit(entityForm: EntityFormComponent): void {
     this.ws.call('acme.dns.authenticator.query').subscribe((authenticators: any[]) => {
       this.dns_map = _.find(this.fieldSets[2].config[0].templateListField, { name: 'authenticators' });
       authenticators.forEach((item) => {
@@ -155,7 +155,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
     this.fieldConfig = entityEdit.fieldConfig;
 
@@ -190,7 +190,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     const dns_mapping: any = { };
     value.domains.forEach((domain: any) => {
       dns_mapping[domain.name_text] = domain.authenticators;

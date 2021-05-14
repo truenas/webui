@@ -36,7 +36,7 @@ export class DataService implements OnDestroy {
     });
   }
 
-  fetch(job: MultiCall) {
+  fetch(job: MultiCall): void {
     const results: any[] = [];
     let tally = 0;
     job.queue.forEach((call: ApiCall, index) => {
@@ -50,7 +50,7 @@ export class DataService implements OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 }
