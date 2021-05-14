@@ -84,7 +84,7 @@ export class DualListboxComponent implements OnInit {
   }
 }
 
-const transfer = (from: ListSelection, to: ListSelection) => ({
+const transfer = (from: ListSelection, to: ListSelection): { from: ListSelection; to: ListSelection } => ({
   from: new ListSelectionImpl(
     from.totalItems.filter((x) => !from.isSelected(x)),
   ),

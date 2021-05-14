@@ -487,7 +487,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     }
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): void {
     if (data.acl.length === 0) {
       setTimeout(() => {
         this.handleEmptyACL();
@@ -510,7 +510,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
       });
   }
 
-  async dataHandler(entityForm: any, defaults?: any) {
+  async dataHandler(entityForm: any, defaults?: any): Promise<void> {
     entityForm.formGroup.controls['aces'].reset();
     entityForm.formGroup.controls['aces'].controls = [];
     this.aces_fc.listFields = [];
@@ -736,7 +736,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     data['dacl'] = dacl;
   }
 
-  async customSubmit(body: any) {
+  async customSubmit(body: any): Promise<void> {
     body.uid = body.apply_user ? body.uid : null;
     body.gid = body.apply_group ? body.gid : null;
     const doesNotWantToEditDataset = this.storageService.isDatasetTopLevel(body.path.replace('mnt/', ''))
@@ -810,7 +810,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  updateGroupSearchOptions(value = '', parent: any, config: any) {
+  updateGroupSearchOptions(value = '', parent: any, config: any): void {
     parent.userService.groupQueryDSCache(value).subscribe((items: any[]) => {
       const groups = [];
       for (let i = 0; i < items.length; i++) {
@@ -820,7 +820,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  updateUserSearchOptions(value = '', parent: any, config: any) {
+  updateUserSearchOptions(value = '', parent: any, config: any): void {
     (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {

@@ -288,7 +288,7 @@ export class IdmapFormComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     for (const item in data.options) {
       data[item] = data.options[item];
     }

@@ -410,7 +410,7 @@ export class DeviceEditComponent implements OnInit {
     }
   }
 
-  async ngOnInit() {
+  async ngOnInit(): Promise<void> {
     this.preInit();
     this.aroute.params.subscribe((params) => {
       this.deviceid = parseInt(params['pk'], 10);

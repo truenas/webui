@@ -206,7 +206,7 @@ export class EmailComponent implements FormConfiguration, OnDestroy {
               + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
             window.addEventListener('message', doAuth, false);
 
-            function doAuth(message: any) {
+            function doAuth(message: any): void {
               if (message.data.oauth_portal) {
                 if (message.data.error) {
                   dialogService.errorReport(T('Error'), message.data.error);

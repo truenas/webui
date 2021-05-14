@@ -172,7 +172,7 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     this.refreshForms();
   }
 
-  getDataCardData() {
+  getDataCardData(): void {
     const activeDirectoryPromise = this.ws.call('activedirectory.config').toPromise();
     const ldapPromise = this.ws.call('ldap.config').toPromise();
     const kerberosSettingsPromise = this.ws.call('kerberos.config').toPromise();

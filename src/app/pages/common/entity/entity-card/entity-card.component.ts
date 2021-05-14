@@ -146,7 +146,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
     return classes.join(' ');
   }
 
-  getCardActions() {
+  getCardActions(): void {
     if (this.conf.cardActions) {
       this.actions = true;
       return this.conf.cardActions;

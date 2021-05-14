@@ -385,7 +385,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
       });
   }
 
-  async dataHandler(entityForm: any, defaults?: any) {
+  async dataHandler(entityForm: any, defaults?: any): Promise<void> {
     entityForm.formGroup.controls['aces'].reset();
     entityForm.formGroup.controls['aces'].controls = [];
     this.aces_fc.listFields = [];
@@ -503,7 +503,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
     data['dacl'] = dacl;
   }
 
-  async customSubmit(body: any) {
+  async customSubmit(body: any): Promise<void> {
     body.uid = body.apply_user ? body.uid : null;
     body.gid = body.apply_group ? body.gid : null;
 
@@ -646,7 +646,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
     this.dialogService.dialogFormWide(conf);
   }
 
-  loadMoreOptions(length: number, parent: any, searchText: string, config: FieldConfig) {
+  loadMoreOptions(length: number, parent: any, searchText: string, config: FieldConfig): void {
     (parent.userService as UserService).userQueryDSCache(searchText, length).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
