@@ -356,16 +356,18 @@ export class UserFormComponent implements FormConfiguration {
       });
 
       this.ws.call('sharing.smb.query', [[['enabled', '=', true], ['home', '=', true]]])
-      // On a new form, if there is a home SMB share, populate the 'home' form explorer with it...
-        .subscribe((res) => {
-          if (res.length > 0) {
-            this.homeSharePath = res[0].path;
-            this.entityForm.formGroup.controls['home'].setValue(this.homeSharePath);
-            // ...then add on /<username>
-            this.entityForm.formGroup.controls['username'].valueChanges.subscribe((value: string) => {
-              this.entityForm.formGroup.controls['home'].setValue(`${this.homeSharePath}/${value}`);
-            });
+        .subscribe((shares) => {
+          // On a new form, if there is a home SMB share, populate the 'home' form explorer with it...
+          if (!shares.length) {
+            return;
           }
+
+          this.homeSharePath = shares[0].path;
+          this.entityForm.formGroup.controls['home'].setValue(this.homeSharePath);
+          // ...then add on /<username>
+          this.entityForm.formGroup.controls['username'].valueChanges.subscribe((value: string) => {
+            this.entityForm.formGroup.controls['home'].setValue(`${this.homeSharePath}/${value}`);
+          });
         });
       // If there is no home share, the 'home' path is populated from helptext
     }

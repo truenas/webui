@@ -3,7 +3,9 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
 import vol_helptext from 'app/helptext/storage/volumes/volume-list';
+import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { T } from 'app/translate-marker';
 import { ProductType } from '../../../../enums/product-type.enum';
@@ -12,17 +14,17 @@ import { ProductType } from '../../../../enums/product-type.enum';
   selector: 'app-smb-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class SMBListComponent {
+export class SMBListComponent implements InputTableConf {
   title = 'Samba';
-  protected queryCall = 'sharing.smb.query';
-  protected wsDelete = 'sharing.smb.delete';
-  protected route_add: string[] = ['sharing', 'smb', 'add'];
+  queryCall: 'sharing.smb.query' = 'sharing.smb.query';
+  wsDelete: 'sharing.smb.delete' = 'sharing.smb.delete';
+  route_add: string[] = ['sharing', 'smb', 'add'];
   protected route_add_tooltip = 'Add Windows (SMB) Share';
-  protected route_edit: string[] = ['sharing', 'smb', 'edit'];
+  route_edit: string[] = ['sharing', 'smb', 'edit'];
   protected route_delete: string[] = ['sharing', 'smb', 'delete'];
   private entityList: EntityTableComponent;
   productType = window.localStorage.getItem('product_type') as ProductType;
-  protected emptyTableConfigMessages = {
+  emptyTableConfigMessages = {
     first_use: {
       title: T('No SMB Shares'),
       message: T('It seems you haven\'t setup any SMB Shares yet. Please click the button below to add an SMB Share.'),
@@ -54,17 +56,21 @@ export class SMBListComponent {
     message: shared.delete_share_message,
     isMessageComplete: true,
     button: T('Unshare'),
-    buildTitle: (share: any) => `${T('Unshare')} ${share.name}`,
+    buildTitle: (share: SmbShare) => `${T('Unshare')} ${share.name}`,
   };
 
-  constructor(private ws: WebSocketService, private router: Router,
-    private dialogService: DialogService, private translate: TranslateService) {}
+  constructor(
+    private ws: WebSocketService,
+    private router: Router,
+    private dialogService: DialogService,
+    private translate: TranslateService,
+  ) {}
 
   afterInit(entityList: any): void {
     this.entityList = entityList;
   }
 
-  getActions(row: any): any[] {
+  getActions(row: SmbShare): any[] {
     const rowName = row.path.replace('/mnt/', '');
     const poolName = rowName.split('/')[0];
     let optionDisabled;

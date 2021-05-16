@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 
 import { helptext_sharing_nfs, shared } from 'app/helptext/sharing';
@@ -157,19 +158,19 @@ export class NFSFormComponent implements FormConfiguration {
           options: [
             {
               label: 'SYS',
-              value: 'SYS',
+              value: NfsSecurityProvider.Sys,
             },
             {
               label: 'KRB5',
-              value: 'KRB5',
+              value: NfsSecurityProvider.Krb5,
             },
             {
               label: 'KRB5I',
-              value: 'KRB5I',
+              value: NfsSecurityProvider.Krb5i,
             },
             {
               label: 'KRB5P',
-              value: 'KRB5P',
+              value: NfsSecurityProvider.Krb5p,
             },
           ],
           isHidden: false,
@@ -306,18 +307,18 @@ export class NFSFormComponent implements FormConfiguration {
       this.maproot_user.options = users;
     });
 
-    this.userService.groupQueryDSCache().subscribe((items) => {
-      const groups = [{
+    this.userService.groupQueryDSCache().subscribe((groups) => {
+      const groupOptions: Option[] = [{
         label: '---------',
         value: '',
       }];
-      for (let i = 0; i < items.length; i++) {
-        groups.push({ label: items[i].group, value: items[i].group });
+      for (let i = 0; i < groups.length; i++) {
+        groupOptions.push({ label: groups[i].group, value: groups[i].group });
       }
       this.mapall_group = this.fieldSets.config('mapall_group');
-      this.mapall_group.options = groups;
+      this.mapall_group.options = groupOptions;
       this.maproot_group = this.fieldSets.config('maproot_group');
-      this.maproot_group.options = groups;
+      this.maproot_group.options = groupOptions;
     });
 
     if (this.productType.includes(ProductType.Scale)) {
@@ -434,12 +435,12 @@ export class NFSFormComponent implements FormConfiguration {
   }
 
   updateGroupSearchOptions(value = '', parent: any, field: any) {
-    parent.userService.groupQueryDSCache(value).subscribe((items: any[]) => {
-      const groups: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        groups.push({ label: items[i].group, value: items[i].group });
+    (parent.userService as UserService).groupQueryDSCache(value).subscribe((groups) => {
+      const groupOptions: Option[] = [];
+      for (let i = 0; i < groups.length; i++) {
+        groupOptions.push({ label: groups[i].group, value: groups[i].group });
       }
-      parent[field].searchOptions = groups;
+      parent[field].searchOptions = groupOptions;
     });
   }
 

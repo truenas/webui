@@ -195,12 +195,12 @@ export class GroupQuotaFormComponent implements FormConfiguration {
   }
 
   updateSearchOptions(value = '', parent: any) {
-    parent.userService.groupQueryDSCache(value).subscribe((items: any[]) => {
-      const entries: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        entries.push({ label: items[i].group, value: items[i].group });
+    (parent.userService as UserService).groupQueryDSCache(value).subscribe((groups) => {
+      const groupOptions: Option[] = [];
+      for (let i = 0; i < groups.length; i++) {
+        groupOptions.push({ label: groups[i].group, value: groups[i].group });
       }
-      parent.entryField.searchOptions = entries;
+      parent.entryField.searchOptions = groupOptions;
     });
   }
 
