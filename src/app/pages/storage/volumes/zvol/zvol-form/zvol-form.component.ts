@@ -372,7 +372,7 @@ export class ZvolFormComponent implements FormConfiguration {
     'key',
   ];
 
-  isCustActionVisible(actionId: string) {
+  isCustActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode === true) {
@@ -409,7 +409,7 @@ export class ZvolFormComponent implements FormConfiguration {
     protected modalService: ModalService,
   ) {}
 
-  async preInit(entityForm: EntityFormComponent) {
+  preInit(entityForm: EntityFormComponent): void {
     if (!this.parent) return;
     if (this.isNew) {
       this.title = helptext.zvol_title_add;
@@ -656,7 +656,7 @@ export class ZvolFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     if (!entityForm.isNew) {
       for (let i = 0; i < this.encryption_fields.length; i++) {
@@ -722,7 +722,7 @@ export class ZvolFormComponent implements FormConfiguration {
     });
   }
 
-  blurVolsize(parent: any) {
+  blurVolsize(parent: any): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['volsize'].setValue(parent.storageService.humanReadable);
     }
@@ -782,7 +782,7 @@ export class ZvolFormComponent implements FormConfiguration {
     return this.ws.call('pool.dataset.create', [data]);
   }
 
-  editSubmit(body: any) {
+  editSubmit(body: any): void {
     this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).subscribe((res) => {
       this.edit_data = this.sendAsBasicOrAdvanced(body);
 
@@ -843,7 +843,7 @@ export class ZvolFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(body: any) {
+  customSubmit(body: any): void {
     this.loader.open();
 
     if (this.isNew === true) {
@@ -860,7 +860,7 @@ export class ZvolFormComponent implements FormConfiguration {
     }
   }
 
-  setParent(id: string) {
+  setParent(id: string): void {
     this.parent = id;
   }
 }

@@ -71,7 +71,7 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
     e.stopPropagation();
   }
 
-  get singleAction() {
+  get singleAction(): any {
     if (this.actions[0].actions == undefined) {
       return null;
     }

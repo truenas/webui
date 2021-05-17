@@ -87,7 +87,7 @@ export class UserListComponent implements OnDestroy {
     },
   };
 
-  isActionVisible(actionId: string, row: any) {
+  isActionVisible(actionId: string, row: any): boolean {
     if (actionId === 'delete' && row.builtin === true) {
       return false;
     }
@@ -102,25 +102,25 @@ export class UserListComponent implements OnDestroy {
     private validationService: ValidationService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.refreshUserForm();
     this.modalService.refreshForm$.subscribe(() => {
       this.refreshUserForm();
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.refreshTableSubscription) {
       this.refreshTableSubscription.unsubscribe();
     }
   }
 
-  refreshUserForm() {
+  refreshUserForm(): void {
     this.addComponent = new UserFormComponent(this.router, this.ws, this.storageService, this.loader,
       this.userService, this.validationService, this.modalService);
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
     setTimeout(() => {
       if (this.prefService.preferences.showUserListMessage) {
@@ -132,6 +132,7 @@ export class UserListComponent implements OnDestroy {
       this.entityList.getData();
     });
   }
+
   getActions(row: any) {
     const actions = [];
     actions.push({
@@ -187,7 +188,7 @@ export class UserListComponent implements OnDestroy {
     return actions;
   }
 
-  ableToDeleteGroup(id: any) {
+  ableToDeleteGroup(id: any): boolean {
     const user = _.find(this.usr_lst[0], { id });
     const group_users = _.find(this.grp_lst[0], { id: user.group.id })['users'];
     // Show checkbox if deleting the last member of a group
@@ -197,7 +198,7 @@ export class UserListComponent implements OnDestroy {
     return false;
   }
 
-  resourceTransformIncomingRestData(d: any) {
+  resourceTransformIncomingRestData(d: any): any {
     let data = Object.assign([], d);
     this.usr_lst = [];
     this.grp_lst = [];
@@ -230,7 +231,7 @@ export class UserListComponent implements OnDestroy {
     return data;
   }
 
-  toggleBuiltins() {
+  toggleBuiltins(): void {
     const toggleAction = this.prefService.preferences.hide_builtin_users
       ? helptext.builtins_dialog.show
       : helptext.builtins_dialog.hide;
@@ -256,14 +257,14 @@ export class UserListComponent implements OnDestroy {
     });
   }
 
-  showOneTimeBuiltinMsg() {
+  showOneTimeBuiltinMsg(): void {
     this.prefService.preferences.showUserListMessage = false;
     this.prefService.savePreferences();
     this.dialogService.confirm(helptext.builtinMessageDialog.title, helptext.builtinMessageDialog.message,
       true, helptext.builtinMessageDialog.button, false, '', '', '', '', true);
   }
 
-  doAdd() {
+  doAdd(): void {
     this.modalService.open('slide-in-form', this.addComponent);
   }
 }

@@ -626,7 +626,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  applyState(state: any[]) {
+  applyState(state: any[]): void {
     // This reconciles current state with saved dashState
 
     if (!this.dashState) {

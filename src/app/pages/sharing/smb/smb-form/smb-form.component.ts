@@ -298,10 +298,10 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private sysGeneralService: SystemGeneralService,
   ) {
-    combineLatest(
+    combineLatest([
       this.ws.call('sharing.smb.query', []),
       this.activatedRoute.paramMap,
-    )
+    ])
       .pipe(
         map(([shares, pm]) => {
           const pk = parseInt(pm.get('pk'), 10);

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SortDirection } from '@angular/material/sort';
+import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { WebSocketService } from './ws.service';
 import { RestService } from './rest.service';
 
@@ -24,7 +25,7 @@ export class StorageService {
 
   constructor(protected ws: WebSocketService, protected rest: RestService) {}
 
-  filesystemStat(path: string) {
+  filesystemStat(path: string): Observable<FileSystemStat> {
     return this.ws.call('filesystem.stat', [path]);
   }
 

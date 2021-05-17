@@ -35,7 +35,7 @@ export class EntityFormService {
   constructor(@Inject(FormBuilder) private formBuilder: FormBuilder,
     protected ws: WebSocketService, private rest: RestService) {}
 
-  createFormGroup(controls: FieldConfig[]) {
+  createFormGroup(controls: FieldConfig[]): FormGroup {
     const formGroup: { [id: string]: AbstractControl } = {};
 
     if (controls) {
@@ -197,7 +197,7 @@ export class EntityFormService {
     }
   }
 
-  phraseInputData(value: any, config: InputUnitConfig) {
+  phraseInputData(value: any, config: InputUnitConfig): any {
     if (!value) {
       return value;
     }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { Option } from 'app/interfaces/option.interface';
 import { RestService } from './rest.service';
 import { WebSocketService } from './ws.service';
 import * as isCidr from 'is-cidr';
@@ -49,7 +50,7 @@ export class NetworkService {
     return this.ws.call('vm.device.nic_attach_choices', []);
   }
 
-  getV4Netmasks() {
+  getV4Netmasks(): Option[] {
     return Array(33).fill(0).map(
       (x, i) => {
         if (i == 0) {
@@ -60,7 +61,7 @@ export class NetworkService {
     );
   }
 
-  getV6PrefixLength() {
+  getV6PrefixLength(): Option[] {
     return Array(34).fill(0).map(
       (x, i) => {
         if (i == 0) {
@@ -71,7 +72,7 @@ export class NetworkService {
     );
   }
 
-  authNetworkValidator(str: string) {
+  authNetworkValidator(str: string): boolean {
     if (isCidr.v4(str) || isCidr.v6(str)) {
       return true;
     }

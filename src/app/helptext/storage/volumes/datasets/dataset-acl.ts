@@ -1,3 +1,4 @@
+import { AclItemTag, AclPermission } from 'app/enums/acl-type.enum';
 import { T } from '../../../../translate-marker';
 
 export default {
@@ -195,9 +196,9 @@ export default {
     placeholder: T('Permissions'),
     tooltip: T('Permissions'),
     options: [
-      { label: T('Read'), value: 'READ' },
-      { label: T('Write'), value: 'WRITE' },
-      { label: T('Execute'), value: 'EXECUTE' },
+      { label: T('Read'), value: AclPermission.Read },
+      { label: T('Write'), value: AclPermission.Write },
+      { label: T('Execute'), value: AclPermission.Execute },
     ],
   },
 
@@ -206,12 +207,12 @@ export default {
     tooltip: T('Tag'),
     options:
   [
-    { label: T('User'), value: 'USER' },
-    { label: T('Group'), value: 'GROUP' },
-    { label: T('Other'), value: 'OTHER' },
-    { label: T('Group Obj'), value: 'GROUP_OBJ' },
-    { label: T('User Obj'), value: 'USER_OBJ' },
-    { label: T('Mask'), value: 'MASK' },
+    { label: T('User'), value: AclItemTag.User },
+    { label: T('Group'), value: AclItemTag.Group },
+    { label: T('Other'), value: AclItemTag.Other },
+    { label: T('Group Obj'), value: AclItemTag.GroupObject },
+    { label: T('User Obj'), value: AclItemTag.UserObject },
+    { label: T('Mask'), value: AclItemTag.Mask },
   ],
   },
 

@@ -1,4 +1,4 @@
-export function removeClass(el: any, className: string) {
+export function removeClass(el: any, className: string): void {
   if (!el || el.length === 0) return;
   if (!el.length) {
     el.classList.remove(className);
@@ -8,7 +8,8 @@ export function removeClass(el: any, className: string) {
     }
   }
 }
-export function addClass(el: any, className: string) {
+
+export function addClass(el: any, className: string): void {
   if (!el) return;
   if (!el.length) {
     el.classList.add(className);
@@ -18,6 +19,7 @@ export function addClass(el: any, className: string) {
     }
   }
 }
+
 export function findClosest(el: HTMLElement, className: string): HTMLElement {
   if (!el) return;
   while (el) {
@@ -28,11 +30,13 @@ export function findClosest(el: HTMLElement, className: string): HTMLElement {
     el = parent;
   }
 }
-export function hasClass(el: HTMLElement, className: string) {
+
+export function hasClass(el: HTMLElement, className: string): boolean {
   if (!el) return;
   return (` ${el.className} `).replace(/[\n\t]/g, ' ').indexOf(` ${className} `) > -1;
 }
-export function toggleClass(el: any, className: string) {
+
+export function toggleClass(el: any, className: string): void {
   if (!el) return;
   if (hasClass(el, className)) {
     removeClass(el, className);
@@ -40,7 +44,8 @@ export function toggleClass(el: any, className: string) {
     addClass(el, className);
   }
 }
-export function changeTheme(themes: any[], themeName: string) {
+
+export function changeTheme(themes: any[], themeName: string): void {
   // Remove default
   /* removeClass(document.body, 'ix-blue');
 
@@ -51,7 +56,8 @@ export function changeTheme(themes: any[], themeName: string) {
   addClass(document.body, themeName); */
   addClass(document.body, 'ix-blue');
 }
-export function ieChatjsFix() {
+
+export function ieChatjsFix(): void {
   if (window.hasOwnProperty('MSInputMethodContext') || document.hasOwnProperty('documentMode')) {
     document.body.style.width = '99.9%';
     setTimeout(() => {

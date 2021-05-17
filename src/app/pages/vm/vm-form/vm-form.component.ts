@@ -202,7 +202,7 @@ export class VmFormComponent implements FormConfiguration {
     protected vmService: VmService, protected route: ActivatedRoute,
     private translate: TranslateService, private dialogService: DialogService, private systemGeneralService: SystemGeneralService) {}
 
-  preInit(entityForm: EntityFormComponent) {
+  preInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.route.params.subscribe((params) => {
       if (params['pk']) {
@@ -215,7 +215,7 @@ export class VmFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.bootloader = _.find(this.fieldConfig, { name: 'bootloader' });
     this.vmService.getBootloaderOptions().subscribe((options) => {
       for (const option in options) {
@@ -268,7 +268,7 @@ export class VmFormComponent implements FormConfiguration {
     });
 
     const gpusFormControl = this.entityForm.formGroup.controls['gpus'];
-    gpusFormControl.valueChanges.subscribe((gpusValue) => {
+    gpusFormControl.valueChanges.subscribe((gpusValue: string[]) => {
       const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
       for (const gpuValue of gpusValue) {
         if (finalIsolatedPciIds.findIndex((pciId) => pciId === gpuValue) === -1) {
@@ -293,7 +293,7 @@ export class VmFormComponent implements FormConfiguration {
     });
   }
 
-  blurEvent(parent: any) {
+  blurEvent(parent: any): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['memory'].setValue(parent.storageService.humanReadable);
       const valString = (parent.entityForm.formGroup.controls['memory'].value);
@@ -306,7 +306,7 @@ export class VmFormComponent implements FormConfiguration {
     }
   }
 
-  cpuValidator(name: string) {
+  cpuValidator(name: string): any {
     const self = this;
     return function validCPU(control: FormControl) {
       const config = self.fieldConfig.find((c) => c.name === name);
@@ -330,7 +330,7 @@ export class VmFormComponent implements FormConfiguration {
     };
   }
 
-  resourceTransformIncomingRestData(vmRes: any) {
+  resourceTransformIncomingRestData(vmRes: any): any {
     this.rawVmData = vmRes;
     vmRes['memory'] = this.storageService.convertBytestoHumanReadable(vmRes['memory'] * 1048576, 0);
     this.ws.call('device.get_info', ['GPU']).subscribe((gpus: GpuDevice[]) => {
@@ -354,7 +354,7 @@ export class VmFormComponent implements FormConfiguration {
     return vmRes;
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     if (data['memory'] !== undefined && data['memory'] !== null) {
       data['memory'] = Math.round(this.storageService.convertHumanStringToNum(data['memory']) / 1048576);
     }

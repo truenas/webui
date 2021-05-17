@@ -6,7 +6,7 @@ import {
 } from '../../../services';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import {
-  FormGroup, Validators, ValidationErrors, FormControl,
+  FormGroup, Validators, ValidationErrors, FormControl, ValidatorFn,
 } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
@@ -454,7 +454,7 @@ export class VMWizardComponent {
 
   }
 
-  preInit(entityWizard: EntityWizardComponent) {
+  preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
     this.ws.call('vm.maximum_supported_vcpus').subscribe((max) => {
       this.maxVCPUs = max;
@@ -474,7 +474,7 @@ export class VMWizardComponent {
     });
   }
 
-  customNext(stepper: MatStepper) {
+  customNext(stepper: MatStepper): void {
     stepper.next();
     this.currentStep = stepper.selectedIndex;
     if (this.currentStep === 2) {
@@ -486,7 +486,7 @@ export class VMWizardComponent {
     }
   }
 
-  setValuesFromPref(stepNumber: number, fieldName: string, prefName: string, defaultIndex?: number) {
+  setValuesFromPref(stepNumber: number, fieldName: string, prefName: string, defaultIndex?: number): void {
     const field = this.getFormControlFromFieldName(fieldName);
     const options = _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName }).options;
     const storedValue = this.prefService.preferences.storedValues[prefName];
@@ -502,7 +502,7 @@ export class VMWizardComponent {
     }
   }
 
-  afterInit(entityWizard: EntityWizardComponent) {
+  afterInit(entityWizard: EntityWizardComponent): void {
     this.ws.call('vm.query').subscribe((res: any[]) => {
       res.forEach((i) => this.namesInUse.push(i.name));
     });
@@ -839,11 +839,11 @@ export class VMWizardComponent {
     }, 2000);
   }
 
-  getRndInteger(min: number, max: number) {
+  getRndInteger(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  memoryValidator(name: string) {
+  memoryValidator(name: string): ValidatorFn {
     const self = this;
     return function validMem(control: FormControl) {
       const config = self.wizardConfig[1].fieldConfig.find((c) => c.name === name);
@@ -864,9 +864,10 @@ export class VMWizardComponent {
     };
   }
 
-  cpuValidator(name: string) {
+  cpuValidator(name: string): ValidatorFn {
     const self = this;
-    return function validCPU(control: FormControl) {
+    // TODO: setTimeout breaks typing
+    return function validCPU(control: FormControl): any {
       const config = self.wizardConfig[1].fieldConfig.find((c) => c.name === name);
       setTimeout(() => {
         const errors = self.vcpus * self.cores * self.threads > self.maxVCPUs
@@ -887,7 +888,7 @@ export class VMWizardComponent {
     };
   }
 
-  volSizeValidator(name: string) {
+  volSizeValidator(name: string): ValidatorFn {
     const self = this;
     return function validStorage(control: FormControl) {
       const config = self.wizardConfig[2].fieldConfig.find((c) => c.name === name);
@@ -915,7 +916,7 @@ export class VMWizardComponent {
     };
   }
 
-  blurEventForMemory(parent: any) {
+  blurEventForMemory(parent: any): void {
     const enteredVal = parent.entityWizard.formGroup.value.formArray[1].memory;
     const vm_memory_requested = parent.storageService.convertHumanStringToNum(enteredVal);
     if (isNaN(vm_memory_requested)) {
@@ -930,7 +931,7 @@ export class VMWizardComponent {
     }
   }
 
-  blueEventForVolSize(parent: any) {
+  blueEventForVolSize(parent: any): void {
     const enteredVal = parent.entityWizard.formArray.controls[2].value.volsize;
     const volsize = parent.storageService.convertHumanStringToNum(enteredVal, false, 'mgtp');
     if (volsize >= 1048576) {
@@ -952,7 +953,7 @@ export class VMWizardComponent {
     return parent.wizardConfig.findIndex((conf: FormConfiguration) => conf.fieldConfig.findIndex((fieldConf: FieldConfig) => fieldConf.name === fieldName) >= 0);
   }
 
-  async customSubmit(value: any) {
+  customSubmit(value: any): void {
     let hdd;
     const vmPayload: any = {};
     const zvolPayload: any = {};

@@ -34,7 +34,7 @@ export class UnlockDialogComponent {
   constructor(public dialogRef: MatDialogRef < UnlockDialogComponent >, protected translate: TranslateService) {
   }
 
-  submit() {
+  submit(): void {
     this.dialogRef.close(true);
     this.parent.dialogOpen = false;
     if (this.final) {
@@ -44,18 +44,18 @@ export class UnlockDialogComponent {
     }
   }
 
-  show_final_results() {
+  show_final_results(): void {
     this.final = true;
     this.errors_message = helptext.unlock_result_dialog.errors_message;
     this.unlock_message = helptext.unlock_result_dialog.unlock_message;
   }
 
-  cancel() {
+  cancel(): void {
     this.dialogRef.close(false);
     this.parent.dialogOpen = false;
   }
 
-  showError(dataset: any) {
+  showError(dataset: any): void {
     if (this.parent.dialogService && dataset.unlock_error) {
       this.parent.dialogService.Info(helptext.unlock_dataset_dialog.error_dialog_title + dataset.name, dataset.unlock_error);
     }

@@ -100,7 +100,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     private dialogService: DialogService, private modalService: ModalService,
     private appService: ApplicationsService) { }
 
-  preInit(entityEdit: any) {
+  preInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
     const pool_control = _.find(this.fieldSets[0].config, { name: 'pool' });
     this.appService.getPoolList().subscribe((pools) => {
@@ -122,7 +122,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.appService.getContainerConfig().subscribe((res) => {
       if (res) {
         this.entityEdit.formGroup.controls['enable_container_image_update'].setValue(res.enable_image_updates);
@@ -130,7 +130,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     if (data.route_v4_gateway === '') {
       data.route_v4_gateway = null;
     }
@@ -142,7 +142,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     delete data.enable_container_image_update;
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     this.loader.open();
 
     const promises = [];

@@ -46,14 +46,14 @@ export class KerberosRealmsListComponent implements OnDestroy {
     return data;
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
     this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
       this.entityList.getData();
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.refreshTableSubscription) {
       this.refreshTableSubscription.unsubscribe();
     }
@@ -88,7 +88,7 @@ export class KerberosRealmsListComponent implements OnDestroy {
     return actions;
   }
 
-  doAdd(id?: number) {
+  doAdd(id?: number): void {
     const formComponent = new KerberosRealmsFormComponent(this.modalService);
     this.modalService.open('slide-in-form', formComponent, id);
   }

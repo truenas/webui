@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import {
+  IscsiAuthAccess, IscsiExtent,
+  IscsiInitiatorGroup,
+  IscsiIpChoices,
+  IscsiPortal,
+  IscsiTarget,
+} from 'app/interfaces/iscsi.interface';
 import { Observable, Subject, Subscription } from 'rxjs';
 
 import { EntityUtils } from '../pages/common/entity/utils';
@@ -12,20 +19,16 @@ export class IscsiService {
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {}
 
-  getIpChoices() {
+  getIpChoices(): Observable<IscsiIpChoices> {
     return this.ws.call('iscsi.portal.listen_ip_choices');
   }
 
-  listPortals() {
+  listPortals(): Observable<IscsiPortal[]> {
     return this.ws.call('iscsi.portal.query', []);
   }
 
-  listInitiators() {
+  listInitiators(): Observable<IscsiInitiatorGroup[]> {
     return this.ws.call('iscsi.initiator.query', []);
-  }
-
-  listTargetGroups() {
-    return this.ws.call('iscsi.target.query', []);
   }
 
   getVolumes() {
@@ -36,15 +39,15 @@ export class IscsiService {
     return this.ws.call('iscsi.extent.disk_choices', []);
   }
 
-  getExtents() {
+  getExtents(): Observable<IscsiExtent[]> {
     return this.ws.call('iscsi.extent.query', []);
   }
 
-  getTargets() {
+  getTargets(): Observable<IscsiTarget[]> {
     return this.ws.call('iscsi.target.query', []);
   }
 
-  getAuth() {
+  getAuth(): Observable<IscsiAuthAccess[]> {
     return this.ws.call('iscsi.auth.query', []);
   }
 

@@ -30,12 +30,12 @@ export class MembersComponent implements OnInit {
     private translate: TranslateService,
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.activatedRoute.params.subscribe((params: Params) => this.groupId = params.pk);
     this.getGroupDetails();
   }
 
-  getGroupDetails() {
+  getGroupDetails(): void {
     let myFilter: QueryFilter<User> = ['id', '=', parseInt(this.groupId)];
     const group$ = this.ws.call('group.query', [[myFilter]]);
 
@@ -50,7 +50,7 @@ export class MembersComponent implements OnInit {
     });
   }
 
-  getMembers() {
+  getMembers(): void {
     this.ws.call('user.query').subscribe((users) => {
       for (const user of users) {
         const idx = this.users.findIndex((x) => user.id === x.id);
@@ -63,11 +63,11 @@ export class MembersComponent implements OnInit {
     this.showSpinner = false;
   }
 
-  cancel() {
+  cancel(): void {
     this.router.navigate(['/', 'credentials', 'groups']);
   }
 
-  updateUsers() {
+  updateUsers(): void {
     this.loading.open(this.translate.instant(helptext.update_users_message));
 
     const userIds = this.selectedMembers.map((user) => user.id);
