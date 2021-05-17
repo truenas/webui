@@ -1,25 +1,25 @@
 import { Component } from '@angular/core';
+import { FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, Observable } from 'rxjs';
+import { AclType } from 'app/enums/acl-type.enum';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { DialogService } from 'app/services/dialog.service';
+import { ModalService } from 'app/services/modal.service';
 
 import * as _ from 'lodash';
-import { ProductType } from '../../../../../enums/product-type.enum';
-import { WebSocketService, StorageService } from '../../../../../services';
-import { EntityUtils } from '../../../../common/entity/utils';
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from '../../../../common/entity/entity-form';
-import { DialogService } from 'app/services/dialog.service';
-import { T } from '../../../../../translate-marker';
-import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-form';
-import globalHelptext from '../../../../../helptext/global-helptext';
-import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import { Validators, ValidationErrors, FormControl } from '@angular/forms';
+import { combineLatest, Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { combineLatest } from 'rxjs';
-import { ModalService } from 'app/services/modal.service';
+import { ProductType } from '../../../../../enums/product-type.enum';
+import globalHelptext from '../../../../../helptext/global-helptext';
+import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-form';
+import { StorageService, WebSocketService } from '../../../../../services';
+import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+import { T } from '../../../../../translate-marker';
+import { EntityFormComponent } from '../../../../common/entity/entity-form';
+import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { EntityUtils } from '../../../../common/entity/utils';
 
 interface DatasetFormData {
   name: string;
@@ -1554,7 +1554,7 @@ export class DatasetFormComponent implements FormConfiguration {
             false, helptext.afterSubmitDialog.cancelBtn).subscribe((res: boolean) => {
             if (res) {
               this.ws.call('filesystem.getacl', [parentPath]).subscribe(({ acltype }) => {
-                if (acltype === 'POSIX1E') {
+                if (acltype === AclType.Posix1e) {
                   this.router.navigate(new Array('/').concat(
                     ['storage', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name],
                   ), { queryParams: { default: parentPath } });

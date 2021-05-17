@@ -84,19 +84,17 @@ export class FibreChannelPortComponent implements OnInit {
     private iscsiService: IscsiService,
   ) {
     const targetField = _.find(this.fieldSets[1].config, { name: 'target' });
-    this.iscsiService.getTargets().subscribe(
-      (res) => {
-        for (let i = 0; i < res.length; i++) {
-          targetField.options.push({
-            label: res[i].name,
-            value: res[i].id,
-          });
-        }
-      },
-      (err) => {
-        new EntityUtils().handleWSError(this, err, this.parent.dialogService);
-      },
-    );
+    this.iscsiService.getTargets().subscribe((targets) => {
+      for (let i = 0; i < targets.length; i++) {
+        targetField.options.push({
+          label: targets[i].name,
+          value: targets[i].id,
+        });
+      }
+    },
+    (err) => {
+      new EntityUtils().handleWSError(this, err, this.parent.dialogService);
+    });
   }
 
   ngOnInit(): void {

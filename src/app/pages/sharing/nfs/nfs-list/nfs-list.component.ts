@@ -1,18 +1,19 @@
 import { Component } from '@angular/core';
 import { shared, helptext_sharing_nfs } from 'app/helptext/sharing';
+import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-nfs-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class NFSListComponent {
+export class NFSListComponent implements InputTableConf {
   title = 'NFS';
-  protected queryCall = 'sharing.nfs.query';
-  protected wsDelete = 'sharing.nfs.delete';
-  protected route_add: string[] = ['sharing', 'nfs', 'add'];
+  queryCall: 'sharing.nfs.query' = 'sharing.nfs.query';
+  wsDelete: 'sharing.nfs.delete' = 'sharing.nfs.delete';
+  route_add: string[] = ['sharing', 'nfs', 'add'];
   protected route_add_tooltip = 'Add Unix (NFS) Share';
-  protected route_edit: string[] = ['sharing', 'nfs', 'edit'];
+  route_edit: string[] = ['sharing', 'nfs', 'edit'];
   protected route_delete: string[] = ['sharing', 'nfs', 'delete'];
 
   columns: any[] = [

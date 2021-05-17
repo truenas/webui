@@ -27,10 +27,10 @@ export class PortalFormComponent implements FormConfiguration {
   customFilter: any[] = [[['id', '=']]];
   isEntity = true;
 
-  protected getValidOptions = this.iscsiService.getIpChoices().toPromise().then((res) => {
+  protected getValidOptions = this.iscsiService.getIpChoices().toPromise().then((ips) => {
     const options: Option[] = [];
-    for (const ip in res) {
-      options.push({ label: res[ip], value: ip });
+    for (const ip in ips) {
+      options.push({ label: ips[ip], value: ip });
     }
     return options;
   });
@@ -166,10 +166,10 @@ export class PortalFormComponent implements FormConfiguration {
     });
     const authgroupFieldset = _.find(this.fieldSets, { class: 'authgroup' });
     this.authgroup_field = _.find(authgroupFieldset.config, { name: 'discovery_authgroup' });
-    this.iscsiService.getAuth().subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        if (_.find(this.authgroup_field.options, { value: res[i].tag }) == undefined) {
-          this.authgroup_field.options.push({ label: res[i].tag, value: res[i].tag });
+    this.iscsiService.getAuth().subscribe((accessRecords) => {
+      for (let i = 0; i < accessRecords.length; i++) {
+        if (_.find(this.authgroup_field.options, { value: accessRecords[i].tag }) == undefined) {
+          this.authgroup_field.options.push({ label: accessRecords[i].tag, value: accessRecords[i].tag });
         }
       }
     });
