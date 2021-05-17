@@ -26,6 +26,6 @@ ul.wizard-ul li{
   overflow: hidden;
 }
 
-.mat-vertical-stepper-content {
+.mat-vertical-stepper-content[style*="visibility: visible"] {
   overflow: visible !important;
 }
