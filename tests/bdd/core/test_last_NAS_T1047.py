@@ -21,7 +21,7 @@ from pytest_bdd import (
 def test_verify_config_backup_can_be_restored(driver):
     """Verify config backup can be restored."""
     # this run at the and remove the tar file to keep systems clean
-    for tar in glob.glob('/tmp/truenas-TrueNAS-*.tar'):
+    for tar in glob.glob('/tmp/uitest*-TrueNAS-*.tar'):
         os.remove(tar)
 
 
@@ -96,10 +96,10 @@ def input_the_root_password_testing_then_click_the_save_button(driver):
 
 
 @then('the file should be saved on the system')
-def the_file_should_be_saved_on_the_system(driver, nas_ip):
+def the_file_should_be_saved_on_the_system(driver, nas_ip, nas_hostname):
     """the file should be saved on the system."""
     global backup_file
-    assert glob.glob('/tmp/truenas-TrueNAS-*.tar')
+    assert glob.glob(f'/tmp/{nas_hostname}-TrueNAS-*.tar')
     backup_file = sorted(glob.glob('/tmp/truenas-TrueNAS-*.tar'))[-1]
 
 

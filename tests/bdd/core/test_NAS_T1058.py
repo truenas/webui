@@ -24,7 +24,7 @@ from pytest_bdd import (
 def test_verify_textdump_contains_data_in_the_debug(driver):
     """Verify textdump contains data in the debug."""
     # this run at the and remove the dowloaded file and extracted files to keep systems clean
-    for tar in glob.glob('/tmp/debug-truenas-*.tgz'):
+    for tar in glob.glob('/tmp/debug-uitest*-*.tgz'):
         os.remove(tar)
     shutil.rmtree('/tmp/ixdiagnose')
 
@@ -84,11 +84,11 @@ def the_system_should_start_creating_a_debug(driver):
 
 
 @then('when the debug tgz is saved and unpack it')
-def when_the_debug_tgz_is_saved_and_unpack_it(driver):
+def when_the_debug_tgz_is_saved_and_unpack_it(driver, nas_hostname):
     """when the debug tgz is saved and unpack it."""
     time.sleep(3)
     global backup_file
-    assert glob.glob('/tmp/debug-truenas-*.tgz')
+    assert glob.glob(f'/tmp/debug-{nas_hostname}-*.tgz')
     backup_file = sorted(glob.glob('/tmp/debug-truenas-*.tgz'))[-1]
     tar = tarfile.open(backup_file)
     tar.extractall('/tmp/')
