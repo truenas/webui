@@ -123,7 +123,7 @@ export class DisplayObject {
     }
   }
 
-  get x() {
+  get x(): number {
     const element = styler(this.rawElement, {});
     // console.log(element.get('x'))
     return this.target.get('x');
@@ -136,7 +136,7 @@ export class DisplayObject {
     // this.target.set({'x': value});
   }
 
-  get y() {
+  get y(): number {
     const element = styler(this.rawElement, {});
     // console.log(element.get('y'))
     return this.target.get('y');
@@ -149,7 +149,7 @@ export class DisplayObject {
     // this.target.set({'y': value});
   }
 
-  get width() {
+  get width(): number {
     return this.target.get('width');
   }
 
@@ -160,7 +160,7 @@ export class DisplayObject {
     this._width = value;
   }
 
-  get height() {
+  get height(): number {
     return this.target.get('height');
   }
 
@@ -171,7 +171,7 @@ export class DisplayObject {
     this._height = value;
   }
 
-  get hasFocus() {
+  get hasFocus(): boolean {
     return this._hasFocus;
   }
 
@@ -313,7 +313,7 @@ export class DisplayObject {
     }
 
     // this.pointerTracker = pointer(this.anchorXY.get()).start(this.anchorXY);
-    const stream = (v: any) => {
+    const stream = (v: any): any => {
       this.inputStream.next(v);
       return v;
     };
@@ -433,7 +433,7 @@ export class DisplayObject {
     }).start(this.target.set);
   }
 
-  limit(value: number, operator: '>' | '<', threshold: number) {
+  limit(value: number, operator: '>' | '<', threshold: number): number {
     switch (operator) {
       case '<':
         if (value < threshold) { return threshold; }

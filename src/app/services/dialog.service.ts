@@ -222,7 +222,7 @@ export class DialogService {
     }
   }
 
-  generalDialog(conf: GeneralDialogConfig, matConfig?: MatDialogConfig) {
+  generalDialog(conf: GeneralDialogConfig, matConfig?: MatDialogConfig): Observable<any> {
     const dialogRef = this.dialog.open(GeneralDialogComponent, matConfig);
     dialogRef.componentInstance.conf = conf;
 

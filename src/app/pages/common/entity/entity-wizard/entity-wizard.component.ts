@@ -222,7 +222,7 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  originalOrder = function () {};
+  originalOrder = function (): void {};
 
   isFieldsetAvailabel(fieldset: any): boolean {
     if (fieldset.config) {

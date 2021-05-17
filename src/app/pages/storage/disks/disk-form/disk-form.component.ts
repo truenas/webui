@@ -197,7 +197,7 @@ export class DiskFormComponent implements FormConfiguration {
   ) {
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     delete data.passwd;
     return data;
   }

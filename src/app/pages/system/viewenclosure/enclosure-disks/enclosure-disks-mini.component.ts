@@ -5,7 +5,7 @@ import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 import { MaterialModule } from 'app/appMaterial.module';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import {
-  Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils,
+  Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils, Point,
 } from 'pixi.js';
 import 'pixi-projection';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
@@ -98,7 +98,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     return Object.keys(obj).length;
   }
 
-  stackPositions(log = false) {
+  stackPositions(log = false): Point[] {
     const result = this.enclosure.driveTrayObjects.map((dt, index) => {
       const disk = this.findDiskBySlotNumber(index + 1);
       return dt.container.getGlobalPosition();

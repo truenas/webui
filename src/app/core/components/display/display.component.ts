@@ -20,7 +20,7 @@ export class Display {
   constructor(private resolver: ComponentFactoryResolver, private viewContainerRef: ViewContainerRef, private renderer: Renderer2) {
   }
 
-  create(component: any) {
+  create(component: any): any {
     const compRef = <any> this.resolver.resolveComponentFactory(component).create(this.viewContainerRef.injector);
     this.children.push(compRef);
     return compRef.instance;
@@ -68,7 +68,7 @@ export class Display {
     compRef.destroy();
   }
 
-  getChild(instance: any) {
+  getChild(instance: any): any {
     for (let i = 0; i < this.children.length; i++) {
       if (this.children[i].instance == instance) {
         return this.children[i];
