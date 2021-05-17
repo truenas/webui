@@ -210,7 +210,7 @@ export class CertificateEditComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     this.incomingData = data;
     if (data.cert_type_CSR) {
       this.isCSR = true;

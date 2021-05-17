@@ -73,12 +73,12 @@ export class LocaleService {
     ];
   }
 
-  formatDateTime(date: Date, tz?: string) {
+  formatDateTime(date: Date, tz?: string): string {
     tz ? moment.tz.setDefault(tz) : moment.tz.setDefault(this.timeZone);
     return moment(date).format(`${this.dateFormat} ${this.timeFormat}`);
   }
 
-  formatDateTimeWithNoTz(date: Date) {
+  formatDateTimeWithNoTz(date: Date): string {
     moment.tz.setDefault('');
     return moment(date).format(`${this.dateFormat} ${this.timeFormat}`);
   }

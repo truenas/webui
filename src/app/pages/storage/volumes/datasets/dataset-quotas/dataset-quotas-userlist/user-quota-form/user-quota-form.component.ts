@@ -1,4 +1,4 @@
-import { Component, IterableDiffers } from '@angular/core';
+import { Component, DoCheck, IterableDiffers } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
@@ -15,7 +15,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   selector: 'app-user-quota-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class UserQuotaFormComponent implements FormConfiguration {
+export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
   isEntity = true;
   entityForm: any;
   pk: string;
@@ -130,7 +130,7 @@ export class UserQuotaFormComponent implements FormConfiguration {
 
   // This is here because selecting an item from autocomplete doesn't trigger value change
   // Unsubscribes automatically
-  ngDoCheck() {
+  ngDoCheck(): void {
     this.differ.diff(this.searchedEntries);
     if (this.searchedEntries.length > 0) {
       this.allowSubmit();
