@@ -101,12 +101,12 @@ export class UserQuotaFormComponent implements FormConfiguration {
     this.differ = differs.find([]).create(null);
   }
 
-  preInit(entityForm: EntityFormComponent) {
+  preInit(entityForm: EntityFormComponent): void {
     const paramMap: any = (<any> this.aroute.params).getValue();
     this.pk = paramMap.pk;
   }
 
-  async validateEntry(value: any) {
+  async validateEntry(value: any): Promise<void> {
     const validEntry = await this.userService.getUserObject(value);
     const chips = document.getElementsByTagName('mat-chip');
     if (!validEntry) {
@@ -117,7 +117,7 @@ export class UserQuotaFormComponent implements FormConfiguration {
     this.allowSubmit();
   }
 
-  allowSubmit() {
+  allowSubmit(): void {
     if ((this.dq || this.oq)
         && (this.selectedEntriesValue.value && this.selectedEntriesValue.value.length > 0
         || this.searchedEntries && this.searchedEntries.length > 0)
@@ -137,7 +137,7 @@ export class UserQuotaFormComponent implements FormConfiguration {
     }
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
     this.route_success = ['storage', 'pools', 'user-quotas', this.pk];
     this.selectedEntriesField = _.find(this.fieldConfig, { name: 'system_entries' });
@@ -183,18 +183,18 @@ export class UserQuotaFormComponent implements FormConfiguration {
     });
   }
 
-  blurEvent(parent: any) {
+  blurEvent(parent: any): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'data_quota');
     }
   }
 
-  transformValue(parent: any, fieldname: string) {
+  transformValue(parent: any, fieldname: string): void {
     parent.entityForm.formGroup.controls[fieldname].setValue(parent.storageService.humanReadable || 0);
     parent.storageService.humanReadable = '';
   }
 
-  updateSearchOptions(value = '', parent: any) {
+  updateSearchOptions(value = '', parent: any): void {
     (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const entries: Option[] = [];
       for (let i = 0; i < items.length; i++) {
@@ -204,7 +204,7 @@ export class UserQuotaFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     const payload: any[] = [];
     if (!data.system_entries) {
       data.system_entries = [];
