@@ -89,7 +89,7 @@ def when_the_debug_tgz_is_saved_and_unpack_it(driver, nas_hostname):
     time.sleep(3)
     global backup_file
     assert glob.glob(f'/tmp/debug-{nas_hostname}-*.tgz')
-    backup_file = sorted(glob.glob('/tmp/debug-truenas-*.tgz'))[-1]
+    backup_file = sorted(glob.glob(f'/tmp/debug-{nas_hostname}-*.tgz'))[-1]
     tar = tarfile.open(backup_file)
     tar.extractall('/tmp/')
     tar.close()

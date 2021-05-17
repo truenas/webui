@@ -100,7 +100,7 @@ def the_file_should_be_saved_on_the_system(driver, nas_ip, nas_hostname):
     """the file should be saved on the system."""
     global backup_file
     assert glob.glob(f'/tmp/{nas_hostname}-TrueNAS-*.tar')
-    backup_file = sorted(glob.glob('/tmp/truenas-TrueNAS-*.tar'))[-1]
+    backup_file = sorted(glob.glob(f'/tmp/{nas_hostname}-TrueNAS-*.tar'))[-1]
 
 
 @then('click on the "Reset Config" button, click Confirm, then RESET CONFIG')

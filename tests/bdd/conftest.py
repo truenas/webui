@@ -21,7 +21,7 @@ from selenium.webdriver.support import expected_conditions as ec
 hostname = f'uitest{"".join(random.choices(string.digits, k=3))}'
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def nas_hostname():
     return hostname
 
