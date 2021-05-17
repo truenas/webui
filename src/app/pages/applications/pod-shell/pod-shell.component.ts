@@ -1,5 +1,5 @@
 import {
-  Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild, ViewEncapsulation,
+  Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, SimpleChanges, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -70,7 +70,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     private dialog: MatDialog) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.aroute.params.subscribe((params) => {
       this.chart_release_name = params['rname'];
       this.pod_name = params['pname'];
@@ -103,7 +103,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.ss.connected) {
       this.ss.socket.close();
     }
@@ -116,7 +116,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  refreshToolbarButtons() {
+  refreshToolbarButtons(): void {
     this.formEvents = new Subject();
     this.formEvents.subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'restore') {
@@ -177,22 +177,20 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
   }
 
-  onResize() {
+  onResize(): void {
     this.resizeTerm();
   }
 
-  onFontSizeChanged() {
+  onFontSizeChanged(): void {
     this.resizeTerm();
   }
 
-  resetDefault() {
+  resetDefault(): void {
     this.font_size = 14;
     this.resizeTerm();
   }
 
-  ngOnChanges(changes: {
-    [propKey: string]: SimpleChange;
-  }) {
+  ngOnChanges(changes: SimpleChanges): void {
     const log: string[] = [];
     for (const propName in changes) {
       const changedProp = changes[propName];
@@ -208,7 +206,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     return false;
   }
 
-  initializeTerminal() {
+  initializeTerminal(): void {
     const size = this.getSize();
     const setting = {
       cursorBlink: false,
@@ -237,7 +235,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  updateTerminal() {
+  updateTerminal(): void {
     if (this.attachAddon) {
       this.attachAddon.dispose();
     }
@@ -249,7 +247,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     this.xterm.loadAddon(this.attachAddon);
   }
 
-  getSize() {
+  getSize(): { rows: number; cols: number } {
     const domWidth = this.container.nativeElement.offsetWidth;
     const domHeight = this.container.nativeElement.offsetHeight;
     var span = document.createElement('span');
@@ -281,7 +279,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     };
   }
 
-  resizeTerm() {
+  resizeTerm(): boolean {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
@@ -291,7 +289,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     return true;
   }
 
-  initializeWebShell(res: string) {
+  initializeWebShell(res: string): void {
     this.ss.token = res;
     this.reconnect();
     this.initializeTerminal();
@@ -310,7 +308,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     return this.ws.call('auth.generate_token');
   }
 
-  reconnect() {
+  reconnect(): void {
     this.ss.podInfo = {
       chart_release_name: this.chart_release_name,
       pod_name: this.pod_name,
@@ -320,7 +318,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.connect();
   }
 
-  updateChooseShellDialog() {
+  updateChooseShellDialog(): void {
     this.choosePod = {
       title: helptext.podConsole.choosePod.title,
       fieldConfig: [{
@@ -356,12 +354,12 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     };
   }
 
-  showChooseShellDialog() {
+  showChooseShellDialog(): void {
     this.updateChooseShellDialog();
     this.dialogService.dialogForm(this.choosePod, true);
   }
 
-  onChooseShell(entityDialog: any) {
+  onChooseShell(entityDialog: any): void {
     const self = entityDialog.parent;
     self.pod_name = entityDialog.formGroup.controls['pods'].value;
     self.conatiner_name = entityDialog.formGroup.controls['containers'].value;
@@ -371,7 +369,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     self.dialogService.closeAllDialogs();
   }
 
-  afterShellDialogInit(entityDialog: any) {
+  afterShellDialogInit(entityDialog: any): void {
     const self = entityDialog.parent;
 
     entityDialog.formGroup.controls['pods'].valueChanges.subscribe((value: any) => {

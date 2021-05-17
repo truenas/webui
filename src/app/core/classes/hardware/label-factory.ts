@@ -43,23 +43,23 @@ export class LabelFactory {
   protected mainStage: any;
   protected chassis: Chassis; // The chassis we are labelling
 
-  onInit(chassis: Chassis, stage: any) {
+  onInit(chassis: Chassis, stage: any): void {
     this.chassis = chassis;
     this.mainStage = stage;
     this.events = new Subject<CoreEvent>();
   }
 
-  onDestroy() {
+  onDestroy(): void {
     console.log('Clean up after yourself');
   }
 
   // Animate into view
-  enter() {
+  enter(): void {
     console.log('Animate into view...');
   }
 
   // Animate out of view
-  exit() {
+  exit(): void {
     console.log('Animate out of view...');
   }
 }

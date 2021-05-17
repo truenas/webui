@@ -38,7 +38,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   chart: any;// Chart.js instance with per core data
   ctx: any; // canvas context for chart.js
   private _cpuData: any;
-  get cpuData() { return this._cpuData; }
+  get cpuData(): any { return this._cpuData; }
   set cpuData(value) {
     this._cpuData = value;
   }
@@ -109,11 +109,11 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.core.register({
       observerClass: this,
       eventName: 'ThemeChanged',
@@ -164,7 +164,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     return [usageColumn, temperatureColumn];
   }
 
-  setMobileStats(usage: number[], temps: number[]) {
+  setMobileStats(usage: number[], temps: number[]): void {
     // Usage
     usage.splice(0, 1);
     this.usageMin = Math.min(...usage);
@@ -198,7 +198,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     }
   }
 
-  setCpuData(data: any) {
+  setCpuData(data: any): void {
     const config: any = {};
     config.title = 'Cores';
     config.orientation = 'horizontal';
@@ -208,7 +208,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.coresChartInit();
   }
 
-  setCpuLoadData(data: any) {
+  setCpuLoadData(data: any): void {
     const config: any = {};
     config.title = data[0];
     config.units = '%';
@@ -220,7 +220,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.cpuAvg = config;
   }
 
-  setPreferences(form: NgForm) {
+  setPreferences(form: NgForm): void {
     const filtered: string[] = [];
     for (const i in form.value) {
       if (form.value[i]) {
@@ -230,7 +230,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   }
 
   // chart.js renderer
-  renderChart() {
+  renderChart(): void {
     if (!this.ctx) {
       const el = this.el.nativeElement.querySelector('#cpu-cores-chart canvas');
       if (!el) { return; }
@@ -314,12 +314,12 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     }
   }
 
-  coresChartInit() {
+  coresChartInit(): void {
     this.currentTheme = this.themeService.currentTheme();
     this.renderChart();
   }
 
-  colorFromTemperature(t: any) {
+  colorFromTemperature(t: any): string {
     let color = 'var(--green)';
     if (t.value >= 80) {
       color = 'var(--red)';
@@ -331,7 +331,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     return color;
   }
 
-  coresChartUpdate() {
+  coresChartUpdate(): void {
     this.chart.load({
       columns: this.cpuData.data,
     });
@@ -383,16 +383,16 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     return colors;
   }
 
-  rgbToString(rgb: string[], alpha?: number) {
+  rgbToString(rgb: string[], alpha?: number): string {
     const a = alpha ? alpha.toString() : '1';
     return 'rgba(' + rgb.join(',') + ',' + a + ')';
   }
 
-  stripVar(str: string) {
+  stripVar(str: string): string {
     return str.replace('var(--', '').replace(')', '');
   }
 
-  getHighlightColor(opacity: number) {
+  getHighlightColor(opacity: number): string {
     // Get highlight color
     const currentTheme = this.themeService.currentTheme();
     const txtColor = currentTheme.fg2;

@@ -169,7 +169,7 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
   /**
      * The direction of the speed dial. Can be 'up', 'down', 'left' or 'right'
      */
-  @Input() get direction() {
+  @Input() get direction(): string {
     return this._direction;
   }
 
@@ -189,7 +189,7 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
   /**
      * The animation mode to open the speed dial. Can be 'fling' or 'scale'
      */
-  @Input() get animationMode() {
+  @Input() get animationMode(): string {
     return this._animationMode;
   }
 

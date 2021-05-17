@@ -149,7 +149,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  onPreferences(prefs: any) {
+  onPreferences(prefs: any): void {
     this.fieldSets[0].config = [
       {
         type: 'select',

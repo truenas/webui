@@ -104,14 +104,14 @@ export class ChassisView {
     return assets;
   }
 
-  destroy() {
+  destroy(): void {
     // Destroy the loader and assets
     if (this.loader) {
       this.loader.reset();
     }
   }
 
-  load() {
+  load(): void {
     // Create a dedicated loader to avoid conflicts with other loaders
     this.loader = new PIXI.loaders.Loader();
     // LOAD OUR ASSETS
@@ -133,7 +133,7 @@ export class ChassisView {
       .load(this.onLoaded.bind(this));
   }
 
-  onLoaded() {
+  onLoaded(): void {
     const outlineFilterBlue = new PIXI.filters.OutlineFilter(2, 0x99ff99);
     const bloomFilter = new PIXI.filters.AdvancedBloomFilter({
       threshold: 0.9,
@@ -188,12 +188,12 @@ export class ChassisView {
     this.onEnter();
   }
 
-  generatePerspectiveOffset() {
+  generatePerspectiveOffset(): void {
     this.driveTrays.x = 43;
     this.driveTrays.y = 78;
   }
 
-  onTap(evt: MouseEvent, driveTray: DriveTray) {
+  onTap(evt: MouseEvent, driveTray: DriveTray): void {
     this.events.next({ name: 'DriveSelected', data: driveTray });
 
     const startAlpha = driveTray.background.alpha;
@@ -209,7 +209,7 @@ export class ChassisView {
     }, 300);
   }
 
-  onEnter() {
+  onEnter(): void {
     const opacity = this.disabledOpacity;
     const delay = 50;
     const duration = 50;
@@ -260,11 +260,11 @@ export class ChassisView {
     });
   }
 
-  loadProgressHandler() {
+  loadProgressHandler(): void {
     // PIXI progress handler logic can go here
   }
 
-  makeDriveTray(altAssets = false) {
+  makeDriveTray(altAssets = false): DriveTray {
     const dt = new DriveTray(this.model, this.loader);
     dt.vertical = this.vertical;
     dt.setup(altAssets);
@@ -281,7 +281,7 @@ export class ChassisView {
     return { x: nextPositionX, y: nextPositionY };
   }
 
-  generatePerspective() {
+  generatePerspective(): void {
     const dts = this.driveTrays;
     const x = 0;
     const y = 0;
@@ -295,7 +295,7 @@ export class ChassisView {
     dts.proj.mapSprite(dts, quad);
   }
 
-  colorDriveTray(slot: number, color: string) {
+  colorDriveTray(slot: number, color: string): void {
     const driveIndex = slot - this.slotRange.start;
     if (driveIndex < 0 || driveIndex >= this.totalDriveTrays) {
       console.warn('IGNORING DRIVE AT INDEX ' + driveIndex + ' SLOT ' + slot + ' IS OUT OF RANGE');
@@ -309,7 +309,7 @@ export class ChassisView {
     }
   }
 
-  setChassisOpacity(value: number) {
+  setChassisOpacity(value: number): void {
     this.chassisOpacity = value;
     if (this.chassis) {
       // If chassis has already ben rendered to stage

@@ -97,7 +97,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     this.core.emit({ name: 'SysInfoRequest', sender: this });
   }
 
-  preInit(entityForm: any) {
+  preInit(entityForm: any): void {
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         if (is_ha) {
@@ -126,7 +126,8 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
       });
     });
   }
-  afterInit(entityForm: any) {
+
+  afterInit(entityForm: any): void {
     this.ws.call('user.query', [[['id', '=', 1]]]).subscribe((ures) => {
       if (ures[0].attributes.preferences['rebootAfterManualUpdate'] === undefined) {
         ures[0].attributes.preferences['rebootAfterManualUpdate'] = false;
@@ -152,7 +153,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     entityForm.submitFunction = this.customSubmit;
   }
 
-  customSubmit(entityForm: any) {
+  customSubmit(entityForm: any): void {
     this.save_button_enabled = false;
     this.systemService.updateRunningNoticeSent.emit();
     this.ws.call('user.query', [[['id', '=', 1]]]).subscribe((ures) => {
@@ -205,7 +206,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     });
   }
 
-  updater(file: any, parent: any) {
+  updater(file: any, parent: any): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.save_button_enabled = true;
@@ -227,7 +228,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     }
   }
 
-  showRunningUpdate(jobId: number) {
+  showRunningUpdate(jobId: number): void {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Update' }, disableClose: true });
     if (this.isHA) {
       this.dialogRef.componentInstance.disableProgressValue(true);
@@ -242,7 +243,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     });
   }
 
-  checkForUpdateRunning() {
+  checkForUpdateRunning(): void {
     this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).subscribe(
       (res) => {
         if (res && res.length > 0) {

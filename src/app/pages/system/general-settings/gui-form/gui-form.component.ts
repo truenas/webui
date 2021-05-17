@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ValidatorFn } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
@@ -152,7 +152,7 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  IPValidator(name: 'ui_address' | 'ui_v6address', wildcard: string) {
+  IPValidator(name: 'ui_address' | 'ui_v6address', wildcard: string): ValidatorFn {
     const self = this;
     return function validIPs(control: FormControl) {
       const config = self.fieldSets.find((set) => set.name === helptext.stg_fieldset_gui).config.find((c) => c.name === name);
@@ -173,7 +173,7 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
     };
   }
 
-  preInit() {
+  preInit(): void {
     this.http_port = this.configData['ui_port'];
     this.https_port = this.configData['ui_httpsport'];
     this.redirect = this.configData['ui_httpsredirect'];
@@ -185,7 +185,7 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
     this.v6addresses = this.configData['ui_v6address'];
   }
 
-  reconnect(href: string) {
+  reconnect(href: string): void {
     if (this.entityForm.ws.connected) {
       this.loader.close();
       // ws is connected
@@ -197,7 +197,7 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
     }
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
 
     this.ui_certificate = this.fieldSets
@@ -253,12 +253,12 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
     entityEdit.formGroup.controls['ui_consolemsg'].setValue(this.configData.ui_consolemsg);
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     delete value.language_sort;
     value.language = this.languageKey;
   }
 
-  afterSubmit(value: any) {
+  afterSubmit(value: any): void {
     const new_http_port = value.ui_port;
     const new_https_port = value.ui_httpsport;
     const new_redirect = value.ui_httpsredirect;
@@ -328,7 +328,7 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
     return Object.keys(object).find((key) => object[key] === value);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.getDataFromDash.unsubscribe();
   }
 }

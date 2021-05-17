@@ -13,7 +13,7 @@ export class DriveTray {
   enabled = false;
 
   private _color: string;
-  get color() {
+  get color(): string {
     return this._color;
   }
   set color(value) {
@@ -27,7 +27,7 @@ export class DriveTray {
     this.container = new PIXI.Container();
   }
 
-  setup(altAssets = false) {
+  setup(altAssets = false): void {
     const alt = altAssets ? '_alt' : '';
 
     this.background = PIXI.projection.Sprite2d.from(this.loader.resources[this.model + alt + '_drivetray_bg'].texture.baseTexture);
@@ -48,7 +48,7 @@ export class DriveTray {
     this.container.calculateBounds();
   }
 
-  private colorize(cssColor: string) {
+  private colorize(cssColor: string): void {
     if (!this.handle) {
       return;
     }

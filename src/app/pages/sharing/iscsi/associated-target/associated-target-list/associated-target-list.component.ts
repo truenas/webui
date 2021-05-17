@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { forkJoin } from 'rxjs';
 
 import { IscsiService } from '../../../../../services';
 import * as _ from 'lodash';
@@ -55,16 +56,14 @@ export class AssociatedTargetListComponent {
   }
 
   dataHandler(entityList: any): void {
-    this.iscsiService.getTargets().subscribe((targets) => {
-      const target_list = targets;
-      this.iscsiService.getExtents().subscribe((res) => {
-        const extent_list = res;
-
-        for (let i = 0; i < entityList.rows.length; i++) {
-          entityList.rows[i].target = _.find(target_list, { id: entityList.rows[i].target })['name'];
-          entityList.rows[i].extent = _.find(extent_list, { id: entityList.rows[i].extent })['name'];
-        }
-      });
+    forkJoin([
+      this.iscsiService.getTargets(),
+      this.iscsiService.getExtents(),
+    ]).subscribe(([targets, extents]) => {
+      for (let i = 0; i < entityList.rows.length; i++) {
+        entityList.rows[i].target = _.find(targets, { id: entityList.rows[i].target })['name'];
+        entityList.rows[i].extent = _.find(extents, { id: entityList.rows[i].extent })['name'];
+      }
     });
   }
 

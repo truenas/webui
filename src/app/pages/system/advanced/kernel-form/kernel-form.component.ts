@@ -75,7 +75,7 @@ export class KernelFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  reconnect(href: string) {
+  reconnect(href: string): void {
     if (this.entityForm.ws.connected) {
       this.loader.close();
       // ws is connected
@@ -87,7 +87,7 @@ export class KernelFormComponent implements FormConfiguration, OnDestroy {
     }
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
   }
 
@@ -105,7 +105,7 @@ export class KernelFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.getDataFromDash.unsubscribe();
   }
 }

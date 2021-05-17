@@ -28,7 +28,7 @@ export interface ViewConfig {
   `,
   styles: [':host {display:block;}'],
 })
-export class ViewControllerComponent extends ViewController implements AfterViewInit, OnDestroy {
+export class ViewControllerComponent extends ViewController implements OnDestroy {
   readonly componentName = ViewControllerComponent;
   @ViewChild('display', { static: true }) display: Display;
   protected core: CoreService;
@@ -42,24 +42,21 @@ export class ViewControllerComponent extends ViewController implements AfterView
     this.core = CoreServiceInjector.get(CoreService);
   }
 
-  ngAfterViewInit() {
-  }
-
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 
-  create(component: any, container?: string) {
+  create(component: any, container?: string): any {
     if (!container) { container = 'display'; }
     return (this as any)[container].create(component);
   }
 
-  addChild(instance: any, container?: string) {
+  addChild(instance: any, container?: string): void {
     if (!container) { container = 'display'; }
     (this as any)[container].addChild(instance);
   }
 
-  removeChild(instance: any, container?: string) {
+  removeChild(instance: any, container?: string): void {
     if (!container) { container = 'display'; }
     (this as any)[container].removeChild(instance);
   }

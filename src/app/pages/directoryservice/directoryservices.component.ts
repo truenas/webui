@@ -171,7 +171,7 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     this.refreshForms();
   }
 
-  getDataCardData() {
+  getDataCardData(): void {
     const activeDirectoryPromise = this.ws.call('activedirectory.config').toPromise();
     const ldapPromise = this.ws.call('ldap.config').toPromise();
     const kerberosSettingsPromise = this.ws.call('kerberos.config').toPromise();
@@ -258,7 +258,7 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     );
   }
 
-  doAdd(name: string, id?: number) {
+  doAdd(name: string, id?: number): void {
     let addComponent: ActiveDirectoryComponent
     | IdmapFormComponent
     | LdapComponent
@@ -307,7 +307,7 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     }
   }
 
-  refreshTables() {
+  refreshTables(): void {
     this.getDataCardData();
     this.tableCards.forEach((card) => {
       if (card.tableConf?.tableComponent) {
@@ -316,7 +316,7 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     });
   }
 
-  refreshForms() {
+  refreshForms(): void {
     this.activeDirectoryFormComponent = new ActiveDirectoryComponent(
       this.router,
       this.ws,
@@ -347,7 +347,7 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     this.kerberosKeytabsFormComponent = new KerberosKeytabsFormComponent(this.modalService);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.refreshOnClose.unsubscribe();
   }
 }

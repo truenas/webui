@@ -67,7 +67,7 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     parent: this,
   };
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.refreshUserForm();
 
     this.modalService.refreshForm$.subscribe(() => {
@@ -75,22 +75,22 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.refreshTableSubscription) {
       this.refreshTableSubscription.unsubscribe();
     }
   }
 
-  refreshUserForm() {
+  refreshUserForm(): void {
     this.addComponent = new PullImageFormComponent(this.mdDialog, this.dialogService, this.modalService);
   }
 
-  refresh() {
+  refresh(): void {
     this.entityList.getData();
     this.entityList.filter(this.filterString);
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
   }
 
@@ -129,11 +129,11 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     return data;
   }
 
-  doAdd() {
+  doAdd(): void {
     this.modalService.open('slide-in-form', this.addComponent);
   }
 
-  onToolbarAction(evt: CoreEvent) {
+  onToolbarAction(evt: CoreEvent): void {
     if (evt.data.event_control == 'filter') {
       this.filterString = evt.data.filter;
       this.entityList.filter(this.filterString);
@@ -142,7 +142,7 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickUpdateImage(row: any) {
+  onClickUpdateImage(row: any): void {
     if (row.repo_tags.length > 0) {
       this.chooseTag.fieldConfig[0].options = row.repo_tags.map((item: any) => ({
         label: item,
@@ -153,7 +153,7 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateImage(entityDialog: any) {
+  updateImage(entityDialog: any): void {
     const self = entityDialog.parent;
     const tag = entityDialog.formGroup.controls['tag'].value;
     const params = tag.split(':');

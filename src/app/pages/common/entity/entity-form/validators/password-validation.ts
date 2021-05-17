@@ -1,6 +1,6 @@
-import { FormControl } from '@angular/forms';
+import { FormControl, ValidatorFn } from '@angular/forms';
 
-export function matchOtherValidator(otherControlName: string) {
+export function matchOtherValidator(otherControlName: string): ValidatorFn {
   let thisControl: FormControl;
   let otherControl: FormControl;
 

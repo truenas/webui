@@ -360,7 +360,7 @@ export class DeviceEditComponent implements OnInit {
     private core: CoreService,
     protected vmService: VmService) {}
 
-  preInit() {
+  preInit(): void {
     // Display
     this.ws.call('vm.device.bind_choices').subscribe((res) => {
       if (res && Object.keys(res).length > 0) {
@@ -402,7 +402,7 @@ export class DeviceEditComponent implements OnInit {
     });
   }
   // Setting values coming from backend and populating formgroup with it.
-  setgetValues(activeformgroup: FormGroup, deviceInformation: any[]) {
+  setgetValues(activeformgroup: FormGroup, deviceInformation: any[]): void {
     for (const value in deviceInformation) {
       const fg = activeformgroup.controls[value];
       if (typeof fg !== 'undefined') {
@@ -410,7 +410,8 @@ export class DeviceEditComponent implements OnInit {
       }
     }
   }
-  async ngOnInit() {
+
+  async ngOnInit(): Promise<void> {
     this.preInit();
     this.aroute.params.subscribe((params) => {
       this.deviceid = parseInt(params['pk'], 10);
@@ -509,7 +510,7 @@ export class DeviceEditComponent implements OnInit {
     this.afterInit();
   }
 
-  afterInit() {
+  afterInit(): void {
     this.ws.call('pool.dataset.query', [[['type', '=', 'VOLUME']], { extra: { properties: ['id'] } }]).subscribe((zvols: any[]) => {
       zvols.forEach((zvol) => {
         _.find(this.diskFieldConfig, { name: 'path' }).options.push(
@@ -533,11 +534,11 @@ export class DeviceEditComponent implements OnInit {
     ];
   }
 
-  goBack() {
+  goBack(): void {
     this.router.navigate(new Array('/').concat(this.route_success));
   }
 
-  onSubmit(event: Event) {
+  onSubmit(event: Event): void {
     this.aroute.params.subscribe((params) => {
       const deviceValue = _.cloneDeep(this.activeFormGroup.value);
       const deviceOrder = deviceValue['order'];
