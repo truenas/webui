@@ -98,12 +98,7 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
 
   customSubmit(body: { gpus: string[] }) {
     this.loader.open();
-    const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
-    for (const gpuValue of body.gpus) {
-      if (finalIsolatedPciIds.findIndex((pciId) => pciId === gpuValue) === -1) {
-        finalIsolatedPciIds.push(gpuValue);
-      }
-    }
+    const finalIsolatedPciIds = body.gpus;
     this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids: finalIsolatedPciIds }]).subscribe(
       (res) => {
         this.loader.close();
