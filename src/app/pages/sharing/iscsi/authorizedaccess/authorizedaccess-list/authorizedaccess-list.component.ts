@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 import { T } from 'app/translate-marker';
 
@@ -9,13 +10,13 @@ import { T } from 'app/translate-marker';
     <entity-table [conf]="this" [title]="tableTitle"></entity-table>
   `,
 })
-export class AuthorizedAccessListComponent {
+export class AuthorizedAccessListComponent implements InputTableConf {
   tableTitle = 'Authorized Access';
-  protected queryCall = 'iscsi.auth.query';
-  protected wsDelete = 'iscsi.auth.delete';
-  protected route_add: string[] = ['sharing', 'iscsi', 'auth', 'add'];
+  queryCall: 'iscsi.auth.query' = 'iscsi.auth.query';
+  wsDelete: 'iscsi.auth.delete' = 'iscsi.auth.delete';
+  route_add: string[] = ['sharing', 'iscsi', 'auth', 'add'];
+  route_edit: string[] = ['sharing', 'iscsi', 'auth', 'edit'];
   protected route_add_tooltip = 'Add Authorized Access';
-  protected route_edit: string[] = ['sharing', 'iscsi', 'auth', 'edit'];
 
   columns: any[] = [
     {

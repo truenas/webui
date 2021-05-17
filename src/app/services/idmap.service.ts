@@ -13,7 +13,9 @@ export class IdmapService {
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {}
 
-  getData(resource_name: string) { return this.rest.get(resource_name, {}); }
+  getData(resource_name: string): void {
+    return this.rest.get(resource_name, {});
+  }
 
   getADIdmap() {
     // return this.rest.get(this.ad_idmap, {});

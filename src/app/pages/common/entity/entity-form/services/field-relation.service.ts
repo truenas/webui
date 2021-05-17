@@ -109,7 +109,7 @@ export class FieldRelationService {
     );
   }
 
-  checkValueConditionIsTrue(conditionValue: any, controlValue: any, operator: string) {
+  checkValueConditionIsTrue(conditionValue: any, controlValue: any, operator: string): boolean {
     let result = false;
 
     switch (operator) {
@@ -263,7 +263,7 @@ export class FieldRelationService {
     return true;
   }
 
-  getDataType(data: unknown) {
+  getDataType(data: unknown): string {
     if (Array.isArray(data)) {
       return 'array';
     } if (data != null && typeof data === 'object') {

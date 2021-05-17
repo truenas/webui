@@ -2,6 +2,7 @@ import { ApplicationRef, Component, Injector } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ValidationErrors, FormControl } from '@angular/forms';
+import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -299,20 +300,20 @@ export class ServiceSMBComponent implements FormConfiguration {
       }
     });
 
-    this.ws.call('user.query').subscribe((res) => {
+    this.ws.call('user.query').subscribe((users) => {
       this.cifs_srv_guest = otherColTwoSet.config.find((config) => config.name === 'guest');
-      res.forEach((user) => {
+      users.forEach((user) => {
         this.cifs_srv_guest.options.push({ label: user.username, value: user.username });
       });
     });
 
-    this.userService.groupQueryDSCache('', true).subscribe((items: any[]) => {
-      const groups: any[] = [];
-      items.forEach((item) => {
-        groups.push({ label: item.group, value: item.group });
+    this.userService.groupQueryDSCache('', true).subscribe((groups) => {
+      const groupOptions: Option[] = [];
+      groups.forEach((item) => {
+        groupOptions.push({ label: item.group, value: item.group });
       });
       this.cifs_srv_admin_group = otherSet.config.find((config) => config.name === 'admin_group');
-      groups.forEach((group) => {
+      groupOptions.forEach((group) => {
         this.cifs_srv_admin_group.options.push({ label: group.label, value: group.value });
       });
     });
@@ -353,12 +354,12 @@ export class ServiceSMBComponent implements FormConfiguration {
   }
 
   updateGroupSearchOptions(value = '', parent: any) {
-    parent.userService.groupQueryDSCache(value, true).subscribe((items: any[]) => {
-      const groups = [];
+    (parent.userService as UserService).groupQueryDSCache(value, true).subscribe((items) => {
+      const groupOptions: Option[] = [];
       for (let i = 0; i < items.length; i++) {
-        groups.push({ label: items[i].group, value: items[i].group });
+        groupOptions.push({ label: items[i].group, value: items[i].group });
       }
-      parent.cifs_srv_admin_group.searchOptions = groups;
+      parent.cifs_srv_admin_group.searchOptions = groupOptions;
     });
   }
 

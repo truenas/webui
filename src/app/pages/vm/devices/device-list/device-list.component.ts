@@ -60,7 +60,7 @@ export class DeviceListComponent {
     public dialogService: DialogService, private cdRef: ChangeDetectorRef,
     private translate: TranslateService) {}
 
-  isActionVisible(actionId: string, row: any) {
+  isActionVisible(actionId: string, row: any): boolean {
     return !(actionId === 'delete' && row.id === true);
   }
 
@@ -145,7 +145,7 @@ export class DeviceListComponent {
     return actions;
   }
 
-  deviceDelete(row: any) {
+  deviceDelete(row: any): void {
     this.translate.get('Delete').subscribe((msg) => {
       this.dialogService.confirm(T('Delete'), `${msg} <b>${row.dtype} ${row.id}</b>`,
         true, T('Delete Device')).subscribe((res: boolean) => {
@@ -169,7 +169,8 @@ export class DeviceListComponent {
       });
     });
   }
-  preInit(entityList: any) {
+
+  preInit(entityList: any): void {
     this.entityList = entityList;
     this.sub = this.aroute.params.subscribe((params) => {
       this.pk = params['pk'];

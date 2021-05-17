@@ -88,7 +88,7 @@ export class TunableListComponent {
     }
   }
 
-  wsMultiDeleteParams(selected: any) {
+  wsMultiDeleteParams(selected: any): any {
     const params: any[] = [this.wsDelete];
     const selectedId = [];
     for (const i in selected) {

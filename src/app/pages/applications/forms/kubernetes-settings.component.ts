@@ -138,7 +138,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     ).toPromise();
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
     this.appService.getContainerConfig().subscribe((res) => {
       if (res) {
@@ -147,7 +147,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     if (data.route_v4_gateway === '') {
       data.route_v4_gateway = null;
     }
@@ -159,7 +159,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     delete data.enable_container_image_update;
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     this.loader.open();
 
     const promises = [];

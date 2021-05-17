@@ -164,7 +164,7 @@ export class VmFormComponent implements FormConfiguration {
     protected vmService: VmService, protected route: ActivatedRoute,
     private translate: TranslateService) {}
 
-  preInit(entityForm: any) {
+  preInit(entityForm: any): void {
     this.entityForm = entityForm;
     this.route.params.subscribe((params) => {
       if (params['pk']) {
@@ -177,7 +177,7 @@ export class VmFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.bootloader = _.find(this.fieldConfig, { name: 'bootloader' });
     this.vmService.getBootloaderOptions().subscribe((options) => {
       for (const option in options) {
@@ -226,7 +226,7 @@ export class VmFormComponent implements FormConfiguration {
     }
   }
 
-  blurEvent(parent: any) {
+  blurEvent(parent: any): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['memory'].setValue(parent.storageService.humanReadable);
       const valString = (parent.entityForm.formGroup.controls['memory'].value);
@@ -239,7 +239,7 @@ export class VmFormComponent implements FormConfiguration {
     }
   }
 
-  cpuValidator(name: string) {
+  cpuValidator(name: string): any {
     const self = this;
     return function validCPU(control: FormControl) {
       const config = self.fieldConfig.find((c) => c.name === name);
@@ -263,12 +263,12 @@ export class VmFormComponent implements FormConfiguration {
     };
   }
 
-  resourceTransformIncomingRestData(wsResponse: any) {
+  resourceTransformIncomingRestData(wsResponse: any): any {
     wsResponse['memory'] = this.storageService.convertBytestoHumanReadable(wsResponse['memory'] * 1048576, 0);
     return wsResponse;
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     if (data['memory'] !== undefined && data['memory'] !== null) {
       data['memory'] = Math.round(this.storageService.convertHumanStringToNum(data['memory']) / 1048576);
     }
