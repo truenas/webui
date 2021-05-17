@@ -4,6 +4,7 @@ import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { IscsiService, SystemGeneralService, WebSocketService } from 'app/services/';
 
 import { DialogService } from 'app/services/dialog.service';
@@ -79,7 +80,7 @@ export class Services implements OnInit {
     });
   }
 
-  getActions(parentRow: ServiceRow) {
+  getActions(parentRow: ServiceRow): EntityTableAction[] {
     return [{
       actionName: 'configure',
       name: parentRow.service,

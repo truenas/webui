@@ -27,7 +27,6 @@ export class ChartWizardComponent implements OnDestroy {
   protected addCall = 'chart.release.create';
   protected isEntity = true;
   protected utils: CommonUtils;
-  private isLinear = true;
   summary = {};
   isAutoSummary = true;
   hideCancel = true;
@@ -45,11 +44,11 @@ export class ChartWizardComponent implements OnDestroy {
     this.utils = new CommonUtils();
   }
 
-  setTitle(title: string) {
+  setTitle(title: string): void {
     this.title = title;
   }
 
-  setCatalogApp(catalogApp: any) {
+  setCatalogApp(catalogApp: any): void {
     this.catalogApp = catalogApp;
     this.parseSchema();
   }
@@ -123,7 +122,7 @@ export class ChartWizardComponent implements OnDestroy {
     }
   }
 
-  afterInit(entityWizard: EntityWizardComponent) {
+  afterInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
     const repositoryConfig = _.find(this.fieldConfig, { name: 'image_repository' });
     if (repositoryConfig) {
@@ -164,9 +163,16 @@ export class ChartWizardComponent implements OnDestroy {
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
+    this.dialogRef.componentInstance.failure.subscribe((res: any) => {
+      if (res.exc_info && res.exc_info.extra) {
+        new EntityUtils().handleWSError(this, res);
+      } else {
+        this.dialogRef.errorReport('Error', res.error, res.exception);
+      }
+    });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }

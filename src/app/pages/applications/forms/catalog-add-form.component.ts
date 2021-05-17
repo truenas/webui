@@ -20,7 +20,6 @@ export class CatalogAddFormComponent implements FormConfiguration {
   isEntity = true;
   protected entityForm: EntityFormComponent;
   title = helptext.catalogForm.title;
-  private dialogRef: any;
   fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
@@ -59,7 +58,7 @@ export class CatalogAddFormComponent implements FormConfiguration {
           name: 'branch',
           placeholder: helptext.catalogForm.branch.placeholder,
           tooltip: helptext.catalogForm.branch.tooltip,
-          value: 'master',
+          value: 'main',
         },
       ],
     },
@@ -69,7 +68,7 @@ export class CatalogAddFormComponent implements FormConfiguration {
     private modalService: ModalService) {
   }
 
-  afterModalFormClosed() {
+  afterModalFormClosed(): void {
     this.modalService.refreshTable();
   }
 }

@@ -435,7 +435,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     });
   }
 
-  setBucketError(error: any) {
+  setBucketError(error: any): void {
     if (error) {
       this.bucket_field.hasErrors = true;
       this.bucket_field.errors = error;
@@ -497,7 +497,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     );
   }
 
-  setDisabled(name: string, disable: boolean, hide = false, status?: string) {
+  setDisabled(name: string, disable: boolean, hide = false, status?: string): void {
     if (hide) {
       disable = hide;
     }
@@ -516,7 +516,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     }
   }
 
-  dataHandler(entityForm: EntityFormComponent) {
+  dataHandler(entityForm: EntityFormComponent): void {
     const data = entityForm.wsResponse;
     for (const i in data) {
       const fg = entityForm.formGroup.controls[i];
@@ -545,7 +545,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     }
   }
 
-  async afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.entityForm = entityForm;
     this.formGroup = entityForm.formGroup;
     this.pk = entityForm.pk;
@@ -822,7 +822,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     return value;
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     value = this.submitDataHandler(value);
     if (!this.pk) {
       this.loader.open();
@@ -848,7 +848,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     }
   }
 
-  isCustActionDisabled() {
+  isCustActionDisabled(): boolean {
     return !this.entityForm.valid;
   }
 }

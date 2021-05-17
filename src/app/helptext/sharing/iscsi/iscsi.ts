@@ -179,7 +179,7 @@ export const helptext_sharing_iscsi = {
 
   extent_placeholder_path: T('Path to the Extent'),
   extent_tooltip_path: T('Browse to an existing file. Create a new file by browsing to a\
- dataset and appending /<i>{filename.ext}</i> to the path. Extents cannot be\
+ dataset and appending /<i>\'{\'filename.ext\'}\'</i> to the path. Extents cannot be\
  created inside a jail root directory.'),
   extent_validators_path: [Validators.required],
 

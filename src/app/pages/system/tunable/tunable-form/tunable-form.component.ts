@@ -81,7 +81,7 @@ export class TunableFormComponent implements FormConfiguration {
 
   constructor(protected ws: WebSocketService, protected sysGeneralService: SystemGeneralService) {}
 
-  preInit() {
+  preInit(): void {
     this.type_fc = _.find(this.fieldSets[0].config, { name: 'type' });
     this.ws.call('tunable.tunable_type_choices').subscribe((tunables) => {
       for (const key in tunables) {
@@ -96,12 +96,12 @@ export class TunableFormComponent implements FormConfiguration {
     }
   }
 
-  async afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.title = `${entityForm.isNew ? T('Add') : T('Edit')} ${this.fieldSets[0].name}`;
     entityForm.formGroup.controls['enabled'].setValue(true);
   }
 
-  afterSubmit() {
+  afterSubmit(): void {
     this.sysGeneralService.refreshSysGeneral();
   }
 }

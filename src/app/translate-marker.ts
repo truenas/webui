@@ -1,3 +1,3 @@
-export function T(str: string) {
+export function T(str: string): string {
   return str;
 }

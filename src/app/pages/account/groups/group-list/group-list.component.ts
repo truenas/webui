@@ -13,7 +13,6 @@ import { T } from '../../../../translate-marker';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { GroupFormComponent } from '../group-form/group-form.component';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { User } from 'app/interfaces/user';
 
 @Component({
   selector: 'app-group-list',
@@ -60,20 +59,20 @@ export class GroupListComponent implements OnDestroy {
     protected prefService: PreferencesService, private translate: TranslateService,
     protected aroute: ActivatedRoute, private modalService: ModalService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.refreshGroupForm();
     this.modalService.refreshForm$.subscribe(() => {
       this.refreshGroupForm();
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.refreshTableSubscription) {
       this.refreshTableSubscription.unsubscribe();
     }
   }
 
-  refreshGroupForm() {
+  refreshGroupForm(): void {
     this.addComponent = new GroupFormComponent(this._router, this.ws, this.modalService);
   }
 
@@ -91,7 +90,7 @@ export class GroupListComponent implements OnDestroy {
     return data;
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
     setTimeout(() => {
       if (this.prefService.preferences.showGroupListMessage) {
@@ -103,7 +102,8 @@ export class GroupListComponent implements OnDestroy {
       this.entityList.getData();
     });
   }
-  isActionVisible(actionId: string, row: any) {
+
+  isActionVisible(actionId: string, row: any): boolean {
     if (actionId === 'delete' && row.builtin === true) {
       return false;
     }
@@ -198,14 +198,14 @@ export class GroupListComponent implements OnDestroy {
     return actions;
   }
 
-  ableToDeleteAllMembers(group: any) {
+  ableToDeleteAllMembers(group: any): boolean {
     return group.users.length !== 0;
   }
 
-  toggleBuiltins() {
-    let show;
-    this.prefService.preferences.hide_builtin_groups ? show = helptext.builtins_dialog.show
-      : show = helptext.builtins_dialog.hide;
+  toggleBuiltins(): void {
+    const show = this.prefService.preferences.hide_builtin_groups
+      ? helptext.builtins_dialog.show
+      : helptext.builtins_dialog.hide;
     this.translate.get(show).subscribe((action: string) => {
       this.translate.get(helptext.builtins_dialog.title).subscribe((title: string) => {
         this.translate.get(helptext.builtins_dialog.message).subscribe((message: string) => {
@@ -224,14 +224,14 @@ export class GroupListComponent implements OnDestroy {
     });
   }
 
-  showOneTimeBuiltinMsg() {
+  showOneTimeBuiltinMsg(): void {
     this.prefService.preferences.showGroupListMessage = false;
     this.prefService.savePreferences();
     this.dialogService.confirm(helptext.builtinMessageDialog.title, helptext.builtinMessageDialog.message,
       true, helptext.builtinMessageDialog.button, false, '', '', '', '', true);
   }
 
-  doAdd() {
+  doAdd(): void {
     this.modalService.open('slide-in-form', this.addComponent);
   }
 }

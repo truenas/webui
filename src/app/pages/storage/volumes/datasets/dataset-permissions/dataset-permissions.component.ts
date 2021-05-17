@@ -173,7 +173,7 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
     protected router: Router,
   ) { }
 
-  preInit(entityEdit: any) {
+  preInit(entityEdit: any): void {
     entityEdit.isNew = true; // remove me when we find a way to get the permissions
     this.aroute.params.subscribe((params) => {
       this.datasetId = params['pk'];
@@ -201,7 +201,7 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
     });
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
     this.storageService.filesystemStat(this.datasetPath).subscribe((res) => {
       this.datasetMode = res.mode.toString(8).substring(2, 5);
@@ -222,11 +222,11 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.recursive_subscription.unsubscribe();
   }
 
-  updateGroupSearchOptions(value = '', parent: any) {
+  updateGroupSearchOptions(value = '', parent: any): void {
     parent.userService.groupQueryDSCache(value).subscribe((items: any) => {
       const groups = [];
       for (let i = 0; i < items.length; i++) {
@@ -236,7 +236,7 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
     });
   }
 
-  updateUserSearchOptions(value = '', parent: any) {
+  updateUserSearchOptions(value = '', parent: any): void {
     (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
@@ -272,7 +272,7 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
     }
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Saving Permissions') } });
     this.dialogRef.componentInstance.setDescription(T('Saving Permissions...'));
     this.dialogRef.componentInstance.setCall(this.updateCall, [this.datasetId, data]);
@@ -289,7 +289,7 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
     });
   }
 
-  loadMoreOptions(length: number, parent: any, searchText: string) {
+  loadMoreOptions(length: number, parent: any, searchText: string): void {
     (parent.userService as UserService).userQueryDSCache(searchText, length).subscribe((items) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
@@ -303,7 +303,7 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
     });
   }
 
-  loadMoreGroupOptions(length: number, parent: any, searchText: string) {
+  loadMoreGroupOptions(length: number, parent: any, searchText: string): void {
     parent.userService.groupQueryDSCache(searchText, false, length).subscribe((items: any[]) => {
       const groups = [];
       for (let i = 0; i < items.length; i++) {

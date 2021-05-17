@@ -37,7 +37,7 @@ export class ChartEventsDialog implements OnInit {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     const chartQueryPromise = this.appService.getChartReleaseWithResources(this.catalogApp.name).toPromise();
     const chartEventPromise = this.appService.getChartReleaseEvents(this.catalogApp.name).toPromise();
 
@@ -59,7 +59,7 @@ export class ChartEventsDialog implements OnInit {
   }
 
   // return the container image status
-  containerImageStatus(containerImage: any) {
+  containerImageStatus(containerImage: any): string {
     if (containerImage.value.update_available) {
       return helptext.chartEventDialog.statusUpdateAvailable;
     }
@@ -67,7 +67,7 @@ export class ChartEventsDialog implements OnInit {
   }
 
   // return the chart app status
-  appStatus() {
+  appStatus(): string {
     let label: string;
     if (!this.catalogApp.update_available && !this.catalogApp.container_images_update_available) {
       label = helptext.chartEventDialog.statusUpToDate;
@@ -78,7 +78,7 @@ export class ChartEventsDialog implements OnInit {
   }
 
   // return the tooltip string for the version availabe to update
-  getUpdateVersionTooltip() {
+  getUpdateVersionTooltip(): string {
     let label: string;
     if (this.catalogApp.update_available) {
       label = helptext.chartEventDialog.statusUpdateAvailableTo + this.catalogApp.human_latest_version;

@@ -111,13 +111,13 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
     protected encryptionService: EncryptionService,
   ) {}
 
-  preInit(entityForm: any) {
+  preInit(): void {
     this.route.params.subscribe((params) => {
       this.pk = params['pk'];
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     entityForm.formGroup.controls['password'].valueChanges.subscribe((res: string) => {
       this.admin_pw = res;
       const btn = <HTMLInputElement> document.getElementById('cust_button_Invalidate Existing Key');
@@ -125,7 +125,7 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     this.ws.call('auth.check_user', ['root', value.password]).subscribe((res) => {
       if (res) {
         this.encryptionService.makeRecoveryKey(this.pk, value.name, this.route_return);

@@ -27,7 +27,7 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
   showMenu = true;
   key_prop: string;
 
-  get isSingleAction() {
+  get isSingleAction(): boolean {
     if (!this.actions) return;
     const hasGroups = (this.actions && this.actions[0].actionName);
 
@@ -43,14 +43,14 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
 
   constructor(protected translate: TranslateService) { }
 
-  menuActionVisible(id: string) {
+  menuActionVisible(id: string): boolean {
     if (id === 'edit' || id === 'delete') {
       return false;
     }
     return true;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.entity.conf.config && this.entity.conf.config.deleteMsg) {
       this.key_prop = this.entity.conf.config.deleteMsg.key_props[0];
     } else if (this.entity.filterColumns) {
@@ -59,15 +59,15 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
     this.getActions();
   }
 
-  ngOnChanges() {
+  ngOnChanges(): void {
     this.getActions();
   }
 
-  getActions() {
+  getActions(): void {
     this.actions = this.entity.getActions(this.row);
   }
 
-  noPropogate(e: MouseEvent) {
+  noPropogate(e: MouseEvent): void {
     e.stopPropagation();
   }
 

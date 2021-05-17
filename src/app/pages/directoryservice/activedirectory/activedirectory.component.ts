@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs/Observable';
 import { ProductType } from '../../../enums/product-type.enum';
 
 import { EntityUtils } from '../../common/entity/utils';
@@ -283,7 +284,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
 
   advanced_field: any[] = helptext.activedirectory_advanced_fields;
 
-  isCustActionVisible(actionname: string) {
+  isCustActionVisible(actionname: string): boolean {
     if (actionname === 'advanced_mode' && this.isBasicMode === false) {
       return false;
     } if (actionname === 'basic_mode' && this.isBasicMode === true) {
@@ -302,7 +303,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     protected systemGeneralService: SystemGeneralService,
     protected dialogservice: DialogService) { }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     if (data['kerberos_realm'] && data['kerberos_realm'] !== null) {
       data['kerberos_realm'] = data['kerberos_realm'].id;
     }
@@ -311,7 +312,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     return data;
   }
 
-  preInit(entityForm: any) {
+  preInit(entityForm: any): void {
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         if (is_ha) {
@@ -328,7 +329,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
     this.ws.call('kerberos.realm.query').subscribe((res) => {
       this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
@@ -378,7 +379,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     entityEdit.submitFunction = this.submitFunction;
   }
 
-  setBasicMode(basic_mode: boolean) {
+  setBasicMode(basic_mode: boolean): void {
     this.isBasicMode = basic_mode;
     _.find(this.fieldSets, { class: 'adv_row' }).label = !basic_mode;
     _.find(this.fieldSets, { class: 'adv_column1' }).label = !basic_mode;
@@ -386,7 +387,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     _.find(this.fieldSets, { class: 'divider1' }).divider = !basic_mode;
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     data.netbiosalias = data.netbiosalias.trim();
     if (data.netbiosalias.length > 0) {
       data.netbiosalias = data.netbiosalias.split(' ');
@@ -410,11 +411,11 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     }
   }
 
-  submitFunction(body: any) {
+  submitFunction(body: any): Observable<any> {
     return this.ws.call('activedirectory.update', [body]);
   }
 
-  responseOnSubmit(value: any) {
+  responseOnSubmit(value: any): void {
     this.entityEdit.formGroup.controls['kerberos_principal'].setValue(value.kerberos_principal);
     this.entityEdit.formGroup.controls['kerberos_realm'].setValue(value['kerberos_realm']);
 
@@ -448,7 +449,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
   }
 
   // Shows starting progress as a job dialog
-  showStartingJob(jobId: number) {
+  showStartingJob(jobId: number): void {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Start' }, disableClose: true });
     this.dialogRef.componentInstance.jobId = jobId;
     this.dialogRef.componentInstance.wsshow();

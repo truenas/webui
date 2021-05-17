@@ -11,7 +11,7 @@ export class ForgotPasswordComponent {
   @ViewChild(MatProgressBar, { static: false }) progressBar: MatProgressBar;
   @ViewChild(MatButton, { static: false }) submitButton: MatButton;
 
-  submitEmail() {
+  submitEmail(): void {
     this.submitButton.disabled = true;
     this.progressBar.mode = 'indeterminate';
   }

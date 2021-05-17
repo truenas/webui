@@ -22,7 +22,7 @@ export class ErrorDialog {
   constructor(public dialogRef: MatDialogRef < ErrorDialog >, public translate: TranslateService,
     private ws: WebSocketService, public http: HttpClient, public storage: StorageService) {}
 
-  toggleOpen() {
+  toggleOpen(): void {
     const dialogs = document.getElementsByClassName('mat-dialog-container');
     const dialog = dialogs[dialogs.length - 1];
     const messageWrapper = (<HTMLElement>dialog.querySelector('#err-message-wrapper'));
@@ -57,7 +57,7 @@ export class ErrorDialog {
     }
   }
 
-  downloadLogs() {
+  downloadLogs(): void {
     this.ws.call('core.download', ['filesystem.get', [this.logs.logs_path], this.logs.id + '.log']).subscribe(
       (res) => {
         const url = res[1];

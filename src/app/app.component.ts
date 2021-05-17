@@ -117,7 +117,7 @@ export class AppComponent {
     };
   }
 
-  private setFavicon(str: string) {
+  private setFavicon(str: string): void {
     const link: HTMLLinkElement = document.querySelector("link[rel*='icon']") || document.createElement('link');
     link['rel'] = 'icon';
     link['type'] = 'image/png';
@@ -126,7 +126,7 @@ export class AppComponent {
     document.getElementsByTagName('head')[0].appendChild(link);
   }
 
-  private detectBrowser(name: string) {
+  private detectBrowser(name: string): boolean {
     const N = navigator.appName;
     const UA = navigator.userAgent;
     let temp;
@@ -138,7 +138,7 @@ export class AppComponent {
     return false;
   }
 
-  private globalPreviewControl() {
+  private globalPreviewControl(): void {
     const snackBarRef = this.snackBar.open('Custom theme Global Preview engaged', 'Back to form');
     snackBarRef.onAction().subscribe(() => {
       this.router.navigate(['ui-preferences', 'create-theme']);

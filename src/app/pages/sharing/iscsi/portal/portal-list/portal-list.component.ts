@@ -66,7 +66,7 @@ export class PortalListComponent {
     });
   }
 
-  dataHandler(data: any) {
+  dataHandler(data: any): void {
     for (const i in data.rows) {
       for (const ip in data.rows[i].listen) {
         const listenIP = this.ipChoicies[data.rows[i].listen[ip].ip] || data.rows[i].listen[ip].ip;

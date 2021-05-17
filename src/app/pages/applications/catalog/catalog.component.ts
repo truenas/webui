@@ -4,6 +4,9 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
+import { Option } from 'app/interfaces/option.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { Subject, Subscription } from 'rxjs';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
@@ -23,15 +26,10 @@ import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from '../../../helptext/apps/apps';
 import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
 
-interface SelectOption {
-  label: string;
-  value: string;
-}
-
 @Component({
   selector: 'app-catalog',
   templateUrl: './catalog.component.html',
-  styleUrls: ['../applications.component.scss'],
+  styleUrls: ['../applications.component.scss', 'catalog.component.scss'],
 })
 export class CatalogComponent implements OnInit {
   @Output() updateTab = new EventEmitter();
@@ -41,14 +39,12 @@ export class CatalogComponent implements OnInit {
   filteredCatalogNames: string[] = [];
   filteredCatalogApps: any[] = [];
   filterString = '';
-  private dialogRef: any;
-  private poolList: SelectOption[] = [];
+  private poolList: Option[] = [];
   private selectedPool = '';
   settingsEvent: Subject<CoreEvent>;
   private kubernetesForm: KubernetesSettingsComponent;
   private chartReleaseForm: ChartReleaseAddComponent;
   private refreshForm: Subscription;
-  private refreshTable: Subscription;
   protected utils: CommonUtils;
 
   choosePool: DialogFormConfiguration = {
@@ -66,10 +62,17 @@ export class CatalogComponent implements OnInit {
     parent: this,
   };
 
-  constructor(private dialogService: DialogService, private appLoaderService: AppLoaderService,
-    private mdDialog: MatDialog, private translate: TranslateService, protected ws: WebSocketService,
-    private router: Router, private core: CoreService, private modalService: ModalService,
-    private appService: ApplicationsService, private sysGeneralService: SystemGeneralService) {
+  constructor(
+    private dialogService: DialogService,
+    private appLoaderService: AppLoaderService,
+    private mdDialog: MatDialog,
+    private translate: TranslateService,
+    private ws: WebSocketService,
+    private router: Router,
+    private core: CoreService,
+    private modalService: ModalService,
+    private appService: ApplicationsService,
+  ) {
     this.utils = new CommonUtils();
   }
 
@@ -82,27 +85,19 @@ export class CatalogComponent implements OnInit {
     });
   }
 
-  loadCatalogs() {
-    this.appService.getAllCatalogItems().subscribe((res: any[]) => {
+  loadCatalogs(): void {
+    this.appService.getAllCatalogItems().subscribe((catalogs) => {
       this.catalogNames = [];
       this.catalogApps = [];
-      res.forEach((catalog) => {
+      catalogs.forEach((catalog) => {
         this.catalogNames.push(catalog.label);
-        catalog.preferred_trains.forEach((train: any) => {
+        catalog.preferred_trains.forEach((train) => {
           for (const i in catalog.trains[train]) {
             const item = catalog.trains[train][i];
             const versions = item.versions;
+            const versionKeys = Object.keys(versions).filter((versionKey) => versions[versionKey].healthy);
 
-            const versionKeys: any[] = [];
-            Object.keys(versions).forEach((versionKey) => {
-              if (versions[versionKey].healthy) {
-                versionKeys.push(versionKey);
-              }
-            });
-
-            const sorted_version_labels = versionKeys.sort(this.utils.versionCompare);
-
-            const latest = sorted_version_labels[0];
+            const latest = versionKeys.sort(this.utils.versionCompare)[0];
             const latestDetails = versions[latest];
 
             const catalogItem = {
@@ -113,23 +108,24 @@ export class CatalogComponent implements OnInit {
                 train,
               },
               icon_url: item.icon_url ? item.icon_url : '/assets/images/ix-original.png',
-              latest_version: latestDetails.human_version,
-              info: latestDetails.app_readme,
+              latest_version: latestDetails?.human_version,
+              info: latestDetails?.app_readme,
               categories: item.categories,
               healthy: item.healthy,
+              healthy_error: item.healthy_error,
               versions: item.versions,
-              schema: latestDetails.schema,
+              schema: latestDetails?.schema,
             };
             this.catalogApps.push(catalogItem);
           }
         });
       });
       this.refreshToolbarMenus();
-      this.filerApps();
+      this.filterApps();
     });
   }
 
-  onToolbarAction(evt: CoreEvent) {
+  onToolbarAction(evt: CoreEvent): void {
     if (evt.data.event_control == 'settings' && evt.data.settings) {
       switch (evt.data.settings.value) {
         case 'select_pool':
@@ -137,65 +133,61 @@ export class CatalogComponent implements OnInit {
         case 'advanced_settings':
           this.modalService.open('slide-in-form', this.kubernetesForm);
           break;
-
         case 'unset_pool':
-
           this.doUnsetPool();
           break;
       }
     } else if (evt.data.event_control == 'launch') {
-      this.doInstall('ix-chart');
+      this.doInstall(ixChartApp);
     } else if (evt.data.event_control == 'filter') {
       this.filterString = evt.data.filter;
-      this.filerApps();
+      this.filterApps();
     } else if (evt.data.event_control == 'refresh_all') {
       this.syncAll();
     } else if (evt.data.event_control == 'catalogs') {
-      this.filteredCatalogNames = [];
-      if (evt.data.catalogs) {
-        evt.data.catalogs.forEach((catalog: any) => {
-          if (catalog) {
-            this.filteredCatalogNames.push(catalog.value);
-          }
-        });
-      }
+      this.filteredCatalogNames = evt.data.catalogs.map((catalog: any) => catalog.value);
 
-      this.filerApps();
+      this.filterApps();
     }
   }
 
-  refreshToolbarMenus() {
-    this.updateTab.emit({ name: 'catalogToolbarChanged', value: !!this.selectedPool, catalogNames: this.catalogNames });
+  refreshToolbarMenus(): void {
+    this.updateTab.emit({ name: 'catalogToolbarChanged', value: Boolean(this.selectedPool), catalogNames: this.catalogNames });
   }
 
-  refreshForms() {
+  refreshForms(): void {
     this.kubernetesForm = new KubernetesSettingsComponent(this.ws, this.appLoaderService, this.dialogService, this.modalService, this.appService);
     this.chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
   }
 
-  checkForConfiguredPool() {
-    this.appService.getKubernetesConfig().subscribe((res) => {
-      if (!res.pool) {
+  checkForConfiguredPool(): void {
+    this.appService.getKubernetesConfig().subscribe((config) => {
+      if (!config.pool) {
         this.selectPool();
       } else {
-        this.selectedPool = res.pool;
+        this.selectedPool = config.pool;
       }
       this.refreshToolbarMenus();
     });
   }
 
-  selectPool() {
-    this.appService.getPoolList().subscribe((res) => {
-      if (res.length === 0) {
-        this.dialogService.confirm(helptext.noPool.title, helptext.noPool.message, true,
-          helptext.noPool.action).subscribe((res: any) => {
-          if (res) {
-            this.router.navigate(['storage', 'manager']);
+  selectPool(): void {
+    this.appService.getPoolList().subscribe((pools) => {
+      if (pools.length === 0) {
+        this.dialogService.confirm({
+          title: helptext.noPool.title,
+          message: helptext.noPool.message,
+          hideCheckBox: true,
+          buttonMsg: helptext.noPool.action,
+        }).subscribe((confirmed) => {
+          if (!confirmed) {
+            return;
           }
+          this.router.navigate(['storage', 'manager']);
         });
       } else {
         this.poolList.length = 0;
-        res.forEach((pool: any) => {
+        pools.forEach((pool) => {
           this.poolList.push({ label: pool.name, value: pool.name });
         });
         if (this.selectedPool) {
@@ -209,49 +201,54 @@ export class CatalogComponent implements OnInit {
     });
   }
 
-  doUnsetPool() {
-    this.dialogService.confirm(helptext.choosePool.unsetPool.confirm.title, helptext.choosePool.unsetPool.confirm.message, true,
-      helptext.choosePool.unsetPool.confirm.button).subscribe((res: boolean) => {
-      if (res) {
-        this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-          data: {
-            title: (
-              helptext.choosePool.jobTitle),
-          },
-          disableClose: true,
-        });
-        this.dialogRef.componentInstance.setCall('kubernetes.update', [{ pool: null }]);
-        this.dialogRef.componentInstance.submit();
-        this.dialogRef.componentInstance.success.subscribe(() => {
-          this.dialogService.closeAllDialogs();
-          this.selectedPool = null;
-          this.refreshToolbarMenus();
-          this.translate.get(helptext.choosePool.unsetPool.label).subscribe((msg) => {
-            this.dialogService.Info(helptext.choosePool.success, msg,
-              '500px', 'info', true);
-          });
-        });
-
-        this.dialogRef.componentInstance.failure.subscribe((err: any) => {
-          new EntityUtils().handleWSError(self, err, this.dialogService);
-        });
+  doUnsetPool(): void {
+    this.dialogService.confirm({
+      title: helptext.choosePool.unsetPool.confirm.title,
+      message: helptext.choosePool.unsetPool.confirm.message,
+      hideCheckBox: true,
+      buttonMsg: helptext.choosePool.unsetPool.confirm.button,
+    }).subscribe((confirmed) => {
+      if (!confirmed) {
+        return;
       }
+
+      const dialogRef = this.mdDialog.open(EntityJobComponent, {
+        data: {
+          title: helptext.choosePool.jobTitle,
+        },
+        disableClose: true,
+      });
+      dialogRef.componentInstance.setCall('kubernetes.update', [{ pool: null }]);
+      dialogRef.componentInstance.submit();
+      dialogRef.componentInstance.success.subscribe(() => {
+        this.dialogService.closeAllDialogs();
+        this.selectedPool = null;
+        this.refreshToolbarMenus();
+        this.translate.get(helptext.choosePool.unsetPool.label).subscribe((msg) => {
+          this.dialogService.Info(helptext.choosePool.success, msg,
+            '500px', 'info', true);
+        });
+      });
+
+      dialogRef.componentInstance.failure.subscribe((err: any) => {
+        new EntityUtils().handleWSError(self, err, this.dialogService);
+      });
     });
   }
 
-  doPoolSelect(entityDialog: any) {
+  doPoolSelect(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     const pool = entityDialog.formGroup.controls['pools'].value;
-    self.dialogRef = self.mdDialog.open(EntityJobComponent, {
+    const dialogRef = self.mdDialog.open(EntityJobComponent, {
       data: {
         title: (
           helptext.choosePool.jobTitle),
       },
       disableClose: true,
     });
-    self.dialogRef.componentInstance.setCall('kubernetes.update', [{ pool }]);
-    self.dialogRef.componentInstance.submit();
-    self.dialogRef.componentInstance.success.subscribe((res: any) => {
+    dialogRef.componentInstance.setCall('kubernetes.update', [{ pool }]);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.subscribe((res: any) => {
       self.selectedPool = pool;
       self.refreshToolbarMenus();
       self.dialogService.closeAllDialogs();
@@ -260,14 +257,14 @@ export class CatalogComponent implements OnInit {
           '500px', 'info', true);
       });
     });
-    self.dialogRef.componentInstance.failure.subscribe((err: string) => {
+    dialogRef.componentInstance.failure.subscribe((err: string) => {
       new EntityUtils().handleWSError(self, err, self.dialogService);
     });
   }
 
-  doInstall(name: string, catalog = 'OFFICIAL', train = 'charts') {
+  doInstall(name: string, catalog = officialCatalog, train = chartsTrain): void {
     const catalogApp = this.catalogApps.find((app) => app.name == name && app.catalog.id == catalog && app.catalog.train == train);
-    if (catalogApp && catalogApp.name != 'ix-chart') {
+    if (catalogApp && catalogApp.name != ixChartApp) {
       const chartWizardComponent = new ChartWizardComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
       chartWizardComponent.setCatalogApp(catalogApp);
       this.modalService.open('slide-in-form', chartWizardComponent);
@@ -278,42 +275,40 @@ export class CatalogComponent implements OnInit {
     }
   }
 
-  filerApps() {
+  filterApps(): void {
     if (this.filterString) {
       this.filteredCatalogApps = this.catalogApps.filter((app) => app.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1);
     } else {
       this.filteredCatalogApps = this.catalogApps;
     }
 
-    if (this.filteredCatalogNames.length > 0) {
-      this.filteredCatalogApps = this.filteredCatalogApps.filter((app) => this.filteredCatalogNames.includes(app.catalog.label));
-    }
-
-    this.filteredCatalogApps = this.filteredCatalogApps.filter((app) => app.name !== 'ix-chart');
+    this.filteredCatalogApps = this.filteredCatalogApps.filter((app) =>
+      this.filteredCatalogNames.includes(app.catalog.label) && app.name !== ixChartApp);
   }
 
-  showSummaryDialog(name: string, catalog = 'OFFICIAL', train = 'charts') {
+  showSummaryDialog(name: string, catalog = officialCatalog, train = chartsTrain): void {
     const catalogApp = this.catalogApps.find((app) => app.name == name && app.catalog.id == catalog && app.catalog.train == train);
-    if (catalogApp) {
-      const dialogRef = this.mdDialog.open(CatalogSummaryDialog, {
-        width: '470px',
-        data: catalogApp,
-        disableClose: false,
-      });
+    if (!catalogApp) {
+      return;
     }
+
+    this.mdDialog.open(CatalogSummaryDialog, {
+      width: '470px',
+      data: catalogApp,
+      disableClose: false,
+    });
   }
 
-  syncAll() {
-    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+  syncAll(): void {
+    const dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
-        title: (
-          helptext.installing),
+        title: helptext.installing,
       },
       disableClose: true,
     });
-    this.dialogRef.componentInstance.setCall('catalog.sync_all');
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    dialogRef.componentInstance.setCall('catalog.sync_all');
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.loadCatalogs();
     });

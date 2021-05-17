@@ -56,7 +56,7 @@ export class StaticRouteFormComponent implements FormConfiguration {
     protected ws: WebSocketService,
     protected networkService: NetworkService) { }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     if (entityForm.pk !== undefined) {
       this.title = helptext.title_edit;
     } else {

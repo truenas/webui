@@ -22,7 +22,6 @@ export class KubernetesSettingsComponent implements FormConfiguration {
   queryCall: 'kubernetes.config' = 'kubernetes.config';
   editCall: 'kubernetes.update' = 'kubernetes.update';
   isEditJob = true;
-  private dialogRef: any;
   private newEnableContainerImageUpdate = true;
   title = helptext.kubForm.title;
   private entityEdit: any;
@@ -104,7 +103,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
   preInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     const pool_control = _.find(this.fieldSets[0].config, { name: 'pool' });
-    this.appService.getPoolList().subscribe((pools: any[]) => {
+    this.appService.getPoolList().subscribe((pools) => {
       pools.forEach((pool) => {
         pool_control.options.push({ label: pool.name, value: pool.name });
       });

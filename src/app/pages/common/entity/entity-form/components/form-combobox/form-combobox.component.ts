@@ -32,11 +32,11 @@ export class FormComboboxComponent implements Field {
 
   constructor(public translate: TranslateService) {}
 
-  onChangeOption(value: any) {
+  onChangeOption(value: any): void {
     this.group.controls[this.config.name].setValue(value);
   }
 
-  updateSearchOptions(value: any) {
+  updateSearchOptions(value: any): void {
     if (this.config.updater && this.config.parent) {
       if (this.config.updateLocal) {
         this.config.updater(value, this.config.parent, this.config);
@@ -55,7 +55,7 @@ export class FormComboboxComponent implements Field {
     }
   }
 
-  onOpenDropdown() {
+  onOpenDropdown(): void {
     setTimeout(() => {
       if (
         this.autoCompleteRef
@@ -83,7 +83,7 @@ export class FormComboboxComponent implements Field {
     });
   }
 
-  onOpenMenu() {
+  onOpenMenu(): void {
     setTimeout(() => {
       const menuPanel = this.menuRef ? document.getElementById(this.menuRef.panelId) : undefined;
       if (menuPanel) {
@@ -101,7 +101,7 @@ export class FormComboboxComponent implements Field {
     });
   }
 
-  loadMoreSearchOptions() {
+  loadMoreSearchOptions(): void {
     if (this.config.loadMoreOptions && this.config.parent) {
       if (this.config.updateLocal) {
         this.config.loadMoreOptions(this.config.searchOptions.length, this.config.parent, this.searchText, this.config);
@@ -111,7 +111,7 @@ export class FormComboboxComponent implements Field {
     }
   }
 
-  loadMoreOptions() {
+  loadMoreOptions(): void {
     if (this.config.loadMoreOptions && this.config.parent) {
       if (this.config.updateLocal) {
         this.config.loadMoreOptions(this.config.options.length, this.config.parent, '', this.config);
@@ -121,11 +121,11 @@ export class FormComboboxComponent implements Field {
     }
   }
 
-  hasValue() {
+  hasValue(): boolean {
     return this.group.controls[this.config.name].value && this.group.controls[this.config.name].value.toString().length;
   }
 
-  resetInput() {
+  resetInput(): void {
     this.group.controls[this.config.name].setValue('');
   }
 }

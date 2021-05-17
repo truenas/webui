@@ -113,7 +113,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
       );
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
     const nameControl = this.entityForm.formGroup.get('name');
@@ -150,7 +150,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
     }
   }
 
-  updateNameValidity() {
+  updateNameValidity(): void {
     this.entityForm.formGroup.get('name').updateValueAndValidity();
   }
 }

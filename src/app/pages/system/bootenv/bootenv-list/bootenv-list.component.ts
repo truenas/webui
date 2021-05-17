@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { DialogService } from 'app/services';
 import * as moment from 'moment';
 import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
@@ -68,14 +69,14 @@ export class BootEnvironmentListComponent implements OnDestroy {
     },
   };
 
-  preInit() {
+  preInit(): void {
     this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res) => {
       this.scrub_interval = res.boot_scrub;
       this.updateBootState();
     });
   }
 
-  dataHandler(entityList: any) {
+  dataHandler(entityList: any): void {
     entityList.rows.forEach((row: any) => {
       if (row.active !== '-' && row.active !== '') {
         row.hideCheckbox = true;
@@ -101,18 +102,18 @@ export class BootEnvironmentListComponent implements OnDestroy {
     return row[attr];
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
   }
 
-  isActionVisible(actionId: string, row: any) {
+  isActionVisible(actionId: string, row: any): boolean {
     if (actionId == 'edit' || actionId == 'add') {
       return false;
     }
     return true;
   }
 
-  getActions(row: any) {
+  getActions(row: any): EntityTableAction[] {
     const actions = [];
     if (!row.active.includes('Reboot')) {
       actions.push({
@@ -186,7 +187,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
       });
     }
 
-    return actions;
+    return actions as EntityTableAction[];
   }
 
   multiActions: any[] = [{
@@ -258,7 +259,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
     });
   }
 
-  toggleKeep(id: string, status: any) {
+  toggleKeep(id: string, status: any): void {
     if (!status) {
       this.dialog.confirm(T('Keep'), T('Keep this Boot Environment?'), false, helptext_system_bootenv.list_dialog_keep_action).subscribe((res: boolean) => {
         if (res) {
@@ -373,13 +374,13 @@ export class BootEnvironmentListComponent implements OnDestroy {
     ];
   }
 
-  goToStatus() {
+  goToStatus(): void {
     this._router.navigate(new Array('').concat(
       ['system', 'boot', 'status'],
     ));
   }
 
-  scrub() {
+  scrub(): void {
     this.dialog.confirm(T('Scrub'), T('Start the scrub now?'), false, helptext_system_bootenv.list_dialog_scrub_action).subscribe((res: boolean) => {
       if (res) {
         this.loader.open();
@@ -396,7 +397,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.getAdvancedConfig) {
       this.getAdvancedConfig.unsubscribe();
     }

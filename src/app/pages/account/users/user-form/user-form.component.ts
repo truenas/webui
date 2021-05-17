@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { User } from 'app/interfaces/user';
+import { User } from 'app/interfaces/user.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/account/user-form';
@@ -379,13 +379,13 @@ export class UserFormComponent implements FormConfiguration {
     }
 
     /* list groups */
-    this.ws.call('group.query').subscribe((res) => {
+    this.ws.call('group.query').subscribe((groups) => {
       this.loader.callDone.emit(status);
       this.group = this.fieldSets.config('group');
       this.groups = this.fieldSets.config('groups');
-      for (let i = 0; i < res.length; i++) {
-        this.group.options.push({ label: res[i].group, value: res[i].id });
-        this.groups.options.push({ label: res[i].group, value: res[i].id });
+      for (let i = 0; i < groups.length; i++) {
+        this.group.options.push({ label: groups[i].group, value: groups[i].id });
+        this.groups.options.push({ label: groups[i].group, value: groups[i].id });
       }
     });
 

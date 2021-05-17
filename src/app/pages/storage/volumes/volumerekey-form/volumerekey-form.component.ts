@@ -91,13 +91,13 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
     protected encryptionService: EncryptionService,
   ) {}
 
-  preInit(entityForm: any) {
+  preInit(entityForm: any): void {
     this.route.params.subscribe((params) => {
       this.pk = params['pk'];
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     entityForm.formGroup.controls['encryptionkey_passphrase'].valueChanges.subscribe((res: any) => {
       const instructions = _.find(this.fieldConfig, { name: 'set_recoverykey-instructions' });
       const field = _.find(this.fieldConfig, { name: 'set_recoverykey' });
@@ -105,7 +105,7 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     this.ws.call('auth.check_user', ['root', value.passphrase]).subscribe((res) => {
       if (!res) {
         this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');

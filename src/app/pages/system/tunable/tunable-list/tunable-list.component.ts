@@ -74,7 +74,7 @@ export class TunableListComponent {
     protected _injector: Injector,
     protected _appRef: ApplicationRef) {}
 
-  preInit(entityList: any) {
+  preInit(entityList: any): void {
     this.entityList = entityList;
     this.sub = this.aroute.params.subscribe((params) => {});
     this.product_type = window.localStorage.getItem('product_type') as ProductType;

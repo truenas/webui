@@ -33,7 +33,7 @@ export class E60 extends Chassis {
     return {x: nextPositionX, y: this.isBelowModules(mod) ? nextPositionY + displayObject.height : nextPositionY }
   } */
 
-  generatePerspectiveOffset() {
+  generatePerspectiveOffset(): void {
     this.front.driveTrays.transform.position.x = 32;
     this.front.driveTrays.transform.position.y = 32;
   }

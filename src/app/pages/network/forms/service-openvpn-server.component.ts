@@ -213,7 +213,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
     return data;
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
     entityEdit.submitFunction = (body: any) => this.services.updateOpenVPN('openvpn.server.update', body);
 
@@ -255,7 +255,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     const serverInfo = data.server.split('/');
     data.server = serverInfo[0];
     data.netmask = parseInt(serverInfo[1]);

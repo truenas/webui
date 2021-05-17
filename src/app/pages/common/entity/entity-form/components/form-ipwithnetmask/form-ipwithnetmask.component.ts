@@ -34,7 +34,7 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
   constructor(public translate: TranslateService, private network: NetworkService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.control = this.group.controls[this.config.name];
     this.valueSubscription = this.control.valueChanges.subscribe((res: string) => {
       this.setAddressAndNetmask(res);
@@ -44,16 +44,16 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.valueSubscription.unsubscribe();
   }
 
-  setAddress($event: FocusEvent) {
+  setAddress($event: FocusEvent): void {
     const address = ($event.target as HTMLInputElement).value;
     this.setAddressAndNetmask(address);
   }
 
-  setNetmaskOptions() {
+  setNetmaskOptions(): void {
     if (this.address.indexOf(':') === -1) {
       this.netmaskOptions = this.ipv4netmaskoptions;
     } else {
@@ -61,12 +61,12 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
     }
   }
 
-  setNetmask($event: MatSelectChange) {
+  setNetmask($event: MatSelectChange): void {
     this.netmask = $event.value;
     this.setValue();
   }
 
-  setValue() {
+  setValue(): void {
     let value = this.address + '/' + this.netmask;
     if (this.address.trim() === '' || this.address === undefined) {
       value = '';
@@ -77,7 +77,7 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
     }
   }
 
-  setAddressAndNetmask(value: string) {
+  setAddressAndNetmask(value: string): void {
     const strings = value.split('/');
     this.address = strings[0];
     if (strings.length > 1) {
