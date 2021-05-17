@@ -32,20 +32,25 @@ mat-tab-group {
           .logo {
             width: calc(100% - 32px);
             flex: 1;
-            background-position: center;
-            background-size: contain;
-            background-repeat: no-repeat;
             margin-left: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            img {
+              width: 100%;
+              height: 100px;
+              object-fit: contain;
+            }
           }
-  
+
           .badge-area {
             margin: 0 16px 16px;
             text-align: center;
             color: rgba($color: #000000, $alpha: 1.0);
-            background-color: var(--yellow);              
-            
+            background-color: var(--yellow);
+
             .partner-badge {
-              background-color: var(--yellow);              
+              background-color: var(--yellow);
             }
 
             .train-badge {
@@ -78,7 +83,7 @@ mat-tab-group {
       top: 0;
       right: 0;
       margin: 10px;
-    } 
+    }
 
 }
 
@@ -97,20 +102,25 @@ mat-tab-group {
       .logo {
         width: calc(100% - 32px);
         flex: 1;
-        background-position: center;
-        background-size: contain;
-        background-repeat: no-repeat;
         margin-left: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        img {
+          width: 100%;
+          height: 100px;
+          object-fit: contain;
+        }
       }
 
       .badge-area {
         margin: 0 16px 16px;
         text-align: center;
         color: rgba($color: #000000, $alpha: 1.0);
-        background-color: var(--yellow);              
-        
+        background-color: var(--yellow);
+
         .partner-badge {
-          background-color: var(--yellow);              
+          background-color: var(--yellow);
         }
 
         .train-badge {
@@ -157,7 +167,7 @@ mat-tab-group {
       position: absolute;
       bottom: 5px;
       right: 15px;
-    } 
+    }
   }
 
   .content-box:hover {
@@ -169,7 +179,7 @@ mat-tab-group {
     position: absolute;
     top: 10px;
     right: 0;
-  } 
+  }
 
   .docker-info {
     font-size: smaller;

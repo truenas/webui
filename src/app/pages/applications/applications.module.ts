@@ -30,6 +30,7 @@ import { ManageCatalogSummaryDialog } from './dialogs/manage-catalog-summary/man
 import { CatalogAddFormComponent } from './forms/catalog-add-form.component';
 import { CatalogEditFormComponent } from './forms/catalog-edit-form.component';
 import { PullImageFormComponent } from './forms/pull-image-form.component';
+import { ImgFallbackModule } from 'ngx-img-fallback';
 
 @NgModule({
   imports: [
@@ -43,6 +44,7 @@ import { PullImageFormComponent } from './forms/pull-image-form.component';
     CoreComponents,
     FormsModule,
     ReactiveFormsModule,
+    ImgFallbackModule,
   ],
   exports: [
   ],
