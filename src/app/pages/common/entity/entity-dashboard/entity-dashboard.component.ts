@@ -30,7 +30,7 @@ export class EntityDashboardComponent implements OnInit {
 
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.parent = this.aroute.parent.parent.routeConfig.path;
     const routeConfigs: any = this.aroute.parent.routeConfig.children;
     for (const i in routeConfigs) {
@@ -76,15 +76,15 @@ export class EntityDashboardComponent implements OnInit {
     }
   }
 
-  remove(element: string) {
+  remove(element: string): void {
     this.routeParts = _.remove(this.routeParts, (r) => r['path'] !== element);
   }
 
-  goList(item: any) {
+  goList(item: any): void {
     this.router.navigate(new Array('/').concat([this.parent, item.path]));
   }
 
-  goAdd(item: any) {
+  goAdd(item: any): void {
     this.router.navigate(new Array('/').concat([this.parent, item.path, item.addPath]));
   }
 }

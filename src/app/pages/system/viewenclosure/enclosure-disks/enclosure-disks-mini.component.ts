@@ -49,14 +49,14 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     this.pixiHeight = 480;
   }
 
-  createExtractedEnclosure(profile: any) {
+  createExtractedEnclosure(profile: any): void {
     // MINIs have no support for expansion shelves
     // therefore we will never need to create
     // any enclosure selection UI. Leave this
     // empty or the base class will throw errors
   }
 
-  createEnclosure(enclosure: any = this.selectedEnclosure) {
+  createEnclosure(enclosure: any = this.selectedEnclosure): void {
     switch (enclosure.model) {
       case 'FREENAS-MINI-3.0-E':
       case 'FREENAS-MINI-3.0-E+':
@@ -94,7 +94,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     this.container.setTransform(-30);
   }
 
-  count(obj: any) {
+  count(obj: any): number {
     return Object.keys(obj).length;
   }
 

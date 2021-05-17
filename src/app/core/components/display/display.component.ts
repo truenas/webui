@@ -11,7 +11,7 @@ import { CoreEvent } from 'app/core/services/core.service';
   template: '<ng-container #wrapper></ng-container>',
   host: { class: 'hidden' },
 })
-export class Display implements OnInit, AfterViewInit {
+export class Display {
   displayList: any[] = []; // items in DOM
   children: any[] = [];
   @ViewChild('wrapper', { static: true }) wrapper: ViewContainerRef;
@@ -20,18 +20,13 @@ export class Display implements OnInit, AfterViewInit {
   constructor(private resolver: ComponentFactoryResolver, private viewContainerRef: ViewContainerRef, private renderer: Renderer2) {
   }
 
-  ngOnInit() {}
-
-  ngAfterViewInit() {
-  }
-
   create(component: any) {
     const compRef = <any> this.resolver.resolveComponentFactory(component).create(this.viewContainerRef.injector);
     this.children.push(compRef);
     return compRef.instance;
   }
 
-  addChild(instance: any) {
+  addChild(instance: any): void {
     const compRef = this.getChild(instance);
 
     // Insert into DOM
@@ -45,7 +40,7 @@ export class Display implements OnInit, AfterViewInit {
     this.displayList.push(instance);
   }
 
-  private moveContents(compRef: any, container: any) {
+  private moveContents(compRef: any, container: any): void {
     const selector = compRef.hostView.rootNodes['0'];
     const contents = compRef.hostView.rootNodes['0'].childNodes;
     let node: any;
@@ -58,7 +53,7 @@ export class Display implements OnInit, AfterViewInit {
     }
   }
 
-  removeChild(instance: any) {
+  removeChild(instance: any): void {
     const compRef = this.getChild(instance);
 
     // Remove from children

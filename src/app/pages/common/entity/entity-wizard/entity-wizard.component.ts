@@ -267,7 +267,7 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  getSummaryValue(fieldConfig: FieldConfig, formControl: AbstractControl) {
+  getSummaryValue(fieldConfig: FieldConfig, formControl: AbstractControl): void {
     let result = formControl.value;
 
     if (fieldConfig.type === 'select') {

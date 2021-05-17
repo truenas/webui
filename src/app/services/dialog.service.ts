@@ -134,7 +134,14 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  select(title: string, options: any[], optionPlaceHolder: string, method: ApiMethod, params?: any, message?: string) {
+  select(
+    title: string,
+    options: any[],
+    optionPlaceHolder: string,
+    method: ApiMethod,
+    params?: any,
+    message?: string,
+  ): void {
     let data: any;
     const dialogRef = this.dialog.open(SelectDialogComponent, { width: '300px' });
 
