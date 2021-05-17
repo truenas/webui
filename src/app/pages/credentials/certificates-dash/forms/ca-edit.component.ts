@@ -204,7 +204,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     this.incomingData = data;
     this.setForm();
     return data;

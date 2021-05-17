@@ -153,7 +153,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
     });
 
     this.rsyncmod_group = accessSet.config.find((config) => config.name === 'group');
-    this.userService.groupQueryDSCache().subscribe((groups: any[]) => {
+    this.userService.groupQueryDSCache().subscribe((groups) => {
       groups.forEach((group) => {
         this.rsyncmod_group.options.push({ label: group.group, value: group.group });
       });
@@ -186,12 +186,12 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
   }
 
   updateGroupSearchOptions(value = '', parent: any): void {
-    parent.userService.groupQueryDSCache(value).subscribe((items: any[]) => {
-      const groups: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        groups.push({ label: items[i].group, value: items[i].group });
+    (parent.userService as UserService).groupQueryDSCache(value).subscribe((groups) => {
+      const groupOptions: Option[] = [];
+      for (let i = 0; i < groups.length; i++) {
+        groupOptions.push({ label: groups[i].group, value: groups[i].group });
       }
-      parent.rsyncmod_group.searchOptions = groups;
+      parent.rsyncmod_group.searchOptions = groupOptions;
     });
   }
 

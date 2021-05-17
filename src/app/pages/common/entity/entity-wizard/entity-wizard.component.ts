@@ -223,7 +223,7 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  originalOrder = function () {};
+  originalOrder = function (): void {};
 
   isFieldsetAvailabel(fieldset: any): boolean {
     if (fieldset.config) {
@@ -268,7 +268,7 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  getSummaryValue(fieldConfig: FieldConfig, formControl: AbstractControl) {
+  getSummaryValue(fieldConfig: FieldConfig, formControl: AbstractControl): void {
     let result = formControl.value;
 
     if (fieldConfig.type === 'select') {

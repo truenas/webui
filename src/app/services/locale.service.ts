@@ -31,7 +31,7 @@ export class LocaleService {
     this.getPrefs();
   }
 
-  getPrefs() {
+  getPrefs(): void {
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
     this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' })
       .subscribe((evt: CoreEvent) => {
@@ -73,17 +73,17 @@ export class LocaleService {
     ];
   }
 
-  formatDateTime(date: Date, tz?: string) {
+  formatDateTime(date: Date, tz?: string): string {
     tz ? moment.tz.setDefault(tz) : moment.tz.setDefault(this.timeZone);
     return moment(date).format(`${this.dateFormat} ${this.timeFormat}`);
   }
 
-  formatDateTimeWithNoTz(date: Date) {
+  formatDateTimeWithNoTz(date: Date): string {
     moment.tz.setDefault('');
     return moment(date).format(`${this.dateFormat} ${this.timeFormat}`);
   }
 
-  getTimeOnly(date: Date, seconds = true, tz?: string) {
+  getTimeOnly(date: Date, seconds = true, tz?: string): string {
     tz ? moment.tz.setDefault(tz) : moment.tz.setDefault(this.timeZone);
     let format: string;
     if (!seconds) {
@@ -106,7 +106,7 @@ export class LocaleService {
     return moment(date).format(format);
   }
 
-  saveDateTimeFormat(dateFormat: any, timeFormat: any) {
+  saveDateTimeFormat(dateFormat: any, timeFormat: any): void {
     this.dateFormat = dateFormat;
     this.timeFormat = timeFormat;
     this.storeDateTimeFormat(this.dateFormat, this.timeFormat);
@@ -128,20 +128,20 @@ export class LocaleService {
     });
   }
 
-  storeDateTimeFormat(dateFormat: string, timeFormat: string) {
+  storeDateTimeFormat(dateFormat: string, timeFormat: string): void {
     window.localStorage.setItem('dateFormat', dateFormat);
     window.localStorage.setItem('timeFormat', timeFormat);
   }
 
-  getPreferredDateFormat() {
+  getPreferredDateFormat(): string {
     return this.dateFormat;
   }
 
-  getPreferredTimeFormat() {
+  getPreferredTimeFormat(): string {
     return this.timeFormat;
   }
 
-  getDateAndTime(tz?: string) {
+  getDateAndTime(tz?: string): [string, string] {
     if (tz) {
       moment.tz.setDefault(tz);
     }
@@ -149,7 +149,7 @@ export class LocaleService {
   }
 
   // Translates moment.js format to angular template format for use in special cases such as form-scheduler
-  getAngularFormat() {
+  getAngularFormat(): string {
     // Renders lowercase am and pm
     const ngTimeFormat = this.timeFormat === 'hh:mm:ss a' ? 'hh:mm:ss aaaaa\'m\'' : this.timeFormat;
     const tempStr = `${this.dateFormat} ${ngTimeFormat}`;

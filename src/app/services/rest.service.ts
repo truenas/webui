@@ -83,7 +83,7 @@ export class RestService {
       catchError(this.handleError),); */
   }
 
-  buildOptions(options: any) {
+  buildOptions(options: any): void {
     const result: any = new Object();
     const search: String[] = [];
     for (const i in options) {
@@ -99,19 +99,19 @@ export class RestService {
     return result;
   }
 
-  get(path: string, options: Object, useBaseUrl?: boolean) {
+  get(path: string, options: Object, useBaseUrl?: boolean): void {
     /* this.request(RequestMethod.Get, path, this.buildOptions(options), useBaseUrl); */
   }
 
-  post(path: string, options: Object, useBaseUrl?: boolean) {
+  post(path: string, options: Object, useBaseUrl?: boolean): void {
     /* this.request(RequestMethod.Post, path, options, useBaseUrl); */
   }
 
-  put(path: string, options: Object, useBaseUrl?: boolean) {
+  put(path: string, options: Object, useBaseUrl?: boolean): void {
     /* this.request(RequestMethod.Put, path, options, useBaseUrl); */
   }
 
-  delete(path: string, options: Object, useBaseUrl?: boolean) {
+  delete(path: string, options: Object, useBaseUrl?: boolean): void {
     /* this.request(RequestMethod.Delete, path, options, useBaseUrl); */
   }
 }

@@ -246,17 +246,17 @@ export class DiskListComponent {
     return actions;
   }
 
-  dataHandler(entityList: any) {
+  dataHandler(entityList: any): void {
     this.diskUpdate(entityList);
   }
 
-  diskUpdate(entityList: any) {
+  diskUpdate(entityList: any): void {
     for (const disk of entityList.rows) {
       disk.readable_size = (<any>window).filesize(disk.size, { standard: 'iec' });
     }
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.core.register({
       observerClass: this,
       eventName: 'DisksChanged',
@@ -273,7 +273,7 @@ export class DiskListComponent {
     return data;
   }
 
-  manualTest(selected: any) {
+  manualTest(selected: any): void {
     const parent = this;
     const disks = Array.isArray(selected) ? selected.map((item) => item.name) : [selected.name];
     const disksIdentifier = Array.isArray(selected) ? selected.map((item) => ({ identifier: item.identifier })) : [{ identifier: selected.identifier }];
@@ -332,7 +332,7 @@ export class DiskListComponent {
     this.dialogService.dialogForm(conf);
   }
 
-  generateManualTestSummary(res: any) {
+  generateManualTestSummary(res: any): void {
     let success_note = '<h4>Expected Finished Time:</h4>';
     let hasSuccessNote = false;
     let fail_note = '<h4>Errors:</h4>';

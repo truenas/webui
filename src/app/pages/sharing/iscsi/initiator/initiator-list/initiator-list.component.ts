@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 import { T } from 'app/translate-marker';
 
@@ -9,13 +10,14 @@ import { T } from 'app/translate-marker';
     <entity-table [conf]="this" [title]="tableTitle"></entity-table>
   `,
 })
-export class InitiatorListComponent {
+export class InitiatorListComponent implements InputTableConf {
   tableTitle = T('Initiators Groups');
-  protected queryCall = 'iscsi.initiator.query';
-  protected route_add: string[] = ['sharing', 'iscsi', 'initiators', 'add'];
+  queryCall: 'iscsi.initiator.query' = 'iscsi.initiator.query';
+  route_add: string[] = ['sharing', 'iscsi', 'initiators', 'add'];
+  route_edit: string[] = ['sharing', 'iscsi', 'initiators', 'edit'];
+  wsDelete: 'iscsi.initiator.delete' = 'iscsi.initiator.delete';
+
   protected route_add_tooltip = 'Add Initiator';
-  protected route_edit: string[] = ['sharing', 'iscsi', 'initiators', 'edit'];
-  protected wsDelete = 'iscsi.initiator.delete';
 
   columns: any[] = [
     {

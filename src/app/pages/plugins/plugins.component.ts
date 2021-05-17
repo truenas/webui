@@ -192,7 +192,7 @@ export class PluginsComponent {
     });
   }
 
-  preInit() {
+  preInit(): void {
     this.getActivatedPollInfo();
   }
 
@@ -229,7 +229,7 @@ export class PluginsComponent {
     });
   }
 
-  noPoolDialog() {
+  noPoolDialog(): void {
     const dialogRef = this.dialogService.confirm(
       jailHelptext.noPoolDialog.title,
       jailHelptext.noPoolDialog.message,
@@ -244,7 +244,7 @@ export class PluginsComponent {
     });
   }
 
-  activatePool() {
+  activatePool(): void {
     const self = this;
 
     const conf: DialogFormConfiguration = {
@@ -290,15 +290,15 @@ export class PluginsComponent {
     }
   }
 
-  prerequisiteFailedHandler(entityList: any) {
+  prerequisiteFailedHandler(entityList: any): void {
     this.entityList = entityList;
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
   }
 
-  dataHandler(entityList: any) {
+  dataHandler(entityList: any): void {
     for (let i = 0; i < entityList.rows.length; i++) {
       let revision = entityList.rows[i]['revision'];
       if (revision !== 'N/A' && revision !== '0') {
@@ -352,7 +352,7 @@ export class PluginsComponent {
     });
   }
 
-  updateMultiAction(selected: any) {
+  updateMultiAction(selected: any): void {
     if (_.find(selected, (plugin) => plugin.state == 'up')) {
       _.find(this.multiActions, { id: 'mstop' as any })['enable'] = true;
     } else {
@@ -520,7 +520,7 @@ export class PluginsComponent {
     return actions;
   }
 
-  isActionVisible(actionId: string, row: any) {
+  isActionVisible(actionId: string, row: any): boolean {
     if (actionId === 'start' && row.state === 'up') {
       return false;
     } if (actionId === 'stop' && row.state === 'down') {
@@ -533,7 +533,7 @@ export class PluginsComponent {
     return true;
   }
 
-  getRegistrationLink() {
+  getRegistrationLink(): void {
     const url = 'https://licenseportal.asigra.com/licenseportal/user-registration.do';
     const form = document.createElement('form');
     form.action = url;
@@ -572,7 +572,7 @@ export class PluginsComponent {
     });
   }
 
-  onCheckboxChange(row: any) {
+  onCheckboxChange(row: any): void {
     this.loader.open();
     row.boot = !row.boot;
     this.ws.call('plugin.update', [row.id, { boot: row.boot ? 'on' : 'off' }])
@@ -590,7 +590,7 @@ export class PluginsComponent {
       );
   }
 
-  gotoAdminPortal(row: any) {
+  gotoAdminPortal(row: any): void {
     if (row.admin_portals.length > 1) {
       const conf: DialogFormConfiguration = {
         title: helptext.portal_dialog.title,
@@ -616,7 +616,7 @@ export class PluginsComponent {
     }
   }
 
-  iconAction(row: any) {
+  iconAction(row: any): void {
     if (row.state === 'up' && row.admin_portals.length > 0) {
       this.gotoAdminPortal(row);
     }
