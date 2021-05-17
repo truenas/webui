@@ -1,9 +1,6 @@
 # coding=utf-8
 """Core UI feature tests."""
 
-import pytest
-import random
-import string
 import time
 from function import (
     wait_on_element,
@@ -18,14 +15,6 @@ from pytest_bdd import (
     when,
     parsers
 )
-
-# random hostname
-hostname = f'uitest{"".join(random.choices(string.digits, k=3))}'
-
-
-@pytest.fixture(scope="session")
-def nas_hostname():
-    return hostname
 
 
 @scenario('features/NAS-T984.feature', 'Setting interface from dhcp to a static ip')

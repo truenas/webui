@@ -1,7 +1,9 @@
 # !/usr/bin/env python3
 
-import pytest
 import os
+import pytest
+import random
+import string
 import time
 from configparser import ConfigParser
 from platform import system
@@ -14,6 +16,14 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
+
+# random hostname
+hostname = f'uitest{"".join(random.choices(string.digits, k=3))}'
+
+
+@pytest.fixture(scope="session")
+def nas_hostname():
+    return hostname
 
 
 @pytest.fixture
