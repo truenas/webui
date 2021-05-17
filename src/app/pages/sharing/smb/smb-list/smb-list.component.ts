@@ -1,14 +1,20 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+
 import { TranslateService } from '@ngx-translate/core';
+
 import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
 import vol_helptext from 'app/helptext/storage/volumes/volume-list';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { DialogService, WebSocketService } from 'app/services';
+import {
+  AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
+} from 'app/services';
 import { T } from 'app/translate-marker';
-import { ProductType } from '../../../../enums/product-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
+import { ModalService } from 'app/services/modal.service';
+import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 
 @Component({
   selector: 'app-smb-list',
@@ -20,7 +26,7 @@ export class SMBListComponent implements InputTableConf {
   wsDelete: 'sharing.smb.delete' = 'sharing.smb.delete';
   route_add: string[] = ['sharing', 'smb', 'add'];
   protected route_add_tooltip = 'Add Windows (SMB) Share';
-  route_edit: string[] = ['sharing', 'smb', 'edit'];
+  // route_edit: string[] = ['sharing', 'smb', 'edit'];
   protected route_delete: string[] = ['sharing', 'smb', 'delete'];
   private entityList: EntityTableComponent;
   productType = window.localStorage.getItem('product_type') as ProductType;
@@ -33,7 +39,7 @@ export class SMBListComponent implements InputTableConf {
       title: T('No SMB Shares'),
       message: T('The system could not retrieve any SMB Shares from the database. Please click the button below to add an SMB Share.'),
     },
-    buttonText: 'Add SMB Share',
+    buttonText: T('Add SMB Share'),
   };
 
   columns: any[] = [
@@ -62,12 +68,24 @@ export class SMBListComponent implements InputTableConf {
   constructor(
     private ws: WebSocketService,
     private router: Router,
-    private dialogService: DialogService,
+    private dialog: DialogService,
     private translate: TranslateService,
+    private modalService: ModalService,
+    private loader: AppLoaderService,
+    private activatedRoute: ActivatedRoute,
+    private sysGeneralService: SystemGeneralService,
   ) {}
 
   afterInit(entityList: any): void {
     this.entityList = entityList;
+  }
+
+  doAdd(id?: number): void {
+    this.modalService.open('slide-in-form', new SMBFormComponent(this.router, this.ws, this.dialog, this.loader, this.activatedRoute, this.sysGeneralService), id);
+  }
+
+  doEdit(id: number): void {
+    this.doAdd(id);
   }
 
   getActions(row: SmbShare): any[] {
@@ -131,7 +149,7 @@ export class SMBListComponent implements InputTableConf {
                 );
               }
             }, (err) => {
-              this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
+              this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
                 err.reason, err.trace.formatted);
             },
           );
@@ -154,11 +172,8 @@ export class SMBListComponent implements InputTableConf {
   }
 
   lockedPathDialog(path: string): void {
-    this.translate.get(helptext_sharing_smb.action_edit_acl_dialog.message1).subscribe((msg1) => {
-      this.translate.get(helptext_sharing_smb.action_edit_acl_dialog.message2).subscribe((msg2) => {
-        this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
-          `${msg1} <i>${path}</i> ${msg2}`);
-      });
-    });
+    const msg1 = this.translate.instant(helptext_sharing_smb.action_edit_acl_dialog.message1);
+    const msg2 = this.translate.instant(helptext_sharing_smb.action_edit_acl_dialog.message2);
+    this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, `${msg1} <i>${path}</i> ${msg2}`);
   }
 }

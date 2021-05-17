@@ -1,5 +1,13 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Validators } from '@angular/forms';
+
+import * as _ from 'lodash';
+import { combineLatest, of, Subscription } from 'rxjs';
+import {
+  catchError, map, switchMap, take, tap, debounceTime,
+} from 'rxjs/operators';
+
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptext_sharing_smb, shared } from 'app/helptext/sharing';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -7,16 +15,10 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
-import * as _ from 'lodash';
-import { combineLatest, of, Subscription } from 'rxjs';
+import { ProductType } from 'app/enums/product-type.enum';
 import {
-  catchError, map, switchMap, take, tap, filter, debounceTime,
-} from 'rxjs/operators';
-import { ProductType } from '../../../../enums/product-type.enum';
-import {
-  AppLoaderService, DialogService, RestService, WebSocketService, SystemGeneralService,
-} from '../../../../services';
-import { Validators } from '@angular/forms';
+  AppLoaderService, DialogService, WebSocketService, SystemGeneralService,
+} from 'app/services';
 import globalHelptext from 'app/helptext/global-helptext';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
@@ -37,6 +39,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
   title = helptext_sharing_smb.formTitle;
   namesInUse: string[] = [];
   productType = window.localStorage.getItem('product_type') as ProductType;
+  isOneColumnForm = true;
   private hostsAllowOnLoad: any[] = [];
   private hostsDenyOnLoad: any[] = [];
   private stripACLWarningSent = false;
@@ -80,16 +83,14 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
           placeholder: helptext_sharing_smb.placeholder_purpose,
           tooltip: helptext_sharing_smb.tooltip_purpose,
           options: [],
-          class: 'inline',
-          width: '50%',
+          width: '100%',
         },
         {
           type: 'input',
           name: 'comment',
           placeholder: helptext_sharing_smb.placeholder_comment,
           tooltip: helptext_sharing_smb.tooltip_comment,
-          class: 'inline',
-          width: '50%',
+          width: '100%',
         },
         {
           type: 'checkbox',
@@ -100,12 +101,11 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
         },
       ],
     },
-    { name: 'divider', divider: false },
     {
       name: helptext_sharing_smb.fieldset_access,
       class: 'access',
       label: true,
-      width: '49%',
+      width: '100%',
       config: [
         {
           type: 'checkbox',
@@ -158,12 +158,11 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
         },
       ],
     },
-    { name: 'spacer', label: false, width: '2%' },
     {
       name: helptext_sharing_smb.fieldset_other,
       class: 'other',
       label: true,
-      width: '49%',
+      width: '100%',
       config: [
         {
           type: 'checkbox',
@@ -241,8 +240,6 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     { name: 'divider', divider: true },
   ];
 
-  private cifs_vfsobjects: any;
-
   advanced_field: any[] = [
     'acl',
     'ro',
@@ -272,6 +269,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
       name: globalHelptext.basic_options,
       function: () => {
         this.isBasicMode = !this.isBasicMode;
+        this.isOneColumnForm = true;
         this.updateForm();
       },
     },
@@ -280,6 +278,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
       name: globalHelptext.advanced_options,
       function: () => {
         this.isBasicMode = !this.isBasicMode;
+        this.isOneColumnForm = false;
         this.updateForm();
       },
     },
@@ -291,7 +290,6 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
 
   constructor(
     protected router: Router,
-    protected rest: RestService,
     protected ws: WebSocketService,
     private dialog: DialogService,
     protected loader: AppLoaderService,
@@ -311,7 +309,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
         }),
       )
       .subscribe((shareNames) => {
-        ['global', ...shareNames].forEach((n) => this.namesInUse.push(n));
+        ['global', ...shareNames].forEach((name) => this.namesInUse.push(name));
       });
   }
 
@@ -372,11 +370,14 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
   }
 
   restartService(entityForm: EntityFormComponent, source: string) {
-    const message = source === 'timemachine' ? helptext_sharing_smb.restart_smb_dialog.message_time_machine
-      : helptext_sharing_smb.restart_smb_dialog.message_allow_deny;
-    this.dialog.confirm(helptext_sharing_smb.restart_smb_dialog.title, message,
-      true, helptext_sharing_smb.restart_smb_dialog.title, false, '', '', '', '', false,
-      helptext_sharing_smb.restart_smb_dialog.cancel_btn).subscribe((res: boolean) => {
+    const confirmOptions = {
+      title: helptext_sharing_smb.restart_smb_dialog.title,
+      message: source === 'timemachine' ? helptext_sharing_smb.restart_smb_dialog.message_time_machine : helptext_sharing_smb.restart_smb_dialog.message_allow_deny,
+      hideCheckBox: true,
+      buttonMsg: helptext_sharing_smb.restart_smb_dialog.title,
+      cancelMsg: helptext_sharing_smb.restart_smb_dialog.cancel_btn,
+    };
+    this.dialog.confirm(confirmOptions).subscribe((res: boolean) => {
       if (res) {
         this.loader.open();
         this.ws.call('service.restart', ['cifs']).subscribe(() => {
@@ -423,26 +424,23 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
               switchMap((isTrivialACL) =>
               /* If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations */
                 (!isTrivialACL || !datasetId.includes('/') || this.productType.includes(ProductType.Scale)
-                  ? combineLatest(of(false), of({}))
-                  : combineLatest(
+                  ? combineLatest([of(false), of({})])
+                  : combineLatest([
                     /* Check if user wants to edit the share's ACL */
-                    this.dialog.confirm(
-                      helptext_sharing_smb.dialog_edit_acl_title,
-                      helptext_sharing_smb.dialog_edit_acl_message,
-                      true,
-                      helptext_sharing_smb.dialog_edit_acl_button,
-                    ),
-                  ))),
+                    this.dialog.confirm({
+                      title: helptext_sharing_smb.dialog_edit_acl_title,
+                      message: helptext_sharing_smb.dialog_edit_acl_message,
+                      hideCheckBox: true,
+                      buttonMsg: helptext_sharing_smb.dialog_edit_acl_button,
+                    }),
+                  ]))),
               tap(([doConfigureACL, dataset]) =>
                 (doConfigureACL
-                  ? this.router.navigate(
-                    ['/'].concat(ACLRoute),
-                  )
+                  ? this.router.navigate(['/'].concat(ACLRoute))
                   : this.router.navigate(['/'].concat(this.route_success)))),
             );
 
-          this.ws
-            .call('service.query', [])
+          this.ws.call('service.query', [])
             .pipe(
               map((response) => _.find(response, { service: ServiceName.Cifs })),
               switchMap((cifsService) => {
@@ -451,16 +449,16 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
                 }
 
                 /**
-           * Allow user to enable cifs service, then ask about editing
-           * dataset ACL.
-           */
+                 * Allow user to enable cifs service, then ask about editing
+                 * dataset ACL.
+                 */
                 return this.dialog
-                  .confirm(
-                    shared.dialog_title,
-                    shared.dialog_message,
-                    true,
-                    shared.dialog_button,
-                  )
+                  .confirm({
+                    title: shared.dialog_title,
+                    message: shared.dialog_message,
+                    hideCheckBox: true,
+                    buttonMsg: shared.dialog_button,
+                  })
                   .pipe(
                     switchMap((doEnableService) => {
                       if (doEnableService) {
@@ -499,7 +497,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     );
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     const generalFieldsets = _.find(this.fieldSets, { class: 'basic' });
     const purposeField = _.find(generalFieldsets.config, { name: 'purpose' });
     this.ws.call('sharing.smb.presets').subscribe(
@@ -525,8 +523,13 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
         entityForm.formGroup.controls['aapl_name_mangling'].valueChanges.subscribe((value) => {
           if (value !== this.mangle && !this.mangleWarningSent) {
             this.mangleWarningSent = true;
-            this.dialog.confirm(helptext_sharing_smb.manglingDialog.title, helptext_sharing_smb.manglingDialog.message,
-              true, helptext_sharing_smb.manglingDialog.action, false, null, null, null, null, true);
+            this.dialog.confirm({
+              title: helptext_sharing_smb.manglingDialog.title,
+              message: helptext_sharing_smb.manglingDialog.message,
+              hideCheckBox: true,
+              buttonMsg: helptext_sharing_smb.manglingDialog.action,
+              hideCancel: true,
+            });
           }
         });
       }, 1000);
@@ -568,8 +571,8 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
       if (entityForm.formGroup.controls['timemachine'].value) { this.isTimeMachineOn = true; }
     }, 700);
 
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res) => {
-      this.isBasicMode = !res.advancedmode;
+    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((config) => {
+      this.isBasicMode = !config.advancedmode;
       this.updateForm();
     });
 
@@ -587,8 +590,13 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
   }
 
   showStripACLWarning() {
-    this.dialog.confirm(helptext_sharing_smb.stripACLDialog.title, helptext_sharing_smb.stripACLDialog.message,
-      true, helptext_sharing_smb.stripACLDialog.button, false, null, null, null, null, true);
+    this.dialog.confirm({
+      title: helptext_sharing_smb.stripACLDialog.title,
+      message: helptext_sharing_smb.stripACLDialog.message,
+      hideCheckBox: true,
+      buttonMsg: helptext_sharing_smb.stripACLDialog.button,
+      hideCancel: true,
+    });
   }
 
   clearPresets() {
