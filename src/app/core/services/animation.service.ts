@@ -1,5 +1,6 @@
 import { Injectable, ElementRef } from '@angular/core';
-import { CoreService, CoreEvent } from './core.service';
+import { CoreEvent } from 'app/interfaces/events';
+import { CoreService } from './core.service';
 import { Subject } from 'rxjs';
 import { DisplayObject } from '../classes/display-object';
 import {

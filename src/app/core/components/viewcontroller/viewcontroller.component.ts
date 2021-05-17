@@ -3,9 +3,10 @@ import {
 } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Display } from 'app/core/components/display/display.component';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { ViewController } from 'app/core/classes/viewcontroller';
 import { LayoutContainer, LayoutChild } from 'app/core/classes/layouts';
+import { CoreEvent } from 'app/interfaces/events';
 import { Subject } from 'rxjs';
 
 export interface ViewConfig {

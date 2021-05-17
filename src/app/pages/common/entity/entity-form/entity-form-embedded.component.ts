@@ -18,6 +18,7 @@ import {
   FormBuilder, FormControl, FormGroup, FormArray, Validators, Form,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CoreEvent } from 'app/interfaces/events';
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
@@ -32,8 +33,6 @@ import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
 import { FieldRelationService } from './services/field-relation.service';
 import { Subscription, Subject } from 'rxjs';
-
-import { CoreEvent } from 'app/core/services/core.service';
 
 export interface FormConfig {
   fieldSets?: any;

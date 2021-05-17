@@ -1,9 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { CoreEvent } from 'app/interfaces/events';
 import * as _ from 'lodash';
 
 import { Subject } from 'rxjs';
-import { CoreEvent } from 'app/core/services/core.service';
 
 import { TooltipsService, WebSocketService } from 'app/services';
 import { EntityFormEmbeddedComponent } from './entity-form-embedded.component';

@@ -1,8 +1,8 @@
+import { CoreEvent } from 'app/interfaces/events';
 import { Container, Texture, Sprite } from 'pixi.js';
 import { OutlineFilter } from '@pixi/filter-outline';
 import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
 import { Subject, Observable } from 'rxjs';
-import { CoreEvent } from 'app/core/services/core.service';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { DriveTray } from './drivetray';
 

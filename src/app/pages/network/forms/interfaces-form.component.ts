@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 
 import * as _ from 'lodash';
 import { ProductType } from '../../../enums/product-type.enum';
@@ -318,10 +319,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   }
 
   setType(type: string) {
-    const is_physical = (type === 'PHYSICAL');
-    const is_vlan = (type === 'VLAN');
-    const is_bridge = (type === 'BRIDGE');
-    const is_lagg = (type === 'LINK_AGGREGATION');
+    const is_vlan = (type === NetworkInterfaceType.Vlan);
+    const is_bridge = (type === NetworkInterfaceType.Bridge);
+    const is_lagg = (type === NetworkInterfaceType.LinkAggregation);
     for (let i = 0; i < this.vlan_fields.length; i++) {
       this.entityForm.setDisabled(this.vlan_fields[i], !is_vlan, !is_vlan);
     }
@@ -515,7 +515,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     }
 
     data.aliases = aliases;
-    if (data.type === 'BRIDGE' && data.bridge_members === undefined) {
+    if (data.type === NetworkInterfaceType.Bridge && data.bridge_members === undefined) {
       data.bridge_members = [];
     }
     if (failover_aliases.length > 0) {
@@ -547,7 +547,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     const type = data['type'];
     const id = data['id'];
     this.setType(type);
-    if (type === 'LINK_AGGREGATION') {
+    if (type === NetworkInterfaceType.LinkAggregation) {
       this.networkService.getLaggPortsChoices(id).subscribe((res) => {
         for (const key in res) {
           this.lag_ports.options.push({ label: res[key], value: key });
@@ -559,13 +559,13 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           this.lag_protocol.options.push({ label: res[i], value: res[i] });
         }
       });
-    } else if (type === 'BRIDGE') {
+    } else if (type === NetworkInterfaceType.Bridge) {
       this.networkService.getBridgeMembersChoices(id).subscribe((res) => {
         for (const key in res) {
           this.bridge_members.options.push({ label: res[key], value: key });
         }
       });
-    } else if (type === 'VLAN') {
+    } else if (type === NetworkInterfaceType.Vlan) {
       this.entityForm.setDisabled('vlan_parent_interface', true);
     }
 

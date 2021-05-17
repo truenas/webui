@@ -2,9 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { CoreEvent } from 'app/core/services/core.service';
+import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { CoreEvent } from 'app/interfaces/events';
+import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
 import * as ipRegex from 'ip-regex';
 import { Subject } from 'rxjs';
@@ -76,7 +78,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent, row.id);
     },
     delete(row: any, table: any) {
-      const deleteAction = row.type === 'PHYSICAL' ? T('Reset configuration for ') : T('Delete ');
+      const deleteAction = row.type === NetworkInterfaceType.Physical ? T('Reset configuration for ') : T('Delete ');
       if (this.parent.ha_enabled) {
         this.parent.dialog.Info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
       } else {
@@ -96,13 +98,13 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     },
     confirmDeleteDialog: {
       buildTitle: (intf: any) => {
-        if (intf.type === 'PHYSICAL') {
+        if (intf.type === NetworkInterfaceType.Physical) {
           return T('Reset Configuration');
         }
         return T('Delete');
       },
       buttonMsg: (intf: any) => {
-        if (intf.type === 'PHYSICAL') {
+        if (intf.type === NetworkInterfaceType.Physical) {
           return T('Reset Configuration');
         }
         return T('Delete');
@@ -500,7 +502,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   getInterfaceInOutInfo(tableSource: any[]) {
-    this.reportEvent = this.ws.sub('reporting.realtime').subscribe((evt) => {
+    this.reportEvent = this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').subscribe((evt) => {
       if (evt.interfaces) {
         tableSource.map((row) => {
           row.received = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].received_bytes);
@@ -516,10 +518,12 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   interfaceDataSourceHelper(res: any[]) {
     const rows = res;
     for (let i = 0; i < rows.length; i++) {
+      // TODO: Replace with probably enum for link_state.
       rows[i]['link_state'] = rows[i]['state']['link_state'].replace('LINK_STATE_', '');
       const addresses = new Set([]);
       for (let j = 0; j < rows[i]['aliases'].length; j++) {
         const alias = rows[i]['aliases'][j];
+        // TODO: See if checks can be removed or replace with enum.
         if (alias.type.startsWith('INET')) {
           addresses.add(alias.address + '/' + alias.netmask);
         }
@@ -542,15 +546,15 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         }
       }
       rows[i]['addresses'] = Array.from(addresses);
-      if (rows[i].type === 'PHYSICAL') {
+      if (rows[i].type === NetworkInterfaceType.Physical) {
         rows[i].active_media_type = rows[i]['state']['active_media_type'];
         rows[i].active_media_subtype = rows[i]['state']['active_media_subtype'];
-      } else if (rows[i].type === 'VLAN') {
+      } else if (rows[i].type === NetworkInterfaceType.Vlan) {
         rows[i].vlan_tag = rows[i]['vlan_tag'];
         rows[i].vlan_parent_interface = rows[i]['vlan_parent_interface'];
-      } else if (rows[i].type === 'BRIDGE') {
+      } else if (rows[i].type === NetworkInterfaceType.Bridge) {
         rows[i].bridge_members = rows[i]['bridge_members'];
-      } else if (rows[i].type === 'LINK_AGGREGATION') {
+      } else if (rows[i].type === NetworkInterfaceType.LinkAggregation) {
         rows[i].lagg_ports = rows[i]['lag_ports'];
         rows[i].lagg_protocol = rows[i]['lag_protocol'];
       }

@@ -3,6 +3,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { Catalog } from 'app/interfaces/catalog.interface';
+import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Group } from 'app/interfaces/group.interface';
@@ -233,7 +234,7 @@ export type ApiDirectory = {
   'interface.lag_supported_protocols': { params: any; response: any };
   'interface.lag_ports_choices': { params: any; response: any };
   'interface.vlan_parent_interface_choices': { params: any; response: any };
-  'interface.query': { params: any; response: any };
+  'interface.query': { params: QueryParams<NetworkInterface>; response: NetworkInterface[] };
   'interface.create': { params: any; response: any };
   'interface.update': { params: any; response: any };
   'interface.has_pending_changes': { params: any; response: any };

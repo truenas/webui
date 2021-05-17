@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
+import { CoreEvent } from 'app/interfaces/events';
 import { ShellService, WebSocketService } from '../../services';
 import helptext from '../../helptext/shell/shell';
 import { CopyPasteMessageComponent } from './copy-paste-message.component';
@@ -10,7 +11,7 @@ import { Terminal } from 'xterm';
 import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
 import * as FontFaceObserver from 'fontfaceobserver';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { T } from 'app/translate-marker';
