@@ -7,6 +7,7 @@ import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { CoreEvent } from 'app/interfaces/events';
+import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { Theme } from 'app/services/theme/theme.service';
 import { Subject } from 'rxjs';
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
@@ -97,7 +98,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.core.register({
       observerClass: this,
       eventName: 'SysInfo',
-    }).subscribe((evt: CoreEvent) => {
+    }).subscribe((evt: SysInfoEvent) => {
       this.threadCount = evt.data.cores;
       this.coreCount = evt.data.physical_cores;
       this.hyperthread = this.threadCount !== this.coreCount;

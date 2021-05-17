@@ -9,6 +9,7 @@ import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/view
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
 import { CoreEvent } from 'app/interfaces/events';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { WebSocketService, SystemGeneralService } from '../../../../services';
 import { LocaleService } from 'app/services/locale.service';
@@ -108,8 +109,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
         this.ha_status = evt.data.status;
       });
     } else {
-      this.ws.call('system.info').subscribe((res) => {
-        const evt = { name: 'SysInfo', data: res };
+      this.ws.call('system.info').subscribe((systemInfo) => {
+        const evt = { name: 'SysInfo', data: systemInfo };
         this.processSysInfo(evt);
       });
 
@@ -229,7 +230,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     return result;
   }
 
-  setProductImage(data: any): void {
+  setProductImage(data: SystemInfo): void {
     if (this.manufacturer !== 'ixsystems') return;
 
     if (data.system_product.includes('MINI')) {
@@ -241,7 +242,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     }
   }
 
-  setTrueNASImage(sys_product: any): void {
+  setTrueNASImage(sys_product: string): void {
     this.product_enclosure = 'rackmount';
 
     if (sys_product.includes('X10')) {
@@ -285,7 +286,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     }
   }
 
-  setMiniImage(sys_product: any): void {
+  setMiniImage(sys_product: string): void {
     this.product_enclosure = 'tower';
 
     if (sys_product && sys_product.includes('CERTIFIED')) {

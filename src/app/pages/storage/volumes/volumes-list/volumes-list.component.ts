@@ -10,10 +10,13 @@ import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey
 import { CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { AclType } from 'app/enums/acl-type.enum';
+import { DatasetType } from 'app/enums/dataset-type.enum';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableService } from 'app/pages/common/entity/entity-table/entity-table.service';
@@ -1708,11 +1711,11 @@ export class VolumesListTableConfig implements InputTableConf {
     this.getMoreDatasetInfo(data, parent);
     node.data.group_actions = true;
     let actions_title = helptext.dataset_actions;
-    if (data.type === 'VOLUME') {
+    if (data.type === DatasetType.Volume) {
       actions_title = helptext.zvol_actions;
     }
     const actions = [{ title: actions_title, actions: this.getActions(data) }];
-    if (data.type === 'FILESYSTEM' || data.type === 'VOLUME') {
+    if (data.type === DatasetType.Filesystem || data.type === DatasetType.Volume) {
       const encryption_actions = this.getEncryptedDatasetActions(data);
       if (encryption_actions.length > 0) {
         actions.push({ title: helptext.encryption_actions_title, actions: encryption_actions });
@@ -1840,7 +1843,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
    * Please note that extra options are special in that they are passed directly to ZFS.
    * This is why 'encryptionroot' is included in order to get 'encryption_root' in the response
    * */
-  private datasetQueryOptions = [[] as any, {
+  private datasetQueryOptions: QueryParams<Dataset, ExtraDatasetQueryOptions> = [[], {
     extra: {
       properties: [
         'type',

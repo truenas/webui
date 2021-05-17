@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CoreEvent } from 'app/interfaces/events';
+import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { Subscription } from 'rxjs';
 import { ProductType } from '../../../enums/product-type.enum';
@@ -60,7 +61,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   showSpinner = false;
   singleDescription: string;
   updateType: string;
-  sysInfo: any;
+  sysInfo: SystemInfoWithFeatures;
   isHA: boolean;
   sysUpdateMessage = T('A system update is in progress. ');
   sysUpdateMsgPt2 = helptext.sysUpdateMessage;
@@ -136,7 +137,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.product_type = window.localStorage.getItem('product_type') as ProductType;
 
     // Get system info from global cache
-    this.core.register({ observerClass: this, eventName: 'SysInfo' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'SysInfo' }).subscribe((evt: SysInfoEvent) => {
       this.sysInfo = evt.data;
       this.isHA = !!(evt.data.license && evt.data.license.system_serial_ha.length > 0);
     });

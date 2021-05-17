@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { DatasetType } from 'app/enums/dataset-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -479,7 +480,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   }
 
   async afterInit(): Promise<void> {
-    this.ws.call('pool.dataset.query', [[['type', '=', 'VOLUME']]]).subscribe((zvols: any[]) => {
+    this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]]]).subscribe((zvols) => {
       zvols.forEach((zvol) => {
         _.find(this.diskFieldConfig, { name: 'path' }).options.push(
           {
@@ -580,7 +581,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   }
 
   updateZvolSearchOptions(value = '', parent: any): void {
-    parent.ws.call('pool.dataset.query', [[['type', '=', 'VOLUME'], ['id', '^', value]]]).subscribe((zvols: any[]) => {
+    (parent.ws as WebSocketService).call('pool.dataset.query', [[['type', '=', DatasetType.Volume], ['id', '^', value]]]).subscribe((zvols) => {
       const searchedZvols = [];
       zvols.forEach((zvol) => {
         searchedZvols.push(

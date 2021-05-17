@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard';
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
 import { Validators, FormControl, ValidationErrors } from '@angular/forms';
@@ -761,15 +762,15 @@ export class IscsiWizardComponent {
 
     const pool = dataset.split('/')[0];
     this.ws.call('pool.dataset.query', [[['id', '=', dataset]]]).subscribe(
-      (res) => {
-        if (res.length == 0) {
+      (datasets) => {
+        if (datasets.length == 0) {
           datasetField.hasErrors = true;
         } else {
           for (const i in this.zvolFieldGroup) {
             const fieldName = this.zvolFieldGroup[i];
-            if (fieldName in res[0]) {
+            if (fieldName in datasets[0]) {
               const controller = this.entityWizard.formArray.controls[0].controls[fieldName];
-              controller.setValue(res[0][fieldName].value);
+              controller.setValue((datasets[0][fieldName as keyof Dataset] as any).value);
             }
           }
         }

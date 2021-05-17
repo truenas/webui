@@ -52,17 +52,17 @@ export class SupportComponent implements OnInit {
     private router: Router, private translate: TranslateService) {}
 
   ngOnInit() {
-    this.ws.call('system.info').subscribe((res) => {
-      this.systemInfo = res;
-      this.systemInfo.memory = (res.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
-      if (res.system_product.includes('MINI')) {
-        this.getMiniImage(res.system_product);
+    this.ws.call('system.info').subscribe((systemInfo) => {
+      this.systemInfo = systemInfo;
+      this.systemInfo.memory = (systemInfo.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
+      if (systemInfo.system_product.includes('MINI')) {
+        this.getMiniImage(systemInfo.system_product);
       } else {
-        this.getServerImage(res.system_product);
+        this.getServerImage(systemInfo.system_product);
       }
-      if (res.license) {
+      if (systemInfo.license) {
         this.hasLicense = true;
-        this.licenseInfo = res.license;
+        this.licenseInfo = systemInfo.license;
         this.parseLicenseInfo();
         this.ws.call('support.is_available').subscribe((res) => {
           if (res) {
