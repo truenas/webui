@@ -4,7 +4,7 @@ import { Relation } from './entity-form/models/field-relation.interface';
 export const NULL_VALUE = 'null_value';
 
 export class EntityUtils {
-  handleError(entity: any, res: any) {
+  handleError(entity: any, res: any): void {
     if (res.code === 409) {
       this.handleObjError(entity, res);
     } else if (res.code === 400) {
@@ -25,7 +25,7 @@ export class EntityUtils {
     }
   }
 
-  handleObjError(entity: any, res: any) {
+  handleObjError(entity: any, res: any): void {
     let scroll = false;
     entity.error = '';
     for (const i in res.error) {
@@ -58,7 +58,7 @@ export class EntityUtils {
     }
   }
 
-  handleWSError(entity: any, res: any, dialogService?: any, targetFieldConfig?: any) {
+  handleWSError(entity: any, res: any, dialogService?: any, targetFieldConfig?: any): void {
     let dialog;
     if (dialogService) {
       dialog = dialogService;
@@ -121,7 +121,7 @@ export class EntityUtils {
     }
   }
 
-  errorReport(res: any, dialog: any) {
+  errorReport(res: any, dialog: any): void {
     if (res.trace && res.trace.formatted && dialog) {
       dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
     } else if (res.state && res.error && res.exception && dialog) {
@@ -136,7 +136,7 @@ export class EntityUtils {
     return (!!a) && (a.constructor === Object);
   };
 
-  flattenData(data: any | any[], level = 0, parent?: any) {
+  flattenData(data: any | any[], level = 0, parent?: any): any[] {
     let ndata: any[] = [];
     if (this.isObject(data)) {
       data = [data];
@@ -169,7 +169,7 @@ export class EntityUtils {
   /**
    * make cron time dow consistence
    */
-  parseDOW(cron: string) {
+  parseDOW(cron: string): string {
     const dowOptions = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
     const cronArray = cron.replace(/00/g, '0').split(' ');
     if (cronArray[cronArray.length - 1] !== '*') {
@@ -182,7 +182,7 @@ export class EntityUtils {
     return cronArray.join(' ');
   }
 
-  filterArrayFunction(item: any) {
+  filterArrayFunction(item: any): boolean {
     /**
      * This function is for validation.
      * If the value of a control is invaild, we ignore it during sending payload
@@ -215,7 +215,7 @@ export class EntityUtils {
     return result;
   }
 
-  changeNull2String(value: any) {
+  changeNull2String(value: any): any {
     let result = value;
     if (value === null) {
       result = NULL_VALUE;
@@ -224,7 +224,7 @@ export class EntityUtils {
     return result;
   }
 
-  changeNullString2Null(data: any) {
+  changeNullString2Null(data: any): any {
     let result: any;
     if (data === undefined || data === null || data === '') {
       result = data;

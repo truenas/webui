@@ -1425,7 +1425,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     }
   }
 
-  async makeNewKeyPair(value: any, submitting?: boolean) {
+  async makeNewKeyPair(value: any, submitting?: boolean): Promise<void> {
     await this.replicationService.genSSHKeypair().then(
       async (res) => {
         const payload = {
@@ -1500,7 +1500,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     }
   }
 
-  async customSubmit(value: any) {
+  customSubmit(value: any): void {
     delete value['oauth_signin_button'];
     if (value['private_key-SFTP'] === 'NEW') {
       this.makeNewKeyPair(value, true);

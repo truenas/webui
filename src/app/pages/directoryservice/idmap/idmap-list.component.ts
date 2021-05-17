@@ -78,14 +78,14 @@ export class IdmapListComponent implements OnDestroy {
     return data;
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
     this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
       this.entityList.getData();
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.refreshTableSubscription) {
       this.refreshTableSubscription.unsubscribe();
     }
@@ -141,7 +141,7 @@ export class IdmapListComponent implements OnDestroy {
     return actions;
   }
 
-  doAdd(id?: number) {
+  doAdd(id?: number): void {
     const idmapFormComponent = new IdmapFormComponent(
       this.idmapService,
       this.validationService,
@@ -153,7 +153,7 @@ export class IdmapListComponent implements OnDestroy {
     this.modalService.open('slide-in-form', idmapFormComponent, id);
   }
 
-  showADForm() {
+  showADForm(): void {
     const formComponent = new ActiveDirectoryComponent(
       this.router,
       this.ws,

@@ -57,7 +57,7 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
 
   @Input() config: GaugeConfig;
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.config) {
       if (changes.config.currentValue && changes.config.currentValue.subtitle) {
         this.subtitle = changes.config.currentValue.subtitle;
@@ -74,11 +74,11 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
     }
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.render();
   }
 
-  get data() {
+  get data(): any {
     return this._data;
   }
 
@@ -86,7 +86,7 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
     this._data = d;
   }
 
-  render() {
+  render(): void {
     const lineWidth = 10;
     this.arc = d3.arc()
       .innerRadius(this.config.diameter / 2 - lineWidth) // 80
@@ -163,7 +163,7 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
     this.update(this.config.data[1]);
   }
 
-  update(value: any) {
+  update(value: any): void {
     if (!document.hidden) {
       d3.transition()
         .select('#gauge-' + this.chartId + ' path.value')
@@ -187,11 +187,11 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
     };
   }
 
-  percentToAngle(value: number) {
+  percentToAngle(value: number): number {
     return value / 100 * this.doublePI;
   }
 
-  updateSubtitle() {
+  updateSubtitle(): void {
     const txt = d3.select('#gauge-' + this.chartId + ' #text-value');
     const subtxt = d3.select('#gauge-' + this.chartId + ' #text-subtitle')
       .text(this.subtitle);

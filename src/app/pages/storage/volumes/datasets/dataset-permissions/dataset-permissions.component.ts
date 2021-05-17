@@ -247,7 +247,7 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
     });
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     if (!data.apply_user) {
       delete data.user;
     }

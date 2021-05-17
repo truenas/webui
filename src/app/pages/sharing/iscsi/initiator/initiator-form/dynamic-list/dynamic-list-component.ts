@@ -18,7 +18,7 @@ export class DynamicListComponent implements OnInit {
   formGroup: FormGroup;
   constructor(private entityFormService: EntityFormService) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     // define input config and control
     this.inputConfig = {
       type: 'input',
@@ -46,16 +46,18 @@ export class DynamicListComponent implements OnInit {
     });
   }
 
-  add() {
+  add(): void {
     if (this.inputControl.value !== null && this.inputControl.value !== undefined && this.inputControl.value !== '') {
       this.listControl.value.add(this.inputControl.value);
       this.inputControl.setValue(null);
     }
   }
-  remove(item: any) {
+
+  remove(item: any): void {
     this.listControl.value.delete(item);
   }
-  drop() {
+
+  drop(): void {
     this.config.customEventMethod(this);
   }
 }

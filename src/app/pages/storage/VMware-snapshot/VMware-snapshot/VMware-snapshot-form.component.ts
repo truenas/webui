@@ -126,7 +126,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
     protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService,
     protected loader: AppLoaderService) { }
 
-  preInit(entityForm: any) {
+  preInit(entityForm: any): void {
     const queryPayload: any[] = [];
     this.route.params.subscribe((params) => {
       queryPayload.push('id');
@@ -136,7 +136,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.datastoreList = [];
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
@@ -155,13 +155,13 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(entityForm: any) {
+  beforeSubmit(entityForm: any): void {
     if (entityForm.filesystem !== undefined) {
       entityForm.filesystem = entityForm.filesystem;
     }
   }
 
-  customSubmit(entityForm: any) {
+  customSubmit(entityForm: any): void {
     const payload = {
       datastore: entityForm.datastore,
       filesystem: entityForm.filesystem,
@@ -226,7 +226,8 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
       });
     }
   }
-  blurEvent(parent: any) {
+
+  blurEvent(parent: any): void {
     if (parent.entityForm) {
       this.datastore = _.find(parent.fieldConfig, { name: 'datastore' });
       const payload: any = {};

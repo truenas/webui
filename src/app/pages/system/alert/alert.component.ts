@@ -202,7 +202,7 @@ export class AlertConfigComponent implements OnInit {
     this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
   }
 
-  onSubmit() {
+  onSubmit(): void {
     const payload: any = { classes: {} };
 
     for (const key in this.formGroup.value) {

@@ -157,7 +157,7 @@ export class VolumeStatusComponent implements OnInit {
     protected localeService: LocaleService,
     protected modalService: ModalService) {}
 
-  getZfsPoolScan(poolName: string) {
+  getZfsPoolScan(poolName: string): void {
     this.ws.subscribe('zfs.pool.scan').subscribe(
       (res) => {
         if (res.fields && res.fields.name == poolName) {
@@ -174,7 +174,7 @@ export class VolumeStatusComponent implements OnInit {
     );
   }
 
-  getData() {
+  getData(): void {
     this.ws.call('pool.query', [[['id', '=', this.pk]]]).subscribe((pools) => {
       this.pool = pools[0];
       if (!pools[0]) {
@@ -202,7 +202,7 @@ export class VolumeStatusComponent implements OnInit {
     });
   }
 
-  getUnusedDisk() {
+  getUnusedDisk(): void {
     const availableDisks: Option[] = [];
     const availableDisksForExtend: Option[] = [];
     this.ws.call('disk.get_unused').subscribe((res) => {
@@ -221,7 +221,7 @@ export class VolumeStatusComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     // Setup Global Actions
     const actionId = 'refreshBtn';
     this.actionEvents = new Subject();
@@ -254,12 +254,12 @@ export class VolumeStatusComponent implements OnInit {
     this.getUnusedDisk();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.actionEvents.complete();
     this.core.unregister({ observerClass: this });
   }
 
-  refresh() {
+  refresh(): void {
     this.loader.open();
     this.getData();
     this.loader.close();
@@ -637,13 +637,13 @@ export class VolumeStatusComponent implements OnInit {
     };
   }
 
-  getReadableDate(data: any) {
+  getReadableDate(data: any): string {
     if (data != null) {
       return this.localeService.formatDateTime(new Date(data.$date));
     }
   }
 
-  onClickEdit(pk: string) {
+  onClickEdit(pk: string): void {
     const diskForm = new DiskFormComponent(this.router, this.rest, this.ws, this.aroute);
     diskForm.inIt(pk);
     this.modalService.open('slide-in-form', diskForm);

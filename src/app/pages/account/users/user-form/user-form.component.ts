@@ -5,6 +5,7 @@ import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs/Observable';
 import helptext from '../../../../helptext/account/user-form';
 import {
   AppLoaderService, StorageService, UserService, WebSocketService, ValidationService,
@@ -314,7 +315,7 @@ export class UserFormComponent implements FormConfiguration {
     );
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.pk = entityForm.pk;
     this.loader.callStarted.emit();
     this.entityForm = entityForm;
@@ -464,7 +465,7 @@ export class UserFormComponent implements FormConfiguration {
     }
   }
 
-  clean_uid(value: any) {
+  clean_uid(value: any): any {
     delete value['password_conf'];
     if (value['uid'] === null) {
       delete value['uid'];
@@ -472,7 +473,7 @@ export class UserFormComponent implements FormConfiguration {
     return value;
   }
 
-  beforeSubmit(entityForm: any) {
+  beforeSubmit(entityForm: any): void {
     entityForm.email = entityForm.email === '' ? null : entityForm.email;
 
     if (this.isNew) {
@@ -500,11 +501,13 @@ export class UserFormComponent implements FormConfiguration {
       delete entityForm['group_create'];
     }
   }
-  submitFunction(this: any, entityForm: any) {
+
+  submitFunction(this: any, entityForm: any): Observable<any> {
     delete entityForm['password_conf'];
     return this.ws.call('user.update', [this.pk, entityForm]);
   }
-  blurEvent(parent: any) {
+
+  blurEvent(parent: any): void {
     if (parent.entityForm && parent.entityForm.isNew) {
       let username: string;
       const fullname = parent.entityForm.formGroup.controls.full_name.value.split(/[\s,]+/);
@@ -522,14 +525,15 @@ export class UserFormComponent implements FormConfiguration {
       }
     }
   }
-  blurEvent2(parent: { fieldSets: FieldSets; entityForm: EntityFormComponent }) {
+
+  blurEvent2(parent: { fieldSets: FieldSets; entityForm: EntityFormComponent }): void {
     if (parent.entityForm) {
       const username = parent.entityForm.formGroup.controls.username.value;
       parent.fieldSets.config('username').warnings = username.length > 8 ? helptext.user_form_blur_event2_warning : null;
     }
   }
 
-  afterSubmit() {
+  afterSubmit(): void {
     this.modalService.refreshTable();
   }
 }

@@ -212,7 +212,7 @@ export class LdapComponent implements FormConfiguration {
 
   advanced_field: any[] = helptext.ldap_advanced_fields;
 
-  isCustActionVisible(actionId: string) {
+  isCustActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode === true) {
@@ -236,7 +236,7 @@ export class LdapComponent implements FormConfiguration {
     return data;
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
 
     this.ws.call('kerberos.realm.query').subscribe((res: any[]) => {
@@ -307,7 +307,7 @@ export class LdapComponent implements FormConfiguration {
     }, 500);
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     if (data['enable']) {
       data['hostname_noreq'] = data['hostname'];
     } else {
@@ -320,7 +320,7 @@ export class LdapComponent implements FormConfiguration {
     return this.ws.call('ldap.update', [body]);
   }
 
-  errorReport(res: any) {
+  errorReport(res: any): void {
     let errorText = res.reason ? res.reason.replace('[EFAULT]', '') : null;
     if (res.reason && res.reason.includes('Invalid credentials')) {
       errorText = T('Invalid credentials. Please try again.');

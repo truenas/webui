@@ -278,7 +278,7 @@ export class NFSFormComponent implements FormConfiguration {
     }
   }
 
-  preInit(EntityForm: any) {
+  preInit(EntityForm: any): void {
     this.route.params.subscribe((params) => {
       if (params['pk']) {
         this.pk = parseInt(params['pk'], 10);
@@ -290,7 +290,7 @@ export class NFSFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(EntityForm: EntityFormComponent) {
+  afterInit(EntityForm: EntityFormComponent): void {
     this.entityForm = EntityForm;
 
     this.userService.userQueryDSCache().subscribe((items) => {
@@ -340,7 +340,7 @@ export class NFSFormComponent implements FormConfiguration {
     });
   }
 
-  isCustActionVisible(actionId: string) {
+  isCustActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode === true) {
@@ -381,7 +381,7 @@ export class NFSFormComponent implements FormConfiguration {
     };
   }
 
-  afterSave(entityForm: any) {
+  afterSave(entityForm: any): void {
     this.ws.call('service.query', [[]]).subscribe((res) => {
       const service = _.find(res, { service: ServiceName.Nfs });
       if (service.enable) {
@@ -426,15 +426,15 @@ export class NFSFormComponent implements FormConfiguration {
     });
   }
 
-  updateMapAllGroupSearchOptions(value = '', parent: any) {
+  updateMapAllGroupSearchOptions(value = '', parent: any): void {
     parent.updateGroupSearchOptions(value, parent, 'mapall_group');
   }
 
-  updateMapRootGroupSearchOptions(value = '', parent: any) {
+  updateMapRootGroupSearchOptions(value = '', parent: any): void {
     parent.updateGroupSearchOptions(value, parent, 'maproot_group');
   }
 
-  updateGroupSearchOptions(value = '', parent: any, field: any) {
+  updateGroupSearchOptions(value = '', parent: any, field: any): void {
     (parent.userService as UserService).groupQueryDSCache(value).subscribe((groups) => {
       const groupOptions: Option[] = [];
       for (let i = 0; i < groups.length; i++) {
@@ -444,15 +444,15 @@ export class NFSFormComponent implements FormConfiguration {
     });
   }
 
-  updateMapAllUserSearchOptions(value = '', parent: any) {
+  updateMapAllUserSearchOptions(value = '', parent: any): void {
     parent.updateUserSearchOptions(value, parent, 'mapall_user');
   }
 
-  updateMapRootUserSearchOptions(value = '', parent: any) {
+  updateMapRootUserSearchOptions(value = '', parent: any): void {
     parent.updateUserSearchOptions(value, parent, 'maproot_user');
   }
 
-  updateUserSearchOptions(value = '', parent: any, field: any) {
+  updateUserSearchOptions(value = '', parent: any, field: any): void {
     (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
