@@ -46,6 +46,20 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   spinner = true;
 
   supportedHardware = false;
+
+  get showEnclosureSelector(): boolean {
+    if (!this.system || !this.events || !this.system.pools || !this.system.enclosures || this.supportedHardware !== true) return false;
+
+    // These conditions are here because M series actually reports a separate chassis for
+    // the rear bays. SystemProfiler will store a rearIndex value for those machines.
+    if (this.system && this.system.rearIndex && this.system.profile.length > 2) {
+      return true;
+    } if (this.system && !this.system.rearIndex && this.system.profile.length > 1) {
+      return true;
+    }
+    return false;
+  }
+
   system_manufacturer: string;
   private _system_product;
   get system_product() {
