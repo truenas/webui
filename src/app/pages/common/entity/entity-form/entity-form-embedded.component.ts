@@ -20,7 +20,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { T } from '../../../../translate-marker';
 
 import { RestService, WebSocketService } from '../../../../services';
