@@ -122,7 +122,7 @@ def select_ldap_user_for_user_click_on_the_apply_user_checkbox(driver, ldap_user
     driver.find_element_by_xpath('//input[@placeholder="User"]').send_keys(ldap_user)
     assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__{ldap_user}"]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div').click()
 
 
@@ -134,7 +134,7 @@ def select_ldap_user_for_group_name_click_on_the_apply_group_checkbox(driver, ld
     driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys(ldap_user)
     assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__{ldap_user}"]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div').click()
 
 

@@ -108,10 +108,10 @@ def reboot_the_system_wait_for_login_and_login(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__RESTART"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__RESTART"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 300, '//input[@placeholder="Username"]', 'clickable')
     # this sleep give a little to get ready for more load
-    time.sleep(5)
+    time.sleep(7)
     assert wait_on_element(driver, 20, '//input[@placeholder="Password"]', 'clickable')
     driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
