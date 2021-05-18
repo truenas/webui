@@ -225,18 +225,20 @@ def press_initiate_failover_check_confirm_and_press_failover(driver):
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear"""
     assert wait_on_element(driver, 1, 60, '//input[@placeholder="Username"]')
-    time.sleep(7)
-    assert wait_on_element(driver, 1, 30, '//input[@placeholder="Username"]')
+    # wait for HA is enabled to avoid UI refreshing
+    assert wait_on_element(driver, 1, 30, '//p[contains(.,"HA is enabled")]')
 
 
 @then(parsers.parse('At the login page enter "{user}" and "{password}"'))
 def at_the_login_page_enter_root_and_password(driver, user, password):
     """At the login page enter "{user}" and "{password}"."""
+    assert wait_on_element(driver, 1, 7, '//input[@placeholder="Username"]')
     driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
     driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
     assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
+
     driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     assert wait_on_element(driver, 1, 5, '//span[contains(.,"System Information")]')
 
