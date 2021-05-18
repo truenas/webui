@@ -29,7 +29,7 @@ export class FormColorpickerComponent implements Field, OnInit {
     console.log(val);
   }
 
-  get colorProxy() {
+  get colorProxy(): string {
     return this.group.value[this.config.name];
   }
 

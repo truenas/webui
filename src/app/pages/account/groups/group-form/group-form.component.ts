@@ -86,7 +86,7 @@ export class GroupFormComponent implements FormConfiguration {
     private modalService: ModalService,
   ) {}
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     data['name'] = data['group'];
     this.getNamesInUse(data['name']);
     return data;

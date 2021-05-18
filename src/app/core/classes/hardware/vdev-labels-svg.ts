@@ -46,7 +46,7 @@ export class VDevLabelsSVG {
     this.onInit(chassis, app);
   }
 
-  onInit(chassis: ChassisView, app: any) {
+  onInit(chassis: ChassisView, app: any): void {
     this.chassis = chassis;
     this.app = app;
     this.mainStage = this.app.stage;
@@ -91,22 +91,19 @@ export class VDevLabelsSVG {
     });
   }
 
-  onDestroy() {
-  }
-
   // Animate into view
-  enter() {
+  enter(): void {
   }
 
   // Animate out of view
-  exit() {
+  exit(): void {
     const op = this.getParent();
     d3.select('#' + op.id + ' svg').remove();
     d3.select('#' + op.id + ' canvas.clickpad').remove();
     this.app.renderer.plugins.interaction.setTargetElement(this.app.renderer.view);
   }
 
-  d3Init() {
+  d3Init(): void {
     const op = this.getParent();
 
     this.svg = d3.select('#' + op.id).append('svg')
@@ -123,11 +120,11 @@ export class VDevLabelsSVG {
     this.app.renderer.plugins.interaction.setTargetElement(op.querySelector('canvas.clickpad'));
   }
 
-  getParent() {
+  getParent(): HTMLElement {
     return this.app.renderer.view.offsetParent;
   }
 
-  createVdevLabelTile(x: number, y: number, w: number, h: number, className: string, diskName: string) {
+  createVdevLabelTile(x: number, y: number, w: number, h: number, className: string, diskName: string): void {
     const color = diskName == this.selectedDisk.devname ? this.selectedDiskColor : this.color;
     let opacity = diskName == this.selectedDisk.devname ? 1 : 0.5;
     opacity = 1;
@@ -143,7 +140,7 @@ export class VDevLabelsSVG {
       .attr('style', 'fill-opacity:0.25; stroke-width:1');
   }
 
-  createVdevLabels(vdev: any) {
+  createVdevLabels(vdev: any): void {
     const disks = vdev.disks ? Object.keys(vdev.disks) : [this.selectedDisk.devname]; // NOTE: vdev.slots only has values for current enclosure
     const xOffset = this.chassis.container.x + this.chassis.container.width + 16;
     const freeSpace = this.app._options.width - xOffset;
@@ -168,7 +165,7 @@ export class VDevLabelsSVG {
     });
   }
 
-  calculateParentOffsets(el: any) {
+  calculateParentOffsets(el: any): { x: number; y: number } {
     // Template uses CSS to center and align text so
     // we need to compensate with absolute positions
     // of wrapper elements
@@ -185,7 +182,7 @@ export class VDevLabelsSVG {
     return { x: xOffset, y: yOffset - 6 };
   }
 
-  traceElements(vdev: any, overlay: any, retrace?: boolean) {
+  traceElements(vdev: any, overlay: any, retrace?: boolean): void {
     if (retrace) {
       this.svg.selectAll('path').remove();
     }
@@ -211,7 +208,7 @@ export class VDevLabelsSVG {
     });
   }
 
-  createTrace(startX: number, startY: number, endX: number, endY: number, diskName: string) {
+  createTrace(startX: number, startY: number, endX: number, endY: number, diskName: string): void {
     const color = diskName == this.selectedDisk.devname ? this.selectedDiskColor : this.color;
     const opacity = diskName == this.selectedDisk.devname ? 1 : 0.25;
 
@@ -224,21 +221,21 @@ export class VDevLabelsSVG {
       .attr('class', diskName);
   }
 
-  highlightTrace(devname: string) {
+  highlightTrace(devname: string): void {
     if (devname == this.selectedDisk.devname) { return; }
 
     const targetEl = this.getParent().querySelector('svg path.' + devname);
-    targetEl.setAttribute('stroke-opacity', 1);
+    targetEl.setAttribute('stroke-opacity', '1');
   }
 
-  unhighlightTrace(devname: string) {
+  unhighlightTrace(devname: string): void {
     if (devname == this.selectedDisk.devname) { return; }
 
     const targetEl = this.getParent().querySelector('svg path.' + devname);
-    targetEl.setAttribute('stroke-opacity', 1);
+    targetEl.setAttribute('stroke-opacity', '1');
   }
 
-  unhighlightAllTraces(traces: any[], exceptions: string[]) {
+  unhighlightAllTraces(traces: any[], exceptions: string[]): void {
     if (!exceptions) { exceptions = []; }
 
     traces.forEach((item, index) => {
@@ -249,16 +246,16 @@ export class VDevLabelsSVG {
     this.showAllTiles(tiles);
   }
 
-  showTrace(devname: string, overlay: any) {
+  showTrace(devname: string, overlay: any): void {
     const labels = overlay.nativeElement.querySelectorAll('.vdev-disk');
     const paths = this.getParent().querySelectorAll('svg path');
     this.hideAllTraces(paths, [this.selectedDisk.devname, devname]);
     const op = this.getParent();
-    const targetEl = op.querySelector('svg path.' + devname);
-    targetEl.style['stroke-opacity'] = 1;
+    const targetEl: HTMLElement = op.querySelector('svg path.' + devname);
+    (targetEl.style as any)['stroke-opacity'] = 1;
   }
 
-  hideAllTraces(traces: any[], exceptions: string[]) {
+  hideAllTraces(traces: NodeListOf<any>, exceptions: string[]): void {
     if (!exceptions) { exceptions = []; }
 
     traces.forEach((item, index) => {
@@ -267,33 +264,33 @@ export class VDevLabelsSVG {
     });
   }
 
-  showTile(devname: string) {
-    const targetEl = this.getParent().querySelector('rect.tile_' + devname);
+  showTile(devname: string): void {
+    const targetEl: HTMLElement = this.getParent().querySelector('rect.tile_' + devname);
     if (targetEl) {
-      targetEl.style.opacity = 1;
+      targetEl.style.opacity = '1';
     }
   }
 
-  hideTile(devname: string) {
-    const targetEl = this.getParent().querySelector('rect.tile_' + devname);
+  hideTile(devname: string): void {
+    const targetEl: HTMLElement = this.getParent().querySelector('rect.tile_' + devname);
     if (targetEl) {
-      targetEl.style.opacity = 0;
+      targetEl.style.opacity = '0';
     }
   }
 
-  hideAllTiles(tiles: any[], exceptions?: string[]) {
+  hideAllTiles(tiles: NodeListOf<any>, exceptions?: string[]): void {
     tiles.forEach((item) => {
       item.style.opacity = 0;
     });
   }
 
-  showAllTiles(tiles: any[], exceptions?: string[]) {
+  showAllTiles(tiles: NodeListOf<any>, exceptions?: string[]): void {
     tiles.forEach((item, index) => {
       item.style.opacity = 1;
     });
   }
 
-  protected parseColor(color: string) {
+  protected parseColor(color: string): number {
     return parseInt('0x' + color.substring(1), 16);
   }
 }

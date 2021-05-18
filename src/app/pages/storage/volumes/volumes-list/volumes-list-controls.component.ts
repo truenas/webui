@@ -74,11 +74,11 @@ implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
     public messageService: MessageService,
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.getSystemDatasetPool();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.filterSubscription) {
       this.filterSubscription.unsubscribe();
     }
@@ -90,7 +90,7 @@ implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     if (this.filter) {
       this.filterSubscription = observableFromEvent(
         this.filter.nativeElement,
@@ -106,7 +106,7 @@ implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  applyConfig(config: any) {
+  applyConfig(config: any): void {
     if (config) {
       this.actions = config.getAddActions();
       this.conf = config.conf;
@@ -116,17 +116,17 @@ implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  navigate(path: string) {
+  navigate(path: string): void {
     this.router.navigate(path.split('/'));
   }
 
-  resetDatasetFilter() {
+  resetDatasetFilter(): void {
     this.filterValue = '';
     this.filter.nativeElement.value = '';
     this.filterDatasets('');
   }
 
-  filterDatasets(value: string) {
+  filterDatasets(value: string): void {
     this.core.emit({
       name: 'TreeTableGlobalFilter',
       data: { column: 'name', value },
@@ -134,7 +134,7 @@ implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  onClickImport() {
+  onClickImport(): void {
     this.modalService.open(
       'slide-in-form',
       new VolumeImportWizardComponent(
@@ -151,7 +151,7 @@ implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  onChooseSystemDatasetPool() {
+  onChooseSystemDatasetPool(): void {
     this.poolChoicesSubscription = this.ws
       .call('systemdataset.pool_choices')
       .subscribe((res: { [key: string]: string }) => {
@@ -186,7 +186,7 @@ implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-  getSystemDatasetPool() {
+  getSystemDatasetPool(): void {
     this.poolConfigSubscription = this.ws
       .call('systemdataset.config')
       .subscribe((res) => {
@@ -194,7 +194,7 @@ implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  customSubmitSystemDatasetPool(entityDialog: any) {
+  customSubmitSystemDatasetPool(entityDialog: any): void {
     const self = entityDialog.parent;
     self.loader.open();
     self.ws.call('service.query').subscribe((services: any) => {
@@ -220,7 +220,7 @@ implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  updateSystemDatasetPool(entityDialog: any) {
+  updateSystemDatasetPool(entityDialog: any): void {
     const self = entityDialog.parent;
     const pool = entityDialog.formGroup.controls['pools'].value;
     self.dialogRef = self.dialog.open(EntityJobComponent, {

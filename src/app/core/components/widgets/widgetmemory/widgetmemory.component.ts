@@ -39,7 +39,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   chart: any;// chart instance
   ctx: any; // canvas context for chart.js
   private _memData: any;
-  get memData() { return this._memData; }
+  get memData(): any { return this._memData; }
   set memData(value) {
     this._memData = value;
     if (this.legendData && typeof this.legendIndex !== 'undefined') {
@@ -81,11 +81,11 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.data.subscribe((evt: CoreEvent) => {
       if (evt.name == 'MemoryStats') {
         if (evt.data.used) {
@@ -99,7 +99,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     }
   }
 
-  bytesToGigabytes(value: number) {
+  bytesToGigabytes(value: number): number {
     return value / 1024 / 1024 / 1024;
   }
 
@@ -131,11 +131,11 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     return columns;
   }
 
-  aggregate(data: any[]) {
+  aggregate(data: any[]): number {
     return data.reduce((total, num) => total + num);
   }
 
-  setMemData(data: any) {
+  setMemData(data: any): void {
     const config: any = {};
     config.title = 'Cores';
     config.orientation = 'vertical';
@@ -146,7 +146,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     this.memChartInit();
   }
 
-  memChartInit() {
+  memChartInit(): void {
     this.currentTheme = this.themeService.currentTheme();
     this.colorPattern = this.processThemeColors(this.currentTheme);
     const startW = this.el.nativeElement.querySelector('#memory-usage-chart');
@@ -155,12 +155,12 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     this.renderChart();
   }
 
-  trustedSecurity(style: string) {
+  trustedSecurity(style: string): SafeStyle {
     return this.sanitizer.bypassSecurityTrustStyle(style);
   }
 
   // chart.js renderer
-  renderChart() {
+  renderChart(): void {
     if (!this.ctx) {
       const el = this.el.nativeElement.querySelector('#memory-usage-chart canvas');
       if (!el) { return; }
@@ -246,7 +246,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     return colors;
   }
 
-  rgbToString(rgb: string[], alpha?: number) {
+  rgbToString(rgb: string[], alpha?: number): string {
     const a = alpha ? alpha.toString() : '1';
     return 'rgba(' + rgb.join(',') + ',' + a + ')';
   }

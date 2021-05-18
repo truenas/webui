@@ -32,7 +32,7 @@ export class VolumeImportWizardComponent {
   firstFormGroup: FormGroup;
   protected dialogRef: any;
   objectKeys = Object.keys;
-  summary_title = 'Pool Import Summary';
+  summaryTitle = 'Pool Import Summary';
   subs: any;
   saveSubmitText = T('Import');
   entityWizard: any;
@@ -160,7 +160,7 @@ export class VolumeImportWizardComponent {
   },
   ];
 
-  updater(file: any, parent: any) {
+  updater(file: any, parent: any): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
@@ -192,7 +192,7 @@ export class VolumeImportWizardComponent {
 
   }
 
-  customNext(stepper: any) {
+  customNext(stepper: any): void {
     if (stepper._selectedIndex === (this.importIndex - 1)) {
       if (this.encrypted && this.encrypted.value) {
         this.decryptDisks(stepper);
@@ -205,7 +205,7 @@ export class VolumeImportWizardComponent {
     }
   }
 
-  decryptDisks(stepper: any) {
+  decryptDisks(stepper: any): void {
     if (this.devices_fg.status === 'INVALID') {
       this.dialogService.Info(T('Disk Selection Required'), T('Select one or more disks to decrypt.'));
       return;
@@ -237,7 +237,7 @@ export class VolumeImportWizardComponent {
     });
   }
 
-  getImportableDisks() {
+  getImportableDisks(): void {
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: helptext.find_pools_title }, disableClose: true });
     dialogRef.componentInstance.setDescription(helptext.find_pools_msg);
     dialogRef.componentInstance.setCall('pool.import_find', []);
@@ -258,7 +258,7 @@ export class VolumeImportWizardComponent {
     });
   }
 
-  preInit(entityWizard: EntityWizardComponent) {
+  preInit(entityWizard: EntityWizardComponent): void {
     this.productType = window.localStorage.getItem('product_type') as ProductType;
     if (this.productType.includes(ProductType.Scale)) {
       this.wizardConfig.splice(0, 2);
@@ -273,7 +273,7 @@ export class VolumeImportWizardComponent {
     }
   }
 
-  afterInit(entityWizard: EntityWizardComponent) {
+  afterInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
 
     if (!this.productType.includes(ProductType.Scale)) {
@@ -310,7 +310,7 @@ export class VolumeImportWizardComponent {
     }
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     if (value.encrypted) {
       const formData: FormData = new FormData();
       const params: any = { guid: value.guid };
@@ -354,7 +354,7 @@ export class VolumeImportWizardComponent {
     }
   }
 
-  errorReport(res: any) {
+  errorReport(res: any): void {
     if (res.reason && res.trace) {
       this.dialogService.errorReport(T('Error importing pool'), res.reason, res.trace.formatted);
     } else if (res.error && res.exception) {
@@ -364,7 +364,7 @@ export class VolumeImportWizardComponent {
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.guid_subscription.unsubscribe();
     if (this.message_subscription) {
       this.message_subscription.unsubscribe();

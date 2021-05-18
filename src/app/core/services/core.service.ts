@@ -76,7 +76,7 @@ export class CoreService {
     return reg.observable;
   }
 
-  unregister(reg: Registration) {
+  unregister(reg: Registration): void {
     if (this.debug) {
       console.log('CoreService: Unregistering the following ObserverClass...');
       console.log(reg.observerClass);
@@ -110,7 +110,7 @@ export class CoreService {
     }
   }
 
-  emit(evt: CoreEvent) {
+  emit(evt: CoreEvent): this {
     // DEBUG MESSAGES
     if (this.debug && this.debug_filter_eventName.length > 0 && this.debug_filter_eventName == evt.name) {
       console.log('*******************************************************');

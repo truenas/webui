@@ -106,7 +106,7 @@ export class ViewChartBarComponent implements AfterViewInit, OnChanges {
     });
   }
 
-  makeConfig() {
+  makeConfig(): any {
     this.chartConfig = {
       bindto: '#bar-' + this.chartId,
       data: {

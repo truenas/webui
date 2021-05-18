@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { AclType } from 'app/enums/acl-type.enum';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -1106,8 +1107,8 @@ export class VolumesListTableConfig implements InputTableConf {
                   'storage', 'permissions', rowData.id,
                 ]));
               } else {
-                this.ws.call('filesystem.getacl', [rowData.mountpoint]).subscribe((res) => {
-                  if (res.acltype === 'POSIX1E') {
+                this.ws.call('filesystem.getacl', [rowData.mountpoint]).subscribe((acl) => {
+                  if (acl.acltype === AclType.Posix1e) {
                     this._router.navigate(new Array('/').concat([
                       'storage', 'id', rowData.pool, 'dataset',
                       'posix-acl', rowData.id,

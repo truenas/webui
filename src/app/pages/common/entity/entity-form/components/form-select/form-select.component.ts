@@ -42,7 +42,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   customTriggerValue: any;
   private _formValue: any;
   private entityUtils = new EntityUtils();
-  get formValue() {
+  get formValue(): any {
     return this._formValue;
   }
   set formValue(value: any) {

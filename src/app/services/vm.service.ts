@@ -12,24 +12,26 @@ export class VmService {
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {}
 
-  getStorageVolumes() { return this.rest.get(this.volume_resource_name, {}); }
+  getStorageVolumes(): void {
+    return this.rest.get(this.volume_resource_name, {});
+  }
 
-  getVM(vm: string) {
+  getVM(vm: string): Observable<any> {
     return this.ws.call('vm.query', [[['name', '=', vm]], { get: true }]);
   }
 
-  getBootloaderOptions() {
+  getBootloaderOptions(): Observable<any> {
     return this.ws.call('vm.bootloader_options');
   }
 
-  getNICTypes() {
+  getNICTypes(): string[][] {
     return [
       ['E1000', 'Intel e82585 (e1000)'],
       ['VIRTIO', 'VirtIO'],
     ];
   }
 
-  getCPUModels() {
+  getCPUModels(): Observable<any> {
     return this.ws.call('vm.cpu_model_choices');
   }
 }

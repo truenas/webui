@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -26,7 +27,7 @@ export class UserService {
     return this.ws.call(this.groupQuery, { limit: 50 });
   }
 
-  groupQueryDSCache(search = '', hideBuiltIn = false, offset = 0) {
+  groupQueryDSCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
     // TODO: Proper type for query API.
     let queryArgs: any[] = [];
     search = search.trim();

@@ -167,17 +167,17 @@ export class TargetFormComponent implements FormConfiguration {
     const authGroupField = _.find(targetGroupFieldset.config, { name: 'groups' }).templateListField[3];
     const promise1 = new Promise((resolve, reject) => {
       this.iscsiService.listPortals().toPromise().then(
-        (protalRes) => {
-          for (let i = 0; i < protalRes.length; i++) {
-            let label = protalRes[i].tag;
-            if (protalRes[i].comment) {
-              label += ' (' + protalRes[i].comment + ')';
+        (portals) => {
+          for (let i = 0; i < portals.length; i++) {
+            let label = String(portals[i].tag);
+            if (portals[i].comment) {
+              label += ' (' + portals[i].comment + ')';
             }
-            portalGroupField.options.push({ label, value: protalRes[i].id });
+            portalGroupField.options.push({ label, value: portals[i].id });
           }
           resolve(true);
         },
-        (protalErr) => {
+        () => {
           resolve(false);
         },
       );
@@ -199,8 +199,8 @@ export class TargetFormComponent implements FormConfiguration {
     });
     const promise3 = new Promise((resolve, reject) => {
       this.iscsiService.getAuth().toPromise().then(
-        (authRes: any[]) => {
-          const tags = _.uniq(authRes.map((item) => item.tag));
+        (accessRecords) => {
+          const tags = _.uniq(accessRecords.map((item) => item.tag));
           authGroupField.options.push({ label: 'None', value: null });
           for (const tag of tags) {
             authGroupField.options.push({ label: tag, value: tag });

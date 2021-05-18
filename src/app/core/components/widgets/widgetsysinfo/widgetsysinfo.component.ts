@@ -29,7 +29,7 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
   templateUrl: './widgetsysinfo.component.html',
   styleUrls: ['./widgetsysinfo.component.css'],
 })
-export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, OnDestroy, AfterViewInit {
+export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy, AfterViewInit {
   // HA
   @Input('isHA') isHA = false;
   @Input('passive') isPassive = false;
@@ -82,7 +82,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).subscribe((evt: CoreEvent) => {
       this.retroLogo = evt.data.retroLogo ? 1 : 0;
     });
@@ -128,10 +128,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     }
   }
 
-  ngOnInit() {
-  }
-
-  checkForRunningUpdate() {
+  checkForRunningUpdate(): void {
     this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).subscribe(
       (res) => {
         if (res && res.length > 0) {
@@ -144,7 +141,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     );
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 
@@ -157,7 +154,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     return this._themeAccentColors;
   }
 
-  get updateBtnStatus() {
+  get updateBtnStatus(): string {
     if (this.updateAvailable) {
       this._updateBtnStatus = 'default';
       this.updateBtnLabel = T('Updates Available');
@@ -165,7 +162,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     return this._updateBtnStatus;
   }
 
-  processSysInfo(evt: CoreEvent) {
+  processSysInfo(evt: CoreEvent): void {
     this.loader = false;
     this.data = evt.data;
 
@@ -194,7 +191,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     this.ready = true;
   }
 
-  parseUptime() {
+  parseUptime(): void {
     this.uptimeString = '';
     const seconds = Math.round(this.data.uptime_seconds);
     const uptime = {
@@ -222,7 +219,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     this.dateTime = (this.locale.getTimeOnly(this.data.datetime.$date, false, this.data.timezone));
   }
 
-  formatMemory(physmem: number, units: string) {
+  formatMemory(physmem: number, units: string): string {
     let result: string;
     if (units == 'MiB') {
       result = Number(physmem / 1024 / 1024).toFixed(0) + ' MiB';
@@ -232,7 +229,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     return result;
   }
 
-  setProductImage(data: any) {
+  setProductImage(data: any): void {
     if (this.manufacturer !== 'ixsystems') return;
 
     if (data.system_product.includes('MINI')) {
@@ -244,7 +241,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     }
   }
 
-  setTrueNASImage(sys_product: any) {
+  setTrueNASImage(sys_product: any): void {
     this.product_enclosure = 'rackmount';
 
     if (sys_product.includes('X10')) {
@@ -288,7 +285,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     }
   }
 
-  setMiniImage(sys_product: any) {
+  setMiniImage(sys_product: any): void {
     this.product_enclosure = 'tower';
 
     if (sys_product && sys_product.includes('CERTIFIED')) {
@@ -322,7 +319,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     }
   }
 
-  goToEnclosure() {
+  goToEnclosure(): void {
     if (this.enclosureSupport) this.router.navigate(['/system/viewenclosure']);
   }
 }

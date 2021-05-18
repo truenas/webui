@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { ixChartApp } from 'app/constants/catalog.constants';
+import { ixChartApp, appImagePlaceholder } from 'app/constants/catalog.constants';
 import { Subject, Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
@@ -51,6 +51,7 @@ export class ChartReleasesComponent implements OnInit {
   private selectedAppName: String;
   private podList: any[] = [];
   private podDetails: any = {};
+  imagePlaceholder = appImagePlaceholder;
 
   emptyPageConf: EmptyConfig = {
     type: EmptyType.loading,
@@ -191,7 +192,7 @@ export class ChartReleasesComponent implements OnInit {
     this.emptyPageConf.message = message;
   }
 
-  getChartItems() {
+  getChartItems(): any {
     return Object.values(this.chartItems);
   }
 

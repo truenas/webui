@@ -163,14 +163,14 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
     return actions;
   }
 
-  preInit(entityList: any) {
+  preInit(entityList: any): void {
     this.entityList = entityList;
     const paramMap: any = (<any> this.aroute.params).getValue();
     this.pk = paramMap.pk;
     this.useFullFilter = window.localStorage.getItem('useFullFilter') !== 'false';
   }
 
-  callGetFunction(entityList: any) {
+  callGetFunction(entityList: any): void {
     const filter = this.useFullFilter ? this.fullFilter : this.emptyFilter;
     this.ws.call('pool.dataset.get_quota', [this.pk, 'USER', filter]).subscribe((res) => {
       entityList.handleData(res, true);
@@ -194,13 +194,12 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
     });
   }
 
-  blurEvent(parent: any) {
+  blurEvent(parent: any): void {
     (<HTMLInputElement>document.getElementById('data-quota_input')).value = parent.storageService.humanReadable;
   }
 
-  toggleDisplay() {
-    let title; let message; let
-      button;
+  toggleDisplay(): void {
+    let title; let message; let button;
     if (this.useFullFilter) {
       title = helptext.users.filter_dialog.title_show;
       message = helptext.users.filter_dialog.message_show;
@@ -222,7 +221,7 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     window.localStorage.setItem('useFullFilter', 'true');
   }
 }

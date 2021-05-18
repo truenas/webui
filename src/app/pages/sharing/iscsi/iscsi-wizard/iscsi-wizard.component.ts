@@ -25,7 +25,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 export class IscsiWizardComponent {
   route_success: string[] = ['sharing', 'iscsi'];
   isLinear = true;
-  summary_title = 'iSCSI Summary';
+  summaryTitle = 'iSCSI Summary';
   summaryObj: { [name: string]: any } = {
     name: null,
     type: null,
@@ -525,16 +525,12 @@ export class IscsiWizardComponent {
     private networkService: NetworkService,
     private router: Router,
     private storageService: StorageService) {
-    this.iscsiService.getExtents().subscribe(
-      (res: any[]) => {
-        this.namesInUse.push(...res.map((extent) => extent.name));
-      },
-    );
-    this.iscsiService.getTargets().subscribe(
-      (res: any[]) => {
-        this.namesInUse.push(...res.map((target) => target.name));
-      },
-    );
+    this.iscsiService.getExtents().subscribe((extents) => {
+      this.namesInUse.push(...extents.map((extent) => extent.name));
+    });
+    this.iscsiService.getTargets().subscribe((targets) => {
+      this.namesInUse.push(...targets.map((target) => target.name));
+    });
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
@@ -554,8 +550,8 @@ export class IscsiWizardComponent {
       }
     });
     const taregt_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' });
-    this.iscsiService.getTargets().subscribe((res) => {
-      for (const item of res) {
+    this.iscsiService.getTargets().subscribe((targets) => {
+      for (const item of targets) {
         taregt_field.options.push({ label: item.name, value: item.id });
       }
     });
@@ -604,15 +600,15 @@ export class IscsiWizardComponent {
     this.iscsiService.listPortals().subscribe((portals) => {
       const field = _.find(this.wizardConfig[1].fieldConfig, { name: 'portal' });
       for (const portal of portals) {
-        const ips = portal.listen.map((ip: any) => ip.ip + ':' + ip.port);
+        const ips = portal.listen.map((ip) => ip.ip + ':' + ip.port);
         field.options.push({ label: portal.tag + ' (' + ips + ')', value: portal.id });
       }
     });
 
-    this.iscsiService.getAuth().subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        if (_.find(authGroupField.options, { value: res[i].tag }) == undefined) {
-          authGroupField.options.push({ label: res[i].tag, value: res[i].tag });
+    this.iscsiService.getAuth().subscribe((accessRecords) => {
+      for (let i = 0; i < accessRecords.length; i++) {
+        if (_.find(authGroupField.options, { value: accessRecords[i].tag }) == undefined) {
+          authGroupField.options.push({ label: accessRecords[i].tag, value: accessRecords[i].tag });
         }
       }
     });

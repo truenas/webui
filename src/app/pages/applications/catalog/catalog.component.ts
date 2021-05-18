@@ -4,7 +4,9 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
-import { chartsTrain, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
+import {
+  chartsTrain, ixChartApp, officialCatalog, appImagePlaceholder,
+} from 'app/constants/catalog.constants';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { Subject, Subscription } from 'rxjs';
@@ -46,6 +48,7 @@ export class CatalogComponent implements OnInit {
   private chartReleaseForm: ChartReleaseAddComponent;
   private refreshForm: Subscription;
   protected utils: CommonUtils;
+  imagePlaceholder = appImagePlaceholder;
 
   choosePool: DialogFormConfiguration = {
     title: helptext.choosePool.title,

@@ -108,7 +108,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     }
   }
 
-  get data() {
+  get data(): ChartData[] {
     return this._data;
   }
 
@@ -178,7 +178,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     return -1;
   }
 
-  makeConfig() {
+  makeConfig(): any {
     this.chartConfig = {
       bindto: '#' + this.chartId,
       data: {
@@ -218,6 +218,6 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     this.render();
   }
 
-  render(conf?: any) {
+  render(conf?: any): void {
   }
 }

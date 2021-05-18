@@ -350,7 +350,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     ];
   }
 
-  refreshTables() {
+  refreshTables(): void {
     this.dataCards.forEach((card) => {
       if (card.tableConf.tableComponent) {
         card.tableConf.tableComponent.getData();
@@ -358,7 +358,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  refreshForms() {
+  refreshForms(): void {
     this.scrubFormComponent = new ScrubFormComponent(this.taskService, this.modalService);
     this.snapshotFormComponent = new SnapshotFormComponent(
       this.taskService,
@@ -823,7 +823,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     ];
   }
 
-  isActionVisible(name: string, row: any) {
+  isActionVisible(name: string, row: any): boolean {
     if (name === 'run' && row.job && row.state === EntityJobState.Running) {
       return false;
     } if (name === 'stop' && (row.job ? row.job && row.state !== EntityJobState.Running : true)) {
@@ -832,7 +832,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  runningStateButton(jobid: any) {
+  runningStateButton(jobid: any): void {
     const dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: { title: T('Task is running') },
       disableClose: false,
@@ -847,7 +847,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  stateButton(row: any) {
+  stateButton(row: any): void {
     if (row.job) {
       if (row.state === EntityJobState.Running) {
         this.runningStateButton(row.job.id);
@@ -859,7 +859,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.refreshForm.unsubscribe();
     this.refreshTable.unsubscribe();
     this.diskSubscription.unsubscribe();
