@@ -95,9 +95,9 @@ export class ChassisView {
     this.columns = 4;
   }
 
-  requiredAssets() {
+  requiredAssets(): { alias: string; path: string }[] {
     // Return a list of assets for the loader to fetch
-    const assets: any[] = [];
+    const assets: { alias: string; path: string }[] = [];
     assets.push({ alias: this.model + '_chassis', path: this.chassisPath });
     assets.push({ alias: this.model + '_drivetray_bg', path: this.driveTrayBackgroundPath });
     assets.push({ alias: this.model + '_drivetray_handle', path: this.driveTrayHandlePath });

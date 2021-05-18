@@ -892,7 +892,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
   }
 
-  toggleHighlightMode(mode: string) {
+  toggleHighlightMode(mode: string): void {
     if (this.selectedDisk.status == 'AVAILABLE') { return; }
 
     this.labels.events.next({

@@ -347,7 +347,7 @@ export class ExtentFormComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     this.originalFilesize = parseInt(data.filesize, 10);
     if (data.type == 'DISK') {
       if (_.startsWith(data['path'], 'zvol')) {

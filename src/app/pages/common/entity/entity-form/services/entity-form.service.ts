@@ -98,7 +98,7 @@ export class EntityFormService {
     formArray.removeAt(index);
   }
 
-  getFilesystemListdirChildren(node: any, explorerType?: string, hideDirs?: any, showHiddenFiles = false) {
+  getFilesystemListdirChildren(node: any, explorerType?: string, hideDirs?: any, showHiddenFiles = false): Promise<any[]> {
     const children: any[] = [];
     let typeFilter: any;
     explorerType && explorerType === 'directory' ? typeFilter = [['type', '=', 'DIRECTORY']] : typeFilter = [];
@@ -157,7 +157,7 @@ export class EntityFormService {
     }); */
   }
 
-  getPoolDatasets(param: any[] = []) {
+  getPoolDatasets(param: any[] = []): Promise<any[]> {
     const nodes: any[] = [];
     return this.ws.call('pool.filesystem_choices', param).toPromise().then((res) => {
       for (let i = 0; i < res.length; i++) {

@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 
 import { helptext_system_ca } from 'app/helptext/system/ca';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 import { SystemGeneralService, WebSocketService } from '../../../../services';
 import { ModalService } from 'app/services/modal.service';
@@ -614,7 +615,7 @@ export class CertificateAuthorityAddComponent {
     this.currentStep = stepper._selectedIndex;
   }
 
-  getSummaryValueLabel(fieldConfig: any, value: any) {
+  getSummaryValueLabel(fieldConfig: any, value: any): any {
     if (fieldConfig.type == 'select') {
       const option = fieldConfig.options.find((option: any) => option.value == value);
       if (option) {
@@ -814,7 +815,7 @@ export class CertificateAuthorityAddComponent {
     }
   }
 
-  getStep(fieldName: any) {
+  getStep(fieldName: any): number {
     const stepNumber = this.wizardConfig.findIndex((step) => {
       const index = step.fieldConfig.findIndex((field) => fieldName == field.name);
       return index > -1;
@@ -823,16 +824,16 @@ export class CertificateAuthorityAddComponent {
     return stepNumber;
   }
 
-  getField(fieldName: any) {
+  getField(fieldName: any): AbstractControl {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
-      const target = (< FormGroup > this.entityWizard.formArray.get([stepNumber])).controls[fieldName];
+      const target = (<FormGroup> this.entityWizard.formArray.get([stepNumber])).controls[fieldName];
       return target;
     }
     return null;
   }
 
-  getTarget(fieldName: any) {
+  getTarget(fieldName: any): FieldConfig {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
       const target = _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName });
@@ -855,7 +856,7 @@ export class CertificateAuthorityAddComponent {
     }
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): any {
     // Addresses non-pristine field being mistaken for a passphrase of ''
     if (data.passphrase == '') {
       data.passphrase = undefined;

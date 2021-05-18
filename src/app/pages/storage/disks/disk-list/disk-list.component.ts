@@ -269,7 +269,7 @@ export class DiskListComponent {
     });
   }
 
-  resourceTransformIncomingRestData(data: any[]) {
+  resourceTransformIncomingRestData(data: any[]): any[] {
     data.forEach((i) => i.pool = i.pool ? i.pool : 'N/A');
     return data;
   }

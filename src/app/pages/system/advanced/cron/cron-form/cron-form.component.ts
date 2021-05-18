@@ -137,7 +137,7 @@ export class CronFormComponent {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     const schedule = data['schedule'];
     data['cron_picker'] = `${schedule.minute} ${schedule.hour} ${schedule.dom} ${schedule.month} ${schedule.dow}`;
     return data;

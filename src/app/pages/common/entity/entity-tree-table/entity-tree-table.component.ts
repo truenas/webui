@@ -113,7 +113,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     });
   }
 
-  resolve(path: string, obj: any) {
+  resolve(path: string, obj: any): string {
     return path.split('.').reduce((prev, curr) => (prev ? prev[curr] : null), obj || self);
   }
 
@@ -167,7 +167,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     this.table.renderRows();
   }
 
-  onHover(evt: any, over = true): void {
+  onHover(evt: MouseEvent, over = true): void {
     const row = this.findRow(evt);
     const cells = row.children;
 
@@ -184,8 +184,8 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     }
   }
 
-  findRow(el: any) {
-    let target = el.target;
+  findRow(event: MouseEvent): HTMLElement {
+    let target = event.target as HTMLElement;
 
     do {
       target = target.parentElement;

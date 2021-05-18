@@ -458,7 +458,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  generateDefaultConfig() {
+  generateDefaultConfig(): DashConfigItem[] {
     const conf: DashConfigItem[] = [
       { name: 'System Information', rendered: true, id: '0' },
     ];
@@ -487,7 +487,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     return conf;
   }
 
-  volumeDataFromConfig(item: DashConfigItem) {
+  volumeDataFromConfig(item: DashConfigItem): any {
     const spl = item.identifier.split(',');
     const key = spl[0] as keyof Pool;
     const value = spl[1];
@@ -496,7 +496,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.volumeData && this.volumeData[pool[0].name] ? this.volumeData[pool[0].name] : '';
   }
 
-  dataFromConfig(item: DashConfigItem) {
+  dataFromConfig(item: DashConfigItem): any {
     let spl: string[];
     let key: string;
     let value: string;

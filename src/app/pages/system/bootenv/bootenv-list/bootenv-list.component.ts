@@ -222,7 +222,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
     return params;
   }
 
-  doActivate(id: string) {
+  doActivate(id: string): void {
     this.dialog.confirm(T('Activate'), T('Activate this Boot Environment?'), false, helptext_system_bootenv.list_dialog_activate_action).subscribe((res: boolean) => {
       if (res) {
         this.loader.open();

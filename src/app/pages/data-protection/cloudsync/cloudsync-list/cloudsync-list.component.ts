@@ -100,7 +100,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  resourceTransformIncomingRestData(data: any[]) {
+  resourceTransformIncomingRestData(data: any[]): any[] {
     return data.map((task) => {
       task.minute = task.schedule['minute'];
       task.hour = task.schedule['hour'];
