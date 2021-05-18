@@ -167,6 +167,14 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           edit(row) {
             this.parent.modalService.open('slide-in-form', this.parent.scrubFormComponent, row.id);
           },
+          tableActions: [
+            {
+              label: T('Adjust Priority'),
+              onClick: () => {
+                this.router.navigate(['/data-protection/scrub/priority']);
+              },
+            },
+          ],
         },
       },
       {

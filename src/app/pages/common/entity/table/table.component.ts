@@ -31,6 +31,10 @@ export interface InputTableConf {
   tableComponent?: TableComponent;
   emptyEntityLarge?: boolean;
   parent: any;
+  tableActions?: {
+    label: string;
+    onClick: () => void;
+  }[];
 
   add?(): any; // add action function
   edit?(any: any): any; // edit row

@@ -31,7 +31,6 @@ import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/datase
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl';
 import { ViewEnclosureComponent } from 'app/pages/system/viewenclosure/view-enclosure.component';
-import { ResilverComponent } from './volumes/resilver/resilver.component';
 
 export const routes: Routes = [
   {
@@ -237,11 +236,6 @@ export const routes: Routes = [
         path: 'viewenclosure',
         component: ViewEnclosureComponent,
         data: { title: 'View Enclosure', breadcrumb: 'View Enclosure', icon: 'settings' },
-      },
-      {
-        path: 'resilver',
-        data: { title: 'Resilver Priority', breadcrumb: 'Resilver Priority', icon: 'event_note' },
-        component: ResilverComponent,
       },
     ],
   },

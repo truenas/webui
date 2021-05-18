@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
+import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { Subject, Subscription } from 'rxjs';
 
 import * as cronParser from 'cron-parser';
@@ -41,6 +43,17 @@ import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-p
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { GpuDevice } from 'app/interfaces/gpu-device.interface';
 
+enum CardId {
+  Console = 'console',
+  Syslog = 'syslog',
+  Kernel = 'kernel',
+  Cron = 'cron',
+  InitShutdown = 'initshutdown',
+  Sysctl = 'sysctl',
+  SystemDatasetPool = 'systemdatasetpool',
+  Gpus = 'gpus',
+}
+
 @Component({
   selector: 'app-advanced-settings',
   templateUrl: './advanced-settings.component.html',
@@ -56,6 +69,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   getAdvancedConfig: Subscription;
   getDatasetConfig: Subscription;
   syslog: boolean;
+  systemDatasetPool: string;
   entityForm: EntityFormComponent;
   isFirstTime = true;
 
@@ -67,6 +81,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   protected syslogFormComponent: SyslogFormComponent;
   protected cronFormComponent: CronFormComponent;
   protected initShutdownFormComponent: InitshutdownFormComponent;
+  protected systemDatasetPoolComponent: SystemDatasetPoolComponent;
 
   emptyPageConf: EmptyConfig = {
     type: EmptyType.no_page_data,
@@ -159,6 +174,8 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     },
   };
 
+  readonly CardId = CardId;
+
   constructor(
     private ws: WebSocketService,
     private sysGeneralService: SystemGeneralService,
@@ -173,6 +190,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     private core: CoreService,
     public datePipe: DatePipe,
     protected userService: UserService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -238,24 +256,15 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   }
 
   getDatasetData(): void {
-    this.getDatasetConfig = this.ws.call('systemdataset.config').subscribe((res) => {
-      if (res) {
-        this.syslog = res.syslog;
-        this.modalService.refreshTable();
-        this.updateSyslogOnTable();
+    this.getDatasetConfig = this.ws.call('systemdataset.config').subscribe((config) => {
+      if (!config) {
+        return;
       }
-    });
-  }
 
-  updateSyslogOnTable(): void {
-    this.dataCards.forEach((card) => {
-      if (card.id === 'syslog') {
-        card.items.forEach((item: any) => {
-          if (item.label === helptext_system_advanced.system_dataset_placeholder) {
-            item.value = this.syslog ? helptext.enabled : helptext.disabled;
-          }
-        });
-      }
+      this.syslog = config.syslog;
+      this.systemDatasetPool = config.pool;
+      this.modalService.refreshTable();
+      this.getDataCardData();
     });
   }
 
@@ -266,7 +275,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
       this.dataCards = [
         {
           title: helptext_system_advanced.fieldset_console,
-          id: 'console',
+          id: CardId.Console,
           items: [
             {
               label: helptext_system_advanced.consolemenu_placeholder,
@@ -292,7 +301,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
         },
         {
           title: helptext_system_advanced.fieldset_syslog,
-          id: 'syslog',
+          id: CardId.Syslog,
           items: [
             {
               label: helptext_system_advanced.fqdn_placeholder,
@@ -318,7 +327,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
         },
         {
           title: helptext_system_advanced.fieldset_kernel,
-          id: 'kernel',
+          id: CardId.Kernel,
           items: [
             {
               label: helptext_system_advanced.autotune_placeholder,
@@ -331,19 +340,29 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
           ],
         },
         {
-          id: 'cron',
+          id: CardId.Cron,
           title: helptext_system_advanced.fieldset_cron,
           tableConf: this.cronTableConf,
         },
         {
-          id: 'initshutdown',
+          id: CardId.InitShutdown,
           title: helptext_system_advanced.fieldset_initshutdown,
           tableConf: this.initShutdownTableConf,
         },
         {
-          id: 'sysctl',
+          id: CardId.Sysctl,
           title: helptext_system_advanced.fieldset_sysctl,
           tableConf: this.sysctlTableConf,
+        },
+        {
+          id: CardId.SystemDatasetPool,
+          title: T('System Dataset Pool'),
+          items: [
+            {
+              label: T('System Dataset Pool'),
+              value: this.systemDatasetPool,
+            },
+          ],
         },
       ];
 
@@ -353,41 +372,45 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
         ) > -1).map((gpu: GpuDevice) => gpu.description).join(', ');
         this.dataCards.push({
           title: T('Isolated GPU Device(s)'),
-          id: 'gpus',
+          id: CardId.Gpus,
           items: [{ label: T('Isolated GPU Device(s)'), value: isolatedGpus }],
         });
       });
     });
   }
 
-  doAdd(name: string, id?: number): void {
+  onSettingsPressed(name: CardId, id?: number): void {
     let addComponent: TunableFormComponent
     | ConsoleFormComponent
     | SyslogFormComponent
     | KernelFormComponent
     | CronFormComponent
     | InitshutdownFormComponent
-    | IsolatedGpuPcisFormComponent;
+    | IsolatedGpuPcisFormComponent
+    | SystemDatasetPoolComponent;
     switch (name) {
-      case 'console':
+      case CardId.Console:
         addComponent = this.consoleFormComponent;
         break;
-      case 'kernel':
+      case CardId.Kernel:
         addComponent = this.kernelFormComponent;
         break;
-      case 'syslog':
+      case CardId.Syslog:
         addComponent = this.syslogFormComponent;
         break;
-      case 'sysctl':
+      case CardId.Sysctl:
         addComponent = this.tunableFormComponent;
         break;
-      case 'cron':
+      case CardId.Cron:
         addComponent = this.cronFormComponent;
         break;
-      case 'initshutdown':
+      case CardId.InitShutdown:
         addComponent = this.initShutdownFormComponent;
         break;
-      case 'gpus':
+      case CardId.SystemDatasetPool:
+        addComponent = this.systemDatasetPoolComponent;
+        break;
+      case CardId.Gpus:
         addComponent = this.isolatedGpuPcisFormComponent;
         break;
       default:
@@ -398,7 +421,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
       this.dialog
         .Info(helptext_system_advanced.first_time.title, helptext_system_advanced.first_time.message)
         .subscribe(() => {
-          if (['console', 'kernel', 'syslog'].includes(name)) {
+          if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
             this.sysGeneralService.sendConfigData(this.configData);
           }
 
@@ -406,7 +429,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
           this.isFirstTime = false;
         });
     } else {
-      if (['console', 'kernel', 'syslog'].includes(name)) {
+      if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
         this.sysGeneralService.sendConfigData(this.configData);
       }
       this.modalService.open('slide-in-form', addComponent, id);
@@ -544,6 +567,14 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     );
     this.cronFormComponent = new CronFormComponent(this.userService, this.modalService);
     this.initShutdownFormComponent = new InitshutdownFormComponent(this.modalService);
+    this.systemDatasetPoolComponent = new SystemDatasetPoolComponent(
+      this.ws,
+      this.loader,
+      this.dialog,
+      this.translate,
+      this.modalService,
+      this.sysGeneralService,
+    );
   }
 
   cronDataSourceHelper(data: any[]): any[] {

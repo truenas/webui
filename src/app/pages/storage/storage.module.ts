@@ -51,7 +51,6 @@ import { DatasetQuotasGrouplistComponent } from './volumes/datasets/dataset-quot
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl';
-import { ResilverComponent } from './volumes/resilver/resilver.component';
 
 @NgModule({
   imports: [
@@ -97,7 +96,6 @@ import { ResilverComponent } from './volumes/resilver/resilver.component';
     UserQuotaFormComponent,
     GroupQuotaFormComponent,
     DatasetPosixAclComponent,
-    ResilverComponent,
   ],
   exports: [VolumesListControlsComponent],
   entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],

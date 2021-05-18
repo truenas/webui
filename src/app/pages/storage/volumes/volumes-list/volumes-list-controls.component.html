@@ -50,103 +50,57 @@
   </div>
   <!-- END CREATE & IMPORT BUTTONS -->
 
-<!--  <div>-->
-<!--    <button mat-button [matMenuTriggerFor]="snapshotsMenu" class="menu-toggle" ix-auto ix-auto-type="button" ix-auto-identifier="tab-selector">-->
-<!--      <span>{{ 'Snapshots' | translate }} <mat-icon class="menu-caret">arrow_drop_down</mat-icon></span>-->
-<!--    </button>-->
-
-<!--    <mat-menu #snapshotsMenu>-->
-<!--      <a-->
-<!--        mat-menu-item-->
-<!--        ix-auto-->
-<!--        ix-auto-type="button"-->
-<!--        ix-auto-identifier="STORAGE_SNAPSHOTS"-->
-<!--        [routerLink]="['/storage/snapshots']"-->
-<!--      >-->
-<!--        {{ 'Snapshots' | translate }}-->
-<!--      </a>-->
-<!--      <a-->
-<!--        mat-menu-item-->
-<!--        ix-auto-->
-<!--        ix-auto-type="button"-->
-<!--        ix-auto-identifier="STORAGE_VMWARE_SNAPSHOTS"-->
-<!--        [routerLink]="['/storage/vmware-snapshots']"-->
-<!--      >-->
-<!--        {{ 'VMware-Snapshots' | translate }}-->
-<!--      </a>-->
-<!--    </mat-menu>-->
-<!--  </div>-->
-
-<!--  <div>-->
-<!--    <button mat-button [matMenuTriggerFor]="disksMenu" class="menu-toggle" ix-auto ix-auto-type="button" ix-auto-identifier="tab-selector">-->
-<!--      <span>{{ 'Disks' | translate }} <mat-icon class="menu-caret">arrow_drop_down</mat-icon></span>-->
-<!--    </button>-->
-
-<!--    <mat-menu #disksMenu>-->
-<!--      <a-->
-<!--        mat-menu-item-->
-<!--        ix-auto-->
-<!--        ix-auto-type="button"-->
-<!--        ix-auto-identifier="STORAGE_DISKS"-->
-<!--        [routerLink]="['/storage/disks']"-->
-<!--      >-->
-<!--        {{ 'Disks' | translate }}-->
-<!--      </a>-->
-<!--      <a-->
-<!--        mat-menu-item-->
-<!--        ix-auto-->
-<!--        ix-auto-type="button"-->
-<!--        ix-auto-identifier="STORAGE_IMPORT_DISK"-->
-<!--        [routerLink]="['/storage/import-disk']"-->
-<!--      >-->
-<!--        {{ 'Import Disk' | translate }}-->
-<!--      </a>-->
-<!--    </mat-menu>-->
-<!--  </div>-->
-
   <div>
     <button mat-button [matMenuTriggerFor]="snapshotsMenu" class="menu-toggle" ix-auto ix-auto-type="button" ix-auto-identifier="tab-selector">
-      <span>{{ 'Tools' | translate }} <mat-icon class="menu-caret">arrow_drop_down</mat-icon></span>
+      <span>{{ 'Snapshots' | translate }} <mat-icon class="menu-caret">arrow_drop_down</mat-icon></span>
     </button>
 
     <mat-menu #snapshotsMenu>
-      <mat-label class="menu-label">Snapshots</mat-label>
-      <button mat-menu-item ix-auto ix-auto-type="button" ix-auto-identifier="STORAGE_SNAPSHOTS" (click)="navigate('storage/snapshots')">{{ 'Snapshots' | translate }}</button>
-      <button mat-menu-item ix-auto ix-auto-type="button" ix-auto-identifier="STORAGE_VMWARE_SNAPSHOTS" (click)="navigate('storage/vmware-Snapshots')">{{ 'VMware-Snapshots' | translate }}</button>
-
-      <mat-divider></mat-divider>
-      <mat-label class="menu-label">Disks</mat-label>
-      <button mat-menu-item ix-auto ix-auto-type="button" ix-auto-identifier="STORAGE_DISKS" (click)="navigate('storage/disks')">{{ 'Disks' | translate }}</button>
-      <button mat-menu-item ix-auto ix-auto-type="button" ix-auto-identifier="STORAGE_IMPORT_DISK" (click)="navigate('storage/import-disk')">{{ 'Import Disk' | translate }}</button>
-
-      <mat-divider></mat-divider>
-      <mat-label class="menu-label">Settings</mat-label>
-      <button mat-menu-item ix-auto ix-auto-type="button" ix-auto-identifier="STORAGE_RESILVER_PRIORITY" (click)="navigate('storage/resilver')">{{ 'Resilver Priority' | translate }}</button>
-      <button mat-menu-item ix-auto ix-auto-type="button" ix-auto-identifier="STORAGE_SYSTEM_DATASET_POOL" (click)="onChooseSystemDatasetPool()">{{ 'System Dataset Pool' | translate }}</button>
+      <a
+        mat-menu-item
+        ix-auto
+        ix-auto-type="button"
+        ix-auto-identifier="STORAGE_SNAPSHOTS"
+        [routerLink]="['/storage/snapshots']"
+      >
+        {{ 'Snapshots' | translate }}
+      </a>
+      <a
+        mat-menu-item
+        ix-auto
+        ix-auto-type="button"
+        ix-auto-identifier="STORAGE_VMWARE_SNAPSHOTS"
+        [routerLink]="['/storage/vmware-snapshots']"
+      >
+        {{ 'VMware-Snapshots' | translate }}
+      </a>
     </mat-menu>
   </div>
 
-  <!-- COG -->
-  <div style="display: none;">
-    <button
-      mat-icon-button
-      ix-auto
-      ix-auto-type="button"
-      ix-auto-identifier="STORAGE_ACTIONS"
-      [matMenuTriggerFor]="volumesListMenu"
-    >
-      <mat-icon>settings</mat-icon>
+  <div>
+    <button mat-button [matMenuTriggerFor]="disksMenu" class="menu-toggle" ix-auto ix-auto-type="button" ix-auto-identifier="tab-selector">
+      <span>{{ 'Disks' | translate }} <mat-icon class="menu-caret">arrow_drop_down</mat-icon></span>
     </button>
 
-    <mat-menu #volumesListMenu>
-<!--      <button mat-menu-item ix-auto ix-auto-type="button" ix-auto-identifier="STORAGE_SNAPSHOTS" (click)="navigate('storage/snapshots')">{{ 'Snapshots' | translate }}</button>-->
-<!--      <button mat-menu-item ix-auto ix-auto-type="button" ix-auto-identifier="STORAGE_VMWARE_SNAPSHOTS" (click)="navigate('storage/vmware-Snapshots')">{{ 'VMware-Snapshots' | translate }}</button>-->
-<!--      <button mat-menu-item ix-auto ix-auto-type="button" ix-auto-identifier="STORAGE_DISKS" (click)="navigate('storage/disks')">{{ 'Disks' | translate }}</button>-->
-<!--      <button mat-menu-item ix-auto ix-auto-type="button" ix-auto-identifier="STORAGE_IMPORT_DISK" (click)="navigate('storage/import-disk')">{{ 'Import Disk' | translate }}</button>-->
-<!--      <button mat-menu-item ix-auto ix-auto-type="button" ix-auto-identifier="STORAGE_MULTIPATHS" (click)="navigate('storage/multipaths')">{{ 'Multipaths' | translate }}</button>-->
-      <button mat-menu-item ix-auto ix-auto-type="button" ix-auto-identifier="STORAGE_RESILVER_PRIORITY" (click)="navigate('storage/resilver')">{{ 'Resilver Priority' | translate }}</button>
-      <button mat-menu-item ix-auto ix-auto-type="button" ix-auto-identifier="STORAGE_SYSTEM_DATASET_POOL" (click)="onChooseSystemDatasetPool()">{{ 'System Dataset Pool' | translate }}</button>
+    <mat-menu #disksMenu>
+      <a
+        mat-menu-item
+        ix-auto
+        ix-auto-type="button"
+        ix-auto-identifier="STORAGE_DISKS"
+        [routerLink]="['/storage/disks']"
+      >
+        {{ 'Disks' | translate }}
+      </a>
+      <a
+        mat-menu-item
+        ix-auto
+        ix-auto-type="button"
+        ix-auto-identifier="STORAGE_IMPORT_DISK"
+        [routerLink]="['/storage/import-disk']"
+      >
+        {{ 'Import Disk' | translate }}
+      </a>
     </mat-menu>
   </div>
-
 </div>
