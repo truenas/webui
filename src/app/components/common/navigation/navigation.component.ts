@@ -7,7 +7,7 @@ import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
-import { ProductType } from '../../../enums/product-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { WebSocketService } from '../../../services';
 import { DocsService } from '../../../services/docs.service';
 import { NavigationService } from '../../../services/navigation/navigation.service';
