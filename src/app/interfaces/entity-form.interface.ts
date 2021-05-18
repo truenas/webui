@@ -64,7 +64,7 @@ export interface FormConfiguration {
   title?: string;
   columnsOnForm?: number;
 
-  prerequisite?(): void;
+  prerequisite?(): Promise<boolean>;
   customEditCall?: (value: any) => void;
   preHandler?: (data: any[], formArray: any) => any[];
   responseOnSubmit?: (value: any) => void;
