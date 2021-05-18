@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 
 import * as _ from 'lodash';
@@ -21,6 +21,8 @@ import {
 } from 'app/services';
 import globalHelptext from 'app/helptext/global-helptext';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { ModalService } from 'app/services/modal.service';
+import { SmbShare } from 'app/interfaces/smb-share.interface';
 
 @Component({
   selector: 'app-smb-form',
@@ -32,11 +34,10 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
   editCall: 'sharing.smb.update' = 'sharing.smb.update';
   pk: number;
   queryKey = 'id';
-  route_success: string[] = ['sharing', 'smb'];
   isEntity = true;
   isBasicMode = true;
   isTimeMachineOn = false;
-  title = helptext_sharing_smb.formTitle;
+  title: string;
   namesInUse: string[] = [];
   productType = window.localStorage.getItem('product_type') as ProductType;
   isOneColumnForm = true;
@@ -63,7 +64,6 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
           tooltip: helptext_sharing_smb.tooltip_path,
           required: true,
           validation: helptext_sharing_smb.validators_path,
-
         },
         {
           type: 'input',
@@ -234,7 +234,6 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
           tooltip: helptext_sharing_smb.tooltip_auxsmbconf,
           isHidden: true,
         },
-
       ],
     },
     { name: 'divider', divider: true },
@@ -269,7 +268,6 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
       name: globalHelptext.basic_options,
       function: () => {
         this.isBasicMode = !this.isBasicMode;
-        this.isOneColumnForm = true;
         this.updateForm();
       },
     },
@@ -278,7 +276,6 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
       name: globalHelptext.advanced_options,
       function: () => {
         this.isBasicMode = !this.isBasicMode;
-        this.isOneColumnForm = false;
         this.updateForm();
       },
     },
@@ -293,43 +290,34 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     protected ws: WebSocketService,
     private dialog: DialogService,
     protected loader: AppLoaderService,
-    private activatedRoute: ActivatedRoute,
     private sysGeneralService: SystemGeneralService,
+    private modalService: ModalService,
   ) {
-    combineLatest([
-      this.ws.call('sharing.smb.query', []),
-      this.activatedRoute.paramMap,
-    ])
-      .pipe(
-        map(([shares, pm]) => {
-          const pk = parseInt(pm.get('pk'), 10);
-          return shares
-            .filter((share) => isNaN(pk) || share.id !== pk)
-            .map((share) => share.name);
-        }),
-      )
+    combineLatest([this.ws.call('sharing.smb.query', []), this.modalService.getRow$])
+      .pipe(map(([shares, pk]) => shares.filter((share) => share.id !== pk).map((share) => share.name)))
       .subscribe((shareNames) => {
         ['global', ...shareNames].forEach((name) => this.namesInUse.push(name));
       });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: SmbShare): SmbShare {
     this.mangle = data.aapl_name_mangling;
     this.hostsAllowOnLoad = data.hostsallow ? [...data.hostsallow] : [];
     this.hostsDenyOnLoad = data.hostsdeny ? [...data.hostsdeny] : [];
     return data;
   }
 
-  isCustActionVisible(actionId: string) {
-    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
+  isCustActionVisible(actionId: string): boolean {
+    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
-    } if (actionId == 'basic_mode' && this.isBasicMode == true) {
+    }
+    if (actionId === 'basic_mode' && this.isBasicMode === true) {
       return false;
     }
     return true;
   }
 
-  updateForm() {
+  updateForm(): void {
     for (const field of this.accessFieldsets.config) {
       field['isHidden'] = !!this.isBasicMode;
     }
@@ -338,41 +326,42 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     }
   }
 
-  preInit(entityForm: EntityFormComponent) {
-    this.activatedRoute.paramMap
-      .pipe(
-        take(1),
-        map((paramMap) => paramMap.get('pk')),
-      )
-      .subscribe((res) => {
-        const pk = parseInt(res, 10);
-        if (pk) {
-          this.pk = entityForm.pk = pk;
-        }
-      });
+  preInit(entityForm: EntityFormComponent): void {
+    this.modalService.getRow$.pipe(take(1)).subscribe((pk: number) => {
+      if (pk) {
+        this.pk = entityForm.pk = pk;
+      }
+    });
   }
 
-  afterSave(entityForm: EntityFormComponent) {
+  afterSave(entityForm: EntityFormComponent): void {
     if (entityForm.formGroup.controls['timemachine'].value && !this.isTimeMachineOn) {
       this.restartService(entityForm, 'timemachine');
     } else {
       this.checkAllowDeny(entityForm);
     }
+    this.modalService.close('slide-in-form');
+    this.modalService.refreshTable();
   }
 
-  checkAllowDeny(entityForm: EntityFormComponent) {
-    if (!_.isEqual(this.hostsAllowOnLoad, entityForm.formGroup.controls['hostsallow'].value)
-      || !_.isEqual(this.hostsDenyOnLoad, entityForm.formGroup.controls['hostsdeny'].value)) {
+  checkAllowDeny(entityForm: EntityFormComponent): void {
+    if (
+      !_.isEqual(this.hostsAllowOnLoad, entityForm.formGroup.controls['hostsallow'].value)
+      || !_.isEqual(this.hostsDenyOnLoad, entityForm.formGroup.controls['hostsdeny'].value)
+    ) {
       this.restartService(entityForm, 'allowdeny');
     } else {
       this.checkACLactions(entityForm);
     }
   }
 
-  restartService(entityForm: EntityFormComponent, source: string) {
+  restartService(entityForm: EntityFormComponent, source: string): void {
     const confirmOptions = {
       title: helptext_sharing_smb.restart_smb_dialog.title,
-      message: source === 'timemachine' ? helptext_sharing_smb.restart_smb_dialog.message_time_machine : helptext_sharing_smb.restart_smb_dialog.message_allow_deny,
+      message:
+        source === 'timemachine'
+          ? helptext_sharing_smb.restart_smb_dialog.message_time_machine
+          : helptext_sharing_smb.restart_smb_dialog.message_allow_deny,
       hideCheckBox: true,
       buttonMsg: helptext_sharing_smb.restart_smb_dialog.title,
       cancelMsg: helptext_sharing_smb.restart_smb_dialog.cancel_btn,
@@ -380,23 +369,31 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     this.dialog.confirm(confirmOptions).subscribe((res: boolean) => {
       if (res) {
         this.loader.open();
-        this.ws.call('service.restart', ['cifs']).subscribe(() => {
-          this.loader.close();
-          this.dialog.Info(helptext_sharing_smb.restarted_smb_dialog.title,
-            helptext_sharing_smb.restarted_smb_dialog.message, '250px').subscribe(() => {
-            this.checkACLactions(entityForm);
-          });
-        }, (err) => {
-          this.loader.close();
-          this.dialog.errorReport('Error', err.err, err.backtrace);
-        });
+        this.ws.call('service.restart', ['cifs']).subscribe(
+          () => {
+            this.loader.close();
+            this.dialog
+              .Info(
+                helptext_sharing_smb.restarted_smb_dialog.title,
+                helptext_sharing_smb.restarted_smb_dialog.message,
+                '250px',
+              )
+              .subscribe(() => {
+                this.checkACLactions(entityForm);
+              });
+          },
+          (err) => {
+            this.loader.close();
+            this.dialog.errorReport('Error', err.err, err.backtrace);
+          },
+        );
       } else {
         source === 'timemachine' ? this.checkAllowDeny(entityForm) : this.checkACLactions(entityForm);
       }
     });
   }
 
-  checkACLactions(entityForm: any) {
+  checkACLactions(entityForm: EntityFormComponent) {
     const sharePath: string = entityForm.formGroup.get('path').value;
     const datasetId = sharePath.replace('/mnt/', '');
     const poolName = datasetId.split('/')[0];
@@ -404,16 +401,14 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     const ACLRoute = ['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId];
 
     if (homeShare && entityForm.isNew) {
-      return this.router.navigate(
-        ['/'].concat(ACLRoute), { queryParams: { homeShare: true } },
-      );
+      return this.router.navigate(['/'].concat(ACLRoute), { queryParams: { homeShare: true } });
     }
     // If this call returns true OR an [ENOENT] err comes back, just return to table
     // because the pool or ds is encrypted. Otherwise, do the next checks
     this.ws.call('pool.dataset.path_in_locked_datasets', [sharePath]).subscribe(
       (res) => {
         if (res) {
-          this.router.navigate(['/'].concat(this.route_success));
+          this.dialog.closeAllDialogs();
         } else {
           /**
            * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
@@ -421,11 +416,13 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
            */
           const promptUserACLEdit = () =>
             this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
-              switchMap((isTrivialACL) =>
-              /* If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations */
-                (!isTrivialACL || !datasetId.includes('/') || this.productType.includes(ProductType.Scale)
-                  ? combineLatest([of(false), of({})])
-                  : combineLatest([
+              switchMap((isTrivialACL) => {
+                let nextStep;
+                /* If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations */
+                if (!isTrivialACL || !datasetId.includes('/') || this.productType.includes(ProductType.Scale)) {
+                  nextStep = combineLatest([of(false), of({})]);
+                } else {
+                  nextStep = combineLatest([
                     /* Check if user wants to edit the share's ACL */
                     this.dialog.confirm({
                       title: helptext_sharing_smb.dialog_edit_acl_title,
@@ -433,14 +430,22 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
                       hideCheckBox: true,
                       buttonMsg: helptext_sharing_smb.dialog_edit_acl_button,
                     }),
-                  ]))),
-              tap(([doConfigureACL, dataset]) =>
-                (doConfigureACL
-                  ? this.router.navigate(['/'].concat(ACLRoute))
-                  : this.router.navigate(['/'].concat(this.route_success)))),
+                  ]);
+                }
+
+                return nextStep;
+              }),
+              tap(([doConfigureACL]) => {
+                if (doConfigureACL) {
+                  this.router.navigate(['/'].concat(ACLRoute));
+                } else {
+                  this.dialog.closeAllDialogs();
+                }
+              }),
             );
 
-          this.ws.call('service.query', [])
+          this.ws
+            .call('service.query', [])
             .pipe(
               map((response) => _.find(response, { service: ServiceName.Cifs })),
               switchMap((cifsService) => {
@@ -462,18 +467,16 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
                   .pipe(
                     switchMap((doEnableService) => {
                       if (doEnableService) {
-                        entityForm.loader.open();
                         return this.ws.call('service.update', [cifsService.id, { enable: true }]).pipe(
                           switchMap(() => this.ws.call('service.start', [cifsService.service])),
-                          tap(() => {
-                            entityForm.loader.close();
-                          }),
-                          switchMap(() => this.dialog.Info(T('SMB') + shared.dialog_started_title,
-                            T('The SMB') + shared.dialog_started_message, '250px')),
-                          catchError((error) => {
-                            entityForm.loader.close();
-                            return this.dialog.errorReport(error.error, error.reason, error.trace.formatted);
-                          }),
+                          switchMap(() =>
+                            this.dialog.Info(
+                              T('SMB') + shared.dialog_started_title,
+                              T('The SMB') + shared.dialog_started_message,
+                              '250px',
+                            )),
+                          catchError((error) =>
+                            this.dialog.errorReport(error.error, error.reason, error.trace.formatted)),
                         );
                       }
                       return of(true);
@@ -482,16 +485,18 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
                   );
               }),
             )
-            .subscribe(() => {}, (error) => new EntityUtils().handleWSError(this, error, this.dialog));
+            .subscribe(
+              () => {},
+              (error) => new EntityUtils().handleWSError(this, error, this.dialog),
+            );
         }
       },
       (err) => {
         if (err.reason.includes('[ENOENT]')) {
-          this.router.navigate(['/'].concat(this.route_success));
+          this.dialog.closeAllDialogs();
         } else {
-        // If some other err comes back from filesystem.path_is_encrypted
-          this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
-            err.reason, err.trace.formatted);
+          // If some other err comes back from filesystem.path_is_encrypted
+          this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, err.reason, err.trace.formatted);
         }
       },
     );
@@ -501,10 +506,10 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     const generalFieldsets = _.find(this.fieldSets, { class: 'basic' });
     const purposeField = _.find(generalFieldsets.config, { name: 'purpose' });
     this.ws.call('sharing.smb.presets').subscribe(
-      (res) => {
-        this.presets = res;
-        for (const item in res) {
-          purposeField.options.push({ label: res[item]['verbose_name'], value: item });
+      (presets) => {
+        this.presets = presets;
+        for (const item in presets) {
+          purposeField.options.push({ label: presets[item]['verbose_name'], value: item });
         }
         if (entityForm.isNew) {
           entityForm.formGroup.controls['purpose'].setValue('DEFAULT_SHARE');
@@ -516,6 +521,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     );
 
     this.entityForm = entityForm;
+    this.title = entityForm.isNew ? helptext_sharing_smb.formTitleAdd : helptext_sharing_smb.formTitleEdit;
     if (entityForm.isNew) {
       entityForm.formGroup.controls['browsable'].setValue(true);
     } else {
@@ -554,21 +560,21 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     });
 
     const path_fc = entityForm.formGroup.controls['path'];
-    entityForm.formGroup.controls['acl'].valueChanges
-      .pipe(debounceTime(100))
-      .subscribe((res) => {
-        if (!res && path_fc.value && !this.stripACLWarningSent) {
-          this.ws.call('filesystem.acl_is_trivial', [path_fc.value]).subscribe((res) => {
-            if (!res) {
-              this.stripACLWarningSent = true;
-              this.showStripACLWarning();
-            }
-          });
-        }
-      });
+    entityForm.formGroup.controls['acl'].valueChanges.pipe(debounceTime(100)).subscribe((res) => {
+      if (!res && path_fc.value && !this.stripACLWarningSent) {
+        this.ws.call('filesystem.acl_is_trivial', [path_fc.value]).subscribe((res) => {
+          if (!res) {
+            this.stripACLWarningSent = true;
+            this.showStripACLWarning();
+          }
+        });
+      }
+    });
 
     setTimeout(() => {
-      if (entityForm.formGroup.controls['timemachine'].value) { this.isTimeMachineOn = true; }
+      if (entityForm.formGroup.controls['timemachine'].value) {
+        this.isTimeMachineOn = true;
+      }
     }, 700);
 
     this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((config) => {
@@ -589,7 +595,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  showStripACLWarning() {
+  showStripACLWarning(): void {
     this.dialog.confirm({
       title: helptext_sharing_smb.stripACLDialog.title,
       message: helptext_sharing_smb.stripACLDialog.message,
@@ -599,7 +605,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  clearPresets() {
+  clearPresets(): void {
     for (const item of this.presetFields) {
       this.entityForm.formGroup.controls[item].enable();
     }
@@ -607,7 +613,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
   }
 
   /* If user blurs name field with empty value, try to auto-populate based on path */
-  blurEventName(parent: { entityForm: EntityFormComponent }) {
+  blurEventName(parent: { entityForm: EntityFormComponent }): void {
     const pathControl = parent.entityForm.formGroup.controls['path'];
     const nameControl = parent.entityForm.formGroup.controls['name'];
     if (pathControl.value && !nameControl.value) {
@@ -615,7 +621,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
-    this.getAdvancedConfig.unsubscribe();
+  ngOnDestroy(): void {
+    this.getAdvancedConfig?.unsubscribe();
   }
 }
