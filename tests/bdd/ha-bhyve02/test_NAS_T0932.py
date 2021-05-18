@@ -90,6 +90,12 @@ def enter_dozer_for_pool_name_check_the_box_next_to_da1_press_right_arrow_under_
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-da1"]').click()
     assert wait_on_element(driver, 0.5, 5, '//button[@id="vdev__add-button"]')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
+    assert wait_on_element(driver, 0.5, 5, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]')
+    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__force-submit-checkbox"]').click()
+    assert wait_on_element(driver, 1, 5, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]')
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+    assert wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__CONTINUE"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
     assert wait_on_element(driver, 0.5, 5, '//button[@name="create-button"]')
     driver.find_element_by_xpath('//button[@name="create-button"]').click()
 
