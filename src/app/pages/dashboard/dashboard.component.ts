@@ -1,8 +1,19 @@
 import {
   Component, OnInit, AfterViewInit, OnDestroy, ElementRef,
 } from '@angular/core';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
+import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { CoreEvent } from 'app/interfaces/events';
+import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
+import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
+import {
+  NetworkInterface,
+  NetworkInterfaceAlias,
+  NetworkInterfaceState,
+} from 'app/interfaces/network-interface.interface';
+import { Pool } from 'app/interfaces/pool.interface';
+import { ReportingRealtimeUpdate, VirtualMemoryUpdate } from 'app/interfaces/reporting.interface';
 
 import { Subject } from 'rxjs';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component'; // POC
@@ -21,6 +32,14 @@ import { EntityEmptyComponent, EmptyConfig, EmptyType } from 'app/pages/common/e
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { UUID } from 'angular2-uuid';
 import { T } from 'app/translate-marker';
+
+// TODO: This adds additional fields. Unclear if vlan is coming from backend
+type DashboardNetworkInterface = NetworkInterface & {
+  state: NetworkInterfaceState & {
+    vlans: any[];
+    lagg_ports: string[];
+  };
+};
 
 @Component({
   selector: 'dashboard',
@@ -84,10 +103,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   // For widgetpool
   system: any;
   system_product = 'Generic';
-  pools: any[]; // = [];
+  pools: Pool[]; // = [];
   volumeData: any; //= {};
 
-  nics: any[]; // = [];
+  nics: DashboardNetworkInterface[];
 
   animation = 'stop';
   shake = false;
@@ -223,24 +242,24 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   init(): void {
     this.startListeners();
 
-    this.core.register({ observerClass: this, eventName: 'NicInfo' }).subscribe((evt: CoreEvent) => {
-      const clone = Object.assign([], evt.data);
-      const removeNics: any = {};
+    this.core.register({ observerClass: this, eventName: 'NicInfo' }).subscribe((evt: NicInfoEvent) => {
+      const clone = [...evt.data] as DashboardNetworkInterface[];
+      const removeNics: { [nic: string]: number | string } = {};
 
       // Store keys for fast lookup
-      const nicKeys: any = {};
-      (evt.data as any[]).forEach((item, index) => {
+      const nicKeys: { [nic: string]: number | string } = {};
+      evt.data.forEach((item, index) => {
         nicKeys[item.name] = index.toString();
       });
 
       // Process Vlans (attach vlans to their parent)
-      (evt.data as any[]).forEach((item, index) => {
-        if (item.type !== 'VLAN' && !clone[index].state.vlans) {
+      evt.data.forEach((item, index) => {
+        if (item.type !== NetworkInterfaceType.Vlan && !clone[index].state.vlans) {
           clone[index].state.vlans = [];
         }
 
-        if (item.type == 'VLAN') {
-          const parentIndex = parseInt(nicKeys[item.state.parent]);
+        if (item.type == NetworkInterfaceType.Vlan) {
+          const parentIndex = parseInt(nicKeys[item.state.parent] as string);
           if (!clone[parentIndex].state.vlans) {
             clone[parentIndex].state.vlans = [];
           }
@@ -251,17 +270,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       });
 
       // Process LAGGs
-      (evt.data as any[]).forEach((item, index) => {
-        if (item.type == 'LINK_AGGREGATION') {
+      evt.data.forEach((item, index) => {
+        if (item.type == NetworkInterfaceType.LinkAggregation) {
           clone[index].state.lagg_ports = item.lag_ports;
-          item.lag_ports.forEach((nic: any) => {
+          item.lag_ports.forEach((nic) => {
             // Consolidate addresses
             clone[index].state.aliases.forEach((item: any) => { item.interface = nic; });
-            clone[index].state.aliases = clone[index].state.aliases.concat(clone[nicKeys[nic]].state.aliases);
+            clone[index].state.aliases = clone[index].state.aliases.concat(clone[nicKeys[nic] as number].state.aliases);
 
             // Consolidate vlans
-            clone[index].state.vlans.forEach((item: any) => { item.interface = nic; });
-            clone[index].state.vlans = clone[index].state.vlans.concat(clone[nicKeys[nic]].state.vlans);
+            clone[index].state.vlans.forEach((item) => { item.interface = nic; });
+            clone[index].state.vlans = clone[index].state.vlans.concat(clone[nicKeys[nic] as number].state.vlans);
 
             // Mark interface for removal
             removeNics[nic] = nicKeys[nic];
@@ -276,7 +295,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           clone.splice(i, 1);
         } else {
           // Only keep INET addresses
-          clone[i].state.aliases = clone[i].state.aliases.filter((address: any) => address.type == 'INET' || address.type == 'INET6');
+          clone[i].state.aliases = clone[i].state.aliases.filter((address) =>
+            [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(address.type));
         }
       }
 
@@ -299,18 +319,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dashStateReady = true;
     });
 
-    this.statsEvents = this.ws.sub('reporting.realtime').subscribe((evt) => {
+    this.statsEvents = this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').subscribe((evt) => {
       if (evt.cpu) {
         this.statsDataEvents.next({ name: 'CpuStats', data: evt.cpu });
       }
 
       if (evt.virtual_memory) {
-        const keys = Object.keys(evt.virtual_memory);
-        const memStats: any = {};
-
-        keys.forEach((key, index) => {
-          memStats[key] = evt.virtual_memory[key];
-        });
+        const memStats: VirtualMemoryUpdate & { arc_size?: number } = { ...evt.virtual_memory };
 
         if (evt.zfs && evt.zfs.arc_size != null) {
           memStats.arc_size = evt.zfs.arc_size;
@@ -366,7 +381,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   getDisksData(): void {
     const uuid = UUID.UUID();
 
-    this.core.register({ observerClass: this, eventName: 'PoolData' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'PoolData' }).subscribe((evt: PoolDataEvent) => {
       this.pools = evt.data;
 
       if (this.pools.length > 0) {
@@ -462,7 +477,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     });
 
-    this.nics.forEach((nic, index) => {
+    this.nics.forEach((nic) => {
       conf.push({
         name: 'Interface', identifier: 'name,' + nic.name, rendered: true, id: conf.length.toString(),
       });
@@ -473,7 +488,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   volumeDataFromConfig(item: DashConfigItem) {
     const spl = item.identifier.split(',');
-    const key = spl[0];
+    const key = spl[0] as keyof Pool;
     const value = spl[1];
 
     const pool = this.pools.filter((pool) => pool[key] == value);
@@ -500,11 +515,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         data = this.statsDataEvents;
         break;
       case 'pool':
-        data = spl ? this.pools.filter((pool) => pool[key] == value) : console.warn('DashConfigItem has no identifier!');
+        data = spl
+          ? this.pools.filter((pool) => pool[key as keyof Pool] == value)
+          : console.warn('DashConfigItem has no identifier!');
         if (data) { data = data[0]; }
         break;
       case 'interface':
-        data = spl ? this.nics.filter((nic) => nic[key] == value) : console.warn('DashConfigItem has no identifier!');
+        data = spl
+          ? this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] == value)
+          : console.warn('DashConfigItem has no identifier!');
         if (data) { data = data[0].state; }
         break;
     }

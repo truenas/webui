@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { CoreEvent } from 'app/interfaces/events';
 import { Subject, Subscription } from 'rxjs';
 
 import * as cronParser from 'cron-parser';
@@ -18,7 +19,7 @@ import {
   StorageService,
   UserService,
 } from '../../../services';
-import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { ModalService } from '../../../services/modal.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';

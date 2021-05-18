@@ -11,9 +11,10 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router, NavigationStart } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { CoreEvent } from 'app/interfaces/events';
 import * as _ from 'lodash';
 import {
   fromEvent as observableFromEvent, Observable, of, Subscription,

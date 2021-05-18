@@ -9,6 +9,7 @@ import {
   FormBuilder, FormGroup, Validators, FormControl,
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { CoreEvent } from 'app/interfaces/events';
 import { FailoverDisabledReason } from '../../../enums/failover-disabled-reason.enum';
 import { ProductType } from '../../../enums/product-type.enum';
 import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
@@ -22,7 +23,7 @@ import { T } from '../../../translate-marker';
 import { WebSocketService } from '../../../services/ws.service';
 import { SystemGeneralService } from '../../../services';
 import { DialogService } from '../../../services/dialog.service';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
 import { AutofillMonitor } from '@angular/cdk/text-field';
 import { LocaleService } from 'app/services/locale.service';

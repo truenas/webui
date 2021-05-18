@@ -207,7 +207,7 @@ export class WebSocketService {
     return source;
   }
 
-  sub(name: string): Observable<any> {
+  sub<T = any>(name: string): Observable<T> {
     const nom = name.replace('.', '_'); // Avoid weird behavior
     if (!this.pendingSubs[nom]) {
       this.pendingSubs[nom] = {

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { MaterialModule } from 'app/appMaterial.module';
 import { iXObject } from 'app/core/classes/ix-object';

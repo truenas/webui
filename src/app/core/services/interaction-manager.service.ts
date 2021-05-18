@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
+import { CoreEvent } from 'app/interfaces/events';
 import { DisplayObject } from '../classes/display-object';
 import { LayoutObject } from '../classes/layout-object';
-import { CoreService, CoreEvent } from './core.service';
+import { CoreService } from './core.service';
 import {
   tween,
   styler,

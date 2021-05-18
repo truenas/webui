@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { CoreEvent } from 'app/interfaces/events';
 import { BaseService } from './base.service';
-import { CoreEvent } from './core.service';
 import helptext from '../../helptext/topbar';
 
 interface InfoObject {

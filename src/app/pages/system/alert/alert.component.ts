@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CoreEvent } from 'app/interfaces/events';
 
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
@@ -13,7 +14,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import helptext from 'app/helptext/system/alert-settings';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 

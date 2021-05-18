@@ -1,12 +1,13 @@
 import {
   Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy, AfterViewInit,
 } from '@angular/core';
+import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { ApplicationsService } from './applications.service';
 import { ModalService } from '../../services/modal.service';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
 import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';

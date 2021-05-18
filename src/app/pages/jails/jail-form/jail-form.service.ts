@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
+import { Observable } from 'rxjs/Observable';
 
 import { WebSocketService } from '../../../services';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
@@ -171,7 +173,7 @@ export class JailFormService {
     }]);
   }
 
-  getInterface() {
+  getInterface(): Observable<NetworkInterface[]> {
     return this.ws.call('interface.query', [[['name', 'rnin', 'vnet0:']]]);
   }
 

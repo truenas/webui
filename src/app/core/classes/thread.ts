@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Observer } from 'rxjs';
 import { Subject } from 'rxjs';
-import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
 import * as moment from 'moment';
 

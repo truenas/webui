@@ -2,12 +2,13 @@ import {
   Component, ElementRef, ViewChild, Input, OnInit, AfterViewInit,
 } from '@angular/core';
 import { MatTableModule, MatTable } from '@angular/material/table';
+import { CoreEvent } from 'app/interfaces/events';
 import { DialogService, WebSocketService } from '../../../../services';
 import { EntityUtils } from '../utils';
 import { EntityTreeTable } from './entity-tree-table.model';
 import { EntityTreeTableService } from './entity-tree-table.service';
 import { TranslateService } from '@ngx-translate/core';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { Sort } from '@angular/material/sort';
 import { TreeNode } from 'primeng/api';
 

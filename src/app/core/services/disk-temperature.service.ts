@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
+import { CoreEvent } from 'app/interfaces/events';
 import { QueryOptions } from 'app/interfaces/query-api.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { BaseService } from './base.service';
-import { CoreEvent } from './core.service';
 
 export interface Temperature {
   keys: string[];

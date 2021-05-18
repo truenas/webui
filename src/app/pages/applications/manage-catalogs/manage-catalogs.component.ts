@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { CoreEvent } from 'app/interfaces/events';
 import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { DialogService, StorageService, ValidationService } from 'app/services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -9,7 +10,6 @@ import { ModalService } from '../../../services/modal.service';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import * as _ from 'lodash';
 import helptext from '../../../helptext/apps/apps';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { ManageCatalogSummaryDialog } from '../dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { CatalogAddFormComponent } from '../forms/catalog-add-form.component';

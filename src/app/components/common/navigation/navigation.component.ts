@@ -1,11 +1,11 @@
 import {
   Component, OnInit, Output, EventEmitter,
 } from '@angular/core';
+import { CoreEvent } from 'app/interfaces/events';
 import { ProductType } from '../../../enums/product-type.enum';
 import { NavigationService } from '../../../services/navigation/navigation.service';
 import { WebSocketService } from '../../../services';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { CoreEvent } from 'app/core/services/core.service';
 import { DocsService } from '../../../services/docs.service';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
