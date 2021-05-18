@@ -224,8 +224,8 @@ def press_initiate_failover_check_confirm_and_press_failover(driver):
 @then('Wait for the login page to appear')
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear"""
-    assert wait_on_element(driver, 1, 30, '//input[@placeholder="Username"]')
-    time.sleep(5)
+    assert wait_on_element(driver, 1, 60, '//input[@placeholder="Username"]')
+    time.sleep(7)
     assert wait_on_element(driver, 1, 30, '//input[@placeholder="Username"]')
 
 
