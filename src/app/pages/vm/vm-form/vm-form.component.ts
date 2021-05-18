@@ -12,9 +12,15 @@ import { T } from '../../../translate-marker';
 import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
 import globalHelptext from '../../../helptext/global-helptext';
 import {
-  WebSocketService, StorageService, VmService, ValidationService,
+  WebSocketService, StorageService, VmService, ValidationService, AppLoaderService, DialogService, SystemGeneralService,
 } from '../../../services';
 import { Validators } from '@angular/forms';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+
+import { GpuDevice } from 'app/interfaces/gpu-device.interface';
+import { combineLatest, Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
@@ -28,11 +34,14 @@ export class VmFormComponent implements FormConfiguration {
   editCall: 'vm.update' = 'vm.update';
   isEntity = true;
   route_success: string[] = ['vm'];
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   save_button_enabled: boolean;
+  private rawVmData: any;
   vcpus: number;
   cores: number;
   threads: number;
+  private gpus: GpuDevice[];
+  private isolatedGpuPciIds: string[];
   private maxVCPUs: number;
   private productType = window.localStorage.getItem('product_type') as ProductType;
   queryCallOption: any[] = [];
@@ -154,17 +163,46 @@ export class VmFormComponent implements FormConfiguration {
 
       ],
     },
+    {
+      name: 'spacer',
+      class: 'spacer',
+      label: false,
+      width: '2%',
+      config: [],
+    },
+    {
+      name: T('GPU'),
+      class: 'vm_settings',
+      label: true,
+      width: '49%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'hide_from_msr',
+          placeholder: T('Hide from MSR'),
+          value: false,
+        },
+        {
+          type: 'select',
+          placeholder: T("GPU's"),
+          name: 'gpus',
+          multiple: true,
+          options: [],
+          required: true,
+        },
+      ],
+    },
   ];
   private bootloader: any;
   bootloader_type: any[];
 
-  constructor(protected router: Router,
+  constructor(protected router: Router, private loader: AppLoaderService,
     protected ws: WebSocketService, protected storageService: StorageService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected vmService: VmService, protected route: ActivatedRoute,
-    private translate: TranslateService) {}
+    private translate: TranslateService, private dialogService: DialogService, private systemGeneralService: SystemGeneralService) {}
 
-  preInit(entityForm: any): void {
+  preInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.route.params.subscribe((params) => {
       if (params['pk']) {
@@ -177,7 +215,7 @@ export class VmFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.bootloader = _.find(this.fieldConfig, { name: 'bootloader' });
     this.vmService.getBootloaderOptions().subscribe((options) => {
       for (const option in options) {
@@ -224,6 +262,35 @@ export class VmFormComponent implements FormConfiguration {
         }
       });
     }
+
+    this.systemGeneralService.getAdvancedConfig.subscribe((res) => {
+      this.isolatedGpuPciIds = res.isolated_gpu_pci_ids;
+    });
+
+    const gpusFormControl = this.entityForm.formGroup.controls['gpus'];
+    gpusFormControl.valueChanges.subscribe((gpusValue: string[]) => {
+      const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
+      for (const gpuValue of gpusValue) {
+        if (finalIsolatedPciIds.findIndex((pciId) => pciId === gpuValue) === -1) {
+          finalIsolatedPciIds.push(gpuValue);
+        }
+      }
+      const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
+      if (finalIsolatedPciIds.length >= gpusConf.options.length) {
+        const prevSelectedGpus = [];
+        for (const gpu of this.gpus) {
+          if (this.isolatedGpuPciIds.findIndex((igpi) => igpi === gpu.addr.pci_slot) >= 0) {
+            prevSelectedGpus.push(gpu);
+          }
+        }
+        const listItems = '<li>' + prevSelectedGpus.map((gpu, index) => (index + 1) + '. ' + gpu.description).join('</li><li>') + '</li>';
+        gpusConf.warnings = 'At least 1 GPU is required by the host for it’s functions.<p>Currently following GPU(s) have been isolated:<ol>' + listItems + '</ol></p><p>With your selection, no GPU is available for the host to consume.</p>';
+        gpusFormControl.setErrors({ maxPCIIds: true });
+      } else {
+        gpusConf.warnings = null;
+        gpusFormControl.setErrors(null);
+      }
+    });
   }
 
   blurEvent(parent: any): void {
@@ -263,14 +330,120 @@ export class VmFormComponent implements FormConfiguration {
     };
   }
 
-  resourceTransformIncomingRestData(wsResponse: any): any {
-    wsResponse['memory'] = this.storageService.convertBytestoHumanReadable(wsResponse['memory'] * 1048576, 0);
-    return wsResponse;
+  resourceTransformIncomingRestData(vmRes: any): any {
+    this.rawVmData = vmRes;
+    vmRes['memory'] = this.storageService.convertBytestoHumanReadable(vmRes['memory'] * 1048576, 0);
+    this.ws.call('device.get_info', ['GPU']).subscribe((gpus: GpuDevice[]) => {
+      this.gpus = gpus;
+      const vmPciSlots: string[] = vmRes.devices.filter((device: any) => device.dtype === 'PCI').map((pciDevice: any) => pciDevice.attributes.pptdev);
+      const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
+      for (const item of gpus) {
+        gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
+      }
+      const vmGpus = this.gpus.filter((gpu) => {
+        for (const gpuPciDevice of gpu.devices) {
+          if (!vmPciSlots.includes(gpuPciDevice.vm_pci_slot)) {
+            return false;
+          }
+        }
+        return true;
+      });
+      const gpuVmPciSlots = vmGpus.map((gpu) => gpu.addr.pci_slot);
+      this.entityForm.formGroup.controls['gpus'].setValue(gpuVmPciSlots);
+    });
+    return vmRes;
   }
 
   beforeSubmit(data: any): void {
     if (data['memory'] !== undefined && data['memory'] !== null) {
       data['memory'] = Math.round(this.storageService.convertHumanStringToNum(data['memory']) / 1048576);
     }
+    return data;
+  }
+
+  customSubmit(updatedVmData: any) {
+    const pciDevicesToCreate = [];
+    const vmPciDeviceIdsToRemove = [];
+
+    const prevVmPciDevices = this.rawVmData.devices.filter((device: any) => device.dtype === 'PCI');
+    const prevVmPciSlots: string[] = prevVmPciDevices.map((pciDevice: any) => pciDevice.attributes.pptdev);
+    const prevGpus = this.gpus.filter((gpu) => {
+      for (const gpuPciDevice of gpu.devices) {
+        if (!prevVmPciSlots.includes(gpuPciDevice.vm_pci_slot)) {
+          return false;
+        }
+      }
+      return true;
+    });
+    const currentGpusSelected = this.gpus.filter((gpu) => updatedVmData['gpus'].includes(gpu.addr.pci_slot));
+
+    for (const currentGpu of currentGpusSelected) {
+      let found = false;
+      for (const prevGpu of prevGpus) {
+        if (prevGpu.addr.pci_slot === currentGpu.addr.pci_slot) {
+          found = true;
+        }
+      }
+      if (!found) {
+        const gpuPciDevices = currentGpu.devices.filter((gpuPciDevice) => !prevVmPciSlots.includes(gpuPciDevice.vm_pci_slot));
+        const gpuPciDevicesConverted = gpuPciDevices.map((pptDev) => ({
+          dtype: 'PCI',
+          vm: this.rawVmData.id,
+          attributes: {
+            pptdev: pptDev.vm_pci_slot,
+          },
+        }));
+        pciDevicesToCreate.push(...gpuPciDevicesConverted);
+      }
+    }
+
+    for (const prevGpu of prevGpus) {
+      let found = false;
+      for (const currentGpu of currentGpusSelected) {
+        if (currentGpu.addr.pci_slot === prevGpu.addr.pci_slot) {
+          found = true;
+        }
+      }
+      if (!found) {
+        const prevVmGpuPciDevicesPciSlots = prevGpu.devices.map((prevGpuPciDevice) => prevGpuPciDevice.vm_pci_slot);
+        const vmPciDevices = prevVmPciDevices.filter((prevVmPciDevice: any) => prevVmGpuPciDevicesPciSlots.includes(prevVmPciDevice.attributes.pptdev));
+        const vmPciDeviceIds = vmPciDevices.map((prevVmPciDevice: any) => prevVmPciDevice.id);
+        vmPciDeviceIdsToRemove.push(...vmPciDeviceIds);
+      }
+    }
+
+    const observables: Observable<any>[] = [];
+    if (updatedVmData.gpus) {
+      const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
+      for (const gpuValue of updatedVmData.gpus) {
+        if (finalIsolatedPciIds.findIndex((pciId) => pciId === gpuValue) === -1) {
+          finalIsolatedPciIds.push(gpuValue);
+        }
+      }
+      observables.push(this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids: finalIsolatedPciIds }]));
+    }
+
+    for (const deviceId of vmPciDeviceIdsToRemove) {
+      observables.push(this.ws.call('datastore.delete', ['vm.device', deviceId]));
+    }
+
+    for (const device of pciDevicesToCreate) {
+      observables.push(this.ws.call('vm.device.create', [device]));
+    }
+
+    delete updatedVmData['gpus'];
+    this.loader.open();
+    observables.push(this.ws.call('vm.update', [this.rawVmData.id, updatedVmData]));
+
+    combineLatest(observables).subscribe(
+      (responses_array) => {
+        this.loader.close();
+        this.router.navigate(new Array('/').concat(this.route_success));
+      },
+      (error) => {
+        this.loader.close();
+        new EntityUtils().handleWSError(this, error, this.dialogService);
+      },
+    );
   }
 }

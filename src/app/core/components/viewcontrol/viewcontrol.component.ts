@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Subject } from 'rxjs';
-import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControl } from 'app/core/classes/viewcontrol';
 
 @Component({

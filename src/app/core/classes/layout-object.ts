@@ -1,5 +1,5 @@
 import { DisplayObject } from './display-object';
-import { CoreService, CoreEvent } from '../services/core.service';
+import { CoreService } from '../services/core.service';
 import { timer } from 'rxjs/observable/timer';
 import { debounceTime } from 'rxjs/operators/debounceTime';
 import {

@@ -4,6 +4,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { Acl } from 'app/interfaces/acl.interface';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { Catalog } from 'app/interfaces/catalog.interface';
+import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import {
   IscsiAuthAccess, IscsiExtent,
@@ -13,6 +14,7 @@ import {
   IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Group } from 'app/interfaces/group.interface';
@@ -20,6 +22,7 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { Disk, DiskQueryOptions, DiskUpdate } from 'app/interfaces/storage.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 
@@ -245,7 +248,7 @@ export type ApiDirectory = {
   'interface.lag_supported_protocols': { params: any; response: any };
   'interface.lag_ports_choices': { params: any; response: any };
   'interface.vlan_parent_interface_choices': { params: any; response: any };
-  'interface.query': { params: any; response: any };
+  'interface.query': { params: QueryParams<NetworkInterface>; response: NetworkInterface[] };
   'interface.create': { params: any; response: any };
   'interface.update': { params: any; response: any };
   'interface.has_pending_changes': { params: any; response: any };
@@ -389,7 +392,10 @@ export type ApiDirectory = {
   'pool.snapshottask.update': { params: any; response: any };
   'pool.import_disk_msdosfs_locales': { params: any; response: any };
   'pool.snapshottask.delete': { params: any; response: any };
-  'pool.dataset.query': { params: any; response: any[] };
+  'pool.dataset.query': {
+    params: QueryParams<Dataset, ExtraDatasetQueryOptions>;
+    response: Dataset[];
+  };
   'pool.scrub.delete': { params: any; response: any };
   'pool.scrub.query': { params: QueryParams<PoolScrub>; response: PoolScrub[] };
   'pool.scrub.update': { params: any; response: any };
@@ -473,10 +479,12 @@ export type ApiDirectory = {
   // System
   'system.feature_enabled': { params: any; response: any };
   'system.advanced.update': { params: any; response: any };
+  'device.gpu_pci_ids_choices': { params: any; response: any };
+  'device.get_info': { params: any; response: any };
   'system.reboot': { params: any; response: any };
   'system.shutdown': { params: any; response: any };
   'system.advanced.serial_port_choices': { params: any; response: any };
-  'system.info': { params: any; response: any };
+  'system.info': { params: any; response: SystemInfo };
   'system.advanced.config': { params: any; response: any };
   'system.general.update': { params: any; response: any };
   'system.ntpserver.delete': { params: any; response: any };

@@ -3,8 +3,9 @@ import {
 } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { NavigationExtras, Router } from '@angular/router';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
+import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
+import { CoreEvent } from 'app/interfaces/events';
 
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
@@ -91,9 +92,8 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   get ipAddresses() {
     if (!this.nicState && !this.nicState.aliases) { return []; }
 
-    const result = this.nicState.aliases.filter((item: any) => item.type == 'INET' || item.type == 'INET6');
-
-    return result;
+    return this.nicState.aliases.filter((item: any) =>
+      [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
   }
 
   get vlanAddresses() {
@@ -101,9 +101,8 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     if (this.path[2].name == 'empty' || this.nicState.vlans.length == 0 || !this.nicState.vlans[parseInt(this.path[2].index)]) { return []; }
 
     const vlan = this.nicState.vlans[parseInt(this.path[2].index)];
-    const result = vlan.aliases.filter((item: any) => item.type == 'INET' || item.type == 'INET6');
-
-    return result;
+    return vlan.aliases.filter((item: any) =>
+      [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
   }
 
   get linkState() {
@@ -133,14 +132,12 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
         const sent: Converted = this.convert(evt.data.sent_bytes_rate);
         const received: Converted = this.convert(evt.data.received_bytes_rate);
 
-        const t = {
+        this.traffic = {
           sent: sent.value,
           sentUnits: sent.units,
           received: received.value,
           receivedUnits: received.units,
         };
-
-        this.traffic = t; // evt.data;
       }
     });
   }
@@ -177,8 +174,8 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   vlanAliases(vlanIndex: string|number) {
     if (typeof vlanIndex == 'string') { vlanIndex = parseInt(vlanIndex); }
     const vlan = this.nicState.vlans[vlanIndex];
-    const result = vlan.aliases.filter((item: any) => item.type == 'INET' || item.type == 'INET6');
-    return result;
+    return vlan.aliases.filter((item: any) =>
+      [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
   }
 
   getMbps(arr: number[]): number | string {
@@ -198,8 +195,8 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   }
 
   convert(value: number): Converted {
-    let result;
-    let units;
+    let result: number;
+    let units: string;
 
     // uppercase so we handle bits and bytes...
     switch (this.optimizeUnits(value)) {

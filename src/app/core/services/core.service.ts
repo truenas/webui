@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Observer } from 'rxjs';
+import { CoreEvent } from 'app/interfaces/events';
 import { Subject } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 
 /*
  * Heavily influenced by Objective C's NSNotificationCenter
@@ -21,12 +21,6 @@ import { Subject } from 'rxjs';
  *
  *
  * */
-
-export interface CoreEvent {
-  name: string;
-  sender?: any;
-  data?: any;
-}
 
 interface Registration {
   observerClass: object; // The component/service listening for the event
@@ -70,7 +64,7 @@ export class CoreService {
 
   private dispatchTable: any[] = [];
 
-  register(reg: Registration) {
+  register(reg: Registration): Observable<CoreEvent> {
     reg.observable = new Subject();
     this.dispatchTable.push(reg);
     return reg.observable;
@@ -86,7 +80,7 @@ export class CoreService {
       for (var i = 0; i < this.dispatchTable.length; i++) {
         const registration = this.dispatchTable[i];
         if (registration.observerClass == reg.observerClass) {
-	  continue;
+	        continue;
         } else {
           clone.push(registration);
         }

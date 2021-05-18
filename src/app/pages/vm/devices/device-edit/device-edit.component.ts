@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { DatasetType } from 'app/enums/dataset-type.enum';
+import { CoreEvent } from 'app/interfaces/events';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
@@ -14,7 +16,7 @@ import {
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import helptext from '../../../../helptext/vm/devices/device-add-edit';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { DialogService } from '../../../../services/dialog.service';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 
@@ -510,7 +512,7 @@ export class DeviceEditComponent implements OnInit {
   }
 
   afterInit(): void {
-    this.ws.call('pool.dataset.query', [[['type', '=', 'VOLUME']], { extra: { properties: ['id'] } }]).subscribe((zvols: any[]) => {
+    this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]], { extra: { properties: ['id'] } }]).subscribe((zvols) => {
       zvols.forEach((zvol) => {
         _.find(this.diskFieldConfig, { name: 'path' }).options.push(
           {

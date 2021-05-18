@@ -1,5 +1,5 @@
+import { CoreEvent } from 'app/interfaces/events';
 import { Subject } from 'rxjs';
-import { CoreEvent } from 'app/core/services/core.service';
 import { View } from 'app/core/classes/view';
 import { Action } from 'app/core/classes/viewcontrol';
 

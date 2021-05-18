@@ -4,6 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ixChartApp, appImagePlaceholder } from 'app/constants/catalog.constants';
+import { CoreEvent } from 'app/interfaces/events';
 import { Subject, Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
@@ -18,7 +19,7 @@ import { ChartFormComponent } from '../forms/chart-form.component';
 import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
 
 import helptext from '../../../helptext/apps/apps';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { Router } from '@angular/router';
 import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';

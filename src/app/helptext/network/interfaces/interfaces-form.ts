@@ -1,3 +1,4 @@
+import { LinkAggregationProtocol, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
@@ -14,9 +15,9 @@ export default {
  and isolates a segment of the connection. Read-only when editing an\
  interface.'),
   int_type_options: [
-    { label: 'Bridge', value: 'BRIDGE' },
-    { label: 'Link Aggregation', value: 'LINK_AGGREGATION' },
-    { label: 'VLAN', value: 'VLAN' },
+    { label: 'Bridge', value: NetworkInterfaceType.Bridge },
+    { label: 'Link Aggregation', value: NetworkInterfaceType.LinkAggregation },
+    { label: 'VLAN', value: NetworkInterfaceType.Vlan },
   ],
 
   int_interface_placeholder: T('NIC'),
@@ -153,11 +154,11 @@ export default {
  for more details.'),
   lagg_protocol_validation: [Validators.required],
   lagg_protocol_options: [
-    { label: 'None', value: 'NONE' },
-    { label: 'LACP', value: 'LACP' },
-    { label: 'Failover', value: 'FAILOVER' },
-    { label: 'Load Balance', value: 'LOADBALANCE' },
-    { label: 'Round Robin', value: 'ROUNDROBIN' },
+    { label: 'None', value: LinkAggregationProtocol.None },
+    { label: 'LACP', value: LinkAggregationProtocol.Lacp },
+    { label: 'Failover', value: LinkAggregationProtocol.Failover },
+    { label: 'Load Balance', value: LinkAggregationProtocol.LoadBalance },
+    { label: 'Round Robin', value: LinkAggregationProtocol.RoundRobin },
   ],
 
   lagg_interfaces_placeholder: T('Lagg Interfaces'),

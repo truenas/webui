@@ -2,6 +2,7 @@ import {
   ApplicationRef, Component, Injector, OnDestroy,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { CoreEvent } from 'app/interfaces/events';
 import * as _ from 'lodash';
 import helptext from '../../../helptext/storage/import-disk/import-disk';
 
@@ -20,7 +21,7 @@ import { EntityUtils } from '../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { T } from '../../../translate-marker';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 
 @Component({
   selector: 'app-import-disk',

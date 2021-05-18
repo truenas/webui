@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
 
 import * as _ from 'lodash';
 import { WebSocketService, IscsiService } from 'app/services';
@@ -47,8 +48,8 @@ export class ISCSI implements OnInit {
 
   ngOnInit(): void {
     this.ws.call('system.info').subscribe(
-      (res) => {
-        if (res.license && res.license.features.indexOf('FIBRECHANNEL') > -1) {
+      (systemInfo) => {
+        if (systemInfo.license && systemInfo.license.features.indexOf(LicenseFeature.FibreChannel) > -1) {
           this.fcEnabled = true;
           this.navLinks.push({
             label: T('Fibre Channel Ports'),

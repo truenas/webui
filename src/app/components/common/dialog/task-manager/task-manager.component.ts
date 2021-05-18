@@ -59,8 +59,8 @@ export class TaskManagerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.sysGeneralService.getSysInfo().subscribe((res) => {
-      this.timeZone = res.timezone;
+    this.sysGeneralService.getSysInfo().subscribe((systemInfo) => {
+      this.timeZone = systemInfo.timezone;
     });
     this.ws.call('core.get_jobs', [[], { order_by: ['-id'], limit: 50 }]).subscribe(
       (res) => {

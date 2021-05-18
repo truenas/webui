@@ -4,6 +4,7 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { DatasetType } from 'app/enums/dataset-type.enum';
 import globalHelptext from '../../../../../helptext/global-helptext';
 import helptext from '../../../../../helptext/storage/volumes/zvol-form';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -63,7 +64,7 @@ export class ZvolWizardComponent {
   title: string;
   isLinear = true;
   summary: any = {};
-  summary_title = 'Zvol Summary';
+  summaryTitle = 'Zvol Summary';
 
   protected origVolSize: number;
   protected origHuman: string;
@@ -330,7 +331,7 @@ export class ZvolWizardComponent {
         }
       }
       this.translate.get('Inherit').subscribe((inheritTr) => {
-        if (pk_dataset && pk_dataset[0].type === 'FILESYSTEM') {
+        if (pk_dataset && pk_dataset[0].type === DatasetType.Filesystem) {
           const sync_inherit = [{ label: `${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];
           const compression_inherit = [{ label: `${inheritTr} (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT' }];
           const deduplication_inherit = [{ label: `${inheritTr} (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT' }];
@@ -353,7 +354,7 @@ export class ZvolWizardComponent {
             this.minimum_recommended_zvol_volblocksize = res;
           });
         } else {
-          let parent_dataset = pk_dataset[0].name.split('/');
+          let parent_dataset: string | string[] = pk_dataset[0].name.split('/');
           parent_dataset.pop();
           parent_dataset = parent_dataset.join('/');
 
