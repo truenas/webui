@@ -215,6 +215,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (this.conf.saveSubmitText) {
       this.saveSubmitText = this.conf.saveSubmitText;
     }
+
+    this.makeFormGroup();
+
     if (this.conf.prerequisite) {
       await this.conf.prerequisite();
     }
@@ -262,8 +265,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       } else {
         this.fieldSetDisplay = 'default';
       }
-
-      this.makeFormGroup();
 
       if (!this.conf.queryCall) {
         this.getFunction = this.noGetFunction();
@@ -356,7 +357,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                 this.wsResponseIdx = this.wsResponse[key];
                 if (this.wsfg) {
                   const current_field = this.fieldConfig.find((control) => control.name === key);
-                  console.log('current=', key, current_field);
                   if (current_field.type === 'array') {
                     this.setArrayValue(this.wsResponse[key], this.wsfg, key);
                   } else if (current_field.type === 'list') {
