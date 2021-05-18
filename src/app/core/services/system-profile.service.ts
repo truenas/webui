@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { CoreEvent } from 'app/interfaces/events';
+import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { BaseService } from './base.service';
 import helptext from '../../helptext/topbar';
 
@@ -33,7 +35,7 @@ interface HAStatus {
   providedIn: 'root',
 })
 export class SystemProfileService extends BaseService {
-  cache: any;
+  cache: SystemInfo;
   private buffer: CoreEvent[] = [];
   private emulateHardware?: InfoObject;
   private mini: InfoObject = {
@@ -58,7 +60,7 @@ export class SystemProfileService extends BaseService {
 
   private ha_status: HAStatus;
 
-  features = {
+  features: SystemFeatures = {
     HA: false,
     enclosure: false,
   };
@@ -113,8 +115,8 @@ export class SystemProfileService extends BaseService {
   }
 
   fetchProfile(localOnly?: boolean) {
-    this.websocket.call('system.info').subscribe((res) => {
-      this.cache = res;
+    this.websocket.call('system.info').subscribe((systemInfo) => {
+      this.cache = systemInfo;
       if (localOnly) {
         this.buffer.push({ name: 'SysInfoRequest', sender: this });
         return;
@@ -132,22 +134,24 @@ export class SystemProfileService extends BaseService {
     });
   }
 
-  respond(evt: CoreEvent) {
-    let data;
-    let responseEvent;
-    switch (evt.name) {
-      case 'SysInfoRequest':
-        data = this.cache;
-        responseEvent = 'SysInfo';
-        break;
+  respond(evt: CoreEvent): void {
+    if (evt.name !== 'SysInfoRequest') {
+      return;
     }
-    data.features = this.detectFeatures(data);
-    this.core.emit({ name: responseEvent, data, sender: this });
+
+    this.core.emit({
+      name: 'SysInfo',
+      data: {
+        ...this.cache,
+        features: this.detectFeatures(this.cache),
+      },
+      sender: this,
+    });
   }
 
-  detectFeatures(_profile: any) {
+  detectFeatures(systemInfo: SystemInfo): SystemFeatures {
     // ENCLOSURE SUPPORT
-    const profile = { ..._profile };
+    const profile = { ...systemInfo };
 
     if (!profile.system_product) {
       // Stick with defaults if value is null

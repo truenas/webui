@@ -8,6 +8,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { CoreService } from 'app/core/services/core.service';
 import { LayoutService } from 'app/core/services/layout.service';
 import { CoreEvent } from 'app/interfaces/events';
+import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { Subscription } from 'rxjs';
 import { ProductType } from '../../../../enums/product-type.enum';
 import * as domHelper from '../../../../helpers/dom.helper';
@@ -109,7 +110,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     core.register({
       observerClass: this,
       eventName: 'SysInfo',
-    }).subscribe((evt: CoreEvent) => {
+    }).subscribe((evt: SysInfoEvent) => {
       this.hostname = evt.data.hostname;
     });
 

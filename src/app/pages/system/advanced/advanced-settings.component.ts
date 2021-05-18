@@ -415,11 +415,11 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   }
 
   saveDebug(): void {
-    this.ws.call('system.info', []).subscribe((res) => {
+    this.ws.call('system.info', []).subscribe((systemInfo) => {
       let fileName = '';
       let mimeType = 'application/gzip';
-      if (res) {
-        const hostname = res.hostname.split('.')[0];
+      if (systemInfo) {
+        const hostname = systemInfo.hostname.split('.')[0];
         const date = this.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
         if (this.isHA) {
           mimeType = 'application/x-tar';

@@ -4,6 +4,7 @@ import {
 import { Router } from '@angular/router';
 import { CoreEvent } from 'app/interfaces/events';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
+import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { RestService, WebSocketService } from 'app/services/';
 import { MaterialModule } from 'app/appMaterial.module';
 import { EnclosureDisksComponent } from './enclosure-disks/enclosure-disks.component';
@@ -49,8 +50,8 @@ export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
 
   supportedHardware = false;
   system_manufacturer: string;
-  private _system_product: any;
-  get system_product(): any {
+  private _system_product: string;
+  get system_product(): string {
     return this._system_product;
   }
   set system_product(value) {
@@ -142,7 +143,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
       }, 1500);
     });
 
-    core.register({ observerClass: this, eventName: 'SysInfo' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'SysInfo' }).subscribe((evt: SysInfoEvent) => {
       if (!this.system_product) {
         this.system_product = evt.data.system_product;
         this.system_manufacturer = evt.data.system_manufacturer.toLowerCase();

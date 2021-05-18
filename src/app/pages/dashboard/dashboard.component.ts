@@ -7,6 +7,7 @@ import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/netwo
 import { CoreEvent } from 'app/interfaces/events';
 import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
+import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import {
   NetworkInterface,
   NetworkInterfaceAlias,
@@ -98,7 +99,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   sysinfoReady = false;
 
   // For CPU widget
-  systemInformation: any;
+  systemInformation: SystemInfoWithFeatures;
 
   // For widgetpool
   system: any;
@@ -115,7 +116,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(protected core: CoreService, protected ws: WebSocketService,
     public mediaObserver: MediaObserver, private el: ElementRef, public modalService: ModalService) {
-    core.register({ observerClass: this, eventName: 'SidenavStatus' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'SidenavStatus' }).subscribe(() => {
       setTimeout(() => {
         this.checkScreenSize();
       }, 100);
@@ -385,10 +386,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.pools = evt.data;
 
       if (this.pools.length > 0) {
-        this.ws.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]).subscribe((res) => {
+        this.ws.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]).subscribe((datasets) => {
           this.setVolumeData({
             name: 'RootDatasets',
-            data: res,
+            data: datasets,
           });
           this.isDataReady();
         });
@@ -400,7 +401,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    this.core.register({ observerClass: this, eventName: 'SysInfo' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'SysInfo' }).subscribe((evt: SysInfoEvent) => {
       if (typeof this.systemInformation == 'undefined') {
         this.systemInformation = evt.data;
         if (!this.pools || this.pools.length == 0) {

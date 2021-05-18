@@ -1,15 +1,16 @@
 import {
-  Component, OnInit, Output, EventEmitter,
+  Component, EventEmitter, OnInit, Output,
 } from '@angular/core';
-import { CoreEvent } from 'app/interfaces/events';
-import { ProductType } from '../../../enums/product-type.enum';
-import { NavigationService } from '../../../services/navigation/navigation.service';
-import { WebSocketService } from '../../../services';
-import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { DocsService } from '../../../services/docs.service';
 import { Router } from '@angular/router';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
+import { ProductType } from 'app/enums/product-type.enum';
+import { WebSocketService } from '../../../services';
+import { DocsService } from '../../../services/docs.service';
+import { NavigationService } from '../../../services/navigation/navigation.service';
 
 @Component({
   selector: 'navigation',
@@ -57,10 +58,10 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
       this.core.register({
         observerClass: this,
         eventName: 'SysInfo',
-      }).subscribe((evt: CoreEvent) => {
+      }).subscribe((evt: SysInfoEvent) => {
         if (window.localStorage.getItem('product_type') !== ProductType.Core) {
           // hide jail and plugins section if product type is SCALE or ENTERPRISE with jail unregistered
-          if ((evt.data.license && evt.data.license.features.indexOf('JAILS') === -1)
+          if ((evt.data.license && evt.data.license.features.indexOf(LicenseFeature.Jails) === -1)
               || window.localStorage.getItem('product_type').includes(ProductType.Scale)) {
             _.find(menuItem, { state: 'plugins' }).disabled = true;
             // _.find(_.find(menuItem, {state : "virtualization"}).sub, { state : 'jails' }).disabled = true; TEMPORARILY disabled
