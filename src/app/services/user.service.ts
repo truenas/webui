@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RestService } from './rest.service';
 import { WebSocketService } from './ws.service';

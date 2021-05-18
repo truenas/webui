@@ -7,8 +7,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import * as ipRegex from 'ip-regex';
-import { Subject } from 'rxjs';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject, Subscription } from 'rxjs';
 import { ProductType } from '../../enums/product-type.enum';
 import helptext from '../../helptext/network/interfaces/interfaces-list';
 

@@ -17,7 +17,6 @@
               "dom-plane",
               "@mattlewis92/dom-autoscroller",
               "rxjs",
-              "rxjs-compat",
               "is-cidr",
               "cidr-regex",
               "dygraphs",

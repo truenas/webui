@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { WebSocketService } from '../../services/index';
 
 @Injectable({ providedIn: 'root' })

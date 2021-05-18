@@ -3,7 +3,7 @@ import {
   Component, Output, EventEmitter, OnInit, OnDestroy,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { T } from '../../../../translate-marker';
 import { WebSocketService } from '../../../../services/ws.service';
 

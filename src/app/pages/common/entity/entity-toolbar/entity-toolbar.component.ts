@@ -19,7 +19,6 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { EntityTemplateDirective } from '../entity-template.directive';
 import { EntityUtils } from '../utils';
 
-import { Subscription } from 'rxjs/Subscription';
 import { CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { Control } from './models/control.interface';

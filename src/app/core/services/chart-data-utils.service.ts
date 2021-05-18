@@ -5,7 +5,6 @@ import { Observer } from 'rxjs';
 import { Subject } from 'rxjs';
 import { CoreService, CoreEvent } from './core.service';
 import { Thread } from 'app/core/classes/thread';
-import * as moment from 'moment';
 
 export interface ProcessTask {
   responseEvent: string;
