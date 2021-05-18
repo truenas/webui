@@ -36,6 +36,7 @@ export class NFSFormComponent implements FormConfiguration {
   productType = window.localStorage.getItem('product_type') as ProductType;
   hideOnScale = ['alldirs', 'quiet'];
   title = helptext_sharing_nfs.title;
+  isOneColumnForm = true;
 
   fieldSets = new FieldSets([
     {
@@ -63,7 +64,6 @@ export class NFSFormComponent implements FormConfiguration {
       name: helptext_sharing_nfs.fieldset_general,
       class: 'general',
       label: true,
-      colspan: 2,
       config: [
         {
           type: 'input',
@@ -95,7 +95,6 @@ export class NFSFormComponent implements FormConfiguration {
     {
       name: helptext_sharing_nfs.fieldset_access,
       label: false,
-      colspan: 2,
       class: 'access',
       config: [
         {
@@ -180,7 +179,6 @@ export class NFSFormComponent implements FormConfiguration {
       name: helptext_sharing_nfs.fieldset_networks,
       label: false,
       class: 'networks',
-      colspan: 2,
       config: [{
         type: 'list',
         name: 'networks',
@@ -198,7 +196,6 @@ export class NFSFormComponent implements FormConfiguration {
       name: helptext_sharing_nfs.fieldset_hosts,
       label: false,
       class: 'hosts',
-      colspan: 2,
       config: [{
         type: 'list',
         name: 'hosts',
