@@ -52,6 +52,7 @@ export class CatalogAddFormComponent implements FormConfiguration {
           name: 'preferred_trains',
           placeholder: helptext.catalogForm.preferredTrains.placeholder,
           tooltip: helptext.catalogForm.preferredTrains.tooltip,
+          value: ['charts'],
         },
         {
           type: 'input',
