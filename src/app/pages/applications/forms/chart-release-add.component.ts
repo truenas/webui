@@ -1,5 +1,8 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import {
+  chartsTrain, ixChartApp, latestVersion, officialCatalog,
+} from 'app/constants/catalog.constants';
 import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
 import { FormGroup } from '@angular/forms';
@@ -32,7 +35,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
   private dialogRef: any;
   hideCancel = true;
   summary: any = {};
-  summary_title = 'Chart Release Summary';
+  summaryTitle = 'Chart Release Summary';
   private entityWizard: any;
   private destroy$ = new Subject();
   // private isLinear = true;
@@ -63,7 +66,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
           name: 'tag',
           placeholder: helptext.chartForm.image.tag.placeholder,
           tooltip: helptext.chartForm.image.tag.tooltip,
-          value: 'latest',
+          value: latestVersion,
         },
         {
           type: 'select',
@@ -358,7 +361,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
     });
   }
 
-  afterInit(entityWizard: EntityWizardComponent) {
+  afterInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
     this.summaryItems.forEach((item) => {
       this.makeSummary(item.step, item.fieldName, item.label);
@@ -383,7 +386,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
     }
   }
 
-  makeSummary(step: string | number, fieldName: string | number, label: string | number) {
+  makeSummary(step: string | number, fieldName: string | number, label: string | number): void {
     (< FormGroup > this.entityWizard.formArray.get([step]).get(fieldName)).valueChanges
       .pipe(
         takeUntil(this.destroy$),
@@ -393,7 +396,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
       });
   }
 
-  hideField(fieldName: any, show: boolean, entity: any) {
+  hideField(fieldName: any, show: boolean, entity: any): void {
     const target = _.find(this.fieldConfig, { name: fieldName });
     target['isHidden'] = show;
     entity.setDisabled(fieldName, show, show);
@@ -454,11 +457,11 @@ export class ChartReleaseAddComponent implements OnDestroy {
     }
 
     const payload = [{
-      catalog: 'OFFICIAL',
-      item: 'ix-chart',
+      catalog: officialCatalog,
+      item: ixChartApp,
       release_name: data.release_name,
-      train: 'charts',
-      version: 'latest',
+      train: chartsTrain,
+      version: latestVersion,
       values: {
         containerArgs: data.containerArgs,
         containerCommand: data.containerCommand,
@@ -506,7 +509,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }

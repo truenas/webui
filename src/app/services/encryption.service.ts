@@ -20,8 +20,16 @@ export class EncryptionService {
     protected loader: AppLoaderService, protected storage: StorageService,
     protected mdDialog: MatDialog, protected router: Router, protected http: HttpClient) {}
 
-  setPassphrase(row: any, encryptKeyPassphrase: string, adminPassphrase: string, poolName: string, route_success: any,
-    addRecoveryKey?: boolean, downloadEncrytpKey?: boolean, success_message?: string) {
+  setPassphrase(
+    row: any,
+    encryptKeyPassphrase: string,
+    adminPassphrase: string,
+    poolName: string,
+    route_success: any,
+    addRecoveryKey?: boolean,
+    downloadEncrytpKey?: boolean,
+    success_message?: string,
+  ): void {
     this.loader.open();
     this.ws.call('pool.passphrase', [parseInt(row), {
       passphrase: encryptKeyPassphrase,
@@ -37,7 +45,7 @@ export class EncryptionService {
     });
   }
 
-  openEncryptDialog(row: any, route_success: any, poolName: string, addRecoveryKey?: boolean) {
+  openEncryptDialog(row: any, route_success: any, poolName: string, addRecoveryKey?: boolean): void {
     const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
     dialogRef.componentInstance.volumeId = row;
     dialogRef.componentInstance.fileName = 'pool_' + poolName + '_encryption.key';
@@ -52,7 +60,7 @@ export class EncryptionService {
     });
   }
 
-  makeRecoveryKey(row: any, poolName: string, route_success: any) {
+  makeRecoveryKey(row: any, poolName: string, route_success: any): void {
     this.loader.open();
     const fileName = 'pool_' + poolName + '_recovery.key';
     this.ws.call('core.download', ['pool.recoverykey_add', [parseInt(row)], fileName]).subscribe((res) => {
@@ -76,7 +84,7 @@ export class EncryptionService {
     });
   }
 
-  deleteRecoveryKey(row: any, adminPassphrase: string, poolName: string, route_success: any) {
+  deleteRecoveryKey(row: any, adminPassphrase: string, poolName: string, route_success: any): void {
     this.dialogService.confirm(helptext.delete_recovery_key_title, helptext.delete_recovery_key_message, true, T('Delete Key'))
       .subscribe((res: boolean) => {
         if (res) {

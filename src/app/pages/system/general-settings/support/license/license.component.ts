@@ -35,7 +35,7 @@ export class LicenseComponent implements FormConfiguration {
   constructor(private ws: WebSocketService, private modalService: ModalService,
     private loader: AppLoaderService, private dialog: DialogService) { }
 
-  customSubmit(form: any) {
+  customSubmit(form: any): void {
     this.loader.open();
     this.ws.call(this.updateCall, [form.license]).subscribe(() => {
       this.loader.close();

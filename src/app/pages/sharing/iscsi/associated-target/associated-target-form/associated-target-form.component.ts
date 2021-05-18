@@ -75,7 +75,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
   constructor(protected router: Router, protected iscsiService: IscsiService, protected aroute: ActivatedRoute,
     protected loader: AppLoaderService, protected ws: WebSocketService) {}
 
-  preInit() {
+  preInit(): void {
     this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
@@ -84,34 +84,34 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
     this.target_control = _.find(this.fieldConfig, { name: 'target' });
     this.target_control.options.push({ label: '----------', value: '' });
-    this.iscsiService.getTargets().subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        this.target_control.options.push({ label: res[i].name, value: res[i].id });
+    this.iscsiService.getTargets().subscribe((targets) => {
+      for (let i = 0; i < targets.length; i++) {
+        this.target_control.options.push({ label: targets[i].name, value: targets[i].id });
       }
     });
 
     this.extent_control = _.find(this.fieldConfig, { name: 'extent' });
     this.extent_control.options.push({ label: '----------', value: '' });
-    this.iscsiService.getExtents().subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        this.extent_control.options.push({ label: res[i].name, value: res[i].id });
+    this.iscsiService.getExtents().subscribe((extents) => {
+      for (let i = 0; i < extents.length; i++) {
+        this.extent_control.options.push({ label: extents[i].name, value: extents[i].id });
       }
     });
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     if (value['lunid'] === '') {
       delete value['lunid'];
     }
   }
 
-  customEditCall(value: any) {
+  customEditCall(value: any): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
       (res) => {

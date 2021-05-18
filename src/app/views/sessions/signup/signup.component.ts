@@ -17,7 +17,7 @@ export class SignupComponent {
     isAgreed: '',
   };
 
-  signup() {
+  signup(): void {
     console.log(this.signupData);
 
     this.submitButton.disabled = true;

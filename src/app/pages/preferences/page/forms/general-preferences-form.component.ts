@@ -68,7 +68,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
   ) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
     this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).subscribe((evt: CoreEvent) => {
       if (this.isWaiting) {
@@ -94,11 +94,11 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
     this.init();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 
-  init(updating?: boolean) {
+  init(updating?: boolean): void {
     this.setThemeOptions();
     if (!updating) {
       this.startSubscriptions();
@@ -106,7 +106,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
     this.generateFieldConfig();
   }
 
-  startSubscriptions() {
+  startSubscriptions(): void {
     this.core.register({ observerClass: this, eventName: 'ThemeListsChanged' }).subscribe((evt: CoreEvent) => {
       this.setThemeOptions();
       if (!this.embeddedForm) { return; }
@@ -140,7 +140,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  setThemeOptions() {
+  setThemeOptions(): void {
     this.themeOptions.splice(0, this.themeOptions.length);
     for (let i = 0; i < this.themeService.allThemes.length; i++) {
       const theme = this.themeService.allThemes[i];
@@ -148,7 +148,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  onPreferences(prefs: any) {
+  onPreferences(prefs: any): void {
     this.fieldSets[0].config = [
       {
         type: 'select',
@@ -207,7 +207,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  generateFieldConfig() {
+  generateFieldConfig(): void {
     for (const i in this.fieldSets) {
       for (const ii in this.fieldSets[i].config) {
         this.fieldConfig.push(this.fieldSets[i].config[ii]);
@@ -215,11 +215,11 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     data.tableDisplayedColumns ? data.tableDisplayedColumns = [] : delete (data.tableDisplayedColumns);
   }
 
-  updateValues(prefs: any) {
+  updateValues(prefs: any): void {
     const keys = Object.keys(this.embeddedForm.formGroup.controls);
     keys.forEach((key) => {
       if (key !== 'reset') {

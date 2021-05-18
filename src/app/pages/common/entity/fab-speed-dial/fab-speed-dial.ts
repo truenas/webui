@@ -37,7 +37,7 @@ export class SmdFabSpeedDialTrigger {
   }
 
   @HostListener('click', ['$event'])
-  _onClick(event: any) {
+  _onClick(event: any): void {
     if (!this._parent.fixed) {
       this._parent.toggle();
       event.stopPropagation();
@@ -66,14 +66,14 @@ export class SmdFabSpeedDialActions implements AfterContentInit {
     this.initButtonStates();
   }
 
-  private initButtonStates() {
+  private initButtonStates(): void {
     this._buttons.toArray().forEach((button, i) => {
       this.renderer.addClass(button._getHostElement(), 'smd-fab-action-item');
       this.changeElementStyle(button._getHostElement(), 'z-index', '' + (Z_INDEX_ITEM - i));
     });
   }
 
-  show() {
+  show(): void {
     if (this._buttons) {
       this._buttons.toArray().forEach((button, i) => {
         let transitionDelay = 0;
@@ -92,7 +92,7 @@ export class SmdFabSpeedDialActions implements AfterContentInit {
     }
   }
 
-  hide() {
+  hide(): void {
     if (this._buttons) {
       this._buttons.toArray().forEach((button, i) => {
         let opacity = '1';
@@ -112,14 +112,14 @@ export class SmdFabSpeedDialActions implements AfterContentInit {
     }
   }
 
-  private getTranslateFunction(value: string) {
+  private getTranslateFunction(value: string): string {
     const dir = this._parent.direction;
     const translateFn = (dir == 'up' || dir == 'down') ? 'translateY' : 'translateX';
     const sign = (dir == 'down' || dir == 'right') ? '-' : '';
     return translateFn + '(' + sign + value + ')';
   }
 
-  private changeElementStyle(elem: any, style: string, value: string) {
+  private changeElementStyle(elem: any, style: string, value: string): void {
     // FIXME - Find a way to create a "wrapper" around the action button(s) provided by the user, so we don't change it's style tag
     this.renderer.setStyle(elem, style, value);
   }
@@ -151,7 +151,7 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
      * Whether this speed dial is opened
      */
   @HostBinding('class.smd-opened')
-  @Input() get open() {
+  @Input() get open(): boolean {
     return this._open;
   }
 
@@ -169,7 +169,7 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
   /**
      * The direction of the speed dial. Can be 'up', 'down', 'left' or 'right'
      */
-  @Input() get direction() {
+  @Input() get direction(): string {
     return this._direction;
   }
 
@@ -189,7 +189,7 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
   /**
      * The animation mode to open the speed dial. Can be 'fling' or 'scale'
      */
-  @Input() get animationMode() {
+  @Input() get animationMode(): string {
     return this._animationMode;
   }
 
@@ -224,18 +224,18 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
   /**
      * Toggle the open state of this speed dial
      */
-  toggle() {
+  toggle(): void {
     this.open = !this.open;
   }
 
   @HostListener('click')
-  _onClick() {
+  _onClick(): void {
     if (!this.fixed && this.open) {
       this.open = false;
     }
   }
 
-  setActionsVisibility() {
+  setActionsVisibility(): void {
     if (this.open) {
       this._childActions.show();
     } else {
@@ -243,7 +243,7 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
     }
   }
 
-  private _setElementClass(elemClass: string, isAdd: boolean) {
+  private _setElementClass(elemClass: string, isAdd: boolean): void {
     this.renderer.addClass(this.elementRef.nativeElement, `smd-${elemClass}`);
   }
 }

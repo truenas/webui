@@ -258,7 +258,7 @@ export class ServiceUPSComponent implements FormConfiguration {
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     entityForm.submitFunction = (body) => this.ws.call('ups.update', [body]);
     this.entityForm = entityForm;
 
@@ -297,7 +297,7 @@ export class ServiceUPSComponent implements FormConfiguration {
     return Object.keys(object).find((key) => object[key] === value);
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     data.driver = this.ups_driver_key;
   }
 }

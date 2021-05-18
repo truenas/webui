@@ -122,7 +122,7 @@ export class OpenvpnClientComponent implements FormConfiguration {
 
   constructor(protected services: ServicesService) { }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     entityEdit.submitFunction = (body: any) => this.services.updateOpenVPN('openvpn.client.update', body);
 
     this.services.getOpenVPNClientAuthAlgorithmChoices().subscribe((res) => {

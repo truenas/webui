@@ -29,8 +29,20 @@ export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnI
   ngOnInit() {
     this.selectStates.length = this.config.options.length;
     this.selectStates.fill(false);
-    this.values.push(this.config.options[0]);
-    this.selectStates[0] = true;
+
+    if (this.config.value) {
+      this.values = this.config.value;
+      this.config.value.forEach((value: any) => {
+        const index = this.config.options.indexOf(value);
+
+        if (index >= 0) {
+          this.selectStates[index] = true;
+        }
+      });
+    } else {
+      this.values.push(this.config.options[0]);
+      this.selectStates[0] = true;
+    }
     this.updateController();
   }
 

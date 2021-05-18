@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { MaterialModule } from '../../appMaterial.module';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
@@ -60,6 +61,7 @@ import { HtmlTooltipDirective } from './directives/html-tooltip/html-tooltip.dir
     FlexLayoutModule,
     FormsModule,
     TranslateModule,
+    RouterModule,
     CommonDirectivesModule,
     EntityModule,
   ],

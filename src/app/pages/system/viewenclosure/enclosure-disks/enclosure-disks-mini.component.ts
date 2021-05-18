@@ -5,7 +5,7 @@ import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 import { MaterialModule } from 'app/appMaterial.module';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import {
-  Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils,
+  Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils, Point,
 } from 'pixi.js';
 import 'pixi-projection';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
@@ -49,14 +49,14 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     this.pixiHeight = 480;
   }
 
-  createExtractedEnclosure(profile: any) {
+  createExtractedEnclosure(profile: any): void {
     // MINIs have no support for expansion shelves
     // therefore we will never need to create
     // any enclosure selection UI. Leave this
     // empty or the base class will throw errors
   }
 
-  createEnclosure(enclosure: any = this.selectedEnclosure) {
+  createEnclosure(enclosure: any = this.selectedEnclosure): void {
     switch (enclosure.model) {
       case 'FREENAS-MINI-3.0-E':
       case 'FREENAS-MINI-3.0-E+':
@@ -94,11 +94,11 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     this.container.setTransform(-30);
   }
 
-  count(obj: any) {
+  count(obj: any): number {
     return Object.keys(obj).length;
   }
 
-  stackPositions(log = false) {
+  stackPositions(log = false): Point[] {
     const result = this.enclosure.driveTrayObjects.map((dt, index) => {
       const disk = this.findDiskBySlotNumber(index + 1);
       return dt.container.getGlobalPosition();

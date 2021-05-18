@@ -35,37 +35,16 @@ export class EntityFormService {
   constructor(@Inject(FormBuilder) private formBuilder: FormBuilder,
     protected ws: WebSocketService, private rest: RestService) {}
 
-  createFormGroup(controls: FieldConfig[]) {
+  createFormGroup(controls: FieldConfig[]): FormGroup {
     const formGroup: { [id: string]: AbstractControl } = {};
 
     if (controls) {
       for (let i = 0; i < controls.length; i++) {
-        if (controls[i].formarray) {
-          if (controls[i].initialCount == null) {
-            controls[i].initialCount = 1;
-          }
+        const formControl = this.createFormControl(controls[i]);
 
-          const formArray = this.createFormArray(controls[i].formarray,
-            controls[i].initialCount);
-          formGroup[controls[i].name] = formArray;
-        } else if (controls[i].listFields) {
-          const formArray = this.formBuilder.array([]);
-          controls[i].listFields.forEach((listField) => {
-            formArray.push(this.createFormGroup(listField));
-          });
-          formGroup[controls[i].name] = formArray;
-        } else if (controls[i].subFields) {
-          const subformGroup = this.createFormGroup(controls[i].subFields);
-          formGroup[controls[i].name] = subformGroup;
-        } else if (controls[i].type == 'label') {
-          continue;
-        } else {
-          formGroup[controls[i].name] = new FormControl(
-            { value: controls[i].value, disabled: controls[i].disabled },
-            controls[i].type === 'input-list' ? [] : controls[i].validation, controls[i].asyncValidation,
-          );
+        if (formControl) {
+          formGroup[controls[i].name] = formControl;
         }
-
         controls[i].relation = Array.isArray(controls[i].relation) ? controls[i].relation : [];
       }
     }
@@ -73,7 +52,34 @@ export class EntityFormService {
     return this.formBuilder.group(formGroup);
   }
 
-  createFormArray(controls: FieldConfig[], initialCount: number) {
+  createFormControl(fieldConfig: FieldConfig): AbstractControl {
+    let formControl: AbstractControl;
+
+    if (fieldConfig) {
+      if (fieldConfig.formarray) {
+        if (fieldConfig.initialCount == null) {
+          fieldConfig.initialCount = 1;
+        }
+        formControl = this.createFormArray(fieldConfig.formarray, fieldConfig.initialCount);
+      } else if (fieldConfig.listFields) {
+        formControl = this.formBuilder.array([]);
+        fieldConfig.listFields.forEach((listField) => {
+          (formControl as FormArray).push(this.createFormGroup(listField));
+        });
+      } else if (fieldConfig.subFields) {
+        formControl = this.createFormGroup(fieldConfig.subFields);
+      } else if (fieldConfig.type != 'label') {
+        formControl = new FormControl(
+          { value: fieldConfig.value, disabled: fieldConfig.disabled },
+          fieldConfig.type === 'input-list' ? [] : fieldConfig.validation, fieldConfig.asyncValidation,
+        );
+      }
+    }
+
+    return formControl;
+  }
+
+  createFormArray(controls: FieldConfig[], initialCount: number): FormArray {
     const formArray = this.formBuilder.array([]);
 
     for (let i = 0; i < initialCount; i++) {
@@ -83,13 +89,12 @@ export class EntityFormService {
     return formArray;
   }
 
-  insertFormArrayGroup(index: number, formArray: FormArray,
-    controls: FieldConfig[]) {
+  insertFormArrayGroup(index: number, formArray: FormArray, controls: FieldConfig[]): void {
     const formGroup = this.createFormGroup(controls);
     formArray.insert(index, formGroup);
   }
 
-  removeFormArrayGroup(index: number, formArray: FormArray) {
+  removeFormArrayGroup(index: number, formArray: FormArray): void {
     formArray.removeAt(index);
   }
 
@@ -140,7 +145,7 @@ export class EntityFormService {
     });
   }
 
-  getDatasetsAndZvolsListChildren(node: any) {
+  getDatasetsAndZvolsListChildren(node: any): void {
     const children = [];
 
     // if we ever need this we should convert to websocket
@@ -185,14 +190,14 @@ export class EntityFormService {
     });
   }
 
-  clearFormError(fieldConfig: any[]) {
+  clearFormError(fieldConfig: any[]): void {
     for (let f = 0; f < fieldConfig.length; f++) {
       fieldConfig[f]['errors'] = '';
       fieldConfig[f]['hasErrors'] = false;
     }
   }
 
-  phraseInputData(value: any, config: InputUnitConfig) {
+  phraseInputData(value: any, config: InputUnitConfig): any {
     if (!value) {
       return value;
     }
@@ -240,7 +245,7 @@ export class EntityFormService {
     return NaN;
   }
 
-  getHumanReadableUnit(num: number, unit: string, type: UnitType) {
+  getHumanReadableUnit(num: number, unit: string, type: UnitType): string {
     if (type === UnitType.duration) {
       let readableUnit = unit.length > 1 ? unit : (this.shortDurationUnit as any)[unit];
       if (num <= 1 && _.endsWith(readableUnit, 'S')) {

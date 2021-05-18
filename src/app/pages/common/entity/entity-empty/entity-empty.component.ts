@@ -40,17 +40,17 @@ export class EntityEmptyComponent {
 
   }
 
-  doAction() {
+  doAction(): void {
     if (this.conf.button.action) {
       this.conf.button.action();
     }
   }
 
-  isLoading() {
+  isLoading(): boolean {
     return this.conf.type == EmptyType.loading;
   }
 
-  getIcon() {
+  getIcon(): string {
     let icon = 'logo';
     if (this.conf.icon) {
       icon = this.conf.icon;

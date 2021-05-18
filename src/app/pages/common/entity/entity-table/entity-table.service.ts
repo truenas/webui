@@ -73,12 +73,12 @@ export class EntityTableService implements OnDestroy {
     };
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
     this.tableUtils.terminate();
   }
 
-  prepReport(evt: CoreEvent) {
+  prepReport(evt: CoreEvent): void {
     this.tableUtils.onmessage = ({ data }) => {
       const evt = data;
     };

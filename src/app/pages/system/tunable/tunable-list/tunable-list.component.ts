@@ -74,7 +74,7 @@ export class TunableListComponent {
     protected _injector: Injector,
     protected _appRef: ApplicationRef) {}
 
-  preInit(entityList: any) {
+  preInit(entityList: any): void {
     this.entityList = entityList;
     this.sub = this.aroute.params.subscribe((params) => {});
     this.product_type = window.localStorage.getItem('product_type') as ProductType;
@@ -88,7 +88,7 @@ export class TunableListComponent {
     }
   }
 
-  wsMultiDeleteParams(selected: any) {
+  wsMultiDeleteParams(selected: any): any {
     const params: any[] = [this.wsDelete];
     const selectedId = [];
     for (const i in selected) {

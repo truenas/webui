@@ -13,7 +13,8 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { WebSocketService } from '../../../services';
 import { EntityUtils } from '../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-
+import { forkJoin, of } from 'rxjs';
+import { tap, map, catchError } from 'rxjs/operators';
 @Component({
   selector: 'app-kubernetes-settings',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -22,7 +23,6 @@ export class KubernetesSettingsComponent implements FormConfiguration {
   queryCall: 'kubernetes.config' = 'kubernetes.config';
   editCall: 'kubernetes.update' = 'kubernetes.update';
   isEditJob = true;
-  private dialogRef: any;
   private newEnableContainerImageUpdate = true;
   title = helptext.kubForm.title;
   private entityEdit: any;
@@ -101,29 +101,45 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     private dialogService: DialogService, private modalService: ModalService,
     private appService: ApplicationsService) { }
 
-  preInit(entityEdit: any) {
-    this.entityEdit = entityEdit;
-    const pool_control = _.find(this.fieldSets[0].config, { name: 'pool' });
-    this.appService.getPoolList().subscribe((pools) => {
-      pools.forEach((pool) => {
-        pool_control.options.push({ label: pool.name, value: pool.name });
-      });
-    });
-    const node_ip_control = _.find(this.fieldSets[0].config, { name: 'node_ip' });
-    this.appService.getBindIPChoices().subscribe((ips) => {
-      for (const ip in ips) {
-        node_ip_control.options.push({ label: ip, value: ip });
-      }
-    });
-    const v4_interface_control = _.find(this.fieldSets[1].config, { name: 'route_v4_interface' });
-    this.appService.getInterfaces().subscribe((interfaces: any[]) => {
-      interfaces.forEach((i) => {
-        v4_interface_control.options.push({ label: i.name, value: i.name });
-      });
-    });
+  async prerequisite(): Promise<boolean> {
+    const setPoolControl = this.appService.getPoolList().pipe(
+      tap((pools) => {
+        const poolControl = _.find(this.fieldSets[0].config, { name: 'pool' });
+        pools.forEach((pool) => {
+          poolControl.options.push({ label: pool.name, value: pool.name });
+        });
+      }),
+    );
+
+    const setNodeIpControl = this.appService.getBindIPChoices().pipe(
+      tap((ips) => {
+        const nodeIpControl = _.find(this.fieldSets[0].config, { name: 'node_ip' });
+        for (const ip in ips) {
+          nodeIpControl.options.push({ label: ip, value: ip });
+        }
+      }),
+    );
+
+    const setV4InterfaceControl = this.appService.getInterfaces().pipe(
+      tap((interfaces: any[]) => {
+        const v4InterfaceControl = _.find(this.fieldSets[1].config, { name: 'route_v4_interface' });
+        interfaces.forEach((i) => {
+          v4InterfaceControl.options.push({ label: i.name, value: i.name });
+        });
+      }),
+    );
+
+    return forkJoin([setPoolControl, setNodeIpControl, setV4InterfaceControl]).pipe(
+      map(() => true),
+      catchError((error) => {
+        console.log(error);
+        return of(false);
+      }),
+    ).toPromise();
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
+    this.entityEdit = entityEdit;
     this.appService.getContainerConfig().subscribe((res) => {
       if (res) {
         this.entityEdit.formGroup.controls['enable_container_image_update'].setValue(res.enable_image_updates);
@@ -131,7 +147,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     if (data.route_v4_gateway === '') {
       data.route_v4_gateway = null;
     }
@@ -143,7 +159,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     delete data.enable_container_image_update;
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     this.loader.open();
 
     const promises = [];

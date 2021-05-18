@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { forkJoin } from 'rxjs';
 
 import { IscsiService } from '../../../../../services';
 import * as _ from 'lodash';
@@ -49,24 +51,23 @@ export class AssociatedTargetListComponent {
   protected entityList: any;
   constructor(protected router: Router, protected iscsiService: IscsiService) {}
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
   }
 
-  dataHandler(entityList: any) {
-    this.iscsiService.getTargets().subscribe((targets) => {
-      const target_list = targets;
-      this.iscsiService.getExtents().subscribe((res) => {
-        const extent_list = res;
-
-        for (let i = 0; i < entityList.rows.length; i++) {
-          entityList.rows[i].target = _.find(target_list, { id: entityList.rows[i].target })['name'];
-          entityList.rows[i].extent = _.find(extent_list, { id: entityList.rows[i].extent })['name'];
-        }
-      });
+  dataHandler(entityList: any): void {
+    forkJoin([
+      this.iscsiService.getTargets(),
+      this.iscsiService.getExtents(),
+    ]).subscribe(([targets, extents]) => {
+      for (let i = 0; i < entityList.rows.length; i++) {
+        entityList.rows[i].target = _.find(targets, { id: entityList.rows[i].target })['name'];
+        entityList.rows[i].extent = _.find(extents, { id: entityList.rows[i].extent })['name'];
+      }
     });
   }
-  getActions(row: any) {
+
+  getActions(row: any): any[] {
     return [{
       id: row.target,
       name: 'edit',

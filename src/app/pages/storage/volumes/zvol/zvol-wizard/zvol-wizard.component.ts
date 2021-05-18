@@ -63,7 +63,7 @@ export class ZvolWizardComponent {
   title: string;
   isLinear = true;
   summary: any = {};
-  summary_title = 'Zvol Summary';
+  summaryTitle = 'Zvol Summary';
 
   protected origVolSize: number;
   protected origHuman: string;
@@ -262,7 +262,7 @@ export class ZvolWizardComponent {
     },
   ];
 
-  isCustActionVisible(actionId: any, stepperIndex: number) {
+  isCustActionVisible(actionId: any, stepperIndex: number): boolean {
     if (!(stepperIndex == 1)) {
       return false;
     }
@@ -304,11 +304,11 @@ export class ZvolWizardComponent {
     protected modalService: ModalService,
   ) {}
 
-  preInit(entityWizard: EntityWizardComponent) {
+  preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
   }
 
-  async preInitZvolForm(entityWizard: EntityWizardComponent) {
+  async preInitZvolForm(entityWizard: EntityWizardComponent): Promise<void> {
     const zvolEntityForm = (< FormGroup > entityWizard.formArray.get([1]));
     if (!this.parent) return;
 
@@ -430,7 +430,7 @@ export class ZvolWizardComponent {
     });
   }
 
-  afterInit(entityWizard: EntityWizardComponent) {
+  afterInit(entityWizard: EntityWizardComponent): void {
     const zvolEntityForm = (< FormGroup > this.entityWizard.formArray.get([1]));
     (< FormGroup > entityWizard.formArray.get([0])).get('path').valueChanges.subscribe((pool: String) => {
       if (pool.includes('mnt')) {
@@ -488,7 +488,7 @@ export class ZvolWizardComponent {
     });
   }
 
-  blurVolsize(parent: any) {
+  blurVolsize(parent: any): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['volsize'].setValue(parent.storageService.humanReadable);
     }
@@ -526,7 +526,7 @@ export class ZvolWizardComponent {
     return this.ws.call('pool.dataset.create', [data]);
   }
 
-  async customNext(stepper: any) {
+  async customNext(stepper: any): Promise<void> {
     if (stepper._selectedIndex == 0) {
       if (!this.parent) {
         this.wizardConfig[0].fieldConfig.find((c) => c.name === 'path').warnings = 'Please select a ZFS Volume';
@@ -537,7 +537,7 @@ export class ZvolWizardComponent {
     stepper.next();
   }
 
-  customSubmit(body: any) {
+  customSubmit(body: any): void {
     this.loader.open();
 
     if (this.isNew === true) {
@@ -559,11 +559,11 @@ export class ZvolWizardComponent {
     }
   }
 
-  setParent(id: string) {
+  setParent(id: string): void {
     this.parent = id;
   }
 
-  customCancel() {
+  customCancel(): void {
     this.modalService.close('slide-in-form').then(
       (closed) => {
         if (closed) {

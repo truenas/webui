@@ -162,6 +162,39 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
   }
 
+  addFormControls(fieldSets: FieldSet[]) {
+    this.fieldSets = this.fieldSets.concat(fieldSets);
+
+    let fieldConfigs: FieldConfig[] = [];
+    fieldSets.forEach((fieldSet) => {
+      if (!fieldSet.divider) {
+        if (fieldSet.maxWidth) {
+          fieldSet.width = '100%';
+        } else {
+          fieldSet.width = this.conf.columnsOnForm === 1 || fieldSet.colspan === 2 ? '100%' : '50%';
+        }
+      }
+
+      fieldSet.config.forEach((fieldConfig) => {
+        const formControl = this.entityFormService.createFormControl(fieldConfig);
+        if (formControl) {
+          this.formGroup.setControl(fieldConfig.name, formControl);
+        }
+      });
+      fieldConfigs = fieldConfigs.concat(fieldSet.config);
+    });
+
+    for (const i in fieldConfigs) {
+      const config = fieldConfigs[i];
+      if (config.relation?.length > 0) {
+        this.fieldRelationService.setRelation(config, this.formGroup);
+      }
+    }
+
+    this.fieldConfig = this.fieldConfig.concat(fieldConfigs);
+    this.conf.fieldConfig = this.fieldConfig;
+  }
+
   async ngOnInit() {
     // get system general setting
     this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res) => {
@@ -182,6 +215,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (this.conf.saveSubmitText) {
       this.saveSubmitText = this.conf.saveSubmitText;
     }
+
+    this.makeFormGroup();
+
     if (this.conf.prerequisite) {
       await this.conf.prerequisite();
     }
@@ -230,8 +266,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         this.fieldSetDisplay = 'default';
       }
 
-      this.makeFormGroup();
-
       if (!this.conf.queryCall) {
         this.getFunction = this.noGetFunction();
       } else if (this.conf.queryCall) {
@@ -271,9 +305,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.data = res.data;
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
               this.data = this.conf.resourceTransformIncomingRestData(this.data);
-              if (this.data['changed_schema']) {
-                this.makeFormGroup();
-                delete this.data['changed_schema'];
+              const extraFieldSets = this.data['extra_fieldsets'];
+              if (extraFieldSets) {
+                this.addFormControls(extraFieldSets);
+                delete this.data['extra_fieldsets'];
               }
             }
             for (const key in this.data) {
@@ -308,9 +343,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
               this.wsResponse = this.conf.resourceTransformIncomingRestData(this.wsResponse);
-              if (this.wsResponse['changed_schema']) {
-                this.makeFormGroup();
-                delete this.wsResponse['changed_schema'];
+              const extraFieldSets = this.wsResponse['extra_fieldsets'];
+              if (extraFieldSets) {
+                this.addFormControls(extraFieldSets);
+                delete this.wsResponse['extra_fieldsets'];
               }
             }
             if (this.conf.dataHandler) {

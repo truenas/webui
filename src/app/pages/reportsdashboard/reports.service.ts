@@ -73,12 +73,12 @@ export class ReportsService implements OnDestroy {
     };
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
     this.reportsUtils.terminate();
   }
 
-  prepReport(evt: CoreEvent) {
+  prepReport(evt: CoreEvent): void {
     this.reportsUtils.onmessage = ({ data }) => {
       const evt = data;
     };

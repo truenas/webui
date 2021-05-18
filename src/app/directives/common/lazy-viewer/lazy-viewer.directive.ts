@@ -10,22 +10,7 @@ import {
 @Directive({
   selector: '[lazyViewer]',
 })
-export class LazyViewerDirective implements OnInit {
+export class LazyViewerDirective {
   @Input() container?: string;
   @Input() view?: string;
-
-  constructor(private renderer: Renderer2, private el: ElementRef) {
-  }
-
-  ngOnInit() {
-    /* console.log(this.view);
-    console.log(this.el); */
-  }
-
-  @HostListener('mouseenter') onMouseEnter() {
-    // console.log(this.el.nativeElement.querySelectorAll(this.view));
-  }
-
-  @HostListener('mouseleave') onMouseLeave() {
-  }
 }

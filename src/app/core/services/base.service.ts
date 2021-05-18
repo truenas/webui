@@ -23,6 +23,6 @@ export class BaseService {
     });
   }
 
-  protected onAuthenticated(evt: CoreEvent) {
+  protected onAuthenticated(evt: CoreEvent): void {
   }
 }

@@ -204,7 +204,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     this.incomingData = data;
     this.setForm();
     return data;
@@ -249,7 +249,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     },
   ];
 
-  setForm() {
+  setForm(): void {
     const fields = ['country', 'state', 'city', 'organization', 'organizational_unit', 'email', 'common', 'DN', 'cert_type',
       'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'revoked', 'signed_certificates', 'lifetime'];
     fields.forEach((field) => {
@@ -266,11 +266,11 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     }
   }
 
-  afterInit() {
+  afterInit(): void {
     this.title = helptext_system_ca.edit.title;
   }
 
-  doSignCSR(entityDialog: any) {
+  doSignCSR(entityDialog: any): void {
     const self = entityDialog.parent;
     const payload = {
       ca_id: self.rowNum,
@@ -288,7 +288,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     });
   }
 
-  viewCertificate() {
+  viewCertificate(): void {
     this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true,
       helptext_system_certificates.viewDialog.download, false, '',
       '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.certificate, true).subscribe((res: boolean) => {
@@ -298,7 +298,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     });
   }
 
-  exportCertificate() {
+  exportCertificate(): void {
     const fileName = this.incomingData.name + '.crt';
     this.ws.call('core.download', ['filesystem.get', [this.incomingData.certificate_path], fileName]).subscribe(
       (res) => {
@@ -317,7 +317,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     );
   }
 
-  viewKey() {
+  viewKey(): void {
     this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true,
       helptext_system_certificates.viewDialog.download, false, '',
       '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.privatekey, true).subscribe((res: boolean) => {
@@ -327,7 +327,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     });
   }
 
-  exportKey() {
+  exportKey(): void {
     const fileName = this.incomingData.name + '.key';
     this.ws.call('core.download', ['filesystem.get', [this.incomingData.privatekey_path], fileName]).subscribe(
       (res) => {
@@ -346,7 +346,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     );
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     const payload: any = {};
     payload['name'] = value.name;
 

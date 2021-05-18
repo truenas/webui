@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, of } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import * as _ from 'lodash';
@@ -373,23 +373,22 @@ export class LanguageService {
   ) {
   }
 
-  setLanguageFromBrowser(): Observable<void> {
+  setLanguageFromBrowser(): Observable<boolean> {
     if (this.currentLanguage) {
-      return EMPTY;
+      return of(true);
     }
 
     const browserLang = this.translate.getBrowserLang();
     return this.setLanguage(browserLang);
   }
 
-  setLanguageFromMiddleware(): Observable<void> {
+  setLanguageFromMiddleware(): Observable<boolean> {
     return this.sysGeneralService.getGeneralConfig.pipe(switchMap((res) => {
       if (res?.language) {
         return this.setLanguage(res.language);
       }
 
-      this.setLanguageFromBrowser();
-      return EMPTY;
+      return this.setLanguageFromBrowser();
     }));
   }
 
@@ -407,7 +406,7 @@ export class LanguageService {
   /**
    * @return Observable that completes when translations have been loaded.
    */
-  setLanguage(lang: string): Observable<void> {
+  setLanguage(lang: string): Observable<boolean> {
     if (_.find(this.availableLangs, { code: lang })) {
       this.currentLanguage = lang;
     } else {
@@ -415,7 +414,7 @@ export class LanguageService {
     }
 
     return this.translate.use(this.currentLanguage).pipe(
-      map(() => undefined),
+      map(() => true),
     );
   }
 }

@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 import { WebSocketService, DialogService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -55,11 +57,11 @@ export class ChangePasswordComponent implements FormConfiguration {
     protected loader: AppLoaderService, protected dialog: DialogService) {
   }
 
-  preInit(entityForm: EntityFormComponent) {
+  preInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
   }
 
-  customSubmit(body: any) {
+  customSubmit(body: any): Subscription {
     delete body.password_conf;
     this.loader.open();
     return this.ws.call('auth.check_user', ['root', body.curr_password]).subscribe((check) => {

@@ -86,11 +86,11 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  doAdd(id?: number) {
+  doAdd(id?: number): void {
     this.modalService.open('slide-in-form', new ScrubFormComponent(this.taskService, this.modalService), id);
   }
 
-  doEdit(id: number) {
+  doEdit(id: number): void {
     this.doAdd(id);
   }
 

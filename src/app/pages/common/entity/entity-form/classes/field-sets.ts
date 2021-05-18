@@ -21,7 +21,7 @@ export class FieldSets {
 
   constructor(private readonly _init: FieldSet[] = []) {}
 
-  config(configName: string) {
+  config(configName: string): FieldConfig {
     return this.list()
       .find(
         (set) =>

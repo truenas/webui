@@ -50,15 +50,9 @@ import { MaterialModule } from 'app/appMaterial.module';
   `],
 })
 
-export class DiskComponent implements AfterViewInit, OnDestroy {
+export class DiskComponent {
   @Input() data: any;
 
-  constructor(public el: ElementRef/* , private ngZone: NgZone */) {
-  }
-
-  ngAfterViewInit() {
-  }
-
-  ngOnDestroy() {
+  constructor(public el: ElementRef) {
   }
 }

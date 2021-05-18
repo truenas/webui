@@ -79,7 +79,7 @@ export class ViewChartBarComponent implements AfterViewInit, OnChanges {
     this.render();
   }
 
-  get data() {
+  get data(): any {
     return this._data;
   }
 
@@ -106,7 +106,7 @@ export class ViewChartBarComponent implements AfterViewInit, OnChanges {
     });
   }
 
-  makeConfig() {
+  makeConfig(): any {
     this.chartConfig = {
       bindto: '#bar-' + this.chartId,
       data: {

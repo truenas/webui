@@ -25,7 +25,7 @@ export class ES60 extends Chassis {
     this.generatePerspectiveOffset();
   }
 
-  generatePerspectiveOffset() {
+  generatePerspectiveOffset(): void {
     this.front.driveTrays.transform.position.x = 32;
     this.front.driveTrays.transform.position.y = 32;
   }

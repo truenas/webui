@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { latestVersion } from 'app/constants/catalog.constants';
 import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -70,7 +71,7 @@ export class ChartReleaseEditComponent implements FormConfiguration {
           name: 'tag',
           placeholder: helptext.chartForm.image.tag.placeholder,
           tooltip: helptext.chartForm.image.tag.tooltip,
-          value: 'latest',
+          value: latestVersion,
         },
         {
           type: 'select',
@@ -124,6 +125,7 @@ export class ChartReleaseEditComponent implements FormConfiguration {
           type: 'list',
           name: 'containerEnvironmentVariables',
           width: '100%',
+          label: 'Add Container Environment Variables',
           box: true,
           templateListField: [
             {
@@ -403,27 +405,23 @@ export class ChartReleaseEditComponent implements FormConfiguration {
   }
 
   parseSchema(schema: any) {
-    let hasGpuConfig = false;
+    let fieldSet;
     try {
       const gpuConfiguration = schema.questions.find((question: any) => question.variable == 'gpuConfiguration');
 
       if (gpuConfiguration && gpuConfiguration.schema.attrs.length > 0) {
         const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(gpuConfiguration);
-        const gpuFieldSet = {
+        fieldSet = {
           name: gpuConfiguration.group,
           label: true,
           config: fieldConfigs,
         };
-
-        this.fieldSets.push(gpuFieldSet);
-
-        hasGpuConfig = true;
       }
     } catch (error) {
       return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
 
-    return hasGpuConfig;
+    return fieldSet;
   }
 
   resourceTransformIncomingRestData(data: any) {
@@ -452,13 +450,14 @@ export class ChartReleaseEditComponent implements FormConfiguration {
       });
     }
 
-    const hasGpuConfig = this.parseSchema(data.chart_schema.schema);
-    data.config['changed_schema'] = hasGpuConfig;
-
+    const gpuFieldSet = this.parseSchema(data.chart_schema.schema);
+    if (gpuFieldSet) {
+      data.config['extra_fieldsets'] = [gpuFieldSet];
+    }
     return data.config;
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     let envVars = [];
     if (data.containerEnvironmentVariables && data.containerEnvironmentVariables.length > 0 && data.containerEnvironmentVariables[0].name) {
       envVars = data.containerEnvironmentVariables;
@@ -546,8 +545,7 @@ export class ChartReleaseEditComponent implements FormConfiguration {
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
-        title: (
-          helptext.installing),
+        title: helptext.installing,
       },
       disableClose: true,
     });

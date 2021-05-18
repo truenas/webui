@@ -41,7 +41,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   activeMobileWidget: DashConfigItem[] = [];
   availableWidgets: DashConfigItem[] = [];
 
-  get renderedWidgets() {
+  get renderedWidgets(): DashConfigItem[] {
     return this.dashState.filter((widget) => widget.rendered);
   }
 
@@ -56,10 +56,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   tcStats: any;
 
   // For empty state
-  get empty() {
+  get empty(): boolean {
     const rendered = this.dashState.filter((widget) => widget.rendered);
     return rendered.length == 0;
   }
+
   emptyDashConf: EmptyConfig = {
     type: EmptyType.no_page_data,
     large: true,
@@ -110,11 +111,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.checkScreenSize();
   }
 
-  checkScreenSize() {
+  checkScreenSize(): void {
     const st = window.innerWidth < 600 ? 'Mobile' : 'Desktop';
 
     // If leaving .xs screen then reset mobile position
@@ -130,7 +131,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.optimizeWidgetContainer();
   }
 
-  optimizeWidgetContainer() {
+  optimizeWidgetContainer(): void {
     const wrapper = (<any>document).querySelector('.rightside-content-hold');
 
     const withMargin = this.widgetWidth + 8;
@@ -139,7 +140,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.optimalDesktopWidth = odw.toString() + 'px';
   }
 
-  onMobileLaunch(evt: DashConfigItem) {
+  onMobileLaunch(evt: DashConfigItem): void {
     this.activeMobileWidget = [evt];
 
     // Transition
@@ -159,7 +160,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }).start(carousel.set);
   }
 
-  onMobileBack() {
+  onMobileBack(): void {
     // Transition
     const vp = this.el.nativeElement.querySelector('.mobile-viewport');
     const viewport = styler(vp);
@@ -184,7 +185,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  onMobileResize(evt: Event) {
+  onMobileResize(evt: Event): void {
     if (this.screenType == 'Desktop') { return; }
     const vp = this.el.nativeElement.querySelector('.mobile-viewport');
     const viewport = styler(vp);
@@ -199,10 +200,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  ngOnInit() {
-    this.modalService.refreshForm$.subscribe(() => {
-    });
-
+  ngOnInit(): void {
     this.init();
 
     this.ws.call('failover.licensed').subscribe((res) => {
@@ -213,7 +211,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sysinfoReady = true;
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.stopListeners();
     this.core.unregister({ observerClass: this });
 
@@ -222,7 +220,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     wrapper.style.overflow = 'auto';
   }
 
-  init() {
+  init(): void {
     this.startListeners();
 
     this.core.register({ observerClass: this, eventName: 'NicInfo' }).subscribe((evt: CoreEvent) => {
@@ -293,7 +291,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getDisksData();
   }
 
-  startListeners() {
+  startListeners(): void {
     this.core.register({ observerClass: this, eventName: 'UserAttributes' }).subscribe((evt: CoreEvent) => {
       if (evt.data.dashState) {
         this.applyState(evt.data.dashState);
@@ -330,7 +328,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  stopListeners() {
+  stopListeners(): void {
     // unsubscribe from middleware
     if (this.statsEvents) {
       this.statsEvents.complete();
@@ -342,7 +340,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  setVolumeData(evt: CoreEvent) {
+  setVolumeData(evt: CoreEvent): void {
     const vd: any = {};
 
     for (const i in evt.data) {
@@ -365,7 +363,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.volumeData = vd;
   }
 
-  getDisksData() {
+  getDisksData(): void {
     const uuid = UUID.UUID();
 
     this.core.register({ observerClass: this, eventName: 'PoolData' }).subscribe((evt: CoreEvent) => {
@@ -399,7 +397,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.core.emit({ name: 'SysInfoRequest', sender: this });
   }
 
-  isDataReady() {
+  isDataReady(): void {
     const isReady = !!(this.statsDataEvents && typeof this.pools !== undefined && this.volumeData && this.nics);
 
     if (isReady) {
@@ -514,7 +512,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     return data || console.warn('Data for this widget is not available!');
   }
 
-  toggleShake() {
+  toggleShake(): void {
     if (this.shake) {
       this.shake = false;
     } else if (!this.shake) {
@@ -522,7 +520,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  showConfigForm() {
+  showConfigForm(): void {
     // this.modalService.open('slide-in-form', this.addComponent);
     if (this.formComponent) {
       delete this.formComponent;
@@ -531,7 +529,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.modalService.open('slide-in-form', this.formComponent);
   }
 
-  generateFormComponent() {
+  generateFormComponent(): void {
     const widgetTypes: any[] = [];
     this.dashState.forEach((item) => {
       if (widgetTypes.indexOf(item.name) == -1) {
@@ -595,7 +593,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.formComponent.target = this.formEvents;
   }
 
-  formHandler(evt: CoreEvent) {
+  formHandler(evt: CoreEvent): void {
     // This method handles the form data
 
     const clone = Object.assign([], this.dashState);
@@ -628,7 +626,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  applyState(state: any[]) {
+  applyState(state: any[]): void {
     // This reconciles current state with saved dashState
 
     if (!this.dashState) {

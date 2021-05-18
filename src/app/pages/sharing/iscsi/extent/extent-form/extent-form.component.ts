@@ -269,7 +269,7 @@ export class ExtentFormComponent implements FormConfiguration {
     protected loader: AppLoaderService,
     protected storageService: StorageService) {}
 
-  preInit() {
+  preInit(): void {
     this.sub = this.aroute.params.subscribe((params) => {
       // removed serial field in edit mode
       if (!params['pk']) {
@@ -284,7 +284,7 @@ export class ExtentFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
     const extent_disk_field = _.find(this.fieldConfig, { name: 'disk' });
@@ -321,7 +321,7 @@ export class ExtentFormComponent implements FormConfiguration {
     }
   }
 
-  formUpdate(type: string) {
+  formUpdate(type: string): void {
     const isDevice = type != 'FILE';
 
     this.fileFieldGroup.forEach((field) => {
@@ -361,7 +361,7 @@ export class ExtentFormComponent implements FormConfiguration {
     return data;
   }
 
-  customEditCall(value: any) {
+  customEditCall(value: any): void {
     this.loader.open();
     if (value['type'] == 'DISK') {
       value['path'] = value['disk'];
@@ -378,14 +378,14 @@ export class ExtentFormComponent implements FormConfiguration {
     );
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     data.filesize = this.storageService.convertHumanStringToNum(data.filesize, true);
     if (this.pk === undefined || this.originalFilesize !== data.filesize) {
       data.filesize = data.filesize == 0 ? data.filesize : (data.filesize + (data.blocksize - data.filesize % data.blocksize));
     }
   }
 
-  blurFilesize(parent: any) {
+  blurFilesize(parent: any): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['filesize'].setValue(parent.storageService.humanReadable);
     }

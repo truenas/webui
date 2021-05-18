@@ -340,7 +340,7 @@ export class AFPFormComponent implements FormConfiguration, OnDestroy {
       });
   }
 
-  isCustActionVisible(actionId: string) {
+  isCustActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode === true) {
@@ -349,7 +349,7 @@ export class AFPFormComponent implements FormConfiguration, OnDestroy {
     return true;
   }
 
-  preInit() {
+  preInit(): void {
     const paramMap: any = (<any> this.aroute.params).getValue();
     if (paramMap['pk'] === undefined) {
       this.fieldSets.config('umask').value = '000';
@@ -360,7 +360,7 @@ export class AFPFormComponent implements FormConfiguration, OnDestroy {
     this.pk = parseInt(paramMap['pk'], 10) || undefined;
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     if (!this.pk) {
       this.openInfoDialog();
     }
@@ -385,11 +385,11 @@ export class AFPFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.afp_timemachine_subscription.unsubscribe();
   }
 
-  resourceTransformIncomingRestData(share: any) {
+  resourceTransformIncomingRestData(share: any): any {
     share.allow = share.allow.map((name: any) => ({ name }));
     share.deny = share.deny.map((name: any) => ({ name }));
     share.ro = share.ro.map((name: any) => ({ name }));
@@ -400,7 +400,7 @@ export class AFPFormComponent implements FormConfiguration, OnDestroy {
     return share;
   }
 
-  clean(share: any) {
+  clean(share: any): any {
     share.allow = (share.allow as any[]).filter((n) => !!n.name).map((name) => name.name);
     share.deny = (share.deny as any[]).filter((n) => !!n.name).map((name) => name.name);
     share.ro = (share.ro as any[]).filter((n) => !!n.name).map((name) => name.name);
@@ -411,7 +411,7 @@ export class AFPFormComponent implements FormConfiguration, OnDestroy {
     return share;
   }
 
-  afterSave(entityForm: any) {
+  afterSave(entityForm: any): void {
     this.ws.call('service.query', []).subscribe((res) => {
       const service = _.find(res, { service: ServiceName.Afp });
       if (service.enable) {
@@ -457,7 +457,7 @@ export class AFPFormComponent implements FormConfiguration, OnDestroy {
   }
 
   /* If user blurs name field with empty value, try to auto-populate based on path */
-  blurEventName(parent: { entityForm: EntityFormComponent }) {
+  blurEventName(parent: { entityForm: EntityFormComponent }): void {
     const pathControl = parent.entityForm.formGroup.controls['path'];
     const nameControl = parent.entityForm.formGroup.controls['name'];
     if (pathControl.value && !nameControl.value) {
@@ -465,7 +465,7 @@ export class AFPFormComponent implements FormConfiguration, OnDestroy {
     }
   }
 
-  openInfoDialog() {
+  openInfoDialog(): void {
     const conf: DialogFormConfiguration = {
       title: helptext_sharing_afp.smb_dialog.title,
       message: helptext_sharing_afp.smb_dialog.message,

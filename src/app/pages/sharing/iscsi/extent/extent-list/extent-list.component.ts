@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { DialogFormConfiguration } from '../../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityUtils } from '../../../../common/entity/utils';
 
@@ -53,7 +54,7 @@ export class ExtentListComponent {
     },
   };
 
-  getActions() {
+  getActions(): EntityTableAction[] {
     return [{
       name: 'edit',
       id: 'edit',
@@ -66,10 +67,10 @@ export class ExtentListComponent {
       icon: 'delete',
       label: T('Delete'),
       onClick: (rowinner: any) => { this.doDelete(rowinner); },
-    }];
+    }] as EntityTableAction[];
   }
 
-  doDelete(row: any) {
+  doDelete(row: any): void {
     const id = row.id;
     const self = this;
     const entityTable = this.entityTable;
@@ -120,7 +121,7 @@ export class ExtentListComponent {
 
   constructor(protected router: Router) {}
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityTable = entityList;
   }
 }

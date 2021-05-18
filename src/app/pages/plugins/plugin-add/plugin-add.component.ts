@@ -289,7 +289,7 @@ export class PluginAddComponent implements OnInit {
     protected translate: TranslateService,
     protected jailService: JailService) {}
 
-  updateIpValidation() {
+  updateIpValidation(): void {
     const ip4AddrField = _.find(this.fieldConfig, { name: 'ip4_addr' });
     const ip6AddrField = _.find(this.fieldConfig, { name: 'ip6_addr' });
     if (this.formGroup.controls['dhcp'].value == false && this.formGroup.controls['nat'].value == false) {
@@ -320,7 +320,7 @@ export class PluginAddComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.ip4_interfaceField = _.find(this.fieldConfig, { name: 'ip4_interface' });
     this.ip4_netmaskField = _.find(this.fieldConfig, { name: 'ip4_netmask' });
     this.ip6_interfaceField = _.find(this.fieldConfig, { name: 'ip6_interface' });
@@ -400,11 +400,11 @@ export class PluginAddComponent implements OnInit {
     });
   }
 
-  goBack() {
+  goBack(): void {
     this.router.navigate(new Array('').concat(this.route_goback));
   }
 
-  onSubmit(event: Event) {
+  onSubmit(event: Event): void {
     this.error = null;
     const property: any = [];
     const value = _.cloneDeep(this.formGroup.value);
@@ -463,7 +463,7 @@ export class PluginAddComponent implements OnInit {
     });
   }
 
-  setDisabled(name: string, disable: boolean) {
+  setDisabled(name: string, disable: boolean): void {
     if (this.formGroup.controls[name]) {
       const method = disable ? 'disable' : 'enable';
       this.formGroup.controls[name][method]();
@@ -478,7 +478,7 @@ export class PluginAddComponent implements OnInit {
     });
   }
 
-  setRelation(config: FieldConfig) {
+  setRelation(config: FieldConfig): void {
     const activations = this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
@@ -495,14 +495,14 @@ export class PluginAddComponent implements OnInit {
     }
   }
 
-  relationUpdate(config: FieldConfig, activations: any) {
+  relationUpdate(config: FieldConfig, activations: any): void {
     const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
       activations, this.formGroup,
     );
     this.setDisabled(config.name, tobeDisabled);
   }
 
-  goAdvanced() {
+  goAdvanced(): void {
     this.router.navigate(
       new Array('').concat(['plugins', 'advanced', this.pluginName, { plugin_repository: this.pluginRepository }]),
     );

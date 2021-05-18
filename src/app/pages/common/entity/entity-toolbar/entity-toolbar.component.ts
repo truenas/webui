@@ -31,7 +31,7 @@ import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.componen
   templateUrl: './entity-toolbar.component.html',
   styleUrls: ['./entity-toolbar.component.scss'],
 })
-export class EntityToolbarComponent implements OnDestroy, OnChanges, GlobalAction {
+export class EntityToolbarComponent implements OnChanges, GlobalAction {
   @Input('conf') conf: ToolbarConfig; // ControlConfig[];
   config: any;
   controller: Subject<Control>;
@@ -44,7 +44,7 @@ export class EntityToolbarComponent implements OnDestroy, OnChanges, GlobalActio
     this.controller = new Subject();
   }
 
-  init() {
+  init(): void {
     this.controller.subscribe((evt: Control) => {
       const clone = Object.assign([], this.values);
       clone[evt.name] = evt.value;
@@ -74,7 +74,7 @@ export class EntityToolbarComponent implements OnDestroy, OnChanges, GlobalActio
     this.values = obj;
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.conf) {
       // Do Stuff
       this.config = changes.conf.currentValue; // For when config is provided via template
@@ -82,12 +82,8 @@ export class EntityToolbarComponent implements OnDestroy, OnChanges, GlobalActio
     }
   }
 
-  ngOnDestroy() {
-    // Clean up after ourselves...
-  }
-
   // For when config is provided via JS
-  applyConfig(conf: any) {
+  applyConfig(conf: any): void {
     this.config = conf;
     this.init();
   }

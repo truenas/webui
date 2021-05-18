@@ -25,7 +25,7 @@ interface ViewConfig {
   templateUrl: './view-enclosure.component.html',
   styleUrls: ['./view-enclosure.component.css'],
 })
-export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDestroy {
+export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
   errors: ErrorMessage[] = [];
   events: Subject<CoreEvent> ;
   @ViewChild('navigation', { static: false }) nav: ElementRef;
@@ -48,7 +48,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   supportedHardware = false;
   system_manufacturer: string;
   private _system_product: any;
-  get system_product() {
+  get system_product(): any {
     return this._system_product;
   }
   set system_product(value) {
@@ -58,7 +58,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     }
   }
 
-  changeView(index: number) {
+  changeView(index: number): void {
     this.currentView = this.views[index];
   }
 
@@ -151,29 +151,26 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     core.emit({ name: 'SysInfoRequest', sender: this });
   }
 
-  fetchData() {
+  fetchData(): void {
     this.core.emit({ name: 'DisksRequest', sender: this });
   }
 
-  ngAfterContentInit() {
+  ngAfterContentInit(): void {
     this.scrollContainer = document.querySelector('.rightside-content-hold');
     this.scrollContainer.style.overflow = 'hidden';
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-  }
-
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
     this.scrollContainer.style.overflow = 'auto';
   }
 
-  selectEnclosure(index: number) {
+  selectEnclosure(index: number): void {
     this.selectedEnclosure = this.system.profile[index];
     this.addViews();
   }
 
-  extractVisualizations() {
+  extractVisualizations(): void {
     this.system.profile.forEach((item, index) => {
       if (this.system.rearIndex && item.enclosureKey == this.system.rearIndex) { return; }
       if (this.system.profile) {
@@ -182,7 +179,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     });
   }
 
-  addViews() {
+  addViews(): void {
     const views = [];
     const disks = {
       name: 'Disks',

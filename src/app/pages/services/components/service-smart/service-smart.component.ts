@@ -86,7 +86,7 @@ export class ServiceSMARTComponent implements FormConfiguration {
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
-  afterInit(entityEdit: EntityFormComponent) {
+  afterInit(entityEdit: EntityFormComponent): void {
     entityEdit.submitFunction = (body) => this.ws.call('smart.update', [body]);
   }
 }
