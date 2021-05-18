@@ -49,7 +49,7 @@
       <mat-step *ngIf="conf.summary">
         <ng-template matStepLabel>{{"Confirm Options" | translate}}</ng-template>
         <div *ngIf="conf.summary">
-          <div> {{ conf.summary_title }}</div>
+          <div> {{ conf.summaryTitle }}</div>
           <ul >
             <li *ngFor="let item of conf.summary | keyvalue : originalOrder">
               <div *ngIf="item.value | keyvalue; else inobject">

@@ -473,6 +473,8 @@ export type ApiDirectory = {
   // System
   'system.feature_enabled': { params: any; response: any };
   'system.advanced.update': { params: any; response: any };
+  'device.gpu_pci_ids_choices': { params: any; response: any };
+  'device.get_info': { params: any; response: any };
   'system.reboot': { params: any; response: any };
   'system.shutdown': { params: any; response: any };
   'system.advanced.serial_port_choices': { params: any; response: any };

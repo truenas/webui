@@ -32,7 +32,7 @@ export class VolumeImportWizardComponent {
   firstFormGroup: FormGroup;
   protected dialogRef: any;
   objectKeys = Object.keys;
-  summary_title = 'Pool Import Summary';
+  summaryTitle = 'Pool Import Summary';
   subs: any;
   saveSubmitText = T('Import');
   entityWizard: any;
