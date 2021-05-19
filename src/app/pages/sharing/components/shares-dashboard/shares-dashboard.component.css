@@ -1,0 +1,57 @@
+.container {
+    height: 90%;
+}
+
+.one-table-container {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 70% 58px 58px 58px;
+    grid-template-areas: 
+    "first"
+    "second"
+    "third"
+    "fourth";
+}
+.one-table-container .first {
+    grid-area: 'first';
+    margin: 5px 0;
+}
+.one-table-container .second {
+    grid-area: 'second';
+    margin: 5px 0;
+}
+.one-table-container .third {
+    grid-area: 'third';
+    margin: 5px 0;
+}
+.one-table-container .fourth {
+    grid-area: 'fourth';
+    margin: 5px 0;
+}
+
+.two-table-container {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 80% 58px 58px;
+    grid-template-areas: 
+    "first second"
+    "third third"
+    "fourth fourth";
+}
+
+.two-table-container .first {
+    grid-area: 'first';
+    margin: 5px 0;
+}
+.two-table-container .second {
+    grid-area: 'second';
+    margin: 5px 0;
+}
+.two-table-container .third {
+    grid-area: 'third';
+    margin: 5px 0;
+}
+.two-table-container .fourth {
+    grid-area: 'fourth';
+    margin: 5px 0;
+}

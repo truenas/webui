@@ -55,6 +55,9 @@ export class TableService {
       if (table.loaderOpen) {
         this.loader.close();
       }
+      if (table.tableConf.afterGetDataExpandable) {
+        table.tableConf.afterGetDataExpandable(res);
+      }
       if (table.tableConf.afterGetData) {
         table.tableConf.afterGetData(res);
       }

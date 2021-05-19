@@ -28,6 +28,7 @@ import { ExtentFormComponent } from './iscsi/extent/extent-form';
 import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list';
 import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
+import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
 
 export const routes: Routes = [
   {
@@ -36,16 +37,18 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: EntityDashboardComponent,
+        component: AFPListComponent,
+        data: { title: 'AFP', breadcrumb: 'AFP' },
       },
       {
         path: 'afp',
         data: { title: 'AFP', breadcrumb: 'AFP', icon: 'share' },
         children: [{
           path: '',
-          component: AFPListComponent,
+          component: SharesDashboardComponent,
           data: { title: 'AFP', breadcrumb: 'AFP' },
-        }, {
+        },
+        {
           path: 'add',
           component: AFPFormComponent,
           data: { title: 'Add', breadcrumb: 'Add' },
