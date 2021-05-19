@@ -176,7 +176,7 @@ export class ProactiveComponent implements FormConfiguration {
     protected dialogService: DialogService, private translate: TranslateService,
     private modalService: ModalService) { }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
     const proactiveFields: any[] = [
       'enabled',
@@ -222,7 +222,7 @@ export class ProactiveComponent implements FormConfiguration {
     }, 1000);
   }
 
-  getContacts() {
+  getContacts(): void {
     this.controls = this.entityEdit.formGroup.controls;
     this.ws.call(this.queryCall).subscribe((res) => {
       if (res && res !== {}) {
@@ -235,7 +235,7 @@ export class ProactiveComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     delete data.proactive_instructions;
     delete data.proactive_second_title;
     delete data.proactive_section_border;
@@ -246,7 +246,7 @@ export class ProactiveComponent implements FormConfiguration {
     }
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     this.loader.open();
     this.ws.call('support.update', [data]).subscribe(() => {
       this.loader.close();

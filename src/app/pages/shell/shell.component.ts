@@ -1,9 +1,10 @@
 import {
-  Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild, ViewEncapsulation,
+  Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, SimpleChanges, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CoreEvent } from 'app/interfaces/events';
+import { Observable } from 'rxjs/Observable';
 import { ShellService, WebSocketService } from '../../services';
 import helptext from '../../helptext/shell/shell';
 import { CopyPasteMessageComponent } from './copy-paste-message.component';
@@ -48,7 +49,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   shellConnected = false;
   connectionId: string;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.getAuthToken().subscribe((res) => {
       this.initializeWebShell(res);
       this.shellSubscription = this.ss.shellOutput.subscribe(() => {
@@ -57,7 +58,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.ss.connected) {
       this.ss.socket.close();
     }
@@ -72,7 +73,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.core.unregister({ observerClass: this });
   }
 
-  refreshToolbarButtons() {
+  refreshToolbarButtons(): void {
     this.formEvents = new Subject();
     this.formEvents.subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'restore') {
@@ -133,22 +134,20 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
   }
 
-  onResize() {
+  onResize(): void {
     this.resizeTerm();
   }
 
-  onFontSizeChanged() {
+  onFontSizeChanged(): void {
     this.resizeTerm();
   }
 
-  resetDefault() {
+  resetDefault(): void {
     this.font_size = 14;
     this.resizeTerm();
   }
 
-  ngOnChanges(changes: {
-    [propKey: string]: SimpleChange;
-  }) {
+  ngOnChanges(changes: SimpleChanges): void {
     const log: string[] = [];
     for (const propName in changes) {
       const changedProp = changes[propName];
@@ -164,7 +163,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     return false;
   }
 
-  initializeTerminal() {
+  initializeTerminal(): void {
     const size = this.getSize();
 
     const setting = {
@@ -194,7 +193,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  getSize() {
+  getSize(): { rows: number; cols: number } {
     const domWidth = this.container.nativeElement.offsetWidth;
     const domHeight = this.container.nativeElement.offsetHeight;
     var span = document.createElement('span');
@@ -226,7 +225,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     };
   }
 
-  resizeTerm() {
+  resizeTerm(): boolean {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
@@ -236,7 +235,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     return true;
   }
 
-  initializeWebShell(res: string) {
+  initializeWebShell(res: string): void {
     this.ss.token = res;
     this.ss.connect();
 
@@ -258,11 +257,11 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  getAuthToken() {
+  getAuthToken(): Observable<any> {
     return this.ws.call('auth.generate_token');
   }
 
-  reconnect() {
+  reconnect(): void {
     this.ss.connect();
   }
 

@@ -85,7 +85,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
     });
   }
 
-  rowValue(row: any, attr: string) {
+  rowValue(row: any, attr: string): any {
     if (attr === 'created') {
       return this.localeService.formatDateTime(row.created.$date);
     }
@@ -206,7 +206,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
     },
   }];
 
-  getSelectedNames(selectedBootenvs: any) {
+  getSelectedNames(selectedBootenvs: any): any[] {
     const selected: any[] = [];
     for (const i in selectedBootenvs) {
       if (selectedBootenvs[i].active === '-' || selectedBootenvs[i].active === '') {
@@ -216,7 +216,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
     return selected;
   }
 
-  wsMultiDeleteParams(selected: any) {
+  wsMultiDeleteParams(selected: any): any[] {
     const params: any[] = ['bootenv.do_delete'];
     params.push(this.getSelectedNames(selected));
     return params;

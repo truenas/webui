@@ -220,7 +220,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.navigation = this.router.getCurrentNavigation();
   }
 
-  getGlobalSettings() {
+  getGlobalSettings(): void {
     this.ws.call(this.configCall).subscribe(
       (config_res) => {
         this.ws.call(this.summayCall).subscribe(
@@ -277,7 +277,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.refreshNetworkForms();
     this.modalService.refreshForm$.subscribe(() => {
       this.refreshNetworkForms();
@@ -312,7 +312,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     }
   }
 
-  checkInterfacePendingChanges() {
+  checkInterfacePendingChanges(): void {
     if (this.interfaceTableConf.tableComponent) {
       this.interfaceTableConf.tableComponent.getData();
     }
@@ -320,13 +320,13 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.checkWaitingCheckin();
   }
 
-  checkPendingChanges() {
+  checkPendingChanges(): void {
     this.ws.call('interface.has_pending_changes').subscribe((res) => {
       this.hasPendingChanges = res;
     });
   }
 
-  checkWaitingCheckin() {
+  checkWaitingCheckin(): void {
     this.ws.call('interface.checkin_waiting').subscribe((res) => {
       if (res != null) {
         const seconds = res.toFixed(0);
@@ -354,7 +354,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     });
   }
 
-  commitPendingChanges() {
+  commitPendingChanges(): void {
     this.ws.call('interface.services_restarted_on_sync').subscribe((res: any[]) => {
       if (res.length > 0) {
         const ips: string[] = [];
@@ -399,7 +399,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     });
   }
 
-  checkInNow() {
+  checkInNow(): void {
     if (this.affectedServices.length > 0) {
       this.translate.get(helptext.services_restarted.message_a).subscribe((msgA) => {
         this.translate.get(helptext.services_restarted.message_b).subscribe((msgB) => {
@@ -425,7 +425,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     }
   }
 
-  finishCheckin() {
+  finishCheckin(): void {
     this.loader.open();
     this.ws.call('interface.checkin').subscribe((success) => {
       this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
@@ -444,7 +444,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     });
   }
 
-  rollbackPendingChanges() {
+  rollbackPendingChanges(): void {
     this.dialog.confirm(
       helptext.rollback_changes_title,
       helptext.rollback_changes_warning,
@@ -467,16 +467,16 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     });
   }
 
-  afterDelete() {
+  afterDelete(): void {
     this.hasPendingChanges = true;
     this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
   }
 
-  goToHA() {
+  goToHA(): void {
     this.router.navigate(new Array('/').concat('system', 'failover'));
   }
 
-  refreshNetworkForms() {
+  refreshNetworkForms(): void {
     this.addComponent = new ConfigurationComponent(this.router, this.ws);
     this.addComponent.afterModalFormClosed = this.getGlobalSettings.bind(this); // update global config card
     this.interfaceComponent = new InterfacesFormComponent(this.router, this.aroute, this.networkService, this.dialog, this.ws);
@@ -490,7 +490,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.impiFormComponent = new IPMIFromComponent(this.ws, this.dialog, this.loader);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.reportEvent) {
       this.reportEvent.unsubscribe();
     }
@@ -501,7 +501,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.core.unregister({ observerClass: this });
   }
 
-  getInterfaceInOutInfo(tableSource: any[]) {
+  getInterfaceInOutInfo(tableSource: any[]): void {
     this.reportEvent = this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').subscribe((evt) => {
       if (evt.interfaces) {
         tableSource.map((row) => {
@@ -515,7 +515,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     });
   }
 
-  interfaceDataSourceHelper(res: any[]) {
+  interfaceDataSourceHelper(res: any[]): any[] {
     const rows = res;
     for (let i = 0; i < rows.length; i++) {
       // TODO: Replace with probably enum for link_state.
@@ -563,7 +563,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     return res;
   }
 
-  ipmiDataSourceHelper(res: any[]) {
+  ipmiDataSourceHelper(res: any[]): any[] {
     for (const item of res) {
       item.channel_lable = 'Channel' + item.channel;
     }
@@ -592,11 +592,11 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     }];
   }
 
-  showConfigForm() {
+  showConfigForm(): void {
     this.modalService.open('slide-in-form', this.addComponent);
   }
 
-  openvpnDataSourceHelper(res: any[]) {
+  openvpnDataSourceHelper(res: any[]): any[] {
     return res.filter((item) => {
       if (item.service.includes('openvpn_')) {
         item.service_label = item.service.charAt(8).toUpperCase() + item.service.slice(9);
@@ -658,14 +658,14 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     }];
   }
 
-  isOpenVpnActionVisible(name: string, row: any) {
+  isOpenVpnActionVisible(name: string, row: any): boolean {
     if ((name === 'start' && row.state === ServiceStatus.Running) || (name === 'stop' && row.state === ServiceStatus.Stopped)) {
       return false;
     }
     return true;
   }
 
-  isIpmiActionVisible(name: string, row: any) {
+  isIpmiActionVisible(name: string, row: any): boolean {
     if (name === 'manage' && row.ipaddress === '0.0.0.0') {
       return false;
     }
