@@ -154,7 +154,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     return '';
   }
 
-  get unhealthyDisks() {
+  get unhealthyDisks(): { totalErrors: number | string; disks: any[] } {
     if (this.poolState && this.poolState.topology) {
       const unhealthy: any[] = []; // Disks with errors
       this.poolState.topology.data.forEach((item: any) => {
@@ -384,7 +384,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     return false;
   }
 
-  trimMultipath(disk: string) {
+  trimMultipath(disk: string): { isMultipath?: boolean; name: string; fullName?: string } {
     if (!disk || disk == null) {
       return { name: disk };
     }

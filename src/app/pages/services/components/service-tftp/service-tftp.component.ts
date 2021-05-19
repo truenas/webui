@@ -102,15 +102,15 @@ export class ServiceTFTPComponent implements FormConfiguration {
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected userService: UserService) {}
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): { umask: string } {
     return invertUMask(data);
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): { umask: string } {
     return invertUMask(data);
   }
 
-  preInit(entityEdit: any) {
+  preInit(entityEdit: any): void {
     this.userService.userQueryDSCache().subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
@@ -123,11 +123,11 @@ export class ServiceTFTPComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: EntityFormComponent) {
+  afterInit(entityEdit: EntityFormComponent): void {
     entityEdit.submitFunction = (body) => this.ws.call('tftp.update', [body]);
   }
 
-  updateUserSearchOptions(value = '', parent: any) {
+  updateUserSearchOptions(value = '', parent: any): void {
     (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {

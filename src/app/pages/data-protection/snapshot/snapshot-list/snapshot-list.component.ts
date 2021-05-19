@@ -65,23 +65,23 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  dataHandler(table: any) {
+  dataHandler(table: any): void {
     for (let i = 0; i < table.rows.length; i++) {
       table.rows[i].keepfor = `${table.rows[i].lifetime_value} ${table.rows[i].lifetime_unit}(S)`;
     }
   }
 
-  onButtonClick(row: any) {
+  onButtonClick(row: any): void {
     this.stateButton(row);
   }
 
-  stateButton(row: any) {
+  stateButton(row: any): void {
     if (row.state.state === EntityJobState.Error) {
       this.dialogService.errorReport(row.state.state, row.state.error);
     }
   }
 
-  onCheckboxChange(row: any) {
+  onCheckboxChange(row: any): void {
     row.enabled = !row.enabled;
     this.ws.call('pool.snapshottask.update', [row.id, { enabled: row.enabled }]).subscribe(
       (res) => {
@@ -96,7 +96,7 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
     );
   }
 
-  doAdd(id?: number) {
+  doAdd(id?: number): void {
     this.modalService.open(
       'slide-in-form',
       new SnapshotFormComponent(this.taskService, this.storageService, this.dialog, this.modalService),
@@ -104,7 +104,7 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
     );
   }
 
-  doEdit(id: number) {
+  doEdit(id: number): void {
     this.doAdd(id);
   }
 

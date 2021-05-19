@@ -1,6 +1,7 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs/Observable';
 
 import { RestService, WebSocketService, ValidationService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -126,7 +127,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected validationService: ValidationService) {}
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     entityForm.ws.call('dyndns.config').subscribe((res: any) => {
       entityForm.formGroup.controls['provider'].setValue(res.provider);
       entityForm.formGroup.controls['checkip_ssl'].setValue(res.checkip_ssl);
@@ -156,13 +157,13 @@ export class ServiceDDNSComponent implements FormConfiguration {
     });
   }
 
-  clean(value: any) {
+  clean(value: any): any {
     delete value['password2'];
 
     return value;
   }
 
-  submitFunction(this: any, entityForm: any) {
+  submitFunction(this: any, entityForm: any): Observable<any> {
     if (entityForm.domain.length === 0) {
       entityForm.domain = [];
     }
@@ -172,7 +173,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
     return this.ws.call('dyndns.update', [entityForm]);
   }
 
-  preInit() {
+  preInit(): void {
     this.provider = this.fieldSets.config('provider');
     this.ws.call('dyndns.provider_choices').subscribe((res) => {
       for (const key in res) {
@@ -182,7 +183,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
     });
   }
 
-  hideField(fieldName: any, show: boolean, entity: any) {
+  hideField(fieldName: any, show: boolean, entity: any): void {
     this.fieldSets.config(fieldName).isHidden = show;
     entity.setDisabled(fieldName, show, show);
   }

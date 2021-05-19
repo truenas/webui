@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs';
 import helptext from '../../../../../../helptext/services/components/service-rsync';
 import { UserService, WebSocketService } from '../../../../../../services';
 import { FieldConfig } from '../../../../../common/entity/entity-form/models/field-config.interface';
@@ -205,7 +206,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
     });
   }
 
-  submitFunction(entityForm: any) {
+  submitFunction(entityForm: any): Observable<any> {
     return this.ws.call('rsyncmod.update', [this.pk, entityForm]);
   }
 }

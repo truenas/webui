@@ -627,7 +627,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   // Continutes the update (based on its type) after the Save Config dialog is closed
-  continueUpdate() {
+  continueUpdate(): void {
     switch (this.updateType) {
       case 'manual':
         this.router.navigate([this.router.url + '/manualupdate']);

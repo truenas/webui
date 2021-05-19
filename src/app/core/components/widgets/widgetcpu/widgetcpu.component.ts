@@ -136,7 +136,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     });
   }
 
-  parseCpuData(data: any) {
+  parseCpuData(data: any): any[][] {
     this.tempAvailable = data.temperature && Object.keys(data.temperature).length > 0 ? 'true' : 'false';
     const usageColumn: any[] = ['Usage'];
     let temperatureColumn: any[] = ['Temperature'];
