@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import {
   ChangeDetectorRef, Component, OnDestroy, OnInit,
@@ -8,10 +7,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 
+import cronstrue from 'cronstrue';
+
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
 import { Subscription } from 'rxjs';
+import { Options as CronOptions } from 'cronstrue/dist/options';
 
+import { LanguageService } from 'app/services/language.service';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import helptext_replication from 'app/helptext/data-protection/replication/replication';
@@ -76,6 +79,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
   messageSubscription: Subscription;
   disks: any[] = [];
   parent: any;
+  cronOptions: CronOptions;
 
   // Components included in this dashboard
   protected scrubFormComponent: ScrubFormComponent;
@@ -91,7 +95,6 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     private modalService: ModalService,
     private dialog: DialogService,
     private loader: AppLoaderService,
-    private http: HttpClient,
     public mdDialog: MatDialog,
     public datePipe: DatePipe,
     public router: Router,
@@ -105,12 +108,14 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     protected cloudCredentialService: CloudCredentialService,
     protected job: JobService,
     protected cdRef: ChangeDetectorRef,
+    private language: LanguageService,
   ) {
     this.diskSubscription = this.storage.listDisks().subscribe((disks) => {
       if (disks) {
         this.disks = disks;
       }
     });
+    this.cronOptions = { verbose: true, locale: this.language.currentLanguage };
   }
 
   ngOnInit(): void {
@@ -190,7 +195,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           },
           columns: [
             { name: T('Pool/Dataset'), prop: 'dataset' },
-            { name: T('Recursive'), prop: 'recursive' },
+            { name: T('Frequency'), prop: 'frequency' },
             { name: T('Keep for'), prop: 'keepfor' },
             {
               name: T('Enabled'), prop: 'enabled', checkbox: true, width: '50px',
@@ -501,6 +506,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     return data.map((task) => {
       task.state = task.state.state;
       task.keepfor = `${task.lifetime_value} ${task.lifetime_unit}(S)`;
+      task.frequency = cronstrue.toString(`${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`, this.cronOptions);
 
       return task;
     });
