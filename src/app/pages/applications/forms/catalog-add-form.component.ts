@@ -8,6 +8,7 @@ import { DialogService } from '../../../services/index';
 import helptext from '../../../helptext/apps/apps';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { chartsTrain } from 'app/constants/catalog.constants';
 
 @Component({
   selector: 'app-catalog-form',
@@ -52,7 +53,7 @@ export class CatalogAddFormComponent implements FormConfiguration {
           name: 'preferred_trains',
           placeholder: helptext.catalogForm.preferredTrains.placeholder,
           tooltip: helptext.catalogForm.preferredTrains.tooltip,
-          value: ['charts'],
+          value: [chartsTrain],
         },
         {
           type: 'input',
