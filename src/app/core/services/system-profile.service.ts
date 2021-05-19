@@ -96,11 +96,11 @@ export class SystemProfileService extends BaseService {
     });
   }
 
-  protected onAuthenticated(evt: CoreEvent) {
+  protected onAuthenticated(evt: CoreEvent): void {
     this.authenticated = true;
   }
 
-  private dataAvailable(evt: CoreEvent) {
+  private dataAvailable(evt: CoreEvent): boolean {
     if (this.cache && this.authenticated) {
       return true;
     } if (!this.cache && this.authenticated) {
@@ -114,7 +114,7 @@ export class SystemProfileService extends BaseService {
     }
   }
 
-  fetchProfile(localOnly?: boolean) {
+  fetchProfile(localOnly?: boolean): void {
     this.websocket.call('system.info').subscribe((systemInfo) => {
       this.cache = systemInfo;
       if (localOnly) {
@@ -128,7 +128,7 @@ export class SystemProfileService extends BaseService {
     });
   }
 
-  clearBuffer() {
+  clearBuffer(): void {
     this.buffer.forEach((evt) => {
       this.respond(evt);
     });
@@ -175,7 +175,7 @@ export class SystemProfileService extends BaseService {
     return this.features;
   }
 
-  updateHA(res: FailoverDisabledReason[]) {
+  updateHA(res: FailoverDisabledReason[]): void {
     const ha_enabled = res.length == 0;
     const ha_status_text = res.length == 0 ? helptext.ha_status_text_enabled : helptext.ha_status_text_disabled;
 

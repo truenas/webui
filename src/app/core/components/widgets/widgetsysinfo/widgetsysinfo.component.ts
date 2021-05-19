@@ -146,7 +146,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     this.core.unregister({ observerClass: this });
   }
 
-  get themeAccentColors() {
+  get themeAccentColors(): string[] {
     const theme = this.themeService.currentTheme();
     this._themeAccentColors = [];
     for (const color in theme.accentColors) {

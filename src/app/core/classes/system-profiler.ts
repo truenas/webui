@@ -38,7 +38,7 @@ export class SystemProfiler {
   rearIndex: number;
 
   private _diskData: any[];
-  get diskData() {
+  get diskData(): any[] {
     return this._diskData;
   }
   set diskData(obj) {
@@ -49,7 +49,7 @@ export class SystemProfiler {
   }
 
   private _enclosures: Enclosure[];
-  get enclosures() {
+  get enclosures(): Enclosure[] {
     return this._enclosures;
   }
   set enclosures(enclosures: Enclosure[]) {
@@ -57,7 +57,7 @@ export class SystemProfiler {
   }
 
   private _pools: Pool[];
-  get pools() {
+  get pools(): Pool[] {
     return this._pools;
   }
   set pools(pools) {
@@ -66,7 +66,7 @@ export class SystemProfiler {
   }
 
   private _sensorData: any;
-  get sensorData() {
+  get sensorData(): any {
     return this._sensorData;
   }
   set sensorData(obj) {
@@ -80,7 +80,7 @@ export class SystemProfiler {
     this.createProfile();
   }
 
-  createProfile() {
+  createProfile(): void {
     let rearEnclosure: Enclosure;
 
     // with the enclosure info we set up basic data structure
@@ -123,7 +123,7 @@ export class SystemProfiler {
     return model;
   }
 
-  private parseDiskData(disks: Disk[]) {
+  private parseDiskData(disks: Disk[]): void {
     // Clean the slate before we start
     this.profile.forEach((enc) => enc.disks = []);
 
@@ -140,14 +140,14 @@ export class SystemProfiler {
     });
   }
 
-  private parseEnclosures(obj: Enclosure[]) {
+  private parseEnclosures(obj: Enclosure[]): void {
     // Provide a shortcut to the enclosures object
     this.profile.forEach((profileItem: EnclosureMetadata, index: number) => {
       profileItem.enclosureKey = Number(index); // Make sure index 0 is not treated as boolean
     });
   }
 
-  private parseSensorData(obj: any) {
+  private parseSensorData(obj: any): void {
     const powerStatus = obj.filter((v: any) => v.name.startsWith('PS'));
     if (this.enclosures[this.headIndex] && this.enclosures[this.headIndex].model == 'M Series') {
       const elements = powerStatus.map((item: any, index: number) => {
@@ -163,7 +163,7 @@ export class SystemProfiler {
     }
   }
 
-  private parsePoolsData(pools: Pool[]) {
+  private parsePoolsData(pools: Pool[]): void {
     pools.forEach((pool, poolIndex) => {
       if (!pool.topology) {
         return;
@@ -176,7 +176,7 @@ export class SystemProfiler {
     });
   }
 
-  private parseByTopology(role: PoolTopologyCategory, pool: Pool, poolIndex: number) {
+  private parseByTopology(role: PoolTopologyCategory, pool: Pool, poolIndex: number): void {
     pool.topology[role].forEach((vdev, vIndex) => {
       const v: VDevMetadata = {
         pool: pool.name,
@@ -209,11 +209,11 @@ export class SystemProfiler {
     });
   }
 
-  getVdev(alias: VDevMetadata) {
+  getVdev(alias: VDevMetadata): VDev {
     return this.pools[alias.poolIndex].topology.data[alias.vdevIndex];
   }
 
-  storeVdevInfo(vdev: VDevMetadata, stats: any) {
+  storeVdevInfo(vdev: VDevMetadata, stats: any): void {
     for (const diskName in vdev.disks) {
       this.addVDevToDiskInfo(diskName, vdev, stats[diskName]);
     }
@@ -294,9 +294,9 @@ export class SystemProfiler {
     return vdev;
   }
 
-  getEnclosureNumber(diskName: string) {
+  getEnclosureNumber(diskName: string): number {
     // To be deprecated when middleware includes enclosure number with disk info
-    let result;
+    let result: number;
     this.profile.forEach((enclosure: EnclosureMetadata, index: number) => {
       if (typeof enclosure.diskKeys[diskName] !== 'undefined') {
         result = index;
@@ -305,13 +305,13 @@ export class SystemProfiler {
     return typeof result == 'undefined' ? -1 : result;
   }
 
-  getEnclosureExpanders(index: number) {
+  getEnclosureExpanders(index: number): any[] {
     if (this.rearIndex && index == this.rearIndex) { index = this.headIndex; }
     const raw: any = this.enclosures[index].elements.filter((item: any) => item.name == 'SAS Expander');
     return raw[0].elements;
   }
 
-  rawCapacity() {
+  rawCapacity(): number {
     if (!this.diskData || this.diskData.length == 0) { return; }
     let capacity = 0;
     this.diskData.forEach((disk: EnclosureDisk) => {
@@ -322,11 +322,11 @@ export class SystemProfiler {
     return capacity;
   }
 
-  getEnclosureLabel(key: number) {
+  getEnclosureLabel(key: number): string {
     return this.enclosures[key].label == this.enclosures[key].name ? this.enclosures[key].label : this.enclosures[key].model;
   }
 
-  getDiskByID(id: string) {
+  getDiskByID(id: string): any {
     return this.diskData ? this.diskData.find((disk) => disk.identifier == id) : null;
   }
 }

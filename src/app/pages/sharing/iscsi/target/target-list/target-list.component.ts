@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 import { IscsiService } from '../../../../../services/iscsi.service';
 import { T } from 'app/translate-marker';
@@ -44,7 +45,7 @@ export class TargetListComponent implements OnInit {
   protected entityList: any;
   constructor(private iscsiService: IscsiService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.fcEnabled) {
       this.columns.push({
         name: T('Mode'),
@@ -53,11 +54,11 @@ export class TargetListComponent implements OnInit {
     }
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
   }
 
-  getActions(row: any) {
+  getActions(row: any): EntityTableAction[] {
     return [{
       id: row.name,
       icon: 'edit',
@@ -100,6 +101,6 @@ export class TargetListComponent implements OnInit {
           },
         );
       },
-    }];
+    }] as EntityTableAction[];
   }
 }
