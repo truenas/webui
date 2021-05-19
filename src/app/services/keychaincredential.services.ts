@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { WebSocketService } from './ws.service';
 
@@ -6,11 +7,11 @@ import { WebSocketService } from './ws.service';
 export class KeychainCredentialService {
   constructor(protected ws: WebSocketService) { }
 
-  getSSHKeys() {
+  getSSHKeys(): Observable<any[]> {
     return this.ws.call('keychaincredential.query', [[['type', '=', 'SSH_KEY_PAIR']]]);
   }
 
-  getSSHConnections() {
+  getSSHConnections(): Observable<any[]> {
     return this.ws.call('keychaincredential.query', [[['type', '=', 'SSH_CREDENTIALS']]]);
   }
 }

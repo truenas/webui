@@ -47,7 +47,7 @@ export class ExampleData {
     this.templates.push(template);
   }
 
-  generateData() {
+  generateData(): any[] {
     const result: any[] = [];
     let tally = 0;
     this.templates.forEach((template, index) => {

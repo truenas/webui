@@ -207,7 +207,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       afterInit(entityDialog: EntityDialogComponent) {
         const copy_desc = _.find(this.fieldConfig, { name: 'copy_desc' });
         const parent = entityDialog.parent;
-        const setParatext = function (vdevs: number) {
+        const setParatext = function (vdevs: number): void {
           const used = parent.first_data_vdev_disknum * vdevs;
           const remaining = parent.duplicable_disks.length - used;
           const size = (<any>window).filesize(parent.first_data_vdev_disksize, { standard: 'iec' });
@@ -251,7 +251,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  getPoolData() {
+  getPoolData(): void {
     this.ws.call(this.queryCall, [[['id', '=', this.pk]]]).subscribe((res) => {
       if (res[0]) {
         this.first_data_vdev_type = res[0].topology.data[0].type.toLowerCase();

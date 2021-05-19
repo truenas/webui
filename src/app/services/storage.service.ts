@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SortDirection } from '@angular/material/sort';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { WebSocketService } from './ws.service';
 import { RestService } from './rest.service';
 
@@ -29,11 +30,11 @@ export class StorageService {
     return this.ws.call('filesystem.stat', [path]);
   }
 
-  listDisks() {
+  listDisks(): Observable<Disk[]> {
     return this.ws.call(this.diskResource, []);
   }
 
-  downloadFile(filename: string, contents: string, mime_type: string) {
+  downloadFile(filename: string, contents: string, mime_type: string): void {
     mime_type = mime_type || 'text/plain';
 
     const byteCharacters = atob(contents);
@@ -50,7 +51,7 @@ export class StorageService {
     this.downloadBlob(blob, filename);
   }
 
-  downloadBlob(blob: Blob, filename: string) {
+  downloadBlob(blob: Blob, filename: string): void {
     const dlink = document.createElement('a');
     document.body.appendChild(dlink);
     dlink.download = filename;
@@ -80,7 +81,7 @@ export class StorageService {
   }
 
   // Handles sorting for entity tables and some other ngx datatables
-  tableSorter(arr: any[], key: string, asc: SortDirection) {
+  tableSorter(arr: any[], key: string, asc: SortDirection): any[] {
     const tempArr: any[] = [];
     let sorter: any;
     const myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
@@ -205,19 +206,19 @@ export class StorageService {
   }
 
   // This section passes data from disk-list to disk-bulk-edit form
-  diskIdsBucket(arr: any) {
+  diskIdsBucket(arr: any): void {
     this.ids = arr;
   }
 
-  diskNamesBucket(arr: any) {
+  diskNamesBucket(arr: any): void {
     this.diskNames = arr;
   }
 
-  diskToggleBucket(bool: boolean) {
+  diskToggleBucket(bool: boolean): void {
     this.diskToggleStatus = bool;
   }
 
-  diskNameSort(disks: any[]) {
+  diskNameSort(disks: any[]): void {
     for (let i = 0; i < disks.length; i++) {
       for (let j = 0; j < disks.length - i - 1; j++) {
         const k = j + 1;
@@ -270,7 +271,7 @@ export class StorageService {
 
   // ----------------------- //
 
-  normalizeUnit(unitStr: string) {
+  normalizeUnit(unitStr: string): string {
     // normalize short units ("MB") or human units ("M") to IEC units ("MiB")
     // unknown values return undefined
 
@@ -294,7 +295,7 @@ export class StorageService {
     return undefined;
   }
 
-  convertUnitToNum(unitStr: string) {
+  convertUnitToNum(unitStr: string): number {
     // convert IEC ("MiB"), short ("MB"), or human ("M") units to numbers
     // unknown units are evaluated as 1
 
@@ -334,7 +335,7 @@ export class StorageService {
   // allowedUnits (optional) should include any or all of 'kmgtp', the first letters of KiB, Mib, etc. The first letter
   // is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB. If you don't pass in allowedUnits,
   // all of the above are accepted AND no unit is attached to an unlabeled number, so 256 is considered 256 bytes.
-  convertHumanStringToNum(hstr: any, dec = false, allowedUnits?: string) {
+  convertHumanStringToNum(hstr: any, dec = false, allowedUnits?: string): number {
     const IECUnitLetters = this.IECUnits.map((unit) => unit.charAt(0).toUpperCase()).join('');
 
     let num = 0;
@@ -386,7 +387,7 @@ export class StorageService {
   }
 
   // Converts a number from bytes to the most natural human readable format
-  convertBytestoHumanReadable(bytes: number, decimalPlaces?: number, min_units?: string, hideBytes?: boolean) {
+  convertBytestoHumanReadable(bytes: number, decimalPlaces?: number, min_units?: string, hideBytes?: boolean): string {
     let i = -1;
     let dec; let
       units;

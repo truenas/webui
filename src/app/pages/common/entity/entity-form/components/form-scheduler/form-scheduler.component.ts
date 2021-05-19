@@ -60,7 +60,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit,
   isOpen = false;
   formControl = new FormControl();
   private _currentValue: string;
-  get currentValue() {
+  get currentValue(): any {
     return this.group.controls[this.config.name].value;
   }
 

@@ -57,7 +57,7 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
     private modalService: ModalService,
   ) { }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     const gpusFormControl = this.entityForm.formGroup.controls['gpus'];
 
@@ -96,7 +96,7 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(body: { gpus: string[] }) {
+  customSubmit(body: { gpus: string[] }): void {
     this.loader.open();
     const finalIsolatedPciIds = body.gpus;
     this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids: finalIsolatedPciIds }]).subscribe(

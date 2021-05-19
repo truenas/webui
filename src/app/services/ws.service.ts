@@ -41,11 +41,11 @@ export class WebSocketService {
     this.connect();
   }
 
-  get authStatus() {
+  get authStatus(): Observable<any> {
     return this._authStatus.asObservable();
   }
 
-  get consoleMessages() {
+  get consoleMessages(): Observable<string> {
     if (!this.consoleSub) {
       this.consoleSub = this.sub('filesystem.file_tail_follow:/var/log/messages:499').pipe(
         filter((res) => res && res.data && typeof res.data === 'string'),
@@ -55,13 +55,13 @@ export class WebSocketService {
     return this.consoleSub;
   }
 
-  reconnect(protocol = window.location.protocol, remote = environment.remote) {
+  reconnect(protocol = window.location.protocol, remote = environment.remote): void {
     this.protocol = protocol;
     this.remote = remote;
     this.socket.close();
   }
 
-  connect() {
+  connect(): void {
     this.socket = new WebSocket(
       (this.protocol == 'https:' ? 'wss://' : 'ws://')
         + this.remote + '/websocket',
@@ -71,12 +71,12 @@ export class WebSocketService {
     this.socket.onclose = this.onclose.bind(this);
   }
 
-  onopen() {
+  onopen(): void {
     this.onOpenSubject.next(true);
     this.send({ msg: 'connect', version: '1', support: ['1'] });
   }
 
-  onconnect() {
+  onconnect(): void {
     this.shuttingdown = false;
     while (this.pendingMessages.length > 0) {
       const payload = this.pendingMessages.pop();
@@ -84,7 +84,7 @@ export class WebSocketService {
     }
   }
 
-  onclose() {
+  onclose(): void {
     this.connected = false;
     this.onCloseSubject.next(true);
     setTimeout(this.connect.bind(this), 5000);
@@ -93,14 +93,14 @@ export class WebSocketService {
     }
   }
 
-  ping() {
+  ping(): void {
     if (this.connected) {
       this.socket.send(JSON.stringify({ msg: 'ping', id: UUID.UUID() }));
       setTimeout(this.ping.bind(this), 20000);
     }
   }
 
-  onmessage(msg: { data: string }) {
+  onmessage(msg: { data: string }): void {
     try {
       var data = JSON.parse(msg.data);
     } catch (e) {
@@ -157,7 +157,7 @@ export class WebSocketService {
     }
   }
 
-  send(payload: any) {
+  send(payload: any): void {
     if (this.socket.readyState == WebSocket.OPEN) {
       this.socket.send(JSON.stringify(payload));
     } else {
@@ -176,7 +176,7 @@ export class WebSocketService {
     return source;
   }
 
-  unsubscribe(observer: any) {
+  unsubscribe(observer: any): void {
     // FIXME: just does not have a good performance :)
     this.subscriptions.forEach((v, k) => {
       v.forEach((item) => {
@@ -261,7 +261,7 @@ export class WebSocketService {
     });
   }
 
-  loginCallback(result: any, observer: Observer<any>) {
+  loginCallback(result: any, observer: Observer<any>): void {
     if (result === true) {
       if (!this.loggedIn) {
         this._authStatus.next(this.loggedIn);
@@ -293,17 +293,17 @@ export class WebSocketService {
     });
   }
 
-  clearCredentials() {
+  clearCredentials(): void {
     this.loggedIn = false;
     this.token = null;
   }
 
-  prepare_shutdown() {
+  prepare_shutdown(): void {
     this.shuttingdown = true;
     this.clearCredentials();
   }
 
-  logout() {
+  logout(): void {
     this.call('auth.logout').subscribe(() => {
       this.clearCredentials();
       this.socket.close();

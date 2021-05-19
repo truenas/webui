@@ -35,7 +35,7 @@ export class KerberosRealmsListComponent implements OnDestroy {
 
   constructor(private modalService: ModalService) { }
 
-  resourceTransformIncomingRestData(data: any[]) {
+  resourceTransformIncomingRestData(data: any[]): any[] {
     data.forEach((row) => {
       this.keyList.forEach((key) => {
         if (row.hasOwnProperty(key)) {
