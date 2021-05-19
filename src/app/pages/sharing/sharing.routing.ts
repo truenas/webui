@@ -62,14 +62,6 @@ export const routes: Routes = [
           path: '',
           component: NFSListComponent,
           data: { title: 'NFS', breadcrumb: 'NFS' },
-        }, {
-          path: 'add',
-          component: NFSFormComponent,
-          data: { title: 'Add', breadcrumb: 'Add' },
-        }, {
-          path: 'edit/:pk',
-          component: NFSFormComponent,
-          data: { title: 'Edit', breadcrumb: 'Edit' },
         }],
       }, {
         path: 'webdav',
