@@ -320,24 +320,24 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dashStateReady = true;
     });
 
-    this.statsEvents = this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').subscribe((evt) => {
-      if (evt.cpu) {
-        this.statsDataEvents.next({ name: 'CpuStats', data: evt.cpu });
+    this.statsEvents = this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').subscribe((update) => {
+      if (update.cpu) {
+        this.statsDataEvents.next({ name: 'CpuStats', data: update.cpu });
       }
 
-      if (evt.virtual_memory) {
-        const memStats: VirtualMemoryUpdate & { arc_size?: number } = { ...evt.virtual_memory };
+      if (update.virtual_memory) {
+        const memStats: VirtualMemoryUpdate & { arc_size?: number } = { ...update.virtual_memory };
 
-        if (evt.zfs && evt.zfs.arc_size != null) {
-          memStats.arc_size = evt.zfs.arc_size;
+        if (update.zfs && update.zfs.arc_size != null) {
+          memStats.arc_size = update.zfs.arc_size;
         }
         this.statsDataEvents.next({ name: 'MemoryStats', data: memStats });
       }
 
-      if (evt.interfaces) {
-        const keys = Object.keys(evt.interfaces);
+      if (update.interfaces) {
+        const keys = Object.keys(update.interfaces);
         keys.forEach((key, index) => {
-          const data = evt.interfaces[key];
+          const data = update.interfaces[key];
           this.statsDataEvents.next({ name: 'NetTraffic_' + key, data });
         });
       }
