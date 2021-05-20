@@ -110,7 +110,8 @@ export interface EntityTableAction {
   actionName: string;
   icon: string;
   label: string;
-  onClick: (row: any) => void;
+  onClick: (row?: any) => void;
+  disabled?: boolean;
 }
 
 export interface SortingConfig {
@@ -819,7 +820,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }];
   }
 
-  getAddActions() {
+  getAddActions(): EntityTableAction[] {
     if (this.conf.getAddActions) {
       return this.conf.getAddActions();
     }

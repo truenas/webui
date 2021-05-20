@@ -32,7 +32,7 @@ import { JobService } from 'app/services/job.service';
 import { KeychainCredentialService } from 'app/services/keychaincredential.services';
 import { ModalService } from 'app/services/modal.service';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { InputTableConf } from 'app/pages/common/entity/table/table.component';
+import { AppTableAction, InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/rsync-form.component';
@@ -522,7 +522,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  getReplicationActions() {
+  getReplicationActions(): AppTableAction[] {
     return [
       {
         id: 'replication_run_now',
@@ -604,10 +604,10 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           this.dialog.dialogFormWide(conf);
         },
       },
-    ];
+    ] as unknown as AppTableAction[];
   }
 
-  getCloudsyncActions() {
+  getCloudsyncActions(): AppTableAction[] {
     return [
       {
         id: 'cloudsync_run_now',
@@ -783,10 +783,10 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           this.dialog.dialogFormWide(conf);
         },
       },
-    ];
+    ] as unknown as AppTableAction[];
   }
 
-  getRsyncActions() {
+  getRsyncActions(): AppTableAction[] {
     return [
       {
         id: 'rsync_run_now',
@@ -820,7 +820,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           });
         },
       },
-    ];
+    ] as unknown as AppTableAction[];
   }
 
   isActionVisible(name: string, row: any): boolean {

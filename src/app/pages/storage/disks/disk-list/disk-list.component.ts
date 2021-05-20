@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { CoreEvent } from 'app/interfaces/events';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 import { T } from '../../../../translate-marker';
 import * as _ from 'lodash';
@@ -127,7 +128,7 @@ export class DiskListComponent {
     this.ws.call('smart.test.disk_choices').subscribe((res) => this.SMARTdiskChoices = res, (err) => new EntityUtils().handleWSError(this, err));
   }
 
-  getActions(parentRow: any) {
+  getActions(parentRow: any): EntityTableAction[] {
     const actions = [{
       id: parentRow.name,
       icon: 'edit',
@@ -244,7 +245,7 @@ export class DiskListComponent {
         },
       });
     }
-    return actions;
+    return actions as EntityTableAction[];
   }
 
   dataHandler(entityList: any): void {
