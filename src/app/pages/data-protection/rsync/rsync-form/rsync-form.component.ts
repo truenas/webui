@@ -12,6 +12,8 @@ import { ModalService } from '../../../../services/modal.service';
 import helptext from '../../../../helptext/data-protection/resync/resync-form';
 import { FieldSets } from '../../../common/entity/entity-form/classes/field-sets';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Direction } from 'app/enums/direction.enum';
+import { T } from 'app/translate-marker';
 @Component({
   selector: 'app-rsync-task-add',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -65,8 +67,8 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
           placeholder: helptext.rsync_direction_placeholder,
           tooltip: helptext.rsync_direction_tooltip,
           options: [
-            { label: 'Push', value: 'PUSH' },
-            { label: 'Pull', value: 'PULL' },
+            { label: T('Push'), value: Direction.Push },
+            { label: T('Pull'), value: Direction.Pull },
           ],
           required: true,
           validation: helptext.rsync_direction_validation,

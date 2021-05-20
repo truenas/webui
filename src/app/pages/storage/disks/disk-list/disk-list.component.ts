@@ -303,19 +303,19 @@ export class DiskListComponent implements InputTableConf {
           placeholder: helptext.manual_test_dialog.type_placeholder,
           options: [
             {
-              label: 'LONG',
+              label: T('LONG'),
               value: SmartTestType.Long,
             },
             {
-              label: 'SHORT',
+              label: T('SHORT'),
               value: SmartTestType.Short,
             },
             {
-              label: 'CONVEYANCE',
+              label: T('CONVEYANCE'),
               value: SmartTestType.Conveyance,
             },
             {
-              label: 'OFFLINE',
+              label: T('OFFLINE'),
               value: SmartTestType.Offline,
             },
           ],

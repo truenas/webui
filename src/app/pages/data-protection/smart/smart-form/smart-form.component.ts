@@ -12,6 +12,7 @@ import { take } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { SmartTestUI } from 'app/interfaces/smart-test.interface';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-smart-test-add',
@@ -63,19 +64,19 @@ export class SmartFormComponent implements FormConfiguration {
           tooltip: helptext.smarttest_type_tooltip,
           options: [
             {
-              label: 'LONG',
+              label: T('LONG'),
               value: SmartTestType.Long,
             },
             {
-              label: 'SHORT',
+              label: T('SHORT'),
               value: SmartTestType.Short,
             },
             {
-              label: 'CONVEYANCE',
+              label: T('CONVEYANCE'),
               value: SmartTestType.Conveyance,
             },
             {
-              label: 'OFFLINE',
+              label: T('OFFLINE'),
               value: SmartTestType.Offline,
             },
           ],

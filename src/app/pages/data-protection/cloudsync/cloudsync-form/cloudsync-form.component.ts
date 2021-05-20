@@ -203,10 +203,10 @@ export class CloudsyncFormComponent implements FormConfiguration {
               connective: 'OR',
               when: [{
                 name: 'direction',
-                value: 'PULL',
+                value: Direction.Pull,
               }, {
                 name: 'transfer_mode',
-                value: 'MOVE',
+                value: TransferMode.Move,
               }],
             },
           ],
@@ -683,21 +683,21 @@ export class CloudsyncFormComponent implements FormConfiguration {
     // When user interacts with direction dropdown, change transfer_mode to COPY
     this.formGroup
       .get('direction')
-      .valueChanges.pipe(filter(() => this.formGroup.get('transfer_mode').value !== 'COPY'))
+      .valueChanges.pipe(filter(() => this.formGroup.get('transfer_mode').value !== TransferMode.Copy))
       .subscribe(() => {
         this.dialog.Info(helptext.resetTransferModeDialog.title, helptext.resetTransferModeDialog.content, '500px', 'info', true);
-        this.formGroup.get('transfer_mode').setValue('COPY');
+        this.formGroup.get('transfer_mode').setValue(TransferMode.Copy);
       });
 
     // Update transfer_mode paragraphs when the mode is changed
-    this.formGroup.get('transfer_mode').valueChanges.subscribe((mode: any) => {
+    this.formGroup.get('transfer_mode').valueChanges.subscribe((mode: TransferMode) => {
       const paragraph = entityForm.fieldConfig.find((config: any) => config.name === 'transfer_mode_warning');
       switch (mode) {
-        case 'SYNC':
+        case TransferMode.Sync:
           paragraph.paraText = helptext.transfer_mode_warning_sync;
           paragraph.paragraphIcon = 'sync';
           break;
-        case 'MOVE':
+        case TransferMode.Move:
           paragraph.paraText = helptext.transfer_mode_warning_move;
           paragraph.paragraphIcon = 'move_to_inbox';
           break;
@@ -819,7 +819,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       return;
     }
 
-    if (value['direction'] == 'PULL') {
+    if (value['direction'] == Direction.Pull) {
       value['snapshot'] = false;
     }
     return value;
