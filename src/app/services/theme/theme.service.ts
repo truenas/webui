@@ -458,7 +458,7 @@ export class ThemeService {
     }
   }
 
-  hexToRGB(str: string) {
+  hexToRGB(str: string): { hex: string; rgb: number[] } {
     return this.utils.hexToRGB(str);
   }
 

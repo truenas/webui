@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { CoreEvent } from 'app/interfaces/events';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs/Observable';
 import { DialogService, ShellService, WebSocketService } from '../../../services';
 import helptext from '../../../helptext/shell/shell';
 import { Terminal } from 'xterm';
@@ -304,7 +305,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  getAuthToken() {
+  getAuthToken(): Observable<any> {
     return this.ws.call('auth.generate_token');
   }
 

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Pool } from 'app/interfaces/pool.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import * as _ from 'lodash';
 import helptext from '../../../helptext/jails/jails-list';
@@ -187,7 +188,7 @@ export class JailListComponent {
     public loader: AppLoaderService, public dialogService: DialogService, private translate: TranslateService,
     public sorter: StorageService, public dialog: MatDialog) {}
 
-  noPoolDialog() {
+  noPoolDialog(): void {
     const dialogRef = this.dialogService.confirm(
       helptext.noPoolDialog.title,
       helptext.noPoolDialog.message,
@@ -235,15 +236,15 @@ export class JailListComponent {
       }
     });
   }
-  prerequisiteFailedHandler(entityList: any) {
+  prerequisiteFailedHandler(entityList: any): void {
     this.entityList = entityList;
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
   }
 
-  activatePool() {
+  activatePool(): void {
     const self = this;
 
     const conf: DialogFormConfiguration = {
@@ -427,7 +428,7 @@ export class JailListComponent {
     return true;
   }
 
-  getSelectedNames(selectedJails: any[]) {
+  getSelectedNames(selectedJails: any[]): any[] {
     const selected: any = [];
     for (const i in selectedJails) {
       selected.push([selectedJails[i].host_hostuuid]);
@@ -435,7 +436,7 @@ export class JailListComponent {
     return selected;
   }
 
-  updateRow(row: any) {
+  updateRow(row: any): void {
     this.ws.call(this.queryCall, [[['host_hostuuid', '=', row.host_hostuuid]]]).subscribe(
       (res) => {
         if (res[0]) {
@@ -452,7 +453,7 @@ export class JailListComponent {
     );
   }
 
-  updateMultiAction(selected: any) {
+  updateMultiAction(selected: any): void {
     if (_.find(selected, ['state', 'up'])) {
       _.find(this.multiActions, { id: 'mstop' as any })['enable'] = true;
     } else {
@@ -466,13 +467,13 @@ export class JailListComponent {
     }
   }
 
-  wsMultiDeleteParams(selected: any) {
+  wsMultiDeleteParams(selected: any): any[] {
     const params: any[] = ['jail.delete'];
     params.push(this.getSelectedNames(selected));
     return params;
   }
 
-  dataHandler(entityList: any) {
+  dataHandler(entityList: any): void {
     // Call sort on load to make sure initial sort is by Jail name, asecnding
     entityList.rows = this.sorter.tableSorter(entityList.rows, 'host_hostuuid', 'asc');
     for (let i = 0; i < entityList.rows.length; i++) {
@@ -490,7 +491,7 @@ export class JailListComponent {
     }
   }
 
-  wsDeleteParams(row: any, id: any) {
+  wsDeleteParams(row: any, id: any): QueryParams<any, any> {
     return row.state === 'up' ? [id, { force: true }] : [id];
   }
 }

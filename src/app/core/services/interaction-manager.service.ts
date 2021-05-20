@@ -117,7 +117,7 @@ export class InteractionManagerService {
     this.displayList = [];
   }
 
-  private releaseAll() {
+  private releaseAll(): void {
     // Trying to avoid glitches with flakey pointer devices
     // unset the focus property for all DisplayObjects
     this.displayList.forEach((item, index) => {
@@ -125,7 +125,7 @@ export class InteractionManagerService {
     });
   }
 
-  registerElement(config: any, layout?: LayoutObject) {
+  registerElement(config: any, layout?: LayoutObject): DisplayObject {
     const selector = config.id;
     const observable = multicast();
     const el = document.querySelector(selector);
@@ -152,7 +152,7 @@ export class InteractionManagerService {
     return registration.displayObject;
   }
 
-  unregisterElement(tracker: any) {
+  unregisterElement(tracker: any): void {
     tracker.interactive = false;
     const index = this.displayList.indexOf(tracker);
     this.displayList.splice(index, 1);
@@ -185,7 +185,7 @@ export class InteractionManagerService {
     return registration.layout;
   }
 
-  private startCollisionDetection(dragTarget: DisplayObject, targets: any[]) {
+  private startCollisionDetection(dragTarget: DisplayObject, targets: any[]): void {
     dragTarget.updateStream.subscribe((position) => {
       // console.log(position.y);
       const collisionTarget = targets.forEach((target) => {
@@ -202,7 +202,7 @@ export class InteractionManagerService {
   }
 
   // Collision Detection Goes Here...
-  private detectCollision(a: any, b: any) {
+  private detectCollision(a: any, b: any): boolean {
     return !(
       ((a.y + a.height) < (b.y))
           || (a.y > (b.y + b.height))
