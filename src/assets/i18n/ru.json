@@ -893,6 +893,7 @@
   "Setting this option changes the destination dataset to be read-only. To continue using the default or existing dataset read permissions, leave this option unset.": "",
   "Share ACL": "",
   "Shares": "",
+  "Shares Dashboard": "",
   "Sharing Controls": "",
   "Sharing Platform": "",
   "Show": "",

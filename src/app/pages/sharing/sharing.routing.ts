@@ -36,16 +36,11 @@ export const routes: Routes = [
     data: { title: 'Sharing' },
     children: [
       {
-        path: '',
-        component: AFPListComponent,
-        data: { title: 'AFP', breadcrumb: 'AFP' },
-      },
-      {
         path: 'afp',
         data: { title: 'AFP', breadcrumb: 'AFP', icon: 'share' },
         children: [{
           path: '',
-          component: SharesDashboardComponent,
+          component: AFPListComponent,
           data: { title: 'AFP', breadcrumb: 'AFP' },
         },
         {
@@ -201,6 +196,11 @@ export const routes: Routes = [
                 }],
               }],
           }],
+      },
+      {
+        path: 'dashboard',
+        component: SharesDashboardComponent,
+        data: { title: 'Dashboard', breadcrumb: 'Dashboard' },
       }],
   },
 ];

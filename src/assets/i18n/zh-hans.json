@@ -725,6 +725,7 @@
   "Set to use encryption when replicating data. Additional encryption options will appear.": "",
   "Set to use the <i>Schedule</i> in place  of the <i>Replicate Specific Snapshots</i> time frame. The Schedule values are  read over the <i>Replicate Specific Snapshots</i> time frame.": "",
   "Shares": "",
+  "Shares Dashboard": "",
   "Sign": "",
   "Signed By: ": "",
   "Signed Certificates: ": "",
