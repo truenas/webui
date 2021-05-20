@@ -1,4 +1,5 @@
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 
 export interface EntityJob {
   abortable: boolean;
@@ -14,6 +15,6 @@ export interface EntityJob {
   progress: { percent: number; description: string; extra: string };
   result: string;
   state: EntityJobState;
-  time_finished: { $date: number };
-  time_started: { $date: number };
+  time_finished: ApiTimestamp;
+  time_started: ApiTimestamp;
 }

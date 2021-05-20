@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { MaterialModule } from 'app/appMaterial.module';
 import { iXObject } from 'app/core/classes/ix-object';
@@ -22,7 +22,7 @@ import { T } from '../../../../translate-marker';
   selector: 'widget',
   templateUrl: './widget.component.html',
 })
-export class WidgetComponent extends iXObject implements AfterViewInit {
+export class WidgetComponent extends iXObject {
   protected core: CoreService;
   themeService: ThemeService;
   @Input() widgetSize: string;
@@ -43,10 +43,7 @@ export class WidgetComponent extends iXObject implements AfterViewInit {
     this.themeService = CoreServiceInjector.get(ThemeService);
   }
 
-  ngAfterViewInit() {
-  }
-
-  toggleConfig() {
+  toggleConfig(): void {
     if (this.isFlipped) {
       this.flipAnimation = 'unflip';
     } else {
@@ -62,12 +59,12 @@ export class WidgetComponent extends iXObject implements AfterViewInit {
     this.isFlipped = !this.isFlipped;
   }
 
-  setPreferences(form: NgForm) {
+  setPreferences(form: NgForm): void {
     console.log('******** FORM SUBMITTED!! ********');
     console.log(form);
   }
 
-  goBack() {
+  goBack(): void {
     this.back.emit();
   }
 }

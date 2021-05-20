@@ -103,7 +103,7 @@ export class StorageFormComponent implements FormConfiguration, OnInit {
     protected jailService: JailService, protected loader: AppLoaderService, protected ws: WebSocketService,
     private dialog: DialogService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.aroute.params.subscribe((params) => {
       this.ws.call('jail.query', [
         [
@@ -134,7 +134,7 @@ export class StorageFormComponent implements FormConfiguration, OnInit {
     });
   }
 
-  preInit(entityForm: any) {
+  preInit(): void {
     const destination_field = _.find(this.fieldConfig, { name: 'destination' });
     this.jail = _.find(this.fieldConfig, { name: 'jail' });
     this.aroute.params.subscribe((params) => {
@@ -152,7 +152,7 @@ export class StorageFormComponent implements FormConfiguration, OnInit {
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.entityForm = entityForm;
     entityForm.onSubmit = this.onSubmit;
     entityForm.error = this.error;
@@ -173,7 +173,7 @@ export class StorageFormComponent implements FormConfiguration, OnInit {
     }
   }
 
-  dataAttributeHandler(entityList: any) {
+  dataAttributeHandler(entityList: any): void {
     entityList.formGroup.controls['source'].setValue(entityList.queryResponse[this.mountpointId].entry[0]);
     entityList.formGroup.controls['destination'].setValue(entityList.queryResponse[this.mountpointId].entry[1]);
 
@@ -191,7 +191,7 @@ export class StorageFormComponent implements FormConfiguration, OnInit {
     this.mountPointEdit.pass = entityList.queryResponse[this.mountpointId].entry[5];
   }
 
-  onSubmit(event: Event) {
+  onSubmit(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
     this.error = null;

@@ -26,7 +26,7 @@ export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnI
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.selectStates.length = this.config.options.length;
     this.selectStates.fill(false);
 
@@ -46,7 +46,7 @@ export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnI
     this.updateController();
   }
 
-  onClick(value: any, index: number) {
+  onClick(value: any, index: number): void {
     if (this.selectStates[index]) {
       if (this.checkLength()) { this.allSelected = false; }
       const vIndex = this.values.indexOf(value);
@@ -61,17 +61,17 @@ export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnI
     this.updateController();
   }
 
-  updateController() {
+  updateController(): void {
     this.config.value = this.values;
     const message: Control = { name: this.config.name, value: this.values };
     this.controller.next(message);
   }
 
-  checkLength() {
+  checkLength(): boolean {
     return this.values.length === this.selectStates.length;
   }
 
-  checkAll() {
+  checkAll(): void {
     this.allSelected = this.checkLength();
     if (!this.allSelected) {
       this.selectStates.fill(true);
@@ -83,11 +83,11 @@ export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnI
     this.updateController();
   }
 
-  isChecked() {
+  isChecked(): boolean {
     return true;
   }
 
-  onChangeOption() {
+  onChangeOption(): void {
   }
 
   compareValues(x: any, y: any): boolean {

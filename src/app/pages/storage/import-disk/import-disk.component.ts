@@ -2,6 +2,7 @@ import {
   ApplicationRef, Component, Injector, OnDestroy,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { CoreEvent } from 'app/interfaces/events';
 import * as _ from 'lodash';
 import helptext from '../../../helptext/storage/import-disk/import-disk';
 
@@ -20,7 +21,7 @@ import { EntityUtils } from '../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { T } from '../../../translate-marker';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 
 @Component({
   selector: 'app-import-disk',
@@ -99,12 +100,12 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService,
     protected job: JobService, protected core: CoreService) {}
 
-  preInit(entityForm: any) {
+  preInit(entityForm: any): void {
     this.entityForm = entityForm;
     entityForm.isNew = true; // disable attempting to load data that doesn't exist
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.fieldConfig = entityForm.fieldConfig;
     this.volume = _.find(this.fieldConfig, { name: 'volume' });
     this.fs_type_list = _.find(this.fieldConfig, { name: 'fs_type' });
@@ -147,7 +148,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     });
   }
 
-  makeList() {
+  makeList(): void {
     this.volume.options = [];
     this.ws.call('disk.get_unused', [true]).subscribe((data) => {
       for (let i = 0; i < data.length; i++) {
@@ -169,7 +170,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     });
   }
 
-  customSubmit(payload: any) {
+  customSubmit(payload: any): void {
     this.custActions = [];
     const fs_options: any = {};
     if (payload.fs_type === 'msdosfs' && payload.msdosfs_locale) {
@@ -212,7 +213,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
     this.fs_type_subscription.unsubscribe();
   }

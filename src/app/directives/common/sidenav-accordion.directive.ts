@@ -12,7 +12,7 @@ export class SideNavAccordionDirective implements OnInit {
     private layoutService: LayoutService,
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     const self = this;
     var subMenu = this.el.nativeElement.querySelector('.mat-list-item-content > mat-nav-list');
     const isCollapsed = this.layoutService.isMenuCollapsed;
@@ -27,7 +27,7 @@ export class SideNavAccordionDirective implements OnInit {
   }
 
   @HostListener('click', ['$event'])
-  onClick($event: MouseEvent) {
+  onClick($event: MouseEvent): void {
     const target = $event.target as HTMLElement;
     var parentLi = domHelper.findClosest(target, 'mat-list-item');
     domHelper.addClass(target.parentElement, 'highlight');
@@ -41,21 +41,22 @@ export class SideNavAccordionDirective implements OnInit {
 
   // For collapsed sidebar
   @HostListener('mouseenter')
-  onMouseEnter() {
+  onMouseEnter(): void {
     const elem = this.el.nativeElement;
     const isCollapsed = this.layoutService.isMenuCollapsed;
     if (!isCollapsed) return;
     domHelper.addClass(elem, 'open');
   }
+
   @HostListener('mouseleave')
-  onMouseLeave() {
+  onMouseLeave(): void {
     const elem = this.el.nativeElement;
     const isCollapsed = this.layoutService.isMenuCollapsed;
     if (!isCollapsed) return;
     domHelper.removeClass(elem, 'open');
   }
 
-  private toggleOpen() {
+  private toggleOpen(): void {
     var elem = this.el.nativeElement;
     var parenMenuItems = document.getElementsByClassName('has-submenu');
 

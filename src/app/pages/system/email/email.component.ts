@@ -58,10 +58,10 @@ export class EmailComponent implements FormConfiguration, OnDestroy {
           subject: 'TrueNAS Test Message',
           text: `This is a test message from TrueNAS ${product_type}.`,
         };
-        this.ws.call('system.info').subscribe((sysInfo) => {
+        this.ws.call('system.info').subscribe((systemInfo) => {
           value.pass = value.pass || this.entityEdit.data.pass;
 
-          mailObj['subject'] += ' hostname: ' + sysInfo['hostname'];
+          mailObj['subject'] += ' hostname: ' + systemInfo.hostname;
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'EMAIL' }, disableClose: true });
           this.dialogRef.componentInstance.setCall('mail.send', [mailObj, value]);
           this.dialogRef.componentInstance.submit();

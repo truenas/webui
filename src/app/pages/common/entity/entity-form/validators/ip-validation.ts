@@ -1,10 +1,10 @@
-import { FormControl } from '@angular/forms';
+import { FormControl, ValidatorFn } from '@angular/forms';
 import * as _ from 'lodash';
 import * as ipRegex from 'ip-regex';
 import * as isCidr from 'is-cidr';
 
 // Accepts ipv4 or ipv6 addresses with no CIDR (ie, /24)
-export function ipv4or6Validator(control: string) {
+export function ipv4or6Validator(control: string): ValidatorFn {
   let thisControl: FormControl;
 
   return function ipValidate(control: FormControl) {
@@ -30,7 +30,7 @@ export function ipv4or6Validator(control: string) {
 }
 
 // Accepts ipv4 or ipv6 addresses with a CIDR (ie, /24)
-export function ipv4or6cidrValidator(control: string) {
+export function ipv4or6cidrValidator(control: string): ValidatorFn {
   let thisControl: FormControl;
 
   return function ipValidate(control: FormControl) {
@@ -55,7 +55,7 @@ export function ipv4or6cidrValidator(control: string) {
 }
 
 // Accepts ipv4 or ipv6 addresses with an OPTIONAL CIDR (ie, /24)
-export function ipv4or6OptionalCidrValidator(control: string) {
+export function ipv4or6OptionalCidrValidator(control: string): ValidatorFn {
   let thisControl: FormControl;
 
   return function ipValidate(control: FormControl) {
@@ -81,7 +81,7 @@ export function ipv4or6OptionalCidrValidator(control: string) {
 }
 
 // Accepts ipv4 addresses with no CIDR (ie, /24)
-export function ipv4Validator(control: string) {
+export function ipv4Validator(control: string): ValidatorFn {
   let thisControl: FormControl;
 
   return function ipValidate(control: FormControl) {
@@ -107,7 +107,7 @@ export function ipv4Validator(control: string) {
 }
 
 // Accepts ipv6 addresses with no CIDR (ie, /24)
-export function ipv6Validator(control: string) {
+export function ipv6Validator(control: string): ValidatorFn {
   let thisControl: FormControl;
 
   return function ipValidate(control: FormControl) {
@@ -132,7 +132,7 @@ export function ipv6Validator(control: string) {
 }
 
 // Used only on sharing/iscsi/portal/portal-form
-export function ipValidator(type: string = 'ipv4' || 'ipv6' || 'all') {
+export function ipValidator(type: string = 'ipv4' || 'ipv6' || 'all'): ValidatorFn {
   const ipv4_regex = ipRegex.v4();
   const ipv6_regex = ipRegex.v6();
   let thisControl: FormControl;
@@ -150,7 +150,7 @@ export function ipValidator(type: string = 'ipv4' || 'ipv6' || 'all') {
       return null;
     }
 
-    function checkIp(ipType = 'ipv4' || 'ipv6') {
+    function checkIp(ipType = 'ipv4' || 'ipv6'): boolean {
       const regex = ipType === 'ipv4' ? ipv4_regex : ipv6_regex;
       const wildcard = ipType === 'ipv4' ? '0.0.0.0' : '::';
       if (_.indexOf(thisControl.value, wildcard) !== -1) {

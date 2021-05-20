@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
+import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
@@ -23,7 +24,7 @@ import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-status';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { EntityToolbarComponent } from '../../../common/entity/entity-toolbar/entity-toolbar.component';
 import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
@@ -604,7 +605,7 @@ export class VolumeStatusComponent implements OnInit {
     return node;
   }
 
-  dataHandler(pool: Pool) {
+  dataHandler(pool: Pool): void {
     const node: TreeNode = {};
     node.data = this.parseData(pool);
     node.expanded = true;

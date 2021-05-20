@@ -8,6 +8,7 @@ import {
   FormGroup,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AclItemTag } from 'app/enums/acl-type.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -352,12 +353,12 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
       this.uid_fc.options = this.userOptions;
     });
 
-    this.userService.groupQueryDSCache().subscribe((items) => {
-      const groups = [];
-      for (let i = 0; i < items.length; i++) {
-        groups.push({ label: items[i].group, value: items[i].group });
+    this.userService.groupQueryDSCache().subscribe((groups) => {
+      const groupOptions: Option[] = [];
+      for (let i = 0; i < groups.length; i++) {
+        groupOptions.push({ label: groups[i].group, value: groups[i].group });
       }
-      this.groupOptions = groups;
+      this.groupOptions = groupOptions;
 
       this.gid_fc.options = this.groupOptions;
     });
@@ -383,8 +384,8 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
       }
     });
 
-    this.ws.call('filesystem.acl_is_trivial', [this.path]).subscribe((acl_is_trivial) => {
-      this.aclIsTrivial = acl_is_trivial;
+    this.ws.call('filesystem.acl_is_trivial', [this.path]).subscribe((aclIsTrivial) => {
+      this.aclIsTrivial = aclIsTrivial;
     }, (err) => {
       new EntityUtils().handleWSError(this.entityForm, err);
     });
@@ -419,10 +420,10 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
             if (!group_fc['parent']) {
               group_fc.parent = this;
             }
-            if (res[i].tag === 'USER') {
+            if (res[i].tag === AclItemTag.User) {
               this.setDisabled(user_fc, this.aces.controls[i].controls['user'], false, false);
               this.setDisabled(group_fc, this.aces.controls[i].controls['group'], true, true);
-            } else if (res[i].tag === 'GROUP') {
+            } else if (res[i].tag === AclItemTag.Group) {
               this.setDisabled(user_fc, this.aces.controls[i].controls['user'], true, true);
               this.setDisabled(group_fc, this.aces.controls[i].controls['group'], false, false);
             } else {
@@ -546,7 +547,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
       acl = {};
       acl.type = data[i].type;
       acl.tag = data[i].tag;
-      if (acl.tag === 'USER') {
+      if (acl.tag === AclItemTag.User) {
         const usr: any = await this.userService.getUserObject(data[i].id);
         if (usr && usr.pw_name) {
           acl.user = usr.pw_name;
@@ -554,7 +555,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
           acl.user = data[i].id;
           acl['user_not_found'] = true;
         }
-      } else if (acl.tag === 'GROUP') {
+      } else if (acl.tag === AclItemTag.Group) {
         const grp: any = await this.userService.getGroupObject(data[i].id);
         if (grp && grp.gr_name) {
           acl.group = grp.gr_name;
@@ -701,9 +702,9 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
       const acl = data.aces[i];
       d['tag'] = acl.tag;
       d['id'] = null;
-      if (acl.tag === 'USER') {
+      if (acl.tag === AclItemTag.User) {
         d['id'] = acl.user;
-      } else if (acl.tag === 'GROUP') {
+      } else if (acl.tag === AclItemTag.Group) {
         d['id'] = acl.group;
       }
       d['type'] = acl.type;
@@ -769,7 +770,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     });
 
     for (let i = 0; i < dacl.length; i++) {
-      if (dacl[i].tag === 'USER') {
+      if (dacl[i].tag === AclItemTag.User) {
         await this.userService.getUserByName(dacl[i].id).toPromise().then((userObj) => {
           if (userObj && userObj.hasOwnProperty('pw_uid')) {
             dacl[i]['id'] = userObj.pw_uid;
@@ -777,7 +778,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
         }, (err) => {
           console.error(err);
         });
-      } else if (dacl[i].tag === 'GROUP') {
+      } else if (dacl[i].tag === AclItemTag.Group) {
         await this.userService.getGroupByName(dacl[i].id).toPromise().then((groupObj) => {
           if (groupObj && groupObj.hasOwnProperty('gr_gid')) {
             dacl[i]['id'] = groupObj.gr_gid;
@@ -811,12 +812,12 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
   }
 
   updateGroupSearchOptions(value = '', parent: any, config: any): void {
-    parent.userService.groupQueryDSCache(value).subscribe((items: any[]) => {
-      const groups = [];
-      for (let i = 0; i < items.length; i++) {
-        groups.push({ label: items[i].group, value: items[i].group });
+    (parent.userService as UserService).groupQueryDSCache(value).subscribe((groups) => {
+      const groupOptions = [];
+      for (let i = 0; i < groups.length; i++) {
+        groupOptions.push({ label: groups[i].group, value: groups[i].group });
       }
-      config.searchOptions = groups;
+      config.searchOptions = groupOptions;
     });
   }
 

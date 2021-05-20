@@ -24,7 +24,7 @@ export class ToolbarMultimenuComponent extends iXAbstractObject implements OnIni
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.selectStates.length = this.config.options.length;
     this.selectStates.fill(false);
     if (this.config.value) {
@@ -48,7 +48,7 @@ export class ToolbarMultimenuComponent extends iXAbstractObject implements OnIni
     this.updateController();
   }
 
-  onClick(value: any, index: number) {
+  onClick(value: any, index: number): void {
     if (this.selectStates[index]) {
       if (this.checkLength()) { this.allSelected = false; }
       const vIndex = this.values.indexOf(value);
@@ -60,18 +60,18 @@ export class ToolbarMultimenuComponent extends iXAbstractObject implements OnIni
     this.updateController();
   }
 
-  updateController() {
+  updateController(): void {
     this.config.value = this.values;
     const message: Control = { name: this.config.name, value: this.values };
     this.controller.next(message);
   }
 
-  checkLength() {
+  checkLength(): boolean {
     // return true;
     return this.values.length === this.selectStates.length;
   }
 
-  checkAll() {
+  checkAll(): void {
     this.allSelected = this.checkLength();
     if (!this.allSelected) {
       this.selectStates.fill(true);
@@ -83,7 +83,7 @@ export class ToolbarMultimenuComponent extends iXAbstractObject implements OnIni
     this.updateController();
   }
 
-  isChecked() {
+  isChecked(): boolean {
     return true;
   }
 }

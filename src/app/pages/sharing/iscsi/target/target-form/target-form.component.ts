@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 
@@ -152,8 +153,8 @@ export class TargetFormComponent implements FormConfiguration {
     protected ws: WebSocketService) {
     const basicFieldset = _.find(this.fieldSets, { class: 'basic' });
     this.ws.call('system.info').subscribe(
-      (res) => {
-        if (res.license && res.license.features.indexOf('FIBRECHANNEL') > -1) {
+      (systemInfo) => {
+        if (systemInfo.license && systemInfo.license.features.indexOf(LicenseFeature.FibreChannel) > -1) {
           _.find(basicFieldset.config, { name: 'mode' }).isHidden = false;
         }
       },
@@ -167,17 +168,17 @@ export class TargetFormComponent implements FormConfiguration {
     const authGroupField = _.find(targetGroupFieldset.config, { name: 'groups' }).templateListField[3];
     const promise1 = new Promise((resolve, reject) => {
       this.iscsiService.listPortals().toPromise().then(
-        (protalRes) => {
-          for (let i = 0; i < protalRes.length; i++) {
-            let label = protalRes[i].tag;
-            if (protalRes[i].comment) {
-              label += ' (' + protalRes[i].comment + ')';
+        (portals) => {
+          for (let i = 0; i < portals.length; i++) {
+            let label = String(portals[i].tag);
+            if (portals[i].comment) {
+              label += ' (' + portals[i].comment + ')';
             }
-            portalGroupField.options.push({ label, value: protalRes[i].id });
+            portalGroupField.options.push({ label, value: portals[i].id });
           }
           resolve(true);
         },
-        (protalErr) => {
+        () => {
           resolve(false);
         },
       );
@@ -199,8 +200,8 @@ export class TargetFormComponent implements FormConfiguration {
     });
     const promise3 = new Promise((resolve, reject) => {
       this.iscsiService.getAuth().toPromise().then(
-        (authRes: any[]) => {
-          const tags = _.uniq(authRes.map((item) => item.tag));
+        (accessRecords) => {
+          const tags = _.uniq(accessRecords.map((item) => item.tag));
           authGroupField.options.push({ label: 'None', value: null });
           for (const tag of tags) {
             authGroupField.options.push({ label: tag, value: tag });
@@ -218,7 +219,7 @@ export class TargetFormComponent implements FormConfiguration {
     );
   }
 
-  preInit() {
+  preInit(): void {
     this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
@@ -227,12 +228,12 @@ export class TargetFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
   }
 
-  customEditCall(value: any) {
+  customEditCall(value: any): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
       (res) => {

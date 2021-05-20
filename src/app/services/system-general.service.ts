@@ -1,4 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { Subject, Observable } from 'rxjs';
 import * as _ from 'lodash';
 import { map } from 'rxjs/operators';
@@ -109,7 +110,7 @@ export class SystemGeneralService {
     return this.ws.call('notifier.choices', ['IPChoices', [true, false]]);
   }
 
-  getSysInfo() {
+  getSysInfo(): Observable<SystemInfo> {
     return this.ws.call('system.info', []);
   }
 

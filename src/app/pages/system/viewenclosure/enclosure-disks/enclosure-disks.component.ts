@@ -3,8 +3,9 @@ import {
 } from '@angular/core';
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 import { MaterialModule } from 'app/appMaterial.module';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
+import { CoreEvent } from 'app/interfaces/events';
 import {
   Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils,
 } from 'pixi.js';
@@ -891,7 +892,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
   }
 
-  toggleHighlightMode(mode: string) {
+  toggleHighlightMode(mode: string): void {
     if (this.selectedDisk.status == 'AVAILABLE') { return; }
 
     this.labels.events.next({

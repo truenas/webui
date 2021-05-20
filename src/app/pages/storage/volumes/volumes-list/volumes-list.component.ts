@@ -9,10 +9,14 @@ import { TranslateService } from '@ngx-translate/core';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { AclType } from 'app/enums/acl-type.enum';
+import { DatasetType } from 'app/enums/dataset-type.enum';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableService } from 'app/pages/common/entity/entity-table/entity-table.service';
@@ -151,7 +155,7 @@ export class VolumesListTableConfig implements InputTableConf {
     }
   }
 
-  isCustActionVisible(actionname: string) {
+  isCustActionVisible(actionname: string): boolean {
     if (actionname === 'download_key' && this.encryptedStatus > 0) {
       return true;
     }
@@ -374,14 +378,14 @@ export class VolumesListTableConfig implements InputTableConf {
     return actions;
   }
 
-  key_file_updater(file: any, parent: any) {
+  key_file_updater(file: any, parent: any): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
     }
   }
 
-  unlockAction(row1: any) {
+  unlockAction(row1: any): void {
     const self = this;
     this.storageService.poolUnlockServiceChoices(row1.id).pipe(
       map((serviceChoices) => ({
@@ -650,7 +654,7 @@ export class VolumesListTableConfig implements InputTableConf {
             doDetach();
           }
 
-          async function doDetach() {
+          async function doDetach(): Promise<void> {
             const sysPool = await self.ws.call('systemdataset.config').pipe(map((res) => res['pool'])).toPromise();
             let title: string;
             let warningA: string;
@@ -964,7 +968,7 @@ export class VolumesListTableConfig implements InputTableConf {
               },
             };
 
-            function doExpand(entityDialog?: EntityDialogComponent) {
+            function doExpand(entityDialog?: EntityDialogComponent): void {
               parent.loader.open();
               const payload = [row1.id];
               if (entityDialog) {
@@ -1107,8 +1111,8 @@ export class VolumesListTableConfig implements InputTableConf {
                   'storage', 'permissions', rowData.id,
                 ]));
               } else {
-                this.ws.call('filesystem.getacl', [rowData.mountpoint]).subscribe((res) => {
-                  if (res.acltype === 'POSIX1E') {
+                this.ws.call('filesystem.getacl', [rowData.mountpoint]).subscribe((acl) => {
+                  if (acl.acltype === AclType.Posix1e) {
                     this._router.navigate(new Array('/').concat([
                       'storage', 'id', rowData.pool, 'dataset',
                       'posix-acl', rowData.id,
@@ -1682,7 +1686,7 @@ export class VolumesListTableConfig implements InputTableConf {
     return encryption_actions;
   }
 
-  clickAction(rowData: any) {
+  clickAction(rowData: any): void {
     const editPermissions = rowData.actions[0].actions.find((o: any) => o.name === 'Edit Permissions');
     if (!rowData.locked && editPermissions) {
       if (!rowData.id.includes('/')) {
@@ -1695,7 +1699,7 @@ export class VolumesListTableConfig implements InputTableConf {
     }
   }
 
-  getTimestamp() {
+  getTimestamp(): string {
     const dateTime = new Date();
     return moment(dateTime).format('YYYY-MM-DD_HH-mm');
   }
@@ -1707,11 +1711,11 @@ export class VolumesListTableConfig implements InputTableConf {
     this.getMoreDatasetInfo(data, parent);
     node.data.group_actions = true;
     let actions_title = helptext.dataset_actions;
-    if (data.type === 'VOLUME') {
+    if (data.type === DatasetType.Volume) {
       actions_title = helptext.zvol_actions;
     }
     const actions = [{ title: actions_title, actions: this.getActions(data) }];
-    if (data.type === 'FILESYSTEM' || data.type === 'VOLUME') {
+    if (data.type === DatasetType.Filesystem || data.type === DatasetType.Volume) {
       const encryption_actions = this.getEncryptedDatasetActions(data);
       if (encryption_actions.length > 0) {
         actions.push({ title: helptext.encryption_actions_title, actions: encryption_actions });
@@ -1734,7 +1738,7 @@ export class VolumesListTableConfig implements InputTableConf {
     return node;
   }
 
-  getMoreDatasetInfo(dataObj: any, parent: any) {
+  getMoreDatasetInfo(dataObj: any, parent: any): void {
     const dataset_data2 = this.datasetData;
     this.translate.get(T('Inherits')).subscribe((inherits) => {
       for (const k in dataset_data2) {
@@ -1839,7 +1843,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
    * Please note that extra options are special in that they are passed directly to ZFS.
    * This is why 'encryptionroot' is included in order to get 'encryption_root' in the response
    * */
-  private datasetQueryOptions = [[] as any, {
+  private datasetQueryOptions: QueryParams<Dataset, ExtraDatasetQueryOptions> = [[], {
     extra: {
       properties: [
         'type',
@@ -1871,13 +1875,13 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
   }
 
-  repaintMe() {
+  repaintMe(): void {
     this.showDefaults = false;
     this.paintMe = false;
     this.ngOnInit();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.refreshTableSubscription) {
       this.refreshTableSubscription.unsubscribe();
     }
@@ -1989,20 +1993,20 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.addDatasetFormComponent = new DatasetFormComponent(this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService);
   }
 
-  addZvol(id: string, isNew: boolean) {
+  addZvol(id: string, isNew: boolean): void {
     this.addZvolComponent.setParent(id);
     this.addZvolComponent.isNew = isNew;
     this.modalService.open('slide-in-form', this.addZvolComponent, id);
   }
 
-  addDataset(pool: any, id: string) {
+  addDataset(pool: any, id: string): void {
     this.addDatasetFormComponent.setParent(id);
     this.addDatasetFormComponent.setVolId(pool);
     this.addDatasetFormComponent.setTitle(T('Add Dataset'));
     this.modalService.open('slide-in-form', this.addDatasetFormComponent, id);
   }
 
-  editDataset(pool: any, id: string) {
+  editDataset(pool: any, id: string): void {
     this.editDatasetFormComponent = new DatasetFormComponent(this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService);
 
     this.editDatasetFormComponent.setPk(id);
@@ -2011,7 +2015,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.modalService.open('slide-in-form', this.editDatasetFormComponent, id);
   }
 
-  createPool() {
+  createPool(): void {
     this.router.navigate(['/storage/manager']);
   }
 }

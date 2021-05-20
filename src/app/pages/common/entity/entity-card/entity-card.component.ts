@@ -165,14 +165,14 @@ export class EntityCardComponent extends iXObject implements OnInit {
       }] */
   }
 
-  getAddActions() {
+  getAddActions(): any[] {
     if (this.conf.getAddActions) {
       return this.conf.getAddActions();
     }
     return [];
   }
 
-  rowValue(row: any, attr: any) {
+  rowValue(row: any, attr: any): any {
     if (this.conf.rowValue) {
       return this.conf.rowValue(row, attr);
     }

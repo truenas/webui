@@ -6,9 +6,10 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatButton } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
-  FormBuilder, FormGroup, Validators, FormControl,
+  FormBuilder, FormGroup, Validators, FormControl, AbstractControl,
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { CoreEvent } from 'app/interfaces/events';
 import { FailoverDisabledReason } from '../../../enums/failover-disabled-reason.enum';
 import { ProductType } from '../../../enums/product-type.enum';
 import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
@@ -22,7 +23,7 @@ import { T } from '../../../translate-marker';
 import { WebSocketService } from '../../../services/ws.service';
 import { SystemGeneralService } from '../../../services';
 import { DialogService } from '../../../services/dialog.service';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
 import { AutofillMonitor } from '@angular/cdk/text-field';
 import { LocaleService } from 'app/services/locale.service';
@@ -45,7 +46,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   checking_status = false;
 
   _copyrightYear = '';
-  get copyrightYear() {
+  get copyrightYear(): string {
     return window.localStorage && window.localStorage.buildtime ? this.localeService.getCopyrightYearFromBuildTime() : '';
   }
 
@@ -107,7 +108,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     this.reason_text = helptext.ha_disabled_reasons;
   }
 
-  checkSystemType() {
+  checkSystemType(): void {
     if (!this.logo_ready) {
       this.getProdType = this.sysGeneralService.getProductType.subscribe((res) => {
         this.logo_ready = true;
@@ -135,7 +136,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this._autofill.monitor(this.usernameInput).subscribe((e) => {
       if (!this.didSetFocus) {
         this.didSetFocus = true;
@@ -144,7 +145,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).subscribe((evt: CoreEvent) => {
       if (this.router.url == '/sessions/signin' && evt.sender.userThemeLoaded == true) {
         this.redirect();
@@ -175,7 +176,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.interval) {
       clearInterval(this.interval);
     }
@@ -189,7 +190,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     this.getProdType.unsubscribe();
   }
 
-  loginToken() {
+  loginToken(): void {
     let middleware_token;
     if ((window as any)['MIDDLEWARE_TOKEN']) {
       middleware_token = (window as any)['MIDDLEWARE_TOKEN'];
@@ -222,7 +223,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  checkBuildtime() {
+  checkBuildtime(): void {
     this.ws.call('system.build_time').subscribe((res) => {
       const buildtime = res.$date;
       const previous_buildtime = window.localStorage.getItem('buildtime');
@@ -233,7 +234,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  canLogin() {
+  canLogin(): boolean {
     if (this.logo_ready && this.connected
        && (this.failover_status === 'SINGLE'
         || this.failover_status === 'MASTER'
@@ -251,7 +252,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     return false;
   }
 
-  getHAStatus() {
+  getHAStatus(): void {
     if ((this.product_type.includes(ProductType.Enterprise) || this.product_type === ProductType.Scale)
       && !this.checking_status) {
       this.checking_status = true;
@@ -306,18 +307,18 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  get password() {
+  get password(): AbstractControl {
     return this.setPasswordFormGroup.get('password');
   }
-  get password2() {
+  get password2(): AbstractControl {
     return this.setPasswordFormGroup.get('password2');
   }
 
-  connected() {
+  connected(): boolean {
     return this.ws.connected;
   }
 
-  signin() {
+  signin(): void {
     this.submitButton.disabled = true;
     this.progressBar.mode = 'indeterminate';
 
@@ -330,7 +331,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  setpassword() {
+  setpassword(): void {
     this.ws.call('user.set_root_password', [this.password.value]).subscribe(
       (res) => {
         this.ws.login('root', this.password.value)
@@ -339,7 +340,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
-  loginCallback(result: boolean) {
+  loginCallback(result: boolean): void {
     if (result === true) {
       this.successLogin();
     } else {
@@ -347,7 +348,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  redirect() {
+  redirect(): void {
     if (this.ws.token) {
       if (this.interval) {
         clearInterval(this.interval);
@@ -364,7 +365,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.tokenObservable.unsubscribe();
     }
   }
-  successLogin() {
+
+  successLogin(): void {
     this.snackBar.dismiss();
     this.tokenObservable = this.ws.call('auth.generate_token', [300]).subscribe((result) => {
       if (result) {
@@ -374,7 +376,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  errorLogin() {
+  errorLogin(): void {
     this.submitButton.disabled = false;
     this.failed = true;
     this.progressBar.mode = 'determinate';
@@ -395,7 +397,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  onGoToLegacy() {
+  onGoToLegacy(): void {
     this.dialogService.confirm(T('Warning'),
       globalHelptext.legacyUIWarning,
       true, T('Continue to Legacy UI')).subscribe((res: boolean) => {
@@ -405,11 +407,11 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  openIX() {
+  openIX(): void {
     window.open('https://www.ixsystems.com/', '_blank');
   }
 
-  gotoTC() {
+  gotoTC(): void {
     this.dialogService.generalDialog({
       title: helptext.tcDialog.title,
       message: helptext.tcDialog.message,

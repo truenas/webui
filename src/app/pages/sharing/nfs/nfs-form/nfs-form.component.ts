@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 
 import { helptext_sharing_nfs, shared } from 'app/helptext/sharing';
@@ -10,14 +10,13 @@ import { T } from 'app/translate-marker';
 import * as _ from 'lodash';
 import { ProductType } from '../../../../enums/product-type.enum';
 import {
-  DialogService, NetworkService, RestService, WebSocketService,
-} from '../../../../services';
-import { UserService } from '../../../../services/user.service';
-import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
+  DialogService, NetworkService, WebSocketService, UserService, ModalService,
+} from 'app/services';
 import { ipv4or6cidrValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import globalHelptext from 'app/helptext/global-helptext';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-nfs-form',
@@ -25,7 +24,6 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [NetworkService],
 })
 export class NFSFormComponent implements FormConfiguration {
-  route_success: string[] = ['sharing', 'nfs'];
   queryCall: 'sharing.nfs.query' = 'sharing.nfs.query';
   editCall: 'sharing.nfs.update' = 'sharing.nfs.update';
   addCall: 'sharing.nfs.create' = 'sharing.nfs.create';
@@ -37,6 +35,8 @@ export class NFSFormComponent implements FormConfiguration {
   save_button_enabled = true;
   productType = window.localStorage.getItem('product_type') as ProductType;
   hideOnScale = ['alldirs', 'quiet'];
+  title = helptext_sharing_nfs.title;
+  isOneColumnForm = true;
 
   fieldSets = new FieldSets([
     {
@@ -64,7 +64,6 @@ export class NFSFormComponent implements FormConfiguration {
       name: helptext_sharing_nfs.fieldset_general,
       class: 'general',
       label: true,
-      width: '49%',
       config: [
         {
           type: 'input',
@@ -93,7 +92,6 @@ export class NFSFormComponent implements FormConfiguration {
         },
       ],
     },
-    { name: 'divider_access', divider: false },
     {
       name: helptext_sharing_nfs.fieldset_access,
       label: false,
@@ -157,19 +155,19 @@ export class NFSFormComponent implements FormConfiguration {
           options: [
             {
               label: 'SYS',
-              value: 'SYS',
+              value: NfsSecurityProvider.Sys,
             },
             {
               label: 'KRB5',
-              value: 'KRB5',
+              value: NfsSecurityProvider.Krb5,
             },
             {
               label: 'KRB5I',
-              value: 'KRB5I',
+              value: NfsSecurityProvider.Krb5i,
             },
             {
               label: 'KRB5P',
-              value: 'KRB5P',
+              value: NfsSecurityProvider.Krb5p,
             },
           ],
           isHidden: false,
@@ -181,7 +179,6 @@ export class NFSFormComponent implements FormConfiguration {
       name: helptext_sharing_nfs.fieldset_networks,
       label: false,
       class: 'networks',
-      width: '49%',
       config: [{
         type: 'list',
         name: 'networks',
@@ -195,12 +192,10 @@ export class NFSFormComponent implements FormConfiguration {
         listFields: [],
       }],
     },
-    { name: 'spacer', width: '2%' },
     {
       name: helptext_sharing_nfs.fieldset_hosts,
       label: false,
       class: 'hosts',
-      width: '49%',
       config: [{
         type: 'list',
         name: 'hosts',
@@ -258,13 +253,13 @@ export class NFSFormComponent implements FormConfiguration {
   private mapall_user: any;
   private mapall_group: any;
 
-  constructor(protected router: Router,
-    protected entityFormService: EntityFormService,
-    protected route: ActivatedRoute,
+  constructor(
     protected userService: UserService,
-    protected rest: RestService,
-    protected ws: WebSocketService, private dialog: DialogService,
-    public networkService: NetworkService) {
+    protected modalService: ModalService,
+    protected ws: WebSocketService,
+    private dialog: DialogService,
+    public networkService: NetworkService,
+  ) {
     const pathsTemplate = this.fieldSets.config('paths').templateListField;
     if (this.productType.includes(ProductType.Scale)) {
       pathsTemplate.push({
@@ -277,11 +272,9 @@ export class NFSFormComponent implements FormConfiguration {
     }
   }
 
-  preInit(EntityForm: any): void {
-    this.route.params.subscribe((params) => {
-      if (params['pk']) {
-        this.pk = parseInt(params['pk'], 10);
-      }
+  preInit(entityForm: EntityFormComponent): void {
+    this.modalService.getRow$.pipe(take(1)).subscribe((id: number) => {
+      this.pk = id;
     });
 
     this.ws.call('nfs.config', []).subscribe((nfsConfig) => {
@@ -289,8 +282,10 @@ export class NFSFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(EntityForm: EntityFormComponent): void {
-    this.entityForm = EntityForm;
+  afterInit(entityForm: EntityFormComponent): void {
+    this.entityForm = entityForm;
+
+    this.title = entityForm.isNew ? helptext_sharing_nfs.title : helptext_sharing_nfs.editTitle;
 
     this.userService.userQueryDSCache().subscribe((items) => {
       const users = [{
@@ -306,18 +301,18 @@ export class NFSFormComponent implements FormConfiguration {
       this.maproot_user.options = users;
     });
 
-    this.userService.groupQueryDSCache().subscribe((items) => {
-      const groups = [{
+    this.userService.groupQueryDSCache().subscribe((groups) => {
+      const groupOptions: Option[] = [{
         label: '---------',
         value: '',
       }];
-      for (let i = 0; i < items.length; i++) {
-        groups.push({ label: items[i].group, value: items[i].group });
+      for (let i = 0; i < groups.length; i++) {
+        groupOptions.push({ label: groups[i].group, value: groups[i].group });
       }
       this.mapall_group = this.fieldSets.config('mapall_group');
-      this.mapall_group.options = groups;
+      this.mapall_group.options = groupOptions;
       this.maproot_group = this.fieldSets.config('maproot_group');
-      this.maproot_group.options = groups;
+      this.maproot_group.options = groupOptions;
     });
 
     if (this.productType.includes(ProductType.Scale)) {
@@ -326,7 +321,7 @@ export class NFSFormComponent implements FormConfiguration {
       });
     }
 
-    EntityForm.formGroup.controls['paths'].valueChanges.subscribe((res: any[]) => {
+    entityForm.formGroup.controls['paths'].valueChanges.subscribe((res: any[]) => {
       const aliases = res.filter((p) => !!p.alias);
 
       if (aliases.length > 0 && aliases.length !== res.length) {
@@ -348,7 +343,7 @@ export class NFSFormComponent implements FormConfiguration {
     return true;
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     const paths = [];
     for (let i = 0; i < data['paths'].length; i++) {
       paths.push({ path: data['paths'][i], alias: data['aliases'][i] ? data['aliases'][i] : undefined });
@@ -370,7 +365,7 @@ export class NFSFormComponent implements FormConfiguration {
     return data;
   }
 
-  clean(data: any) {
+  clean(data: any): any {
     return {
       ...data,
       paths: (data.paths as any[]).filter((p) => !!p.path).map((p) => p.path),
@@ -380,84 +375,66 @@ export class NFSFormComponent implements FormConfiguration {
     };
   }
 
-  afterSave(entityForm: any): void {
+  afterSave(entityForm: EntityFormComponent): void {
+    this.modalService.close('slide-in-form');
+    this.modalService.refreshTable();
     this.ws.call('service.query', [[]]).subscribe((res) => {
       const service = _.find(res, { service: ServiceName.Nfs });
-      if (service.enable) {
-        this.router.navigate(new Array('/').concat(
-          this.route_success,
-        ));
-      } else {
+      if (!service.enable) {
         this.dialog.confirm(shared.dialog_title, shared.dialog_message,
           true, shared.dialog_button).subscribe((dialogRes: boolean) => {
           if (dialogRes) {
-            entityForm.loader.open();
             this.ws.call('service.update', [service.id, { enable: true }]).subscribe(() => {
               this.ws.call('service.start', [service.service]).subscribe(() => {
-                entityForm.loader.close();
                 this.dialog.Info(T('NFS') + shared.dialog_started_title,
                   T('The NFS') + shared.dialog_started_message, '250px').subscribe(() => {
-                  this.router.navigate(new Array('/').concat(
-                    this.route_success,
-                  ));
+                  this.dialog.closeAllDialogs();
                 });
               }, (err) => {
-                entityForm.loader.close();
                 this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
-                this.router.navigate(new Array('/').concat(
-                  this.route_success,
-                ));
               });
             }, (err) => {
-              entityForm.loader.close();
               this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
-              this.router.navigate(new Array('/').concat(
-                this.route_success,
-              ));
             });
-          } else {
-            this.router.navigate(new Array('/').concat(
-              this.route_success,
-            ));
           }
         });
       }
     });
   }
 
-  updateMapAllGroupSearchOptions(value = '', parent: any): void {
+  updateMapAllGroupSearchOptions(value = '', parent: NFSFormComponent): void {
     parent.updateGroupSearchOptions(value, parent, 'mapall_group');
   }
 
-  updateMapRootGroupSearchOptions(value = '', parent: any): void {
+  updateMapRootGroupSearchOptions(value = '', parent: NFSFormComponent): void {
     parent.updateGroupSearchOptions(value, parent, 'maproot_group');
   }
 
-  updateGroupSearchOptions(value = '', parent: any, field: any): void {
-    parent.userService.groupQueryDSCache(value).subscribe((items: any[]) => {
-      const groups: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        groups.push({ label: items[i].group, value: items[i].group });
+  updateGroupSearchOptions(value = '', parent: NFSFormComponent, field: string): void {
+    (parent.userService as UserService).groupQueryDSCache(value).subscribe((groups) => {
+      const groupOptions: Option[] = [];
+      for (let i = 0; i < groups.length; i++) {
+        groupOptions.push({ label: groups[i].group, value: groups[i].group });
       }
-      parent[field].searchOptions = groups;
+      parent.fieldSets.config(field).searchOptions = groupOptions;
     });
   }
 
-  updateMapAllUserSearchOptions(value = '', parent: any): void {
+  updateMapAllUserSearchOptions(value = '', parent: NFSFormComponent): void {
     parent.updateUserSearchOptions(value, parent, 'mapall_user');
   }
 
-  updateMapRootUserSearchOptions(value = '', parent: any): void {
+  updateMapRootUserSearchOptions(value = '', parent: NFSFormComponent): void {
     parent.updateUserSearchOptions(value, parent, 'maproot_user');
   }
 
-  updateUserSearchOptions(value = '', parent: any, field: any): void {
+  updateUserSearchOptions(value = '', parent: NFSFormComponent, field: string): void {
     (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
       }
-      parent[field].searchOptions = users;
+      parent.fieldSets.config(field).searchOptions = users;
     });
   }
 }

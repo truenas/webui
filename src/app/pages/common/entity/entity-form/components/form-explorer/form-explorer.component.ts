@@ -109,7 +109,7 @@ export class FormExplorerComponent implements Field, OnInit {
     }
   }
 
-  getChildren(node: any) {
+  getChildren(node: any): Promise<any> {
     return new Promise((resolve, reject) => {
       if (this.config.explorerType === 'zvol') {
         resolve(this.entityFormService.getDatasetsAndZvolsListChildren(node));

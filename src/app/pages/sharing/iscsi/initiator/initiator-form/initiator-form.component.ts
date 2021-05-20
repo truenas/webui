@@ -97,7 +97,7 @@ export class InitiatorFormComponent implements OnInit {
     protected networkService: NetworkService,
   ) { }
 
-  getConnectedInitiators() {
+  getConnectedInitiators(): void {
     this.ws.call('iscsi.global.sessions').subscribe(
       (res) => {
         this.connectedInitiators = _.unionBy(res, (item) => item['initiator'] && item['initiator_addr']);
@@ -107,7 +107,8 @@ export class InitiatorFormComponent implements OnInit {
       },
     );
   }
-  ngOnInit() {
+
+  ngOnInit(): void {
     this.getConnectedInitiators();
 
     this.aroute.params.subscribe((params) => {
@@ -131,7 +132,7 @@ export class InitiatorFormComponent implements OnInit {
 
     if (this.pk) {
       this.ws.call(this.queryCall, this.customFilter).subscribe(
-        (res) => {
+        (res: any[]) => {
           for (const i in res[0]) {
             const ctrl = this.formGroup.controls[i];
             if (ctrl) {
@@ -153,7 +154,7 @@ export class InitiatorFormComponent implements OnInit {
     }
   }
 
-  onSubmit() {
+  onSubmit(): void {
     this.error = null;
     const value = _.cloneDeep(this.formGroup.value);
 
@@ -183,11 +184,11 @@ export class InitiatorFormComponent implements OnInit {
     );
   }
 
-  goBack() {
+  goBack(): void {
     this.router.navigate(new Array('/').concat(this.route_success));
   }
 
-  setRelation(config: FieldConfig) {
+  setRelation(config: FieldConfig): void {
     const activations = this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
@@ -207,7 +208,7 @@ export class InitiatorFormComponent implements OnInit {
     }
   }
 
-  relationUpdate(config: FieldConfig, activations: any) {
+  relationUpdate(config: FieldConfig, activations: any): void {
     const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
       activations, this.formGroup,
     );
@@ -217,7 +218,7 @@ export class InitiatorFormComponent implements OnInit {
     this.setDisabled(config.name, tobeDisabled, tobeHide);
   }
 
-  setDisabled(name: string, disable: boolean, hide?: boolean) {
+  setDisabled(name: string, disable: boolean, hide?: boolean): void {
     // if field is hidden, disable it too
     if (hide) {
       disable = hide;

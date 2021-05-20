@@ -6,8 +6,9 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { CoreEvent } from 'app/core/services/core.service';
 import { LayoutService } from 'app/core/services/layout.service';
+import { CoreEvent } from 'app/interfaces/events';
+import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { TranslatedMessages } from 'app/interfaces/translated-messages.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { Subscription, Subject } from 'rxjs';
@@ -233,7 +234,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.core.register({
       observerClass: this,
       eventName: 'SysInfo',
-    }).subscribe((evt: CoreEvent) => {
+    }).subscribe((evt: SysInfoEvent) => {
       this.hostname = evt.data.hostname;
     });
 

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Observer } from 'rxjs';
 import { Subject } from 'rxjs';
-import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
 import * as moment from 'moment';
 
@@ -52,13 +52,13 @@ export class Thread extends iXAbstractObject {
     }
   }
 
-  testMessages() {
+  testMessages(): void {
     // this.thread.postMessage(JSON.stringify({name:"CoreEventTest1"}));
     this.thread.postMessage({ name: 'CoreEventTest2' });
     // this.thread.postMessage("EventTest");
   }
 
-  readonly main = () => {
+  readonly main = (): void => {
     // Some example code to show how messages can be exchanged with main thread
     const context: Worker = self as any; // Needed for TypeScript not to complain. DO NOT REMOVE!
     context.postMessage('ThreadInitialized'); // This inits the worker. DO NOT REMOVE!
@@ -75,7 +75,7 @@ export class Thread extends iXAbstractObject {
     };
   };
 
-  createThread() {
+  createThread(): Worker {
     // let blob = new Blob(['self.onmessage = ', fn.toString()], { type: 'text/javascript' });
     // let blob = new Blob([fn.toString()], { type: 'text/javascript' });
     // let url = URL.createObjectURL(blob);
@@ -83,7 +83,7 @@ export class Thread extends iXAbstractObject {
     return new Worker(url);
   }
 
-  start() {
+  start(): void {
     if (!this.operations) {
       console.error('Started with thread.operations not set! Make sure operations is not null before trying to start process.');
       return;
@@ -115,17 +115,17 @@ export class Thread extends iXAbstractObject {
     this.executing = true;
   }
 
-  exit() {
+  exit(): void {
     this.finished = true;
     this.thread.terminate();
   }
 
-  cancel() {
+  cancel(): void {
     this.cancelled = true;
     this.thread.terminate();
   }
 
-  postMessage(e: any) {
+  postMessage(e: any): void {
     this.thread.postMessage(e);
   }
 

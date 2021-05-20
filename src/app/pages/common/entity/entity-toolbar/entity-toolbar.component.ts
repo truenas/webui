@@ -11,6 +11,7 @@ import {
   ViewChildren,
   OnChanges, SimpleChanges,
 } from '@angular/core';
+import { CoreEvent } from 'app/interfaces/events';
 
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
@@ -20,7 +21,6 @@ import { EntityTemplateDirective } from '../entity-template.directive';
 import { EntityUtils } from '../utils';
 
 import { Subscription } from 'rxjs/Subscription';
-import { CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { Control } from './models/control.interface';
 import { ToolbarConfig, ControlConfig } from './models/control-config.interface';
