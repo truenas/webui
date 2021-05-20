@@ -4,11 +4,21 @@ import { helptext_sharing_webdav } from 'app/helptext/sharing';
 import { helptext_sharing_afp } from 'app/helptext/sharing';
 import { InputExpandableTableConf } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
 import { helptext_sharing_smb } from 'app/helptext/sharing';
+import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form';
+import {
+  AppLoaderService, DialogService, IscsiService, ModalService, NetworkService, SystemGeneralService, UserService, WebSocketService,
+} from 'app/services';
+import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form';
+import { ActivatedRoute, Router } from '@angular/router';
+import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form';
+import { TranslateService } from '@ngx-translate/core';
+import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
 
 @Component({
   selector: 'app-shares-dashboard-1',
   templateUrl: './shares-dashboard.template.html',
   styleUrls: ['./shares-dashboard.component.css'],
+  providers: [IscsiService],
 })
 export class SharesDashboardComponent {
   webdavTableConf: InputExpandableTableConf = {
@@ -64,10 +74,10 @@ export class SharesDashboardComponent {
       { name: helptext_sharing_afp.column_enabled, prop: 'enabled' },
     ],
     add() {
-      this.parent.add('afp');
+      this.parent.add('nfs');
     },
     edit(row) {
-      this.parent.edit('afp', row.id);
+      this.parent.edit('nfs', row.id);
     },
     afterGetData: (data: any) => {
       if (data.length > 0) {
@@ -135,10 +145,10 @@ export class SharesDashboardComponent {
       },
     ],
     add() {
-      this.parent.add('smb');
+      this.parent.add('iscsi');
     },
     edit(row) {
-      this.parent.edit('smb', row.id);
+      this.parent.edit('iscsi', row.id);
     },
     collapsedIfEmpty: true,
     afterGetData: (data: any) => {
@@ -155,6 +165,11 @@ export class SharesDashboardComponent {
   smbHasItems = 0;
   iscsiHasItems = 0;
 
+  constructor(private userService: UserService, private modalService: ModalService, private ws: WebSocketService,
+    private dialog: DialogService, private networkService: NetworkService, private router: Router,
+    private loader: AppLoaderService, private sysGeneralService: SystemGeneralService, private aroute: ActivatedRoute,
+    private iscsiService: IscsiService, private translate: TranslateService) { }
+
   ngOnInit() {
     if (this.webdavHasItems) {
       this.webdavTableConf.alwaysExpanded = true;
@@ -168,6 +183,29 @@ export class SharesDashboardComponent {
     if (this.iscsiHasItems) {
       this.iscsiTableConf.alwaysExpanded = true;
     }
+  }
+
+  add(share: string, id?: number): void {
+    let formComponent: NFSFormComponent | SMBFormComponent | WebdavFormComponent | TargetFormComponent;
+    switch (share) {
+      case 'nfs':
+        formComponent = new NFSFormComponent(this.userService, this.modalService, this.ws, this.dialog, this.networkService);
+        break;
+      case 'smb':
+        formComponent = new SMBFormComponent(this.router, this.ws, this.dialog, this.loader, this.sysGeneralService, this.modalService);
+        break;
+      case 'webdav':
+        formComponent = new WebdavFormComponent(this.router, this.ws, this.dialog);
+        break;
+      // case 'iscsi':
+      //   formComponent = new TargetFormComponent(this.router, this.aroute, this.iscsiService, this.loader, this.translate, this.ws);
+      //   break;
+    }
+    this.modalService.open('slide-in-form', formComponent, id);
+  }
+
+  edit(share: string, id: number): void {
+    this.add(share, id);
   }
 
   getTablesOrder(): string[] {

@@ -22,7 +22,7 @@ export class WebdavFormComponent implements FormConfiguration {
   editCall: 'sharing.webdav.update' = 'sharing.webdav.update';
   route_success: string[] = ['sharing', 'webdav'];
   isEntity = true;
-
+  title = 'Add WebDAV';
   confirmSubmit = true;
   confirmSubmitDialog = {
     title: helptext_sharing_webdav.warning_dialog_title,

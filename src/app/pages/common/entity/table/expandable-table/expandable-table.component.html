@@ -1,12 +1,12 @@
 <mat-expansion-panel class="expanded-table" hideToggle [disabled]="disabled" [collapsed]="shouldBeCollapsed()" [expanded]="shouldBeExpanded()">
     <mat-expansion-panel-header>
       <mat-panel-title>
-        <h3 class="title" *ngIf="title">
+        <h5 class="title" *ngIf="title">
             <ng-container *ngIf="titleHref; else plainTitle">
               <a [routerLink]="titleHref">{{ title }}</a>
             </ng-container>
             <ng-template #plainTitle>{{ title }}</ng-template>
-          </h3>
+          </h5>
       </mat-panel-title>
       <mat-panel-description>
         <div class="actions" style="width: 100%;display: flex; flex-direction: row-reverse;">
