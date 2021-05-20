@@ -7,7 +7,9 @@ import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { CoreEvent } from 'app/interfaces/events';
+import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
+import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/services/theme/theme.service';
 import { Subject } from 'rxjs';
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
@@ -47,7 +49,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   cpuAvg: any;
   title: string = T('CPU');
   subtitle: string = T('% of all cores');
-  widgetColorCssVar = 'var(--accent)';
   configurable = false;
   chartId = UUID.UUID();
   coreCount: number;
@@ -57,7 +58,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   screenType = 'Desktop'; // Desktop || Mobile
 
   // Mobile Stats
-  tempAvailable = 'false';
+  tempAvailable = false;
   tempMax: number;
   tempMaxThreads: number[] = [];
   tempMin: number;
@@ -69,13 +70,18 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   usageMinThreads: number[] = [];
 
   legendColors: string[];
-  private legendIndex: number;
+  legendIndex: number;
 
   labels: string[] = [];
   protected currentTheme: any;
   private utils: ThemeUtils;
 
-  constructor(router: Router, public translate: TranslateService, public mediaObserver: MediaObserver, private el: ElementRef) {
+  constructor(
+    router: Router,
+    public translate: TranslateService,
+    public mediaObserver: MediaObserver,
+    private el: ElementRef,
+  ) {
     super(translate);
 
     this.utils = new ThemeUtils();
@@ -118,7 +124,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.core.register({
       observerClass: this,
       eventName: 'ThemeChanged',
-    }).subscribe((evt: CoreEvent) => {
+    }).subscribe(() => {
       d3.select('#grad1 .begin')
         .style('stop-color', this.getHighlightColor(0));
 
@@ -127,36 +133,41 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     });
 
     this.data.subscribe((evt: CoreEvent) => {
-      if (evt.name == 'CpuStats') {
-        if (evt.data.average) {
-          this.setCpuLoadData(['Load', parseInt(evt.data.average.usage.toFixed(1))]);
-          this.setCpuData(evt.data);
-        }
+      if (evt.name !== 'CpuStats') {
+        return;
       }
+
+      const cpuData = (evt as CpuStatsEvent).data;
+      if (!cpuData.average) {
+        return;
+      }
+
+      this.setCpuLoadData(['Load', parseInt(cpuData.average.usage.toFixed(1))]);
+      this.setCpuData(cpuData);
     });
   }
 
-  parseCpuData(data: any): any[][] {
-    this.tempAvailable = data.temperature && Object.keys(data.temperature).length > 0 ? 'true' : 'false';
+  parseCpuData(cpuData: AllCpusUpdate): any[][] {
+    this.tempAvailable = Boolean(cpuData.temperature && Object.keys(cpuData.temperature).length > 0);
     const usageColumn: any[] = ['Usage'];
     let temperatureColumn: any[] = ['Temperature'];
     const temperatureValues = [];
 
     // Filter out stats per thread
-    const keys = Object.keys(data);
+    const keys = Object.keys(cpuData);
     const threads = keys.filter((n) => !isNaN(parseFloat(n)));
 
     for (let i = 0; i < this.threadCount; i++) {
-      usageColumn.push(parseInt(data[i.toString()].usage.toFixed(1)));
+      usageColumn.push(parseInt(cpuData[i].usage.toFixed(1)));
 
       const mod = threads.length % 2;
       const temperatureIndex = this.hyperthread ? Math.floor(i / 2 - mod) : i;
 
-      if (data.temperature && data.temperature[temperatureIndex] && !data.temperature_celsius) {
-        const temperatureAsCelsius = (data.temperature[temperatureIndex] / 10 - 273.05).toFixed(1);
+      if (cpuData.temperature && cpuData.temperature[temperatureIndex] && !cpuData.temperature_celsius) {
+        const temperatureAsCelsius = (cpuData.temperature[temperatureIndex] / 10 - 273.05).toFixed(1);
         temperatureValues.push(parseInt(temperatureAsCelsius));
-      } else if (data.temperature_celsius && data.temperature_celsius[temperatureIndex]) {
-        temperatureValues.push(data.temperature_celsius[temperatureIndex]);
+      } else if (cpuData.temperature_celsius && cpuData.temperature_celsius[temperatureIndex]) {
+        temperatureValues.push(cpuData.temperature_celsius[temperatureIndex]);
       }
     }
     temperatureColumn = temperatureColumn.concat(temperatureValues);
@@ -199,12 +210,12 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     }
   }
 
-  setCpuData(data: any): void {
+  setCpuData(cpuData: AllCpusUpdate): void {
     const config: any = {};
     config.title = 'Cores';
     config.orientation = 'horizontal';
     config.max = 100;
-    config.data = this.parseCpuData(data);
+    config.data = this.parseCpuData(cpuData);
     this.cpuData = config;
     this.coresChartInit();
   }
@@ -318,18 +329,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   coresChartInit(): void {
     this.currentTheme = this.themeService.currentTheme();
     this.renderChart();
-  }
-
-  colorFromTemperature(t: any): string {
-    let color = 'var(--green)';
-    if (t.value >= 80) {
-      color = 'var(--red)';
-    } else if (t.value < 80 && t.value > 63) {
-      color = 'var(--yellow)';
-    } else if (t.value < 64) {
-      color = 'var(--green)';
-    }
-    return color;
   }
 
   coresChartUpdate(): void {
