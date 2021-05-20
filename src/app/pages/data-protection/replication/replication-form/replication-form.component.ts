@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { Schedule } from 'app/interfaces/schedule.interface';
 
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
@@ -1368,7 +1369,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     picker: any,
     begin: any,
     end: any,
-  ): { minute: string; hour: string; dom: string; month: string; dow: string; begin: any; end: any } {
+  ): Schedule {
     const spl = picker.split(' ');
     return {
       minute: spl[0],
