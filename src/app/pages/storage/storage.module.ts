@@ -25,8 +25,7 @@ import { UnlockDialogComponent } from './volumes/datasets/dataset-unlock/unlock-
 import { ImportDiskComponent } from './import-disk/import-disk.component';
 
 import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager';
-// import { VolumesEditComponent } from './volumes/volumes-edit/';
-import { VolumesListComponent } from './volumes/volumes-list';
+import { VolumesListComponent } from './volumes/volumes-list/volumes-list.component';
 import { VolumesListControlsComponent } from './volumes/volumes-list/volumes-list-controls.component';
 import { VolumeStatusComponent } from './volumes/volume-status';
 import { MultipathsComponent } from './multipaths/multipaths.component';
@@ -52,7 +51,6 @@ import { DatasetQuotasGrouplistComponent } from './volumes/datasets/dataset-quot
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl';
-import { ResilverComponent } from './volumes/resilver/resilver.component';
 
 @NgModule({
   imports: [
@@ -98,7 +96,6 @@ import { ResilverComponent } from './volumes/resilver/resilver.component';
     UserQuotaFormComponent,
     GroupQuotaFormComponent,
     DatasetPosixAclComponent,
-    ResilverComponent,
   ],
   exports: [VolumesListControlsComponent],
   entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],
