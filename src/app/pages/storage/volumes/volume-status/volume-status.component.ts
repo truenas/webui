@@ -473,7 +473,7 @@ export class VolumeStatusComponent implements OnInit {
     return actions;
   }
 
-  extendAction() {
+  extendAction(): any[] {
     return [{
       id: 'extend',
       label: helptext.actions_label.extend,

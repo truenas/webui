@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import * as _ from 'lodash';
 
 import * as myIP from 'what-is-my-ip-address';
@@ -372,7 +373,7 @@ export class PluginsComponent {
     return params;
   }
 
-  getActions(parentrow: any) {
+  getActions(parentrow: any): EntityTableAction[] {
     const actions = [{
       name: parentrow.name,
       id: 'start',
@@ -517,7 +518,7 @@ export class PluginsComponent {
         },
       });
     }
-    return actions;
+    return actions as EntityTableAction[];
   }
 
   isActionVisible(actionId: string, row: any): boolean {

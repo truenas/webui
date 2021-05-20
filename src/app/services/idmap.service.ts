@@ -17,22 +17,22 @@ export class IdmapService {
     return this.rest.get(resource_name, {});
   }
 
-  getADIdmap() {
+  getADIdmap(): void {
     // return this.rest.get(this.ad_idmap, {});
     return this.getData(this.ad_idmap);
   }
 
-  getADEXIdmap() { return this.getData(this.adex_idmap); }
+  getADEXIdmap(): void { return this.getData(this.adex_idmap); }
 
-  getCerts() {
+  getCerts(): Observable<any[]> {
     return this.ws.call('certificate.query');
   }
 
-  getBackendChoices() {
+  getBackendChoices(): Observable<any> {
     return this.ws.call('idmap.backend_options');
   }
 
-  getADStatus() {
+  getADStatus(): Observable<any> {
     return this.ws.call('activedirectory.config');
   }
 }

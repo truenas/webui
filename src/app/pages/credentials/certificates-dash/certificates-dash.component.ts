@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Option } from 'app/interfaces/option.interface';
+import { AppTableAction } from 'app/pages/common/entity/table/table.component';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -232,7 +233,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
     this.acmeDNSComponent = new AcmednsFormComponent(this.ws, this.loader, this.dialogService, this.modalService);
   }
 
-  certificateActions() {
+  certificateActions(): AppTableAction[] {
     this.downloadActions = [{
       icon: 'save_alt',
       name: 'download',
@@ -277,7 +278,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
     return this.downloadActions;
   }
 
-  csrActions() {
+  csrActions(): AppTableAction[] {
     const csrRowActions = [...this.downloadActions];
     const acmeAction = {
       icon: 'build',
@@ -292,7 +293,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
     return csrRowActions;
   }
 
-  caActions() {
+  caActions(): AppTableAction[] {
     const caRowActions = [...this.downloadActions];
     const acmeAction = {
       icon: 'beenhere',

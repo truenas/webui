@@ -1,4 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 import { T } from '../../../translate-marker';
 import helptext from '../../../helptext/directoryservice/kerberosrealms-form-list';
@@ -59,16 +60,16 @@ export class KerberosRealmsListComponent implements OnDestroy {
     }
   }
 
-  getAddActions() {
+  getAddActions(): EntityTableAction[] {
     return [{
       label: T('Add'),
       onClick: () => {
         this.doAdd();
       },
-    }];
+    }] as EntityTableAction[];
   }
 
-  getActions(row: any) {
+  getActions(row: any): EntityTableAction[] {
     const actions = [];
     actions.push({
       id: 'edit',
@@ -85,7 +86,7 @@ export class KerberosRealmsListComponent implements OnDestroy {
       },
     });
 
-    return actions;
+    return actions as EntityTableAction[];
   }
 
   doAdd(id?: number): void {

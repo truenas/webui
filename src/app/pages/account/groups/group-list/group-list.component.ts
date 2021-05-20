@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
@@ -110,7 +111,7 @@ export class GroupListComponent implements OnDestroy {
     return true;
   }
 
-  getActions(row: any) {
+  getActions(row: any): EntityTableAction[] {
     const actions = [];
     actions.push({
       id: row.group,
@@ -195,7 +196,7 @@ export class GroupListComponent implements OnDestroy {
       });
     }
 
-    return actions;
+    return actions as EntityTableAction[];
   }
 
   ableToDeleteAllMembers(group: any): boolean {
