@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AclType } from 'app/enums/acl-type.enum';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
@@ -69,7 +72,7 @@ export class DatasetFormComponent implements FormConfiguration {
   queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   isEntity = true;
   isNew = false;
-  parent_dataset: any;
+  parent_dataset: Dataset;
   protected entityForm: any;
   minimum_recommended_dataset_recordsize = '128K';
   protected recordsize_field: any;
@@ -923,8 +926,8 @@ export class DatasetFormComponent implements FormConfiguration {
     ///
     this.entityForm = entityForm;
     if (this.productType.includes(ProductType.Enterprise)) {
-      this.ws.call('system.info').subscribe((res) => {
-        if (res.license && res.license.features.indexOf('DEDUP') > -1) {
+      this.ws.call('system.info').subscribe((systemInfo) => {
+        if (systemInfo.license && systemInfo.license.features.indexOf(LicenseFeature.Dedup) > -1) {
           this.entityForm.setDisabled('deduplication', false, false);
         }
       });
@@ -1290,35 +1293,35 @@ export class DatasetFormComponent implements FormConfiguration {
               edit_recordsize_collection = [{ label: `Inherit (${formattedLabel})`, value: 'INHERIT' }];
               edit_recordsize.options = edit_recordsize_collection.concat(edit_recordsize.options);
               let sync_value = pk_dataset[0].sync.value;
-              if (pk_dataset[0].sync.source === 'DEFAULT') {
+              if (pk_dataset[0].sync.source === ZfsPropertySource.Default) {
                 sync_value = 'INHERIT';
               }
               entityForm.formGroup.controls['sync'].setValue(sync_value);
 
               let compression_value = pk_dataset[0].compression.value;
-              if (pk_dataset[0].compression.source === 'INHERITED' || pk_dataset[0].compression.source === 'DEFAULT') {
+              if (pk_dataset[0].compression.source === ZfsPropertySource.Inherited || pk_dataset[0].compression.source === ZfsPropertySource.Default) {
                 compression_value = 'INHERIT';
               }
               entityForm.formGroup.controls['compression'].setValue(compression_value);
 
               let deduplication_value = pk_dataset[0].deduplication.value;
-              if (pk_dataset[0].deduplication.source === 'DEFAULT' || pk_dataset[0].deduplication.source === 'INHERITED') {
+              if (pk_dataset[0].deduplication.source === ZfsPropertySource.Default || pk_dataset[0].deduplication.source === ZfsPropertySource.Inherited) {
                 deduplication_value = 'INHERIT';
               }
               let exec_value = pk_dataset[0].exec.value;
-              if (pk_dataset[0].exec.source === 'DEFAULT' || pk_dataset[0].exec.source === 'INHERITED') {
+              if (pk_dataset[0].exec.source === ZfsPropertySource.Default || pk_dataset[0].exec.source === ZfsPropertySource.Inherited) {
                 exec_value = 'INHERIT';
               }
               let readonly_value = pk_dataset[0].readonly.value;
-              if (pk_dataset[0].readonly.source === 'DEFAULT' || pk_dataset[0].readonly.source === 'INHERITED') {
+              if (pk_dataset[0].readonly.source === ZfsPropertySource.Default || pk_dataset[0].readonly.source === ZfsPropertySource.Inherited) {
                 readonly_value = 'INHERIT';
               }
               let atime_value = pk_dataset[0].atime.value;
-              if (pk_dataset[0].atime.source === 'DEFAULT' || pk_dataset[0].atime.source === 'INHERITED') {
+              if (pk_dataset[0].atime.source === ZfsPropertySource.Default || pk_dataset[0].atime.source === ZfsPropertySource.Inherited) {
                 atime_value = 'INHERIT';
               }
               let recordsize_value = pk_dataset[0].recordsize.value;
-              if (pk_dataset[0].recordsize.source === 'DEFAULT' || pk_dataset[0].recordsize.source === 'INHERITED') {
+              if (pk_dataset[0].recordsize.source === ZfsPropertySource.Default || pk_dataset[0].recordsize.source === ZfsPropertySource.Inherited) {
                 recordsize_value = 'INHERIT';
               }
 

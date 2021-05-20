@@ -8,6 +8,8 @@ export const helptext_sharing_nfs = {
   column_enabled: T('Enabled'),
 
   // NFSFormComponent
+  title: T('Add NFS'),
+  editTitle: T('Edit NFS'),
   fieldset_paths: T('Paths'),
   fieldset_general: T('General Options'),
   fieldset_access: T('Access'),

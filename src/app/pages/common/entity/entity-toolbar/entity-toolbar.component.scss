@@ -7,13 +7,3 @@
   display:inline-block;
   max-height:36px;
 }
-
-// TODO: This needs to go to global styles or menu button needs to become a component.
-::ng-deep {
-  button.menu-toggle {
-    .mat-button-wrapper {
-      display: inline-flex;
-      align-items: center;
-    }
-  }
-}

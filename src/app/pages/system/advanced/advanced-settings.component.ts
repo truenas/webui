@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { CoreEvent } from 'app/interfaces/events';
 import { TranslateService } from '@ngx-translate/core';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { Subject, Subscription } from 'rxjs';
@@ -20,7 +21,7 @@ import {
   StorageService,
   UserService,
 } from '../../../services';
-import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { ModalService } from '../../../services/modal.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
@@ -437,11 +438,11 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   }
 
   saveDebug(): void {
-    this.ws.call('system.info', []).subscribe((res) => {
+    this.ws.call('system.info', []).subscribe((systemInfo) => {
       let fileName = '';
       let mimeType = 'application/gzip';
-      if (res) {
-        const hostname = res.hostname.split('.')[0];
+      if (systemInfo) {
+        const hostname = systemInfo.hostname.split('.')[0];
         const date = this.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
         if (this.isHA) {
           mimeType = 'application/x-tar';

@@ -38,7 +38,7 @@ export class ShellService {
     this.pendingCalls = new Map();
   }
 
-  connect() {
+  connect(): void {
     this.socket = new WebSocket(
       (window.location.protocol === 'https:' ? 'wss://' : 'ws://')
       + environment.remote + '/websocket/shell/',
@@ -48,7 +48,7 @@ export class ShellService {
     this.socket.onclose = this.onclose.bind(this);
   }
 
-  onopen() {
+  onopen(): void {
     this.onOpenSubject.next(true);
     if (this.jailId) {
       this.send(JSON.stringify({ token: this.token, options: { jail: this.jailId } }));
@@ -69,7 +69,7 @@ export class ShellService {
     }
   }
 
-  onconnect() {
+  onconnect(): void {
     while (this.pendingMessages.length > 0) {
       const payload = this.pendingMessages.pop();
       this.send(payload);
@@ -77,9 +77,9 @@ export class ShellService {
   }
 
   // empty eventListener for attach socket
-  addEventListener() {}
+  addEventListener(): void {}
 
-  onclose() {
+  onclose(): void {
     this.connected = false;
     this.onCloseSubject.next(true);
     this.shellConnected.emit({
@@ -87,7 +87,7 @@ export class ShellService {
     });
   }
 
-  onmessage(msg: any) {
+  onmessage(msg: any): void {
     let data: any;
 
     try {
@@ -114,7 +114,7 @@ export class ShellService {
     this.shellOutput.emit(this.shellCmdOutput);
   }
 
-  send(payload: any) {
+  send(payload: any): void {
     if (this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(payload);
     } else {
@@ -133,7 +133,7 @@ export class ShellService {
     return source;
   }
 
-  unsubscribe(observer: any) {
+  unsubscribe(observer: any): void {
     // FIXME: just does not have a good performance :)
     this.subscriptions.forEach((v, k) => {
       v.forEach((item) => {

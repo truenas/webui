@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { DatasetType } from 'app/enums/dataset-type.enum';
 import { ProductType } from '../../../enums/product-type.enum';
 import {
   RestService, WebSocketService, NetworkService, StorageService, SystemGeneralService,
@@ -541,8 +542,8 @@ export class VMWizardComponent {
         this.wizardConfig[2].fieldConfig.find((config) => config.name === 'datastore').options = options;
       });
 
-    this.ws.call('pool.dataset.query', [[['type', '=', 'VOLUME']]]).subscribe((zvols) => {
-      zvols.forEach((zvol: any) => {
+    this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]]]).subscribe((zvols) => {
+      zvols.forEach((zvol) => {
         _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' }).options.push(
           {
             label: zvol.id, value: zvol.id,

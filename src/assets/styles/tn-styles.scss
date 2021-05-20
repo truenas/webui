@@ -1591,4 +1591,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     resize: none;
   }
 
+  button.menu-toggle {
+    .mat-button-wrapper {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .mat-icon {
+      position: relative;
+      right: -10px;
+    }
+  }
+
 } // end of ix theme

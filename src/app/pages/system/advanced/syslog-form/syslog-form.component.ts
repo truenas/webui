@@ -139,7 +139,7 @@ export class SyslogFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  customSubmit(body: any) {
+  customSubmit(body: any): Subscription {
     this.loader.open();
     const syslog_value = body.syslog;
     delete body.syslog;
@@ -172,7 +172,7 @@ export class SyslogFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.getDatasetConfig.unsubscribe();
     this.getDataFromDash.unsubscribe();
   }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { CoreService, CoreEvent } from './core.service';
+import { CoreEvent } from 'app/interfaces/events';
+import { CoreService } from './core.service';
 import { ApiService } from './api.service';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
 

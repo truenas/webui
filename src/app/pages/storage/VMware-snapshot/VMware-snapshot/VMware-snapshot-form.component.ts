@@ -205,7 +205,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
     }
   }
 
-  customEditCall(body: any) {
+  customEditCall(body: any): void {
     if (this.entityForm.pk) {
       this.entityForm.loader.open();
       this.ws.call('vmware.update', [this.entityForm.pk, body]).subscribe((res) => {

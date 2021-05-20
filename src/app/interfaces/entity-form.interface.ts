@@ -1,8 +1,8 @@
+import { CoreEvent } from 'app/interfaces/events';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { Subject } from 'rxjs';
-import { CoreEvent } from 'app/core/services/core.service';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 

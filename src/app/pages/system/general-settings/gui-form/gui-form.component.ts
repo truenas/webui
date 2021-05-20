@@ -324,10 +324,6 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  getKeyByValue(object: any, value: any) {
-    return Object.keys(object).find((key) => object[key] === value);
-  }
-
   ngOnDestroy(): void {
     this.getDataFromDash.unsubscribe();
   }

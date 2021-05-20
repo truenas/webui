@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Option } from 'app/interfaces/option.interface';
 
 import * as _ from 'lodash';
+import { Subscription } from 'rxjs/Subscription';
 import { ProductType } from '../../../enums/product-type.enum';
 import { DialogService, WebSocketService } from '../../../services';
 import { ipv4Validator } from '../../common/entity/entity-form/validators/ip-validation';
@@ -248,7 +249,7 @@ export class IPMIFromComponent implements FormConfiguration {
     status === 'INVALID' ? field.hasErrors = true : field.hasErrors = false;
   }
 
-  customSubmit(payload: any) {
+  customSubmit(payload: any): Subscription {
     let call = this.ws.call('ipmi.update', [this.channelValue, payload]);
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
       call = this.ws.call('failover.call_remote', ['ipmi.update', [this.channelValue, payload]]);

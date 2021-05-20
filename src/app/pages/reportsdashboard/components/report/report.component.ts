@@ -10,7 +10,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreEvent } from 'app/interfaces/events';
 import { WebSocketService, SystemGeneralService } from 'app/services/';
 import { Theme } from 'app/services/theme/theme.service';
 import { ProductType } from '../../../../enums/product-type.enum';

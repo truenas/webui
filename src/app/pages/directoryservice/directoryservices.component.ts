@@ -12,7 +12,6 @@ import {
   IdmapService,
   UserService,
 } from '../../services';
-import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { ModalService } from '../../services/modal.service';
 import helptext from '../../helptext/directoryservice/dashboard';
 import idmapHelptext from '../../helptext/directoryservice/idmap';

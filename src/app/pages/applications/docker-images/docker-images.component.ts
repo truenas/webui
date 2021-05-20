@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { latestVersion } from 'app/constants/catalog.constants';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
+import { CoreEvent } from 'app/interfaces/events';
 import { ApplicationsService } from '../applications.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService, StorageService, ValidationService } from 'app/services';
@@ -9,7 +10,6 @@ import { WebSocketService } from '../../../services/ws.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { ModalService } from '../../../services/modal.service';
 import helptext from '../../../helptext/apps/apps';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { PullImageFormComponent } from '../forms/pull-image-form.component';
 import { EntityUtils } from '../../common/entity/utils';
@@ -118,7 +118,7 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     return actions;
   }
 
-  resourceTransformIncomingRestData(d: any[]) {
+  resourceTransformIncomingRestData(d: any[]): any[] {
     const data: any[] = [];
     d.forEach((row) => {
       if (!row.system_image) {

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Catalog } from 'app/interfaces/catalog.interface';
+import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Observable } from 'rxjs/Observable';
 import { WebSocketService } from '../../services/index';
@@ -61,7 +62,7 @@ export class ApplicationsService {
     return this.ws.call('chart.release.nic_choices');
   }
 
-  getInterfaces() {
+  getInterfaces(): Observable<NetworkInterface[]> {
     return this.ws.call('interface.query');
   }
 
