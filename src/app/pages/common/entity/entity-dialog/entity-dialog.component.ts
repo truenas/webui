@@ -23,7 +23,7 @@ import { T } from '../../../../translate-marker';
   providers: [EntityFormService, DatePipe, FieldRelationService],
 })
 export class EntityDialogComponent<P = any> implements OnInit {
-  @Input() conf: any;
+  @Input() conf: DialogFormConfiguration<P>;
 
   title: string;
   warning: string;

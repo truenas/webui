@@ -9,7 +9,7 @@ import { SnapshotCloneComponent } from './snapshots/snapshot-clone';
 import { SnapshotListComponent } from './snapshots/snapshot-list';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form';
 import { ManagerComponent } from './volumes/manager';
-import { VolumesListComponent } from './volumes/volumes-list';
+import { VolumesListComponent } from './volumes/volumes-list/volumes-list.component';
 import { ZvolFormComponent } from './volumes/zvol/zvol-form';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
@@ -31,7 +31,6 @@ import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/datase
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl';
 import { ViewEnclosureComponent } from 'app/pages/system/viewenclosure/view-enclosure.component';
-import { ResilverComponent } from './volumes/resilver/resilver.component';
 
 export const routes: Routes = [
   {
@@ -171,7 +170,7 @@ export const routes: Routes = [
         ],
       },
       {
-        path: 'vmware-Snapshots',
+        path: 'vmware-snapshots',
         data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots', icon: 'camera_alt' },
         children: [
           {
@@ -237,11 +236,6 @@ export const routes: Routes = [
         path: 'viewenclosure',
         component: ViewEnclosureComponent,
         data: { title: 'View Enclosure', breadcrumb: 'View Enclosure', icon: 'settings' },
-      },
-      {
-        path: 'resilver',
-        data: { title: 'Resilver Priority', breadcrumb: 'Resilver Priority', icon: 'event_note' },
-        component: ResilverComponent,
       },
     ],
   },

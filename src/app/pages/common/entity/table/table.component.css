@@ -40,6 +40,10 @@ div.table-container {
   table-layout: fixed;
 }
 
+.table-action-button {
+  margin-right: 5px;
+}
+
 div.table-row-action {
   display: flex;
   align-items: center;

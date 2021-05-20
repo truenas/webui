@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { NgxUploaderModule } from 'ngx-uploader';
 
 import { QRCodeModule } from 'angular2-qrcode';
@@ -101,6 +102,7 @@ import { IsolatedGpuPcisFormComponent } from './advanced/isolated-gpu-pcis/isola
     InitshutdownListComponent,
     CronFormComponent,
     CronListComponent,
+    SystemDatasetPoolComponent,
   ],
   entryComponents: [QRDialog],
   providers: [],
