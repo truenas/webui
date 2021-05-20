@@ -6,8 +6,12 @@ import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 
-import { CloudSyncTask, CloudSyncTaskUI } from 'app/interfaces/cloud-sync-task.interface';
-import { EntityTableComponent, InputTableConf, EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { CloudSyncTaskUI } from 'app/interfaces/cloud-sync-task.interface';
+import {
+  EntityTableComponent,
+  InputTableConf,
+  EntityTableAction,
+} from 'app/pages/common/entity/entity-table/entity-table.component';
 import {
   AppLoaderService,
   CloudCredentialService,
@@ -50,7 +54,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
     { name: T('Path'), prop: 'path', hidden: true },
     {
       name: T('Schedule'),
-      prop: 'cron',
+      prop: 'cron_schedule',
       hidden: true,
       widget: {
         icon: 'calendar-range',
@@ -59,7 +63,10 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
     },
     { name: T('Next Run'), prop: 'next_run', hidden: true },
     {
-      name: T('Status'), prop: 'state', state: 'state', button: true,
+      name: T('Status'),
+      prop: 'state',
+      state: 'state',
+      button: true,
     },
     { name: T('Enabled'), prop: 'enabled' },
   ];
@@ -98,9 +105,9 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
   resourceTransformIncomingRestData(data: CloudSyncTaskUI[]): CloudSyncTaskUI[] {
     return data.map((task) => {
       task.credential = task.credentials.name;
-      task.cron = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
-      task.frequency = this.taskService.getTaskCronDescription(task.cron);
-      task.next_run = this.taskService.getTaskNextRun(task.cron);
+      task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
+      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
+      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
 
       if (task.job === null) {
         task.state = { state: EntityJobState.Pending };
@@ -125,29 +132,31 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
         icon: 'play_arrow',
         name: 'run',
         onClick: (row: any) => {
-          this.dialog.confirm({ title: T('Run Now'), message: T('Run this cloud sync now?'), hideCheckBox: true }).subscribe((res: boolean) => {
-            if (res) {
-              row.state = { state: EntityJobState.Running };
-              this.ws.call('cloudsync.sync', [row.id]).subscribe(
-                (jobId: number) => {
-                  this.dialog.Info(
-                    T('Task Started'),
-                    T('Cloud sync <i>') + row.description + T('</i> has started.'),
-                    '500px',
-                    'info',
-                    true,
-                  );
-                  this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
-                    row.state = { state: job.state };
-                    row.job = job;
-                  });
-                },
-                (err) => {
-                  new EntityUtils().handleWSError(this.entityList, err);
-                },
-              );
-            }
-          });
+          this.dialog
+            .confirm({ title: T('Run Now'), message: T('Run this cloud sync now?'), hideCheckBox: true })
+            .subscribe((res: boolean) => {
+              if (res) {
+                row.state = { state: EntityJobState.Running };
+                this.ws.call('cloudsync.sync', [row.id]).subscribe(
+                  (jobId: number) => {
+                    this.dialog.Info(
+                      T('Task Started'),
+                      T('Cloud sync <i>') + row.description + T('</i> has started.'),
+                      '500px',
+                      'info',
+                      true,
+                    );
+                    this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
+                      row.state = { state: job.state };
+                      row.job = job;
+                    });
+                  },
+                  (err) => {
+                    new EntityUtils().handleWSError(this.entityList, err);
+                  },
+                );
+              }
+            });
         },
       },
       {
@@ -157,28 +166,30 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
         label: T('Stop'),
         icon: 'stop',
         onClick: (row: any) => {
-          this.dialog.confirm({
-            title: T('Stop'),
-            message: T('Stop this cloud sync?'),
-            hideCheckBox: true,
-          }).subscribe((res: boolean) => {
-            if (res) {
-              this.ws.call('cloudsync.abort', [row.id]).subscribe(
-                (wsRes) => {
-                  this.dialog.Info(
-                    T('Task Stopped'),
-                    T('Cloud sync <i>') + row.description + T('</i> stopped.'),
-                    '500px',
-                    'info',
-                    true,
-                  );
-                },
-                (wsErr) => {
-                  new EntityUtils().handleWSError(this.entityList, wsErr);
-                },
-              );
-            }
-          });
+          this.dialog
+            .confirm({
+              title: T('Stop'),
+              message: T('Stop this cloud sync?'),
+              hideCheckBox: true,
+            })
+            .subscribe((res: boolean) => {
+              if (res) {
+                this.ws.call('cloudsync.abort', [row.id]).subscribe(
+                  (wsRes) => {
+                    this.dialog.Info(
+                      T('Task Stopped'),
+                      T('Cloud sync <i>') + row.description + T('</i> stopped.'),
+                      '500px',
+                      'info',
+                      true,
+                    );
+                  },
+                  (wsErr) => {
+                    new EntityUtils().handleWSError(this.entityList, wsErr);
+                  },
+                );
+              }
+            });
         },
       },
       {
@@ -188,32 +199,34 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
         label: helptext.action_button_dry_run,
         icon: 'sync',
         onClick: (row: any) => {
-          this.dialog.confirm({
-            title: helptext.dry_run_title,
-            message: helptext.dry_run_dialog,
-            hideCheckBox: true,
-          }).subscribe((res: boolean) => {
-            if (res) {
-              this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).subscribe(
-                (jobId: number) => {
-                  this.dialog.Info(
-                    T('Task Started'),
-                    T('Cloud sync <i>') + row.description + T('</i> has started.'),
-                    '500px',
-                    'info',
-                    true,
-                  );
-                  this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
-                    row.state = { state: job.state };
-                    row.job = job;
-                  });
-                },
-                (err) => {
-                  new EntityUtils().handleWSError(this.entityList, err);
-                },
-              );
-            }
-          });
+          this.dialog
+            .confirm({
+              title: helptext.dry_run_title,
+              message: helptext.dry_run_dialog,
+              hideCheckBox: true,
+            })
+            .subscribe((res: boolean) => {
+              if (res) {
+                this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).subscribe(
+                  (jobId: number) => {
+                    this.dialog.Info(
+                      T('Task Started'),
+                      T('Cloud sync <i>') + row.description + T('</i> has started.'),
+                      '500px',
+                      'info',
+                      true,
+                    );
+                    this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
+                      row.state = { state: job.state };
+                      row.job = job;
+                    });
+                  },
+                  (err) => {
+                    new EntityUtils().handleWSError(this.entityList, err);
+                  },
+                );
+              }
+            });
         },
       },
       {
@@ -323,7 +336,8 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
   isActionVisible(actionId: string, row: any): boolean {
     if (actionId === 'run_now' && row.job && row.job.state === EntityJobState.Running) {
       return false;
-    } if (actionId === 'stop' && (row.job ? row.job && row.job.state !== EntityJobState.Running : true)) {
+    }
+    if (actionId === 'stop' && (row.job ? row.job && row.job.state !== EntityJobState.Running : true)) {
       return false;
     }
     return true;

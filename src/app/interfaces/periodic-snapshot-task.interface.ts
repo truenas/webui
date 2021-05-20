@@ -30,7 +30,7 @@ export interface PeriodicSnapshotTask extends PeriodicSnapshotTaskRaw {
 
 export interface PeriodicSnapshotTaskUI extends PeriodicSnapshotTask {
   keepfor: string;
-  cron: string;
+  cron_schedule: string;
   when: string;
   frequency: string;
   next_run: string;

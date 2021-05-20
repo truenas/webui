@@ -44,7 +44,7 @@ export interface CloudSyncTask {
 
 export interface CloudSyncTaskUI extends CloudSyncTask {
   credential: string;
-  cron: string;
+  cron_schedule: string;
   frequency: string;
   next_run: string;
   state: {

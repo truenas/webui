@@ -77,9 +77,9 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
     return data.map((task) => {
       task.keepfor = `${task.lifetime_value} ${task.lifetime_unit}(S)`;
       task.when = this.translate.instant(T('From {task_begin} to {task_end}'), { task_begin: task.schedule.begin, task_end: task.schedule.end });
-      task.cron = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
-      task.next_run = this.taskService.getTaskNextRun(task.cron);
-      task.frequency = this.taskService.getTaskCronDescription(task.cron);
+      task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
+      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
+      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
 
       return task;
     });

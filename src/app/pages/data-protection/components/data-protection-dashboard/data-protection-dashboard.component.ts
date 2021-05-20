@@ -460,9 +460,9 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
   cloudsyncDataSourceHelper(data: CloudSyncTaskUI[]): CloudSyncTaskUI[] {
     return data.map((task) => {
       task.credential = task.credentials.name;
-      task.cron = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
-      task.frequency = this.parent.taskService.getTaskCronDescription(task.cron);
-      task.next_run = this.parent.taskService.getTaskNextRun(task.cron);
+      task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
+      task.frequency = this.parent.taskService.getTaskCronDescription(task.cron_schedule);
+      task.next_run = this.parent.taskService.getTaskNextRun(task.cron_schedule);
 
       if (task.job === null) {
         task.state = { state: EntityJobState.Pending };
@@ -521,9 +521,9 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
   snapshotDataSourceHelper(data: PeriodicSnapshotTaskUI[]): PeriodicSnapshotTaskUI[] {
     return data.map((task) => {
       task.keepfor = `${task.lifetime_value} ${task.lifetime_unit}(S)`;
-      task.cron = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
-      task.frequency = this.parent.taskService.getTaskCronDescription(task.cron);
-      task.next_run = this.parent.taskService.getTaskNextRun(task.cron);
+      task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
+      task.frequency = this.parent.taskService.getTaskCronDescription(task.cron_schedule);
+      task.next_run = this.parent.taskService.getTaskNextRun(task.cron_schedule);
 
       return task;
     });
