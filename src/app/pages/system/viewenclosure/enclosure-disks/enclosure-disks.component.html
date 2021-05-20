@@ -230,7 +230,7 @@
             <disk-ui [data]="selectedDisk"></disk-ui><!-- disk icon + labels -->
             <div class="capacity">{{converter(selectedDisk.size)}}</div>
             <div class="disk-actions">
-              <button *ngIf="isIdentifiable === true" id="identify-btn" mat-button color="primary" (click)="toggleSlotStatus()">Identify Drive</button>
+              <button *ngIf="isIdentifiable" id="identify-btn" mat-button color="primary" (click)="toggleSlotStatus()">Identify Drive</button>
             </div>
           </div>
   
