@@ -5,6 +5,7 @@ export interface InputExpandableTableConf extends InputTableConf {
   alwaysCollapsed?: boolean;
   collapsedIfEmpty?: boolean;
   alwaysExpanded?: boolean;
+  expandedIfNotEmpty?: boolean;
 }
 
 @Component({
@@ -15,7 +16,8 @@ export class ExpandableTableComponent {
   title = '';
   titleHref: string;
   actions: any[];
-  disabled: boolean;
+  disabled = false;
+  isEmpty = true;
 
   @Input('conf') tableConf: InputExpandableTableConf;
 
@@ -27,11 +29,24 @@ export class ExpandableTableComponent {
     if (this.tableConf.getActions || this.tableConf.deleteCall) {
       this.actions = this.tableConf.getActions ? this.tableConf.getActions() : []; // get all row actions
     }
-    console.log('Expandable Table is here', this.tableConf);
     if (this.tableConf) {
       this.tableConf.expandable = true;
     }
 
-    this.tableConf.afterGetDataExpandable = (data: any) => this.disabled = (data.length === 0 && this.tableConf.collapsedIfEmpty) || this.tableConf.alwaysCollapsed || this.tableConf.alwaysExpanded;
+    this.tableConf.afterGetDataExpandable = (data: any) => {
+      this.isEmpty = !data.length;
+      this.disabled = (this.isEmpty && this.tableConf.collapsedIfEmpty)
+        || this.tableConf.alwaysCollapsed
+        || this.tableConf.alwaysExpanded
+        || (!this.isEmpty && this.tableConf.expandedIfNotEmpty);
+    };
+  }
+
+  shouldBeCollapsed() {
+    return this.tableConf.alwaysCollapsed || (this.isEmpty && this.tableConf.collapsedIfEmpty);
+  }
+
+  shouldBeExpanded() {
+    return this.tableConf.alwaysExpanded || (!this.isEmpty && this.tableConf.expandedIfNotEmpty);
   }
 }

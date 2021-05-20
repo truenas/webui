@@ -1,4 +1,4 @@
-<mat-expansion-panel class="expanded-table" hideToggle [disabled]="tableConf.alwaysCollapsed || disabled" [collapsed]="tableConf.alwaysCollapsed" [expanded]="tableConf.alwaysExpanded">
+<mat-expansion-panel class="expanded-table" hideToggle [disabled]="disabled" [collapsed]="shouldBeCollapsed()" [expanded]="shouldBeExpanded()">
     <mat-expansion-panel-header>
       <mat-panel-title>
         <h3 class="title" *ngIf="title">

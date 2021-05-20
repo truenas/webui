@@ -34,16 +34,23 @@ export class SharesDashboardComponent {
       this.parent.add('webdav');
     },
     edit(row) {
-      console.log('Editing Row', row.id);
       this.parent.edit('webdav', row.id);
     },
+    afterGetData: (data: any) => {
+      if (data.length > 0) {
+        this.webdavHasItems = 1;
+        this.webdavTableConf.alwaysExpanded = true;
+      }
+    },
+    expandedIfNotEmpty: true,
+    collapsedIfEmpty: true,
   };
 
-  afpTableConf: InputExpandableTableConf = {
-    title: 'AFP (Apple File Protocol)',
-    titleHref: '/sharing/afp',
-    queryCall: 'sharing.afp.query',
-    deleteCall: 'sharing.afp.delete',
+  nfsTableConf: InputExpandableTableConf = {
+    title: 'UNIX (NFS) Shares',
+    titleHref: '/sharing/nfs',
+    queryCall: 'sharing.nfs.query',
+    deleteCall: 'sharing.nfs.delete',
     deleteMsg: {
       title: 'Delete',
       key_props: ['name'],
@@ -60,9 +67,16 @@ export class SharesDashboardComponent {
       this.parent.add('afp');
     },
     edit(row) {
-      console.log('Editing Row', row.id);
       this.parent.edit('afp', row.id);
     },
+    afterGetData: (data: any) => {
+      if (data.length > 0) {
+        this.nfsHasItems = 1;
+        this.nfsTableConf.alwaysExpanded = true;
+      }
+    },
+    expandedIfNotEmpty: true,
+    collapsedIfEmpty: true,
   };
 
   smbTableConf: InputExpandableTableConf = {
@@ -86,16 +100,23 @@ export class SharesDashboardComponent {
       this.parent.add('smb');
     },
     edit(row) {
-      console.log('Editing Row', row.id);
       this.parent.edit('smb', row.id);
     },
+    afterGetData: (data: any) => {
+      if (data.length > 0) {
+        this.smbHasItems = 1;
+        this.smbTableConf.alwaysExpanded = true;
+      }
+    },
+    expandedIfNotEmpty: true,
+    collapsedIfEmpty: true,
   };
 
   iscsiTableConf: InputExpandableTableConf = {
-    title: 'Block (ISCSI) Shares',
+    title: 'Block (ISCSI) Shares Targets',
     titleHref: '/sharing/smb',
-    queryCall: 'sharing.smb.query',
-    deleteCall: 'sharing.smb.delete',
+    queryCall: 'iscsi.target.query',
+    deleteCall: 'iscsi.target.delete',
     deleteMsg: {
       title: 'Delete',
       key_props: ['name'],
@@ -103,32 +124,120 @@ export class SharesDashboardComponent {
     emptyEntityLarge: false,
     parent: this,
     columns: [
-      { name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
-      { name: helptext_sharing_smb.column_path, prop: 'path' },
-      { name: helptext_sharing_smb.column_comment, prop: 'comment' },
-      { name: helptext_sharing_smb.column_enabled, prop: 'enabled', checkbox: true },
+      {
+        name: T('Target Name'),
+        prop: 'name',
+        always_display: true,
+      },
+      {
+        name: T('Target Alias'),
+        prop: 'alias',
+      },
     ],
     add() {
       this.parent.add('smb');
     },
     edit(row) {
-      console.log('Editing Row', row.id);
       this.parent.edit('smb', row.id);
     },
     collapsedIfEmpty: true,
+    afterGetData: (data: any) => {
+      if (data.length > 0) {
+        this.iscsiHasItems = 1;
+        this.iscsiTableConf.alwaysExpanded = true;
+      }
+    },
+    expandedIfNotEmpty: true,
   };
 
-  webdavHasItems = true;
-  afpHasItems = false;
-  third = false;
-  fourth = false;
+  webdavHasItems = 0;
+  nfsHasItems = 0;
+  smbHasItems = 0;
+  iscsiHasItems = 0;
 
   ngOnInit() {
     if (this.webdavHasItems) {
       this.webdavTableConf.alwaysExpanded = true;
     }
-    if (this.afpHasItems) {
-      this.afpTableConf.alwaysExpanded = true;
+    if (this.nfsHasItems) {
+      this.nfsTableConf.alwaysExpanded = true;
+    }
+    if (this.smbHasItems) {
+      this.smbTableConf.alwaysExpanded = true;
+    }
+    if (this.iscsiHasItems) {
+      this.iscsiTableConf.alwaysExpanded = true;
+    }
+  }
+
+  getTablesOrder(): string[] {
+    const order: string[] = ['smb', 'nfs', 'iscsi', 'webdav'];
+    // Note: The order of these IFs is important. One can't come before the other
+    if (!this.smbHasItems) {
+      order.splice(order.findIndex((share) => share === 'smb'), 1);
+      order.push('smb');
+    }
+    if (!this.nfsHasItems) {
+      order.splice(order.findIndex((share) => share === 'nfs'), 1);
+      order.push('nfs');
+    }
+    if (!this.iscsiHasItems) {
+      order.splice(order.findIndex((share) => share === 'iscsi'), 1);
+      order.push('iscsi');
+    }
+    if (!this.webdavHasItems) {
+      order.splice(order.findIndex((share) => share === 'webdav'), 1);
+      order.push('webdav');
+    }
+    return order;
+  }
+
+  getContainerClass(): string {
+    const noOfPopulatedTables = this.webdavHasItems + this.nfsHasItems + this.smbHasItems + this.iscsiHasItems;
+    switch (noOfPopulatedTables) {
+      case 1:
+        return 'one-table-container';
+      case 2:
+        return 'two-table-container';
+      case 3:
+        return 'three-table-container';
+      case 4:
+        return 'four-table-container';
+      default:
+        return 'four-table-container';
+    }
+  }
+
+  getWebdavOrder(): string {
+    const order = this.getTablesOrder();
+    return this.getOrderFromIndex(order.findIndex((share) => share === 'webdav'));
+  }
+
+  getNfsOrder(): string {
+    const order = this.getTablesOrder();
+    return this.getOrderFromIndex(order.findIndex((share) => share === 'nfs'));
+  }
+
+  getIscsiOrder(): string {
+    const order = this.getTablesOrder();
+    return this.getOrderFromIndex(order.findIndex((share) => share === 'iscsi'));
+  }
+
+  getSmbOrder(): string {
+    const order = this.getTablesOrder();
+    return this.getOrderFromIndex(order.findIndex((share) => share === 'smb'));
+  }
+
+  getOrderFromIndex(index: number): string {
+    switch (index) {
+      case 0:
+        return 'first';
+      case 1:
+        return 'second';
+      case 2:
+        return 'third';
+      case 3:
+        return 'fourth';
     }
   }
 }
