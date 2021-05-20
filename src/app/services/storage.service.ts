@@ -19,7 +19,6 @@ export class StorageService {
   diskToggleStatus: boolean;
   SMARToptions: any;
   advPowerMgt: any;
-  acousticLevel: any;
   humanReadable: any;
   IECUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
