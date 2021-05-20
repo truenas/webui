@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
+import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { DialogService, WebSocketService, AppLoaderService } from '../../../../services';
 import { Subscription } from 'rxjs';
 import { ModalService } from 'app/services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_acme as helptext, helptext_system_acme } from 'app/helptext/system/acme';
-import _ from 'lodash';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
@@ -24,19 +25,23 @@ export class AcmednsFormComponent implements FormConfiguration {
   fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [];
 
-  protected entityForm: any;
-  private rowNum: any;
-  queryCallOption: any;
-  private getRow = new Subscription();
+  protected entityForm: EntityFormComponent;
+  private rowNum: number;
+  queryCallOption: [QueryFilter<DnsAuthenticator>];
+  private getRow: Subscription;
 
-  constructor(protected ws: WebSocketService, protected loader: AppLoaderService,
-    protected dialog: DialogService, private modalService: ModalService) {
-    this.getRow = this.modalService.getRow$.subscribe((rowId) => {
+  constructor(
+    protected ws: WebSocketService,
+    protected loader: AppLoaderService,
+    protected dialog: DialogService,
+    private modalService: ModalService,
+  ) {
+    this.getRow = this.modalService.getRow$.subscribe((rowId: number) => {
       this.rowNum = rowId;
       this.queryCallOption = [['id', '=', rowId]];
       this.getRow.unsubscribe();
     });
-    this.ws.call('acme.dns.authenticator.authenticator_schemas', []).subscribe((schemas) => {
+    this.ws.call('acme.dns.authenticator.authenticator_schemas').subscribe((schemas) => {
       const authenticatorConfig: FieldConfig = {
         type: 'select',
         name: 'authenticator',
@@ -46,7 +51,7 @@ export class AcmednsFormComponent implements FormConfiguration {
         ],
         parent: this,
       };
-      const fieldSet: any = [
+      const fieldSet: FieldSet[] = [
         {
           name: 'Add DNS Authenticator',
           label: true,
@@ -62,15 +67,17 @@ export class AcmednsFormComponent implements FormConfiguration {
             },
             authenticatorConfig,
           ],
-        }];
+        },
+      ];
+
       for (const schema of schemas) {
         authenticatorConfig.options.push({ label: schema.key, value: schema.key });
         for (const input of schema.schema) {
-          const conf = {
-            name: input['_name_'],
+          const conf: FieldConfig = {
+            name: input._name_,
             type: 'input',
-            required: input['_required_'],
-            placeholder: input['title'],
+            required: input._required_,
+            placeholder: input.title,
             parent: this,
             relation: [
               {
@@ -97,9 +104,25 @@ export class AcmednsFormComponent implements FormConfiguration {
     return data;
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     this.title = this.rowNum ? helptext_system_acme.edit_title : helptext_system_acme.add_title;
+  }
+
+  /**
+   * Avoid sending empty strings "" to backend,
+   * as it fails backend validation in some cases.
+   */
+  clean(formValues: any): any {
+    const cleanedValues = { ...formValues };
+
+    this.fieldConfig.forEach((field) => {
+      if (!field.required && cleanedValues[field.name] === '') {
+        delete cleanedValues[field.name];
+      }
+    });
+
+    return cleanedValues;
   }
 
   beforeSubmit(value: any): void {
