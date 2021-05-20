@@ -123,8 +123,8 @@ from the source dataset.'),
   naming_schema_tooltip: T('Pattern of naming custom snapshots to be \
  replicated. Enter the name and \
  <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" \
- target="_blank">strftime(3)</a> <i>%Y</i>, <i>%m</i>, <i>%d</i>, \
- <i>%H</i>, and <i>%M</i> strings that match the snapshots to include in \
+ target="_blank">strftime(3)</a> <i>&percnt;Y</i>, <i>&percnt;m</i>, <i>&percnt;d</i>, \
+ <i>&percnt;H</i>, and <i>&percnt;M</i> strings that match the snapshots to include in \
  the replication. Separate entries by pressing <code>Enter</code>.'),
 
   also_include_naming_schema_placeholder: T('Also Include Naming Schema'),
@@ -135,8 +135,8 @@ from the source dataset.'),
  target="_blank">strftime(3)</a> strings that match the snapshots to \
  include in the replication.<br><br> \
  When a periodic snapshot is not linked to the replication, enter the \
- naming schema for manually created snapshots. Has the same <i>%Y</i>, \
- <i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i> string requirements as \
+ naming schema for manually created snapshots. Has the same <i>&percnt;Y</i>, \
+ <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i> string requirements as \
  the <b>Naming Schema</b> in a <b>Periodic Snapshot Task</b>. Separate \
  entries by pressing <code>Enter</code>.'),
 
