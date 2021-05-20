@@ -197,9 +197,9 @@ export class SharesDashboardComponent {
       case 'webdav':
         formComponent = new WebdavFormComponent(this.router, this.ws, this.dialog);
         break;
-      // case 'iscsi':
-      //   formComponent = new TargetFormComponent(this.router, this.aroute, this.iscsiService, this.loader, this.translate, this.ws);
-      //   break;
+      case 'iscsi':
+        formComponent = new TargetFormComponent(this.router, this.aroute, this.iscsiService, this.loader, this.translate, this.ws);
+        break;
     }
     this.modalService.open('slide-in-form', formComponent, id);
   }
