@@ -76,7 +76,7 @@ export class GroupListComponent implements OnDestroy {
     this.addComponent = new GroupFormComponent(this._router, this.ws, this.modalService);
   }
 
-  resourceTransformIncomingRestData(data: any[]) {
+  resourceTransformIncomingRestData(data: any[]): any[] {
     // Default setting is to hide builtin groups
     if (this.prefService.preferences.hide_builtin_groups) {
       const newData: any[] = [];

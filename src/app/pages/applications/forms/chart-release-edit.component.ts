@@ -404,8 +404,8 @@ export class ChartReleaseEditComponent implements FormConfiguration {
     });
   }
 
-  parseSchema(schema: any) {
-    let fieldSet;
+  parseSchema(schema: any): any {
+    let fieldSet: FieldSet;
     try {
       const gpuConfiguration = schema.questions.find((question: any) => question.variable == 'gpuConfiguration');
 
@@ -424,7 +424,7 @@ export class ChartReleaseEditComponent implements FormConfiguration {
     return fieldSet;
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     this.name = data.name;
     data.config.release_name = data.name;
     data.config.repository = data.config.image.repository;
