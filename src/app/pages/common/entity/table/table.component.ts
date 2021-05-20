@@ -79,7 +79,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   private entityEmptyLarge = false;
   private enableViewMore = false;
 
-  get tableConf() {
+  get tableConf(): InputTableConf {
     return this._tableConf;
   }
 
@@ -94,7 +94,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   constructor(private ws: WebSocketService, private tableService: TableService, private matDialog: MatDialog) {}
 
-  calculateLimitRows() {
+  calculateLimitRows(): void {
     if (this.table) {
       this.tableHeight = this.table.nativeElement.offsetHeight;
       if (this.enableViewMore) {
@@ -115,20 +115,21 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.calculateLimitRows();
   }
 
-  ngAfterViewChecked() {
+  ngAfterViewChecked(): void {
     if (this.tableHeight !== this.table.nativeElement.offsetHeight) {
       setTimeout(() => this.calculateLimitRows());
     }
   }
-  ngOnInit() {
+
+  ngOnInit(): void {
     this.populateTable();
   }
 
-  populateTable() {
+  populateTable(): void {
     this.title = this._tableConf.title || '';
     if (this._tableConf.titleHref) {
       this.titleHref = this._tableConf.titleHref;
@@ -156,23 +157,23 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     this._tableConf.tableComponent = this;
   }
 
-  getData() {
+  getData(): void {
     this.tableService.getData(this);
   }
 
-  editRow(row: any) {
+  editRow(row: any): void {
     if (this._tableConf.edit) {
       this._tableConf.edit(row);
     }
   }
 
-  onButtonClick(row: any) {
+  onButtonClick(row: any): void {
     if (this._tableConf.onButtonClick) {
       this._tableConf.onButtonClick(row);
     }
   }
 
-  deleteRow(row: any) {
+  deleteRow(row: any): void {
     if (this._tableConf.delete) {
       this._tableConf.delete(row, this);
     } else {
@@ -182,11 +183,11 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   // TODO: Enum
-  unifyState(state: string) {
+  unifyState(state: string): string {
     return this.tableService.unifyState(state);
   }
 
-  showInOutInfo(element: any) {
+  showInOutInfo(element: any): string {
     if (element.oldSent === undefined) {
       element.oldSent = element.sent_bytes;
     }
@@ -205,14 +206,14 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     return `Sent: ${element.sent} Received: ${element.received}`;
   }
 
-  openViewMore() {
+  openViewMore(): void {
     this.enableViewMore = true;
     this.displayedDataSource = this.dataSource;
     this.showViewMore = false;
     this.showCollapse = true;
   }
 
-  collapse() {
+  collapse(): void {
     this.enableViewMore = false;
     this.displayedDataSource = this.dataSource.slice(0, this.limitRows);
     this.showViewMore = true;
@@ -233,7 +234,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
   }
 
-  determineColumnType(column: any) {
+  determineColumnType(column: any): string {
     if (column.listview) {
       return 'listview';
     }

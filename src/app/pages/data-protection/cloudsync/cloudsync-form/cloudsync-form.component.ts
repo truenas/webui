@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { Observable } from 'rxjs/Observable';
 import { filter, take } from 'rxjs/operators';
 
 import * as _ from 'lodash';
@@ -420,11 +421,11 @@ export class CloudsyncFormComponent implements FormConfiguration {
     });
   }
 
-  getBuckets(credential: any) {
+  getBuckets(credential: any): Observable<any[]> {
     return this.ws.call('cloudsync.list_buckets', [credential.id]);
   }
 
-  getChildren(node: any) {
+  getChildren(node: any): Promise<Promise<any>> {
     const credential = this.formGroup.controls['credentials'].value;
     let bucket = this.formGroup.controls['bucket'].value;
     if (this.bucket_field.disabled) {
@@ -449,7 +450,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     }
   }
 
-  getBucketFolders(credential: string, bucket: string, node: any) {
+  getBucketFolders(credential: string, bucket: string, node: any): Promise<any> {
     const formValue = this.entityForm.formGroup.value;
     const children: any[] = [];
     const data = {
@@ -705,7 +706,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     data['cloudsync_picker'] = data.schedule.minute + ' '
                           + data.schedule.hour + ' '
                           + data.schedule.dom + ' '
@@ -760,7 +761,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     return bwlimtArr;
   }
 
-  submitDataHandler(formValue: any) {
+  submitDataHandler(formValue: any): any {
     const value = _.cloneDeep(formValue);
     const attributes: any = {};
     const schedule: any = {};

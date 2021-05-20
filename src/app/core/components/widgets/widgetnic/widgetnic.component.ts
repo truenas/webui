@@ -89,14 +89,14 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     { name: T('empty') },
   ];
 
-  get ipAddresses() {
+  get ipAddresses(): any[] {
     if (!this.nicState && !this.nicState.aliases) { return []; }
 
     return this.nicState.aliases.filter((item: any) =>
       [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
   }
 
-  get vlanAddresses() {
+  get vlanAddresses(): any[] {
     if (!this.nicState) { return []; }
     if (this.path[2].name == 'empty' || this.nicState.vlans.length == 0 || !this.nicState.vlans[parseInt(this.path[2].index)]) { return []; }
 
@@ -105,8 +105,8 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
       [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
   }
 
-  get linkState() {
-    if (!this.nicState && !this.nicState.aliases) { return []; }
+  get linkState(): string {
+    if (!this.nicState && !this.nicState.aliases) { return ''; }
     return this.nicState.link_state.replace(/_/g, ' ');
   }
 
@@ -171,7 +171,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     this.title = this.currentSlide == '0' ? 'Interface' : this.nicState.name;
   }
 
-  vlanAliases(vlanIndex: string|number) {
+  vlanAliases(vlanIndex: string|number): any[] {
     if (typeof vlanIndex == 'string') { vlanIndex = parseInt(vlanIndex); }
     const vlan = this.nicState.vlans[vlanIndex];
     return vlan.aliases.filter((item: any) =>

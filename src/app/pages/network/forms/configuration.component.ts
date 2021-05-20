@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs/Observable';
 import { ProductType } from '../../../enums/product-type.enum';
 
 import { TooltipsService, WebSocketService } from '../../../services';
@@ -244,7 +245,7 @@ export class ConfigurationComponent implements FormConfiguration {
     this.entityEdit.submitFunction = this.submitFunction;
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any[] {
     if (data.hosts && data.hosts !== '') {
       data['hosts'] = data.hosts.split('\n');
     } else {
@@ -264,7 +265,7 @@ export class ConfigurationComponent implements FormConfiguration {
     return data;
   }
 
-  clean(data: any) {
+  clean(data: any): any {
     data.hosts = data.hosts.length > 0 ? data.hosts.join('\n') : '';
     data['service_announcement'] = {
       netbios: data['netbios'],
@@ -278,7 +279,7 @@ export class ConfigurationComponent implements FormConfiguration {
     return data;
   }
 
-  submitFunction(body: any) {
+  submitFunction(body: any): Observable<any> {
     return this.ws.call('network.configuration.update', [body]);
   }
 

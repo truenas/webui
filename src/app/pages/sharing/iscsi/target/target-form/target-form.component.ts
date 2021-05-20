@@ -219,7 +219,7 @@ export class TargetFormComponent implements FormConfiguration {
     );
   }
 
-  preInit() {
+  preInit(): void {
     this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
@@ -228,12 +228,12 @@ export class TargetFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
   }
 
-  customEditCall(value: any) {
+  customEditCall(value: any): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
       (res) => {

@@ -25,7 +25,7 @@ export class TableService {
   ) { }
 
   // get table data source
-  getData(table: any) {
+  getData(table: any): void {
     table.ws.call(table.tableConf.queryCall).subscribe((res: any) => {
       if (table.tableConf.dataSourceHelper) {
         res = table.tableConf.dataSourceHelper(res);
@@ -64,7 +64,7 @@ export class TableService {
     });
   }
 
-  delete(table: any, item: any, action?: any) {
+  delete(table: any, item: any, action?: any): void {
     const deleteMsg = table.tableConf.confirmDeleteDialog && table.tableConf.confirmDeleteDialog.isMessageComplete
       ? ''
       : this.getDeleteMessage(table, item, action);
@@ -99,7 +99,7 @@ export class TableService {
   }
 
   // generate delete msg
-  getDeleteMessage(table: any, item: any, action = T('Delete ')) {
+  getDeleteMessage(table: any, item: any, action = T('Delete ')): string {
     let deleteMsg = T('Delete the selected item?');
     if (table.tableConf.deleteMsg) {
       deleteMsg = action + table.tableConf.deleteMsg.title;
@@ -121,7 +121,7 @@ export class TableService {
   }
 
   // excute deletion of item
-  doDelete(table: any, item: any) {
+  doDelete(table: any, item: any): void {
     if (table.tableConf.deleteCallIsJob) {
       this.loader.open();
       table.loaderOpen = true;
@@ -171,7 +171,7 @@ export class TableService {
     }
   }
 
-  unifyState(state: string) {
+  unifyState(state: string): string {
     switch (state.toUpperCase()) {
       case 'UP':
         return stateClass.UP;
@@ -181,7 +181,7 @@ export class TableService {
     }
   }
 
-  updateStateInfoIcon(elemntId: string, type: 'sent' | 'received') {
+  updateStateInfoIcon(elemntId: string, type: 'sent' | 'received'): void {
     const targetEl = document.getElementById(elemntId);
     const targetIcon = targetEl.firstElementChild;
     if (targetIcon) {

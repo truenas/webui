@@ -68,7 +68,7 @@ export class ViewChartLineComponent extends ViewChartComponent {
     return labels;
   }
 
-  makeConfig() {
+  makeConfig(): any {
     this.chartConfig = {
       bindto: '#' + this._chartId,
       grid: {

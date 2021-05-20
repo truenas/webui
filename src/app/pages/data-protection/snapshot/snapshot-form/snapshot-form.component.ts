@@ -144,7 +144,7 @@ export class SnapshotFormComponent implements FormConfiguration, OnDestroy {
     }
   }
 
-  async afterInit(entityForm: EntityFormComponent) {
+  async afterInit(entityForm: EntityFormComponent): Promise<void> {
     this.entityForm = entityForm;
     this.pk = entityForm.pk;
     this.isNew = entityForm.isNew;
@@ -186,13 +186,13 @@ export class SnapshotFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.dataset_subscription) {
       this.dataset_subscription.unsubscribe();
     }
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     data['snapshot_picker'] = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
     data['begin'] = data.schedule.begin;
     data['end'] = data.schedule.end;
@@ -202,7 +202,7 @@ export class SnapshotFormComponent implements FormConfiguration, OnDestroy {
     return data;
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     const lifetime = value.lifetime.split(' ');
     value['lifetime_value'] = lifetime[0];
     value['lifetime_unit'] = _.endsWith(lifetime[1], 'S') ? lifetime[1].substring(0, lifetime[1].length - 1) : lifetime[1];

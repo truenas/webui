@@ -155,7 +155,7 @@ export class VolumesListTableConfig implements InputTableConf {
     }
   }
 
-  isCustActionVisible(actionname: string) {
+  isCustActionVisible(actionname: string): boolean {
     if (actionname === 'download_key' && this.encryptedStatus > 0) {
       return true;
     }
@@ -378,14 +378,14 @@ export class VolumesListTableConfig implements InputTableConf {
     return actions;
   }
 
-  key_file_updater(file: any, parent: any) {
+  key_file_updater(file: any, parent: any): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
     }
   }
 
-  unlockAction(row1: any) {
+  unlockAction(row1: any): void {
     const self = this;
     this.storageService.poolUnlockServiceChoices(row1.id).pipe(
       map((serviceChoices) => ({
@@ -654,7 +654,7 @@ export class VolumesListTableConfig implements InputTableConf {
             doDetach();
           }
 
-          async function doDetach() {
+          async function doDetach(): Promise<void> {
             const sysPool = await self.ws.call('systemdataset.config').pipe(map((res) => res['pool'])).toPromise();
             let title: string;
             let warningA: string;
@@ -968,7 +968,7 @@ export class VolumesListTableConfig implements InputTableConf {
               },
             };
 
-            function doExpand(entityDialog?: EntityDialogComponent) {
+            function doExpand(entityDialog?: EntityDialogComponent): void {
               parent.loader.open();
               const payload = [row1.id];
               if (entityDialog) {
@@ -1686,7 +1686,7 @@ export class VolumesListTableConfig implements InputTableConf {
     return encryption_actions;
   }
 
-  clickAction(rowData: any) {
+  clickAction(rowData: any): void {
     const editPermissions = rowData.actions[0].actions.find((o: any) => o.name === 'Edit Permissions');
     if (!rowData.locked && editPermissions) {
       if (!rowData.id.includes('/')) {
@@ -1699,7 +1699,7 @@ export class VolumesListTableConfig implements InputTableConf {
     }
   }
 
-  getTimestamp() {
+  getTimestamp(): string {
     const dateTime = new Date();
     return moment(dateTime).format('YYYY-MM-DD_HH-mm');
   }
@@ -1738,7 +1738,7 @@ export class VolumesListTableConfig implements InputTableConf {
     return node;
   }
 
-  getMoreDatasetInfo(dataObj: any, parent: any) {
+  getMoreDatasetInfo(dataObj: any, parent: any): void {
     const dataset_data2 = this.datasetData;
     this.translate.get(T('Inherits')).subscribe((inherits) => {
       for (const k in dataset_data2) {
@@ -1875,13 +1875,13 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
   }
 
-  repaintMe() {
+  repaintMe(): void {
     this.showDefaults = false;
     this.paintMe = false;
     this.ngOnInit();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.refreshTableSubscription) {
       this.refreshTableSubscription.unsubscribe();
     }
@@ -1993,20 +1993,20 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.addDatasetFormComponent = new DatasetFormComponent(this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService);
   }
 
-  addZvol(id: string, isNew: boolean) {
+  addZvol(id: string, isNew: boolean): void {
     this.addZvolComponent.setParent(id);
     this.addZvolComponent.isNew = isNew;
     this.modalService.open('slide-in-form', this.addZvolComponent, id);
   }
 
-  addDataset(pool: any, id: string) {
+  addDataset(pool: any, id: string): void {
     this.addDatasetFormComponent.setParent(id);
     this.addDatasetFormComponent.setVolId(pool);
     this.addDatasetFormComponent.setTitle(T('Add Dataset'));
     this.modalService.open('slide-in-form', this.addDatasetFormComponent, id);
   }
 
-  editDataset(pool: any, id: string) {
+  editDataset(pool: any, id: string): void {
     this.editDatasetFormComponent = new DatasetFormComponent(this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService);
 
     this.editDatasetFormComponent.setPk(id);
@@ -2015,7 +2015,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.modalService.open('slide-in-form', this.editDatasetFormComponent, id);
   }
 
-  createPool() {
+  createPool(): void {
     this.router.navigate(['/storage/manager']);
   }
 }

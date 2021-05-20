@@ -95,7 +95,7 @@ export class EntityTableService implements OnDestroy {
     this.tableUtils.postMessage({ name: 'ProcessCommands', data: pipeLine, sender: 'chartID' });
   }
 
-  truncateData(data: any) {
+  truncateData(data: any): any {
     let finished = false;
     let index = data.length - 1;
     do {

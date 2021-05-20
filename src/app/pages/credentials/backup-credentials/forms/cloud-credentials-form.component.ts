@@ -1402,7 +1402,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
     window.addEventListener('message', doAuth, false);
 
-    function doAuth(message: any) {
+    function doAuth(message: any): void {
       if (message.data.oauth_portal) {
         if (message.data.error) {
           dialogService.errorReport(T('Error'), message.data.error);

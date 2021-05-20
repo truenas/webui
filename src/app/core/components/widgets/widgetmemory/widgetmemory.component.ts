@@ -103,7 +103,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     return value / 1024 / 1024 / 1024;
   }
 
-  parseMemData(data: any) {
+  parseMemData(data: any): string[][] {
     /*
      * PROVIDED BY MIDDLEWARE
      * total

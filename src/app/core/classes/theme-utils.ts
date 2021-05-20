@@ -1,5 +1,5 @@
 export class ThemeUtils {
-  textContrast(cssVar: string, bgVar: string) {
+  textContrast(cssVar: string, bgVar: string): string {
     let txtColor = '';
     // Convert hex value to RGB
     const cssVarType = this.getValueType(cssVar);
@@ -28,7 +28,7 @@ export class ThemeUtils {
     return txtColor;
   }
 
-  getValueType(value: string) {
+  getValueType(value: string): string {
     let valueType: string;
     if (value.startsWith('var')) {
       valueType = 'cssVar';
@@ -45,7 +45,7 @@ export class ThemeUtils {
     return valueType;
   }
 
-  convertToRGB(value: string) {
+  convertToRGB(value: string): { hex: string; rgb: number[] } {
     const valueType = this.getValueType(value);
     switch (valueType) {
       case 'hex':
@@ -61,7 +61,7 @@ export class ThemeUtils {
     }
   }
 
-  hexToRGB(str: string) {
+  hexToRGB(str: string): { hex: string; rgb: number[] } {
     const valueType = this.getValueType(str); // cssVar || hex || rgb || rgba
     if (valueType != 'hex') console.error('This method takes a hex value as a parameter but was given a value of type ' + valueType);
 

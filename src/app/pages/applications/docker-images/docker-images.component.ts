@@ -118,7 +118,7 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     return actions;
   }
 
-  resourceTransformIncomingRestData(d: any[]) {
+  resourceTransformIncomingRestData(d: any[]): any[] {
     const data: any[] = [];
     d.forEach((row) => {
       if (!row.system_image) {
