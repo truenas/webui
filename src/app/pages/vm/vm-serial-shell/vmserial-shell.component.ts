@@ -84,7 +84,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     this.resizeTerm();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     const log: string[] = [];
     for (const propName in changes) {
       const changedProp = changes[propName];

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { FormControl } from '@angular/forms';
+import { FormControl, ValidatorFn } from '@angular/forms';
 import * as _ from 'lodash';
 import { WebSocketService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
@@ -164,7 +164,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
     public ws: WebSocketService, public dialogService: DialogService, public router: Router,
     private modalService: ModalService) { }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
     this.custActions = [
       {
@@ -186,7 +186,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
     ];
   }
 
-  emailListValidator(name: string) {
+  emailListValidator(name: string): ValidatorFn {
     const self = this;
     return function validEmails(control: FormControl) {
       const config = self.fieldConfig.find((c) => c.name === name);
@@ -236,7 +236,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
     this.openDialog(payload);
   }
 
-  openDialog(payload: any) {
+  openDialog(payload: any): void {
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Ticket', CloseOnClickOutside: true } });
     let url: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
@@ -272,7 +272,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
     });
   }
 
-  updater(file: any, parent: any) {
+  updater(file: any, parent: any): void {
     parent.subs = [];
     const fileBrowser = file.fileInput.nativeElement;
     this.screenshot = _.find(parent.fieldConfig, { name: 'screenshot' });
@@ -289,7 +289,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
     }
   }
 
-  resetForm() {
+  resetForm(): void {
     this.entityEdit.formGroup.reset();
     this.entityEdit.formGroup.controls['TNCategory'].setValue('BUG');
     this.entityEdit.formGroup.controls['environment'].setValue('production');
