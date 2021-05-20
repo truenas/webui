@@ -1,3 +1,4 @@
+import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
 import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { RealtimeStatsEvent } from 'app/interfaces/events/realtime-stats-event.interface';
@@ -14,4 +15,5 @@ export type CoreEvent =
   | PoolDataEvent
   | NicInfoEvent
   | SysInfoEvent
-  | UntypedEvent;
+  | UntypedEvent
+  | CpuStatsEvent;
