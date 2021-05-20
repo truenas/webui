@@ -121,6 +121,16 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     return Object.keys(selectedEnclosure.poolKeys);
   }
 
+  private _isIdentifiable = true;
+  get isIdentifiable() {
+    if (this.view == 'rear') {
+      const index: number = this.system.rearIndex ? this.system.rearIndex : this.selectedEnclosure.enclosureKey;
+      const result: boolean = this.system.enclosures[index].elements[0].has_slot_status;
+      return result;
+    }
+    return this._isIdentifiable;
+  }
+
   selectedVdevDisks: string[];
   selectedDisk: any;
 
