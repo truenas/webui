@@ -1378,8 +1378,6 @@ export class ReplicationFormComponent implements FormConfiguration {
   }
 
   beforeSubmit(data: any) {
-    const targetDatasetPush = _.cloneDeep(data['target_dataset_PUSH']);
-
     if (data['replicate']) {
       data['recursive'] = true;
       data['properties'] = true;
@@ -1414,7 +1412,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           : _.cloneDeep(data['source_datasets_PUSH']).split(',').map(_.trim),
       );
 
-      data['target_dataset'] = typeof targetDatasetPush === 'string' ? targetDatasetPush : targetDatasetPush.toString();
+      data['target_dataset'] = typeof data['target_dataset_PUSH'] === 'string' ? data['target_dataset_PUSH'] : data['target_dataset_PUSH'].toString();
 
       delete data['source_datasets_PUSH'];
       delete data['target_dataset_PUSH'];
