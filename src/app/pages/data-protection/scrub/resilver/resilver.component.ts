@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import * as _ from 'lodash';
-import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { TaskService } from '../../../../services';
-import helptext from '../../../../helptext/storage/resilver/resilver';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { TaskService } from 'app/services';
+import helptext from 'app/helptext/storage/resilver/resilver';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
@@ -17,7 +17,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 export class ResilverComponent implements FormConfiguration {
   queryCall: 'pool.resilver.config' = 'pool.resilver.config';
   editCall: 'pool.resilver.update' = 'pool.resilver.update';
-  route_success: string[] = ['storage'];
+  route_success: string[] = ['data-protection'];
 
   fieldSets: FieldSet[] = [
     {
