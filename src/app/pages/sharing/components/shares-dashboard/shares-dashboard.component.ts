@@ -62,6 +62,7 @@ export class SharesDashboardComponent {
     expandedIfNotEmpty: true,
     collapsedIfEmpty: true,
     detailsHref: '/sharing/webdav',
+    limitRows: 5,
   };
 
   nfsTableConf: InputExpandableTableConf = {
@@ -96,6 +97,7 @@ export class SharesDashboardComponent {
     },
     expandedIfNotEmpty: true,
     collapsedIfEmpty: true,
+    limitRows: 5,
   };
 
   smbTableConf: InputExpandableTableConf = {
@@ -130,6 +132,7 @@ export class SharesDashboardComponent {
     },
     expandedIfNotEmpty: true,
     collapsedIfEmpty: true,
+    limitRows: 5,
   };
 
   iscsiTableConf: InputExpandableTableConf = {
@@ -169,6 +172,7 @@ export class SharesDashboardComponent {
       }
     },
     expandedIfNotEmpty: true,
+    limitRows: 5,
   };
 
   webdavHasItems = 0;
