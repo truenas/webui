@@ -10,7 +10,7 @@ export interface ScrubTask {
   threshold: number;
 }
 
-export interface ScrubTaskUI extends ScrubTask {
+export interface ScrubTaskUi extends ScrubTask {
   cron_schedule: string;
   frequency: string;
   next_run: string;

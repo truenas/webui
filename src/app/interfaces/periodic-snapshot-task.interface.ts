@@ -6,7 +6,7 @@ interface PeriodicSnapshotTaskState {
   error: string;
 }
 
-export interface PeriodicSnapshotTaskRaw {
+export interface PeriodicSnapshotTask {
   schedule: Schedule;
   allow_empty?: boolean;
   dataset: string;
@@ -17,18 +17,11 @@ export interface PeriodicSnapshotTaskRaw {
   lifetime_value: number;
   naming_schema: string;
   recursive: boolean;
-}
-
-/*
- * See middleware for details
- * https://github.com/truenas/middleware/blob/HEAD/src/middlewared/middlewared/plugins/snapshot.py#L51
-*/
-export interface PeriodicSnapshotTask extends PeriodicSnapshotTaskRaw {
   state: PeriodicSnapshotTaskState;
   vmware_sync: boolean;
 }
 
-export interface PeriodicSnapshotTaskUI extends PeriodicSnapshotTask {
+export interface PeriodicSnapshotTaskUi extends PeriodicSnapshotTask {
   keepfor: string;
   cron_schedule: string;
   when: string;

@@ -11,7 +11,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { take } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
-import { SmartTestUI } from 'app/interfaces/smart-test.interface';
+import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { T } from 'app/translate-marker';
 
 @Component({
@@ -117,7 +117,7 @@ export class SmartFormComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: SmartTestUI): SmartTestUI {
+  resourceTransformIncomingRestData(data: SmartTestUi): SmartTestUi {
     data.cron_schedule = `0 ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
     return data;
   }

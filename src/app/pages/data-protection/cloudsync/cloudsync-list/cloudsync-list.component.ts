@@ -4,9 +4,9 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 
-import { CloudSyncTaskUI } from 'app/interfaces/cloud-sync-task.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import {
   EntityTableComponent,
   InputTableConf,
@@ -102,7 +102,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  resourceTransformIncomingRestData(data: CloudSyncTaskUI[]): CloudSyncTaskUI[] {
+  resourceTransformIncomingRestData(data: CloudSyncTaskUi[]): CloudSyncTaskUi[] {
     return data.map((task) => {
       task.credential = task.credentials.name;
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;

@@ -10,7 +10,7 @@ export interface SmartTest {
   type: SmartTestType;
 }
 
-export interface SmartTestUI extends SmartTest {
+export interface SmartTestUi extends SmartTest {
   cron_schedule: string;
   frequency: string;
   next_run: string;

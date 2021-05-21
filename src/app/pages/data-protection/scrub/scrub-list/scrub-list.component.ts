@@ -12,7 +12,7 @@ import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { ScrubTaskUI } from 'app/interfaces/scrub-task.interface';
+import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 
 @Component({
   selector: 'app-scrub-list',
@@ -73,7 +73,7 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  resourceTransformIncomingRestData(data: ScrubTaskUI[]): ScrubTaskUI[] {
+  resourceTransformIncomingRestData(data: ScrubTaskUi[]): ScrubTaskUi[] {
     return data.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);

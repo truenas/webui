@@ -42,7 +42,7 @@ export interface CloudSyncTask {
   transfers: number;
 }
 
-export interface CloudSyncTaskUI extends CloudSyncTask {
+export interface CloudSyncTaskUi extends CloudSyncTask {
   credential: string;
   cron_schedule: string;
   frequency: string;

@@ -29,7 +29,7 @@ export interface RsyncTask {
   user: string;
 }
 
-export interface RsyncTaskUI extends RsyncTask {
+export interface RsyncTaskUi extends RsyncTask {
   cron_schedule: string;
   next_run: string;
   frequency: string;

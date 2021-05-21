@@ -66,7 +66,7 @@ export interface ReplicationTask {
   transport: TransportMode;
 }
 
-export interface ReplicationTaskUI extends ReplicationTask {
+export interface ReplicationTaskUi extends ReplicationTask {
   ssh_connection: string;
   task_last_snapshot: string;
 }

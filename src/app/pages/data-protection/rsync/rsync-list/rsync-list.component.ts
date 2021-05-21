@@ -18,7 +18,7 @@ import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
-import { RsyncTaskUI } from 'app/interfaces/rsync-task.interface';
+import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 
 @Component({
   selector: 'app-rsync-list',
@@ -149,7 +149,7 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
     }];
   }
 
-  resourceTransformIncomingRestData(data: RsyncTaskUI[]): RsyncTaskUI[] {
+  resourceTransformIncomingRestData(data: RsyncTaskUi[]): RsyncTaskUi[] {
     return data.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
 

@@ -44,12 +44,12 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { PeriodicSnapshotTaskUI } from 'app/interfaces/periodic-snapshot-task.interface';
-import { CloudSyncTaskUI } from 'app/interfaces/cloud-sync-task.interface';
-import { ReplicationTaskUI } from 'app/interfaces/replication-task.interface';
-import { ScrubTaskUI } from 'app/interfaces/scrub-task.interface';
-import { RsyncTaskUI } from 'app/interfaces/rsync-task.interface';
-import { SmartTestUI } from 'app/interfaces/smart-test.interface';
+import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
+import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
+import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
+import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
+import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
+import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 
 export interface TaskCard {
@@ -447,7 +447,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     this.smartFormComponent = new SmartFormComponent(this.ws, this.modalService);
   }
 
-  scrubDataSourceHelper(data: ScrubTaskUI[]): ScrubTaskUI[] {
+  scrubDataSourceHelper(data: ScrubTaskUi[]): ScrubTaskUi[] {
     return data.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.frequency = this.parent.taskService.getTaskCronDescription(task.cron_schedule);
@@ -457,7 +457,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  cloudsyncDataSourceHelper(data: CloudSyncTaskUI[]): CloudSyncTaskUI[] {
+  cloudsyncDataSourceHelper(data: CloudSyncTaskUi[]): CloudSyncTaskUi[] {
     return data.map((task) => {
       task.credential = task.credentials.name;
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
@@ -478,7 +478,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  replicationDataSourceHelper(data: ReplicationTaskUI[]): ReplicationTaskUI[] {
+  replicationDataSourceHelper(data: ReplicationTaskUi[]): ReplicationTaskUi[] {
     return data.map((task) => {
       task.task_last_snapshot = task.state.last_snapshot
         ? task.state.last_snapshot
@@ -495,7 +495,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  smartTestsDataSourceHelper(data: SmartTestUI[]): SmartTestUI[] {
+  smartTestsDataSourceHelper(data: SmartTestUi[]): SmartTestUi[] {
     return data.map((test) => {
       test.cron_schedule = `0 ${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
       test.frequency = this.parent.taskService.getTaskCronDescription(test.cron_schedule);
@@ -518,7 +518,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  snapshotDataSourceHelper(data: PeriodicSnapshotTaskUI[]): PeriodicSnapshotTaskUI[] {
+  snapshotDataSourceHelper(data: PeriodicSnapshotTaskUi[]): PeriodicSnapshotTaskUi[] {
     return data.map((task) => {
       task.keepfor = `${task.lifetime_value} ${task.lifetime_unit}(S)`;
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
@@ -529,7 +529,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  rsyncDataSourceHelper(data: RsyncTaskUI[]): RsyncTaskUI[] {
+  rsyncDataSourceHelper(data: RsyncTaskUi[]): RsyncTaskUi[] {
     return data.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.frequency = this.parent.taskService.getTaskCronDescription(task.cron_schedule);

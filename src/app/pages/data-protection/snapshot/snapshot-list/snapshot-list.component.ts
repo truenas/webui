@@ -12,7 +12,7 @@ import { ModalService } from 'app/services/modal.service';
 import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { PeriodicSnapshotTaskUI } from 'app/interfaces/periodic-snapshot-task.interface';
+import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 
 @Component({
   selector: 'app-snapshot-task-list',
@@ -73,7 +73,7 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  resourceTransformIncomingRestData(data: PeriodicSnapshotTaskUI[]): PeriodicSnapshotTaskUI[] {
+  resourceTransformIncomingRestData(data: PeriodicSnapshotTaskUi[]): PeriodicSnapshotTaskUi[] {
     return data.map((task) => {
       task.keepfor = `${task.lifetime_value} ${task.lifetime_unit}(S)`;
       task.when = this.translate.instant(T('From {task_begin} to {task_end}'), { task_begin: task.schedule.begin, task_end: task.schedule.end });

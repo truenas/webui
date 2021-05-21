@@ -12,7 +12,7 @@ import { TaskService, WebSocketService } from 'app/services';
 import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { TranslateService } from '@ngx-translate/core';
-import { SmartTestUI } from 'app/interfaces/smart-test.interface';
+import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 
 @Component({
   selector: 'app-smart-list',
@@ -78,7 +78,7 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  resourceTransformIncomingRestData(data: SmartTestUI[]): SmartTestUI[] {
+  resourceTransformIncomingRestData(data: SmartTestUi[]): SmartTestUi[] {
     return data.map((test) => {
       test.cron_schedule = `${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
       if (test.all_disks) {
