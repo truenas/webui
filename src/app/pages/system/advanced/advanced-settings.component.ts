@@ -10,6 +10,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { Subject, Subscription } from 'rxjs';
 
+import * as cronParser from 'cron-parser';
+import { Moment } from 'moment';
+
 import {
   WebSocketService,
   SystemGeneralService,
@@ -40,7 +43,6 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { GpuDevice } from 'app/interfaces/gpu-device.interface';
-import { TaskService } from 'app/services/task.service';
 
 enum CardId {
   Console = 'console',
@@ -56,7 +58,7 @@ enum CardId {
 @Component({
   selector: 'app-advanced-settings',
   templateUrl: './advanced-settings.component.html',
-  providers: [DatePipe, UserService, TaskService],
+  providers: [DatePipe, UserService],
 })
 export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   dataCards: any[] = [];
@@ -580,7 +582,11 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   cronDataSourceHelper(data: any[]): any[] {
     return data.map((job) => {
       job.cron_schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
-      job.next_run = this.taskService.getTaskNextRun(job.cron_schedule);
+
+      /* Weird type assertions are due to a type definition error in the cron-parser library */
+      job.next_run = ((cronParser.parseExpression(job.cron_schedule, { iterator: true }).next() as unknown) as {
+        value: { _date: Moment };
+      }).value._date.fromNow();
 
       return job;
     });
