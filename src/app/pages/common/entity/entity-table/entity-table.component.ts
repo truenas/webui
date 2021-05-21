@@ -11,7 +11,7 @@ import {
   fromEvent as observableFromEvent, Observable, of, Subscription,
 } from 'rxjs';
 import {
-  catchError, debounceTime, distinctUntilChanged, filter, switchMap, take, tap,
+  catchError, debounceTime, distinctUntilChanged, filter, switchMap, take, tap, map,
 } from 'rxjs/operators';
 import { DialogService, JobService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -180,7 +180,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   protected toDeleteRow: any;
   private routeSub: any;
-  private expandedRowIds: any[] = [];
+  private expandedRowIds: number[] = [];
 
   hasDetails = () =>
     this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
@@ -328,7 +328,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.erdService.attachResizeEventToElement('entity-table-component');
   }
 
-  setFilteredRows(isTrigeredByFilter = false) {
+  setFilteredRows(isTrigeredByFilter = false): void {
     const filterValue: string = this.filter.nativeElement.value;
     let newData: any[] = [];
     this.expandedRows = 0; // TODO: Make this unnecessary by figuring out how to keep expanded rows expanded when filtering
@@ -374,6 +374,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     } else {
       this.expandedRowIds = [];
+      setTimeout(() => {
+        if (this.table) {
+          this.table.rowDetail.collapseAllRows();
+        }
+      });
+
     }
 
     if (!this.fixedTableHight) {
@@ -384,6 +390,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     if (this.filter) {
       observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
+        map((event: any) => {
+          return event.target.value;
+        }),
         debounceTime(150),
         distinctUntilChanged(),
       )
