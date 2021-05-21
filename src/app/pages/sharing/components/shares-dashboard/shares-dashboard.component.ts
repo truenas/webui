@@ -22,12 +22,12 @@ import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form'
 })
 export class SharesDashboardComponent {
   webdavTableConf: InputExpandableTableConf = {
-    title: 'WebDAV',
+    title: T('WebDAV'),
     titleHref: '/sharing/webdav',
     queryCall: 'sharing.webdav.query',
     deleteCall: 'sharing.webdav.delete',
     deleteMsg: {
-      title: 'Delete',
+      title: T('Delete'),
       key_props: ['name'],
     },
     emptyEntityLarge: false,
@@ -57,12 +57,12 @@ export class SharesDashboardComponent {
   };
 
   nfsTableConf: InputExpandableTableConf = {
-    title: 'UNIX (NFS) Shares',
+    title: T('UNIX (NFS) Shares'),
     titleHref: '/sharing/nfs',
     queryCall: 'sharing.nfs.query',
     deleteCall: 'sharing.nfs.delete',
     deleteMsg: {
-      title: 'Delete',
+      title: T('Delete'),
       key_props: ['name'],
     },
     emptyEntityLarge: false,
@@ -90,12 +90,12 @@ export class SharesDashboardComponent {
   };
 
   smbTableConf: InputExpandableTableConf = {
-    title: 'Windows (SMB) Shares',
+    title: T('Windows (SMB) Shares'),
     titleHref: '/sharing/smb',
     queryCall: 'sharing.smb.query',
     deleteCall: 'sharing.smb.delete',
     deleteMsg: {
-      title: 'Delete',
+      title: T('Delete'),
       key_props: ['name'],
     },
     emptyEntityLarge: false,
@@ -123,12 +123,12 @@ export class SharesDashboardComponent {
   };
 
   iscsiTableConf: InputExpandableTableConf = {
-    title: 'Block (ISCSI) Shares Targets',
+    title: T('Block (ISCSI) Shares Targets'),
     titleHref: '/sharing/smb',
     queryCall: 'iscsi.target.query',
     deleteCall: 'iscsi.target.delete',
     deleteMsg: {
-      title: 'Delete',
+      title: T('Delete'),
       key_props: ['name'],
     },
     emptyEntityLarge: false,
