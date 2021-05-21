@@ -273,8 +273,50 @@ export class SnapshotListComponent {
     });
   }
 
+  restructureData(selected: any): any {
+    const datasets = [];
+    const snapshots = {};
+    selected.forEach((item, index) => {
+      if (!snapshots[item.dataset]) {
+        datasets.push(item.dataset);
+        snapshots[item.dataset] = [];
+      }
+
+      snapshots[item.dataset].push(item.snapshot);
+    });
+
+    return { datasets, snapshots };
+  }
+
+  getMultiDeleteMessage(selected: any): string {
+    const grandTotal = selected.length > 1 ? selected.length.toString() : '';
+    let message = `<strong>The following ${grandTotal} snapshots will be deleted. Are you sure you want to proceed?</strong>`;
+    message += '<br>';
+    const info = this.restructureData(selected);
+
+    const datasetStart = "<div class='mat-list-item'>";
+    const datasetEnd = '</div>';
+    const listStart = '<ul>';
+    const listEnd = '</ul>';
+    const breakTag = '<br>';
+
+    info.datasets.forEach((dataset, index) => {
+      const totalSnapshots = info.snapshots[dataset].length;
+      const header = `<br/> <div><strong>${dataset}</strong> (${totalSnapshots} snapshots) </div>`;
+      const listContent = [];
+
+      info.snapshots[dataset].forEach((snapshot) => {
+        listContent.push('<li>&nbsp;&nbsp;&nbsp;&nbsp;' + snapshot + '</li>');
+      });
+
+      message += datasetStart + header + listStart + listContent.toString().replaceAll(',', '') + listEnd + breakTag + datasetEnd;
+    });
+
+    return message;
+  }
+
   doMultiDelete(selected: any): void {
-    const multiDeleteMsg = this.entityList.getMultiDeleteMessage(selected);
+    const multiDeleteMsg = this.getMultiDeleteMessage(selected);
     this.dialogService.confirm('Delete', multiDeleteMsg, false, T('Delete')).subscribe((res: boolean) => {
       if (res) {
         this.startMultiDeleteProgress(selected);
