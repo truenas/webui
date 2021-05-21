@@ -124,13 +124,6 @@ export class DiskFormComponent implements FormConfiguration {
           tooltip: helptext.disk_form_advpowermgmt_tooltip,
           options: helptext.disk_form_advpowermgmt_options,
         },
-        {
-          type: 'select',
-          name: 'acousticlevel',
-          placeholder: helptext.disk_form_acousticlevel_placeholder,
-          tooltip: helptext.disk_form_acousticlevel_tooltip,
-          options: helptext.disk_form_acousticlevel_options,
-        },
       ],
     },
     {
@@ -184,7 +177,6 @@ export class DiskFormComponent implements FormConfiguration {
 
   protected disk_hddstandby: any;
   protected disk_advpowermgmt: any;
-  protected disk_acousticlevel: any;
   title: string;
 
   rowid: any;
