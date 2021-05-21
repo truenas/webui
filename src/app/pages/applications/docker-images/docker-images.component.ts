@@ -116,7 +116,7 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
       },
     });
 
-    return actions;
+    return actions as EntityTableAction[];
   }
 
   resourceTransformIncomingRestData(d: any[]): any[] {

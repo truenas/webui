@@ -4,6 +4,7 @@ import { Validators } from '@angular/forms';
 
 import * as _ from 'lodash';
 import { combineLatest, of, Subscription } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 import {
   catchError, map, switchMap, take, tap, debounceTime,
 } from 'rxjs/operators';
@@ -415,7 +416,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
            * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
            * nav to SMB shares list view.
            */
-          const promptUserACLEdit = (): void => {
+          const promptUserACLEdit = (): Observable<[boolean, {}] | [boolean]> =>
             this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
               switchMap((isTrivialACL) => {
                 let nextStep;
@@ -444,7 +445,6 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
                 }
               }),
             );
-          };
 
           this.ws
             .call('service.query', [])
