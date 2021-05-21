@@ -218,6 +218,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit, OnDestroy {
       type: 'button',
       color: 'primary',
       value: 'launch',
+      disabled: !this.isSelectedPool,
     });
 
     this.toolbarConfig.target.next({ name: 'UpdateControls', data: this.toolbarConfig.controls });
