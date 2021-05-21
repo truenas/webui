@@ -15,7 +15,8 @@
       "es2016",
       "dom",
       "es2017.object",
-      "es2016.array.include"
+      "es2016.array.include",
+      "ESNext.String"
     ],
     "module": "es2015"
   },
