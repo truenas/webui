@@ -19,7 +19,7 @@ export class FormColorpickerComponent implements Field, OnInit {
   picker = false;
   private _textInput = '';
 
-  get textInput() {
+  get textInput(): string {
     return this._textInput;
   }
 
@@ -29,7 +29,7 @@ export class FormColorpickerComponent implements Field, OnInit {
     console.log(val);
   }
 
-  get colorProxy() {
+  get colorProxy(): string {
     return this.group.value[this.config.name];
   }
 
@@ -37,9 +37,7 @@ export class FormColorpickerComponent implements Field, OnInit {
     this.group.controls[this.config.name].setValue(val);
   }
 
-  constructor() {}
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.config.value = this.group.value[this.config.name];
   }
 
@@ -56,7 +54,7 @@ export class FormColorpickerComponent implements Field, OnInit {
     // console.log(color);
   }
 
-  togglePicker() {
+  togglePicker(): void {
     this.picker = !this.picker;
   }
 }

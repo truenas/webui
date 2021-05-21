@@ -38,7 +38,7 @@ export class ToolbarSelectComponent extends iXAbstractObject {
     super();
   }
 
-  onChange(event: MatSelectChange) {
+  onChange(event: MatSelectChange): void {
     this.config.value = event.value;
     this.controller.next({ name: this.config.name, value: this.config.value });
   }

@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -46,7 +47,7 @@ import { T } from 'app/translate-marker';
 export class ReplicationWizardComponent {
   title = T('Replication Task Wizard');
   isLinear = true;
-  summary_title = T('Replication Summary');
+  summaryTitle = T('Replication Summary');
   pk: number;
   getRow: Subscription;
   saveSubmitText = T('START REPLICATION');
@@ -735,7 +736,7 @@ export class ReplicationWizardComponent {
     'password',
   ];
 
-  protected createCalls = {
+  protected createCalls: { [key: string]: ApiMethod } = {
     private_key: 'keychaincredential.create',
     ssh_credentials_semiautomatic: 'keychaincredential.remote_ssh_semiautomatic_setup',
     ssh_credentials_manual: 'keychaincredential.create',
@@ -744,7 +745,7 @@ export class ReplicationWizardComponent {
     snapshot: 'zfs.snapshot.create',
   };
 
-  protected deleteCalls = {
+  protected deleteCalls: { [key: string]: ApiMethod } = {
     private_key: 'keychaincredential.delete',
     ssh_credentials: 'keychaincredential.delete',
     periodic_snapshot_tasks: 'pool.snapshottask.delete',

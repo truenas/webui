@@ -33,7 +33,7 @@ export class RebootComponent implements OnInit {
     });
   }
 
-  isWSConnected() {
+  isWSConnected(): void {
     if (this.ws.connected) {
       this.loader.close();
       // ws is connected
@@ -45,7 +45,7 @@ export class RebootComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.product_type = window.localStorage.getItem('product_type') as ProductType;
 
     this.dialog.closeAll();

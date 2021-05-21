@@ -9,19 +9,20 @@ import { EntityUtils } from '../../common/entity/utils';
 import helptext from '../../../helptext/directoryservice/idmap';
 import { ModalService } from '../../../services/modal.service';
 import { Subscription } from 'rxjs';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-idmap-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class IdmapFormComponent {
-  protected title: string;
-  protected isEntity = true;
+export class IdmapFormComponent implements FormConfiguration {
+  title: string;
+  isEntity = true;
   protected namesInUse: string[] = [];
-  protected queryCall = 'idmap.query';
-  protected addCall = 'idmap.create';
-  protected editCall = 'idmap.update';
-  protected pk: any;
-  protected queryKey = 'id';
+  queryCall: 'idmap.query' = 'idmap.query';
+  addCall: 'idmap.create' = 'idmap.create';
+  editCall: 'idmap.update' = 'idmap.update';
+  pk: any;
+  queryKey = 'id';
   private getRow = new Subscription();
   rangeLowValidation = [
     ...helptext.idmap.required_validator,
@@ -41,10 +42,10 @@ export class IdmapFormComponent {
     'DS_TYPE_LDAP',
   ];
   protected readOnly = false;
-  protected fieldConfig: FieldConfig[] = [];
+  fieldConfig: FieldConfig[] = [];
   protected isOneColumnForm = true;
   fieldSetDisplay = 'default';
-  protected fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext.idmap.settings_label,
       class: 'idmap-configuration-form',
@@ -287,7 +288,7 @@ export class IdmapFormComponent {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     for (const item in data.options) {
       data[item] = data.options[item];
     }
@@ -298,7 +299,7 @@ export class IdmapFormComponent {
     return data;
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.title = entityEdit.isNew ? helptext.title_add : helptext.title_edit;
     this.entityForm = entityEdit;
     this.optionsFields.forEach((option) => {
@@ -360,13 +361,13 @@ export class IdmapFormComponent {
     }, 500);
   }
 
-  hideField(fieldName: any, show: boolean, entity: any) {
+  hideField(fieldName: any, show: boolean, entity: any): void {
     const target = _.find(this.fieldConfig, { name: fieldName });
     target['isHidden'] = show;
     entity.setDisabled(fieldName, show, show);
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     if (data.dns_domain_name === null) {
       delete data.dns_domain_name;
     }
@@ -386,7 +387,7 @@ export class IdmapFormComponent {
     data['options'] = options;
   }
 
-  afterSubmit() {
+  afterSubmit(): void {
     this.modalService.refreshTable();
     this.dialogService.confirm(helptext.idmap.clear_cache_dialog.title, helptext.idmap.clear_cache_dialog.message,
       true)

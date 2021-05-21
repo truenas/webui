@@ -5,15 +5,15 @@ import { DialogService, WebSocketService } from '../../../../../services';
 import { ModalService } from '../../../../../services/modal.service';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-license',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class LicenseComponent {
-  private queryCall = 'none';
-  private updateCall = 'system.license_update';
+export class LicenseComponent implements FormConfiguration {
+  updateCall: 'system.license_update' = 'system.license_update';
   protected isOneColumnForm = true;
   fieldSets: FieldSet[] = [
     {
@@ -35,7 +35,7 @@ export class LicenseComponent {
   constructor(private ws: WebSocketService, private modalService: ModalService,
     private loader: AppLoaderService, private dialog: DialogService) { }
 
-  customSubmit(form: any) {
+  customSubmit(form: any): void {
     this.loader.open();
     this.ws.call(this.updateCall, [form.license]).subscribe(() => {
       this.loader.close();

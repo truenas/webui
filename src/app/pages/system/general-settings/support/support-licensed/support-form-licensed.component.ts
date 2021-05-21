@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { FormControl } from '@angular/forms';
+import { FormControl, ValidatorFn } from '@angular/forms';
 import * as _ from 'lodash';
 import { WebSocketService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
@@ -11,15 +11,14 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { ModalService } from '../../../../../services/modal.service';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-support-form-licensed',
   template: '<entity-form [conf]="this"></entity-form>',
 
 })
-export class SupportFormLicensedComponent {
-  private queryCall = 'none';
-
+export class SupportFormLicensedComponent implements FormConfiguration {
   entityEdit: any;
   screenshot: any;
   subs: any[];
@@ -165,7 +164,7 @@ export class SupportFormLicensedComponent {
     public ws: WebSocketService, public dialogService: DialogService, public router: Router,
     private modalService: ModalService) { }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
     this.custActions = [
       {
@@ -187,7 +186,7 @@ export class SupportFormLicensedComponent {
     ];
   }
 
-  emailListValidator(name: string) {
+  emailListValidator(name: string): ValidatorFn {
     const self = this;
     return function validEmails(control: FormControl) {
       const config = self.fieldConfig.find((c) => c.name === name);
@@ -237,7 +236,7 @@ export class SupportFormLicensedComponent {
     this.openDialog(payload);
   }
 
-  openDialog(payload: any) {
+  openDialog(payload: any): void {
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Ticket', CloseOnClickOutside: true } });
     let url: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
@@ -257,7 +256,7 @@ export class SupportFormLicensedComponent {
           dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
           dialogRef.componentInstance.success.subscribe(() => {
             this.resetForm();
-          }),
+          });
           dialogRef.componentInstance.failure.subscribe((res: any) => {
             dialogRef.componentInstance.setDescription(res.error);
           });
@@ -273,7 +272,7 @@ export class SupportFormLicensedComponent {
     });
   }
 
-  updater(file: any, parent: any) {
+  updater(file: any, parent: any): void {
     parent.subs = [];
     const fileBrowser = file.fileInput.nativeElement;
     this.screenshot = _.find(parent.fieldConfig, { name: 'screenshot' });
@@ -290,7 +289,7 @@ export class SupportFormLicensedComponent {
     }
   }
 
-  resetForm() {
+  resetForm(): void {
     this.entityEdit.formGroup.reset();
     this.entityEdit.formGroup.controls['TNCategory'].setValue('BUG');
     this.entityEdit.formGroup.controls['environment'].setValue('production');

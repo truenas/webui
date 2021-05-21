@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { CoreService, CoreEvent } from './core.service';
+import { CoreEvent } from 'app/interfaces/events';
+import { CoreService } from './core.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({
@@ -23,6 +24,6 @@ export class BaseService {
     });
   }
 
-  protected onAuthenticated(evt: CoreEvent) {
+  protected onAuthenticated(evt: CoreEvent): void {
   }
 }

@@ -32,12 +32,13 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
 
   constructor(protected entityFormService: EntityFormService,
     public translate: TranslateService) {}
-  ngAfterViewInit() {
+
+  ngAfterViewInit(): void {
     this.active_tab = this.config.tabs[this.tabGroup.selectedIndex];
     this.setControlValue();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.init = true;
 
     this.tabFormGroup = this.entityFormService.createFormGroup(this.config.tabs);
@@ -65,12 +66,12 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
     });
   }
 
-  onSelectChange($event: any) {
+  onSelectChange($event: any): void {
     this.active_tab = this.config.tabs[this.tabGroup.selectedIndex];
     this.setControlValue();
   }
 
-  setControlValue() {
+  setControlValue(): void {
     this.value = this.tabFormGroup.controls[this.active_tab.name].value;
     if (this.active_tab.type == 'slider' && this.value) {
       this.value = '*/' + this.value;

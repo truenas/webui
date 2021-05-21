@@ -17,18 +17,19 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import helptext from '../../../../helptext/storage/VMware-snapshot/VMware-snapshot';
 import { first } from 'rxjs/operators';
 import { EntityUtils } from '../../../common/entity/utils';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-vmware-snapshot-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class VMwareSnapshotFormComponent {
-  protected route_success: string[] = ['storage', 'vmware-Snapshots'];
-  protected isEntity = true;
-  queryCall = 'vmware.query';
-  addCall = 'vmware.create';
-  protected pk: any;
+export class VMwareSnapshotFormComponent implements FormConfiguration {
+  route_success: string[] = ['storage', 'vmware-snapshots'];
+  isEntity = true;
+  queryCall: 'vmware.query' = 'vmware.query';
+  addCall: 'vmware.create' = 'vmware.create';
+  pk: any;
   formGroup: FormGroup;
 
   protected entityForm: any;
@@ -37,7 +38,7 @@ export class VMwareSnapshotFormComponent {
   private dataListComplete: any[];
   private fileSystemList: any[];
 
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
       name: helptext.fieldset_vmsnapshot,
@@ -125,7 +126,7 @@ export class VMwareSnapshotFormComponent {
     protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService,
     protected loader: AppLoaderService) { }
 
-  preInit(entityForm: any) {
+  preInit(entityForm: any): void {
     const queryPayload: any[] = [];
     this.route.params.subscribe((params) => {
       queryPayload.push('id');
@@ -135,7 +136,7 @@ export class VMwareSnapshotFormComponent {
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.datastoreList = [];
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
@@ -154,13 +155,13 @@ export class VMwareSnapshotFormComponent {
     });
   }
 
-  beforeSubmit(entityForm: any) {
+  beforeSubmit(entityForm: any): void {
     if (entityForm.filesystem !== undefined) {
       entityForm.filesystem = entityForm.filesystem;
     }
   }
 
-  customSubmit(entityForm: any) {
+  customSubmit(entityForm: any): void {
     const payload = {
       datastore: entityForm.datastore,
       filesystem: entityForm.filesystem,
@@ -204,7 +205,7 @@ export class VMwareSnapshotFormComponent {
     }
   }
 
-  customEditCall(body: any) {
+  customEditCall(body: any): void {
     if (this.entityForm.pk) {
       this.entityForm.loader.open();
       this.ws.call('vmware.update', [this.entityForm.pk, body]).subscribe((res) => {
@@ -225,7 +226,8 @@ export class VMwareSnapshotFormComponent {
       });
     }
   }
-  blurEvent(parent: any) {
+
+  blurEvent(parent: any): void {
     if (parent.entityForm) {
       this.datastore = _.find(parent.fieldConfig, { name: 'datastore' });
       const payload: any = {};

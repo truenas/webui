@@ -4,10 +4,11 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { CoreEvent } from 'app/interfaces/events';
 import * as _ from 'lodash';
 import { DialogService, ShellService, WebSocketService } from '../../../services';
 import helptext from '../../../helptext/apps/apps';
-import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -61,7 +62,7 @@ export class PodLogsComponent implements OnInit {
     private dialog: MatDialog) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.aroute.params.subscribe((params) => {
       this.chart_release_name = params['rname'];
       this.pod_name = params['pname'];
@@ -90,14 +91,14 @@ export class PodLogsComponent implements OnInit {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.podLogsChangedListener) {
       this.podLogsChangedListener.complete();
     }
   }
 
   // subscribe pod log for selected app, pod and container.
-  reconnect() {
+  reconnect(): void {
     this.podLogs = [];
     if (this.podLogsChangedListener) {
       this.podLogsChangedListener.complete();
@@ -122,7 +123,7 @@ export class PodLogsComponent implements OnInit {
     }
   }
 
-  setupToolbarButtons() {
+  setupToolbarButtons(): void {
     this.formEvents = new Subject();
     this.formEvents.subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'download') {
@@ -170,7 +171,7 @@ export class PodLogsComponent implements OnInit {
     this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
   }
 
-  updateChooseLogsDialog(isDownload = false) {
+  updateChooseLogsDialog(isDownload = false): void {
     let containerOptions = [];
 
     if (this.pod_name && this.podDetails[this.pod_name]) {
@@ -223,14 +224,14 @@ export class PodLogsComponent implements OnInit {
     };
   }
 
-  showChooseLogsDialog(isDownload = false) {
+  showChooseLogsDialog(isDownload = false): void {
     this.tempPodDetails = this.podDetails;
     this.updateChooseLogsDialog(isDownload);
     this.dialogService.dialogForm(this.choosePod, true);
   }
 
   // download log
-  download(entityDialog: EntityDialogComponent) {
+  download(entityDialog: EntityDialogComponent): void {
     const self = entityDialog.parent;
     const chart_release_name = entityDialog.formGroup.controls['apps'].value;
     const pod_name = entityDialog.formGroup.controls['pods'].value;
@@ -263,7 +264,7 @@ export class PodLogsComponent implements OnInit {
     });
   }
 
-  onChooseLogs(entityDialog: EntityDialogComponent) {
+  onChooseLogs(entityDialog: EntityDialogComponent): void {
     const self = entityDialog.parent;
     self.chart_release_name = entityDialog.formGroup.controls['apps'].value;
     self.pod_name = entityDialog.formGroup.controls['pods'].value;
@@ -275,7 +276,7 @@ export class PodLogsComponent implements OnInit {
     self.dialogService.closeAllDialogs();
   }
 
-  afterLogsDialogInit(entityDialog: EntityDialogComponent) {
+  afterLogsDialogInit(entityDialog: EntityDialogComponent): void {
     const self = entityDialog.parent;
 
     const podFC = _.find(entityDialog.fieldConfig, { name: 'pods' });

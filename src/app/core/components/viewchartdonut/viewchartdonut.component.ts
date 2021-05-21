@@ -47,15 +47,11 @@ export class ViewChartDonutComponent extends ViewChartComponent implements OnIni
   chartType = 'donut';
   legendPosition = 'right'; // Valid positions are top or right
 
-  constructor() {
-    super();
-  }
-
   ngOnInit(): void {
     this.showLegendValues = true;
   }
 
-  makeConfig() {
+  makeConfig(): any {
     this.chartConfig = {
       bindto: '#' + this._chartId,
       data: {

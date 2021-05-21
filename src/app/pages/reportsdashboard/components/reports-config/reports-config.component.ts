@@ -3,15 +3,15 @@ import { helptext } from 'app/helptext/system/reporting';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { DialogService, WebSocketService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-reports-config',
   template: '<entity-form [conf]="this"></entity-form>',
   styleUrls: ['reports-config.component.css'],
 })
-export class ReportsConfigComponent {
+export class ReportsConfigComponent implements FormConfiguration {
   job: any = {};
-  protected queryCall = 'reporting.config';
+  queryCall: 'reporting.config' = 'reporting.config';
   title: string;
   isOneColumnForm: boolean;
   entityForm: any;

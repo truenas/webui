@@ -12,23 +12,24 @@ import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.int
 import { EntityUtils } from '../../../common/entity/utils';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-ca-edit',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class CertificateAuthorityEditComponent {
-  protected queryCall = 'certificateauthority.query';
-  protected editCall = 'certificateauthority.update';
-  protected isEntity = true;
-  protected queryCallOption: any[];
+export class CertificateAuthorityEditComponent implements FormConfiguration {
+  queryCall: 'certificateauthority.query' = 'certificateauthority.query';
+  editCall: 'certificateauthority.update' = 'certificateauthority.update';
+  isEntity = true;
+  queryCallOption: any[];
   private getRow = new Subscription();
   private rowNum: any;
-  private title: string;
+  title: string;
   private incomingData: any;
   private unsignedCAs: any[] = [];
 
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
       name: helptext_system_certificates.edit.fieldset_certificate,
@@ -203,7 +204,7 @@ export class CertificateAuthorityEditComponent {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     this.incomingData = data;
     this.setForm();
     return data;
@@ -231,7 +232,7 @@ export class CertificateAuthorityEditComponent {
     parent: this,
   };
 
-  protected custActions = [
+  custActions = [
     {
       id: 'sign_CSR',
       name: helptext_system_certificates.edit.signCSR,
@@ -248,7 +249,7 @@ export class CertificateAuthorityEditComponent {
     },
   ];
 
-  setForm() {
+  setForm(): void {
     const fields = ['country', 'state', 'city', 'organization', 'organizational_unit', 'email', 'common', 'DN', 'cert_type',
       'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'revoked', 'signed_certificates', 'lifetime'];
     fields.forEach((field) => {
@@ -265,11 +266,11 @@ export class CertificateAuthorityEditComponent {
     }
   }
 
-  afterInit() {
+  afterInit(): void {
     this.title = helptext_system_ca.edit.title;
   }
 
-  doSignCSR(entityDialog: any) {
+  doSignCSR(entityDialog: any): void {
     const self = entityDialog.parent;
     const payload = {
       ca_id: self.rowNum,
@@ -287,7 +288,7 @@ export class CertificateAuthorityEditComponent {
     });
   }
 
-  viewCertificate() {
+  viewCertificate(): void {
     this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true,
       helptext_system_certificates.viewDialog.download, false, '',
       '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.certificate, true).subscribe((res: boolean) => {
@@ -297,7 +298,7 @@ export class CertificateAuthorityEditComponent {
     });
   }
 
-  exportCertificate() {
+  exportCertificate(): void {
     const fileName = this.incomingData.name + '.crt';
     this.ws.call('core.download', ['filesystem.get', [this.incomingData.certificate_path], fileName]).subscribe(
       (res) => {
@@ -316,7 +317,7 @@ export class CertificateAuthorityEditComponent {
     );
   }
 
-  viewKey() {
+  viewKey(): void {
     this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true,
       helptext_system_certificates.viewDialog.download, false, '',
       '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.privatekey, true).subscribe((res: boolean) => {
@@ -326,7 +327,7 @@ export class CertificateAuthorityEditComponent {
     });
   }
 
-  exportKey() {
+  exportKey(): void {
     const fileName = this.incomingData.name + '.key';
     this.ws.call('core.download', ['filesystem.get', [this.incomingData.privatekey_path], fileName]).subscribe(
       (res) => {
@@ -345,7 +346,7 @@ export class CertificateAuthorityEditComponent {
     );
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     const payload: any = {};
     payload['name'] = value.name;
 

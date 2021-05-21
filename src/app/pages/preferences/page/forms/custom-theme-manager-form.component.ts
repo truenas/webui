@@ -3,13 +3,14 @@ import {
 } from '@angular/core';
 import { NgModel } from '@angular/forms';
 import { Router } from '@angular/router';
+import { CoreEvent } from 'app/interfaces/events';
 import * as _ from 'lodash';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { RestService, WebSocketService } from 'app/services/';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
@@ -67,7 +68,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
     protected core: CoreService,
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initSubjects();
     // Only initialize if customThemes exist
     if (this.themeService.customThemes && this.themeService.customThemes.length > 0) {
@@ -81,11 +82,11 @@ export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 
-  initForm() {
+  initForm(): void {
     this.loadValues('deselectAll');
 
     if (!this.customThemeFields || this.customThemeFields.length == 0 || this.customThemeFields.length != this.themeService.customThemes.length) {
@@ -96,7 +97,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  initSubjects() {
+  initSubjects(): void {
     this.target.subscribe((evt: CoreEvent) => {
       switch (evt.name) {
         case 'FormSubmitted':
@@ -114,7 +115,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadValues(key: string) {
+  loadValues(key: string): void {
     const values: boolean[] = [];
 
     for (let i = 0; i < this.themeService.customThemes.length; i++) {
@@ -133,7 +134,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
     this.values = values;
   }
 
-  setCustomThemeFields() {
+  setCustomThemeFields(): void {
     if (this.customThemeFields && this.customThemeFields.length > 0) {
       this.customThemeFields.splice(0, this.customThemeFields.length);
     }
@@ -154,7 +155,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  generateFieldConfig() {
+  generateFieldConfig(): void {
     const fc = [];
     for (const i in this.fieldSets) {
       for (const ii in this.fieldSets[i].config) {

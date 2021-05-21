@@ -1,12 +1,19 @@
 
 <div *ngIf="zfsPoolRows.length > 0">
   <mat-accordion [multi]="true">
-    <mat-expansion-panel class="no-padding" *ngFor="let row of zfsPoolRows; let pool = index;" id="expansionpanel_zfs_{{row.name}}"
-      [expanded]="row.status === 'LOCKED' ? false : true"  [disabled]="row.status === 'OFFLINE'"
-      ix-auto ix-auto-type="expansion-panel" ix-auto-identifier="{{row.name}}">
+    <mat-expansion-panel
+      *ngFor="let row of zfsPoolRows; let pool = index;"
+      class="no-padding"
+      id="expansionpanel_zfs_{{row.name}}"
+      [expanded]="row.status !== 'LOCKED'"
+      [disabled]="row.status === PoolStatus.Offline"
+      ix-auto
+      ix-auto-type="expansion-panel"
+      [ix-auto-identifier]="row.name"
+    >
       <mat-expansion-panel-header class="{{row.status.toLowerCase()}}">
         <mat-panel-title>
-          {{row.name}} <span *ngIf="row.name === systemdatasetPool" class="ml-1"> 
+          {{row.name}} <span *ngIf="row.name === systemdatasetPool" class="ml-1">
             {{ '(System Dataset Pool)' | translate}}</span>
           <span *ngIf="row.encrypt > 0"  title="Encryption On" id="volume_encrypt_on_{{row.name}}" class="panel_status_enc">
               <mat-icon *ngIf="!row.is_decrypted" role="img" fontSet="mdi-set" fontIcon="mdi-lock" ></mat-icon>
@@ -18,23 +25,23 @@
         </mat-panel-title>
         <mat-panel-description>
           {{row.status}}&nbsp;
-          <span *ngIf="!row.healthy && row.status == 'ONLINE'">(Unhealthy)</span>
-         
+          <span *ngIf="!row.healthy && row.status == PoolStatus.Online">(Unhealthy)</span>
+
           &nbsp;
           <span [style.margin-right.px]="5">
             <i class="material-icons green-icon" *ngIf="row.healthy; else status;">check_circle</i>
             <ng-template #status>
-              <i class="material-icons orange-icon" *ngIf="row.status==='DEGRADED'">warning</i>
-              <i class="material-icons yellow-icon" *ngIf="row.status==='LOCKED'">lock</i>
-              <i class="material-icons blue-icon" *ngIf="row.status==='FAULTED'">help</i>
-              <i class="material-icons red-icon" 
-                *ngIf="row.status!=='DEGRADED' && row.status!=='LOCKED' && row.status!=='FAULTED'"
+              <i class="material-icons orange-icon" *ngIf="row.status === PoolStatus.Degraded">warning</i>
+              <i class="material-icons yellow-icon" *ngIf="row.status === 'LOCKED'">lock</i>
+              <i class="material-icons blue-icon" *ngIf="row.status === PoolStatus.Faulted">help</i>
+              <i class="material-icons red-icon"
+                *ngIf="row.status !== PoolStatus.Degraded && row.status !== 'LOCKED' && row.status !== PoolStatus.Faulted"
               >cancel</i>
             </ng-template>
           </span>
           <span *ngIf="row.usedStr && row.availStr">
             &nbsp;<span style="opacity:0.5;">|</span>&nbsp;
-            {{row.usedStr}} {{"Used" | translate}} 
+            {{row.usedStr}} {{"Used" | translate}}
             &nbsp;<span style="opacity:0.5;">|</span>&nbsp;
             {{row.availStr}} {{"Free" | translate}}
           </span>

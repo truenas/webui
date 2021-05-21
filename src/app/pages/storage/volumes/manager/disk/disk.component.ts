@@ -23,7 +23,7 @@ export class DiskComponent implements OnInit {
 
   constructor(public elementRef: ElementRef) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     console.log();
     this.capacity = (<any>window).filesize(this.data.capacity, { standard: 'iec' });
   }

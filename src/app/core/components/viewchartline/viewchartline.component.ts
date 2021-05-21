@@ -13,7 +13,7 @@ interface TimeData {
   selector: 'viewchartline',
   template: ViewChartMetadata.template,
 })
-export class ViewChartLineComponent extends ViewChartComponent implements OnInit {
+export class ViewChartLineComponent extends ViewChartComponent {
   // public chartType: string;
   timeSeries: boolean;
   timeFormat: string;
@@ -29,10 +29,7 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
     this.timeFormat = '%m/%d/%Y';
   }
 
-  ngOnInit() {
-  }
-
-  get chartType() {
+  get chartType(): string {
     return this._chartType;
   }
 
@@ -44,7 +41,7 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
     }
   }
 
-  get tooltipHeight() {
+  get tooltipHeight(): string {
     return this._tooltipHeight;
   }
 
@@ -52,7 +49,7 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
     this._tooltipHeight = tth + 'px';
   }
 
-  get timeData() {
+  get timeData(): TimeData {
     return this._timeData;
   }
 
@@ -71,7 +68,7 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
     return labels;
   }
 
-  makeConfig() {
+  makeConfig(): any {
     this.chartConfig = {
       bindto: '#' + this._chartId,
       grid: {

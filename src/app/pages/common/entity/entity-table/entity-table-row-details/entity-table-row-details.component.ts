@@ -17,17 +17,17 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   columns: any[] = [];
   actions: EntityTableAction[] = [];
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.buildColumns();
     this.actions = this.getActions();
   }
 
-  ngOnChanges() {
+  ngOnChanges(): void {
     this.buildColumns();
     this.actions = this.getActions();
   }
 
-  getPropValue(prop: string, isCronTime = false) {
+  getPropValue(prop: string, isCronTime = false): any {
     let val = _.get(this.config, prop.split('.'));
     if (val === undefined || val === null) {
       val = 'N/A';

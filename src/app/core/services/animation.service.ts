@@ -1,5 +1,6 @@
 import { Injectable, ElementRef } from '@angular/core';
-import { CoreService, CoreEvent } from './core.service';
+import { CoreEvent } from 'app/interfaces/events';
+import { CoreService } from './core.service';
 import { Subject } from 'rxjs';
 import { DisplayObject } from '../classes/display-object';
 import {
@@ -84,7 +85,7 @@ export class AnimationService {
     });
   }
 
-  private flip(animationTarget: DisplayObject, finishState: string) {
+  private flip(animationTarget: DisplayObject, finishState: string): void {
     const target = animationTarget;// .target;
     if (target.width > target.height) {
       this.flipVertical(animationTarget, finishState);
@@ -96,7 +97,7 @@ export class AnimationService {
     }
   }
 
-  private flipVertical(animationTarget: DisplayObject, finishState: string) {
+  private flipVertical(animationTarget: DisplayObject, finishState: string): void {
     console.log('Flip Vertical Method');
     // Setup parent element so perspectives are properly set...
     animationTarget.rawTarget.parentNode.style['perspective'] = (animationTarget.target.get('width') * 10) + 'px';
@@ -122,7 +123,7 @@ export class AnimationService {
     ]).start(animationTarget.target.set);
   }
 
-  private flipHorizontal(animationTarget: DisplayObject, finishState: string) {
+  private flipHorizontal(animationTarget: DisplayObject, finishState: string): void {
     console.log('Flip Horizontal Method');
     // Setup parent element so perspectives are properly set...
     animationTarget.rawTarget.parentNode.style['perspective'] = (animationTarget.target.get('height') * 80) + 'px';
@@ -149,7 +150,7 @@ export class AnimationService {
     ]).start(animationTarget.target.set);
   }
 
-  private fade(animationTarget: DisplayObject, finishState: string) {
+  private fade(animationTarget: DisplayObject, finishState: string): void {
     console.log('Fade' + finishState);
     let startOpacity; // animationTarget.target.get('opacity');
     let finishOpacity;
@@ -168,7 +169,7 @@ export class AnimationService {
     }).start(animationTarget.target.set);
   }
 
-  private scale(animationTarget: DisplayObject, finishState: string) {
+  private scale(animationTarget: DisplayObject, finishState: string): void {
     console.log('Scale' + finishState);
     let startScale;
     let finishScale;
@@ -188,7 +189,7 @@ export class AnimationService {
     }).start(animationTarget.target.set);
   }
 
-  private elasticScale(animationTarget: DisplayObject, finishState: string) {
+  private elasticScale(animationTarget: DisplayObject, finishState: string): void {
     if (finishState == 'Out') {
       this.scale(animationTarget, finishState);
       return;
@@ -213,7 +214,7 @@ export class AnimationService {
     }).start(animationTarget.target.set);
   }
 
-  private bounce(animationTarget: DisplayObject, finishState: string) {
+  private bounce(animationTarget: DisplayObject, finishState: string): void {
     if (finishState == 'Stop') {
       const savedState = this.activeAnimations[animationTarget.id];
       const animation = savedState.animation;
@@ -254,7 +255,7 @@ export class AnimationService {
     this.activeAnimations[animationTarget.id] = { animation: bounce, originalState: startY };
   }
 
-  private radiate(animationTarget: DisplayObject, finishState: string) {
+  private radiate(animationTarget: DisplayObject, finishState: string): void {
     console.log('Radiate method');
     const startShadow = animationTarget.element.get('box-shadow'); // Styler
 
@@ -293,7 +294,7 @@ export class AnimationService {
     this.activeAnimations[animationTarget.id] = { animation: radiate, originalState: startShadow };
   }
 
-  private scrollTo(destination: string, obj?: any) {
+  private scrollTo(destination: string, obj?: any): void {
     let container;
     let rawContainer;
     if (!obj) {

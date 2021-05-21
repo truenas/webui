@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CoreEvent } from 'app/interfaces/events';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import {
   WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService,
 }
   from '../../../services';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { LocaleService } from '../../../services/locale.service';
 import { ModalService } from '../../../services/modal.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -166,7 +167,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
   }
 
-  getDataCardData() {
+  getDataCardData(): void {
     this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe((res) => {
       this.configData = res;
       this.dataCards = [
@@ -212,7 +213,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  doAdd(name: string, id?: number) {
+  doAdd(name: string, id?: number): void {
     let addComponent;
     switch (name) {
       case 'gui':
@@ -228,7 +229,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     this.modalService.open('slide-in-form', addComponent, id);
   }
 
-  doNTPDelete(server: any) {
+  doNTPDelete(server: any): void {
     this.dialog.confirm(helptext.deleteServer.title, `${helptext.deleteServer.message} ${server.address}?`,
       false, helptext.deleteServer.message).subscribe((res: boolean) => {
       if (res) {
@@ -244,23 +245,23 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getNTPData() {
+  getNTPData(): void {
     this.ws.call('system.ntpserver.query').subscribe((res) => {
       this.dataSource = res;
       this.displayedColumns = ['address', 'burst', 'iburst', 'prefer', 'minpoll', 'maxpoll', 'actions'];
     });
   }
 
-  saveConfigSubmit(entityDialog: any) {
+  saveConfigSubmit(entityDialog: any): void {
     parent = entityDialog.parent;
     entityDialog.loader.open();
-    entityDialog.ws.call('system.info', []).subscribe((res: any) => {
+    (entityDialog.ws as WebSocketService).call('system.info', []).subscribe((systemInfo) => {
       let fileName = '';
       let mimetype: string;
-      if (res) {
-        const hostname = res.hostname.split('.')[0];
+      if (systemInfo) {
+        const hostname = systemInfo.hostname.split('.')[0];
         const date = entityDialog.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
-        fileName = hostname + '-' + res.version + '-' + date;
+        fileName = hostname + '-' + systemInfo.version + '-' + date;
         if (entityDialog.formValue['secretseed']) {
           mimetype = 'application/x-tar';
           fileName += '.tar';
@@ -299,14 +300,14 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  updater(file: any, parent: any) {
+  updater(file: any, parent: any): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
     }
   }
 
-  uploadConfigSubmit(entityDialog: EntityDialogComponent) {
+  uploadConfigSubmit(entityDialog: EntityDialogComponent): void {
     const parent = entityDialog.conf.fieldConfig[0].parent;
     const formData: FormData = new FormData();
 
@@ -328,12 +329,12 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  resetConfigSubmit(entityDialog: EntityDialogComponent) {
+  resetConfigSubmit(entityDialog: EntityDialogComponent): void {
     const parent = entityDialog.parent;
     parent.router.navigate(new Array('').concat(['others', 'config-reset']));
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.refreshCardData.unsubscribe();
     this.refreshTable.unsubscribe();
     this.getGenConfig.unsubscribe();

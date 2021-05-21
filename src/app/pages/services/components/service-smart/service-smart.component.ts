@@ -7,6 +7,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { T } from 'app/translate-marker';
 import helptext from '../../../../helptext/services/components/service-smart';
 import { RestService, WebSocketService } from '../../../../services';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 enum PowerMode {
   Never = 'NEVER',
@@ -20,9 +21,9 @@ enum PowerMode {
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class ServiceSMARTComponent {
-  protected queryCall = 'smart.config';
-  protected route_success: string[] = ['services'];
+export class ServiceSMARTComponent implements FormConfiguration {
+  queryCall: 'smart.config' = 'smart.config';
+  route_success: string[] = ['services'];
   title = helptext.formTitle;
 
   fieldSets: FieldSet[] = [
@@ -85,7 +86,7 @@ export class ServiceSMARTComponent {
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
-  afterInit(entityEdit: EntityFormComponent) {
+  afterInit(entityEdit: EntityFormComponent): void {
     entityEdit.submitFunction = (body) => this.ws.call('smart.update', [body]);
   }
 }

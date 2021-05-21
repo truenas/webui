@@ -1,8 +1,8 @@
+import { CoreEvent } from 'app/interfaces/events';
 import { Container, Texture, Sprite } from 'pixi.js';
 import { DriveTray } from './drivetray';
 import { Chassis } from './chassis';
 import { ChassisView } from './chassis-view';
-import { CoreEvent } from 'app/core/services/core.service';
 
 export class MINIXLPLUS extends Chassis {
   constructor() {
@@ -34,7 +34,7 @@ export class MINIXLPLUS extends Chassis {
     });
   }
 
-  onLoaded() {
+  onLoaded(): void {
     // Scale the Chassis
     const chassis = this.front.container.getChildAt(0);
     const backY = 100;

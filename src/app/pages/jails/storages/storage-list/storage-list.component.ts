@@ -61,11 +61,11 @@ export class StorageListComponent {
     });
   }
 
-  afterInit(entityTable: any) {
+  afterInit(entityTable: any): void {
     this.entityList = entityTable;
   }
 
-  dataHandler(entityList: any) {
+  dataHandler(entityList: any): void {
     const data = entityList.rows;
     const rows = [];
 
@@ -87,7 +87,7 @@ export class StorageListComponent {
     }
   }
 
-  doDelete(item: any) {
+  doDelete(item: any): void {
     this.ws.call('jail.query', [
       [
         ['host_hostuuid', '=', this.jailId],
@@ -126,7 +126,7 @@ export class StorageListComponent {
     }];
   }
 
-  doAdd() {
+  doAdd(): void {
     this.ws.call('jail.query', [
       [
         ['host_hostuuid', '=', this.jailId],

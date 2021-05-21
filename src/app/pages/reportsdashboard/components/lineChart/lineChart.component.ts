@@ -2,7 +2,7 @@ import {
   Component, Input, AfterViewInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef,
 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import { Report, ReportData } from '../report/report.component';
@@ -60,7 +60,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   legendAnalytics: BehaviorSubject<any>;
 
   _colorPattern: string[] = ['#2196f3', '#009688', '#ffc107', '#9c27b0', '#607d8b', '#00bcd4', '#8bc34a', '#ffeb3b', '#e91e63', '#3f51b5'];
-  get colorPattern() {
+  get colorPattern(): string[] {
     return this.chartColors;
   }
 
@@ -84,18 +84,18 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     this.legendAnalytics = new BehaviorSubject([]);
   }
 
-  applyHandledData(columns: any, linechartData: any, legendLabels: any) {
+  applyHandledData(columns: any, linechartData: any, legendLabels: any): void {
     this.columns = columns;
     this.linechartData = linechartData;
     this.legendLabels.next(legendLabels);
   }
 
-  render(option?: string) {
+  render(option?: string): void {
     this.renderGraph(option);
   }
 
   // dygraph renderer
-  renderGraph(option: any) {
+  renderGraph(option: any): void {
     if (this.data.name == 'cpu') {
       this.data.legend = this.data.legend.reverse();
       for (let i = 0; i < this.data.data.length; i++) {
@@ -255,7 +255,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     return obj;
   }
 
-  fetchData(rrdOptions: any, timeformat?: string, culling?: number) {
+  fetchData(rrdOptions: any, timeformat?: string, culling?: number): void {
     if (timeformat) {
       this.timeFormat = timeformat;
     }
@@ -270,7 +270,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     }
   }
 
-  inferUnits(label: string) {
+  inferUnits(label: string): string {
     // if(this.report.units){ return this.report.units; }
     // Figures out from the label what the unit is
     let units = label;
@@ -327,7 +327,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     return { value: output, suffix };
   }
 
-  limitDecimals(numero: number) {
+  limitDecimals(numero: number): string | number {
     const subZero = numero.toString().split('.');
     const decimalPlaces = subZero && subZero[1] ? subZero[1].length : 0;
     return decimalPlaces > 2 ? numero.toFixed(2) : numero;
@@ -369,11 +369,11 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     return { value: output, prefix, shortName };
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.render();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.data) {
       this.render();
     }
@@ -388,7 +388,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
 
     this.chart.destroy();

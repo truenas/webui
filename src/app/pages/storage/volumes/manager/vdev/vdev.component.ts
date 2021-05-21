@@ -49,7 +49,7 @@ export class VdevComponent implements OnInit {
     public translate: TranslateService,
     public sorter: StorageService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.group === 'data') {
       this.vdev_type_disabled = !this.manager.isNew;
       if (!this.vdev_type_disabled) {
@@ -71,7 +71,7 @@ export class VdevComponent implements OnInit {
     this.estimateSize();
   }
 
-  getType() {
+  getType(): string {
     if (this.type === undefined) {
       this.type = this.manager.first_data_vdev_type;
     }
@@ -80,11 +80,11 @@ export class VdevComponent implements OnInit {
     return helptext.vdev_types[this.type as keyof typeof helptext.vdev_types];
   }
 
-  getTitle() {
+  getTitle(): string {
     return 'Vdev ' + (this.index + 1) + ': ' + this.type.charAt(0).toUpperCase() + this.type.slice(1);
   }
 
-  addDisk(disk: any) {
+  addDisk(disk: any): void {
     this.disks.push(disk);
     this.disks = [...this.disks];
     this.guessVdevType();
@@ -92,7 +92,7 @@ export class VdevComponent implements OnInit {
     this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
   }
 
-  removeDisk(disk: any) {
+  removeDisk(disk: any): void {
     this.disks.splice(this.disks.indexOf(disk), 1);
     this.disks = [...this.disks];
     this.guessVdevType();
@@ -100,7 +100,7 @@ export class VdevComponent implements OnInit {
     this.manager.getCurrentLayout();
   }
 
-  guessVdevType() {
+  guessVdevType(): void {
     if (this.group === 'data' && !this.vdev_type_disabled) {
       if (this.disks.length === 2) {
         this.type = 'mirror';
@@ -123,7 +123,7 @@ export class VdevComponent implements OnInit {
     }
   }
 
-  estimateSize() {
+  estimateSize(): void {
     this.error = null;
     this.firstdisksize = 0;
     let totalsize = 0;
@@ -176,12 +176,12 @@ export class VdevComponent implements OnInit {
     this.size = (<any>window).filesize(estimate, { standard: 'iec' });
   }
 
-  onSelect({ selected }: any) {
+  onSelect({ selected }: any): void {
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
   }
 
-  removeSelectedDisks() {
+  removeSelectedDisks(): void {
     for (let i = 0; i < this.selected.length; i++) {
       this.manager.addDisk(this.selected[i]);
       this.removeDisk(this.selected[i]);
@@ -189,7 +189,7 @@ export class VdevComponent implements OnInit {
     this.selected = [];
   }
 
-  addSelectedDisks() {
+  addSelectedDisks(): void {
     for (let i = 0; i < this.manager.selected.length; i++) {
       this.addDisk(this.manager.selected[i]);
       this.manager.removeDisk(this.manager.selected[i]);
@@ -197,32 +197,34 @@ export class VdevComponent implements OnInit {
     this.manager.selected = [];
   }
 
-  getDisks() { return this.disks; }
+  getDisks(): any[] {
+    return this.disks;
+  }
 
-  onTypeChange() {
+  onTypeChange(): void {
     this.estimateSize();
     this.manager.getCurrentLayout();
     // console.log(e, this.group);
   }
 
-  getRawSize() {
+  getRawSize(): number {
     return this.rawSize;
   }
 
-  remove() {
+  remove(): void {
     while (this.disks.length > 0) {
       this.manager.addDisk(this.disks.pop());
     }
     this.manager.removeVdev(this);
   }
 
-  reorderEvent(event: any) {
+  reorderEvent(event: any): void {
     const sort = event.sorts[0];
     const rows = this.disks;
     this.sorter.tableSorter(rows, sort.prop, sort.dir);
   }
 
-  toggleExpandRow(row: any) {
+  toggleExpandRow(row: any): void {
     // console.log('Toggled Expand Row!', row);
     if (!this.startingHeight) {
       this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;

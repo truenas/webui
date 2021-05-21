@@ -9,7 +9,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { RestService, WebSocketService } from '../../../services';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -55,7 +55,7 @@ export class PreferencesPage implements OnDestroy {
     private core: CoreService,
   ) {}
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 }

@@ -7,10 +7,12 @@ import {
   Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot,
 } from '@angular/router';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import * as _ from 'lodash';
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -41,7 +43,7 @@ interface Tab {
 @Component({
   selector: 'reportsdashboard',
   styleUrls: ['./reportsdashboard.scss'],
-  templateUrl: './reportsdashboard.html',
+  templateUrl: './reportsdashboard.component.html',
   providers: [SystemGeneralService],
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleChartConfigDataFunc, */ AfterViewInit {
@@ -88,20 +90,19 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   actionsConfig: any;
   formComponent: ReportsConfigComponent;
 
-  constructor(private erdService: ErdService,
+  constructor(
+    private erdService: ErdService,
     public translate: TranslateService,
     public modalService: ModalService,
     public dialogService: DialogService,
     private router: Router,
     private core: CoreService,
-    private rs: ReportsService,
-    protected ws: WebSocketService, private sysGeneralService: SystemGeneralService) {
+    private route: ActivatedRoute,
+    protected ws: WebSocketService,
+    private sysGeneralService: SystemGeneralService,
+  ) {}
 
-    // EXAMPLE METHOD
-    // this.viewport.scrollToIndex(5);
-  }
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.scrollContainer = document.querySelector('.rightside-content-hold ');// this.container.nativeElement;
     this.scrollContainer.style.overflow = 'hidden';
 
@@ -153,7 +154,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.diskQueries();
   }
 
-  diskQueries() {
+  diskQueries(): void {
     this.ws.call('multipath.query').subscribe((multipath_res: any[]) => {
       let multipathDisks: any[] = [];
       multipath_res.forEach((m) => {
@@ -168,7 +169,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.scrollContainer.style.overflow = 'auto';
     this.core.unregister({ observerClass: this });
     this.getAdvancedConfig.unsubscribe();
@@ -183,20 +184,20 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
   }
 
-  getVisibility(key: number) {
+  getVisibility(key: number): boolean {
     const test = this.visibleReports.indexOf(key);
     return test != -1;
   }
 
-  getBatch(lastSeen: string) {
+  getBatch(lastSeen: string): number[] {
     return this.visibleReports;
   }
 
-  nextBatch(evt: number) {
+  nextBatch(evt: number): void {
     this.scrolledIndex = evt;
   }
 
-  generateTabs() {
+  generateTabs(): void {
     const labels = [T('CPU'), T('Disk'), T('Memory'), T('Network'), T('NFS'), T('Partition'), T('System'), T('Target'), T('ZFS')];
     const UPS = this.otherReports.find((report) => report.title.startsWith('UPS'));
 
@@ -209,13 +210,13 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     });
   }
 
-  activateTabFromUrl() {
-    const subpath = this.router.url.split('/reportsdashboard/');
-    const tabFound = this.allTabs.find((tab) => tab.value === subpath[1]);
-    this.updateActiveTab(tabFound);
+  activateTabFromUrl(): void {
+    const subpath = this.route.snapshot.url[0] && this.route.snapshot.url[0].path;
+    const tabFound = this.allTabs.find((tab) => tab.value === subpath);
+    this.updateActiveTab(tabFound || this.allTabs[0]);
   }
 
-  isActiveTab(str: string) {
+  isActiveTab(str: string): boolean {
     let test: boolean;
     if (!this.activeTab) {
       test = ('/reportsdashboard/' + str.toLowerCase()) == this.router.url;
@@ -225,7 +226,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     return test;
   }
 
-  updateActiveTab(tab: Tab) {
+  updateActiveTab(tab: Tab): void {
     // Change the URL without reloading page/component
     // the old fashioned way
     window.history.replaceState({}, '', '/reportsdashboard/' + tab.value);
@@ -249,15 +250,18 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
     this.activateTab(tab.label);
 
-    if (tab.label == 'Disk') { this.diskReportBuilderSetup(); }
+    if (tab.label == 'Disk') {
+      const selectedDisks = this.route.snapshot.queryParams.disks;
+      this.diskReportBuilderSetup(selectedDisks);
+    }
   }
 
-  navigateToTab(tabName: string) {
+  navigateToTab(tabName: string): void {
     const link = '/reportsdashboard/' + tabName.toLowerCase();
     this.router.navigate([link]);
   }
 
-  activateTab(name: string) {
+  activateTab(name: string): void {
     this.activeTab = name;
     this.activeTabVerified = true;
 
@@ -307,7 +311,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     }
   }
 
-  flattenReports(list: Report[]) {
+  flattenReports(list: Report[]): any[] {
     // Based on identifiers, create a single dimensional array of reports to render
     const result: any[] = [];
     list.forEach((report) => {
@@ -337,7 +341,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
   // Disk Report Filtering
 
-  diskReportBuilderSetup() {
+  diskReportBuilderSetup(selectedDisks: string[]): void {
     this.generateValues();
 
     // Entity-Toolbar Config
@@ -352,8 +356,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
           placeholder: T('Devices'),
           disabled: false,
           multiple: true,
-          options: this.diskDevices.map((v) => v), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+          options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
           customTriggerValue: 'Select Disks',
+          value: this.diskDevices?.length && selectedDisks
+            ? this.diskDevices.filter((device) => selectedDisks.includes(device.value)) : null,
         },
         {
           type: 'multiselect',
@@ -363,7 +369,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
           customTriggerValue: T('Select Reports'),
           disabled: false,
           multiple: true,
-          options: this.diskMetrics ? this.diskMetrics.map((v) => v) : [T('Not Available')], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+          options: this.diskMetrics ? this.diskMetrics : [T('Not Available')], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+          value: selectedDisks ? this.diskMetrics : undefined,
         },
       ],
     };
@@ -405,7 +412,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.generateFieldConfig();
   }
 
-  generateValues() {
+  generateValues(): void {
     const metrics: Option[] = [];
 
     this.diskReports.forEach((item) => {
@@ -419,7 +426,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.diskMetrics = metrics;
   }
 
-  generateFieldConfig() {
+  generateFieldConfig(): void {
     for (const i in this.fieldSets) {
       for (const ii in this.fieldSets[i].config) {
         this.fieldConfig.push(this.fieldSets[i].config[ii]);
@@ -428,7 +435,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.diskReportConfigReady = true;
   }
 
-  setupSubscriptions() {
+  setupSubscriptions(): void {
     this.target.subscribe((evt: CoreEvent) => {
       switch (evt.name) {
         case 'FormSubmitted':
@@ -445,7 +452,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.target.next({ name: 'Refresh' });
   }
 
-  buildDiskReport(device: string | any[], metric: string | any[]) {
+  buildDiskReport(device: string | any[], metric: string | any[]): void {
     // Convert strings to arrays
     if (typeof device == 'string') {
       device = [device];
@@ -472,9 +479,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.visibleReports = visible;
   }
 
-  parseDisks(res: any[], multipathDisks: any[]) {
-    const uniqueNames = res.filter((disk) => !disk.devname.includes('multipath'))
-      .map((d) => d.devname);
+  parseDisks(disks: Disk[], multipathDisks: any[]): void {
+    const uniqueNames = disks
+      .filter((disk) => !disk.devname.includes('multipath'))
+      .map((disk) => disk.devname);
 
     const activeDisks = multipathDisks.filter((disk) => disk.status == 'ACTIVE');
 
@@ -502,7 +510,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.diskDevices = diskDevices.concat(multipathNames);
   }
 
-  showConfigForm() {
+  showConfigForm(): void {
     if (this.formComponent) {
       delete this.formComponent;
     }
@@ -510,7 +518,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.modalService.open('slide-in-form', this.formComponent);
   }
 
-  generateFormComponent() {
+  generateFormComponent(): void {
     this.formComponent = new ReportsConfigComponent(this.ws, this.dialogService);
     this.formComponent.title = T('Reports Configuration');
     this.formComponent.isOneColumnForm = true;

@@ -1,5 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { DatasetType } from 'app/enums/dataset-type.enum';
+import { CoreEvent } from 'app/interfaces/events';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
@@ -16,7 +18,7 @@ import { DialogService } from '../../../../services/dialog.service';
 import helptext from '../../../../helptext/vm/devices/device-add-edit';
 import { ModalService } from 'app/services/modal.service';
 import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard';
-import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 
 @Component({
   selector: 'app-device-add2',
@@ -24,7 +26,7 @@ import { CoreEvent, CoreService } from 'app/core/services/core.service';
   styleUrls: ['../../../common/entity/entity-form/entity-form.component.scss'],
 })
 export class DeviceAddComponent implements OnInit, OnDestroy {
-  protected addCall = 'vm.device.create';
+  protected addCall: 'vm.device.create' = 'vm.device.create';
   protected route_success: string[];
   vmid: any;
   vmname: any;
@@ -292,6 +294,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       placeholder: helptext.password_placeholder,
       tooltip: helptext.password_tooltip,
       type: 'input',
+      togglePw: true,
       inputType: 'password',
       validation: helptext.password_validation,
     },
@@ -310,6 +313,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       placeholder: helptext.web_placeholder,
       tooltip: helptext.web_tooltip,
       type: 'checkbox',
+      value: true,
     },
     {
       name: 'order',
@@ -337,7 +341,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     private modalService: ModalService,
     private storageService: StorageService) {}
 
-  preInit() {
+  preInit(): void {
     // Display
     this.ws.call('vm.device.bind_choices').subscribe((res) => {
       if (res && Object.keys(res).length > 0) {
@@ -354,6 +358,14 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         resolution.options.push({ label: key, value: res[key] });
       }
       this.displayFormGroup.controls['resolution'].setValue(res[Object.keys(res)[0]]);
+    });
+
+    this.ws.call('vm.get_display_devices', [this.vmid]).subscribe((devices) => {
+      if (devices.length > 1) {
+        this.fieldConfig[0].options.splice(this.fieldConfig[0].options.findIndex((o) => o.value === 'DISPLAY'));
+      }
+    }, (err) => {
+      new EntityUtils().handleWSError(this, err, this.dialogService);
     });
 
     this.core.register({ observerClass: this, eventName: 'zvolCreated' }).subscribe((evt: CoreEvent) => {
@@ -389,7 +401,13 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.aroute.params.subscribe((params) => {
+      this.vmid = params['pk'];
+      this.vmname = params['name'];
+      this.route_success = ['vm', this.vmid, 'devices', this.vmname];
+    });
+
     this.preInit();
 
     this.fieldSets = [
@@ -451,12 +469,6 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.aroute.params.subscribe((params) => {
-      this.vmid = params['pk'];
-      this.vmname = params['name'];
-      this.route_success = ['vm', this.vmid, 'devices', this.vmname];
-    });
-
     if (!this.productType.includes(ProductType.Scale)) {
       _.find(this.displayFieldConfig, { name: 'wait' }).isHidden = false;
       _.find(this.displayFieldConfig, { name: 'resolution' }).isHidden = false;
@@ -467,8 +479,8 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.afterInit();
   }
 
-  async afterInit() {
-    this.ws.call('pool.dataset.query', [[['type', '=', 'VOLUME']]]).subscribe((zvols: any[]) => {
+  async afterInit(): Promise<void> {
+    this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]]]).subscribe((zvols) => {
       zvols.forEach((zvol) => {
         _.find(this.diskFieldConfig, { name: 'path' }).options.push(
           {
@@ -528,11 +540,11 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.displayFormGroup.controls['bind'].setValue('0.0.0.0');
   }
 
-  goBack() {
+  goBack(): void {
     this.router.navigate(new Array('/').concat(this.route_success));
   }
 
-  onSubmit(event: Event) {
+  onSubmit(event: Event): void {
     this.error = '';
     this.aroute.params.subscribe((params) => {
       const device = _.cloneDeep(this.formGroup.value);
@@ -564,12 +576,12 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     });
   }
 
-  addZvol() {
+  addZvol(): void {
     this.modalService.open('slide-in-form', this.addZvolComponent);
   }
 
-  updateZvolSearchOptions(value = '', parent: any) {
-    parent.ws.call('pool.dataset.query', [[['type', '=', 'VOLUME'], ['id', '^', value]]]).subscribe((zvols: any[]) => {
+  updateZvolSearchOptions(value = '', parent: any): void {
+    (parent.ws as WebSocketService).call('pool.dataset.query', [[['type', '=', DatasetType.Volume], ['id', '^', value]]]).subscribe((zvols) => {
       const searchedZvols = [];
       zvols.forEach((zvol) => {
         searchedZvols.push(
@@ -585,7 +597,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 }

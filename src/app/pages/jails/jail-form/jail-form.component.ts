@@ -1,4 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -27,15 +28,15 @@ import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interf
 })
 export class JailFormComponent implements OnInit, AfterViewInit {
   isReady = false;
-  protected queryCall = 'jail.query';
-  protected updateCall = 'jail.update';
-  protected upgradeCall = 'jail.upgrade';
+  protected queryCall: 'jail.query' = 'jail.query';
+  protected updateCall: 'jail.update' = 'jail.update';
+  protected upgradeCall: 'jail.upgrade' = 'jail.upgrade';
 
-  protected addCall = 'jail.create';
+  protected addCall: 'jail.create' = 'jail.create';
   route_success: string[] = ['jails'];
   protected route_conf: string[] = ['jails', 'configuration'];
 
-  protected pluginAddCall = 'plugin.create';
+  protected pluginAddCall: 'plugin.create' = 'plugin.create';
   plugin_route_success: string[] = ['plugins'];
 
   formGroup: any;
@@ -859,7 +860,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     protected dialogService: DialogService,
     protected networkService: NetworkService) { }
 
-  getReleaseAndInterface() {
+  getReleaseAndInterface(): void {
     this.jailService.getInterfaceChoice().subscribe(
       (res) => {
         for (const i in res) {
@@ -900,7 +901,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     }
   }
 
-  setValuechange() {
+  setValuechange(): void {
     const httpsField = _.find(this.formFields, { name: 'https' });
     this.formGroup.controls['release'].valueChanges.subscribe((res: any) => {
       httpsField.isHidden = !(_.indexOf(this.unfetchedRelease, res) > -1);
@@ -957,7 +958,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     });
   }
 
-  loadInterfaces(res: any, i: any) {
+  loadInterfaces(res: any, i: any): void {
     if (i === 'interfaces') {
       const ventInterfaces = res['interfaces'].split(',');
       for (const item of ventInterfaces) {
@@ -967,14 +968,15 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     }
   }
 
-  disableForm() {
+  disableForm(): void {
     for (let i = 0; i < this.formFields.length; i++) {
       if (!this.formGroup.controls[this.formFields[i].name].disabled) {
         this.jailFromService.setDisabled(this.formGroup, this.formFields, this.formFields[i].name, true, this.formFields[i].isHidden);
       }
     }
   }
-  toEnableForm() {
+
+  toEnableForm(): void {
     this.showSpinner = false;
     for (let i = 0; i < this.formFields.length; i++) {
       if (!this.formFields[i].isHidden && (this.plugin === undefined || this.formFields[i].name !== 'plugin_name')) {
@@ -984,7 +986,8 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     this.formGroup.controls['dhcp'].setValue(this.formGroup.controls['dhcp'].value);
     this.formGroup.controls['nat'].setValue(this.formGroup.controls['nat'].value);
   }
-  loadFormValue() {
+
+  loadFormValue(): void {
     if (this.pk === undefined) {
       this.jailService.getDefaultConfiguration().subscribe(
         (res) => {
@@ -1089,7 +1092,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     }
   }
 
-  async ngOnInit() {
+  async ngOnInit(): Promise<void> {
     this.formGroup = this.jailFromService.createForm(this.formFields);
     await this.formGroup.disable();
     this.aroute.params.subscribe(async (params) => {
@@ -1123,7 +1126,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     setTimeout(() => {
       this.isReady = true;
       this.disableForm();
@@ -1139,11 +1142,15 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     }
   }
 
-  goBack() {
+  goBack(): void {
     this.router.navigate(new Array('').concat(this.plugin === undefined ? this.route_success : this.plugin_route_success));
   }
 
-  openJobDialog(type: 'pluginInstall' | 'jailInstall' | 'jailEdit', wsCall: any, payload: any) {
+  openJobDialog(
+    type: 'pluginInstall' | 'jailInstall' | 'jailEdit',
+    wsCall: any,
+    payload: any,
+  ): MatDialogRef<EntityJobComponent> {
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: helptext.jailFormJobDialog[type].title }, disableClose: true });
     dialogRef.componentInstance.setDescription(helptext.jailFormJobDialog[type].description);
     dialogRef.componentInstance.setCall(wsCall, payload);
@@ -1151,7 +1158,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     return dialogRef;
   }
 
-  onSubmit(event: Event) {
+  onSubmit(event: Event): void {
     let updateRelease = false;
     let newRelease: any;
     event.preventDefault();
@@ -1307,15 +1314,15 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     }
   }
 
-  setStep(index: number) {
+  setStep(index: number): void {
     this.step = index;
   }
 
-  nextStep() {
+  nextStep(): void {
     this.step++;
   }
 
-  prevStep() {
+  prevStep(): void {
     this.step--;
   }
 }

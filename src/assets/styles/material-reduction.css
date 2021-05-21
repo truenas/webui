@@ -352,7 +352,7 @@ entity-form-list .list-action-block-wrapper .form-element select{
 
 .form-list .list-action-inline {
   display: flex;
-  align-items: start;
+  align-items: flex-start;
   justify-content: center;
 }
 
@@ -909,4 +909,41 @@ ul.nested-list{
 
 ul.nested-list li{
   margin-left: 24px;
+}
+
+.expanded-table-container {
+  height: 100%;
+}
+.expanded-table {
+  height: 100%;
+}
+.expanded-table.expanded-height {
+  height: 90%;
+}
+.expanded-table .mat-expansion-panel-body {
+  padding: 0 !important;
+}
+
+.expanded-table .mat-expansion-panel-header {
+  height: auto !important;
+  margin: 5px 0;
+  padding: inherit 0;
+}
+
+.expanded-table .mat-expansion-panel-header span {
+  padding: 0;
+}
+
+
+.expanded-table mat-card {
+  margin: 0 !important;
+}
+
+.expanded-table mat-panel-title, .expanded-table mat-panel-description {
+  margin: 0 !important;
+}
+
+.expanded-table mat-panel-title {
+  display: flex;
+  align-items: center;
 }

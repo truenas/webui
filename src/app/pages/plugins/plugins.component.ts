@@ -1,19 +1,21 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { PoolStatus } from 'app/enums/pool-status.enum';
+import { Pool } from 'app/interfaces/pool.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import * as _ from 'lodash';
 
 import * as myIP from 'what-is-my-ip-address';
-
-import { AvailablePluginsComponent } from './available-plugins/available-plugins.component';
-import { AppLoaderService, WebSocketService, DialogService } from '../../services';
-import { EntityUtils } from '../common/entity/utils';
+import jailHelptext from '../../helptext/jails/jails-list';
+import helptext from '../../helptext/plugins/plugins';
+import { AppLoaderService, DialogService, WebSocketService } from '../../services';
 import { T } from '../../translate-marker';
-import * as _ from 'lodash';
 import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityJobComponent } from '../common/entity/entity-job/entity-job.component';
-import helptext from '../../helptext/plugins/plugins';
-import jailHelptext from '../../helptext/jails/jails-list';
+import { EntityUtils } from '../common/entity/utils';
+
+import { AvailablePluginsComponent } from './available-plugins/available-plugins.component';
 
 @Component({
   selector: 'app-plugins-ui',
@@ -37,7 +39,7 @@ export class PluginsComponent {
   protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
 
-  availablePools: any[];
+  availablePools: Pool[];
   activatedPool: any;
 
   columns: any[] = [
@@ -190,7 +192,7 @@ export class PluginsComponent {
     });
   }
 
-  preInit() {
+  preInit(): void {
     this.getActivatedPollInfo();
   }
 
@@ -227,7 +229,7 @@ export class PluginsComponent {
     });
   }
 
-  noPoolDialog() {
+  noPoolDialog(): void {
     const dialogRef = this.dialogService.confirm(
       jailHelptext.noPoolDialog.title,
       jailHelptext.noPoolDialog.message,
@@ -242,7 +244,7 @@ export class PluginsComponent {
     });
   }
 
-  activatePool() {
+  activatePool(): void {
     const self = this;
 
     const conf: DialogFormConfiguration = {
@@ -253,9 +255,9 @@ export class PluginsComponent {
           name: 'selectedPool',
           placeholder: jailHelptext.activatePoolDialog.selectedPool_placeholder,
           options: this.availablePools ? this.availablePools.map((pool) => ({
-            label: pool.name + (pool.is_decrypted ? (pool.status === 'ONLINE' ? '' : ` (${pool.status})`) : ' (Locked)'),
+            label: pool.name + (pool.is_decrypted ? (pool.status === PoolStatus.Online ? '' : ` (${pool.status})`) : ' (Locked)'),
             value: pool.name,
-            disable: !pool.is_decrypted || pool.status !== 'ONLINE',
+            disable: !pool.is_decrypted || pool.status !== PoolStatus.Online,
           })) : [],
           value: this.activatedPool,
         },
@@ -288,15 +290,15 @@ export class PluginsComponent {
     }
   }
 
-  prerequisiteFailedHandler(entityList: any) {
+  prerequisiteFailedHandler(entityList: any): void {
     this.entityList = entityList;
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
   }
 
-  dataHandler(entityList: any) {
+  dataHandler(entityList: any): void {
     for (let i = 0; i < entityList.rows.length; i++) {
       let revision = entityList.rows[i]['revision'];
       if (revision !== 'N/A' && revision !== '0') {
@@ -350,7 +352,7 @@ export class PluginsComponent {
     });
   }
 
-  updateMultiAction(selected: any) {
+  updateMultiAction(selected: any): void {
     if (_.find(selected, (plugin) => plugin.state == 'up')) {
       _.find(this.multiActions, { id: 'mstop' as any })['enable'] = true;
     } else {
@@ -518,7 +520,7 @@ export class PluginsComponent {
     return actions;
   }
 
-  isActionVisible(actionId: string, row: any) {
+  isActionVisible(actionId: string, row: any): boolean {
     if (actionId === 'start' && row.state === 'up') {
       return false;
     } if (actionId === 'stop' && row.state === 'down') {
@@ -531,7 +533,7 @@ export class PluginsComponent {
     return true;
   }
 
-  getRegistrationLink() {
+  getRegistrationLink(): void {
     const url = 'https://licenseportal.asigra.com/licenseportal/user-registration.do';
     const form = document.createElement('form');
     form.action = url;
@@ -570,7 +572,7 @@ export class PluginsComponent {
     });
   }
 
-  onCheckboxChange(row: any) {
+  onCheckboxChange(row: any): void {
     this.loader.open();
     row.boot = !row.boot;
     this.ws.call('plugin.update', [row.id, { boot: row.boot ? 'on' : 'off' }])
@@ -588,7 +590,7 @@ export class PluginsComponent {
       );
   }
 
-  gotoAdminPortal(row: any) {
+  gotoAdminPortal(row: any): void {
     if (row.admin_portals.length > 1) {
       const conf: DialogFormConfiguration = {
         title: helptext.portal_dialog.title,
@@ -614,7 +616,7 @@ export class PluginsComponent {
     }
   }
 
-  iconAction(row: any) {
+  iconAction(row: any): void {
     if (row.state === 'up' && row.admin_portals.length > 0) {
       this.gotoAdminPortal(row);
     }

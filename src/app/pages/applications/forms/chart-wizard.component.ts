@@ -10,7 +10,7 @@ import { ModalService } from '../../../services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from '../../../helptext/apps/apps';
-import { EntityUtils, FORM_KEY_SEPERATOR, FORM_LABEL_KEY_PREFIX } from '../../common/entity/utils';
+import { EntityUtils } from '../../common/entity/utils';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import { Subject } from 'rxjs';
@@ -27,7 +27,6 @@ export class ChartWizardComponent implements OnDestroy {
   protected addCall = 'chart.release.create';
   protected isEntity = true;
   protected utils: CommonUtils;
-  private isLinear = true;
   summary = {};
   isAutoSummary = true;
   hideCancel = true;
@@ -45,16 +44,16 @@ export class ChartWizardComponent implements OnDestroy {
     this.utils = new CommonUtils();
   }
 
-  setTitle(title: string) {
+  setTitle(title: string): void {
     this.title = title;
   }
 
-  setCatalogApp(catalogApp: any) {
+  setCatalogApp(catalogApp: any): void {
     this.catalogApp = catalogApp;
     this.parseSchema();
   }
 
-  parseSchema() {
+  parseSchema(): void {
     try {
       this.title = this.catalogApp.name;
       const versionKeys: any[] = [];
@@ -119,11 +118,11 @@ export class ChartWizardComponent implements OnDestroy {
         });
       }
     } catch (error) {
-      return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
+      this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
   }
 
-  afterInit(entityWizard: EntityWizardComponent) {
+  afterInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
     const repositoryConfig = _.find(this.fieldConfig, { name: 'image_repository' });
     if (repositoryConfig) {
@@ -136,12 +135,9 @@ export class ChartWizardComponent implements OnDestroy {
     });
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     const apiCall = this.addCall;
     delete data.version;
-
-    const values = {};
-    new EntityUtils().parseFormControlValues(data, values);
 
     const payload = [];
     payload.push({
@@ -150,7 +146,7 @@ export class ChartWizardComponent implements OnDestroy {
       release_name: data.release_name,
       train: this.catalogApp.catalog.train,
       version: this.selectedVersionKey,
-      values,
+      values: data,
     });
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
@@ -167,9 +163,16 @@ export class ChartWizardComponent implements OnDestroy {
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
+    this.dialogRef.componentInstance.failure.subscribe((res: any) => {
+      if (res.exc_info && res.exc_info.extra) {
+        new EntityUtils().handleWSError(this, res);
+      } else {
+        this.dialogRef.errorReport('Error', res.error, res.exception);
+      }
+    });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }

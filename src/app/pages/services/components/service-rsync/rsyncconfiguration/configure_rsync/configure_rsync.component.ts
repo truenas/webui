@@ -5,17 +5,18 @@ import helptext from '../../../../../../helptext/services/components/service-rsy
 import { RestService } from '../../../../../../services/rest.service';
 import { WebSocketService } from '../../../../../../services/ws.service';
 import { FieldConfig } from '../../../../../common/entity/entity-form/models/field-config.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-configure-rsync',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class CconfigureRYSNCComponent {
-  protected queryCall = 'rsyncd.config';
+export class CconfigureRYSNCComponent implements FormConfiguration {
+  queryCall: 'rsyncd.config' = 'rsyncd.config';
   title = helptext.configureFormTitle;
 
-  protected route_success: string[] = ['services'];
+  route_success: string[] = ['services'];
 
   fieldConfig: FieldConfig[] = [
     {
@@ -36,7 +37,7 @@ export class CconfigureRYSNCComponent {
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService) {}
 
-  afterInit(entityEdit: EntityFormComponent) {
+  afterInit(entityEdit: EntityFormComponent): void {
     entityEdit.submitFunction = (body) => this.ws.call('rsyncd.update', [body]);
   }
 }

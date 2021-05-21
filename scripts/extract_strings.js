@@ -1,28 +1,37 @@
 #!/usr/bin/env node
 
-var fs = require('fs');
-// In newer Node.js versions where process is already global this isn't necessary.
-var process = require("process");
-var exec = require('child_process').exec;
+const fs = require('fs');
+const exec = require('child_process').exec;
 
-var translations = "src/assets/i18n/";
+const translationDir = "src/assets/i18n/";
+
+function getFilePath(language) {
+  return `${translationDir}${language}.json`;
+}
 
 // Loop through all the files in the temp directory
-fs.readdir(translations, function (err, files) {
+fs.readdir(translationDir, function (err, files) {
   if (err) {
     console.error("Could not list the directory.", err);
     process.exit(1);
   }
 
-  var pos = "";
+  const languages = [];
 
-  files.forEach(function (file, index) {
-    if (file.match(/\.po$/)) {
-      pos += translations + file + " ";
+  files.forEach((file) => {
+    if (!file.match(/\.json$/)) {
+      return;
     }
+
+    const language = file.replace(/\.json$/, '');
+    languages.push(language);
   });
 
-  exec('ngx-translate-extract --input src --output ' + pos + ' --clean --sort --format pot -m T', (err, stdout, stderr) => {
+  const outputArgument = languages
+    .map(getFilePath)
+    .join(' ');
+
+  exec('ngx-translate-extract --input src --output ' + outputArgument + ' --clean -m T', (err, stdout, stderr) => {
     if (err) {
       console.error(err);
       console.error("Error extracting strings.");
@@ -31,5 +40,28 @@ fs.readdir(translations, function (err, files) {
     }
     console.log(stdout);
     console.error(stderr);
+
+    // Reorder keys so that untranslated strings are on top.
+    languages.forEach((language) => {
+      const filePath = getFilePath(language);
+      const messages = JSON.parse(fs.readFileSync(filePath, { encoding: 'utf-8' }));
+      const output = {};
+      const nonTranslatedKeys = [];
+      const translatedKeys = [];
+
+      Object.keys(messages).forEach((key) => {
+        if (messages[key] === '') {
+          nonTranslatedKeys.push(key);
+        } else {
+          translatedKeys.push(key);
+        }
+      });
+
+      nonTranslatedKeys.sort().forEach((key) => output[key] = messages[key]);
+      translatedKeys.sort().forEach((key) => output[key] = messages[key]);
+
+      const stream = fs.createWriteStream(filePath, {});
+      stream.write(JSON.stringify(output, null, '  '));
+    });
   });
 });

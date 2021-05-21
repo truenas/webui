@@ -1,6 +1,6 @@
-import { FormControl } from '@angular/forms';
+import { FormControl, ValidatorFn } from '@angular/forms';
 
-export function atLeastOne(otherControlName: string, fieldPlacehoders: [string, string]) {
+export function atLeastOne(otherControlName: string, fieldPlacehoders: [string, string]): ValidatorFn {
   let thisControl: FormControl;
   let otherControl: FormControl;
 

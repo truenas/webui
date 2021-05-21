@@ -2,6 +2,7 @@ import {
   Component, OnInit, Input, Output, EventEmitter, ElementRef, TemplateRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -51,7 +52,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
@@ -61,16 +62,15 @@ export class EntityCardComponent extends iXObject implements OnInit {
     }
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     if (this.conf) {
       this.isFlipped = this.conf.isFlipped;
-      // console.log("conf exists!!")
     } else {
-      alert("conf doesn't exist!!");
+      console.error("Conf doesn't exist!");
     }
   }
 
-  toggle(row: any) {
+  toggle(row: any): void {
     let rpc: string;
 
     if (row[this.conf.toggleProp] !== this.conf.runnningState) {
@@ -79,7 +79,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
       rpc = this.conf.toggleStop;
     }
 
-    this.busy = this.ws.call(rpc, [row.id]).subscribe((res) => {
+    this.busy = this.ws.call(rpc as ApiMethod, [row.id]).subscribe((res) => {
       if (res) {
         row[this.conf.toggleProp] = ServiceStatus.Running;
       } else {
@@ -88,7 +88,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
     });
   }
 
-  getData() {
+  getData(): void {
     const offset = this.itemsPerPage * (this.page - 1);
     const sort: String[] = [];
     let options: any = {};
@@ -126,7 +126,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
   onChangeTable(
     config: any,
     page: any = { page: this.page, itemsPerPage: this.itemsPerPage },
-  ) {
+  ): void {
     if (config.filtering) {
       Object.assign(this.config.filtering, config.filtering);
     }
@@ -137,7 +137,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
     this.getData();
   }
 
-  trClass(row: any) {
+  trClass(row: any): string {
     const classes = [];
     classes.push('treegrid-' + row.id);
     if (row._parent) {
@@ -146,7 +146,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
     return classes.join(' ');
   }
 
-  getCardActions() {
+  getCardActions(): any[] {
     if (this.conf.cardActions) {
       this.actions = true;
       return this.conf.cardActions;
@@ -165,25 +165,25 @@ export class EntityCardComponent extends iXObject implements OnInit {
       }] */
   }
 
-  getAddActions() {
+  getAddActions(): any[] {
     if (this.conf.getAddActions) {
       return this.conf.getAddActions();
     }
     return [];
   }
 
-  rowValue(row: any, attr: any) {
+  rowValue(row: any, attr: any): any {
     if (this.conf.rowValue) {
       return this.conf.rowValue(row, attr);
     }
     return row[attr];
   }
 
-  doAdd() {
+  doAdd(): void {
     this.router.navigate(new Array('/').concat(this.conf.route_add));
   }
 
-  doSave() {
+  doSave(): void {
     this.toggleFlip();
     /*
     this.router.navigate(
@@ -192,7 +192,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
     */
   }
 
-  doDelete() {
+  doDelete(): void {
     this.dialog.confirm('Delete', 'Delete this item?').subscribe((res: boolean) => {
       if (res) {
         /*
@@ -211,7 +211,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
 
     this.toggleFlip();
   }
-  toggleFlip() {
+  toggleFlip(): void {
     this.conf.isFlipped = !this.conf.isFlipped;
   }
 }

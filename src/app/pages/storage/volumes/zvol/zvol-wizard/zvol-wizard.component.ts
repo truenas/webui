@@ -4,6 +4,7 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { DatasetType } from 'app/enums/dataset-type.enum';
 import globalHelptext from '../../../../../helptext/global-helptext';
 import helptext from '../../../../../helptext/storage/volumes/zvol-form';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -44,7 +45,7 @@ export class ZvolWizardComponent {
   protected pk: any;
   protected path: string;
   sub: Subscription;
-  queryCall = 'pool.dataset.query';
+  queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   protected compression: any;
   protected advanced_field: any[] = ['volblocksize'];
   protected isBasicMode = true;
@@ -63,7 +64,7 @@ export class ZvolWizardComponent {
   title: string;
   isLinear = true;
   summary: any = {};
-  summary_title = 'Zvol Summary';
+  summaryTitle = 'Zvol Summary';
 
   protected origVolSize: number;
   protected origHuman: string;
@@ -262,7 +263,7 @@ export class ZvolWizardComponent {
     },
   ];
 
-  isCustActionVisible(actionId: any, stepperIndex: number) {
+  isCustActionVisible(actionId: any, stepperIndex: number): boolean {
     if (!(stepperIndex == 1)) {
       return false;
     }
@@ -286,9 +287,6 @@ export class ZvolWizardComponent {
       data.name = this.parent + '/' + data.name;
     }
 
-    if (this.isBasicMode === true) {
-
-    }
     // TODO: Incorrect type comparison, probably a bug.
     if (this.origHuman !== (data.volsize as any)) {
       data.volsize = this.storageService.convertHumanStringToNum(data.volsize, true);
@@ -307,11 +305,11 @@ export class ZvolWizardComponent {
     protected modalService: ModalService,
   ) {}
 
-  preInit(entityWizard: EntityWizardComponent) {
+  preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
   }
 
-  async preInitZvolForm(entityWizard: EntityWizardComponent) {
+  async preInitZvolForm(entityWizard: EntityWizardComponent): Promise<void> {
     const zvolEntityForm = (< FormGroup > entityWizard.formArray.get([1]));
     if (!this.parent) return;
 
@@ -333,7 +331,7 @@ export class ZvolWizardComponent {
         }
       }
       this.translate.get('Inherit').subscribe((inheritTr) => {
-        if (pk_dataset && pk_dataset[0].type === 'FILESYSTEM') {
+        if (pk_dataset && pk_dataset[0].type === DatasetType.Filesystem) {
           const sync_inherit = [{ label: `${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];
           const compression_inherit = [{ label: `${inheritTr} (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT' }];
           const deduplication_inherit = [{ label: `${inheritTr} (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT' }];
@@ -356,7 +354,7 @@ export class ZvolWizardComponent {
             this.minimum_recommended_zvol_volblocksize = res;
           });
         } else {
-          let parent_dataset = pk_dataset[0].name.split('/');
+          let parent_dataset: string | string[] = pk_dataset[0].name.split('/');
           parent_dataset.pop();
           parent_dataset = parent_dataset.join('/');
 
@@ -433,7 +431,7 @@ export class ZvolWizardComponent {
     });
   }
 
-  afterInit(entityWizard: EntityWizardComponent) {
+  afterInit(entityWizard: EntityWizardComponent): void {
     const zvolEntityForm = (< FormGroup > this.entityWizard.formArray.get([1]));
     (< FormGroup > entityWizard.formArray.get([0])).get('path').valueChanges.subscribe((pool: String) => {
       if (pool.includes('mnt')) {
@@ -491,7 +489,7 @@ export class ZvolWizardComponent {
     });
   }
 
-  blurVolsize(parent: any) {
+  blurVolsize(parent: any): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['volsize'].setValue(parent.storageService.humanReadable);
     }
@@ -529,7 +527,7 @@ export class ZvolWizardComponent {
     return this.ws.call('pool.dataset.create', [data]);
   }
 
-  async customNext(stepper: any) {
+  async customNext(stepper: any): Promise<void> {
     if (stepper._selectedIndex == 0) {
       if (!this.parent) {
         this.wizardConfig[0].fieldConfig.find((c) => c.name === 'path').warnings = 'Please select a ZFS Volume';
@@ -540,7 +538,7 @@ export class ZvolWizardComponent {
     stepper.next();
   }
 
-  customSubmit(body: any) {
+  customSubmit(body: any): void {
     this.loader.open();
 
     if (this.isNew === true) {
@@ -562,11 +560,11 @@ export class ZvolWizardComponent {
     }
   }
 
-  setParent(id: string) {
+  setParent(id: string): void {
     this.parent = id;
   }
 
-  customCancel() {
+  customCancel(): void {
     this.modalService.close('slide-in-form').then(
       (closed) => {
         if (closed) {

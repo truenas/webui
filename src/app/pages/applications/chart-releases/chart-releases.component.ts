@@ -3,6 +3,8 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
+import { ixChartApp, appImagePlaceholder } from 'app/constants/catalog.constants';
+import { CoreEvent } from 'app/interfaces/events';
 import { Subject, Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
@@ -17,9 +19,10 @@ import { ChartFormComponent } from '../forms/chart-form.component';
 import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
 
 import helptext from '../../../helptext/apps/apps';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { Router } from '@angular/router';
 import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 @Component({
   selector: 'app-charts',
@@ -49,6 +52,7 @@ export class ChartReleasesComponent implements OnInit {
   private selectedAppName: String;
   private podList: any[] = [];
   private podDetails: any = {};
+  imagePlaceholder = appImagePlaceholder;
 
   emptyPageConf: EmptyConfig = {
     type: EmptyType.loading,
@@ -134,7 +138,7 @@ export class ChartReleasesComponent implements OnInit {
     parent: this,
   };
 
-  constructor(private mdDialog: MatDialog,
+  constructor(private mdDialog: MatDialog, private appLoaderService: AppLoaderService,
     private dialogService: DialogService, private translate: TranslateService,
     private appService: ApplicationsService, private modalService: ModalService,
     private sysGeneralService: SystemGeneralService, private router: Router,
@@ -145,13 +149,13 @@ export class ChartReleasesComponent implements OnInit {
     this.addChartReleaseChangedEventListner();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.chartReleaseChangedListener) {
       this.ws.unsubscribe(this.chartReleaseChangedListener);
     }
   }
 
-  onToolbarAction(evt: CoreEvent) {
+  onToolbarAction(evt: CoreEvent): void {
     if (evt.data.event_control == 'filter') {
       this.filterString = evt.data.filter;
       this.filerChartItems();
@@ -160,11 +164,11 @@ export class ChartReleasesComponent implements OnInit {
     }
   }
 
-  viewCatalog() {
+  viewCatalog(): void {
     this.updateTab.emit({ name: 'SwitchTab', value: 0 });
   }
 
-  showLoadStatus(type: EmptyType) {
+  showLoadStatus(type: EmptyType): void {
     let title = '';
     let message;
 
@@ -189,11 +193,11 @@ export class ChartReleasesComponent implements OnInit {
     this.emptyPageConf.message = message;
   }
 
-  getChartItems() {
+  getChartItems(): any {
     return Object.values(this.chartItems);
   }
 
-  addChartReleaseChangedEventListner() {
+  addChartReleaseChangedEventListner(): void {
     this.chartReleaseChangedListener = this.ws.subscribe('chart.release.query').subscribe((evt) => {
       const app = this.chartItems[evt.id];
 
@@ -203,10 +207,10 @@ export class ChartReleasesComponent implements OnInit {
         app.count = `${evt.fields.pod_status.available}/${evt.fields.pod_status.desired}`;
         app.desired = evt.fields.pod_status.desired;
         app.catalog = evt.fields.catalog;
-        app.update_available = evt.fields.update_available,
-        app.container_images_update_available = evt.fields.container_images_update_available,
-        app.human_version = evt.fields.human_version,
-        app.human_latest_version = evt.fields.human_latest_version,
+        app.update_available = evt.fields.update_available;
+        app.container_images_update_available = evt.fields.container_images_update_available;
+        app.human_version = evt.fields.human_version;
+        app.human_latest_version = evt.fields.human_latest_version;
         app.latest_version = evt.fields.chart_metadata.latest_chart_version;
         app.repository = evt.fields.config.image.repository;
         app.tag = evt.fields.config.image.tag;
@@ -224,7 +228,7 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  refreshChartReleases() {
+  refreshChartReleases(): void {
     this.showLoadStatus(EmptyType.loading);
     this.chartItems = {};
     this.filerChartItems();
@@ -233,7 +237,7 @@ export class ChartReleasesComponent implements OnInit {
     }, 1000);
   }
 
-  updateChartReleases() {
+  updateChartReleases(): void {
     this.appService.getKubernetesConfig().subscribe((res) => {
       if (!res.pool) {
         this.chartItems = {};
@@ -276,7 +280,8 @@ export class ChartReleasesComponent implements OnInit {
                 if (chart.used_ports) {
                   chart.used_ports.forEach((item: any) => {
                     ports.push(`${item.port}\\${item.protocol}`);
-                  })(chartObj as any)['used_ports'] = ports.join(', ');
+                  });
+                  (chartObj as any)['used_ports'] = ports.join(', ');
                   this.chartItems[chartObj.name] = chartObj;
                 }
               });
@@ -293,7 +298,7 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  refreshStatus(name: string) {
+  refreshStatus(name: string): void {
     this.appService.getChartReleases(name).subscribe((res) => {
       const item = this.chartItems[name];
       if (item) {
@@ -307,23 +312,23 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  start(name: string) {
+  start(name: string): void {
     this.appService.setReplicaCount(name, 1).subscribe(() => {
       this.refreshStatus(name);
     });
   }
 
-  stop(name: string) {
+  stop(name: string): void {
     this.appService.setReplicaCount(name, 0).subscribe(() => {
       this.refreshStatus(name);
     });
   }
 
-  portal(portal: string) {
+  portal(portal: string): void {
     window.open(portal);
   }
 
-  update(name: string) {
+  update(name: string): void {
     this.translate.get(helptext.charts.upgrade_dialog.msg).subscribe((msg) => {
       this.dialogService.confirm(helptext.charts.upgrade_dialog.title, msg + name + '?')
         .subscribe((res: boolean) => {
@@ -345,12 +350,12 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  rollback(name: string) {
+  rollback(name: string): void {
     this.rollbackChartName = name;
     this.dialogService.dialogForm(this.rollBackChart, true);
   }
 
-  doRollback(entityDialog: any) {
+  doRollback(entityDialog: any): void {
     const self = entityDialog.parent;
     const form = entityDialog.formGroup.controls;
     const payload = {
@@ -372,9 +377,9 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  edit(name: string, id: string) {
+  edit(name: string, id: string): void {
     const catalogApp = this.chartItems[name];
-    if (catalogApp && catalogApp.chart_name != 'ix-chart') {
+    if (catalogApp && catalogApp.chart_name != ixChartApp) {
       const chartFormComponent = new ChartFormComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
       chartFormComponent.setTitle(catalogApp.chart_name);
       this.modalService.open('slide-in-form', chartFormComponent, name);
@@ -384,7 +389,7 @@ export class ChartReleasesComponent implements OnInit {
     }
   }
 
-  getSelectedItems() {
+  getSelectedItems(): any[] {
     const selectedItems: any[] = [];
     this.filteredChartItems.forEach((element) => {
       if (element.selected) {
@@ -394,7 +399,7 @@ export class ChartReleasesComponent implements OnInit {
     return selectedItems;
   }
 
-  checkAll(checkedItems: any[]) {
+  checkAll(checkedItems: any[]): void {
     let selectAll = true;
     if (checkedItems.length == this.filteredChartItems.length) {
       selectAll = false;
@@ -407,7 +412,7 @@ export class ChartReleasesComponent implements OnInit {
     this.refreshToolbarMenus();
   }
 
-  onBulkAction(actionName: string) {
+  onBulkAction(actionName: string): void {
     const checkedItems = this.getSelectedItems();
 
     if (actionName === 'select_all') {
@@ -439,7 +444,7 @@ export class ChartReleasesComponent implements OnInit {
     }
   }
 
-  delete(name: string) {
+  delete(name: string): void {
     this.translate.get(helptext.charts.delete_dialog.msg).subscribe((msg) => {
       this.dialogService.confirm(helptext.charts.delete_dialog.title, msg + name + '?')
         .subscribe((res: boolean) => {
@@ -462,7 +467,7 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  bulkDelete(names: string[]) {
+  bulkDelete(names: string[]): void {
     const name = names.join(',');
     this.translate.get(helptext.charts.delete_dialog.msg).subscribe((msg) => {
       this.dialogService.confirm(helptext.charts.delete_dialog.title, msg + name + '?')
@@ -498,7 +503,7 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  filerChartItems() {
+  filerChartItems(): void {
     if (this.filterString) {
       this.filteredChartItems = this.getChartItems().filter((chart: any) => chart.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1);
     } else {
@@ -508,11 +513,13 @@ export class ChartReleasesComponent implements OnInit {
     this.refreshToolbarMenus();
   }
 
-  openShell(name: string) {
+  openShell(name: string): void {
     this.podList = [];
     this.podDetails = {};
     this.selectedAppName = name;
+    this.appLoaderService.open();
     this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).subscribe((res) => {
+      this.appLoaderService.close();
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
       if (this.podList.length == 0) {
@@ -530,14 +537,18 @@ export class ChartReleasesComponent implements OnInit {
         }));
         this.dialogService.dialogForm(this.choosePod, true);
       }
+    }, (err) => {
+      this.appLoaderService.close();
     });
   }
 
-  openLogs(name: string) {
+  openLogs(name: string): void {
     this.podList = [];
     this.podDetails = {};
     this.selectedAppName = name;
+    this.appLoaderService.open();
     this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).subscribe((res) => {
+      this.appLoaderService.close();
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
       if (this.podList.length == 0) {
@@ -555,10 +566,12 @@ export class ChartReleasesComponent implements OnInit {
         }));
         this.dialogService.dialogForm(this.choosePodForLogs, true);
       }
+    }, (err) => {
+      this.appLoaderService.close();
     });
   }
 
-  doPodSelect(entityDialog: any) {
+  doPodSelect(entityDialog: any): void {
     const self = entityDialog.parent;
     const pod = entityDialog.formGroup.controls['pods'].value;
     const command = entityDialog.formGroup.controls['command'].value;
@@ -566,7 +579,7 @@ export class ChartReleasesComponent implements OnInit {
     self.dialogService.closeAllDialogs();
   }
 
-  doPodSelectForLogs(entityDialog: any) {
+  doPodSelectForLogs(entityDialog: any): void {
     const self = entityDialog.parent;
     const pod = entityDialog.formGroup.controls['pods'].value;
     const container = entityDialog.formGroup.controls['containers'].value;
@@ -575,7 +588,7 @@ export class ChartReleasesComponent implements OnInit {
     self.dialogService.closeAllDialogs();
   }
 
-  afterShellDialogInit(entityDialog: any) {
+  afterShellDialogInit(entityDialog: any): void {
     const self = entityDialog.parent;
     entityDialog.formGroup.controls['pods'].valueChanges.subscribe((value: any) => {
       const containers = self.podDetails[value];
@@ -588,7 +601,7 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  afterLogsDialogInit(entityDialog: any) {
+  afterLogsDialogInit(entityDialog: any): void {
     const self = entityDialog.parent;
     entityDialog.formGroup.controls['pods'].valueChanges.subscribe((value: any) => {
       const containers = self.podDetails[value];
@@ -601,7 +614,7 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  showChartEvents(name: string) {
+  showChartEvents(name: string): void {
     const catalogApp = this.chartItems[name];
     if (catalogApp) {
       const dialogRef = this.mdDialog.open(ChartEventsDialog, {
@@ -614,12 +627,12 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   // On click checkbox
-  onChangeCheck() {
+  onChangeCheck(): void {
     this.refreshToolbarMenus();
   }
 
   // Refresh Toolbar menus
-  refreshToolbarMenus() {
+  refreshToolbarMenus(): void {
     const isSelectedOneMore: boolean = this.getSelectedItems().length > 0;
     const isSelectedAll = !this.filteredChartItems.find((item) => !item.selected);
     this.updateTab.emit({ name: 'UpdateToolbar', value: isSelectedOneMore, isSelectedAll });

@@ -16,7 +16,7 @@ interface DialogData {
     ix-auto ix-auto-type="button" ix-auto-identifier="Initiate Failover">Initiate Failover</button>`,
 })
 
-export class SimpleFailoverBtnComponent implements OnDestroy {
+export class SimpleFailoverBtnComponent {
   @Input() color = 'default';
   @Input() disabled?: boolean = false;
   constructor(
@@ -25,9 +25,6 @@ export class SimpleFailoverBtnComponent implements OnDestroy {
     private router: Router,
     public translate: TranslateService,
   ) {}
-
-  afterInit() {
-  }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(SimpleFailoverBtnDialog, {
@@ -40,9 +37,6 @@ export class SimpleFailoverBtnComponent implements OnDestroy {
         this.router.navigate(['/others/reboot']);
       }
     });
-  }
-
-  ngOnDestroy() {
   }
 }
 
@@ -60,7 +54,7 @@ export class SimpleFailoverBtnComponent implements OnDestroy {
 })
 export class SimpleFailoverBtnDialog {
   private _confirmed: boolean;
-  get confirmed() {
+  get confirmed(): boolean {
     return this._confirmed;
   }
 

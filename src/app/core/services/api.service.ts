@@ -1,13 +1,15 @@
 import { Injectable, OnInit } from '@angular/core';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { CoreEvent } from 'app/interfaces/events';
 import { Subject } from 'rxjs';
 import { WebSocketService } from '../../services/ws.service';
 import { RestService } from '../../services/rest.service';
-import { CoreService, CoreEvent } from './core.service';
+import { CoreService } from './core.service';
 import { DialogService } from '../../services';
 // import { DataService } from './data.service';
 
 export interface ApiCall {
-  namespace: string; // namespace for ws and path for rest
+  namespace: ApiMethod; // namespace for ws and path for rest
   args?: any;
   operation?: string; // DEPRECATED - Used for REST calls only
   responseEvent?: any;// The event name of the response this service will send
@@ -616,7 +618,7 @@ export class ApiService {
     this.registerDefinitions();
   }
 
-  registerDefinitions() {
+  registerDefinitions(): void {
     // DEBUG: console.log("APISERVICE: Registering API Definitions");
     for (var def in this.apiDefinitions) {
       // DEBUG: console.log("def = " + def);
@@ -644,7 +646,7 @@ export class ApiService {
     }
   }
 
-  private callRest(evt: any, def: any) {
+  private callRest(evt: any, def: any): void {
     const baseUrl = '/api/v' + def.apiCall.version + '/';
     const cloneDef = { ...def };
     if (evt.data) {
@@ -692,7 +694,7 @@ export class ApiService {
     }
   }
 
-  async callWebsocket(evt: CoreEvent, def: any) {
+  async callWebsocket(evt: CoreEvent, def: any): Promise<void> {
     const cloneDef = { ...def };
     const async_calls = [
       'vm.start',

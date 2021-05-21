@@ -1,7 +1,7 @@
-import { AbstractControl } from '@angular/forms';
+import { AbstractControl, ValidatorFn } from '@angular/forms';
 import { FormControl, FormGroup } from '@angular/forms';
 
-export function rangeValidator(min: number, max?: number) {
+export function rangeValidator(min: number, max?: number): ValidatorFn {
   let thisControl: FormControl;
 
   return function rangeValidate(control: FormControl) {

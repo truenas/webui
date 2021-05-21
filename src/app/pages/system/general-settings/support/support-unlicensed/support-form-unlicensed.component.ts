@@ -8,12 +8,13 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { WebSocketService } from 'app/services/';
 import { ModalService } from '../../../../../services/modal.service';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-support-form-unlicensed',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class SupportFormUnlicensedComponent {
+export class SupportFormUnlicensedComponent implements FormConfiguration {
   entityEdit: any;
   password: any;
   username: any;
@@ -137,11 +138,11 @@ export class SupportFormUnlicensedComponent {
   constructor(protected ws: WebSocketService, protected dialog: MatDialog,
     private modalService: ModalService) { }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
   }
 
-  blurEvent(parent: any) {
+  blurEvent(parent: any): void {
     this.password_fc = _.find(parent.fieldConfig, { name: 'password' });
     this.username_fc = _.find(parent.fieldConfig, { name: 'username' });
     this.category = _.find(parent.fieldConfig, { name: 'category' });
@@ -197,7 +198,7 @@ export class SupportFormUnlicensedComponent {
     this.openDialog(payload);
   }
 
-  openDialog(payload: any) {
+  openDialog(payload: any): void {
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Ticket'), CloseOnClickOutside: true } });
     let url: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
@@ -235,14 +236,14 @@ export class SupportFormUnlicensedComponent {
     });
   }
 
-  resetForm() {
+  resetForm(): void {
     this.entityEdit.formGroup.reset();
     this.entityEdit.formGroup.controls['type'].setValue('BUG');
     this.subs = [];
     this.modalService.close('slide-in-form');
   }
 
-  updater(file: any, parent: any) {
+  updater(file: any, parent: any): void {
     parent.subs = [];
     const fileBrowser = file.fileInput.nativeElement;
     this.screenshot = _.find(parent.fieldConfig, { name: 'screenshot' });

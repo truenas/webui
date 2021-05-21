@@ -8,14 +8,15 @@ import { DialogService } from 'app/services/dialog.service';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-proactive',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class ProactiveComponent {
+export class ProactiveComponent implements FormConfiguration {
   entityEdit: any;
-  protected queryCall = 'support.config';
+  queryCall: 'support.config' = 'support.config';
   contacts: any;
   controls: any;
   save_button_enabled: boolean;
@@ -175,7 +176,7 @@ export class ProactiveComponent {
     protected dialogService: DialogService, private translate: TranslateService,
     private modalService: ModalService) { }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
     const proactiveFields: any[] = [
       'enabled',
@@ -221,7 +222,7 @@ export class ProactiveComponent {
     }, 1000);
   }
 
-  getContacts() {
+  getContacts(): void {
     this.controls = this.entityEdit.formGroup.controls;
     this.ws.call(this.queryCall).subscribe((res) => {
       if (res && res !== {}) {
@@ -234,7 +235,7 @@ export class ProactiveComponent {
     });
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     delete data.proactive_instructions;
     delete data.proactive_second_title;
     delete data.proactive_section_border;
@@ -245,7 +246,7 @@ export class ProactiveComponent {
     }
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     this.loader.open();
     this.ws.call('support.update', [data]).subscribe(() => {
       this.loader.close();

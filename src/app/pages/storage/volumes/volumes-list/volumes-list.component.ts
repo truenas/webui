@@ -1,46 +1,50 @@
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { ProductType } from '../../../../enums/product-type.enum';
-import { EmptyConfig, EmptyType } from '../../../common/entity/entity-empty/entity-empty.component';
+import { HttpClient } from '@angular/common/http';
 import {
-  Component, ElementRef, OnInit, AfterViewChecked, OnDestroy,
+  Component, ElementRef, OnDestroy, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { AclType } from 'app/enums/acl-type.enum';
+import { DatasetType } from 'app/enums/dataset-type.enum';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { PoolScanState } from 'app/enums/pool-scan-state.enum';
+import { PoolStatus } from 'app/enums/pool-status.enum';
+import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
+import { Pool } from 'app/interfaces/pool.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableService } from 'app/pages/common/entity/entity-table/entity-table.service';
-import {
-  EntityTableAction,
-  EntityTableComponent,
-  InputTableConf,
-} from 'app/pages/common/entity/entity-table/entity-table.component';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErdService } from 'app/services/erd.service';
+import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { TreeNode } from 'primeng/api';
+import { combineLatest } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 import { map, switchMap } from 'rxjs/operators';
-import helptext from '../../../../helptext/storage/volumes/volume-list';
+import { ProductType } from '../../../../enums/product-type.enum';
 import dataset_helptext from '../../../../helptext/storage/volumes/datasets/dataset-form';
+import helptext from '../../../../helptext/storage/volumes/volume-list';
 import { JobService, RestService, ValidationService } from '../../../../services';
 import { StorageService } from '../../../../services/storage.service';
 import { T } from '../../../../translate-marker';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EmptyConfig, EmptyType } from '../../../common/entity/entity-empty/entity-empty.component';
 import { MessageService } from '../../../common/entity/entity-form/services/message.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../../common/entity/utils';
-import { combineLatest } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { ModalService } from 'app/services/modal.service';
-import { VolumesListControlsComponent } from './volumes-list-controls.component';
-import { ZvolFormComponent } from '../zvol/zvol-form';
 import { DatasetFormComponent } from '../datasets/dataset-form';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { ZvolFormComponent } from '../zvol/zvol-form';
+import { VolumesListControlsComponent } from './volumes-list-controls.component';
 
 export interface ZfsPoolData {
   pool: string;
@@ -151,22 +155,22 @@ export class VolumesListTableConfig implements InputTableConf {
     }
   }
 
-  isCustActionVisible(actionname: string) {
+  isCustActionVisible(actionname: string): boolean {
     if (actionname === 'download_key' && this.encryptedStatus > 0) {
       return true;
     }
     return false;
   }
 
-  getEncryptedActions(rowData: any) {
-    const actions = []; const
-      self = this;
+  getEncryptedActions(rowData: Pool) {
+    const actions = [];
+    const self = this;
     if (rowData.encrypt === 2) {
       if (rowData.is_decrypted) {
         if (self.parentVolumesListComponent.systemdatasetPool != rowData.name) {
           actions.push({
             label: T('Lock'),
-            onClick: (row1: any) => {
+            onClick: (row1: Pool) => {
               let p1 = '';
               const self = this;
               this.loader.open();
@@ -295,7 +299,7 @@ export class VolumesListTableConfig implements InputTableConf {
       } else {
         actions.push({
           label: T('Unlock'),
-          onClick: (row1: any) => {
+          onClick: (row1: Pool) => {
             this.unlockAction(row1);
           },
         });
@@ -374,14 +378,14 @@ export class VolumesListTableConfig implements InputTableConf {
     return actions;
   }
 
-  key_file_updater(file: any, parent: any) {
+  key_file_updater(file: any, parent: any): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
     }
   }
 
-  unlockAction(row1: any) {
+  unlockAction(row1: any): void {
     const self = this;
     this.storageService.poolUnlockServiceChoices(row1.id).pipe(
       map((serviceChoices) => ({
@@ -488,12 +492,8 @@ export class VolumesListTableConfig implements InputTableConf {
     ).subscribe(() => {});
   }
 
-  getPoolData(poolId: number) {
-    return this.ws.call('pool.query', [
-      [
-        ['id', '=', poolId],
-      ],
-    ]);
+  getPoolData(poolId: number): Observable<Pool[]> {
+    return this.ws.call('pool.query', [[['id', '=', poolId]]]);
   }
 
   getActions(rowData: any): any[] {
@@ -654,7 +654,7 @@ export class VolumesListTableConfig implements InputTableConf {
             doDetach();
           }
 
-          async function doDetach() {
+          async function doDetach(): Promise<void> {
             const sysPool = await self.ws.call('systemdataset.config').pipe(map((res) => res['pool'])).toPromise();
             let title: string;
             let warningA: string;
@@ -786,7 +786,7 @@ export class VolumesListTableConfig implements InputTableConf {
                           self.parentVolumesListComponent.repaintMe();
                         });
                       });
-                    }),
+                    });
                     dialogRef.componentInstance.failure.subscribe((res: any) => {
                       let conditionalErrMessage = '';
                       if (res.error) {
@@ -872,57 +872,59 @@ export class VolumesListTableConfig implements InputTableConf {
           name: 'Scrub Pool',
           label: T('Scrub Pool'),
           onClick: (row1: any) => {
-            this.getPoolData(row1.id).subscribe((res) => {
-              if (res[0]) {
-                if (res[0].scan.function === 'SCRUB' && res[0].scan.state === 'SCANNING') {
-                  self.translate.get('Stop the scrub on ').subscribe((msg) => {
-                    this.dialogService.confirm(T('Scrub Pool'), msg + row1.name + '?', false, T('Stop Scrub'))
-                      .subscribe((res: boolean) => {
-                        if (res) {
-                          this.loader.open();
-                          this.ws.call('pool.scrub', [row1.id, 'STOP']).subscribe(
-                            () => {
-                              this.loader.close();
-                              self.translate.get('Stopping scrub on pool').subscribe((msg) => {
-                                this.dialogService.Info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>`, '300px', 'info', true);
-                              });
-                            },
-                            (err) => {
-                              this.loader.close();
-                              new EntityUtils().handleWSError(this, err, this.dialogService);
-                            },
-                          );
-                        }
-                      });
-                  });
-                } else {
-                  self.translate.get('Start scrub on pool').subscribe((msg) => {
-                    this.dialogService.confirm(T('Scrub Pool'), `${msg} <i>${row1.name}</i>?`, false, T('Start Scrub')).subscribe((res: boolean) => {
+            this.getPoolData(row1.id).subscribe((pools) => {
+              if (!pools[0]) {
+                return;
+              }
+
+              if (pools[0].scan.function === 'SCRUB' && pools[0].scan.state === PoolScanState.Scanning) {
+                self.translate.get('Stop the scrub on ').subscribe((msg) => {
+                  this.dialogService.confirm(T('Scrub Pool'), msg + row1.name + '?', false, T('Stop Scrub'))
+                    .subscribe((res: boolean) => {
                       if (res) {
-                        this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Scrub Pool') }, disableClose: false });
-                        this.dialogRef.componentInstance.setCall('pool.scrub', [row1.id, 'START']);
-                        this.dialogRef.componentInstance.submit();
-                        this.dialogRef.componentInstance.success.subscribe(
-                          (jobres: any) => {
-                            this.dialogRef.close(false);
-                            if (jobres.progress.percent == 100 && jobres.progress.description === 'Scrub finished') {
-                              self.translate.get('Scrub complete on pool').subscribe((msg: string) => {
-                                this.dialogService.Info(T('Scrub Complete'), `${msg} <i>${row1.name}</i>.`, '300px', 'info', true);
-                              });
-                            } else {
-                              self.translate.get('Stopped the scrub on pool').subscribe((msg: string) => {
-                                this.dialogService.Info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>.`, '300px', 'info', true);
-                              });
-                            }
+                        this.loader.open();
+                        this.ws.call('pool.scrub', [row1.id, 'STOP']).subscribe(
+                          () => {
+                            this.loader.close();
+                            self.translate.get('Stopping scrub on pool').subscribe((msg) => {
+                              this.dialogService.Info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>`, '300px', 'info', true);
+                            });
+                          },
+                          (err) => {
+                            this.loader.close();
+                            new EntityUtils().handleWSError(this, err, this.dialogService);
                           },
                         );
-                        this.dialogRef.componentInstance.failure.subscribe((err: any) => {
-                          this.dialogRef.componentInstance.setDescription(err.error);
-                        });
                       }
                     });
+                });
+              } else {
+                self.translate.get('Start scrub on pool').subscribe((msg) => {
+                  this.dialogService.confirm(T('Scrub Pool'), `${msg} <i>${row1.name}</i>?`, false, T('Start Scrub')).subscribe((res: boolean) => {
+                    if (res) {
+                      this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Scrub Pool') }, disableClose: false });
+                      this.dialogRef.componentInstance.setCall('pool.scrub', [row1.id, 'START']);
+                      this.dialogRef.componentInstance.submit();
+                      this.dialogRef.componentInstance.success.subscribe(
+                        (jobres: any) => {
+                          this.dialogRef.close(false);
+                          if (jobres.progress.percent == 100 && jobres.progress.description === 'Scrub finished') {
+                            self.translate.get('Scrub complete on pool').subscribe((msg: string) => {
+                              this.dialogService.Info(T('Scrub Complete'), `${msg} <i>${row1.name}</i>.`, '300px', 'info', true);
+                            });
+                          } else {
+                            self.translate.get('Stopped the scrub on pool').subscribe((msg: string) => {
+                              this.dialogService.Info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>.`, '300px', 'info', true);
+                            });
+                          }
+                        },
+                      );
+                      this.dialogRef.componentInstance.failure.subscribe((err: any) => {
+                        this.dialogRef.componentInstance.setDescription(err.error);
+                      });
+                    }
                   });
-                }
+                });
               }
             });
           },
@@ -966,7 +968,7 @@ export class VolumesListTableConfig implements InputTableConf {
               },
             };
 
-            function doExpand(entityDialog?: EntityDialogComponent) {
+            function doExpand(entityDialog?: EntityDialogComponent): void {
               parent.loader.open();
               const payload = [row1.id];
               if (entityDialog) {
@@ -1109,8 +1111,8 @@ export class VolumesListTableConfig implements InputTableConf {
                   'storage', 'permissions', rowData.id,
                 ]));
               } else {
-                this.ws.call('filesystem.getacl', [rowData.mountpoint]).subscribe((res) => {
-                  if (res.acltype === 'POSIX1E') {
+                this.ws.call('filesystem.getacl', [rowData.mountpoint]).subscribe((acl) => {
+                  if (acl.acltype === AclType.Posix1e) {
                     this._router.navigate(new Array('/').concat([
                       'storage', 'id', rowData.pool, 'dataset',
                       'posix-acl', rowData.id,
@@ -1276,7 +1278,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 tooltip: helptext.snapshotDialog_name_tooltip,
                 validation: helptext.snapshotDialog_name_validation,
                 required: true,
-                value: 'manual' + '-' + this.getTimestamp(),
+                value: 'manual-' + this.getTimestamp(),
               },
               {
                 type: 'checkbox',
@@ -1684,7 +1686,7 @@ export class VolumesListTableConfig implements InputTableConf {
     return encryption_actions;
   }
 
-  clickAction(rowData: any) {
+  clickAction(rowData: any): void {
     const editPermissions = rowData.actions[0].actions.find((o: any) => o.name === 'Edit Permissions');
     if (!rowData.locked && editPermissions) {
       if (!rowData.id.includes('/')) {
@@ -1697,7 +1699,7 @@ export class VolumesListTableConfig implements InputTableConf {
     }
   }
 
-  getTimestamp() {
+  getTimestamp(): string {
     const dateTime = new Date();
     return moment(dateTime).format('YYYY-MM-DD_HH-mm');
   }
@@ -1709,11 +1711,11 @@ export class VolumesListTableConfig implements InputTableConf {
     this.getMoreDatasetInfo(data, parent);
     node.data.group_actions = true;
     let actions_title = helptext.dataset_actions;
-    if (data.type === 'VOLUME') {
+    if (data.type === DatasetType.Volume) {
       actions_title = helptext.zvol_actions;
     }
     const actions = [{ title: actions_title, actions: this.getActions(data) }];
-    if (data.type === 'FILESYSTEM' || data.type === 'VOLUME') {
+    if (data.type === DatasetType.Filesystem || data.type === DatasetType.Volume) {
       const encryption_actions = this.getEncryptedDatasetActions(data);
       if (encryption_actions.length > 0) {
         actions.push({ title: helptext.encryption_actions_title, actions: encryption_actions });
@@ -1736,7 +1738,7 @@ export class VolumesListTableConfig implements InputTableConf {
     return node;
   }
 
-  getMoreDatasetInfo(dataObj: any, parent: any) {
+  getMoreDatasetInfo(dataObj: any, parent: any): void {
     const dataset_data2 = this.datasetData;
     this.translate.get(T('Inherits')).subscribe((inherits) => {
       for (const k in dataset_data2) {
@@ -1787,13 +1789,13 @@ export class VolumesListTableConfig implements InputTableConf {
   templateUrl: './volumes-list.component.html',
   providers: [],
 })
-export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class VolumesListComponent extends EntityTableComponent implements OnInit, OnDestroy {
   title = T('Pools');
   zfsPoolRows: ZfsPoolData[] = [];
   conf: InputTableConf = new VolumesListTableConfig(this, this.router, '', [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http, this.validationService);
 
   actionComponent = {
-    getActions: (row: any) => {
+    getActions: (row: Pool) => {
       const actions: any[] = [
         {
           name: 'pool_actions',
@@ -1802,7 +1804,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         },
       ];
 
-      if (row.status !== 'OFFLINE') {
+      if (row.status !== PoolStatus.Offline) {
         const encryptionActions = {
           name: 'encryption_actions',
           title: helptext.encryption_actions_title,
@@ -1836,12 +1838,12 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   protected editDatasetFormComponent: DatasetFormComponent;
   protected aroute: ActivatedRoute;
   private refreshTableSubscription: any;
-  private datasetQuery = 'pool.dataset.query';
+  private datasetQuery: 'pool.dataset.query' = 'pool.dataset.query';
   /*
    * Please note that extra options are special in that they are passed directly to ZFS.
    * This is why 'encryptionroot' is included in order to get 'encryption_root' in the response
    * */
-  private datasetQueryOptions = [[] as any, {
+  private datasetQueryOptions: QueryParams<Dataset, ExtraDatasetQueryOptions> = [[], {
     extra: {
       properties: [
         'type',
@@ -1860,6 +1862,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     },
   }];
 
+  readonly PoolStatus = PoolStatus;
+
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
@@ -1871,19 +1875,16 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
   }
 
-  repaintMe() {
+  repaintMe(): void {
     this.showDefaults = false;
     this.paintMe = false;
     this.ngOnInit();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.refreshTableSubscription) {
       this.refreshTableSubscription.unsubscribe();
     }
-  }
-
-  ngAfterViewChecked() {
   }
 
   async ngOnInit(): Promise<void> {
@@ -1912,7 +1913,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       });
     }
 
-    combineLatest([this.ws.call('pool.query', []), this.ws.call<any[]>(this.datasetQuery, this.datasetQueryOptions)]).subscribe(async ([pools, datasets]) => {
+    combineLatest([
+      this.ws.call('pool.query', []),
+      this.ws.call(this.datasetQuery, this.datasetQueryOptions),
+    ]).subscribe(async ([pools, datasets]: [any[], any[]]) => {
+      // TODO: Additional fields added on frontend.
       if (pools.length > 0) {
         for (const pool of pools) {
           pool.is_upgraded = await this.ws.call('pool.is_upgraded', [pool.id]).toPromise();
@@ -1988,20 +1993,20 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.addDatasetFormComponent = new DatasetFormComponent(this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService);
   }
 
-  addZvol(id: string, isNew: boolean) {
+  addZvol(id: string, isNew: boolean): void {
     this.addZvolComponent.setParent(id);
     this.addZvolComponent.isNew = isNew;
     this.modalService.open('slide-in-form', this.addZvolComponent, id);
   }
 
-  addDataset(pool: any, id: string) {
+  addDataset(pool: any, id: string): void {
     this.addDatasetFormComponent.setParent(id);
     this.addDatasetFormComponent.setVolId(pool);
     this.addDatasetFormComponent.setTitle(T('Add Dataset'));
     this.modalService.open('slide-in-form', this.addDatasetFormComponent, id);
   }
 
-  editDataset(pool: any, id: string) {
+  editDataset(pool: any, id: string): void {
     this.editDatasetFormComponent = new DatasetFormComponent(this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService);
 
     this.editDatasetFormComponent.setPk(id);
@@ -2010,7 +2015,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.modalService.open('slide-in-form', this.editDatasetFormComponent, id);
   }
 
-  createPool() {
+  createPool(): void {
     this.router.navigate(['/storage/manager']);
   }
 }

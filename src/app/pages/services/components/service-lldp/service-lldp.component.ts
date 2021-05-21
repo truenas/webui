@@ -2,20 +2,20 @@ import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FormControl, Validators } from '@angular/forms';
+import { FormControl, ValidatorFn, Validators } from '@angular/forms';
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/services/components/service-lldp';
 import { RestService, WebSocketService, ServicesService } from '../../../../services';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'lldp-edit',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class ServiceLLDPComponent {
-  protected queryCall = 'lldp.config';
-  protected route_success: string[] = ['services'];
+export class ServiceLLDPComponent implements FormConfiguration {
+  queryCall: 'lldp.config' = 'lldp.config';
+  route_success: string[] = ['services'];
   title = helptext.formTitle;
 
   fieldConfig: FieldConfig[] = [];
@@ -54,7 +54,7 @@ export class ServiceLLDPComponent {
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected services: ServicesService) {}
 
-  afterInit(entityEdit: EntityFormComponent) {
+  afterInit(entityEdit: EntityFormComponent): void {
     entityEdit.submitFunction = (body) => this.ws.call('lldp.update', [body]);
 
     this.services.getLLDPCountries().subscribe((res) => {
@@ -67,7 +67,7 @@ export class ServiceLLDPComponent {
     });
   }
 
-  countryValidator(code: string) {
+  countryValidator(code: string): ValidatorFn {
     const self = this;
     return function validCode(control: FormControl) {
       const config = self.fieldConfig.find((c) => c.name === code);

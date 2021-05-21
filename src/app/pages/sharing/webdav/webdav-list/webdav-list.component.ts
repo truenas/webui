@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
@@ -8,17 +9,16 @@ import { helptext_sharing_webdav } from 'app/helptext/sharing';
   selector: 'webdav-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-
-export class WebdavListComponent {
+export class WebdavListComponent implements InputTableConf {
   title = 'WebDAV';
-  protected queryCall = 'sharing.webdav.query';
-  protected wsDelete = 'sharing.webdav.delete';
+  queryCall: 'sharing.webdav.query' = 'sharing.webdav.query';
+  wsDelete: 'sharing.webdav.delete' = 'sharing.webdav.delete';
   busy: Subscription;
   sub: Subscription;
 
-  protected route_add: string[] = ['sharing', 'webdav', 'add'];
+  route_add: string[] = ['sharing', 'webdav', 'add'];
   protected route_add_tooltip = 'Add WebDAV Share';
-  protected route_edit: string[] = ['sharing', 'webdav', 'edit'];
+  route_edit: string[] = ['sharing', 'webdav', 'edit'];
   protected route_delete: string[] = ['sharing', 'webdav', 'delete'];
 
   columns: any[] = [

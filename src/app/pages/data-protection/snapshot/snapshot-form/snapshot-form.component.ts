@@ -10,23 +10,23 @@ import helptext from '../../../../helptext/data-protection/snapshot/snapshot-for
 import { DialogService, StorageService, TaskService } from '../../../../services';
 import { FieldConfig, UnitType } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-cron-snapshot-task-add',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [TaskService],
 })
-export class SnapshotFormComponent implements OnDestroy {
-  protected queryCall = 'pool.snapshottask.query';
-  protected addCall = 'pool.snapshottask.create';
-  protected editCall = 'pool.snapshottask.update';
-  protected isEntity = true;
-  protected pk: number;
+export class SnapshotFormComponent implements FormConfiguration, OnDestroy {
+  queryCall: 'pool.snapshottask.query' = 'pool.snapshottask.query';
+  addCall: 'pool.snapshottask.create' = 'pool.snapshottask.create';
+  editCall: 'pool.snapshottask.update' = 'pool.snapshottask.update';
+  isEntity = true;
+  pk: number;
   protected dataset: any;
   protected dataset_disabled = false;
   protected datasetFg: any;
   protected dataset_subscription: Subscription;
-  protected save_button_enabled = true;
+  save_button_enabled = true;
   protected entityForm: EntityFormComponent;
   title: string;
   isNew = false;
@@ -130,7 +130,6 @@ export class SnapshotFormComponent implements OnDestroy {
     },
     { name: 'divider', divider: true },
   ]);
-  fieldConfig: FieldConfig;
 
   constructor(protected taskService: TaskService,
     protected storageService: StorageService,
@@ -145,7 +144,7 @@ export class SnapshotFormComponent implements OnDestroy {
     }
   }
 
-  async afterInit(entityForm: EntityFormComponent) {
+  async afterInit(entityForm: EntityFormComponent): Promise<void> {
     this.entityForm = entityForm;
     this.pk = entityForm.pk;
     this.isNew = entityForm.isNew;
@@ -187,13 +186,13 @@ export class SnapshotFormComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.dataset_subscription) {
       this.dataset_subscription.unsubscribe();
     }
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     data['snapshot_picker'] = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
     data['begin'] = data.schedule.begin;
     data['end'] = data.schedule.end;
@@ -203,7 +202,7 @@ export class SnapshotFormComponent implements OnDestroy {
     return data;
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     const lifetime = value.lifetime.split(' ');
     value['lifetime_value'] = lifetime[0];
     value['lifetime_unit'] = _.endsWith(lifetime[1], 'S') ? lifetime[1].substring(0, lifetime[1].length - 1) : lifetime[1];

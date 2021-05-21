@@ -43,9 +43,7 @@ export class EntityJobComponent implements OnInit {
     private ws: WebSocketService, public rest: RestService,
     @Inject(MAT_DIALOG_DATA) public data: any, translate: TranslateService, protected http: HttpClient) {}
 
-  ngOnInit() {
-    // this.dialogRef.updateSize('35%', '200px');
-
+  ngOnInit(): void {
     if (this.data.title) {
       this.setTitle(this.data.title);
     }
@@ -79,34 +77,34 @@ export class EntityJobComponent implements OnInit {
     });
   }
 
-  setCall(method: string, args?: any[]) {
+  setCall(method: string, args?: any[]): void {
     this.method = method;
     if (args) {
       this.args = args;
     }
   }
 
-  setDescription(desc: string) {
+  setDescription(desc: string): void {
     this.description = desc;
   }
 
-  setTitle(title: string) {
+  setTitle(title: string): void {
     this.title = title;
   }
 
-  enableRealtimeLogs(showRealtimeLogs: boolean) {
+  enableRealtimeLogs(showRealtimeLogs: boolean): void {
     this.showRealtimeLogs = showRealtimeLogs;
   }
 
-  changeAltMessage(msg: string) {
+  changeAltMessage(msg: string): void {
     this.altMessage = msg;
   }
 
-  disableProgressValue(hide: boolean) {
+  disableProgressValue(hide: boolean): void {
     this.hideProgressValue = hide;
   }
 
-  show() {
+  show(): void {
     this.ws.call('core.get_jobs', [
       [
         ['id', '=', this.jobId],
@@ -124,7 +122,7 @@ export class EntityJobComponent implements OnInit {
     });
   }
 
-  jobUpdate(job: any) {
+  jobUpdate(job: any): void {
     this.job = job;
     this.showAbortButton = this.job.abortable;
     if (job.progress) {
@@ -137,7 +135,7 @@ export class EntityJobComponent implements OnInit {
     }
   }
 
-  submit() {
+  submit(): void {
     this.ws.job(this.method, this.args)
       .subscribe(
         (res) => {
@@ -167,7 +165,7 @@ export class EntityJobComponent implements OnInit {
       );
   }
 
-  wspost(path: string, options: any) {
+  wspost(path: string, options: any): void {
     this.http.post(path, options).subscribe(
       (res) => {
         this.job = res;
@@ -183,7 +181,8 @@ export class EntityJobComponent implements OnInit {
       },
     );
   }
-  wsshow() {
+
+  wsshow(): void {
     this.ws.call('core.get_jobs', [
       [
         ['id', '=', this.jobId],
@@ -201,7 +200,7 @@ export class EntityJobComponent implements OnInit {
     });
   }
 
-  wsjobUpdate(job: any) {
+  wsjobUpdate(job: any): void {
     this.job = job;
     this.showAbortButton = this.job.abortable;
     if (job.fields) {
@@ -225,11 +224,11 @@ export class EntityJobComponent implements OnInit {
     }
   }
 
-  abortJob() {
+  abortJob(): void {
     this.ws.call('core.job_abort', [this.job.id]).subscribe();
   }
 
-  getRealtimeLogs() {
+  getRealtimeLogs(): void {
     this.realtimeLogsSubscribed = true;
     const subName = 'filesystem.file_tail_follow:' + this.job.logs_path;
     this.ws.sub(subName).subscribe((res) => {
@@ -240,7 +239,7 @@ export class EntityJobComponent implements OnInit {
     });
   }
 
-  scrollBottom() {
+  scrollBottom(): void {
     const cardContainer = document.getElementsByClassName('entity-job-dialog')[0];
     cardContainer.scrollTop = cardContainer.scrollHeight;
   }

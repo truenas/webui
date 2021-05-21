@@ -19,18 +19,19 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { UnlockDialogComponent } from './unlock-dialog/unlock-dialog.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-dataset-unlock',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class DatasetUnlockComponent implements OnDestroy {
-  protected queryCall = 'pool.dataset.encryption_summary';
-  protected updateCall = 'pool.dataset.unlock';
+export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
+  queryCall: 'pool.dataset.encryption_summary' = 'pool.dataset.encryption_summary';
+  updateCall = 'pool.dataset.unlock';
   route_success: string[] = ['storage'];
-  protected isEntity = true;
-  protected isNew = true;
-  protected pk: string;
+  isEntity = true;
+  isNew = true;
+  pk: string;
   protected path: string;
   protected entityForm: any;
   protected dialogOpen = false;
@@ -167,13 +168,13 @@ export class DatasetUnlockComponent implements OnDestroy {
     protected storageService: StorageService, protected dialogService: DialogService,
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
-  preInit(entityEdit: any) {
+  preInit(entityEdit: any): void {
     this.aroute.params.subscribe((params) => {
       this.pk = params['path'];
     });
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
     this.datasets = entityEdit.formGroup.controls['datasets'];
     this.datasets_fc = _.find(this.fieldConfig, { name: 'datasets' });
@@ -272,7 +273,7 @@ export class DatasetUnlockComponent implements OnDestroy {
     });
   }
 
-  setDisabled(fieldConfig: FieldConfig, formControl: FormControl, disable: boolean, hide: boolean) {
+  setDisabled(fieldConfig: FieldConfig, formControl: FormControl, disable: boolean, hide: boolean): void {
     fieldConfig.disabled = disable;
     fieldConfig['isHidden'] = hide;
     if (!hide) {
@@ -286,12 +287,12 @@ export class DatasetUnlockComponent implements OnDestroy {
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.key_file_subscription.unsubscribe();
     this.unlock_children_subscription.unsubscribe();
   }
 
-  customSubmit(body: any) {
+  customSubmit(body: any): void {
     const datasets = [];
     let num = 1; // only unlock the first dataset (the root) if unlock_children is disabled
     if (body['unlock_children']) {
@@ -358,7 +359,7 @@ export class DatasetUnlockComponent implements OnDestroy {
     });
   }
 
-  unlockSubmit(payload: any) {
+  unlockSubmit(payload: any): void {
     payload['recursive'] = this.unlock_children_fg.value;
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: helptext.unlocking_datasets_title }, disableClose: true });
     if (payload.key_file && this.subs) {
@@ -414,11 +415,11 @@ export class DatasetUnlockComponent implements OnDestroy {
     });
   }
 
-  go_back() {
+  go_back(): void {
     this.router.navigate(this.route_success);
   }
 
-  key_file_updater(file: any, parent: any) {
+  key_file_updater(file: any, parent: any): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };

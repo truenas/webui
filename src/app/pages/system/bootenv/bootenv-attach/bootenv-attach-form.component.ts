@@ -6,18 +6,19 @@ import * as _ from 'lodash';
 import { RestService, WebSocketService, DialogService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'bootenv-attach-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class BootEnvAttachFormComponent {
-  protected route_success: string[] = ['system', 'boot', 'status'];
-  protected isEntity = true;
-  protected addCall = 'boot.attach';
-  protected pk: any;
-  protected isNew = true;
+export class BootEnvAttachFormComponent implements FormConfiguration {
+  route_success: string[] = ['system', 'boot', 'status'];
+  isEntity = true;
+  addCall: 'boot.attach' = 'boot.attach';
+  pk: any;
+  isNew = true;
   protected dialogRef: any;
 
   protected entityForm: any;
@@ -45,14 +46,14 @@ export class BootEnvAttachFormComponent {
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected dialog: MatDialog, protected dialogService: DialogService) {}
 
-  preInit(entityForm: any) {
+  preInit(entityForm: any): void {
     this.route.params.subscribe((params) => {
       this.pk = params['pk'];
     });
     this.entityForm = entityForm;
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     let disksize = 0;
     this.entityForm = entityForm;
     this.diskChoice = _.find(this.fieldConfig, { name: 'dev' });
@@ -66,7 +67,7 @@ export class BootEnvAttachFormComponent {
     });
   }
 
-  customSubmit(entityForm: any) {
+  customSubmit(entityForm: any): void {
     const payload: any = {};
     payload['expand'] = entityForm.expand;
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Attach Device' }, disableClose: true });

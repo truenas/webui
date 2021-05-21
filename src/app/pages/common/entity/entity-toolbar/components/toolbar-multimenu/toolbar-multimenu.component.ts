@@ -14,7 +14,7 @@ import { Control } from '../../models/control.interface';
   styleUrls: ['toolbar-multimenu.component.scss'],
   templateUrl: 'toolbar-multimenu.component.html',
 })
-export class ToolbarMultimenuComponent extends iXAbstractObject implements OnInit, OnChanges {
+export class ToolbarMultimenuComponent extends iXAbstractObject implements OnInit {
   @Input() config?: ControlConfig;
   @Input() controller: Subject<any>;
   allSelected = false;
@@ -24,12 +24,7 @@ export class ToolbarMultimenuComponent extends iXAbstractObject implements OnIni
     super();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.config) {
-    }
-  }
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.selectStates.length = this.config.options.length;
     this.selectStates.fill(false);
     if (this.config.value) {
@@ -53,7 +48,7 @@ export class ToolbarMultimenuComponent extends iXAbstractObject implements OnIni
     this.updateController();
   }
 
-  onClick(value: any, index: number) {
+  onClick(value: any, index: number): void {
     if (this.selectStates[index]) {
       if (this.checkLength()) { this.allSelected = false; }
       const vIndex = this.values.indexOf(value);
@@ -65,18 +60,18 @@ export class ToolbarMultimenuComponent extends iXAbstractObject implements OnIni
     this.updateController();
   }
 
-  updateController() {
+  updateController(): void {
     this.config.value = this.values;
     const message: Control = { name: this.config.name, value: this.values };
     this.controller.next(message);
   }
 
-  checkLength() {
+  checkLength(): boolean {
     // return true;
     return this.values.length === this.selectStates.length;
   }
 
-  checkAll() {
+  checkAll(): void {
     this.allSelected = this.checkLength();
     if (!this.allSelected) {
       this.selectStates.fill(true);
@@ -88,7 +83,7 @@ export class ToolbarMultimenuComponent extends iXAbstractObject implements OnIni
     this.updateController();
   }
 
-  isChecked() {
+  isChecked(): boolean {
     return true;
   }
 }

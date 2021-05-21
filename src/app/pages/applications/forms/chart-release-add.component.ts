@@ -1,5 +1,8 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import {
+  chartsTrain, ixChartApp, latestVersion, officialCatalog,
+} from 'app/constants/catalog.constants';
 import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
 import { FormGroup } from '@angular/forms';
@@ -32,7 +35,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
   private dialogRef: any;
   hideCancel = true;
   summary: any = {};
-  summary_title = 'Chart Release Summary';
+  summaryTitle = 'Chart Release Summary';
   private entityWizard: any;
   private destroy$ = new Subject();
   // private isLinear = true;
@@ -63,7 +66,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
           name: 'tag',
           placeholder: helptext.chartForm.image.tag.placeholder,
           tooltip: helptext.chartForm.image.tag.tooltip,
-          value: 'latest',
+          value: latestVersion,
         },
         {
           type: 'select',
@@ -137,7 +140,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
           label: 'Add External Interface',
           box: true,
           width: '100%',
-          customEventMethod: this.onChangeExternalInterfaces,
           templateListField: [
             {
               type: 'select',
@@ -162,18 +164,18 @@ export class ChartReleaseAddComponent implements OnDestroy {
                   type: 'ipwithnetmask',
                   name: 'staticIP',
                   placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
-                  relation: [
-                    {
-                      action: 'ENABLE',
-                      when: [{
-                        name: 'ipam',
-                        value: 'static',
-                      }],
-                    },
-                  ],
                 },
               ],
               listFields: [],
+              relation: [
+                {
+                  action: 'SHOW',
+                  when: [{
+                    name: 'ipam',
+                    value: 'static',
+                  }],
+                },
+              ],
             },
             {
               type: 'list',
@@ -192,6 +194,15 @@ export class ChartReleaseAddComponent implements OnDestroy {
                 },
               ],
               listFields: [],
+              relation: [
+                {
+                  action: 'SHOW',
+                  when: [{
+                    name: 'ipam',
+                    value: 'static',
+                  }],
+                },
+              ],
             },
 
           ],
@@ -350,14 +361,14 @@ export class ChartReleaseAddComponent implements OnDestroy {
     });
   }
 
-  afterInit(entityWizard: EntityWizardComponent) {
+  afterInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
     this.summaryItems.forEach((item) => {
       this.makeSummary(item.step, item.fieldName, item.label);
     });
   }
 
-  parseSchema(catalogApp: any) {
+  parseSchema(catalogApp: any): void {
     try {
       const gpuConfiguration = catalogApp.schema.questions.find((question: any) => question.variable == 'gpuConfiguration');
 
@@ -371,28 +382,11 @@ export class ChartReleaseAddComponent implements OnDestroy {
         this.wizardConfig.push(gpuWizardConfig);
       }
     } catch (error) {
-      return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
+      this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
   }
 
-  onChangeExternalInterfaces(listComponent: FormListComponent) {
-    listComponent.listsFromArray.controls.forEach((externalInterface, index) => {
-      const staticRoutesFC = _.find(listComponent.config.listFields[index], { name: 'staticRoutes' });
-      const staticIPConfigurationsFC = _.find(listComponent.config.listFields[index], { name: 'staticIPConfigurations' });
-
-      (<FormGroup>externalInterface).controls['ipam'].valueChanges.subscribe((value) => {
-        if (value === 'static') {
-          staticIPConfigurationsFC.isHidden = false;
-          staticRoutesFC.isHidden = false;
-        } else {
-          staticIPConfigurationsFC.isHidden = true;
-          staticRoutesFC.isHidden = true;
-        }
-      });
-    });
-  }
-
-  makeSummary(step: string | number, fieldName: string | number, label: string | number) {
+  makeSummary(step: string | number, fieldName: string | number, label: string | number): void {
     (< FormGroup > this.entityWizard.formArray.get([step]).get(fieldName)).valueChanges
       .pipe(
         takeUntil(this.destroy$),
@@ -402,16 +396,13 @@ export class ChartReleaseAddComponent implements OnDestroy {
       });
   }
 
-  hideField(fieldName: any, show: boolean, entity: any) {
+  hideField(fieldName: any, show: boolean, entity: any): void {
     const target = _.find(this.fieldConfig, { name: fieldName });
     target['isHidden'] = show;
     entity.setDisabled(fieldName, show, show);
   }
 
-  customSubmit(data: any) {
-    const parsedData: any = {};
-    this.entityUtils.parseFormControlValues(data, parsedData);
-
+  customSubmit(data: any): void {
     let envVars = [];
     if (data.containerEnvironmentVariables && data.containerEnvironmentVariables.length > 0 && data.containerEnvironmentVariables[0].name) {
       envVars = data.containerEnvironmentVariables;
@@ -466,11 +457,11 @@ export class ChartReleaseAddComponent implements OnDestroy {
     }
 
     const payload = [{
-      catalog: 'OFFICIAL',
-      item: 'ix-chart',
+      catalog: officialCatalog,
+      item: ixChartApp,
       release_name: data.release_name,
-      train: 'charts',
-      version: 'latest',
+      train: chartsTrain,
+      version: latestVersion,
       values: {
         containerArgs: data.containerArgs,
         containerCommand: data.containerCommand,
@@ -498,8 +489,8 @@ export class ChartReleaseAddComponent implements OnDestroy {
       },
     }];
 
-    if (parsedData['gpuConfiguration']) {
-      (payload[0].values as any)['gpuConfiguration'] = parsedData['gpuConfiguration'];
+    if (data['gpuConfiguration']) {
+      (payload[0] as any).values['gpuConfiguration'] = data['gpuConfiguration'];
     }
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
@@ -518,7 +509,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }

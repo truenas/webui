@@ -1,7 +1,4 @@
 export class CommonUtils {
-  constructor() {
-  }
-
   versionCompare(a: string, b: string): number {
     if (a === b) {
       return 0;

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 
@@ -8,19 +9,22 @@ import { IscsiService, WebSocketService, AppLoaderService } from '../../../../..
 import { EntityUtils } from '../../../../common/entity/utils';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { T } from 'app/translate-marker';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 @Component({
   selector: 'app-iscsi-target-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [IscsiService],
 })
-export class TargetFormComponent {
-  protected queryCall = 'iscsi.target.query';
-  protected addCall = 'iscsi.target.create';
-  protected editCall = 'iscsi.target.update';
+export class TargetFormComponent implements FormConfiguration {
+  queryCall: 'iscsi.target.query' = 'iscsi.target.query';
+  addCall: 'iscsi.target.create' = 'iscsi.target.create';
+  editCall: 'iscsi.target.update' = 'iscsi.target.update';
   route_success: string[] = ['sharing', 'iscsi', 'target'];
-  protected customFilter: any[] = [[['id', '=']]];
-  protected isEntity = true;
+  customFilter: any[] = [[['id', '=']]];
+  isEntity = true;
 
   fieldSets: FieldSet[] = [
     {
@@ -140,8 +144,8 @@ export class TargetFormComponent {
     },
   ];
   fieldConfig: FieldConfig[];
-
-  private pk: any;
+  title = T('Add ISCSI Target');
+  pk: any;
   protected entityForm: any;
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -151,8 +155,8 @@ export class TargetFormComponent {
     protected ws: WebSocketService) {
     const basicFieldset = _.find(this.fieldSets, { class: 'basic' });
     this.ws.call('system.info').subscribe(
-      (res) => {
-        if (res.license && res.license.features.indexOf('FIBRECHANNEL') > -1) {
+      (systemInfo) => {
+        if (systemInfo.license && systemInfo.license.features.indexOf(LicenseFeature.FibreChannel) > -1) {
           _.find(basicFieldset.config, { name: 'mode' }).isHidden = false;
         }
       },
@@ -166,17 +170,17 @@ export class TargetFormComponent {
     const authGroupField = _.find(targetGroupFieldset.config, { name: 'groups' }).templateListField[3];
     const promise1 = new Promise((resolve, reject) => {
       this.iscsiService.listPortals().toPromise().then(
-        (protalRes) => {
-          for (let i = 0; i < protalRes.length; i++) {
-            let label = protalRes[i].tag;
-            if (protalRes[i].comment) {
-              label += ' (' + protalRes[i].comment + ')';
+        (portals) => {
+          for (let i = 0; i < portals.length; i++) {
+            let label = String(portals[i].tag);
+            if (portals[i].comment) {
+              label += ' (' + portals[i].comment + ')';
             }
-            portalGroupField.options.push({ label, value: protalRes[i].id });
+            portalGroupField.options.push({ label, value: portals[i].id });
           }
           resolve(true);
         },
-        (protalErr) => {
+        () => {
           resolve(false);
         },
       );
@@ -198,8 +202,8 @@ export class TargetFormComponent {
     });
     const promise3 = new Promise((resolve, reject) => {
       this.iscsiService.getAuth().toPromise().then(
-        (authRes: any[]) => {
-          const tags = _.uniq(authRes.map((item) => item.tag));
+        (accessRecords) => {
+          const tags = _.uniq(accessRecords.map((item) => item.tag));
           authGroupField.options.push({ label: 'None', value: null });
           for (const tag of tags) {
             authGroupField.options.push({ label: tag, value: tag });
@@ -217,7 +221,7 @@ export class TargetFormComponent {
     );
   }
 
-  preInit() {
+  preInit(): void {
     this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
@@ -226,12 +230,13 @@ export class TargetFormComponent {
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
+    this.title = entityForm.isNew ? T('Add ISCSI Target') : T('Edit ISCSI Target');
   }
 
-  customEditCall(value: any) {
+  customEditCall(value: any): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
       (res) => {

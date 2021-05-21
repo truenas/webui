@@ -9,19 +9,20 @@ import {
   DialogService, StorageService, WebSocketService, AppLoaderService, UserService,
 } from 'app/services';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-group-quota-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class GroupQuotaFormComponent {
+export class GroupQuotaFormComponent implements FormConfiguration {
   isEntity = true;
   entityForm: any;
   pk: string;
-  protected route_success: string[];
+  route_success: string[];
   searchedEntries: any[] = [];
   entryField: FieldConfig;
-  private isNew = true;
+  isNew = true;
   private dq: string;
   private oq: string;
   private selectedEntriesField: any;
@@ -100,12 +101,12 @@ export class GroupQuotaFormComponent {
     this.differ = differs.find([]).create(null);
   }
 
-  preInit(entityForm: EntityFormComponent) {
+  preInit(entityForm: EntityFormComponent): void {
     const paramMap: any = (<any> this.aroute.params).getValue();
     this.pk = paramMap.pk;
   }
 
-  async validateEntry(value: any) {
+  async validateEntry(value: any): Promise<void> {
     const validEntry = await this.userService.getGroupObject(value);
     if (!validEntry) {
       const chips = document.getElementsByTagName('mat-chip');
@@ -116,7 +117,7 @@ export class GroupQuotaFormComponent {
     this.allowSubmit();
   }
 
-  allowSubmit() {
+  allowSubmit(): void {
     if ((this.dq || this.oq)
         && (this.selectedEntriesValue.value && this.selectedEntriesValue.value.length > 0
         || this.searchedEntries && this.searchedEntries.length > 0)
@@ -129,14 +130,14 @@ export class GroupQuotaFormComponent {
 
   // This is here because selecting an item from autocomplete doesn't trigger value change
   // Unsubscribes automatically
-  ngDoCheck() {
+  ngDoCheck(): void {
     this.differ.diff(this.searchedEntries);
     if (this.searchedEntries.length > 0) {
       this.allowSubmit();
     }
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
     this.route_success = ['storage', 'pools', 'group-quotas', this.pk];
     this.selectedEntriesField = _.find(this.fieldConfig, { name: 'system_entries' });
@@ -144,9 +145,9 @@ export class GroupQuotaFormComponent {
     this.entryField = _.find(this.fieldSets.find((set) => set.name === helptext.groups.group_title).config,
       { name: 'searched_entries' });
 
-    this.ws.call('group.query').subscribe((res: any[]) => {
-      res.map((entry) => {
-        this.selectedEntriesField.options.push({ label: entry.group, value: entry.gid });
+    this.ws.call('group.query').subscribe((groups) => {
+      groups.forEach((group) => {
+        this.selectedEntriesField.options.push({ label: group.group, value: group.gid });
       });
     });
 
@@ -182,28 +183,28 @@ export class GroupQuotaFormComponent {
     });
   }
 
-  blurEvent(parent: any) {
+  blurEvent(parent: any): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'data_quota');
     }
   }
 
-  transformValue(parent: any, fieldname: string) {
+  transformValue(parent: any, fieldname: string): void {
     parent.entityForm.formGroup.controls[fieldname].setValue(parent.storageService.humanReadable || 0);
     parent.storageService.humanReadable = '';
   }
 
-  updateSearchOptions(value = '', parent: any) {
-    parent.userService.groupQueryDSCache(value).subscribe((items: any[]) => {
-      const entries: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        entries.push({ label: items[i].group, value: items[i].group });
+  updateSearchOptions(value = '', parent: any): void {
+    (parent.userService as UserService).groupQueryDSCache(value).subscribe((groups) => {
+      const groupOptions: Option[] = [];
+      for (let i = 0; i < groups.length; i++) {
+        groupOptions.push({ label: groups[i].group, value: groups[i].group });
       }
-      parent.entryField.searchOptions = entries;
+      parent.entryField.searchOptions = groupOptions;
     });
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     const payload: any[] = [];
     if (!data.system_entries) {
       data.system_entries = [];

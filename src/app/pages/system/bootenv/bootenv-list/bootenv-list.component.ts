@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { DialogService } from 'app/services';
 import * as moment from 'moment';
 import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
@@ -27,14 +28,14 @@ export class BootEnvironmentListComponent implements OnDestroy {
 
   title = T('Boot Environments');
   protected resource_name = 'system/bootenv';
-  protected queryCall = 'bootenv.query';
+  protected queryCall: 'bootenv.query' = 'bootenv.query';
   protected route_add: string[] = ['system', 'boot', 'create'];
   protected route_delete: string[] = ['system', 'boot', 'delete'];
-  protected wsDelete = 'bootenv.delete';
-  protected wsMultiDelete = 'core.bulk';
+  protected wsDelete: 'bootenv.delete' = 'bootenv.delete';
+  protected wsMultiDelete: 'core.bulk' = 'core.bulk';
   protected entityList: EntityTableComponent;
-  protected wsActivate = 'bootenv.activate';
-  protected wsKeep = 'bootenv.set_attribute';
+  protected wsActivate: 'bootenv.activate' = 'bootenv.activate';
+  protected wsKeep: 'bootenv.set_attribute' = 'bootenv.set_attribute';
   protected loaderOpen = false;
   busy: Subscription;
   size_consumed: string;
@@ -68,14 +69,14 @@ export class BootEnvironmentListComponent implements OnDestroy {
     },
   };
 
-  preInit() {
+  preInit(): void {
     this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res) => {
       this.scrub_interval = res.boot_scrub;
       this.updateBootState();
     });
   }
 
-  dataHandler(entityList: any) {
+  dataHandler(entityList: any): void {
     entityList.rows.forEach((row: any) => {
       if (row.active !== '-' && row.active !== '') {
         row.hideCheckbox = true;
@@ -84,7 +85,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
     });
   }
 
-  rowValue(row: any, attr: string) {
+  rowValue(row: any, attr: string): any {
     if (attr === 'created') {
       return this.localeService.formatDateTime(row.created.$date);
     }
@@ -101,18 +102,18 @@ export class BootEnvironmentListComponent implements OnDestroy {
     return row[attr];
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
   }
 
-  isActionVisible(actionId: string, row: any) {
+  isActionVisible(actionId: string, row: any): boolean {
     if (actionId == 'edit' || actionId == 'add') {
       return false;
     }
     return true;
   }
 
-  getActions(row: any) {
+  getActions(row: any): EntityTableAction[] {
     const actions = [];
     if (!row.active.includes('Reboot')) {
       actions.push({
@@ -186,7 +187,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
       });
     }
 
-    return actions;
+    return actions as EntityTableAction[];
   }
 
   multiActions: any[] = [{
@@ -205,7 +206,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
     },
   }];
 
-  getSelectedNames(selectedBootenvs: any) {
+  getSelectedNames(selectedBootenvs: any): any[] {
     const selected: any[] = [];
     for (const i in selectedBootenvs) {
       if (selectedBootenvs[i].active === '-' || selectedBootenvs[i].active === '') {
@@ -215,13 +216,13 @@ export class BootEnvironmentListComponent implements OnDestroy {
     return selected;
   }
 
-  wsMultiDeleteParams(selected: any) {
+  wsMultiDeleteParams(selected: any): any[] {
     const params: any[] = ['bootenv.do_delete'];
     params.push(this.getSelectedNames(selected));
     return params;
   }
 
-  doActivate(id: string) {
+  doActivate(id: string): void {
     this.dialog.confirm(T('Activate'), T('Activate this Boot Environment?'), false, helptext_system_bootenv.list_dialog_activate_action).subscribe((res: boolean) => {
       if (res) {
         this.loader.open();
@@ -258,7 +259,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
     });
   }
 
-  toggleKeep(id: string, status: any) {
+  toggleKeep(id: string, status: any): void {
     if (!status) {
       this.dialog.confirm(T('Keep'), T('Keep this Boot Environment?'), false, helptext_system_bootenv.list_dialog_keep_action).subscribe((res: boolean) => {
         if (res) {
@@ -373,13 +374,13 @@ export class BootEnvironmentListComponent implements OnDestroy {
     ];
   }
 
-  goToStatus() {
+  goToStatus(): void {
     this._router.navigate(new Array('').concat(
       ['system', 'boot', 'status'],
     ));
   }
 
-  scrub() {
+  scrub(): void {
     this.dialog.confirm(T('Scrub'), T('Start the scrub now?'), false, helptext_system_bootenv.list_dialog_scrub_action).subscribe((res: boolean) => {
       if (res) {
         this.loader.open();
@@ -396,7 +397,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.getAdvancedConfig) {
       this.getAdvancedConfig.unsubscribe();
     }

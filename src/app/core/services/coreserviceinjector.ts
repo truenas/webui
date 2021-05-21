@@ -13,7 +13,7 @@ export let CoreServiceInjector: Injector;
  * which trying to make changes after using `import {CoreServiceInjector}` would throw:
  * "TS2539: Cannot assign to 'CoreServiceInjector' because it is not a variable".
  */
-export function setCoreServiceInjector(injector: Injector) {
+export function setCoreServiceInjector(injector: Injector): void {
   if (CoreServiceInjector) {
     // Should not happen
     console.error('Programming error: CoreServiceInjector was already set');

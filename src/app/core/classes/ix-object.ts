@@ -8,7 +8,7 @@ export abstract class iXObject {
     this.id = 'id-' + UUID.UUID();
   }
 
-  get element() {
+  get element(): HTMLElement {
     return this._element;
   }
 

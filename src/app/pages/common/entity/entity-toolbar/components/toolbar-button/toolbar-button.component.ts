@@ -32,7 +32,7 @@ export class ToolbarButtonComponent extends iXAbstractObject {
     super();
   }
 
-  onClick(value: any) {
+  onClick(value: any): void {
     this.config.value = value;
     this.controller.next({ name: this.config.name, value: this.config.value });
   }

@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { User } from 'app/interfaces/user.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs/Observable';
 import helptext from '../../../../helptext/account/user-form';
 import {
   AppLoaderService, StorageService, UserService, WebSocketService, ValidationService,
@@ -10,24 +13,25 @@ import {
 import { ModalService } from 'app/services/modal.service';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-user-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [UserService],
 })
-export class UserFormComponent {
-  protected queryCall = 'user.query';
-  protected addCall = 'user.create';
-  protected editCall = 'user.update';
-  protected pk: string;
-  protected queryKey = 'id';
-  protected isEntity = true;
-  protected isNew: boolean;
+export class UserFormComponent implements FormConfiguration {
+  queryCall: 'user.query' = 'user.query';
+  addCall: 'user.create' = 'user.create';
+  editCall: 'user.update' = 'user.update';
+  pk: string;
+  queryKey = 'id';
+  isEntity = true;
+  isNew: boolean;
   entityForm: any;
   protected namesInUse: string[] = [];
   private homeSharePath: string;
-  protected columnsOnForm = 2;
+  columnsOnForm = 2;
   title: string;
 
   fieldSetDisplay = 'default';// default | carousel | stepper
@@ -277,7 +281,7 @@ export class UserFormComponent {
     },
   ]);
 
-  protected custActions = [
+  custActions = [
     {
       id: 'download_sshpubkey',
       name: helptext.user_form_download_key,
@@ -306,12 +310,12 @@ export class UserFormComponent {
     private modalService: ModalService) {
     this.ws.call('user.query').subscribe(
       (res) => {
-        this.namesInUse.push(...res.map((user: any) => user.username));
+        this.namesInUse.push(...res.map((user) => user.username));
       },
     );
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.pk = entityForm.pk;
     this.loader.callStarted.emit();
     this.entityForm = entityForm;
@@ -353,16 +357,18 @@ export class UserFormComponent {
       });
 
       this.ws.call('sharing.smb.query', [[['enabled', '=', true], ['home', '=', true]]])
-      // On a new form, if there is a home SMB share, populate the 'home' form explorer with it...
-        .subscribe((res) => {
-          if (res.length > 0) {
-            this.homeSharePath = res[0].path;
-            this.entityForm.formGroup.controls['home'].setValue(this.homeSharePath);
-            // ...then add on /<username>
-            this.entityForm.formGroup.controls['username'].valueChanges.subscribe((value: string) => {
-              this.entityForm.formGroup.controls['home'].setValue(`${this.homeSharePath}/${value}`);
-            });
+        .subscribe((shares) => {
+          // On a new form, if there is a home SMB share, populate the 'home' form explorer with it...
+          if (!shares.length) {
+            return;
           }
+
+          this.homeSharePath = shares[0].path;
+          this.entityForm.formGroup.controls['home'].setValue(this.homeSharePath);
+          // ...then add on /<username>
+          this.entityForm.formGroup.controls['username'].valueChanges.subscribe((value: string) => {
+            this.entityForm.formGroup.controls['home'].setValue(`${this.homeSharePath}/${value}`);
+          });
         });
       // If there is no home share, the 'home' path is populated from helptext
     }
@@ -376,18 +382,18 @@ export class UserFormComponent {
     }
 
     /* list groups */
-    this.ws.call('group.query').subscribe((res) => {
+    this.ws.call('group.query').subscribe((groups) => {
       this.loader.callDone.emit(status);
       this.group = this.fieldSets.config('group');
       this.groups = this.fieldSets.config('groups');
-      for (let i = 0; i < res.length; i++) {
-        this.group.options.push({ label: res[i].group, value: res[i].id });
-        this.groups.options.push({ label: res[i].group, value: res[i].id });
+      for (let i = 0; i < groups.length; i++) {
+        this.group.options.push({ label: groups[i].group, value: groups[i].id });
+        this.groups.options.push({ label: groups[i].group, value: groups[i].id });
       }
     });
 
     /* list users */
-    const filter = ['id', '=', parseInt(this.pk, 10)];
+    const filter: QueryFilter<User> = ['id', '=', parseInt(this.pk, 10)];
     this.ws.call('user.query', [[filter]]).subscribe(async (res) => {
       if (res.length !== 0 && res[0].home !== '/nonexistent') {
         this.storageService.filesystemStat(res[0].home).subscribe((stat) => {
@@ -459,7 +465,7 @@ export class UserFormComponent {
     }
   }
 
-  clean_uid(value: any) {
+  clean_uid(value: any): any {
     delete value['password_conf'];
     if (value['uid'] === null) {
       delete value['uid'];
@@ -467,7 +473,7 @@ export class UserFormComponent {
     return value;
   }
 
-  beforeSubmit(entityForm: any) {
+  beforeSubmit(entityForm: any): void {
     entityForm.email = entityForm.email === '' ? null : entityForm.email;
 
     if (this.isNew) {
@@ -495,11 +501,13 @@ export class UserFormComponent {
       delete entityForm['group_create'];
     }
   }
-  submitFunction(this: any, entityForm: any) {
+
+  submitFunction(this: any, entityForm: any): Observable<any> {
     delete entityForm['password_conf'];
     return this.ws.call('user.update', [this.pk, entityForm]);
   }
-  blurEvent(parent: any) {
+
+  blurEvent(parent: any): void {
     if (parent.entityForm && parent.entityForm.isNew) {
       let username: string;
       const fullname = parent.entityForm.formGroup.controls.full_name.value.split(/[\s,]+/);
@@ -517,14 +525,15 @@ export class UserFormComponent {
       }
     }
   }
-  blurEvent2(parent: { fieldSets: FieldSets; entityForm: EntityFormComponent }) {
+
+  blurEvent2(parent: { fieldSets: FieldSets; entityForm: EntityFormComponent }): void {
     if (parent.entityForm) {
       const username = parent.entityForm.formGroup.controls.username.value;
       parent.fieldSets.config('username').warnings = username.length > 8 ? helptext.user_form_blur_event2_warning : null;
     }
   }
 
-  afterSubmit() {
+  afterSubmit(): void {
     this.modalService.refreshTable();
   }
 }

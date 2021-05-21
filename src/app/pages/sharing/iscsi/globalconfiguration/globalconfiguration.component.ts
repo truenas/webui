@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { ProductType } from '../../../../enums/product-type.enum';
 
@@ -10,14 +11,15 @@ import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 import { shared, helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { T } from 'app/translate-marker';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-iscsi-globalconfiguration',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class GlobalconfigurationComponent {
-  protected queryCall = 'iscsi.global.config';
-  protected editCall = 'iscsi.global.update';
+export class GlobalconfigurationComponent implements FormConfiguration {
+  queryCall: 'iscsi.global.config' = 'iscsi.global.config';
+  editCall: 'iscsi.global.update' = 'iscsi.global.update';
   private getProdType: Subscription;
 
   fieldSets: FieldSet[] = [
@@ -67,7 +69,7 @@ export class GlobalconfigurationComponent {
     private sysGeneralService: SystemGeneralService,
   ) {}
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     entityForm.submitFunction = entityForm.editCall;
     this.getProdType = this.sysGeneralService.getProductType.subscribe((res) => {
       if (res === ProductType.Enterprise) {
@@ -77,22 +79,22 @@ export class GlobalconfigurationComponent {
     });
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     if (value.pool_avail_threshold == '') {
       value.pool_avail_threshold = null;
     }
   }
 
-  afterSubmit() {
+  afterSubmit(): void {
     this.ws.call('service.query', [[]]).subscribe((service_res) => {
-      const service = _.find(service_res, { service: 'iscsitarget' });
-      if (!service['enable']) {
+      const service = _.find(service_res, { service: ServiceName.Iscsi });
+      if (!service.enable) {
         this.dialogService.confirm(shared.dialog_title, shared.dialog_message,
           true, shared.dialog_button).subscribe((dialogRes: boolean) => {
           if (dialogRes) {
             this.loader.open();
-            this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
-              this.ws.call('service.start', [service.service]).subscribe((startRes) => {
+            this.ws.call('service.update', [service.id, { enable: true }]).subscribe(() => {
+              this.ws.call('service.start', [service.service]).subscribe(() => {
                 this.loader.close();
                 this.dialogService.Info(T('iSCSI') + shared.dialog_started_title,
                   T('The iSCSI') + shared.dialog_started_message, '250px');

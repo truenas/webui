@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
+import { CoreEvent } from 'app/interfaces/events';
 import * as domHelper from '../../helpers/dom.helper';
 import { RestService, WebSocketService } from 'app/services';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { ApiService } from 'app/core/services/api.service';
 import { Router } from '@angular/router';
@@ -318,7 +319,7 @@ export class ThemeService {
     });
   }
 
-  onPreferences(evt: CoreEvent) {
+  onPreferences(evt: CoreEvent): void {
     if (evt.data.customThemes) {
       this.customThemes = evt.data.customThemes;
     }
@@ -341,12 +342,12 @@ export class ThemeService {
     }
   }
 
-  resetToDefaultTheme() {
+  resetToDefaultTheme(): void {
     this.activeTheme = this.defaultTheme;
     this.changeTheme(this.defaultTheme);
   }
 
-  get isDefaultTheme() {
+  get isDefaultTheme(): boolean {
     return this.activeTheme == this.defaultTheme;
   }
 
@@ -374,16 +375,16 @@ export class ThemeService {
     return this.freenasThemes[this.freeThemeDefaultIndex];
   }
 
-  changeTheme(theme: string) {
+  changeTheme(theme: string): void {
     this.core.emit({ name: 'ChangeThemePreference', data: theme, sender: this });
   }
 
-  saveCurrentTheme() {
+  saveCurrentTheme(): void {
     const theme = this.currentTheme();
     this.core.emit({ name: 'ChangeThemePreference', data: theme.name });
   }
 
-  setCssVars(theme: Theme) {
+  setCssVars(theme: Theme): void {
     // Sets CSS Custom Properties for an entire theme
     const keys = Object.keys(theme) as (keyof Theme)[];
 
@@ -457,11 +458,11 @@ export class ThemeService {
     }
   }
 
-  hexToRGB(str: string) {
+  hexToRGB(str: string): { hex: string; rgb: number[] } {
     return this.utils.hexToRGB(str);
   }
 
-  get customThemes() {
+  get customThemes(): Theme[] {
     return this._customThemes;
   }
 

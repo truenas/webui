@@ -3,6 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { CoreEvent } from 'app/interfaces/events';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { T } from '../../../../translate-marker';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
@@ -12,18 +13,18 @@ import { DialogService } from '../../../../services/dialog.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { MessageService } from '../../../common/entity/entity-form/services/message.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { EntityUtils } from '../../../common/entity/utils';
 import { take } from 'rxjs/operators';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-manualupdate',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [MessageService],
 })
-export class ManualUpdateComponent extends ViewControllerComponent {
+export class ManualUpdateComponent extends ViewControllerComponent implements FormConfiguration {
   formGroup: FormGroup;
   route_success: string[] = ['system', 'update'];
   protected dialogRef: any;
@@ -33,7 +34,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
   isUpdateRunning = false;
   updateMethod = 'update.update';
   saveSubmitText = T('Apply Update');
-  protected fieldConfig: FieldConfig[] = [
+  fieldConfig: FieldConfig[] = [
     {
       type: 'paragraph',
       name: 'version',
@@ -96,7 +97,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
     this.core.emit({ name: 'SysInfoRequest', sender: this });
   }
 
-  preInit(entityForm: any) {
+  preInit(entityForm: any): void {
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         if (is_ha) {
@@ -109,19 +110,24 @@ export class ManualUpdateComponent extends ViewControllerComponent {
       });
     }
 
-    this.ws.call('pool.query').subscribe((pools: any[]) => {
-      if (pools) {
-        pools.forEach((pool) => {
-          if (pool.is_decrypted) {
-            _.find(this.fieldConfig, { name: 'filelocation' }).options.push({
-              label: '/mnt/' + pool.name, value: '/mnt/' + pool.name,
-            });
-          }
-        });
+    this.ws.call('pool.query').subscribe((pools) => {
+      if (!pools) {
+        return;
       }
+
+      pools.forEach((pool) => {
+        if (!pool.is_decrypted) {
+          return;
+        }
+
+        _.find(this.fieldConfig, { name: 'filelocation' }).options.push({
+          label: '/mnt/' + pool.name, value: '/mnt/' + pool.name,
+        });
+      });
     });
   }
-  afterInit(entityForm: any) {
+
+  afterInit(entityForm: any): void {
     this.ws.call('user.query', [[['id', '=', 1]]]).subscribe((ures) => {
       if (ures[0].attributes.preferences['rebootAfterManualUpdate'] === undefined) {
         ures[0].attributes.preferences['rebootAfterManualUpdate'] = false;
@@ -147,7 +153,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
     entityForm.submitFunction = this.customSubmit;
   }
 
-  customSubmit(entityForm: any) {
+  customSubmit(entityForm: any): void {
     this.save_button_enabled = false;
     this.systemService.updateRunningNoticeSent.emit();
     this.ws.call('user.query', [[['id', '=', 1]]]).subscribe((ures) => {
@@ -200,7 +206,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
     });
   }
 
-  updater(file: any, parent: any) {
+  updater(file: any, parent: any): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.save_button_enabled = true;
@@ -222,7 +228,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
     }
   }
 
-  showRunningUpdate(jobId: number) {
+  showRunningUpdate(jobId: number): void {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Update' }, disableClose: true });
     if (this.isHA) {
       this.dialogRef.componentInstance.disableProgressValue(true);
@@ -237,7 +243,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
     });
   }
 
-  checkForUpdateRunning() {
+  checkForUpdateRunning(): void {
     this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).subscribe(
       (res) => {
         if (res && res.length > 0) {

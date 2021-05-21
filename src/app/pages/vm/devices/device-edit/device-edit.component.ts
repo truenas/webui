@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { DatasetType } from 'app/enums/dataset-type.enum';
+import { CoreEvent } from 'app/interfaces/events';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
@@ -14,16 +16,36 @@ import {
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import helptext from '../../../../helptext/vm/devices/device-add-edit';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { DialogService } from '../../../../services/dialog.service';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+
+interface DisplayDeviceAttributes {
+  bind: string;
+  password: string;
+  port: number;
+  password_configured: boolean;
+  resolution: string;
+  type: string;
+  wait: boolean;
+  web: boolean;
+}
+
+interface Device {
+  attributes: DisplayDeviceAttributes;
+  dtype: string;
+  id: number;
+  order: number;
+  vm: number;
+}
+
 @Component({
   selector: 'app-device-edit',
   templateUrl: './device-edit.component.html',
   styleUrls: ['./device-edit.component.scss'],
 })
 export class DeviceEditComponent implements OnInit {
-  protected updateCall = 'vm.device.update';
+  protected updateCall: 'vm.device.update' = 'vm.device.update';
   protected route_success: string[];
   deviceid: any;
   vmname: any;
@@ -41,6 +63,7 @@ export class DeviceEditComponent implements OnInit {
   displayFormGroup: any;
   rootpwd: any;
   vminfo: any;
+  vmId: number;
   boot: any;
   error: string;
   private productType = window.localStorage.getItem('product_type') as ProductType;
@@ -282,8 +305,7 @@ export class DeviceEditComponent implements OnInit {
       placeholder: helptext.resolution_placeholder,
       tooltip: helptext.resolution_tooltip,
       type: 'select',
-      options: helptext.resolution_options,
-      isHidden: true,
+      options: [],
     },
     {
       name: 'bind',
@@ -297,8 +319,18 @@ export class DeviceEditComponent implements OnInit {
       placeholder: helptext.password_placeholder,
       tooltip: helptext.password_tooltip,
       type: 'input',
+      togglePw: true,
       inputType: 'password',
       validation: helptext.password_validation,
+    },
+    {
+      name: 'type',
+      placeholder: helptext.type_placeholder,
+      type: 'select',
+      options: [
+        { label: T('VNC'), value: 'VNC' },
+        { label: T('SPICE'), value: 'SPICE' },
+      ],
     },
     {
       name: 'web',
@@ -329,7 +361,7 @@ export class DeviceEditComponent implements OnInit {
     private core: CoreService,
     protected vmService: VmService) {}
 
-  preInit() {
+  preInit(): void {
     // Display
     this.ws.call('vm.device.bind_choices').subscribe((res) => {
       if (res && Object.keys(res).length > 0) {
@@ -337,6 +369,13 @@ export class DeviceEditComponent implements OnInit {
         Object.keys(res).forEach((address) => {
           this.ipAddress.options.push({ label: address, value: address });
         });
+      }
+    });
+
+    this.ws.call('vm.resolution_choices').subscribe((res) => {
+      const resolution = _.find(this.displayFieldConfig, { name: 'resolution' });
+      for (const key in res) {
+        resolution.options.push({ label: key, value: res[key] });
       }
     });
 
@@ -364,21 +403,21 @@ export class DeviceEditComponent implements OnInit {
     });
   }
   // Setting values coming from backend and populating formgroup with it.
-  setgetValues(activeformgroup: FormGroup, deviceInformation: any[]) {
+  setgetValues(activeformgroup: FormGroup, deviceInformation: any[]): void {
     for (const value in deviceInformation) {
       const fg = activeformgroup.controls[value];
       if (typeof fg !== 'undefined') {
         fg.setValue(deviceInformation[value]);
-      } else {
-        console.log(deviceInformation, value, activeformgroup);
       }
     }
   }
-  async ngOnInit() {
+
+  async ngOnInit(): Promise<void> {
     this.preInit();
     this.aroute.params.subscribe((params) => {
       this.deviceid = parseInt(params['pk'], 10);
       this.vmname = params['name'];
+      this.vmId = params['vmid'];
       this.route_success = ['vm', params['vmid'], 'devices', this.vmname];
     });
 
@@ -447,6 +486,13 @@ export class DeviceEditComponent implements OnInit {
       } else if (res === 'DISPLAY') {
         this.activeFormGroup = this.displayFormGroup;
         this.isCustActionVisible = false;
+        this.ws.call('vm.get_display_devices', [this.vmId]).subscribe((devices: Device[]) => {
+          if (devices.length > 1) {
+            _.find(this.displayFieldConfig, { name: 'type' }).isHidden = true;
+          }
+        }, (err) => {
+          new EntityUtils().handleWSError(this, err, this.dialogService);
+        });
       }
       this.setgetValues(this.activeFormGroup, deviceInformation);
     });
@@ -460,14 +506,13 @@ export class DeviceEditComponent implements OnInit {
 
     if (!this.productType.includes(ProductType.Scale)) {
       _.find(this.displayFieldConfig, { name: 'wait' }).isHidden = false;
-      _.find(this.displayFieldConfig, { name: 'resolution' }).isHidden = false;
     }
 
     this.afterInit();
   }
 
-  afterInit() {
-    this.ws.call('pool.dataset.query', [[['type', '=', 'VOLUME']], { extra: { properties: ['id'] } }]).subscribe((zvols: any[]) => {
+  afterInit(): void {
+    this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]], { extra: { properties: ['id'] } }]).subscribe((zvols) => {
       zvols.forEach((zvol) => {
         _.find(this.diskFieldConfig, { name: 'path' }).options.push(
           {
@@ -490,11 +535,11 @@ export class DeviceEditComponent implements OnInit {
     ];
   }
 
-  goBack() {
+  goBack(): void {
     this.router.navigate(new Array('/').concat(this.route_success));
   }
 
-  onSubmit(event: Event) {
+  onSubmit(event: Event): void {
     this.aroute.params.subscribe((params) => {
       const deviceValue = _.cloneDeep(this.activeFormGroup.value);
       const deviceOrder = deviceValue['order'];

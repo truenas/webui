@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ServiceName } from 'app/enums/service-name.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_afp, shared } from 'app/helptext/sharing';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -13,26 +14,27 @@ import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DialogService, WebSocketService } from '../../../../services';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-afp-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class AFPFormComponent implements OnDestroy {
-  protected route_success = ['sharing', 'afp'];
-  protected queryCall = 'sharing.afp.query';
-  protected editCall = 'sharing.afp.update';
-  protected addCall = 'sharing.afp.create';
-  protected pk: number;
-  protected queryKey = 'id';
-  protected isEntity = true;
-  protected isBasicMode = true;
+export class AFPFormComponent implements FormConfiguration, OnDestroy {
+  route_success = ['sharing', 'afp'];
+  queryCall: 'sharing.afp.query' = 'sharing.afp.query';
+  editCall: 'sharing.afp.update' = 'sharing.afp.update';
+  addCall: 'sharing.afp.create' = 'sharing.afp.create';
+  pk: number;
+  queryKey = 'id';
+  isEntity = true;
+  isBasicMode = true;
   afp_timemachine: any;
   afp_timemachine_quota: any;
   afp_timemachine_subscription: any;
   title = helptext_sharing_afp.formTitle;
   private namesInUse: string[] = [];
-  private fieldSets = new FieldSets([
+  fieldSets = new FieldSets([
     {
       name: helptext_sharing_afp.fieldset_general,
       class: 'general',
@@ -262,7 +264,7 @@ export class AFPFormComponent implements OnDestroy {
     { name: 'divider_last', divider: true },
   ]);
 
-  protected advanced_field: any[] = [
+  advanced_field: any[] = [
     'comment',
     'upriv',
     'auxparams',
@@ -338,7 +340,7 @@ export class AFPFormComponent implements OnDestroy {
       });
   }
 
-  isCustActionVisible(actionId: string) {
+  isCustActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode === true) {
@@ -347,7 +349,7 @@ export class AFPFormComponent implements OnDestroy {
     return true;
   }
 
-  preInit() {
+  preInit(): void {
     const paramMap: any = (<any> this.aroute.params).getValue();
     if (paramMap['pk'] === undefined) {
       this.fieldSets.config('umask').value = '000';
@@ -358,7 +360,7 @@ export class AFPFormComponent implements OnDestroy {
     this.pk = parseInt(paramMap['pk'], 10) || undefined;
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     if (!this.pk) {
       this.openInfoDialog();
     }
@@ -383,11 +385,11 @@ export class AFPFormComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.afp_timemachine_subscription.unsubscribe();
   }
 
-  resourceTransformIncomingRestData(share: any) {
+  resourceTransformIncomingRestData(share: any): any {
     share.allow = share.allow.map((name: any) => ({ name }));
     share.deny = share.deny.map((name: any) => ({ name }));
     share.ro = share.ro.map((name: any) => ({ name }));
@@ -398,7 +400,7 @@ export class AFPFormComponent implements OnDestroy {
     return share;
   }
 
-  clean(share: any) {
+  clean(share: any): any {
     share.allow = (share.allow as any[]).filter((n) => !!n.name).map((name) => name.name);
     share.deny = (share.deny as any[]).filter((n) => !!n.name).map((name) => name.name);
     share.ro = (share.ro as any[]).filter((n) => !!n.name).map((name) => name.name);
@@ -409,10 +411,10 @@ export class AFPFormComponent implements OnDestroy {
     return share;
   }
 
-  afterSave(entityForm: any) {
+  afterSave(entityForm: any): void {
     this.ws.call('service.query', []).subscribe((res) => {
-      const service = _.find(res, { service: 'afp' });
-      if (service['enable']) {
+      const service = _.find(res, { service: ServiceName.Afp });
+      if (service.enable) {
         this.router.navigate(new Array('/').concat(
           this.route_success,
         ));
@@ -421,8 +423,8 @@ export class AFPFormComponent implements OnDestroy {
           shared.dialog_message, true, shared.dialog_button).subscribe((dialogRes: boolean) => {
           if (dialogRes) {
             entityForm.loader.open();
-            this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
-              this.ws.call('service.start', [service.service]).subscribe((startRes) => {
+            this.ws.call('service.update', [service.id, { enable: true }]).subscribe(() => {
+              this.ws.call('service.start', [service.service]).subscribe(() => {
                 entityForm.loader.close();
                 this.dialog.Info(T('AFP') + shared.dialog_started_title,
                   T('The AFP') + shared.dialog_started_message, '250px').subscribe(() => {
@@ -455,7 +457,7 @@ export class AFPFormComponent implements OnDestroy {
   }
 
   /* If user blurs name field with empty value, try to auto-populate based on path */
-  blurEventName(parent: { entityForm: EntityFormComponent }) {
+  blurEventName(parent: { entityForm: EntityFormComponent }): void {
     const pathControl = parent.entityForm.formGroup.controls['path'];
     const nameControl = parent.entityForm.formGroup.controls['name'];
     if (pathControl.value && !nameControl.value) {
@@ -463,7 +465,7 @@ export class AFPFormComponent implements OnDestroy {
     }
   }
 
-  openInfoDialog() {
+  openInfoDialog(): void {
     const conf: DialogFormConfiguration = {
       title: helptext_sharing_afp.smb_dialog.title,
       message: helptext_sharing_afp.smb_dialog.message,

@@ -19,7 +19,7 @@ export class SelectDialogComponent {
 
   constructor(public dialogRef: MatDialogRef < SelectDialogComponent >, protected translate: TranslateService) {}
 
-  switchSelection() {
+  switchSelection(): void {
     this.switchSelectionEmitter.emit(this.DisplaySelection);
   }
 }

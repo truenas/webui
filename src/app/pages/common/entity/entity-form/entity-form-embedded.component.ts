@@ -18,8 +18,10 @@ import {
   FormBuilder, FormControl, FormGroup, FormArray, Validators, Form,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CoreEvent } from 'app/interfaces/events';
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs/Observable';
 import { T } from '../../../../translate-marker';
 
 import { RestService, WebSocketService } from '../../../../services';
@@ -32,8 +34,6 @@ import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
 import { FieldRelationService } from './services/field-relation.service';
 import { Subscription, Subject } from 'rxjs';
-import { Formconfiguration } from './entity-form.component';
-import { CoreEvent } from 'app/core/services/core.service';
 
 export interface FormConfig {
   fieldSets?: any;
@@ -107,14 +107,18 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   saveSubmitStatus = '';
   actionButtonsAlign = 'center';
 
-  get controls() {
+  get controls(): FieldConfig[] {
     return this.fieldConfig.filter(({ type }) => type !== 'button');
   }
-  get changes() { return this.formGroup.valueChanges; }
-  get statusChanges() { return this.formGroup.statusChanges; }
-  get dirty() { return this.entityForm ? this.entityForm.dirty : false; }
-  get valid() { return this.formGroup.valid; }
-  get value() { return this.formGroup.value; }
+  get changes(): Observable<any> {
+    return this.formGroup.valueChanges;
+  }
+  get statusChanges(): Observable<any> {
+    return this.formGroup.statusChanges;
+  }
+  get dirty(): boolean { return this.entityForm ? this.entityForm.dirty : false; }
+  get valid(): boolean { return this.formGroup.valid; }
+  get value(): boolean { return this.formGroup.value; }
 
   templateTop: TemplateRef<any>;
   @ContentChildren(EntityTemplateDirective)
@@ -137,7 +141,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     protected loader: AppLoaderService,
     public translate: TranslateService) {}
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.templates.forEach((item) => {
       if (item.type === 'TOP') {
         this.templateTop = item.templateRef;
@@ -145,7 +149,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.conf.saveSubmitText) {
       this.saveSubmitText = this.conf.saveSubmitText;
     }
@@ -182,7 +186,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     }
   }
 
-  init() {
+  init(): void {
     // Setup Fields
     this.fieldConfig = this.conf.fieldConfig;
     this.actionButtonsAlign = this.conf.actionButtonsAlign;
@@ -220,7 +224,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     }
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.formGroup) {
       this.onFormGroupChanged();
     }
@@ -234,7 +238,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     }
   }
 
-  setControlChangeDetection() {
+  setControlChangeDetection(): void {
     this.formGroup.valueChanges.subscribe((evt) => {
       this.target.next({ name: 'FormGroupValueChanged', data: evt, sender: this.formGroup });
     });
@@ -245,7 +249,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     });
   }
 
-  onFormGroupChanged() {
+  onFormGroupChanged(): void {
     const controls = Object.keys(this.formGroup.controls);
     const configControls = this.controls.map((item) => item.name);
 
@@ -261,11 +265,11 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     const fg = { ...this.formGroup };
   }
 
-  goBack() {
+  goBack(): void {
     this.target.next({ name: 'FormCancelled', sender: this.conf });
   }
 
-  onSubmit(event: Event, eventName?: string) {
+  onSubmit(event: Event, eventName?: string): void {
     event.preventDefault();
     event.stopPropagation();
     this.error = null;
@@ -300,13 +304,13 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     }
   }
 
-  after(value: any) {
+  after(value: any): void {
     if (this.conf.afterSubmit) {
       this.conf.afterSubmit(value);
     }
   }
 
-  clearErrors() {
+  clearErrors(): void {
     for (let f = 0; f < this.fieldConfig.length; f++) {
       this.fieldConfig[f]['errors'] = '';
       this.fieldConfig[f]['hasErrors'] = false;
@@ -322,7 +326,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     return true;
   }
 
-  goConf() {
+  goConf(): void {
     let route = this.conf.route_conf;
     if (!route) {
       route = this.conf.route_success;
@@ -330,12 +334,12 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     this.router.navigate(new Array('/').concat(route));
   }
 
-  createControl(config: FieldConfig) {
+  createControl(config: FieldConfig): FormControl {
     const { disabled, validation, value } = config;
     return this.fb.control({ disabled, value }, validation);
   }
 
-  setDisabled(name: string, disable: boolean) {
+  setDisabled(name: string, disable: boolean): void {
     if (this.formGroup.controls[name]) {
       const method = disable ? 'disable' : 'enable';
       this.formGroup.controls[name][method]();
@@ -350,11 +354,11 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     });
   }
 
-  setValue(name: string, value: any) {
+  setValue(name: string, value: any): void {
     this.formGroup.controls[name].setValue(value, { emitEvent: true });
   }
 
-  setArrayValue(data: any[], formArray: any, name: string) {
+  setArrayValue(data: any[], formArray: any, name: string): void {
     let array_controls: any;
     for (const i in this.fieldConfig) {
       const config = this.fieldConfig[i];
@@ -380,7 +384,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     });
   }
 
-  setRelation(config: FieldConfig) {
+  setRelation(config: FieldConfig): void {
     const activations = this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
@@ -397,20 +401,20 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     }
   }
 
-  relationUpdate(config: FieldConfig, activations: any) {
+  relationUpdate(config: FieldConfig, activations: any): void {
     const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
       activations, this.formGroup,
     );
     this.setDisabled(config.name, tobeDisabled);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.sub) {
       this.sub.unsubscribe();
     }
   }
 
-  setHiddenFieldSets(fs: string[]) {
+  setHiddenFieldSets(fs: string[]): void {
     this.hiddenFieldSets = fs;
   }
 }

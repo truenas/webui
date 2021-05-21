@@ -139,7 +139,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  getCardData() {
+  getCardData(): void {
     this.dataCards = [
       {
         name: 'scrub',
@@ -167,6 +167,14 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           edit(row) {
             this.parent.modalService.open('slide-in-form', this.parent.scrubFormComponent, row.id);
           },
+          tableActions: [
+            {
+              label: T('Adjust Priority'),
+              onClick: () => {
+                this.router.navigate(['/data-protection/scrub/priority']);
+              },
+            },
+          ],
         },
       },
       {
@@ -350,7 +358,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     ];
   }
 
-  refreshTables() {
+  refreshTables(): void {
     this.dataCards.forEach((card) => {
       if (card.tableConf.tableComponent) {
         card.tableConf.tableComponent.getData();
@@ -358,7 +366,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  refreshForms() {
+  refreshForms(): void {
     this.scrubFormComponent = new ScrubFormComponent(this.taskService, this.modalService);
     this.snapshotFormComponent = new SnapshotFormComponent(
       this.taskService,
@@ -405,7 +413,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     this.smartFormComponent = new SmartFormComponent(this.ws, this.modalService);
   }
 
-  scrubDataSourceHelper(data: any[]) {
+  scrubDataSourceHelper(data: any[]): any[] {
     return data.map((task) => {
       task.schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
 
@@ -422,7 +430,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  cloudsyncDataSourceHelper(data: any[]) {
+  cloudsyncDataSourceHelper(data: any[]): any[] {
     return data.map((task) => {
       task.minute = task.schedule['minute'];
       task.hour = task.schedule['hour'];
@@ -452,7 +460,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  replicationDataSourceHelper(data: any[]) {
+  replicationDataSourceHelper(data: any[]): any[] {
     return data.map((task) => {
       task.ssh_connection = task.ssh_credentials ? task.ssh_credentials.name : '-';
       task.task_last_snapshot = task.state.last_snapshot ? task.state.last_snapshot : T('No snapshots sent yet');
@@ -469,7 +477,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  smartTestsDataSourceHelper(data: any[]) {
+  smartTestsDataSourceHelper(data: any[]): any[] {
     return data.map((test) => {
       test.schedule = `${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
       if (test.all_disks) {
@@ -489,7 +497,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  snapshotDataSourceHelper(data: any[]) {
+  snapshotDataSourceHelper(data: any[]): any[] {
     return data.map((task) => {
       task.state = task.state.state;
       task.keepfor = `${task.lifetime_value} ${task.lifetime_unit}(S)`;
@@ -498,7 +506,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  rsyncDataSourceHelper(data: any[]) {
+  rsyncDataSourceHelper(data: any[]): any[] {
     return data.map((task) => {
       task.minute = task.schedule['minute'];
       task.hour = task.schedule['hour'];
@@ -823,7 +831,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     ];
   }
 
-  isActionVisible(name: string, row: any) {
+  isActionVisible(name: string, row: any): boolean {
     if (name === 'run' && row.job && row.state === EntityJobState.Running) {
       return false;
     } if (name === 'stop' && (row.job ? row.job && row.state !== EntityJobState.Running : true)) {
@@ -832,7 +840,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  runningStateButton(jobid: any) {
+  runningStateButton(jobid: any): void {
     const dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: { title: T('Task is running') },
       disableClose: false,
@@ -847,7 +855,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  stateButton(row: any) {
+  stateButton(row: any): void {
     if (row.job) {
       if (row.state === EntityJobState.Running) {
         this.runningStateButton(row.job.id);
@@ -859,7 +867,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.refreshForm.unsubscribe();
     this.refreshTable.unsubscribe();
     this.diskSubscription.unsubscribe();

@@ -5,7 +5,7 @@ import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class CloudCredentialService {
-  protected credentialProviders = 'cloudsync.providers';
+  protected credentialProviders: 'cloudsync.providers' = 'cloudsync.providers';
   protected byteMap = {
     T: 1024 ** 4,
     G: 1024 ** 3,
@@ -16,11 +16,11 @@ export class CloudCredentialService {
 
   constructor(protected ws: WebSocketService) {}
 
-  getProviders() {
+  getProviders(): Observable<any> {
   	return this.ws.call(this.credentialProviders, []);
   }
 
-  getCloudsyncCredentials() {
+  getCloudsyncCredentials(): Promise<any> {
     return this.ws.call('cloudsync.credentials.query', {}).toPromise();
   }
 

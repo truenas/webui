@@ -14,7 +14,7 @@ import { Control } from '../../models/control.interface';
   selector: 'toolbar-multiselect',
   templateUrl: './toolbar-multiselect.component.html',
 })
-export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnInit, OnChanges {
+export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnInit {
   @ViewChild('selectTrigger') mySel: MatSelect;
   @Input() config?: ControlConfig;
   @Input() controller: Subject<any>;
@@ -26,20 +26,27 @@ export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnI
     super();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.config) {
-    }
-  }
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.selectStates.length = this.config.options.length;
     this.selectStates.fill(false);
-    this.values.push(this.config.options[0]);
-    this.selectStates[0] = true;
+
+    if (this.config.value) {
+      this.values = this.config.value;
+      this.config.value.forEach((value: any) => {
+        const index = this.config.options.indexOf(value);
+
+        if (index >= 0) {
+          this.selectStates[index] = true;
+        }
+      });
+    } else {
+      this.values.push(this.config.options[0]);
+      this.selectStates[0] = true;
+    }
     this.updateController();
   }
 
-  onClick(value: any, index: number) {
+  onClick(value: any, index: number): void {
     if (this.selectStates[index]) {
       if (this.checkLength()) { this.allSelected = false; }
       const vIndex = this.values.indexOf(value);
@@ -54,17 +61,17 @@ export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnI
     this.updateController();
   }
 
-  updateController() {
+  updateController(): void {
     this.config.value = this.values;
     const message: Control = { name: this.config.name, value: this.values };
     this.controller.next(message);
   }
 
-  checkLength() {
+  checkLength(): boolean {
     return this.values.length === this.selectStates.length;
   }
 
-  checkAll() {
+  checkAll(): void {
     this.allSelected = this.checkLength();
     if (!this.allSelected) {
       this.selectStates.fill(true);
@@ -76,11 +83,11 @@ export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnI
     this.updateController();
   }
 
-  isChecked() {
+  isChecked(): boolean {
     return true;
   }
 
-  onChangeOption() {
+  onChangeOption(): void {
   }
 
   compareValues(x: any, y: any): boolean {

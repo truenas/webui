@@ -22,7 +22,7 @@ export class FormToggleButtonComponent implements Field, OnInit {
 
   constructor(public translate: TranslateService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.init = true;
     this.control = this.group.controls[this.config.name];
 
@@ -49,7 +49,7 @@ export class FormToggleButtonComponent implements Field, OnInit {
     });
   }
 
-  check(item: any) {
+  check(item: any): void {
     this.init = false;
     item.checked = !item.checked;
     const target = _.findIndex(this.groupValue, _.unary(_.partialRight(_.includes, item.value)));

@@ -52,6 +52,7 @@ export class NavigationService {
     icon: 'folder_shared',
     state: 'sharing',
     sub: [
+      { name: T('Shares Dashboard'), state: 'dashboard' },
       { name: T('Apple Shares (AFP)'), state: 'afp' },
       { name: T('Block Shares (iSCSI)'), state: 'iscsi' },
       { name: T('Unix Shares (NFS)'), state: 'nfs' },
@@ -156,9 +157,7 @@ export class NavigationService {
   // navigation component has subscribed this Observable
   menuItems$ = this.menuItems.asObservable();
 
-  constructor() { }
-
-  publishNavigationChange(menuType: string) {
+  publishNavigationChange(menuType: string): void {
     this.menuItems.next(this.defaultMenu);
   }
 }

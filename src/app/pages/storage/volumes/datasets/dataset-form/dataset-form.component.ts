@@ -1,25 +1,28 @@
 import { Component } from '@angular/core';
+import { FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, Observable } from 'rxjs';
+import { AclType } from 'app/enums/acl-type.enum';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
+import { Dataset } from 'app/interfaces/dataset.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { DialogService } from 'app/services/dialog.service';
+import { ModalService } from 'app/services/modal.service';
 
 import * as _ from 'lodash';
-import { ProductType } from '../../../../../enums/product-type.enum';
-import { WebSocketService, StorageService } from '../../../../../services';
-import { EntityUtils } from '../../../../common/entity/utils';
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
-import { Formconfiguration } from '../../../../common/entity/entity-form/entity-form.component';
-import { EntityFormComponent } from '../../../../common/entity/entity-form';
-import { DialogService } from 'app/services/dialog.service';
-import { T } from '../../../../../translate-marker';
-import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-form';
-import globalHelptext from '../../../../../helptext/global-helptext';
-import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import { Validators, ValidationErrors, FormControl } from '@angular/forms';
+import { combineLatest, Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { combineLatest } from 'rxjs';
-import { ModalService } from 'app/services/modal.service';
+import { ProductType } from '../../../../../enums/product-type.enum';
+import globalHelptext from '../../../../../helptext/global-helptext';
+import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-form';
+import { StorageService, WebSocketService } from '../../../../../services';
+import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+import { T } from '../../../../../translate-marker';
+import { EntityFormComponent } from '../../../../common/entity/entity-form';
+import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { EntityUtils } from '../../../../common/entity/utils';
 
 interface DatasetFormData {
   name: string;
@@ -59,17 +62,17 @@ interface DatasetFormData {
   selector: 'app-dataset-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class DatasetFormComponent implements Formconfiguration {
+export class DatasetFormComponent implements FormConfiguration {
   title: string;
   volid: string;
   sub: Subscription;
   isBasicMode = true;
   pk: any;
   customFilter: any[] = [];
-  queryCall = 'pool.dataset.query';
+  queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   isEntity = true;
   isNew = false;
-  parent_dataset: any;
+  parent_dataset: Dataset;
   protected entityForm: any;
   minimum_recommended_dataset_recordsize = '128K';
   protected recordsize_field: any;
@@ -923,8 +926,8 @@ export class DatasetFormComponent implements Formconfiguration {
     ///
     this.entityForm = entityForm;
     if (this.productType.includes(ProductType.Enterprise)) {
-      this.ws.call('system.info').subscribe((res) => {
-        if (res.license && res.license.features.indexOf('DEDUP') > -1) {
+      this.ws.call('system.info').subscribe((systemInfo) => {
+        if (systemInfo.license && systemInfo.license.features.indexOf(LicenseFeature.Dedup) > -1) {
           this.entityForm.setDisabled('deduplication', false, false);
         }
       });
@@ -1044,7 +1047,10 @@ export class DatasetFormComponent implements Formconfiguration {
         this.minimum_recommended_dataset_recordsize = res;
         this.recommended_size_number = parseInt((this.reverseRecordSizeMap as any)[this.minimum_recommended_dataset_recordsize], 0);
       });
-      combineLatest(this.ws.call('pool.query', [[['name', '=', root]]]), this.ws.call('pool.dataset.query', [[['id', '=', this.pk]]])).subscribe(
+      combineLatest([
+        this.ws.call('pool.query', [[['name', '=', root]]]),
+        this.ws.call('pool.dataset.query', [[['id', '=', this.pk]]]),
+      ]).subscribe(
         ([pk_pool, pk_dataset]) => {
           if (pk_pool[0].encrypt !== 0) {
             this.legacy_encryption = true;
@@ -1287,35 +1293,35 @@ export class DatasetFormComponent implements Formconfiguration {
               edit_recordsize_collection = [{ label: `Inherit (${formattedLabel})`, value: 'INHERIT' }];
               edit_recordsize.options = edit_recordsize_collection.concat(edit_recordsize.options);
               let sync_value = pk_dataset[0].sync.value;
-              if (pk_dataset[0].sync.source === 'DEFAULT') {
+              if (pk_dataset[0].sync.source === ZfsPropertySource.Default) {
                 sync_value = 'INHERIT';
               }
               entityForm.formGroup.controls['sync'].setValue(sync_value);
 
               let compression_value = pk_dataset[0].compression.value;
-              if (pk_dataset[0].compression.source === 'INHERITED' || pk_dataset[0].compression.source === 'DEFAULT') {
+              if (pk_dataset[0].compression.source === ZfsPropertySource.Inherited || pk_dataset[0].compression.source === ZfsPropertySource.Default) {
                 compression_value = 'INHERIT';
               }
               entityForm.formGroup.controls['compression'].setValue(compression_value);
 
               let deduplication_value = pk_dataset[0].deduplication.value;
-              if (pk_dataset[0].deduplication.source === 'DEFAULT' || pk_dataset[0].deduplication.source === 'INHERITED') {
+              if (pk_dataset[0].deduplication.source === ZfsPropertySource.Default || pk_dataset[0].deduplication.source === ZfsPropertySource.Inherited) {
                 deduplication_value = 'INHERIT';
               }
               let exec_value = pk_dataset[0].exec.value;
-              if (pk_dataset[0].exec.source === 'DEFAULT' || pk_dataset[0].exec.source === 'INHERITED') {
+              if (pk_dataset[0].exec.source === ZfsPropertySource.Default || pk_dataset[0].exec.source === ZfsPropertySource.Inherited) {
                 exec_value = 'INHERIT';
               }
               let readonly_value = pk_dataset[0].readonly.value;
-              if (pk_dataset[0].readonly.source === 'DEFAULT' || pk_dataset[0].readonly.source === 'INHERITED') {
+              if (pk_dataset[0].readonly.source === ZfsPropertySource.Default || pk_dataset[0].readonly.source === ZfsPropertySource.Inherited) {
                 readonly_value = 'INHERIT';
               }
               let atime_value = pk_dataset[0].atime.value;
-              if (pk_dataset[0].atime.source === 'DEFAULT' || pk_dataset[0].atime.source === 'INHERITED') {
+              if (pk_dataset[0].atime.source === ZfsPropertySource.Default || pk_dataset[0].atime.source === ZfsPropertySource.Inherited) {
                 atime_value = 'INHERIT';
               }
               let recordsize_value = pk_dataset[0].recordsize.value;
-              if (pk_dataset[0].recordsize.source === 'DEFAULT' || pk_dataset[0].recordsize.source === 'INHERITED') {
+              if (pk_dataset[0].recordsize.source === ZfsPropertySource.Default || pk_dataset[0].recordsize.source === ZfsPropertySource.Inherited) {
                 recordsize_value = 'INHERIT';
               }
 
@@ -1551,7 +1557,7 @@ export class DatasetFormComponent implements Formconfiguration {
             false, helptext.afterSubmitDialog.cancelBtn).subscribe((res: boolean) => {
             if (res) {
               this.ws.call('filesystem.getacl', [parentPath]).subscribe(({ acltype }) => {
-                if (acltype === 'POSIX1E') {
+                if (acltype === AclType.Posix1e) {
                   this.router.navigate(new Array('/').concat(
                     ['storage', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name],
                   ), { queryParams: { default: parentPath } });

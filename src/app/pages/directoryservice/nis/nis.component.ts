@@ -13,15 +13,16 @@ import {
 import {
   FieldConfig,
 } from '../../common/entity/entity-form/models/field-config.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-nis',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class NISComponent {
-  queryCall = 'nis.config';
-  protected addCall = 'nis.update';
+export class NISComponent implements FormConfiguration {
+  queryCall: 'nis.config' = 'nis.config';
+  addCall: 'nis.update' = 'nis.update';
   custActions: any[] = [
     {
       id: helptext.nis_custactions_clearcache_id,
@@ -83,7 +84,7 @@ export class NISComponent {
     protected systemGeneralService: SystemGeneralService,
     private dialogservice: DialogService) {}
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     entityForm.submitFunction = (body: any) => this.ws.call(this.addCall, [body]);
   }
 }

@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { WebSocketService, AppLoaderService, DialogService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EncryptionService } from '../../../../services/encryption.service';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-key';
@@ -14,10 +14,10 @@ import helptext from '../../../../helptext/storage/volumes/volume-key';
   selector: 'app-volumeunlock-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class VolumeRekeyFormComponent implements Formconfiguration {
+export class VolumeRekeyFormComponent implements FormConfiguration {
   saveSubmitText = T('Reset Encryption');
 
-  queryCall = 'pool.query';
+  queryCall: 'pool.query' = 'pool.query';
   queryKey = 'id';
   route_success: string[] = ['storage', 'pools'];
   isNew = false;
@@ -91,13 +91,13 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
     protected encryptionService: EncryptionService,
   ) {}
 
-  preInit(entityForm: any) {
+  preInit(entityForm: any): void {
     this.route.params.subscribe((params) => {
       this.pk = params['pk'];
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     entityForm.formGroup.controls['encryptionkey_passphrase'].valueChanges.subscribe((res: any) => {
       const instructions = _.find(this.fieldConfig, { name: 'set_recoverykey-instructions' });
       const field = _.find(this.fieldConfig, { name: 'set_recoverykey' });
@@ -105,7 +105,7 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
     });
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     this.ws.call('auth.check_user', ['root', value.passphrase]).subscribe((res) => {
       if (!res) {
         this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');

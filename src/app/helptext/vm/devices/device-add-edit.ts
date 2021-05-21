@@ -110,7 +110,7 @@ export default {
   bind_placeholder: T('Bind'),
   bind_tooltip: T('Select an IP address to use for VNC sessions.'),
 
-  type_placeholder: T('Type'),
+  type_placeholder: T('Display Type'),
 
   password_placeholder: T('Password'),
   password_tooltip: T('Enter a VNC password to automatically pass to the\
