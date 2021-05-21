@@ -51,7 +51,7 @@ export class LayoutObject {
   private columns = 1;
   private grid = false;
   private _id: string;
-  get id() {
+  get id(): string {
     return this._id;
   }
 
@@ -65,7 +65,7 @@ export class LayoutObject {
 
   arrangement = ' ';
   private _containerSelector: string;
-  get containerSelector() {
+  get containerSelector(): string {
     return this._containerSelector;
   }
   set containerSelector(value: string) {
@@ -90,7 +90,7 @@ export class LayoutObject {
     this.screenPositions = [];
   }
 
-  initialize(layoutStyle?: string) {
+  initialize(layoutStyle?: string): void {
     /*
        //Test animation service
        let animationTarget:DisplayObject;
@@ -150,7 +150,7 @@ export class LayoutObject {
     this.updateCollectionPositions(0, this.orderedCollection.length - 1);
   }
 
-  private test(animation: string, state: string, animationTarget: DisplayObject) {
+  private test(animation: string, state: string, animationTarget: DisplayObject): void {
     this.messageBus.emit({
       name: 'Animate',
       data: {
@@ -162,7 +162,7 @@ export class LayoutObject {
     });
   }
 
-  insert(item: DisplayObject, at?: number) { // Add new item to collection and regenerate screenPositions
+  insert(item: DisplayObject, at?: number): void { // Add new item to collection and regenerate screenPositions
     console.log('Inserting DisplayObject into layout');
     console.warn(this.reorderedCollection);
     // update collection
@@ -185,7 +185,7 @@ export class LayoutObject {
         console.log(item.id) */
   }
 
-  private remove(item: DisplayObject) { // Remove item from collection and regenerate screenPositions
+  private remove(item: DisplayObject): void { // Remove item from collection and regenerate screenPositions
     // update collection
     delete this.collection[item.id];
 
@@ -195,7 +195,7 @@ export class LayoutObject {
     this.updateCollectionPositions(0, this.collection.length - 1);
   }
 
-  private createLayoutFromArrangement(arrangement?: string, constrain?: boolean) {
+  private createLayoutFromArrangement(arrangement?: string, constrain?: boolean): void {
     if (!constrain) {
       constrain = false;
     }
@@ -217,7 +217,7 @@ export class LayoutObject {
     }
   }
 
-  moveToScreenPosition(dragTarget: DisplayObject, index: number, debug?: boolean) { // Move an existing DisplayObject to a new position.
+  moveToScreenPosition(dragTarget: DisplayObject, index: number, debug?: boolean): void { // Move an existing DisplayObject to a new position.
     const startX = dragTarget.x;
     const startY = dragTarget.y;
     const distance = 0;
@@ -263,7 +263,7 @@ export class LayoutObject {
       })
     } */
 
-  beginInteractiveMovement(displayObject: DisplayObject) { // Do collision detection and reorder collection list
+  beginInteractiveMovement(displayObject: DisplayObject): void { // Do collision detection and reorder collection list
     const dragTarget = displayObject;
     // let originalDragTargetIndex = this.collection.indexOf(dragTarget);
     const originalDragTargetIndex = this.orderedCollection.indexOf(dragTarget.id);
@@ -324,11 +324,11 @@ export class LayoutObject {
     });
   }
 
-  private updateInteractiveMovement(dragTarget: any, newCollection: any) { // React to new order while in dragging
+  private updateInteractiveMovement(dragTarget: any, newCollection: any): void { // React to new order while in dragging
     this.reorderedCollection = newCollection;
   }
 
-  endInteractiveMovement(dragTarget: DisplayObject) { // Complete and cleanup after item has been dropped to new location
+  endInteractiveMovement(dragTarget: DisplayObject): void { // Complete and cleanup after item has been dropped to new location
     console.log('Ending Interactive Movement in layout');
     const index = this.reorderedCollection.indexOf(dragTarget.id);
     this.moveToScreenPosition(dragTarget, index);
@@ -337,7 +337,7 @@ export class LayoutObject {
     // this.updateStaticPositions();
   }
 
-  private cancelInteractiveMovement() { // Reset to original layout
+  private cancelInteractiveMovement(): void { // Reset to original layout
     this.reorderedCollection = null;
     this.orderedCollection.forEach((item, index) => {
       const dragTarget = this.collection[index];
@@ -345,13 +345,13 @@ export class LayoutObject {
     });
   }
 
-  private createGrid() {
+  private createGrid(): void {
     this.grid = true; // Should be deprecated in favor of this.arrangement
     this.createScreenPositions(this.orderedCollection.length, this.orderedCollection.length, this.margin, true);
     // this.updateCollectionPositions(0, this.collection.length - 1);
   }
 
-  private createListHorizontal(constrain?: boolean) {
+  private createListHorizontal(constrain?: boolean): void {
     if (constrain) {
       this.collection.forEach((item: any) => {
         item.constrainY = true;
@@ -361,7 +361,7 @@ export class LayoutObject {
     // this.updateCollectionPositions(0, this.collection.length - 1);
   }
 
-  private createListVertical(constrain?: boolean) {
+  private createListVertical(constrain?: boolean): void {
     if (constrain) {
       this.collection.forEach((item: any) => {
         item.constrainX = true;
@@ -371,7 +371,7 @@ export class LayoutObject {
     // this.updateCollectionPositions(0, this.collection.length - 1);
   }
 
-  private updateCollectionPositions(startIndex: number, endIndex: number, dragTarget?: DisplayObject) {
+  private updateCollectionPositions(startIndex: number, endIndex: number, dragTarget?: DisplayObject): void {
     /* console.log("Collection = " + this.collection.length);
        if(this.reorderedCollection && this.reorderedCollection.length > 0){
         console.log("Reordered coll. = " + this.reorderedCollection.length)
@@ -386,7 +386,7 @@ export class LayoutObject {
     }
   }
 
-  private createScreenPositions(columns: number, total: number, margin: number, dynamic?: boolean) {
+  private createScreenPositions(columns: number, total: number, margin: number, dynamic?: boolean): void {
     // console.log("Creating Rows...")
     if (this.screenPositions.length > 0) {
       this.screenPositions = [];
@@ -427,7 +427,7 @@ export class LayoutObject {
     }
   }
 
-  private configureCollectionItem(item: DisplayObject) {
+  private configureCollectionItem(item: DisplayObject): void {
     // misc. element options
     // item.constrainX = true;
     item.resizeable = false;
@@ -435,7 +435,7 @@ export class LayoutObject {
     item.elevateOnSelect = true;
   }
 
-  private calcRows(elWidth: number, marg: number) {
+  private calcRows(elWidth: number, marg: number): number {
     let containerDimensions;
     if (this.container) {
       containerDimensions = this.container.getBoundingClientRect();
@@ -446,7 +446,7 @@ export class LayoutObject {
     return containerDimensions.width / (elWidth + marg * 2);
   }
 
-  private detectCollisionByXY(a: any, b: any) {
+  private detectCollisionByXY(a: any, b: any): boolean {
     // a = dragTarget , b = target
     let test = false;
     const range = 16; // margin of error
@@ -456,7 +456,7 @@ export class LayoutObject {
     return test;
   }
 
-  private detectCollision(a: any, b: any) {
+  private detectCollision(a: any, b: any): boolean {
     return !(
       ((a.y + a.height) < (b.y))
            || (a.y > (b.y + b.height))
@@ -465,7 +465,7 @@ export class LayoutObject {
     );
   }
 
-  private detectBoxCollision(a: any, b: any) {
+  private detectBoxCollision(a: any, b: any): boolean {
     return !(
       ((a.bottom) < (b.top))
            || (a.top > (b.bottom))

@@ -1,4 +1,3 @@
-import { DiskAcousticLevel } from 'app/enums/disk-acoustic-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 
@@ -51,7 +50,6 @@ export interface EnclosureSlot {
 }
 
 export interface Disk {
-  acousticlevel: DiskAcousticLevel;
   advpowermgmt: DiskPowerLevel;
   critical: string;
   description: string;
@@ -102,7 +100,6 @@ export interface DiskQueryOptions {
 
 export interface DiskUpdate {
   togglesmart?: boolean;
-  acousticlevel: DiskAcousticLevel;
   advpowermgmt?: DiskPowerLevel;
   description?: string;
   hddstandby?: DiskStandby;

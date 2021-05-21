@@ -16,11 +16,11 @@ export class CloudCredentialService {
 
   constructor(protected ws: WebSocketService) {}
 
-  getProviders() {
+  getProviders(): Observable<any> {
   	return this.ws.call(this.credentialProviders, []);
   }
 
-  getCloudsyncCredentials() {
+  getCloudsyncCredentials(): Promise<any> {
     return this.ws.call('cloudsync.credentials.query', {}).toPromise();
   }
 

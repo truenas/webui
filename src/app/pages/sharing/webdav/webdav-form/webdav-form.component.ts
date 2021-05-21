@@ -22,7 +22,7 @@ export class WebdavFormComponent implements FormConfiguration {
   editCall: 'sharing.webdav.update' = 'sharing.webdav.update';
   route_success: string[] = ['sharing', 'webdav'];
   isEntity = true;
-
+  title = T('Add WebDAV');
   confirmSubmit = true;
   confirmSubmitDialog = {
     title: helptext_sharing_webdav.warning_dialog_title,
@@ -88,10 +88,11 @@ export class WebdavFormComponent implements FormConfiguration {
   constructor(protected router: Router,
     protected ws: WebSocketService, private dialog: DialogService) {}
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     entityForm.formGroup.controls['perm'].valueChanges.subscribe((value: any) => {
       value ? this.confirmSubmit = true : this.confirmSubmit = false;
     });
+    this.title = entityForm.isNew ? T('Add WebDAV') : T('Edit WebDAV');
   }
 
   afterSave(entityForm: any): void {

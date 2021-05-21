@@ -318,7 +318,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     super();
   }
 
-  setType(type: string) {
+  setType(type: string): void {
     const is_vlan = (type === NetworkInterfaceType.Vlan);
     const is_bridge = (type === NetworkInterfaceType.Bridge);
     const is_lagg = (type === NetworkInterfaceType.LinkAggregation);
@@ -336,7 +336,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.bridge_fieldset.label = is_bridge;
   }
 
-  preInit(entityForm: any) {
+  preInit(entityForm: any): void {
     this.entityForm = entityForm;
     this.vlan_fieldset = _.find(this.fieldSets, { class: 'vlan_settings' });
     this.lag_fieldset = _.find(this.fieldSets, { class: 'lag_settings' });
@@ -345,7 +345,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.vlan_pint = _.find(this.vlan_fieldset.config, { name: 'vlan_parent_interface' });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     if (entityForm.pk !== undefined) {
       this.vlan_pint.type = 'input';
       this.title = helptext.title_edit;
@@ -482,7 +482,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     }
   }
 
-  clean(data: any) {
+  clean(data: any): any {
     if (data['mtu'] === '') {
       data['mtu'] = 1500;
     }
@@ -527,7 +527,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     return data;
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     const aliases = data['aliases'];
     const a: any[] = [];
     const failover_aliases = data['failover_aliases'];
@@ -572,11 +572,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     return data;
   }
 
-  afterSave() {
+  afterSave(): void {
     this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.type_subscription) {
       this.type_subscription.unsubscribe();
     }

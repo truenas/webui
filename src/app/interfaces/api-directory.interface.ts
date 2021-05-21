@@ -5,6 +5,11 @@ import { Acl } from 'app/interfaces/acl.interface';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
+import {
+  AuthenticatorSchema,
+  CreateDnsAuthenticator,
+  DnsAuthenticator, UpdateDnsAuthenticator,
+} from 'app/interfaces/dns-authenticator.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import {
   IscsiAuthAccess, IscsiExtent,
@@ -23,6 +28,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { Disk, DiskQueryOptions, DiskUpdate } from 'app/interfaces/storage.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 
@@ -37,10 +43,10 @@ export type ApiDirectory = {
   'afp.config': { params: any; response: any };
 
   // Acme
-  'acme.dns.authenticator.query': { params: any; response: any };
-  'acme.dns.authenticator.create': { params: any; response: any };
-  'acme.dns.authenticator.update': { params: any; response: any };
-  'acme.dns.authenticator.authenticator_schemas': { params: any; response: any };
+  'acme.dns.authenticator.query': { params: void; response: DnsAuthenticator[] };
+  'acme.dns.authenticator.create': { params: CreateDnsAuthenticator; response: DnsAuthenticator };
+  'acme.dns.authenticator.update': { params: [number, UpdateDnsAuthenticator]; response: DnsAuthenticator };
+  'acme.dns.authenticator.authenticator_schemas': { params: void; response: AuthenticatorSchema[] };
 
   // Alert
   'alert.list': { params: any; response: any };
@@ -58,6 +64,12 @@ export type ApiDirectory = {
   'alertservice.create': { params: any; response: any };
   'alertservice.query': { params: any; response: any };
   'alertservice.test': { params: any; response: any };
+
+  // Api Key
+  'api_key.create': { params: any; response: any };
+  'api_key.update': { params: any; response: any };
+  'api_key.delete': { params: any; response: any };
+  'api_key.query': { params: any; response: any };
 
   // Auth
   'auth.generate_token': { params: any; response: any };
@@ -111,6 +123,7 @@ export type ApiDirectory = {
   'certificateauthority.query': { params: any; response: any };
   'certificateauthority.update': { params: any; response: any };
   'certificateauthority.profiles': { params: any; response: any };
+  'certificateauthority.ca_sign_csr': { params: any; response: any };
 
   // Chart
   'chart.release.pod_logs_choices': { params: any; response: any };
@@ -121,6 +134,7 @@ export type ApiDirectory = {
   'chart.release.pod_console_choices': { params: any; response: any };
   'chart.release.nic_choices': { params: any; response: any };
   'chart.release.events': { params: any; response: any };
+  'chart.release.rollback': { params: any; response: any };
 
   // CRON
   'cronjob.run': { params: any; response: any };
@@ -131,6 +145,10 @@ export type ApiDirectory = {
   'core.job_abort': { params: any; response: any };
   'core.bulk': { params: any; response: any };
   'core.resize_shell': { params: any; response: any };
+
+  // Config
+  'config.upload': { params: any; response: any };
+  'config.reset': { params: any; response: any };
 
   // Cloudsync
   'cloudsync.providers': { params: any; response: any };
@@ -517,8 +535,9 @@ export type ApiDirectory = {
   'smart.test.update': { params: any; response: any };
 
   // SystemDataset
-  'systemdataset.pool_choices': { params: any; response: any };
-  'systemdataset.config': { params: any; response: any };
+  'systemdataset.pool_choices': { params: void; response: { [key: string]: string } };
+  'systemdataset.config': { params: void; response: SystemDatasetConfig };
+  'systemdataset.update': { params: [{ [poolName: string]: string }]; response: any };
 
   // Service
   'service.started': { params: any; response: any };
@@ -639,6 +658,7 @@ export type ApiDirectory = {
   'zfs.snapshot.query': { params: any; response: any };
   'zfs.snapshot.delete': { params: any; response: any };
   'zfs.snapshot.clone': { params: any; response: any };
+  'zfs.snapshot.rollback': { params: any; response: any };
 
   // staticroute
   'staticroute.query': { params: any; response: any };

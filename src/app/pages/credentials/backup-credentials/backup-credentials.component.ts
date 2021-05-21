@@ -51,7 +51,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     );
   }
 
-  getCards() {
+  getCards(): void {
     this.cards = [
       {
         name: 'cloudCredentials',
@@ -122,7 +122,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     ];
   }
 
-  cloudCredentialsDataSourceHelper(res: any[]) {
+  cloudCredentialsDataSourceHelper(res: any[]): any[] {
     return res.map((item) => {
       if (this.providers) {
         const credentialProvider = this.providers.find((provider) => provider.name == item.provider);
@@ -134,11 +134,11 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     });
   }
 
-  sshConnectionsDataSourceHelper(res: any[]) {
+  sshConnectionsDataSourceHelper(res: any[]): any[] {
     return res.filter((item) => item.type === 'SSH_CREDENTIALS');
   }
 
-  sshKeyPairsDataSourceHelper(res: any[]) {
+  sshKeyPairsDataSourceHelper(res: any[]): any[] {
     return res.filter((item) => item.type === 'SSH_KEY_PAIR');
   }
 

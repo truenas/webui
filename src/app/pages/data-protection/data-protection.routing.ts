@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { ResilverComponent } from 'app/pages/data-protection/scrub/resilver/resilver.component';
 
 import { DataProtectionDashboardComponent } from './components/data-protection-dashboard/data-protection-dashboard.component';
 import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.component';
@@ -123,6 +124,11 @@ export const DataProtectionRoutes: Routes = [{
         path: 'edit/:pk',
         component: ScrubFormComponent,
         data: { title: 'Edit', breadcrumb: 'Edit' },
+      }, {
+        path: 'priority',
+        data: { title: 'Resilver Priority', breadcrumb: 'Resilver Priority', icon: 'event_note' },
+        component: ResilverComponent,
       }],
-    }],
+    },
+  ],
 }];

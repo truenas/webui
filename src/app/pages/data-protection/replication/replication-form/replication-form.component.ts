@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { Schedule } from 'app/interfaces/schedule.interface';
 
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
@@ -1141,7 +1142,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     }
   }
 
-  countEligibleManualSnapshots() {
+  countEligibleManualSnapshots(): void {
     const namingSchema = this.entityForm.formGroup.controls['also_include_naming_schema'].value;
     if (typeof namingSchema !== 'string' && namingSchema.length === 0) {
       return;
@@ -1168,7 +1169,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       );
   }
 
-  async afterInit(entityForm: EntityFormComponent) {
+  async afterInit(entityForm: EntityFormComponent): Promise<void> {
     this.entityForm = entityForm;
     this.pk = entityForm.pk;
     this.isNew = entityForm.isNew;
@@ -1301,7 +1302,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     entityForm.formGroup.controls['auto'].setValue(entityForm.formGroup.controls['auto'].value);
   }
 
-  resourceTransformIncomingRestData(wsResponse: any) {
+  resourceTransformIncomingRestData(wsResponse: any): any {
     this.queryRes = _.cloneDeep(wsResponse);
     wsResponse['source_datasets_PUSH'] = wsResponse['source_datasets'];
     wsResponse['target_dataset_PUSH'] = wsResponse['target_dataset'];
@@ -1364,7 +1365,11 @@ export class ReplicationFormComponent implements FormConfiguration {
     return wsResponse;
   }
 
-  parsePickerTime(picker: any, begin: any, end: any) {
+  parsePickerTime(
+    picker: any,
+    begin: any,
+    end: any,
+  ): Schedule {
     const spl = picker.split(' ');
     return {
       minute: spl[0],
@@ -1377,9 +1382,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     };
   }
 
-  beforeSubmit(data: any) {
-    const targetDatasetPush = _.cloneDeep(data['target_dataset_PUSH']);
-
+  beforeSubmit(data: any): void {
     if (data['replicate']) {
       data['recursive'] = true;
       data['properties'] = true;
@@ -1414,7 +1417,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           : _.cloneDeep(data['source_datasets_PUSH']).split(',').map(_.trim),
       );
 
-      data['target_dataset'] = typeof targetDatasetPush === 'string' ? targetDatasetPush : targetDatasetPush.toString();
+      data['target_dataset'] = typeof data['target_dataset_PUSH'] === 'string' ? data['target_dataset_PUSH'] : data['target_dataset_PUSH'].toString();
 
       delete data['source_datasets_PUSH'];
       delete data['target_dataset_PUSH'];
@@ -1503,7 +1506,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     }
   }
 
-  getChildren() {
+  getChildren(): Promise<Promise<any>> {
     for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
       this.fieldSets.config(item).hasErrors = false;
     }
@@ -1524,13 +1527,13 @@ export class ReplicationFormComponent implements FormConfiguration {
     });
   }
 
-  blurEvent(parent: any) {
+  blurEvent(parent: any): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['speed_limit'].setValue(parent.storageService.humanReadable);
     }
   }
 
-  blurEventNamingSchema(parent: any) {
+  blurEventNamingSchema(parent: any): void {
     if (
       parent.entityForm
       && parent.entityForm.formGroup.controls['direction'].value === Direction.Push

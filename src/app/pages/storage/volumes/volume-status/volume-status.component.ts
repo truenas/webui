@@ -605,7 +605,7 @@ export class VolumeStatusComponent implements OnInit {
     return node;
   }
 
-  dataHandler(pool: Pool) {
+  dataHandler(pool: Pool): void {
     const node: TreeNode = {};
     node.data = this.parseData(pool);
     node.expanded = true;

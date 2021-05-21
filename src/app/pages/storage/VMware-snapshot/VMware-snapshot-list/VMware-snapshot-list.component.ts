@@ -11,7 +11,7 @@ import { T } from '../../../../translate-marker';
 export class VMwareSnapshotListComponent {
   title = 'VMware Snapshots';
   protected queryCall = 'vmware.query';
-  protected route_add: string[] = ['storage', 'vmware-Snapshots', 'add'];
+  protected route_add: string[] = ['storage', 'vmware-snapshots', 'add'];
   protected route_add_tooltip = 'Add VMware Snapshot';
   protected entityList: any;
   protected wsDelete = 'vmware.delete';
@@ -57,7 +57,7 @@ export class VMwareSnapshotListComponent {
         label: T('Edit'),
         onClick: (row: any) => {
           this._router.navigate(new Array('/').concat(
-            ['storage', 'vmware-Snapshots', 'edit', row.id],
+            ['storage', 'vmware-snapshots', 'edit', row.id],
           ));
         },
       },
