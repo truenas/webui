@@ -30,6 +30,9 @@ export class TableService {
       if (table.tableConf.dataSourceHelper) {
         res = table.tableConf.dataSourceHelper(res);
       }
+      if (table.tableConf.afterGetDataExpandable) {
+        res = table.tableConf.afterGetDataExpandable(res);
+      }
       if (table.tableConf.getInOutInfo) {
         table.tableConf.getInOutInfo(res);
       }
@@ -55,9 +58,7 @@ export class TableService {
       if (table.loaderOpen) {
         this.loader.close();
       }
-      if (table.tableConf.afterGetDataExpandable) {
-        table.tableConf.afterGetDataExpandable(res);
-      }
+
       if (table.tableConf.afterGetData) {
         table.tableConf.afterGetData(res);
       }

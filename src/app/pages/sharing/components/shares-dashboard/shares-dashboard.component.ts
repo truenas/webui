@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component } from '@angular/core';
 import { T } from 'app/translate-marker';
 import { helptext_sharing_webdav } from 'app/helptext/sharing';
 import { helptext_sharing_afp } from 'app/helptext/sharing';
@@ -81,6 +81,7 @@ export class SharesDashboardComponent {
       { name: helptext_sharing_afp.column_comment, prop: 'comment' },
       { name: helptext_sharing_afp.column_enabled, prop: 'enabled' },
     ],
+    detailsHref: '/sharing/nfs',
     add() {
       this.parent.add(ShareTypes.NFS);
     },
@@ -106,6 +107,7 @@ export class SharesDashboardComponent {
       title: T('Delete'),
       key_props: ['name'],
     },
+    detailsHref: '/sharing/smb',
     emptyEntityLarge: false,
     parent: this,
     columns: [
@@ -132,9 +134,10 @@ export class SharesDashboardComponent {
 
   iscsiTableConf: InputExpandableTableConf = {
     title: T('Block (ISCSI) Shares Targets'),
-    titleHref: '/sharing/smb',
+    titleHref: '/sharing/iscsi/target',
     queryCall: 'iscsi.target.query',
     deleteCall: 'iscsi.target.delete',
+    detailsHref: '/sharing/iscsi/target',
     deleteMsg: {
       title: T('Delete'),
       key_props: ['name'],

@@ -7,6 +7,7 @@ export interface InputExpandableTableConf extends InputTableConf {
   alwaysExpanded?: boolean;
   expandedIfNotEmpty?: boolean;
   detailsHref?: string;
+  limitRows?: number;
 }
 
 @Component({
@@ -42,6 +43,10 @@ export class ExpandableTableComponent {
         || this.tableConf.alwaysCollapsed
         || this.tableConf.alwaysExpanded
         || (!this.isEmpty && this.tableConf.expandedIfNotEmpty);
+      if (this.tableConf.limitRows) {
+        return data.splice(0, this.tableConf.limitRows);
+      }
+      return data;
     };
   }
 
