@@ -25,6 +25,7 @@ import { Disk, DiskQueryOptions, DiskUpdate } from 'app/interfaces/storage.inter
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { User } from 'app/interfaces/user.interface';
+import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 
 export type ApiDirectory = {
@@ -590,7 +591,7 @@ export type ApiDirectory = {
   'truenas.set_production': { params: any; response: any };
 
   // Vm
-  'vm.query': { params: any; response: any };
+  'vm.query': { params: QueryParams<VirtualMachine, { get: boolean }>; response: VirtualMachine[] };
   'vm.cpu_model_choices': { params: any; response: any };
   'vm.bootloader_options': { params: any; response: any };
   'vm.device.nic_attach_choices': { params: any; response: any };

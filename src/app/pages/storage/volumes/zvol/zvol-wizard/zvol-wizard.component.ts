@@ -299,7 +299,7 @@ export class ZvolWizardComponent {
   constructor(
     protected core: CoreService,
     protected router: Router, protected aroute: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
+    protected ws: WebSocketService,
     protected loader: AppLoaderService, protected dialogService: DialogService,
     protected storageService: StorageService, private translate: TranslateService,
     protected modalService: ModalService,

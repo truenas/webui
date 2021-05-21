@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { ProductType } from '../../../enums/product-type.enum';
@@ -168,11 +169,11 @@ export class VMListComponent implements OnDestroy {
     if (!devices || devices.length === 0) {
       return false;
     }
-    if (this.productType !== ProductType.Scale && (vm.bootloader === 'GRUB' || vm.bootloader === 'UEFI_CSM')) {
+    if (this.productType !== ProductType.Scale && (vm.bootloader === VmBootloader.Grub || vm.bootloader === VmBootloader.UefiCsm)) {
       return false;
     }
     for (let i = 0; i < devices.length; i++) {
-      if (devices && devices[i].dtype === 'DISPLAY') {
+      if (devices && devices[i].dtype === VmDeviceType.Display) {
         return true;
       }
     }
@@ -183,11 +184,11 @@ export class VMListComponent implements OnDestroy {
     if (!devices || devices.length === 0) {
       return false;
     }
-    if (this.productType !== ProductType.Scale && (vm.bootloader === 'GRUB' || vm.bootloader === 'UEFI_CSM')) {
+    if (this.productType !== ProductType.Scale && (vm.bootloader === VmBootloader.Grub || vm.bootloader === VmBootloader.UefiCsm)) {
       return false;
     }
     for (let i = 0; i < devices.length; i++) {
-      if (devices && devices[i].dtype === 'DISPLAY') {
+      if (devices && devices[i].dtype === VmDeviceType.Display) {
         return devices[i].attributes.port;
       }
     }

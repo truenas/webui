@@ -1,6 +1,5 @@
 <mat-card class="mat-card-padded">
   <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" #entityForm="ngForm">
-    <div class="mat-card-title" *ngIf="vminfo">{{ 'Edit' | translate }} {{vminfo.dtype}} {{ 'Device' | translate }}</div>
     <div class="fieldset-container fieldset-display-default" *ngIf="fieldSets">
       <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
         <div [ngClass]="fieldSet.class" class="fieldset divider-{{fieldSet.divider}}" fxLayout="row wrap" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSets[i].width}} - 16px)">
@@ -25,7 +24,7 @@
                 <div dynamicField [config]="diskField" [group]="diskFormGroup"></div>
               </div>
             </div>
-            <div *ngSwitch="VmDeviceType.Raw" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
+            <div *ngSwitchCase="VmDeviceType.Raw" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
               <div *ngFor="let rawfileField of fieldSet.rawfileFieldConfig;">
                 <div dynamicField [config]="rawfileField" [group]="rawfileFormGroup"></div>
               </div>
@@ -35,7 +34,7 @@
                 <div dynamicField [config]="pciField" [group]="pciFormGroup"></div>
               </div>
             </div>
-            <div *ngSwitchCase="VmDeviceType.Display" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
+            <div  *ngSwitchCase="VmDeviceType.Display" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
               <div *ngFor="let displayField of fieldSet.displayFieldConfig;">
                 <div dynamicField [config]="displayField" [group]="displayFormGroup"></div>
               </div>
