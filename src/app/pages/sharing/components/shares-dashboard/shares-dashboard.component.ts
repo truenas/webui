@@ -14,6 +14,13 @@ import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form';
 import { TranslateService } from '@ngx-translate/core';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
 
+enum ShareTypes {
+  SMB = 'smb',
+  NFS = 'nfs',
+  ISCSI = 'iscsi',
+  WebDAV = 'webdav',
+}
+
 @Component({
   selector: 'app-shares-dashboard',
   templateUrl: './shares-dashboard.template.html',
@@ -41,10 +48,10 @@ export class SharesDashboardComponent {
       { prop: 'perm', name: helptext_sharing_webdav.column_perm, hidden: true },
     ],
     add() {
-      this.parent.add('webdav');
+      this.parent.add(ShareTypes.WebDAV);
     },
     edit(row) {
-      this.parent.edit('webdav', row.id);
+      this.parent.edit(ShareTypes.WebDAV, row.id);
     },
     afterGetData: (data: any) => {
       if (data.length > 0) {
@@ -74,10 +81,10 @@ export class SharesDashboardComponent {
       { name: helptext_sharing_afp.column_enabled, prop: 'enabled' },
     ],
     add() {
-      this.parent.add('nfs');
+      this.parent.add(ShareTypes.NFS);
     },
     edit(row) {
-      this.parent.edit('nfs', row.id);
+      this.parent.edit(ShareTypes.NFS, row.id);
     },
     afterGetData: (data: any) => {
       if (data.length > 0) {
@@ -107,10 +114,10 @@ export class SharesDashboardComponent {
       { name: helptext_sharing_smb.column_enabled, prop: 'enabled', checkbox: true },
     ],
     add() {
-      this.parent.add('smb');
+      this.parent.add(ShareTypes.SMB);
     },
     edit(row) {
-      this.parent.edit('smb', row.id);
+      this.parent.edit(ShareTypes.SMB, row.id);
     },
     afterGetData: (data: any) => {
       if (data.length > 0) {
@@ -145,10 +152,10 @@ export class SharesDashboardComponent {
       },
     ],
     add() {
-      this.parent.add('iscsi');
+      this.parent.add(ShareTypes.ISCSI);
     },
     edit(row) {
-      this.parent.edit('iscsi', row.id);
+      this.parent.edit(ShareTypes.ISCSI, row.id);
     },
     collapsedIfEmpty: true,
     afterGetData: (data: any) => {
@@ -188,16 +195,16 @@ export class SharesDashboardComponent {
   add(share: string, id?: number): void {
     let formComponent: NFSFormComponent | SMBFormComponent | WebdavFormComponent | TargetFormComponent;
     switch (share) {
-      case 'nfs':
+      case ShareTypes.NFS:
         formComponent = new NFSFormComponent(this.userService, this.modalService, this.ws, this.dialog, this.networkService);
         break;
-      case 'smb':
+      case ShareTypes.SMB:
         formComponent = new SMBFormComponent(this.router, this.ws, this.dialog, this.loader, this.sysGeneralService, this.modalService);
         break;
-      case 'webdav':
+      case ShareTypes.WebDAV:
         formComponent = new WebdavFormComponent(this.router, this.ws, this.dialog);
         break;
-      case 'iscsi':
+      case ShareTypes.ISCSI:
         formComponent = new TargetFormComponent(this.router, this.aroute, this.iscsiService, this.loader, this.translate, this.ws);
         break;
     }
@@ -209,23 +216,23 @@ export class SharesDashboardComponent {
   }
 
   getTablesOrder(): string[] {
-    const order: string[] = ['smb', 'nfs', 'iscsi', 'webdav'];
+    const order: string[] = [ShareTypes.SMB, ShareTypes.NFS, ShareTypes.ISCSI, ShareTypes.WebDAV];
     // Note: The order of these IFs is important. One can't come before the other
     if (!this.smbHasItems) {
-      order.splice(order.findIndex((share) => share === 'smb'), 1);
-      order.push('smb');
+      order.splice(order.findIndex((share) => share === ShareTypes.SMB), 1);
+      order.push(ShareTypes.SMB);
     }
     if (!this.nfsHasItems) {
-      order.splice(order.findIndex((share) => share === 'nfs'), 1);
-      order.push('nfs');
+      order.splice(order.findIndex((share) => share === ShareTypes.NFS), 1);
+      order.push(ShareTypes.NFS);
     }
     if (!this.iscsiHasItems) {
-      order.splice(order.findIndex((share) => share === 'iscsi'), 1);
-      order.push('iscsi');
+      order.splice(order.findIndex((share) => share === ShareTypes.ISCSI), 1);
+      order.push(ShareTypes.ISCSI);
     }
     if (!this.webdavHasItems) {
-      order.splice(order.findIndex((share) => share === 'webdav'), 1);
-      order.push('webdav');
+      order.splice(order.findIndex((share) => share === ShareTypes.WebDAV), 1);
+      order.push(ShareTypes.WebDAV);
     }
     return order;
   }
@@ -248,22 +255,22 @@ export class SharesDashboardComponent {
 
   getWebdavOrder(): string {
     const order = this.getTablesOrder();
-    return this.getOrderFromIndex(order.findIndex((share) => share === 'webdav'));
+    return this.getOrderFromIndex(order.findIndex((share) => share === ShareTypes.WebDAV));
   }
 
   getNfsOrder(): string {
     const order = this.getTablesOrder();
-    return this.getOrderFromIndex(order.findIndex((share) => share === 'nfs'));
+    return this.getOrderFromIndex(order.findIndex((share) => share === ShareTypes.NFS));
   }
 
   getIscsiOrder(): string {
     const order = this.getTablesOrder();
-    return this.getOrderFromIndex(order.findIndex((share) => share === 'iscsi'));
+    return this.getOrderFromIndex(order.findIndex((share) => share === ShareTypes.ISCSI));
   }
 
   getSmbOrder(): string {
     const order = this.getTablesOrder();
-    return this.getOrderFromIndex(order.findIndex((share) => share === 'smb'));
+    return this.getOrderFromIndex(order.findIndex((share) => share === ShareTypes.SMB));
   }
 
   getOrderFromIndex(index: number): string {
