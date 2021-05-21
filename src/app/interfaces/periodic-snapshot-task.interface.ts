@@ -1,10 +1,6 @@
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { Schedule } from 'app/interfaces/schedule.interface';
-
-interface PeriodicSnapshotTaskState {
-  state: string;
-  error: string;
-}
+import { DataProtectionTaskState } from 'app/interfaces/data-protection-task-state.interface';
 
 export interface PeriodicSnapshotTask {
   schedule: Schedule;
@@ -17,7 +13,7 @@ export interface PeriodicSnapshotTask {
   lifetime_value: number;
   naming_schema: string;
   recursive: boolean;
-  state: PeriodicSnapshotTaskState;
+  state: DataProtectionTaskState;
   vmware_sync: boolean;
 }
 

@@ -1,3 +1,4 @@
+import { DataProtectionTaskState } from './data-protection-task-state.interface';
 import { CompressionType } from 'app/enums/compression-type.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -10,7 +11,6 @@ import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
-import { ReplicationState } from 'app/interfaces/replication-state.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 
@@ -60,7 +60,7 @@ export interface ReplicationTask {
   source_datasets_from: string;
   speed_limit?: number;
   ssh_credentials?: SshCredentials | number[];
-  state: ReplicationState;
+  state: DataProtectionTaskState;
   target_dataset: string;
   target_dataset_from: string;
   transport: TransportMode;

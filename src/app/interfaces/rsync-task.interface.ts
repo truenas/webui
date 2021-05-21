@@ -1,6 +1,7 @@
 import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { Direction } from 'app/enums/direction.enum';
+import { DataProtectionTaskState } from 'app/interfaces/data-protection-task-state.interface';
 
 export interface RsyncTask {
   archive: boolean;
@@ -33,8 +34,5 @@ export interface RsyncTaskUi extends RsyncTask {
   cron_schedule: string;
   next_run: string;
   frequency: string;
-  state: {
-    state: string;
-    error?: string;
-  };
+  state: DataProtectionTaskState;
 }
