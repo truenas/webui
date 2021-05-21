@@ -14,7 +14,7 @@ import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form';
 import { TranslateService } from '@ngx-translate/core';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
 
-enum ShareTypes {
+enum ShareType {
   SMB = 'smb',
   NFS = 'nfs',
   ISCSI = 'iscsi',
@@ -48,10 +48,10 @@ export class SharesDashboardComponent {
       { prop: 'perm', name: helptext_sharing_webdav.column_perm, hidden: true },
     ],
     add() {
-      this.parent.add(ShareTypes.WebDAV);
+      this.parent.add(ShareType.WebDAV);
     },
     edit(row) {
-      this.parent.edit(ShareTypes.WebDAV, row.id);
+      this.parent.edit(ShareType.WebDAV, row.id);
     },
     afterGetData: (data: any) => {
       if (data.length > 0) {
@@ -84,10 +84,10 @@ export class SharesDashboardComponent {
     ],
     detailsHref: '/sharing/nfs',
     add() {
-      this.parent.add(ShareTypes.NFS);
+      this.parent.add(ShareType.NFS);
     },
     edit(row) {
-      this.parent.edit(ShareTypes.NFS, row.id);
+      this.parent.edit(ShareType.NFS, row.id);
     },
     afterGetData: (data: any) => {
       if (data.length > 0) {
@@ -119,10 +119,10 @@ export class SharesDashboardComponent {
       { name: helptext_sharing_smb.column_enabled, prop: 'enabled', checkbox: true },
     ],
     add() {
-      this.parent.add(ShareTypes.SMB);
+      this.parent.add(ShareType.SMB);
     },
     edit(row) {
-      this.parent.edit(ShareTypes.SMB, row.id);
+      this.parent.edit(ShareType.SMB, row.id);
     },
     afterGetData: (data: any) => {
       if (data.length > 0) {
@@ -159,10 +159,10 @@ export class SharesDashboardComponent {
       },
     ],
     add() {
-      this.parent.add(ShareTypes.ISCSI);
+      this.parent.add(ShareType.ISCSI);
     },
     edit(row) {
-      this.parent.edit(ShareTypes.ISCSI, row.id);
+      this.parent.edit(ShareType.ISCSI, row.id);
     },
     collapsedIfEmpty: true,
     afterGetData: (data: any) => {
@@ -183,7 +183,7 @@ export class SharesDashboardComponent {
   constructor(private userService: UserService, private modalService: ModalService, private ws: WebSocketService,
     private dialog: DialogService, private networkService: NetworkService, private router: Router,
     private loader: AppLoaderService, private sysGeneralService: SystemGeneralService, private aroute: ActivatedRoute,
-    private iscsiService: IscsiService, private translate: TranslateService) { }
+    private iscsiService: IscsiService, private translate: TranslateService) {}
 
   ngOnInit() {
     if (this.webdavHasItems) {
@@ -200,47 +200,47 @@ export class SharesDashboardComponent {
     }
   }
 
-  add(share: string, id?: number): void {
+  add(share: ShareType, id?: number): void {
     let formComponent: NFSFormComponent | SMBFormComponent | WebdavFormComponent | TargetFormComponent;
     switch (share) {
-      case ShareTypes.NFS:
+      case ShareType.NFS:
         formComponent = new NFSFormComponent(this.userService, this.modalService, this.ws, this.dialog, this.networkService);
         break;
-      case ShareTypes.SMB:
+      case ShareType.SMB:
         formComponent = new SMBFormComponent(this.router, this.ws, this.dialog, this.loader, this.sysGeneralService, this.modalService);
         break;
-      case ShareTypes.WebDAV:
+      case ShareType.WebDAV:
         formComponent = new WebdavFormComponent(this.router, this.ws, this.dialog);
         break;
-      case ShareTypes.ISCSI:
+      case ShareType.ISCSI:
         formComponent = new TargetFormComponent(this.router, this.aroute, this.iscsiService, this.loader, this.translate, this.ws);
         break;
     }
     this.modalService.open('slide-in-form', formComponent, id);
   }
 
-  edit(share: string, id: number): void {
+  edit(share: ShareType, id: number): void {
     this.add(share, id);
   }
 
   getTablesOrder(): string[] {
-    const order: string[] = [ShareTypes.SMB, ShareTypes.NFS, ShareTypes.ISCSI, ShareTypes.WebDAV];
+    const order: string[] = [ShareType.SMB, ShareType.NFS, ShareType.ISCSI, ShareType.WebDAV];
     // Note: The order of these IFs is important. One can't come before the other
     if (!this.smbHasItems) {
-      order.splice(order.findIndex((share) => share === ShareTypes.SMB), 1);
-      order.push(ShareTypes.SMB);
+      order.splice(order.findIndex((share) => share === ShareType.SMB), 1);
+      order.push(ShareType.SMB);
     }
     if (!this.nfsHasItems) {
-      order.splice(order.findIndex((share) => share === ShareTypes.NFS), 1);
-      order.push(ShareTypes.NFS);
+      order.splice(order.findIndex((share) => share === ShareType.NFS), 1);
+      order.push(ShareType.NFS);
     }
     if (!this.iscsiHasItems) {
-      order.splice(order.findIndex((share) => share === ShareTypes.ISCSI), 1);
-      order.push(ShareTypes.ISCSI);
+      order.splice(order.findIndex((share) => share === ShareType.ISCSI), 1);
+      order.push(ShareType.ISCSI);
     }
     if (!this.webdavHasItems) {
-      order.splice(order.findIndex((share) => share === ShareTypes.WebDAV), 1);
-      order.push(ShareTypes.WebDAV);
+      order.splice(order.findIndex((share) => share === ShareType.WebDAV), 1);
+      order.push(ShareType.WebDAV);
     }
     return order;
   }
@@ -263,22 +263,22 @@ export class SharesDashboardComponent {
 
   getWebdavOrder(): string {
     const order = this.getTablesOrder();
-    return this.getOrderFromIndex(order.findIndex((share) => share === ShareTypes.WebDAV));
+    return this.getOrderFromIndex(order.findIndex((share) => share === ShareType.WebDAV));
   }
 
   getNfsOrder(): string {
     const order = this.getTablesOrder();
-    return this.getOrderFromIndex(order.findIndex((share) => share === ShareTypes.NFS));
+    return this.getOrderFromIndex(order.findIndex((share) => share === ShareType.NFS));
   }
 
   getIscsiOrder(): string {
     const order = this.getTablesOrder();
-    return this.getOrderFromIndex(order.findIndex((share) => share === ShareTypes.ISCSI));
+    return this.getOrderFromIndex(order.findIndex((share) => share === ShareType.ISCSI));
   }
 
   getSmbOrder(): string {
     const order = this.getTablesOrder();
-    return this.getOrderFromIndex(order.findIndex((share) => share === ShareTypes.SMB));
+    return this.getOrderFromIndex(order.findIndex((share) => share === ShareType.SMB));
   }
 
   getOrderFromIndex(index: number): string {
