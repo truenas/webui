@@ -61,6 +61,7 @@ export class SharesDashboardComponent {
     },
     expandedIfNotEmpty: true,
     collapsedIfEmpty: true,
+    detailsHref: '/sharing/webdav',
   };
 
   nfsTableConf: InputExpandableTableConf = {

@@ -911,8 +911,14 @@ ul.nested-list li{
   margin-left: 24px;
 }
 
+.expanded-table-container {
+  height: 100%;
+}
 .expanded-table {
   height: 100%;
+}
+.expanded-table.expanded-height {
+  height: 90%;
 }
 .expanded-table .mat-expansion-panel-body {
   padding: 0 !important;

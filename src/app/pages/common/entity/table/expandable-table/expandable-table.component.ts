@@ -6,6 +6,7 @@ export interface InputExpandableTableConf extends InputTableConf {
   collapsedIfEmpty?: boolean;
   alwaysExpanded?: boolean;
   expandedIfNotEmpty?: boolean;
+  detailsHref?: string;
 }
 
 @Component({
@@ -19,6 +20,7 @@ export class ExpandableTableComponent {
   actions: any[];
   disabled = false;
   isEmpty = true;
+  isExpanded = false;
 
   @Input('conf') tableConf: InputExpandableTableConf;
 
