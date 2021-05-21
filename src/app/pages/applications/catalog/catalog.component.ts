@@ -52,7 +52,7 @@ export class CatalogComponent implements OnInit {
   protected utils: CommonUtils;
   imagePlaceholder = appImagePlaceholder;
 
-  hasApiError = false;
+  isLoading = false;
   emptyPageConf: EmptyConfig = {
     type: EmptyType.loading,
     large: true,
@@ -98,20 +98,17 @@ export class CatalogComponent implements OnInit {
   }
 
   loadCatalogs(): void {
+    this.isLoading = true;
     this.showLoadStatus(EmptyType.loading);
+
     this.appService.getAllCatalogItems().subscribe((catalogs) => {
-      this.hasApiError = false;
+      this.isLoading = false;
       this.catalogNames = [];
       this.catalogApps = [];
-
       for (let i = 0; i < catalogs.length; i++) {
         const catalog = catalogs[i];
-        if (catalog.error) {
-          this.hasApiError = true;
-          this.catalogNames = [];
-          this.catalogApps = [];
-          break;
-        } else {
+
+        if (!catalog.error) {
           this.catalogNames.push(catalog.label);
           catalog.preferred_trains.forEach((train) => {
             for (const i in catalog.trains[train]) {
@@ -152,6 +149,10 @@ export class CatalogComponent implements OnInit {
   showLoadStatus(type: EmptyType): void {
     let title = '';
     let message;
+
+    if (this.isLoading) {
+      type = EmptyType.loading;
+    }
 
     switch (type) {
       case EmptyType.loading:
@@ -334,9 +335,7 @@ export class CatalogComponent implements OnInit {
       this.filteredCatalogNames.includes(app.catalog.label) && app.name !== ixChartApp);
 
     if (this.filteredCatalogApps.length == 0) {
-      if (this.hasApiError) {
-        this.showLoadStatus(EmptyType.errors);
-      } else if (this.filterString) {
+      if (this.filterString) {
         this.showLoadStatus(EmptyType.no_search_results);
       } else {
         this.showLoadStatus(EmptyType.no_page_data);

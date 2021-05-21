@@ -30,9 +30,8 @@ export default {
 
   catalogMessage: {
     loading: T('Loading...'),
-    has_api_error: T('It was unable to retrieve catalogs data.'),
     no_search_result: T('No Search Results.'),
-    no_catalog: T('No catalog data is available.'),
+    no_catalog: T('It was unable to retrieve catalogs data.'),
   },
 
   installing: T('Installing'),
