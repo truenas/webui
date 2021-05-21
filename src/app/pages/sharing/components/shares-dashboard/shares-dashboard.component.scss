@@ -12,18 +12,22 @@
     "third"
     "fourth";
 }
+
 .one-table-container .first {
     grid-area: first;
     margin: 5px 0;
 }
+
 .one-table-container .second {
     grid-area: second;
     margin: 5px 0;
 }
+
 .one-table-container .third {
     grid-area: third;
     margin: 5px 0;
 }
+
 .one-table-container .fourth {
     grid-area: fourth;
     margin: 5px 0;
@@ -44,16 +48,19 @@
     margin: 5px 0;
     margin-right: 5px;
 }
+
 .two-table-container .second {
     grid-area: second;
     margin: 5px 0;
     margin-left: 5px;
 }
+
 .two-table-container .third {
     grid-area: third;
     margin: 5px 0;
     column-span: 2;
 }
+
 .two-table-container .fourth {
     grid-area: fourth;
     margin: 5px 0;
@@ -76,16 +83,19 @@
     margin: 5px 0;
     margin-right: 5px;
 }
+
 .three-table-container .second {
     grid-area: second;
     margin: 5px 0;
     margin-left: 5px;
 }
+
 .three-table-container .third {
     grid-area: third;
     margin: 5px 0;
     margin-right: 5px;
 }
+
 .three-table-container .fourth {
     grid-area: fourth;
     margin: 5px 0;
@@ -105,16 +115,19 @@
     margin: 5px 0;
     margin-right: 5px;
 }
+
 .four-table-container .second {
     grid-area: second;
     margin: 5px 0;
     margin-left: 5px;
 }
+
 .four-table-container .third {
     grid-area: third;
     margin: 5px 0;
     margin-right: 5px;
 }
+
 .four-table-container .fourth {
     grid-area: fourth;
     margin: 5px 0;

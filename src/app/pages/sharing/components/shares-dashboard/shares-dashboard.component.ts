@@ -15,9 +15,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
 
 @Component({
-  selector: 'app-shares-dashboard-1',
+  selector: 'app-shares-dashboard',
   templateUrl: './shares-dashboard.template.html',
-  styleUrls: ['./shares-dashboard.component.css'],
+  styleUrls: ['./shares-dashboard.component.scss'],
   providers: [IscsiService],
 })
 export class SharesDashboardComponent {

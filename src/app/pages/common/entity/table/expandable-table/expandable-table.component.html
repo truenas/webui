@@ -8,8 +8,8 @@
             <ng-template #plainTitle>{{ title }}</ng-template>
           </h5>
       </mat-panel-title>
-      <mat-panel-description>
-        <div class="actions" style="width: 100%;display: flex; flex-direction: row-reverse;">
+      <mat-panel-description class="description-panel">
+        <div class="actions">
             <button mat-button color="default" class="action-icon" *ngIf="tableConf.add" (click)="tableConf.add()"
               ix-auto ix-auto-type="button" ix-auto-identifier="{{tableConf.name}}-add"
             >{{ 'Add' | translate }}</button>

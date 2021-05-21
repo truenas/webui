@@ -39,7 +39,7 @@ import { AssociatedTargetListComponent } from './iscsi/associated-target/associa
 import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form';
 import { FibreChannelPortsComponent } from './iscsi/fibre-channel-ports/fibre-channel-ports.component';
 import { FibreChannelPortComponent } from './iscsi/fibre-channel-ports/fibre-channel-port/fibre-channel-port.component';
-import { SharesDashboardComponent } from './components/shares-dashboard';
+import { SharesDashboardComponent } from './components/shares-dashboard/shares-dashboard.component';
 
 @NgModule({
   imports: [

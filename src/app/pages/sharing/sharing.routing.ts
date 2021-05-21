@@ -6,7 +6,6 @@ import { T } from 'app/translate-marker';
 import { AFPListComponent } from './afp/afp-list';
 import { AFPFormComponent } from './afp/afp-form';
 import { NFSListComponent } from './nfs/nfs-list';
-import { NFSFormComponent } from './nfs/nfs-form';
 import { WebdavListComponent } from './webdav/webdav-list';
 import { WebdavFormComponent } from './webdav/webdav-form';
 import { SMBListComponent } from './smb/smb-list';
@@ -14,20 +13,12 @@ import { SMBFormComponent } from './smb/smb-form';
 import { SMBAclComponent } from './smb/smb-acl/smb-acl.component';
 import { ISCSI } from './iscsi/iscsi.component';
 import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.component';
-import { GlobalconfigurationComponent } from './iscsi/globalconfiguration';
-import { PortalListComponent } from './iscsi/portal/portal-list';
 import { PortalFormComponent } from './iscsi/portal/portal-form';
-import { InitiatorListComponent } from './iscsi/initiator/initiator-list';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form';
-import { AuthorizedAccessListComponent } from './iscsi/authorizedaccess/authorizedaccess-list';
 import { AuthorizedAccessFormComponent } from './iscsi/authorizedaccess/authorizedaccess-form';
-import { TargetListComponent } from './iscsi/target/target-list';
 import { TargetFormComponent } from './iscsi/target/target-form';
-import { ExtentListComponent } from './iscsi/extent/extent-list';
 import { ExtentFormComponent } from './iscsi/extent/extent-form';
-import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list';
 import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form';
-import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
 
 export const routes: Routes = [

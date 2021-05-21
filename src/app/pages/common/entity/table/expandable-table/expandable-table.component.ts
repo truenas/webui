@@ -11,6 +11,7 @@ export interface InputExpandableTableConf extends InputTableConf {
 @Component({
   selector: 'app-expandable-table',
   templateUrl: './expandable-table.component.html',
+  styleUrls: ['./expandable-table.component.scss'],
 })
 export class ExpandableTableComponent {
   title = '';
@@ -21,7 +22,7 @@ export class ExpandableTableComponent {
 
   @Input('conf') tableConf: InputExpandableTableConf;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.title = this.tableConf.title || '';
     if (this.tableConf.titleHref) {
       this.titleHref = this.tableConf.titleHref;
@@ -42,11 +43,11 @@ export class ExpandableTableComponent {
     };
   }
 
-  shouldBeCollapsed() {
+  shouldBeCollapsed(): boolean {
     return this.tableConf.alwaysCollapsed || (this.isEmpty && this.tableConf.collapsedIfEmpty);
   }
 
-  shouldBeExpanded() {
+  shouldBeExpanded(): boolean {
     return this.tableConf.alwaysExpanded || (!this.isEmpty && this.tableConf.expandedIfNotEmpty);
   }
 }
