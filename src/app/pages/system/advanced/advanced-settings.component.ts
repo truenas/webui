@@ -116,10 +116,10 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
       { name: T('Next Run'), prop: 'next_run', hidden: true },
     ],
     add() {
-      this.parent.doAdd('cron');
+      this.parent.onSettingsPressed(CardId.Cron);
     },
     edit(row) {
-      this.parent.doAdd('cron', row.id);
+      this.parent.onSettingsPressed(CardId.Cron, row.id);
     },
   };
 
@@ -144,10 +144,10 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
       { name: T('Timeout'), prop: 'timeout', hidden: true },
     ],
     add() {
-      this.parent.doAdd('initshutdown');
+      this.parent.onSettingsPressed(CardId.InitShutdown);
     },
     edit(row) {
-      this.parent.doAdd('initshutdown', row.id);
+      this.parent.onSettingsPressed(CardId.InitShutdown, row.id);
     },
   };
 
@@ -168,10 +168,10 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
       { name: T('Description'), prop: 'comment' },
     ],
     add() {
-      this.parent.doAdd('sysctl');
+      this.parent.onSettingsPressed(CardId.Sysctl);
     },
     edit(row) {
-      this.parent.doAdd('sysctl', row.id);
+      this.parent.onSettingsPressed(CardId.Sysctl, row.id);
     },
   };
 
