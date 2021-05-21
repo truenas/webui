@@ -114,3 +114,71 @@ export interface DiskUpdate {
   informational?: number;
   enclosure?: EnclosureSlot;
 }
+
+/**
+ * As returned by snapshot.query
+ */
+export interface SnapshotData {
+  name: string;
+  snapshot: string;
+  dataset: string;
+  created?: string;
+  properties?: SnapshotProperties;
+  referenced?: string;
+  used?: string;
+}
+
+export interface SnapshotProperty {
+  parsed: string;
+  rawvalue: string;
+  value: string;
+  source: string;
+}
+
+export interface SnapshotProperties {
+  acltype: SnapshotProperty;
+  casesensitivity: SnapshotProperty;
+  clones: SnapshotProperty;
+  compressratio: SnapshotProperty;
+  context: SnapshotProperty;
+  createtxg: SnapshotProperty;
+  creation: SnapshotProperty;
+  defcontext: SnapshotProperty;
+  defer_destroy: SnapshotProperty;
+  devices: SnapshotProperty;
+  encryption: SnapshotProperty;
+  encryptionroot: SnapshotProperty;
+  exec: SnapshotProperty;
+  fscontext: SnapshotProperty;
+  guid: SnapshotProperty;
+  inconsistent: SnapshotProperty;
+  ivsetguid: SnapshotProperty;
+  keyguid: SnapshotProperty;
+  keystatus: SnapshotProperty;
+  logicalreferenced: SnapshotProperty;
+  mlslabel: SnapshotProperty;
+  name: SnapshotProperty;
+  nbmand: SnapshotProperty;
+  normalization: SnapshotProperty;
+  numclones: SnapshotProperty;
+  objsetid: SnapshotProperty;
+  primarycache: SnapshotProperty;
+  redact_snaps: SnapshotProperty;
+  redacted: SnapshotProperty;
+  refcompressratio: SnapshotProperty;
+  referenced: SnapshotProperty;
+  remaptxg: SnapshotProperty;
+  rootcontext: SnapshotProperty;
+  secondarycache: SnapshotProperty;
+  setuid: SnapshotProperty;
+  type: SnapshotProperty;
+  unique: SnapshotProperty;
+  used: SnapshotProperty;
+  useraccounting: SnapshotProperty;
+  userrefs: SnapshotProperty;
+  utf8only: SnapshotProperty;
+  version: SnapshotProperty;
+  volsize: SnapshotProperty;
+  written: SnapshotProperty;
+  xattr: SnapshotProperty;
+}

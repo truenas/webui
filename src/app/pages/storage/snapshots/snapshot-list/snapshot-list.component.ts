@@ -16,6 +16,12 @@ import helptext from '../../../../helptext/storage/snapshots/snapshots';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { SnapshotData, SnapshotProperties, SnapshotProperty } from 'app/interfaces/storage.interface';
+
+interface DialogData {
+  datasets: string[];
+  snapshots: any;
+}
 
 @Component({
   selector: 'app-snapshot-list',
@@ -273,10 +279,11 @@ export class SnapshotListComponent {
     });
   }
 
-  restructureData(selected: any): any {
-    const datasets = [];
-    const snapshots = {};
-    selected.forEach((item, index) => {
+  restructureData(selected: SnapshotData[]): DialogData {
+    const datasets: string[] = [];
+    const snapshots: any = {};
+    console.log(selected);
+    selected.forEach((item: SnapshotData) => {
       if (!snapshots[item.dataset]) {
         datasets.push(item.dataset);
         snapshots[item.dataset] = [];
@@ -288,11 +295,11 @@ export class SnapshotListComponent {
     return { datasets, snapshots };
   }
 
-  getMultiDeleteMessage(selected: any): string {
-    const grandTotal = selected.length > 1 ? selected.length.toString() : '';
+  getMultiDeleteMessage(selected: SnapshotData[]): string {
+    const grandTotal: string = selected.length > 1 ? selected.length.toString() : '';
     let message = `<strong>The following ${grandTotal} snapshots will be deleted. Are you sure you want to proceed?</strong>`;
     message += '<br>';
-    const info = this.restructureData(selected);
+    const info: DialogData = this.restructureData(selected);
 
     const datasetStart = "<div class='mat-list-item'>";
     const datasetEnd = '</div>';
@@ -300,16 +307,17 @@ export class SnapshotListComponent {
     const listEnd = '</ul>';
     const breakTag = '<br>';
 
-    info.datasets.forEach((dataset, index) => {
-      const totalSnapshots = info.snapshots[dataset].length;
+    info.datasets.forEach((dataset: any) => {
+      const totalSnapshots: number = info.snapshots[dataset].length;
       const header = `<br/> <div><strong>${dataset}</strong> (${totalSnapshots} snapshots) </div>`;
-      const listContent = [];
+      const listContent: string[] = [];
 
-      info.snapshots[dataset].forEach((snapshot) => {
+      info.snapshots[dataset].forEach((snapshot: any) => {
         listContent.push('<li>&nbsp;&nbsp;&nbsp;&nbsp;' + snapshot + '</li>');
       });
 
-      message += datasetStart + header + listStart + listContent.toString().replaceAll(',', '') + listEnd + breakTag + datasetEnd;
+      const listContentString: string = listContent.toString();
+      message += datasetStart + header + listStart + listContentString.replaceAll(',', '') + listEnd + breakTag + datasetEnd;
     });
 
     return message;
