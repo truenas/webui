@@ -32,6 +32,10 @@ export interface InputTableConf {
   emptyEntityLarge?: boolean;
   parent: any;
   expandable?: boolean;
+  tableActions?: {
+    label: string;
+    onClick: () => void;
+  }[];
 
   add?(): any; // add action function
   afterGetData?(data: any): void;
