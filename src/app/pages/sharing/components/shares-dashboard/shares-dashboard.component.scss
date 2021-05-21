@@ -1,135 +1,135 @@
 .container {
-    height: 90%;
+  height: 90%;
 }
 
 .one-table-container {
-    display: grid;
-    grid-template-columns: 100%;
-    grid-template-rows: 70% 58px 58px 58px;
-    grid-template-areas: 
-    "first"
-    "second"
-    "third"
-    "fourth";
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 70% 58px 58px 58px;
+  grid-template-areas: 
+  "first"
+  "second"
+  "third"
+  "fourth";
 }
 
 .one-table-container .first {
-    grid-area: first;
-    margin: 5px 0;
+  grid-area: first;
+  margin: 5px 0;
 }
 
 .one-table-container .second {
-    grid-area: second;
-    margin: 5px 0;
+  grid-area: second;
+  margin: 5px 0;
 }
 
 .one-table-container .third {
-    grid-area: third;
-    margin: 5px 0;
+  grid-area: third;
+  margin: 5px 0;
 }
 
 .one-table-container .fourth {
-    grid-area: fourth;
-    margin: 5px 0;
+  grid-area: fourth;
+  margin: 5px 0;
 }
 
 .two-table-container {
-    display: grid;
-    grid-template-columns: 50% 50%;
-    grid-template-rows: 80% 58px 58px;
-    grid-template-areas: 
-    "first second"
-    "third third"
-    "fourth fourth";
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 80% 58px 58px;
+  grid-template-areas: 
+  "first second"
+  "third third"
+  "fourth fourth";
 }
 
 .two-table-container .first {
-    grid-area: first;
-    margin: 5px 0;
-    margin-right: 5px;
+  grid-area: first;
+  margin: 5px 0;
+  margin-right: 5px;
 }
 
 .two-table-container .second {
-    grid-area: second;
-    margin: 5px 0;
-    margin-left: 5px;
+  grid-area: second;
+  margin: 5px 0;
+  margin-left: 5px;
 }
 
 .two-table-container .third {
-    grid-area: third;
-    margin: 5px 0;
-    column-span: 2;
+  grid-area: third;
+  margin: 5px 0;
+  column-span: 2;
 }
 
 .two-table-container .fourth {
-    grid-area: fourth;
-    margin: 5px 0;
-    column-span: 2;
+  grid-area: fourth;
+  margin: 5px 0;
+  column-span: 2;
 }
 
 
 .three-table-container {
-    display: grid;
-    grid-template-columns: 50% 50%;
-    grid-template-rows: 45% 45% 58px;
-    grid-template-areas: 
-    "first second"
-    "third ."
-    "fourth fourth";
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 45% 45% 58px;
+  grid-template-areas: 
+  "first second"
+  "third ."
+  "fourth fourth";
 }
 
 .three-table-container .first {
-    grid-area: first;
-    margin: 5px 0;
-    margin-right: 5px;
+  grid-area: first;
+  margin: 5px 0;
+  margin-right: 5px;
 }
 
 .three-table-container .second {
-    grid-area: second;
-    margin: 5px 0;
-    margin-left: 5px;
+  grid-area: second;
+  margin: 5px 0;
+  margin-left: 5px;
 }
 
 .three-table-container .third {
-    grid-area: third;
-    margin: 5px 0;
-    margin-right: 5px;
+  grid-area: third;
+  margin: 5px 0;
+  margin-right: 5px;
 }
 
 .three-table-container .fourth {
-    grid-area: fourth;
-    margin: 5px 0;
+  grid-area: fourth;
+  margin: 5px 0;
 }
 
 .four-table-container {
-    display: grid;
-    grid-template-columns: 50% 50%;
-    grid-template-rows: 49% 49%;
-    grid-template-areas: 
-    "first second"
-    "third fourth"
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 49% 49%;
+  grid-template-areas: 
+  "first second"
+  "third fourth"
 }
 
 .four-table-container .first {
-    grid-area: first;
-    margin: 5px 0;
-    margin-right: 5px;
+  grid-area: first;
+  margin: 5px 0;
+  margin-right: 5px;
 }
 
 .four-table-container .second {
-    grid-area: second;
-    margin: 5px 0;
-    margin-left: 5px;
+  grid-area: second;
+  margin: 5px 0;
+  margin-left: 5px;
 }
 
 .four-table-container .third {
-    grid-area: third;
-    margin: 5px 0;
-    margin-right: 5px;
+  grid-area: third;
+  margin: 5px 0;
+  margin-right: 5px;
 }
 
 .four-table-container .fourth {
-    grid-area: fourth;
-    margin: 5px 0;
-    margin-left: 5px;
+  grid-area: fourth;
+  margin: 5px 0;
+  margin-left: 5px;
 }
