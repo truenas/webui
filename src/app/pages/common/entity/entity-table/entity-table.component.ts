@@ -11,7 +11,7 @@ import {
   fromEvent as observableFromEvent, Observable, of, Subscription,
 } from 'rxjs';
 import {
-  catchError, debounceTime, distinctUntilChanged, filter, switchMap, take, tap,
+  catchError, debounceTime, distinctUntilChanged, filter, switchMap, take, tap, map,
 } from 'rxjs/operators';
 import { DialogService, JobService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -180,6 +180,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   protected toDeleteRow: any;
   private routeSub: any;
+  private expandedRowIds: number[] = [];
 
   hasDetails = () =>
     this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
@@ -327,12 +328,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.erdService.attachResizeEventToElement('entity-table-component');
   }
 
-  getFilteredRows() {
+  setFilteredRows(isTrigeredByFilter = false): void {
     const filterValue: string = this.filter.nativeElement.value;
     let newData: any[] = [];
-
+    this.expandedRows = 0; // TODO: Make this unnecessary by figuring out how to keep expanded rows expanded when filtering
     if (filterValue.length > 0) {
-      this.expandedRows = 0; // TODO: Make this unnecessary by figuring out how to keep expanded rows expanded when filtering
       this.rows.forEach((dataElement) => {
         for (const dataElementProp of this.filterColumns) {
           let value: any = dataElement[dataElementProp.prop];
@@ -362,17 +362,42 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       newData = this.rows;
     }
 
-    return newData;
+    this.currentRows = newData;
+
+    if (!isTrigeredByFilter) {
+      this.currentRows.forEach((row) => {
+        const index = this.expandedRowIds.indexOf(row.id);
+        if (index > -1) {
+          this.expandedRows++;
+          this.table.rowDetail.toggleExpandRow(row);
+        }
+      });
+    } else {
+      this.expandedRowIds = [];
+      setTimeout(() => {
+        if (this.table) {
+          this.table.rowDetail.collapseAllRows();
+        }
+      });
+
+    }
+
+    if (!this.fixedTableHight) {
+      this.updateTableHeightAfterDetailToggle();
+    }
   }
 
   ngAfterViewInit() {
     if (this.filter) {
       observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
+        map((event: any) => {
+          return event.target.value;
+        }),
         debounceTime(150),
         distinctUntilChanged(),
       )
         .subscribe((evt) => {
-          this.currentRows = this.getFilteredRows();
+          this.setFilteredRows(true);
           this.paginationPageIndex = 0;
           this.setPaginationInfo();
         });
@@ -545,7 +570,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.conf.addRows(this);
     }
 
-    this.currentRows = this.getFilteredRows();
+    this.setFilteredRows();
+
 
     if (!this.showDefaults) {
       this.paginationPageIndex = 0;
@@ -1106,6 +1132,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleExpandRow(row) {
+    const index = this.expandedRowIds.indexOf(row.id);
+    if (index > -1) {
+      this.expandedRowIds.splice(index, 1);
+    } else {
+      this.expandedRowIds.push(row.id);
+    }
     this.table.rowDetail.toggleExpandRow(row);
     if (!this.fixedTableHight) {
       this.updateTableHeightAfterDetailToggle();
