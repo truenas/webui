@@ -5,6 +5,11 @@ import { Acl } from 'app/interfaces/acl.interface';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
+import {
+  AuthenticatorSchema,
+  CreateDnsAuthenticator,
+  DnsAuthenticator, UpdateDnsAuthenticator,
+} from 'app/interfaces/dns-authenticator.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import {
   IscsiAuthAccess, IscsiExtent,
@@ -38,10 +43,10 @@ export type ApiDirectory = {
   'afp.config': { params: any; response: any };
 
   // Acme
-  'acme.dns.authenticator.query': { params: any; response: any };
-  'acme.dns.authenticator.create': { params: any; response: any };
-  'acme.dns.authenticator.update': { params: any; response: any };
-  'acme.dns.authenticator.authenticator_schemas': { params: any; response: any };
+  'acme.dns.authenticator.query': { params: void; response: DnsAuthenticator[] };
+  'acme.dns.authenticator.create': { params: CreateDnsAuthenticator; response: DnsAuthenticator };
+  'acme.dns.authenticator.update': { params: [number, UpdateDnsAuthenticator]; response: DnsAuthenticator };
+  'acme.dns.authenticator.authenticator_schemas': { params: void; response: AuthenticatorSchema[] };
 
   // Alert
   'alert.list': { params: any; response: any };

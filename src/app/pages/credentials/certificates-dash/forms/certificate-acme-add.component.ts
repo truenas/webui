@@ -139,7 +139,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   }
 
   preInit(entityForm: EntityFormComponent): void {
-    this.ws.call('acme.dns.authenticator.query').subscribe((authenticators: any[]) => {
+    this.ws.call('acme.dns.authenticator.query').subscribe((authenticators) => {
       this.dns_map = _.find(this.fieldSets[2].config[0].templateListField, { name: 'authenticators' });
       authenticators.forEach((item) => {
         this.dns_map.options.push({ label: item.name, value: item.id });
