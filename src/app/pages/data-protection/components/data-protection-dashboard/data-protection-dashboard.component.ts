@@ -73,8 +73,6 @@ export interface TaskCard {
 })
 export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
   dataCards: TaskCard[] = [];
-  configData: any;
-  entityForm: any;
   onDestroy$ = new Subject();
   disks: any[] = [];
   parent: DataProtectionDashboardComponent;
@@ -568,7 +566,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               if (res) {
                 row.state = { state: EntityJobState.Running };
                 this.ws.call('replication.run', [row.id]).subscribe(
-                  (jobId) => {
+                  (jobId: number) => {
                     this.dialog.Info(
                       T('Task started'),
                       T('Replication <i>') + row.name + T('</i> has started.'),
@@ -582,7 +580,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                     });
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this.entityForm, err);
+                    new EntityUtils().handleWSError(this, err);
                   },
                 );
               }
@@ -659,7 +657,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               if (res) {
                 row.state = { state: EntityJobState.Running };
                 this.ws.call('cloudsync.sync', [row.id]).subscribe(
-                  (jobId: any) => {
+                  (jobId: number) => {
                     this.dialog.Info(
                       T('Task Started'),
                       T('Cloud sync <i>') + row.description + T('</i> has started.'),
@@ -673,7 +671,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                     });
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this.entityForm, err);
+                    new EntityUtils().handleWSError(this, err);
                   },
                 );
               }
@@ -693,7 +691,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               message: T('Stop this cloud sync?'),
               hideCheckBox: true,
             })
-            .subscribe((res: any) => {
+            .subscribe((res: boolean) => {
               if (res) {
                 this.ws.call('cloudsync.abort', [row.id]).subscribe(
                   () => {
@@ -705,8 +703,8 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                       true,
                     );
                   },
-                  (wsErr) => {
-                    new EntityUtils().handleWSError(this.entityForm, wsErr);
+                  (err) => {
+                    new EntityUtils().handleWSError(this, err);
                   },
                 );
               }
@@ -729,7 +727,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             .subscribe((res: boolean) => {
               if (res) {
                 this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).subscribe(
-                  (jobId) => {
+                  (jobId: number) => {
                     this.dialog.Info(
                       T('Task Started'),
                       T('Cloud sync <i>') + row.description + T('</i> has started.'),
@@ -743,7 +741,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                     });
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this.entityForm, err);
+                    new EntityUtils().handleWSError(this, err);
                   },
                 );
               }
@@ -854,7 +852,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               if (run) {
                 row.state = { state: EntityJobState.Running };
                 this.ws.call('rsynctask.run', [row.id]).subscribe(
-                  (jobId) => {
+                  (jobId: number) => {
                     this.dialog.Info(
                       T('Task Started'),
                       'Rsync task <i>' + row.remotehost + ' - ' + row.remotemodule + '</i> started.',
