@@ -10,20 +10,20 @@ import { TaskService } from '../../../../services';
 
 import helptext from '../../../../helptext/data-protection/scrub/scrub-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-scrub-task-add',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [TaskService],
 })
-export class ScrubFormComponent {
-  protected queryCall = 'pool.scrub.query';
-  protected queryKey = 'id';
-  protected pk: number;
-  protected editCall = 'pool.scrub.update';
-  protected addCall = 'pool.scrub.create';
+export class ScrubFormComponent implements FormConfiguration {
+  queryCall: 'pool.scrub.query' = 'pool.scrub.query';
+  queryKey = 'id';
+  pk: number;
+  editCall: 'pool.scrub.update' = 'pool.scrub.update';
+  addCall: 'pool.scrub.create' = 'pool.scrub.create';
   protected entityForm: EntityFormComponent;
-  protected isEntity = true;
+  isEntity = true;
   protected preTaskName = 'scrub';
   protected isOneColumnForm = true;
   title: string;
@@ -93,22 +93,23 @@ export class ScrubFormComponent {
 
   constructor(protected taskService: TaskService, protected modalService: ModalService) {}
 
-  async afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.pk = entityForm.pk;
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.scrub_task_add : helptext.scrub_task_edit;
 
     this.volume_field = this.fieldSets.config('pool');
-    this.taskService.getVolumeList().subscribe((res: any[]) => {
-      res.forEach((item) => {
-        this.volume_field.options.push({ label: item.name, value: item.id });
+    this.taskService.getVolumeList().subscribe((pools) => {
+      pools.forEach((pool) => {
+        this.volume_field.options.push({ label: pool.name, value: pool.id });
       });
     });
 
     entityForm.formGroup.controls['pool'].valueChanges.subscribe((res) => {
       if (!Number.isInteger(res)) {
-        this.taskService.getVolumeList().subscribe((list) => {
+        this.taskService.getVolumeList().subscribe((list: any) => {
+          // TODO: Weird typing.
           for (const i in list.data) {
             if (list.data[i].vol_name === res) {
               entityForm.formGroup.controls['pool'].setValue(list.data[i].id);
@@ -119,7 +120,7 @@ export class ScrubFormComponent {
     });
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     const spl = value.scrub_picker.split(' ');
     value.schedule = {};
     value.schedule['minute'] = spl[0];

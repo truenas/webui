@@ -21,8 +21,8 @@ Options:
 --convert-feature                - This convert Jira feature files
                                    for pytest-bdd.
 --test-suite                     - To specify the test suite to run ha-bhyve02
-                                   is use by default.
-                                   test-suite options: ha-bhyve02, ha-tn09, scale
+                                   is use by default. test-suite options:
+                                   ha-bhyve02, ha-tn09, scale, scale-validation
 
 """
 
@@ -40,7 +40,8 @@ option_list = [
 test_suite_list = [
     'ha-bhyve02',
     'ha-tn09',
-    'scale'
+    'scale',
+    'scale-validation'
 ]
 
 
@@ -109,20 +110,30 @@ for output, arg in myopts:
 
 
 def run_testing():
-    # store ip and password in environment variable if test suite is core.
-    if 'ip' in globals() and 'password' in globals() and 'version' in globals() and test_suite == 'core':
+    # store ip and password in environment variable if test suite is scale.
+    if 'ip' in globals() and 'password' in globals() and 'version' in globals() and test_suite == 'scale':
         os.environ["nas_ip"] = ip
         os.environ["nas_password"] = password
-        os.environ["nas_version"] = version
         os.environ['test_suite'] = test_suite
-    elif os.path.exists(f'{cwd}/config.cfg') and test_suite == 'core':
+    elif os.path.exists(f'{cwd}/config.cfg') and test_suite == 'scale':
         configs = ConfigParser()
         configs.read('config.cfg')
         os.environ["nas_ip"] = configs['NAS_CONFIG']['ip']
         os.environ["nas_password"] = configs['NAS_CONFIG']['password']
         os.environ["nas_version"] = configs['NAS_CONFIG']['version']
         os.environ['test_suite'] = test_suite
-    elif not os.path.exists(f'{cwd}/config.cfg') and test_suite == 'core':
+    if 'ip' in globals() and 'password' in globals() and test_suite == 'scale-validation':
+        os.environ["nas_ip"] = ip
+        os.environ["nas_password"] = password
+        os.environ["nas_version"] = version
+        os.environ['test_suite'] = test_suite
+    elif os.path.exists(f'{cwd}/config.cfg') and test_suite == 'scale-validation':
+        configs = ConfigParser()
+        configs.read('config.cfg')
+        os.environ["nas_ip"] = configs['NAS_CONFIG']['ip']
+        os.environ["nas_password"] = configs['NAS_CONFIG']['password']
+        os.environ['test_suite'] = test_suite
+    elif not os.path.exists(f'{cwd}/config.cfg') and test_suite in ['scale', 'scale-validation']:
         msg = 'Please use --ip and --nas-password or add confing.cfg ' \
             'in this directory'
         print(msg)
@@ -130,7 +141,8 @@ def run_testing():
         cfg_msg = "[NAS_CONFIG]\n"
         cfg_msg += "ip = 0.0.0.0\n"
         cfg_msg += "password = testing\n"
-        cfg_msg += "version = TrueNAS-12.0-U2\n"
+        if test_suite == 'scale-validation':
+            cfg_msg += "version = TrueNAS-12.0-U2\n"
         print(cfg_msg)
         exit(1)
     else:

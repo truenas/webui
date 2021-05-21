@@ -1,11 +1,13 @@
 import {
-  Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy,
+  Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy, AfterViewInit,
 } from '@angular/core';
+import { CoreEvent } from 'app/interfaces/events';
+import { Option } from 'app/interfaces/option.interface';
 import { ApplicationsService } from './applications.service';
 import { ModalService } from '../../services/modal.service';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
 import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
@@ -22,12 +24,11 @@ import { DockerImagesComponent } from './docker-images/docker-images.component';
   styleUrls: ['./applications.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-
-export class ApplicationsComponent implements OnInit, OnDestroy {
+export class ApplicationsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(CatalogComponent, { static: false }) private catalogTab: CatalogComponent;
   @ViewChild(ChartReleasesComponent, { static: false }) private chartTab: ChartReleasesComponent;
   @ViewChild(ManageCatalogsComponent, { static: false }) private manageCatalogTab: ManageCatalogsComponent;
-  @ViewChild(DockerImagesComponent, { static: false }) private dockeImagesTab: DockerImagesComponent;
+  @ViewChild(DockerImagesComponent, { static: false }) private dockerImagesTab: DockerImagesComponent;
   selectedIndex = 0;
   isSelectedOneMore = false;
   isSelectedAll = false;
@@ -35,15 +36,17 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
   settingsEvent: Subject<CoreEvent>;
   filterString = '';
   toolbarConfig: ToolbarConfig;
-  catalogOptions: any[] = [];
-  selectedCatalogOptions: any[] = [];
+  catalogOptions: Option[] = [];
+  selectedCatalogOptions: Option[] = [];
   protected utils: CommonUtils;
   private refreshTable: Subscription;
 
-  constructor(private appService: ApplicationsService,
+  constructor(
+    private appService: ApplicationsService,
     private core: CoreService,
-    protected aroute: ActivatedRoute,
-    private modalService: ModalService) {
+    private aroute: ActivatedRoute,
+    private modalService: ModalService,
+  ) {
     this.utils = new CommonUtils();
   }
 
@@ -55,7 +58,7 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     // If the route parameter "tabIndex" is 1, switch tab to "Installed applications".
     this.aroute.params.subscribe((params) => {
       if (params['tabIndex'] == 1) {
@@ -65,13 +68,13 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.refreshTable) {
       this.refreshTable.unsubscribe();
     }
   }
 
-  setupToolbar() {
+  setupToolbar(): void {
     this.settingsEvent = new Subject();
     this.settingsEvent.subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'filter') {
@@ -85,7 +88,7 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
       this.catalogTab.onToolbarAction(evt);
       this.chartTab.onToolbarAction(evt);
       this.manageCatalogTab.onToolbarAction(evt);
-      this.dockeImagesTab.onToolbarAction(evt);
+      this.dockerImagesTab.onToolbarAction(evt);
     });
 
     const controls: any[] = [
@@ -110,10 +113,11 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
     this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
   }
 
-  updateToolbar() {
+  updateToolbar(): void {
     this.toolbarConfig.controls.splice(1);
     const search = this.toolbarConfig.controls[0];
 
+    // TODO: Error prone if index is changed
     switch (this.selectedIndex) {
       case 0:
         search.placeholder = helptext.availablePlaceholder;
@@ -219,7 +223,7 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
     this.toolbarConfig.target.next({ name: 'UpdateControls', data: this.toolbarConfig.controls });
   }
 
-  updateTab(evt: any) {
+  updateTab(evt: any): void {
     if (evt.name == 'SwitchTab') {
       this.selectedIndex = evt.value;
     } else if (evt.name == 'UpdateToolbar') {
@@ -228,7 +232,7 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
       this.updateToolbar();
     } else if (evt.name == 'catalogToolbarChanged') {
       this.isSelectedPool = evt.value;
-      this.catalogOptions = evt.catalogNames.map((catalogName: any) => ({
+      this.catalogOptions = evt.catalogNames.map((catalogName: string) => ({
         label: this.utils.capitalizeFirstLetter(catalogName),
         value: catalogName,
       }));
@@ -238,7 +242,7 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
     }
   }
 
-  refreshTab(switchToAppTab = false) {
+  refreshTab(switchToAppTab = false): void {
     this.updateToolbar();
     if (this.selectedIndex == 0) {
       if (switchToAppTab) {
@@ -252,11 +256,11 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
     } else if (this.selectedIndex == 2) {
       this.manageCatalogTab.refresh();
     } else if (this.selectedIndex == 3) {
-      this.dockeImagesTab.refresh();
+      this.dockerImagesTab.refresh();
     }
   }
 
-  refresh(e: MatTabChangeEvent) {
+  refresh(e: MatTabChangeEvent): void {
     this.selectedIndex = e.index;
     this.refreshTab();
   }

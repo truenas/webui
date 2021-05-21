@@ -1,29 +1,31 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
+import { Observable } from 'rxjs/Observable';
 import { BootEnvService, RestService, WebSocketService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-bootenv-create',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [BootEnvService],
 })
-export class BootEnvironmentCreateComponent {
-  protected route_success: string[] = ['system', 'boot'];
-  protected addCall = 'bootenv.create';
-  protected pk: any;
-  protected isNew = false;
-  protected isEntity = true;
+export class BootEnvironmentCreateComponent implements FormConfiguration {
+  route_success: string[] = ['system', 'boot'];
+  addCall: 'bootenv.create' = 'bootenv.create';
+  pk: any;
+  isNew = false;
+  isEntity = true;
   protected entityForm: any;
 
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService, protected bootEnvService: BootEnvService) {}
 
-  preInit(entityForm: any) {
+  preInit(entityForm: any): void {
     this.route.params.subscribe((params) => {
       this.pk = params['pk'];
       this.fieldConfig = [
@@ -39,10 +41,12 @@ export class BootEnvironmentCreateComponent {
     });
     this.entityForm = entityForm;
   }
-  afterInit(entityForm: any) {
+
+  afterInit(entityForm: any): void {
     entityForm.submitFunction = this.submitFunction;
   }
-  submitFunction(entityForm: any) {
+
+  submitFunction(entityForm: any): Observable<any> {
     const payload: any = {};
     payload['name'] = entityForm.name;
     return this.ws.call('bootenv.create', [payload]);

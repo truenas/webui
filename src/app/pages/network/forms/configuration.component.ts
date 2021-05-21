@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs/Observable';
 import { ProductType } from '../../../enums/product-type.enum';
 
 import { TooltipsService, WebSocketService } from '../../../services';
@@ -9,6 +10,7 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { ipv4Validator, ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import helptext from '../../../helptext/network/configuration/configuration';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-networkconfiguration',
@@ -17,10 +19,10 @@ import helptext from '../../../helptext/network/configuration/configuration';
   `,
   providers: [TooltipsService],
 })
-export class ConfigurationComponent {
+export class ConfigurationComponent implements FormConfiguration {
   // protected resource_name: string = 'network/globalconfiguration/';
-  protected queryCall = 'network.configuration.config';
-  protected updateCall = 'network.configuration.update';
+  queryCall: 'network.configuration.config' = 'network.configuration.config';
+  updateCall: 'network.configuration.update' = 'network.configuration.update';
   isEntity = false;
   fieldConfig: FieldConfig[] = [];
   fieldSets = new FieldSets([
@@ -220,7 +222,7 @@ export class ConfigurationComponent {
   constructor(protected router: Router,
     protected ws: WebSocketService) { }
 
-  preInit() {
+  preInit(): void {
     const outbound_network_value_field = this.fieldSets.config('outbound_network_value');
     this.ws.call('network.configuration.activity_choices').subscribe(
       (res) => {
@@ -230,7 +232,8 @@ export class ConfigurationComponent {
       },
     );
   }
-  afterInit(entityEdit: any) {
+
+  afterInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
     if ([ProductType.Enterprise, ProductType.ScaleEnterprise].includes(window.localStorage.getItem('product_type') as ProductType)) {
       this.ws.call('failover.licensed').subscribe((is_ha) => { // fixme, stupid race condition makes me need to call this again
@@ -242,7 +245,7 @@ export class ConfigurationComponent {
     this.entityEdit.submitFunction = this.submitFunction;
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any[] {
     if (data.hosts && data.hosts !== '') {
       data['hosts'] = data.hosts.split('\n');
     } else {
@@ -262,7 +265,7 @@ export class ConfigurationComponent {
     return data;
   }
 
-  clean(data: any) {
+  clean(data: any): any {
     data.hosts = data.hosts.length > 0 ? data.hosts.join('\n') : '';
     data['service_announcement'] = {
       netbios: data['netbios'],
@@ -276,11 +279,11 @@ export class ConfigurationComponent {
     return data;
   }
 
-  submitFunction(body: any) {
+  submitFunction(body: any): Observable<any> {
     return this.ws.call('network.configuration.update', [body]);
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     if (data['outbound_network_activity'] === 'ALLOW' || data['outbound_network_activity'] === 'DENY') {
       data['activity'] = { type: data['outbound_network_activity'], activities: [] };
     } else {

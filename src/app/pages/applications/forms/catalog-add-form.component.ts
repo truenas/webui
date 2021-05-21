@@ -7,20 +7,21 @@ import { ModalService } from '../../../services/modal.service';
 import { DialogService } from '../../../services/index';
 import helptext from '../../../helptext/apps/apps';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { chartsTrain } from 'app/constants/catalog.constants';
 
 @Component({
   selector: 'app-catalog-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class CatalogAddFormComponent {
-  protected queryCall = 'catalog.query';
-  protected customFilter: any[];
-  protected addCall = 'catalog.create';
-  protected isEntity = true;
+export class CatalogAddFormComponent implements FormConfiguration {
+  queryCall: 'catalog.query' = 'catalog.query';
+  customFilter: any[];
+  addCall: 'catalog.create' = 'catalog.create';
+  isEntity = true;
   protected entityForm: EntityFormComponent;
-  private title = helptext.catalogForm.title;
-  private dialogRef: any;
-  protected fieldConfig: FieldConfig[];
+  title = helptext.catalogForm.title;
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
       name: 'Name',
@@ -52,13 +53,14 @@ export class CatalogAddFormComponent {
           name: 'preferred_trains',
           placeholder: helptext.catalogForm.preferredTrains.placeholder,
           tooltip: helptext.catalogForm.preferredTrains.tooltip,
+          value: [chartsTrain],
         },
         {
           type: 'input',
           name: 'branch',
           placeholder: helptext.catalogForm.branch.placeholder,
           tooltip: helptext.catalogForm.branch.tooltip,
-          value: 'master',
+          value: 'main',
         },
       ],
     },
@@ -68,7 +70,7 @@ export class CatalogAddFormComponent {
     private modalService: ModalService) {
   }
 
-  afterModalFormClosed() {
+  afterModalFormClosed(): void {
     this.modalService.refreshTable();
   }
 }

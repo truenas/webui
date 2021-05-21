@@ -35,7 +35,7 @@ export class FormUploadComponent {
     public dialog: DialogService, public translate: TranslateService,
   ) {}
 
-  fileBtnClick() {
+  fileBtnClick(): void {
     this.fileInput.nativeElement.click();
     this.fbrowser = document.getElementById('fb');
     this.fbrowser.onchange = () => {
@@ -43,7 +43,7 @@ export class FormUploadComponent {
     };
   }
 
-  upload(location = '/tmp/') {
+  upload(location = '/tmp/'): void {
     if (this.config.updater && this.config.parent) {
       this.config.updater(this, this.config.parent);
       return;
@@ -80,7 +80,8 @@ export class FormUploadComponent {
       });
     }
   }
-  newMessage(message: any) {
+
+  newMessage(message: any): void {
     if (this.config.message) {
       this.config.message.newMessage(message);
     }

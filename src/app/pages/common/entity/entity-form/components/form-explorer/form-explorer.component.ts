@@ -74,7 +74,7 @@ export class FormExplorerComponent implements Field, OnInit {
   constructor(private entityFormService: EntityFormService,
     public translate: TranslateService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.rootSelectable = this.config.rootSelectable === undefined ? true : this.config.rootSelectable;
 
     if (this.config.multiple) {
@@ -109,7 +109,7 @@ export class FormExplorerComponent implements Field, OnInit {
     }
   }
 
-  getChildren(node: any) {
+  getChildren(node: any): Promise<any> {
     return new Promise((resolve, reject) => {
       if (this.config.explorerType === 'zvol') {
         resolve(this.entityFormService.getDatasetsAndZvolsListChildren(node));
@@ -125,11 +125,11 @@ export class FormExplorerComponent implements Field, OnInit {
     });
   }
 
-  private toggleTree() {
+  private toggleTree(): void {
     this.treeVisible = !this.treeVisible;
   }
 
-  setPath(node: any) {
+  setPath(node: any): void {
     if (this.config.explorerType === 'zvol') {
       if (!node.data.mountpoint) {
         node.data.mountpoint = this.config.initial + '/' + node.data.path;
@@ -140,7 +140,7 @@ export class FormExplorerComponent implements Field, OnInit {
     }
   }
 
-  onClick(event: any) {
+  onClick(event: any): void {
     const selectedTreeNodes = Object.entries(event.treeModel.selectedLeafNodeIds)
       .filter(([key, value]) => (value === true)).map((node) => event.treeModel.getNodeById(node[0]));
     // this is to mark selected node, but not update form value
@@ -150,7 +150,7 @@ export class FormExplorerComponent implements Field, OnInit {
     this.valueHandler(selectedTreeNodes);
   }
 
-  valueHandler(selectedTreeNodes: any) {
+  valueHandler(selectedTreeNodes: any): void {
     const res = [];
     for (let i = 0; i < selectedTreeNodes.length; i++) {
       if (selectedTreeNodes[i] == undefined) {
@@ -173,7 +173,7 @@ export class FormExplorerComponent implements Field, OnInit {
     this.group.controls[this.config.name].setValue(res);
   }
 
-  loadNodeChildren(event: any) {
+  loadNodeChildren(event: any): void {
     if (this.customTemplateStringOptions.useCheckbox && this.group.controls[this.config.name].value) {
       for (const item of (event.node.data.children || [])) {
         if (this.group.controls[this.config.name].value.indexOf(item.name) > -1) {
@@ -184,7 +184,7 @@ export class FormExplorerComponent implements Field, OnInit {
     }
   }
 
-  onToggle(event: any) {
+  onToggle(event: any): void {
     if (event.isExpanded && this.customTemplateStringOptions.useCheckbox && this.group.controls[this.config.name].value) {
       for (const item of (event.node.data.children || [])) {
         if (this.group.controls[this.config.name].value.indexOf(item.name) > -1) {

@@ -2,9 +2,10 @@ import { Component, OnInit, Input } from '@angular/core';
 import {
   Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot,
 } from '@angular/router';
+import { CoreEvent } from 'app/interfaces/events';
 import { ProductType } from '../../../enums/product-type.enum';
 import { RoutePartsService } from '../../../services/route-parts/route-parts.service';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import globalHelptext from '../../../helptext/global-helptext';
 import { filter } from 'rxjs/operators';
 import { LocaleService } from 'app/services/locale.service';

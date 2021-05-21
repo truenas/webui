@@ -10,24 +10,25 @@ import { ModalService } from 'app/services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-group-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class GroupFormComponent {
-  protected isEntity = true;
+export class GroupFormComponent implements FormConfiguration {
+  isEntity = true;
   protected namesInUse: string[] = [];
-  protected queryCall = 'group.query';
-  protected addCall = 'group.create';
-  protected editCall = 'group.update';
-  protected queryKey = 'id';
+  queryCall: 'group.query' = 'group.query';
+  addCall: 'group.create' = 'group.create';
+  editCall: 'group.update' = 'group.update';
+  queryKey = 'id';
   title: string;
   protected isOneColumnForm = true;
-  protected fieldConfig: FieldConfig[] = [];
+  fieldConfig: FieldConfig[] = [];
 
   fieldSetDisplay = 'default';
-  protected fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext.fieldset_name,
       class: 'group-configuration-form',
@@ -77,65 +78,48 @@ export class GroupFormComponent {
     },
   ];
 
-  users: any[];
   private bsdgrp_gid: any;
-  private allow: any;
 
-  constructor(protected router: Router,
+  constructor(
+    protected router: Router,
     protected ws: WebSocketService,
-    private modalService: ModalService) {
-  }
+    private modalService: ModalService,
+  ) {}
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     data['name'] = data['group'];
     this.getNamesInUse(data['name']);
     return data;
   }
 
-  getNamesInUse(currentName?: string) {
-    this.ws.call('group.query').subscribe(
-      (res) => {
-        if (currentName) {
-          _.remove(res, (group: any) => group['group'] == currentName);
-        }
-        this.namesInUse.push(...res.map((group: any) => group.group));
-      },
-    );
-  }
-
-  afterInit(entityForm: any) {
-    this.ws.call('user.query', []).subscribe((res) => {
-      this.users = res.map((u: any) => {
-        const user = { ...u };
-        user.gid = user.group.bsdgrp_gid;
-        return user;
-      });
-
-      let gid = 999;
-      this.bsdgrp_gid = _.find(this.fieldSets[0].config, { name: 'gid' });
-      this.users.forEach((item, i) => {
-        if (item.gid > gid) {
-          gid = item.gid;
-        }
-      });
-
-      if (!entityForm.isNew) {
-        entityForm.setDisabled('gid', true);
-
-        entityForm.formGroup.controls['allow_duplicate_gid'].setValue(true);
-        _.find(this.fieldSets[0].config, { name: 'allow_duplicate_gid' }).isHidden = true;
-        this.title = helptext.title_edit;
-      } else {
-        this.title = helptext.title_add;
-        this.getNamesInUse();
-        this.ws.call('group.get_next_gid').subscribe((res) => {
-          entityForm.formGroup.controls['gid'].setValue(res);
-        });
+  getNamesInUse(currentName?: string): void {
+    this.ws.call('group.query').subscribe((groups) => {
+      if (currentName) {
+        _.remove(groups, (group) => group.group == currentName);
       }
+      this.namesInUse.push(...groups.map((group) => group.group));
     });
   }
 
-  afterSubmit() {
+  afterInit(entityForm: any): void {
+    this.bsdgrp_gid = _.find(this.fieldSets[0].config, { name: 'gid' });
+
+    if (!entityForm.isNew) {
+      entityForm.setDisabled('gid', true);
+
+      entityForm.formGroup.controls['allow_duplicate_gid'].setValue(true);
+      _.find(this.fieldSets[0].config, { name: 'allow_duplicate_gid' }).isHidden = true;
+      this.title = helptext.title_edit;
+    } else {
+      this.title = helptext.title_add;
+      this.getNamesInUse();
+      this.ws.call('group.get_next_gid').subscribe((res) => {
+        entityForm.formGroup.controls['gid'].setValue(res);
+      });
+    }
+  }
+
+  afterSubmit(): void {
     this.modalService.refreshTable();
   }
 }

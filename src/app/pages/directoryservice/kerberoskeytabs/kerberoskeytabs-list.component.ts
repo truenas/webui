@@ -30,14 +30,14 @@ export class KerberosKeytabsListComponent {
 
   constructor(private modalService: ModalService) { }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
     this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
       this.entityList.getData();
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.refreshTableSubscription) {
       this.refreshTableSubscription.unsubscribe();
     }
@@ -72,7 +72,7 @@ export class KerberosKeytabsListComponent {
     return actions;
   }
 
-  doAdd(id?: number) {
+  doAdd(id?: number): void {
     const formComponent = new KerberosKeytabsFormComponent(this.modalService);
     this.modalService.open('slide-in-form', formComponent, id);
   }

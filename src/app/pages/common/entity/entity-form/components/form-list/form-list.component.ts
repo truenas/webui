@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
 import { EntityFormService } from '../../services/entity-form.service';
+import { FieldRelationService } from '../../services/field-relation.service';
 
 @Component({
   selector: 'entity-form-list',
@@ -18,9 +19,9 @@ export class FormListComponent implements Field, OnInit {
 
   listsFromArray: FormArray;
 
-  constructor(private entityFormService: EntityFormService, private formBuilder: FormBuilder) {}
+  constructor(private entityFormService: EntityFormService, protected fieldRelationService: FieldRelationService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     setTimeout(() => {
       this.listsFromArray = this.group.controls[this.config.name] as FormArray;
       if (this.config.addInitialList && this.listsFromArray.length === 0) {
@@ -29,20 +30,19 @@ export class FormListComponent implements Field, OnInit {
     }, 0);
   }
 
-  add() {
+  add(): void {
     const templateListField = _.cloneDeep(this.config.templateListField);
-    this.listsFromArray.push(this.entityFormService.createFormGroup(templateListField));
+    const formGroup = this.entityFormService.createFormGroup(templateListField);
+    this.listsFromArray.push(formGroup);
     this.config.listFields.push(templateListField);
-    if (this.config.customEventMethod) {
-      this.config.customEventMethod(this);
-    }
+
+    templateListField.forEach((subFieldConfig) => {
+      this.fieldRelationService.setRelation(subFieldConfig, formGroup);
+    });
   }
 
-  delete(id: number) {
+  delete(id: number): void {
     this.listsFromArray.removeAt(id);
     this.config.listFields.splice(id, 1);
-    if (this.config.customEventMethod) {
-      this.config.customEventMethod(this);
-    }
   }
 }

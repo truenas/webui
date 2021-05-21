@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Option } from 'app/interfaces/option.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
+import { Observable } from 'rxjs/Observable';
 import { RestService } from './rest.service';
 import { WebSocketService } from './ws.service';
 
@@ -110,12 +112,12 @@ export class TaskService {
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {}
 
-  getTimeOptions() {
+  getTimeOptions(): Option[] {
     return this.time_options;
   }
 
-  getVolumeList() {
-    return this.ws.call('pool.query', {});
+  getVolumeList(): Observable<Pool[]> {
+    return this.ws.call('pool.query', []);
   }
 
   /**

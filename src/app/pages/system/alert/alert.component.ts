@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CoreEvent } from 'app/interfaces/events';
 
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
@@ -13,7 +14,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import helptext from 'app/helptext/system/alert-settings';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 
@@ -31,8 +32,8 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
 export class AlertConfigComponent implements OnInit {
   formEvents: Subject<CoreEvent>;
   protected route_success = ['system', 'alertsettings'];
-  protected queryCall = 'alertclasses.config';
-  protected editCall = 'alertclasses.update';
+  protected queryCall: 'alertclasses.config' = 'alertclasses.config';
+  protected editCall: 'alertclasses.update' = 'alertclasses.update';
   protected isEntity = true;
   fieldSets: FieldSets;
   fieldConfig: FieldConfig[] = [];
@@ -61,7 +62,7 @@ export class AlertConfigComponent implements OnInit {
     public dialog: DialogService,
   ) {}
 
-  async ngOnInit() {
+  ngOnInit(): void {
     this.loader.open();
     this.ws.call('alert.list_policies', []).subscribe(
       (res) => {
@@ -163,7 +164,7 @@ export class AlertConfigComponent implements OnInit {
       });
   }
 
-  addButtons(categories: any[]) {
+  addButtons(categories: any[]): void {
     const options: Option[] = [];
     categories.forEach((category, index) => {
       options.push({ label: category.title, value: index });
@@ -202,7 +203,7 @@ export class AlertConfigComponent implements OnInit {
     this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
   }
 
-  onSubmit() {
+  onSubmit(): void {
     const payload: any = { classes: {} };
 
     for (const key in this.formGroup.value) {

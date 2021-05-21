@@ -36,7 +36,7 @@ export class FormReadFileComponent implements Field {
     return fReader.readAsText(file);
   }
 
-  contents(result: any) {
+  contents(result: any): void {
     this.group.controls[this.config.name].setValue(result);
   }
 }

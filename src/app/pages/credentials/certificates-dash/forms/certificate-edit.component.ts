@@ -11,21 +11,22 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-certificate-edit',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class CertificateEditComponent {
-  protected queryCall = 'certificate.query';
-  protected editCall = 'certificate.update';
-  protected isEntity = true;
-  private title = helptext_system_certificates.edit.title;
+export class CertificateEditComponent implements FormConfiguration {
+  queryCall: 'certificate.query' = 'certificate.query';
+  editCall: 'certificate.update' = 'certificate.update';
+  isEntity = true;
+  title = helptext_system_certificates.edit.title;
   private viewButtonText = helptext_system_certificates.viewButton.certificate;
   protected isCSR: boolean;
-  protected queryCallOption: any[];
+  queryCallOption: any[];
 
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
       name: helptext_system_certificates.edit.fieldset_certificate,
@@ -209,7 +210,7 @@ export class CertificateEditComponent {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     this.incomingData = data;
     if (data.cert_type_CSR) {
       this.isCSR = true;
@@ -220,7 +221,7 @@ export class CertificateEditComponent {
     return data;
   }
 
-  protected custActions = [
+  custActions = [
     {
       id: 'create_ACME',
       name: helptext_system_certificates.list.action_create_acme_certificate,
@@ -232,18 +233,18 @@ export class CertificateEditComponent {
     },
   ];
 
-  isCustActionVisible(actionname: string) {
+  isCustActionVisible(actionname: string): boolean {
     if (actionname === 'create_ACME' && !this.isCSR) {
       return false;
     }
     return true;
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
   }
 
-  setForm() {
+  setForm(): void {
     const fields = ['country', 'state', 'city', 'organization', 'organizational_unit', 'email', 'common', 'DN', 'cert_type',
       'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'revoked', 'signed_by', 'lifetime'];
     fields.forEach((field) => {
@@ -261,7 +262,7 @@ export class CertificateEditComponent {
     _.find(this.fieldConfig, { name: 'certificate_view' }).customEventActionLabel = this.viewButtonText;
   }
 
-  exportCertificate() {
+  exportCertificate(): void {
     const path = this.incomingData.CSR ? this.incomingData.csr_path : this.incomingData.certificate_path;
     const fileName = this.incomingData.name + '.crt'; // is this right for a csr?
     this.ws.call('core.download', ['filesystem.get', [path], fileName]).subscribe(
@@ -281,7 +282,7 @@ export class CertificateEditComponent {
     );
   }
 
-  exportKey() {
+  exportKey(): void {
     const fileName = this.incomingData.name + '.key';
     this.ws.call('core.download', ['filesystem.get', [this.incomingData.privatekey_path], fileName]).subscribe(
       (res) => {
@@ -300,7 +301,7 @@ export class CertificateEditComponent {
     );
   }
 
-  viewCertificate() {
+  viewCertificate(): void {
     if (this.incomingData.CSR) {
       this.dialog.confirm(this.incomingData.name, this.incomingData.CSR, true,
         helptext_system_certificates.viewDialog.download, false, '',
@@ -320,7 +321,7 @@ export class CertificateEditComponent {
     }
   }
 
-  viewKey() {
+  viewKey(): void {
     this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true,
       helptext_system_certificates.viewDialog.download, false, '',
       '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.privatekey, true).subscribe((res: boolean) => {
@@ -330,7 +331,7 @@ export class CertificateEditComponent {
     });
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: 'Updating Identifier' } });
     this.dialogRef.componentInstance.setCall(this.editCall, [this.rowNum, { name: value['name'] }]);
     this.dialogRef.componentInstance.submit();

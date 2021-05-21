@@ -15,17 +15,18 @@ import helptext from '../../../helptext/directoryservice/ldap';
 import global_helptext from '../../../helptext/global-helptext';
 import { T } from 'app/translate-marker';
 import { ModalService } from '../../../services/modal.service';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-ldap',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class LdapComponent {
-  protected title: string = helptext.title;
-  protected isEntity = false;
-  protected queryCall = 'ldap.config';
-  protected upodateCall = 'ldap.update';
-  protected isBasicMode = true;
+export class LdapComponent implements FormConfiguration {
+  title: string = helptext.title;
+  isEntity = false;
+  queryCall: 'ldap.config' = 'ldap.config';
+  upodateCall = 'ldap.update';
+  isBasicMode = true;
   protected idmapBacked: any;
   protected ldap_kerberos_realm: any;
   protected ldap_kerberos_principal: any;
@@ -209,9 +210,9 @@ export class LdapComponent {
     },
   ];
 
-  protected advanced_field: any[] = helptext.ldap_advanced_fields;
+  advanced_field: any[] = helptext.ldap_advanced_fields;
 
-  isCustActionVisible(actionId: string) {
+  isCustActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode === true) {
@@ -235,7 +236,7 @@ export class LdapComponent {
     return data;
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
 
     this.ws.call('kerberos.realm.query').subscribe((res: any[]) => {
@@ -306,7 +307,7 @@ export class LdapComponent {
     }, 500);
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     if (data['enable']) {
       data['hostname_noreq'] = data['hostname'];
     } else {
@@ -319,7 +320,7 @@ export class LdapComponent {
     return this.ws.call('ldap.update', [body]);
   }
 
-  errorReport(res: any) {
+  errorReport(res: any): void {
     let errorText = res.reason ? res.reason.replace('[EFAULT]', '') : null;
     if (res.reason && res.reason.includes('Invalid credentials')) {
       errorText = T('Invalid credentials. Please try again.');

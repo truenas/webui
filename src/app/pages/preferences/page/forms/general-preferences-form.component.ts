@@ -10,13 +10,14 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { CoreEvent } from 'app/interfaces/events';
 import * as _ from 'lodash';
 import { EntityFormEmbeddedComponent } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RestService, WebSocketService } from 'app/services/';
 import { ThemeService, Theme, DefaultTheme } from 'app/services/theme/theme.service';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { Subject } from 'rxjs';
 import { T } from '../../../../translate-marker';
@@ -36,7 +37,7 @@ interface UserPreferences {
   selector: 'general-preferences-form',
   template: '<entity-form-embedded *ngIf="preferences" #embeddedForm fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>',
 })
-export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
+export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
   @ViewChild('embeddedForm', { static: false }) embeddedForm: EntityFormEmbeddedComponent;
   target: Subject<CoreEvent> = new Subject();
   isWaiting = false;
@@ -68,7 +69,7 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
   ) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
     this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).subscribe((evt: CoreEvent) => {
       if (this.isWaiting) {
@@ -94,20 +95,11 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
     this.init();
   }
 
-  ngAfterViewInit() {
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.baseTheme) {
-      alert('baseTheme Changed!');
-    }
-  }
-
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 
-  init(updating?: boolean) {
+  init(updating?: boolean): void {
     this.setThemeOptions();
     if (!updating) {
       this.startSubscriptions();
@@ -115,7 +107,7 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
     this.generateFieldConfig();
   }
 
-  startSubscriptions() {
+  startSubscriptions(): void {
     this.core.register({ observerClass: this, eventName: 'ThemeListsChanged' }).subscribe((evt: CoreEvent) => {
       this.setThemeOptions();
       if (!this.embeddedForm) { return; }
@@ -149,7 +141,7 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
     });
   }
 
-  setThemeOptions() {
+  setThemeOptions(): void {
     this.themeOptions.splice(0, this.themeOptions.length);
     for (let i = 0; i < this.themeService.allThemes.length; i++) {
       const theme = this.themeService.allThemes[i];
@@ -157,7 +149,7 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
     }
   }
 
-  onPreferences(prefs: any) {
+  onPreferences(prefs: any): void {
     this.fieldSets[0].config = [
       {
         type: 'select',
@@ -216,7 +208,7 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
     }
   }
 
-  generateFieldConfig() {
+  generateFieldConfig(): void {
     for (const i in this.fieldSets) {
       for (const ii in this.fieldSets[i].config) {
         this.fieldConfig.push(this.fieldSets[i].config[ii]);
@@ -224,11 +216,11 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
     }
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     data.tableDisplayedColumns ? data.tableDisplayedColumns = [] : delete (data.tableDisplayedColumns);
   }
 
-  updateValues(prefs: any) {
+  updateValues(prefs: any): void {
     const keys = Object.keys(this.embeddedForm.formGroup.controls);
     keys.forEach((key) => {
       if (key !== 'reset') {

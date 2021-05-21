@@ -16,6 +16,7 @@ import { T } from 'app/translate-marker';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 interface OAuthData {
   client_id?: string;
@@ -29,9 +30,9 @@ interface OAuthData {
   <entity-form [conf]="this"></entity-form>
   `,
 })
-export class EmailComponent implements OnDestroy {
-  queryCall = 'mail.config';
-  updateCall = 'mail.update';
+export class EmailComponent implements FormConfiguration, OnDestroy {
+  queryCall: 'mail.config' = 'mail.config';
+  updateCall: 'mail.update' = 'mail.update';
   entityEdit: any;
   rootEmail: string;
   private oauthCreds: BehaviorSubject<OAuthData> = new BehaviorSubject({});
@@ -57,10 +58,10 @@ export class EmailComponent implements OnDestroy {
           subject: 'TrueNAS Test Message',
           text: `This is a test message from TrueNAS ${product_type}.`,
         };
-        this.ws.call('system.info').subscribe((sysInfo) => {
+        this.ws.call('system.info').subscribe((systemInfo) => {
           value.pass = value.pass || this.entityEdit.data.pass;
 
-          mailObj['subject'] += ' hostname: ' + sysInfo['hostname'];
+          mailObj['subject'] += ' hostname: ' + systemInfo.hostname;
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'EMAIL' }, disableClose: true });
           this.dialogRef.componentInstance.setCall('mail.send', [mailObj, value]);
           this.dialogRef.componentInstance.submit();
@@ -205,7 +206,7 @@ export class EmailComponent implements OnDestroy {
               + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
             window.addEventListener('message', doAuth, false);
 
-            function doAuth(message: any) {
+            function doAuth(message: any): void {
               if (message.data.oauth_portal) {
                 if (message.data.error) {
                   dialogService.errorReport(T('Error'), message.data.error);
@@ -247,13 +248,9 @@ export class EmailComponent implements OnDestroy {
     return data;
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
-    const payload = [];
-    payload.push('username');
-    payload.push('=');
-    payload.push('root');
-    this.ws.call('user.query', [[payload]]).subscribe((res) => {
+    this.ws.call('user.query', [[['username', '=', 'root']]]).subscribe((res) => {
       this.rootEmail = res[0].email;
     });
     this.pass = this.fieldSets.config('pass');
@@ -281,7 +278,7 @@ export class EmailComponent implements OnDestroy {
     });
   }
 
-  checkForOauthCreds() {
+  checkForOauthCreds(): void {
     if (this.oauthCreds.getValue().client_id) {
       this.entityEdit.setDisabled('oauth_applied', false, false);
       this.entityEdit.setDisabled('oauth_not_applied', true, true);
@@ -291,11 +288,12 @@ export class EmailComponent implements OnDestroy {
     }
   }
 
-  toggleSmtpAuthControls() {
+  toggleSmtpAuthControls(): void {
     this.entityEdit.setDisabled('user', !this.sendMailMethod.value || !this.smtp.value, !this.sendMailMethod.value || !this.smtp.value);
     this.entityEdit.setDisabled('pass', !this.sendMailMethod.value || !this.smtp.value, !this.sendMailMethod.value || !this.smtp.value);
   }
-  toggleSmtpControls() {
+
+  toggleSmtpControls(): void {
     this.entityEdit.setDisabled('outgoingserver', !this.sendMailMethod.value, !this.sendMailMethod.value);
     this.entityEdit.setDisabled('port', !this.sendMailMethod.value, !this.sendMailMethod.value);
     this.entityEdit.setDisabled('security', !this.sendMailMethod.value, !this.sendMailMethod.value);
@@ -303,7 +301,7 @@ export class EmailComponent implements OnDestroy {
     this.entityEdit.setDisabled('login-gmail', this.sendMailMethod.value, this.sendMailMethod.value);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.sendMailMethodSubscription.unsubscribe();
     this.smtpSubscription.unsubscribe();
   }

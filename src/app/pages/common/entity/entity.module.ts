@@ -39,6 +39,7 @@ import { FormIpWithNetmaskComponent } from './entity-form/components/form-ipwith
 import { FormListComponent } from './entity-form/components/form-list/form-list.component';
 import { FormChipComponent } from './entity-form/components/form-chip/form-chip.component';
 import { FormErrorsComponent } from './entity-form/components/form-errors/form-errors.component';
+import { FormDictComponent } from './entity-form/components/form-dict/form-dict.component';
 
 import { FormExplorerComponent } from './entity-form/components/form-explorer/form-explorer.component';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
@@ -93,6 +94,7 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
 import { EntityEmptyComponent } from './entity-empty/entity-empty.component';
 
 import { TableComponent } from './table/table.component';
+import { ExpandableTableComponent } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
 
 @NgModule({
   imports: [
@@ -164,8 +166,10 @@ import { TableComponent } from './table/table.component';
     FormStatusComponent,
     EntityComingsoonComponent,
     TableComponent,
+    ExpandableTableComponent,
     EntityDashboardComponent,
     EntityEmptyComponent,
+    FormDictComponent,
   ],
   exports: [
     EntityTemplateDirective,
@@ -200,6 +204,7 @@ import { TableComponent } from './table/table.component';
     ToolbarMultiSelectComponent,
     EntityComingsoonComponent,
     TableComponent,
+    ExpandableTableComponent,
     CdkTreeModule,
     EntityEmptyComponent,
   ],
@@ -234,6 +239,7 @@ import { TableComponent } from './table/table.component';
     EntitySnackbarComponent,
     EntityTableRowDetailsComponent,
     TaskScheduleListComponent,
+    FormDictComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

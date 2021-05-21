@@ -1,5 +1,6 @@
 import { Component, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 import { T } from '../../../../translate-marker';
 
@@ -10,7 +11,7 @@ import { T } from '../../../../translate-marker';
 export class VMwareSnapshotListComponent {
   title = 'VMware Snapshots';
   protected queryCall = 'vmware.query';
-  protected route_add: string[] = ['storage', 'vmware-Snapshots', 'add'];
+  protected route_add: string[] = ['storage', 'vmware-snapshots', 'add'];
   protected route_add_tooltip = 'Add VMware Snapshot';
   protected entityList: any;
   protected wsDelete = 'vmware.delete';
@@ -31,39 +32,39 @@ export class VMwareSnapshotListComponent {
 
   constructor(private _router: Router, _eRef: ElementRef) {}
 
-  isActionVisible(actionId: string, row: any) {
+  isActionVisible(actionId: string, row: any): boolean {
     if (actionId == 'edit' || actionId == 'add') {
       return false;
     }
     return true;
   }
 
-  getActions(row: any) {
-    const actions = [];
-    actions.push({
-      id: row.hostname,
-      icon: 'delete',
-      name: 'delete',
-      label: T('Delete'),
-      onClick: (row: any) => {
-        this.entityList.doDelete(row);
+  getActions(row: any): EntityTableAction[] {
+    return [
+      {
+        id: row.hostname,
+        icon: 'delete',
+        name: 'delete',
+        label: T('Delete'),
+        onClick: (row: any) => {
+          this.entityList.doDelete(row);
+        },
       },
-    });
-    actions.push({
-      id: row.hostname,
-      icon: 'edit',
-      name: 'edit',
-      label: T('Edit'),
-      onClick: (row: any) => {
-        this._router.navigate(new Array('/').concat(
-          ['storage', 'vmware-Snapshots', 'edit', row.id],
-        ));
+      {
+        id: row.hostname,
+        icon: 'edit',
+        name: 'edit',
+        label: T('Edit'),
+        onClick: (row: any) => {
+          this._router.navigate(new Array('/').concat(
+            ['storage', 'vmware-snapshots', 'edit', row.id],
+          ));
+        },
       },
-    });
-    return actions;
+    ] as EntityTableAction[];
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
   }
 }

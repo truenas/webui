@@ -7,27 +7,28 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { T } from 'app/translate-marker';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-system-tunable-edit',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class TunableFormComponent {
-  protected queryCall = 'tunable.query';
-  protected queryKey = 'id';
-  protected editCall = 'tunable.update';
-  protected addCall = 'tunable.create';
-  protected pk: any;
-  protected title: string;
+export class TunableFormComponent implements FormConfiguration {
+  queryCall: 'tunable.query' = 'tunable.query';
+  queryKey = 'id';
+  editCall: 'tunable.update' = 'tunable.update';
+  addCall: 'tunable.create' = 'tunable.create';
+  pk: any;
+  title: string;
   protected isOneColumnForm = true;
 
-  protected isEntity = true;
+  isEntity = true;
 
   protected product_type: ProductType;
   protected type_fc: any;
 
-  protected fieldConfig: FieldConfig[] = [];
-  protected fieldSets: FieldSet[] = [
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSet[] = [
     {
       name: helptext.metadata.fieldsets[0],
       class: 'add-cron',
@@ -80,7 +81,7 @@ export class TunableFormComponent {
 
   constructor(protected ws: WebSocketService, protected sysGeneralService: SystemGeneralService) {}
 
-  preInit() {
+  preInit(): void {
     this.type_fc = _.find(this.fieldSets[0].config, { name: 'type' });
     this.ws.call('tunable.tunable_type_choices').subscribe((tunables) => {
       for (const key in tunables) {
@@ -95,12 +96,12 @@ export class TunableFormComponent {
     }
   }
 
-  async afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.title = `${entityForm.isNew ? T('Add') : T('Edit')} ${this.fieldSets[0].name}`;
     entityForm.formGroup.controls['enabled'].setValue(true);
   }
 
-  afterSubmit() {
+  afterSubmit(): void {
     this.sysGeneralService.refreshSysGeneral();
   }
 }

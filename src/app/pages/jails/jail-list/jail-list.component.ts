@@ -2,17 +2,19 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { PoolStatus } from 'app/enums/pool-status.enum';
+import { Pool } from 'app/interfaces/pool.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import * as _ from 'lodash';
-import { DialogService } from '../../../services';
-import { RestService, WebSocketService } from '../../../services';
+import helptext from '../../../helptext/jails/jails-list';
+import { DialogService, RestService, WebSocketService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { StorageService } from '../../../services/storage.service';
 import { T } from '../../../translate-marker';
+import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import helptext from '../../../helptext/jails/jails-list';
 
 @Component({
   selector: 'app-jail-list',
@@ -23,11 +25,11 @@ export class JailListComponent {
   isPoolActivated: boolean;
   selectedPool: any;
   activatedPool: any;
-  availablePools: any;
+  availablePools: Pool[];
   title = 'Jails';
-  protected queryCall = 'jail.query';
-  protected wsDelete = 'jail.delete';
-  protected wsMultiDelete = 'core.bulk';
+  protected queryCall: 'jail.query' = 'jail.query';
+  protected wsDelete: 'jail.delete' = 'jail.delete';
+  protected wsMultiDelete: 'core.bulk' = 'core.bulk';
   entityList: any;
   protected route_add = ['jails', 'add', 'wizard'];
   protected route_add_tooltip = 'Add Jail';
@@ -186,7 +188,7 @@ export class JailListComponent {
     public loader: AppLoaderService, public dialogService: DialogService, private translate: TranslateService,
     public sorter: StorageService, public dialog: MatDialog) {}
 
-  noPoolDialog() {
+  noPoolDialog(): void {
     const dialogRef = this.dialogService.confirm(
       helptext.noPoolDialog.title,
       helptext.noPoolDialog.message,
@@ -203,13 +205,13 @@ export class JailListComponent {
 
   prerequisite(): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
-      await this.ws.call('pool.query').toPromise().then((res) => {
-        if (res.length === 0) {
+      await this.ws.call('pool.query').toPromise().then((pools) => {
+        if (pools.length === 0) {
           resolve(true);
           this.noPoolDialog();
           return;
         }
-        this.availablePools = res;
+        this.availablePools = pools;
       }, (err) => {
         resolve(false);
         new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
@@ -234,15 +236,15 @@ export class JailListComponent {
       }
     });
   }
-  prerequisiteFailedHandler(entityList: any) {
+  prerequisiteFailedHandler(entityList: any): void {
     this.entityList = entityList;
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
   }
 
-  activatePool() {
+  activatePool(): void {
     const self = this;
 
     const conf: DialogFormConfiguration = {
@@ -252,10 +254,10 @@ export class JailListComponent {
           type: 'select',
           name: 'selectedPool',
           placeholder: helptext.activatePoolDialog.selectedPool_placeholder,
-          options: this.availablePools ? this.availablePools.map((pool: any) => ({
-            label: pool.name + (pool.is_decrypted ? (pool.status === 'ONLINE' ? '' : ` (${pool.status})`) : ' (Locked)'),
+          options: this.availablePools ? this.availablePools.map((pool) => ({
+            label: pool.name + (pool.is_decrypted ? (pool.status === PoolStatus.Online ? '' : ` (${pool.status})`) : ' (Locked)'),
             value: pool.name,
-            disable: !pool.is_decrypted || pool.status !== 'ONLINE',
+            disable: !pool.is_decrypted || pool.status !== PoolStatus.Online,
           })) : [],
           value: this.activatedPool,
         },
@@ -426,7 +428,7 @@ export class JailListComponent {
     return true;
   }
 
-  getSelectedNames(selectedJails: any[]) {
+  getSelectedNames(selectedJails: any[]): any[] {
     const selected: any = [];
     for (const i in selectedJails) {
       selected.push([selectedJails[i].host_hostuuid]);
@@ -434,7 +436,7 @@ export class JailListComponent {
     return selected;
   }
 
-  updateRow(row: any) {
+  updateRow(row: any): void {
     this.ws.call(this.queryCall, [[['host_hostuuid', '=', row.host_hostuuid]]]).subscribe(
       (res) => {
         if (res[0]) {
@@ -451,7 +453,7 @@ export class JailListComponent {
     );
   }
 
-  updateMultiAction(selected: any) {
+  updateMultiAction(selected: any): void {
     if (_.find(selected, ['state', 'up'])) {
       _.find(this.multiActions, { id: 'mstop' as any })['enable'] = true;
     } else {
@@ -465,13 +467,13 @@ export class JailListComponent {
     }
   }
 
-  wsMultiDeleteParams(selected: any) {
+  wsMultiDeleteParams(selected: any): any[] {
     const params: any[] = ['jail.delete'];
     params.push(this.getSelectedNames(selected));
     return params;
   }
 
-  dataHandler(entityList: any) {
+  dataHandler(entityList: any): void {
     // Call sort on load to make sure initial sort is by Jail name, asecnding
     entityList.rows = this.sorter.tableSorter(entityList.rows, 'host_hostuuid', 'asc');
     for (let i = 0; i < entityList.rows.length; i++) {
@@ -489,7 +491,7 @@ export class JailListComponent {
     }
   }
 
-  wsDeleteParams(row: any, id: any) {
+  wsDeleteParams(row: any, id: any): QueryParams<any, any> {
     return row.state === 'up' ? [id, { force: true }] : [id];
   }
 }

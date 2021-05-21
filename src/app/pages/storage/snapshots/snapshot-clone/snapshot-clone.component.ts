@@ -14,19 +14,19 @@ import { RestService, WebSocketService } from '../../../../services';
 
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/storage/snapshots/snapshots';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'snapshot-clone',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class SnapshotCloneComponent {
-  protected route_success: string[] = ['storage', 'pools'];
-  protected route_cancel: string[] = ['storage', 'snapshots'];
-  protected addCall = 'zfs.snapshot.clone';
-  protected pk: any;
-  protected isEntity = true;
-  protected isNew = true;
+export class SnapshotCloneComponent implements FormConfiguration {
+  route_success: string[] = ['storage', 'pools'];
+  route_cancel: string[] = ['storage', 'snapshots'];
+  addCall: 'zfs.snapshot.clone' = 'zfs.snapshot.clone';
+  pk: any;
+  isEntity = true;
+  isNew = true;
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
@@ -56,18 +56,18 @@ export class SnapshotCloneComponent {
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
-  preInit(entityForm: any) {
+  preInit(entityForm: any): void {
     this.route.params.subscribe((params) => {
       this.pk = params['pk'];
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     entityForm.formGroup.controls['dataset_dst'].setValue(this.setName(this.pk));
     entityForm.formGroup.controls['snapshot'].setValue(this.pk);
   }
 
-  setName(name: string) {
+  setName(name: string): string {
     let value;
     if (name.indexOf('/') !== -1) {
       value = name.replace('@', '-') + '-clone';

@@ -15,22 +15,23 @@ import { EntityUtils } from '../../../../common/entity/utils';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import globalHelptext from 'app/helptext/global-helptext';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-iscsi-initiator-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [IscsiService, StorageService],
 })
-export class ExtentFormComponent {
-  protected addCall = 'iscsi.extent.create';
-  protected queryCall = 'iscsi.extent.query';
-  protected editCall = 'iscsi.extent.update';
-  protected customFilter: any[] = [[['id', '=']]];
+export class ExtentFormComponent implements FormConfiguration {
+  addCall: 'iscsi.extent.create' = 'iscsi.extent.create';
+  queryCall: 'iscsi.extent.query' = 'iscsi.extent.query';
+  editCall: 'iscsi.extent.update' = 'iscsi.extent.update';
+  customFilter: any[] = [[['id', '=']]];
   // protected resource_name: string = 'services/iscsi/extent';
-  protected route_success: string[] = ['sharing', 'iscsi', 'extent'];
-  protected isEntity = true;
+  route_success: string[] = ['sharing', 'iscsi', 'extent'];
+  isEntity = true;
   protected entityForm: EntityFormComponent;
-  protected isNew = false;
+  isNew = false;
   sub: Subscription;
   protected originalFilesize: number;
 
@@ -256,9 +257,9 @@ export class ExtentFormComponent {
   ];
   protected extent_type_control: any;
   protected extent_disk_control: any;
-  protected pk: string;
+  pk: string;
   protected avail_threshold_field: any;
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -268,7 +269,7 @@ export class ExtentFormComponent {
     protected loader: AppLoaderService,
     protected storageService: StorageService) {}
 
-  preInit() {
+  preInit(): void {
     this.sub = this.aroute.params.subscribe((params) => {
       // removed serial field in edit mode
       if (!params['pk']) {
@@ -283,7 +284,7 @@ export class ExtentFormComponent {
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
     const extent_disk_field = _.find(this.fieldConfig, { name: 'disk' });
@@ -320,7 +321,7 @@ export class ExtentFormComponent {
     }
   }
 
-  formUpdate(type: string) {
+  formUpdate(type: string): void {
     const isDevice = type != 'FILE';
 
     this.fileFieldGroup.forEach((field) => {
@@ -346,7 +347,7 @@ export class ExtentFormComponent {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     this.originalFilesize = parseInt(data.filesize, 10);
     if (data.type == 'DISK') {
       if (_.startsWith(data['path'], 'zvol')) {
@@ -360,7 +361,7 @@ export class ExtentFormComponent {
     return data;
   }
 
-  customEditCall(value: any) {
+  customEditCall(value: any): void {
     this.loader.open();
     if (value['type'] == 'DISK') {
       value['path'] = value['disk'];
@@ -377,14 +378,14 @@ export class ExtentFormComponent {
     );
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     data.filesize = this.storageService.convertHumanStringToNum(data.filesize, true);
     if (this.pk === undefined || this.originalFilesize !== data.filesize) {
       data.filesize = data.filesize == 0 ? data.filesize : (data.filesize + (data.blocksize - data.filesize % data.blocksize));
     }
   }
 
-  blurFilesize(parent: any) {
+  blurFilesize(parent: any): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['filesize'].setValue(parent.storageService.humanReadable);
     }

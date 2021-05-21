@@ -12,14 +12,14 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { LocaleService } from 'app/services/locale.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-localization-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class LocalizationFormComponent implements OnDestroy {
-  protected queryCall = 'none';
+export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
   protected updateCall = 'system.general.update';
   sortLanguagesByName = true;
   languageList: any = [];
@@ -93,7 +93,7 @@ export class LocalizationFormComponent implements OnDestroy {
     });
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
     this.setTimeOptions(this.configData.timezone);
     this.makeLanguageList();
@@ -126,7 +126,7 @@ export class LocalizationFormComponent implements OnDestroy {
     });
   }
 
-  setTimeOptions(tz: string) {
+  setTimeOptions(tz: string): void {
     const timeOptions = this.localeService.getTimeFormatOptions(tz);
     this.fieldSets
       .find((set) => set.name === helptext.stg_fieldset_loc)
@@ -138,14 +138,14 @@ export class LocalizationFormComponent implements OnDestroy {
       .config.find((config) => config.name === 'date_format').options = dateOptions;
   }
 
-  getDateTimeFormats() {
+  getDateTimeFormats(): void {
     this.entityForm.formGroup.controls['date_format'].setValue(this.localeService.getPreferredDateFormat());
     _.find(this.fieldConfig, { name: 'date_format' })['isLoading'] = false;
     this.entityForm.formGroup.controls['time_format'].setValue(this.localeService.getPreferredTimeFormat());
     _.find(this.fieldConfig, { name: 'time_format' })['isLoading'] = false;
   }
 
-  makeLanguageList() {
+  makeLanguageList(): void {
     this.sysGeneralService.languageChoices().subscribe((res) => {
       this.languageList = res;
       const options: Option[] = Object.keys(this.languageList || {}).map((key) => ({
@@ -164,11 +164,11 @@ export class LocalizationFormComponent implements OnDestroy {
     });
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     value.language = this.languageKey;
   }
 
-  afterSubmit(value: any) {
+  afterSubmit(value: any): void {
     this.setTimeOptions(value.timezone);
     this.language.setLanguage(value.language);
   }
@@ -196,7 +196,7 @@ export class LocalizationFormComponent implements OnDestroy {
     return Object.keys(object).find((key) => object[key] === value);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.dateTimeChangeSubscription.unsubscribe();
     this.getDataFromDash.unsubscribe();
   }

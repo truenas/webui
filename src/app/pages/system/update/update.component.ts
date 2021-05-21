@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { CoreEvent } from 'app/interfaces/events';
+import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { Subscription } from 'rxjs';
 import { ProductType } from '../../../enums/product-type.enum';
@@ -13,7 +15,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../common/entity/utils';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
@@ -59,7 +61,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   showSpinner = false;
   singleDescription: string;
   updateType: string;
-  sysInfo: any;
+  sysInfo: SystemInfoWithFeatures;
   isHA: boolean;
   sysUpdateMessage = T('A system update is in progress. ');
   sysUpdateMsgPt2 = helptext.sysUpdateMessage;
@@ -107,7 +109,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     });
   }
 
-  parseTrainName(name: string) {
+  parseTrainName(name: string): string[] {
     const version = [];
     let sw_version = '';
     let branch = '';
@@ -131,11 +133,11 @@ export class UpdateComponent implements OnInit, OnDestroy {
     return version;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.product_type = window.localStorage.getItem('product_type') as ProductType;
 
     // Get system info from global cache
-    this.core.register({ observerClass: this, eventName: 'SysInfo' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'SysInfo' }).subscribe((evt: SysInfoEvent) => {
       this.sysInfo = evt.data;
       this.isHA = !!(evt.data.license && evt.data.license.system_serial_ha.length > 0);
     });
@@ -196,7 +198,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkForUpdateRunning() {
+  checkForUpdateRunning(): void {
     this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).subscribe(
       (res) => {
         if (res && res.length > 0) {
@@ -210,13 +212,13 @@ export class UpdateComponent implements OnInit, OnDestroy {
     );
   }
 
-  checkUpgradePending() {
+  checkUpgradePending(): void {
     this.ws.call('failover.upgrade_pending').subscribe((res) => {
       this.failover_upgrade_pending = res;
     });
   }
 
-  applyFailoverUpgrade() {
+  applyFailoverUpgrade(): void {
     this.dialogService.confirm(T('Finish Upgrade?'), T(''), true, T('Continue')).subscribe((res: boolean) => {
       if (res) {
         this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Update') }, disableClose: false });
@@ -234,7 +236,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     });
   }
 
-  onTrainChanged(event: any) {
+  onTrainChanged(event: any): void {
     // For the case when the user switches away, then BACK to the train of the current OS
     if (event === this.selectedTrain) {
       this.currentTrainDescription = this.trainDescriptionOnPageLoad;
@@ -259,7 +261,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     });
   }
 
-  setTrainDescription() {
+  setTrainDescription(): void {
     if ((this.fullTrainList as any)[this.train]) {
       this.currentTrainDescription = (this.fullTrainList as any)[this.train].description.toLowerCase();
     } else {
@@ -267,7 +269,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleAutoCheck() {
+  toggleAutoCheck(): void {
     // TODO: Likely a bug
     this.autoCheck === !this.autoCheck;
     this.ws.call('update.set_auto_download', [this.autoCheck]).subscribe(() => {
@@ -277,7 +279,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     });
   }
 
-  pendingupdates() {
+  pendingupdates(): void {
     this.ws.call('update.get_pending').subscribe((pending) => {
       if (pending.length !== 0) {
         this.update_downloaded = true;
@@ -285,7 +287,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     });
   }
 
-  setTrainAndCheck() {
+  setTrainAndCheck(): void {
     this.showSpinner = true;
     this.ws.call('update.set_train', [this.train]).subscribe(() => {
       this.check();
@@ -298,7 +300,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     });
   }
 
-  check() {
+  check(): void {
     // Reset the template
     this.updates_available = false;
     this.releaseNotes = '';
@@ -379,7 +381,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   // Shows an update in progress as a job dialog on the update page
-  showRunningUpdate(jobId: string) {
+  showRunningUpdate(jobId: string): void {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Update' }, disableClose: true });
     if (this.is_ha) {
       this.dialogRef.componentInstance.disableProgressValue(true);
@@ -397,7 +399,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   // Functions for carrying out the update begin here /////////////////////
 
   // Buttons in the template activate these three functions
-  downloadUpdate() {
+  downloadUpdate(): void {
     this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).subscribe(
       (res) => {
         if (res[0]) {
@@ -412,7 +414,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     );
   }
 
-  ApplyPendingUpdate() {
+  ApplyPendingUpdate(): void {
     this.updateType = 'applyPending';
     // Calls the 'Save Config' dialog - Returns here if user declines
     this.dialogService.dialogForm(this.saveConfigFormConf).subscribe((res) => {
@@ -422,7 +424,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     });
   }
 
-  ManualUpdate() {
+  ManualUpdate(): void {
     this.updateType = 'manual';
     // Calls the 'Save Config' dialog - Returns here if user declines
     this.dialogService.dialogForm(this.saveConfigFormConf).subscribe((res) => {
@@ -433,7 +435,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
   // End button section
 
-  startUpdate() {
+  startUpdate(): void {
     this.error = null;
     this.loader.open();
     this.ws.call('update.check_available')
@@ -503,7 +505,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   // Continues the update process began in startUpdate(), after passing through the Save Config dialog
-  confirmAndUpdate() {
+  confirmAndUpdate(): void {
     let downloadMsg;
     let confirmMsg;
 
@@ -543,7 +545,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     });
   }
 
-  update() {
+  update(): void {
     this.sysGenService.updateRunningNoticeSent.emit();
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Update' }, disableClose: true });
     if (!this.is_ha) {
@@ -576,7 +578,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   // Save Config dialog
-  saveConfigSubmit(entityDialog: any) {
+  saveConfigSubmit(entityDialog: any): void {
     parent = entityDialog.parent;
     let fileName = '';
     let mimetype: string;
@@ -645,7 +647,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.checkChangesSubscription) {
       this.checkChangesSubscription.unsubscribe();
     }

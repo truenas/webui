@@ -32,13 +32,15 @@ export class ConfirmDialog {
   constructor(public dialogRef: MatDialogRef < ConfirmDialog >, protected translate: TranslateService) {
   }
 
-  toggleSubmit(data: MatCheckboxChange) {
+  toggleSubmit(data: MatCheckboxChange): void {
     this.isSubmitEnabled = data.checked;
   }
-  secondaryCheckBoxEvent() {
+
+  secondaryCheckBoxEvent(): void {
     this.switchSelectionEmitter.emit(this.secondaryCheckBox);
   }
-  isDisabled() {
+
+  isDisabled(): boolean {
     if (!this.hideCheckBox) {
       return !this.isSubmitEnabled && !this.hideCheckBox;
     }

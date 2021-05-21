@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { Observable } from 'rxjs/Observable';
 import { filter, take } from 'rxjs/operators';
 
 import * as _ from 'lodash';
@@ -15,21 +16,22 @@ import helptext from '../../../../helptext/data-protection/cloudsync/cloudsync-f
 import { EntityUtils } from '../../../common/entity/utils';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { ModalService } from 'app/services/modal.service';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-cloudsync-add',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [CloudCredentialService, JobService],
 })
-export class CloudsyncFormComponent {
-  protected addCall = 'cloudsync.create';
-  protected editCall = 'cloudsync.update';
-  protected entityForm: EntityFormComponent;
-  protected isEntity = true;
-  protected queryCall = 'cloudsync.query';
-  protected queryPayload: any[] = [];
-  protected customFilter: any[] = [];
-  protected title: string;
+export class CloudsyncFormComponent implements FormConfiguration {
+  addCall: 'cloudsync.create' = 'cloudsync.create';
+  editCall: 'cloudsync.update' = 'cloudsync.update';
+  entityForm: EntityFormComponent;
+  isEntity = true;
+  queryCall: 'cloudsync.query' = 'cloudsync.query';
+  queryPayload: any[] = [];
+  customFilter: any[] = [];
+  title: string;
 
   fieldSets: FieldSets = new FieldSets([
     {
@@ -371,7 +373,7 @@ export class CloudsyncFormComponent {
 
   formGroup: any;
   error: string;
-  protected pk: any;
+  pk: any;
   isNew = false;
   protected data: any;
 
@@ -419,11 +421,11 @@ export class CloudsyncFormComponent {
     });
   }
 
-  getBuckets(credential: any) {
+  getBuckets(credential: any): Observable<any[]> {
     return this.ws.call('cloudsync.list_buckets', [credential.id]);
   }
 
-  getChildren(node: any) {
+  getChildren(node: any): Promise<Promise<any>> {
     const credential = this.formGroup.controls['credentials'].value;
     let bucket = this.formGroup.controls['bucket'].value;
     if (this.bucket_field.disabled) {
@@ -434,7 +436,7 @@ export class CloudsyncFormComponent {
     });
   }
 
-  setBucketError(error: any) {
+  setBucketError(error: any): void {
     if (error) {
       this.bucket_field.hasErrors = true;
       this.bucket_field.errors = error;
@@ -448,7 +450,7 @@ export class CloudsyncFormComponent {
     }
   }
 
-  getBucketFolders(credential: string, bucket: string, node: any) {
+  getBucketFolders(credential: string, bucket: string, node: any): Promise<any> {
     const formValue = this.entityForm.formGroup.value;
     const children: any[] = [];
     const data = {
@@ -496,7 +498,7 @@ export class CloudsyncFormComponent {
     );
   }
 
-  setDisabled(name: string, disable: boolean, hide = false, status?: string) {
+  setDisabled(name: string, disable: boolean, hide = false, status?: string): void {
     if (hide) {
       disable = hide;
     }
@@ -515,7 +517,7 @@ export class CloudsyncFormComponent {
     }
   }
 
-  dataHandler(entityForm: EntityFormComponent) {
+  dataHandler(entityForm: EntityFormComponent): void {
     const data = entityForm.wsResponse;
     for (const i in data) {
       const fg = entityForm.formGroup.controls[i];
@@ -544,7 +546,7 @@ export class CloudsyncFormComponent {
     }
   }
 
-  async afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.entityForm = entityForm;
     this.formGroup = entityForm.formGroup;
     this.pk = entityForm.pk;
@@ -704,7 +706,7 @@ export class CloudsyncFormComponent {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     data['cloudsync_picker'] = data.schedule.minute + ' '
                           + data.schedule.hour + ' '
                           + data.schedule.dom + ' '
@@ -759,7 +761,7 @@ export class CloudsyncFormComponent {
     return bwlimtArr;
   }
 
-  submitDataHandler(formValue: any) {
+  submitDataHandler(formValue: any): any {
     const value = _.cloneDeep(formValue);
     const attributes: any = {};
     const schedule: any = {};
@@ -821,7 +823,7 @@ export class CloudsyncFormComponent {
     return value;
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     value = this.submitDataHandler(value);
     if (!this.pk) {
       this.loader.open();
@@ -847,7 +849,7 @@ export class CloudsyncFormComponent {
     }
   }
 
-  isCustActionDisabled() {
+  isCustActionDisabled(): boolean {
     return !this.entityForm.valid;
   }
 }

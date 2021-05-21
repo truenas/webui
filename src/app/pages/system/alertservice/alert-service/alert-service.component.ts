@@ -12,21 +12,22 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
 import helptext from 'app/helptext/system/alert-service';
 import { AlertLevel } from 'app/enums/alert-level.enum';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-alertservice',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [EntityFormService],
 })
-export class AlertServiceComponent {
-  protected addCall = 'alertservice.create';
-  protected queryCall = 'alertservice.query';
-  protected queryCallOption: any[] = [['id', '=']];
-  protected editCall = 'alertservice.update';
-  protected testCall = 'alertservice.test';
+export class AlertServiceComponent implements FormConfiguration {
+  addCall: 'alertservice.create' = 'alertservice.create';
+  queryCall: 'alertservice.query' = 'alertservice.query';
+  queryCallOption: any[] = [['id', '=']];
+  editCall: 'alertservice.update' = 'alertservice.update';
+  testCall: 'alertservice.test' = 'alertservice.test';
   route_success: string[] = ['system', 'alertservice'];
 
-  protected isEntity = true;
+  isEntity = true;
   entityForm: any;
 
   fieldConfig: FieldConfig[];
@@ -702,7 +703,7 @@ export class AlertServiceComponent {
     protected dialogService: DialogService,
   ) { }
 
-  preInit() {
+  preInit(): void {
     this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.queryCallOption[0].push(Number(params['pk']));
@@ -710,12 +711,12 @@ export class AlertServiceComponent {
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
   }
 
-  dataAttributeHandler(entityForm: any) {
+  dataAttributeHandler(entityForm: any): void {
     const type = entityForm.formGroup.controls['type'].value;
     for (const i in entityForm.wsResponseIdx) {
       const field_name = type + '-' + i;
@@ -728,7 +729,7 @@ export class AlertServiceComponent {
     }
   }
 
-  generateTelegramChatIdsPayload(data: any, i: string) {
+  generateTelegramChatIdsPayload(data: any, i: string): string[] {
     const wrongChatIds: string[] = [];
     // Telegram chat IDs must be an array of integer
     const arrayChatIds: [] = data[i].map((strChatId: string) => {
@@ -746,7 +747,7 @@ export class AlertServiceComponent {
     return Array.from(new Set(arrayChatIds));
   }
 
-  generatePayload(data: any) {
+  generatePayload(data: any): any {
     const payload: any = { attributes: {} };
 
     for (const i in data) {
@@ -764,7 +765,7 @@ export class AlertServiceComponent {
     return payload;
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     this.entityFormService.clearFormError(this.fieldConfig);
     const payload = this.generatePayload(value);
 
@@ -794,7 +795,7 @@ export class AlertServiceComponent {
     }
   }
 
-  getErrorField(field: string) {
+  getErrorField(field: string): FieldConfig {
     return _.find(this.fieldConfig, { name: this.entityForm.formGroup.controls['type'].value + '-' + field });
   }
 }

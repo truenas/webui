@@ -16,8 +16,8 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
   styleUrls: ['./kmip.component.css'],
 })
 export class KmipComponent {
-  protected queryCall = 'kmip.config';
-  protected editCall = 'kmip.update';
+  protected queryCall: 'kmip.config' = 'kmip.config';
+  protected editCall: 'kmip.update' = 'kmip.update';
   isEntity = false;
 
   entityForm: any;
@@ -158,7 +158,7 @@ export class KmipComponent {
     );
   }
 
-  preInit() {
+  preInit(): void {
     const certificateFieldset = _.find(this.fieldSets, { class: 'certificate' });
     const certificateField = _.find(certificateFieldset.config, { name: 'certificate' });
     const certificateAuthorityField = _.find(certificateFieldset.config, { name: 'certificate_authority' });
@@ -174,12 +174,13 @@ export class KmipComponent {
       }
     });
   }
-  afterInit(entityForm: EntityFormComponent) {
+
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     if (data['server'] === null) {
       data['server'] = '';
     }
@@ -200,7 +201,7 @@ export class KmipComponent {
     });
   }
 
-  syncKeys() {
+  syncKeys(): void {
     this.ws.call('kmip.sync_keys').subscribe(
       (res) => {
         this.dialogService.Info(helptext_system_kmip.syncInfoDialog.title, helptext_system_kmip.syncInfoDialog.info, '500px', 'info', true);
@@ -211,7 +212,7 @@ export class KmipComponent {
     );
   }
 
-  clearSyncKeys() {
+  clearSyncKeys(): void {
     this.ws.call('kmip.clear_sync_pending_keys').subscribe(
       (res) => {
         this.dialogService.Info(helptext_system_kmip.clearSyncKeyInfoDialog.title, helptext_system_kmip.clearSyncKeyInfoDialog.info, '500px', 'info', true);

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DatasetType } from 'app/enums/dataset-type.enum';
 import { Subscription, combineLatest } from 'rxjs';
 import * as _ from 'lodash';
 
@@ -17,7 +18,7 @@ import helptext from '../../../../../helptext/storage/volumes/zvol-form';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import globalHelptext from '../../../../../helptext/global-helptext';
 import { ModalService } from 'app/services/modal.service';
-import { Formconfiguration } from '../../../../common/entity/entity-form/entity-form.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 
 interface ZvolFormData {
@@ -38,11 +39,11 @@ interface ZvolFormData {
   selector: 'app-zvol-add',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class ZvolFormComponent implements Formconfiguration {
+export class ZvolFormComponent implements FormConfiguration {
   pk: any;
   protected path: string;
   sub: Subscription;
-  queryCall = 'pool.dataset.query';
+  queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   protected compression: any;
   advanced_field: any[] = ['volblocksize'];
   isBasicMode = true;
@@ -372,7 +373,7 @@ export class ZvolFormComponent implements Formconfiguration {
     'key',
   ];
 
-  isCustActionVisible(actionId: string) {
+  isCustActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode === true) {
@@ -393,9 +394,6 @@ export class ZvolFormComponent implements Formconfiguration {
       data.name = this.parent + '/' + data.name;
     }
 
-    if (this.isBasicMode === true) {
-
-    }
     if (this.origHuman !== data.volsize) {
       data.volsize = this.storageService.convertHumanStringToNum(data.volsize, true);
     } else {
@@ -412,7 +410,7 @@ export class ZvolFormComponent implements Formconfiguration {
     protected modalService: ModalService,
   ) {}
 
-  async preInit(entityForm: EntityFormComponent) {
+  preInit(entityForm: EntityFormComponent): void {
     if (!this.parent) return;
     if (this.isNew) {
       this.title = helptext.zvol_title_add;
@@ -421,7 +419,10 @@ export class ZvolFormComponent implements Formconfiguration {
     }
 
     const root = this.parent.split('/')[0];
-    combineLatest(this.ws.call('pool.query', [[['name', '=', root]]]), this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]])).subscribe(([pk_pool, pk_dataset]) => {
+    combineLatest([
+      this.ws.call('pool.query', [[['name', '=', root]]]),
+      this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]),
+    ]).subscribe(([pk_pool, pk_dataset]) => {
       if (pk_pool[0].encrypt !== 0) {
         this.legacy_encryption = true;
       }
@@ -566,7 +567,7 @@ export class ZvolFormComponent implements Formconfiguration {
       }
 
       this.translate.get('Inherit').subscribe((inheritTr) => {
-        if (pk_dataset && pk_dataset[0].type === 'FILESYSTEM') {
+        if (pk_dataset && pk_dataset[0].type === DatasetType.Filesystem) {
           this.sync_inherit = [{ label: `${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];
           this.compression_inherit = [{ label: `${inheritTr} (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT' }];
           this.deduplication_inherit = [{ label: `${inheritTr} (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT' }];
@@ -581,7 +582,7 @@ export class ZvolFormComponent implements Formconfiguration {
             this.minimum_recommended_zvol_volblocksize = res;
           });
         } else {
-          let parent_dataset = pk_dataset[0].name.split('/');
+          let parent_dataset: string | string[] = pk_dataset[0].name.split('/');
           parent_dataset.pop();
           parent_dataset = parent_dataset.join('/');
 
@@ -656,7 +657,7 @@ export class ZvolFormComponent implements Formconfiguration {
     });
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     if (!entityForm.isNew) {
       for (let i = 0; i < this.encryption_fields.length; i++) {
@@ -722,7 +723,7 @@ export class ZvolFormComponent implements Formconfiguration {
     });
   }
 
-  blurVolsize(parent: any) {
+  blurVolsize(parent: any): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['volsize'].setValue(parent.storageService.humanReadable);
     }
@@ -782,8 +783,8 @@ export class ZvolFormComponent implements Formconfiguration {
     return this.ws.call('pool.dataset.create', [data]);
   }
 
-  editSubmit(body: any) {
-    this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).subscribe((res) => {
+  editSubmit(body: any): void {
+    this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).subscribe((datasets) => {
       this.edit_data = this.sendAsBasicOrAdvanced(body);
 
       if (this.edit_data.inherit_encryption) {
@@ -811,7 +812,7 @@ export class ZvolFormComponent implements Formconfiguration {
       delete this.edit_data.encryption_type;
       delete this.edit_data.algorithm;
 
-      let volblocksize_integer_value = res[0].volblocksize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
+      let volblocksize_integer_value: number | string = datasets[0].volblocksize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
       volblocksize_integer_value = parseInt(volblocksize_integer_value, 10);
       if (volblocksize_integer_value === 512) {
         volblocksize_integer_value = 512;
@@ -821,10 +822,10 @@ export class ZvolFormComponent implements Formconfiguration {
       if (this.edit_data.volsize && this.edit_data.volsize % volblocksize_integer_value !== 0) {
         this.edit_data.volsize = this.edit_data.volsize + (volblocksize_integer_value - this.edit_data.volsize % volblocksize_integer_value);
       }
-      let rounded_vol_size = res[0].volsize.parsed;
+      let rounded_vol_size = datasets[0].volsize.parsed;
 
-      if (res[0].volsize.parsed % volblocksize_integer_value !== 0) {
-        rounded_vol_size = res[0].volsize.parsed + (volblocksize_integer_value - res[0].volsize.parsed % volblocksize_integer_value);
+      if (datasets[0].volsize.parsed % volblocksize_integer_value !== 0) {
+        rounded_vol_size = datasets[0].volsize.parsed + (volblocksize_integer_value - datasets[0].volsize.parsed % volblocksize_integer_value);
       }
 
       if (!this.edit_data.volsize || this.edit_data.volsize >= rounded_vol_size) {
@@ -843,7 +844,7 @@ export class ZvolFormComponent implements Formconfiguration {
     });
   }
 
-  customSubmit(body: any) {
+  customSubmit(body: any): void {
     this.loader.open();
 
     if (this.isNew === true) {
@@ -860,7 +861,7 @@ export class ZvolFormComponent implements Formconfiguration {
     }
   }
 
-  setParent(id: string) {
+  setParent(id: string): void {
     this.parent = id;
   }
 }

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Option } from 'app/interfaces/option.interface';
 
 import * as _ from 'lodash';
+import { Subscription } from 'rxjs/Subscription';
 import { ProductType } from '../../../enums/product-type.enum';
 import { DialogService, WebSocketService } from '../../../services';
 import { ipv4Validator } from '../../common/entity/entity-form/validators/ip-validation';
@@ -12,14 +13,14 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { EntityUtils } from '../../common/entity/utils';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { T } from '../../../translate-marker';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-ipmi',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class IPMIFromComponent {
+export class IPMIFromComponent implements FormConfiguration {
   title = 'IMPI';
-  protected queryCall = 'ipmi.query';
+  queryCall: 'ipmi.query' = 'ipmi.query';
 
   protected entityEdit: any;
   is_ha = false;
@@ -154,7 +155,7 @@ export class IPMIFromComponent {
 
   queryKey = 'id';
   channelValue: any;
-  protected isEntity = true;
+  isEntity = true;
 
   constructor(
     protected ws: WebSocketService,
@@ -210,7 +211,7 @@ export class IPMIFromComponent {
     });
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.channelValue = entityEdit.pk;
     this.entityEdit = entityEdit;
 
@@ -244,11 +245,11 @@ export class IPMIFromComponent {
     }
   }
 
-  setErrorStatus(status: any, field: any) {
+  setErrorStatus(status: any, field: any): void {
     status === 'INVALID' ? field.hasErrors = true : field.hasErrors = false;
   }
 
-  customSubmit(payload: any) {
+  customSubmit(payload: any): Subscription {
     let call = this.ws.call('ipmi.update', [this.channelValue, payload]);
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
       call = this.ws.call('failover.call_remote', ['ipmi.update', [this.channelValue, payload]]);
@@ -264,7 +265,7 @@ export class IPMIFromComponent {
     });
   }
 
-  loadData(filter: any[] = []) {
+  loadData(filter: any[] = []): void {
     let query = this.ws.call(this.queryCall, filter);
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
       query = this.ws.call('failover.call_remote', [this.queryCall, [filter]]);

@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import * as _ from 'lodash';
+import { Subscription } from 'rxjs/Subscription';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../services/dialog.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,7 +11,7 @@ import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_failover } from 'app/helptext/system/failover';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-system-failover',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -18,9 +19,9 @@ import { helptext_system_failover } from 'app/helptext/system/failover';
   providers: [],
 })
 
-export class FailoverComponent implements OnDestroy {
-  protected queryCall = 'failover.config';
-  protected updateCall = 'failover.update';
+export class FailoverComponent implements FormConfiguration, OnDestroy {
+  queryCall: 'failover.config' = 'failover.config';
+  updateCall = 'failover.update';
   entityForm: any;
   protected failoverDisableSubscription: any;
   alreadyDisabled = false;
@@ -134,7 +135,7 @@ export class FailoverComponent implements OnDestroy {
     private router: Router,
   ) {}
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
     this.failoverDisableSubscription = this.entityForm.formGroup.controls['disabled'].valueChanges.subscribe((res: boolean) => {
       if (!this.alreadyDisabled) {
@@ -160,7 +161,7 @@ export class FailoverComponent implements OnDestroy {
     });
   }
 
-  customSubmit(body: any) {
+  customSubmit(body: any): Subscription {
     this.load.open();
     return this.ws.call('failover.update', [body]).subscribe(() => {
       this.alreadyDisabled = body['disabled'];
@@ -176,13 +177,13 @@ export class FailoverComponent implements OnDestroy {
     });
   }
 
-  resourceTransformIncomingRestData(value: any) {
+  resourceTransformIncomingRestData(value: any): any {
     this.alreadyDisabled = value['disabled'];
     value['master'] = true;
     return value;
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.failoverDisableSubscription.unsubscribe();
   }
 }

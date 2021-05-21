@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ValidatorFn } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
@@ -16,15 +16,15 @@ import { ModalService } from '../../../../services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout/admin-layout.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-gui-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class GuiFormComponent implements OnDestroy {
-  protected queryCall = 'none';
-  protected updateCall = 'system.general.update';
+export class GuiFormComponent implements FormConfiguration, OnDestroy {
+  updateCall = 'system.general.update';
   sortLanguagesByName = true;
   languageList: Option[] = [];
   languageKey: string;
@@ -133,7 +133,7 @@ export class GuiFormComponent implements OnDestroy {
   private guicertificate: any;
   private entityForm: any;
   private configData: any;
-  protected title = helptext.guiPageTitle;
+  title = helptext.guiPageTitle;
 
   constructor(
     protected router: Router,
@@ -152,7 +152,7 @@ export class GuiFormComponent implements OnDestroy {
     });
   }
 
-  IPValidator(name: 'ui_address' | 'ui_v6address', wildcard: string) {
+  IPValidator(name: 'ui_address' | 'ui_v6address', wildcard: string): ValidatorFn {
     const self = this;
     return function validIPs(control: FormControl) {
       const config = self.fieldSets.find((set) => set.name === helptext.stg_fieldset_gui).config.find((c) => c.name === name);
@@ -173,7 +173,7 @@ export class GuiFormComponent implements OnDestroy {
     };
   }
 
-  preInit() {
+  preInit(): void {
     this.http_port = this.configData['ui_port'];
     this.https_port = this.configData['ui_httpsport'];
     this.redirect = this.configData['ui_httpsredirect'];
@@ -185,7 +185,7 @@ export class GuiFormComponent implements OnDestroy {
     this.v6addresses = this.configData['ui_v6address'];
   }
 
-  reconnect(href: string) {
+  reconnect(href: string): void {
     if (this.entityForm.ws.connected) {
       this.loader.close();
       // ws is connected
@@ -197,7 +197,7 @@ export class GuiFormComponent implements OnDestroy {
     }
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
 
     this.ui_certificate = this.fieldSets
@@ -253,12 +253,12 @@ export class GuiFormComponent implements OnDestroy {
     entityEdit.formGroup.controls['ui_consolemsg'].setValue(this.configData.ui_consolemsg);
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     delete value.language_sort;
     value.language = this.languageKey;
   }
 
-  afterSubmit(value: any) {
+  afterSubmit(value: any): void {
     const new_http_port = value.ui_port;
     const new_https_port = value.ui_httpsport;
     const new_redirect = value.ui_httpsredirect;
@@ -324,11 +324,7 @@ export class GuiFormComponent implements OnDestroy {
     });
   }
 
-  getKeyByValue(object: any, value: any) {
-    return Object.keys(object).find((key) => object[key] === value);
-  }
-
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.getDataFromDash.unsubscribe();
   }
 }

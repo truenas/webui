@@ -4,7 +4,10 @@ import {
 import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { CoreEvent } from 'app/interfaces/events';
+import { TranslateService } from '@ngx-translate/core';
+import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { Subject, Subscription } from 'rxjs';
 
 import * as cronParser from 'cron-parser';
@@ -18,7 +21,7 @@ import {
   StorageService,
   UserService,
 } from '../../../services';
-import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { ModalService } from '../../../services/modal.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
@@ -36,6 +39,21 @@ import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { EmptyConfig } from '../../common/entity/entity-empty/entity-empty.component';
 import { ConsoleFormComponent } from './console-form/console-form.component';
 import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.component';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { GpuDevice } from 'app/interfaces/gpu-device.interface';
+
+enum CardId {
+  Console = 'console',
+  Syslog = 'syslog',
+  Kernel = 'kernel',
+  Cron = 'cron',
+  InitShutdown = 'initshutdown',
+  Sysctl = 'sysctl',
+  SystemDatasetPool = 'systemdatasetpool',
+  Gpus = 'gpus',
+}
 
 @Component({
   selector: 'app-advanced-settings',
@@ -44,7 +62,7 @@ import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.compo
 })
 export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   dataCards: any[] = [];
-  configData: any;
+  configData: AdvancedConfig;
   refreshCardData: Subscription;
   refreshTable: Subscription;
   refreshForm: Subscription;
@@ -52,16 +70,19 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   getAdvancedConfig: Subscription;
   getDatasetConfig: Subscription;
   syslog: boolean;
-  entityForm: any;
+  systemDatasetPool: string;
+  entityForm: EntityFormComponent;
   isFirstTime = true;
 
   // Components included in this dashboard
   protected tunableFormComponent: TunableFormComponent;
   protected consoleFormComponent: ConsoleFormComponent;
+  protected isolatedGpuPcisFormComponent: IsolatedGpuPcisFormComponent;
   protected kernelFormComponent: KernelFormComponent;
   protected syslogFormComponent: SyslogFormComponent;
   protected cronFormComponent: CronFormComponent;
   protected initShutdownFormComponent: InitshutdownFormComponent;
+  protected systemDatasetPoolComponent: SystemDatasetPoolComponent;
 
   emptyPageConf: EmptyConfig = {
     type: EmptyType.no_page_data,
@@ -69,10 +90,10 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     large: false,
     message: T('To configure sysctls, click the "Add" button.'),
   };
-  is_ha = false;
+  isHA = false;
   formEvents: Subject<CoreEvent>;
   actionsConfig: any;
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
 
   cronTableConf: InputTableConf = {
     title: helptext_system_advanced.fieldset_cron,
@@ -95,10 +116,10 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
       { name: T('Next Run'), prop: 'next_run', hidden: true },
     ],
     add() {
-      this.parent.doAdd('cron');
+      this.parent.onSettingsPressed(CardId.Cron);
     },
     edit(row) {
-      this.parent.doAdd('cron', row.id);
+      this.parent.onSettingsPressed(CardId.Cron, row.id);
     },
   };
 
@@ -123,10 +144,10 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
       { name: T('Timeout'), prop: 'timeout', hidden: true },
     ],
     add() {
-      this.parent.doAdd('initshutdown');
+      this.parent.onSettingsPressed(CardId.InitShutdown);
     },
     edit(row) {
-      this.parent.doAdd('initshutdown', row.id);
+      this.parent.onSettingsPressed(CardId.InitShutdown, row.id);
     },
   };
 
@@ -147,12 +168,14 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
       { name: T('Description'), prop: 'comment' },
     ],
     add() {
-      this.parent.doAdd('sysctl');
+      this.parent.onSettingsPressed(CardId.Sysctl);
     },
     edit(row) {
-      this.parent.doAdd('sysctl', row.id);
+      this.parent.onSettingsPressed(CardId.Sysctl, row.id);
     },
   };
+
+  readonly CardId = CardId;
 
   constructor(
     private ws: WebSocketService,
@@ -168,6 +191,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     private core: CoreService,
     public datePipe: DatePipe,
     protected userService: UserService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -220,12 +244,11 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
   }
 
-  afterInit(entityEdit: any) {
-    this.entityForm = entityEdit;
-    console.log('afterInit::entityEdit', entityEdit);
+  afterInit(entityForm: EntityFormComponent): void {
+    this.entityForm = entityForm;
 
     this.ws.call('failover.licensed').subscribe((is_ha) => {
-      this.is_ha = is_ha;
+      this.isHA = is_ha;
     });
   }
 
@@ -233,77 +256,69 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     return helptext_system_advanced.sysloglevel.options.find((option) => option.value === level).label;
   }
 
-  getDatasetData() {
-    this.getDatasetConfig = this.ws.call('systemdataset.config').subscribe((res) => {
-      if (res) {
-        this.syslog = res.syslog;
-        this.modalService.refreshTable();
-        this.updateSyslogOnTable();
+  getDatasetData(): void {
+    this.getDatasetConfig = this.ws.call('systemdataset.config').subscribe((config) => {
+      if (!config) {
+        return;
       }
+
+      this.syslog = config.syslog;
+      this.systemDatasetPool = config.pool;
+      this.modalService.refreshTable();
+      this.getDataCardData();
     });
   }
 
-  updateSyslogOnTable() {
-    this.dataCards.forEach((card) => {
-      if (card.id === 'syslog') {
-        card.items.forEach((item: any) => {
-          if (item.label === helptext_system_advanced.system_dataset_placeholder) {
-            item.value = this.syslog ? helptext.enabled : helptext.disabled;
-          }
-        });
-      }
-    });
-  }
+  getDataCardData(): void {
+    this.getAdvancedConfig = this.ws.call('system.advanced.config').subscribe((advancedConfig: AdvancedConfig) => {
+      this.configData = advancedConfig;
 
-  getDataCardData() {
-    this.getAdvancedConfig = this.ws.call('system.advanced.config').subscribe((res) => {
-      this.configData = res;
       this.dataCards = [
         {
           title: helptext_system_advanced.fieldset_console,
-          id: 'console',
+          id: CardId.Console,
           items: [
             {
               label: helptext_system_advanced.consolemenu_placeholder,
-              value: res.consolemenu ? helptext.enabled : helptext.disabled,
+              value: advancedConfig.consolemenu ? helptext.enabled : helptext.disabled,
             },
             {
               label: helptext_system_advanced.serialconsole_placeholder,
-              value: res.serialconsole ? helptext.enabled : helptext.disabled,
+              value: advancedConfig.serialconsole ? helptext.enabled : helptext.disabled,
             },
             {
               label: helptext_system_advanced.serialport_placeholder,
-              value: res.serialport ? res.serialport : '–',
+              value: advancedConfig.serialport ? advancedConfig.serialport : '–',
             },
             {
               label: helptext_system_advanced.serialspeed_placeholder,
-              value: res.serialspeed ? `${res.serialspeed} bps` : '–',
+              value: advancedConfig.serialspeed ? `${advancedConfig.serialspeed} bps` : '–',
             },
             {
               label: helptext_system_advanced.motd_placeholder,
-              value: res.motd ? res.motd.toString() : '–',
+              value: advancedConfig.motd ? advancedConfig.motd.toString() : '–',
             },
           ],
         },
         {
           title: helptext_system_advanced.fieldset_syslog,
-          id: 'syslog',
+          id: CardId.Syslog,
           items: [
             {
               label: helptext_system_advanced.fqdn_placeholder,
-              value: res.fqdn_syslog ? helptext.enabled : helptext.disabled,
+              value: advancedConfig.fqdn_syslog ? helptext.enabled : helptext.disabled,
             },
             {
               label: helptext_system_advanced.sysloglevel.placeholder,
-              value: this.formatSyslogLevel(res.sysloglevel),
+              value: this.formatSyslogLevel(advancedConfig.sysloglevel),
             },
             {
               label: helptext_system_advanced.syslogserver.placeholder,
-              value: res.syslogserver ? res.syslogserver : '–',
+              value: advancedConfig.syslogserver ? advancedConfig.syslogserver : '–',
             },
             {
               label: helptext_system_advanced.syslog_transport.placeholder,
-              value: res.syslog_transport,
+              value: advancedConfig.syslog_transport,
             },
             {
               label: helptext_system_advanced.system_dataset_placeholder,
@@ -313,62 +328,91 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
         },
         {
           title: helptext_system_advanced.fieldset_kernel,
-          id: 'kernel',
+          id: CardId.Kernel,
           items: [
             {
               label: helptext_system_advanced.autotune_placeholder,
-              value: res.autotune ? helptext.enabled : helptext.disabled,
+              value: advancedConfig.autotune ? helptext.enabled : helptext.disabled,
             },
             {
               label: helptext_system_advanced.debugkernel_placeholder,
-              value: res.debugkernel ? helptext.enabled : helptext.disabled,
+              value: advancedConfig.debugkernel ? helptext.enabled : helptext.disabled,
             },
           ],
         },
         {
-          id: 'cron',
+          id: CardId.Cron,
           title: helptext_system_advanced.fieldset_cron,
           tableConf: this.cronTableConf,
         },
         {
-          id: 'initshutdown',
+          id: CardId.InitShutdown,
           title: helptext_system_advanced.fieldset_initshutdown,
           tableConf: this.initShutdownTableConf,
         },
         {
-          id: 'sysctl',
+          id: CardId.Sysctl,
           title: helptext_system_advanced.fieldset_sysctl,
           tableConf: this.sysctlTableConf,
         },
+        {
+          id: CardId.SystemDatasetPool,
+          title: T('System Dataset Pool'),
+          items: [
+            {
+              label: T('System Dataset Pool'),
+              value: this.systemDatasetPool,
+            },
+          ],
+        },
       ];
+
+      this.ws.call('device.get_info', ['GPU']).subscribe((gpus: GpuDevice[]) => {
+        const isolatedGpus = gpus.filter((gpu: GpuDevice) => advancedConfig.isolated_gpu_pci_ids.findIndex(
+          (pciId: string) => pciId === gpu.addr.pci_slot,
+        ) > -1).map((gpu: GpuDevice) => gpu.description).join(', ');
+        this.dataCards.push({
+          title: T('Isolated GPU Device(s)'),
+          id: CardId.Gpus,
+          items: [{ label: T('Isolated GPU Device(s)'), value: isolatedGpus }],
+        });
+      });
     });
   }
 
-  doAdd(name: string, id?: number) {
+  onSettingsPressed(name: CardId, id?: number): void {
     let addComponent: TunableFormComponent
     | ConsoleFormComponent
     | SyslogFormComponent
     | KernelFormComponent
     | CronFormComponent
-    | InitshutdownFormComponent;
+    | InitshutdownFormComponent
+    | IsolatedGpuPcisFormComponent
+    | SystemDatasetPoolComponent;
     switch (name) {
-      case 'console':
+      case CardId.Console:
         addComponent = this.consoleFormComponent;
         break;
-      case 'kernel':
+      case CardId.Kernel:
         addComponent = this.kernelFormComponent;
         break;
-      case 'syslog':
+      case CardId.Syslog:
         addComponent = this.syslogFormComponent;
         break;
-      case 'sysctl':
+      case CardId.Sysctl:
         addComponent = this.tunableFormComponent;
         break;
-      case 'cron':
+      case CardId.Cron:
         addComponent = this.cronFormComponent;
         break;
-      case 'initshutdown':
+      case CardId.InitShutdown:
         addComponent = this.initShutdownFormComponent;
+        break;
+      case CardId.SystemDatasetPool:
+        addComponent = this.systemDatasetPoolComponent;
+        break;
+      case CardId.Gpus:
+        addComponent = this.isolatedGpuPcisFormComponent;
         break;
       default:
         break;
@@ -378,7 +422,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
       this.dialog
         .Info(helptext_system_advanced.first_time.title, helptext_system_advanced.first_time.message)
         .subscribe(() => {
-          if (['console', 'kernel', 'syslog'].includes(name)) {
+          if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
             this.sysGeneralService.sendConfigData(this.configData);
           }
 
@@ -386,22 +430,22 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
           this.isFirstTime = false;
         });
     } else {
-      if (['console', 'kernel', 'syslog'].includes(name)) {
+      if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
         this.sysGeneralService.sendConfigData(this.configData);
       }
       this.modalService.open('slide-in-form', addComponent, id);
     }
   }
 
-  saveDebug() {
-    this.ws.call('system.info', []).subscribe((res) => {
+  saveDebug(): void {
+    this.ws.call('system.info', []).subscribe((systemInfo) => {
       let fileName = '';
-      let mimetype = 'application/gzip';
-      if (res) {
-        const hostname = res.hostname.split('.')[0];
+      let mimeType = 'application/gzip';
+      if (systemInfo) {
+        const hostname = systemInfo.hostname.split('.')[0];
         const date = this.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
-        if (this.is_ha) {
-          mimetype = 'application/x-tar';
+        if (this.isHA) {
+          mimeType = 'application/x-tar';
           fileName = `debug-${hostname}-${date}.tar`;
         } else {
           fileName = `debug-${hostname}-${date}.tgz`;
@@ -420,7 +464,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
               (res: any) => {
                 const url = res[1];
                 let failed = false;
-                this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(
+                this.storage.streamDownloadFile(this.http, url, fileName, mimeType).subscribe(
                   (file) => {
                     this.storage.downloadBlob(file, fileName);
                   },
@@ -473,7 +517,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  refreshTables() {
+  refreshTables(): void {
     this.dataCards.forEach((card) => {
       if (card.tableConf?.tableComponent) {
         card.tableConf.tableComponent.getData();
@@ -481,7 +525,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  refreshForms() {
+  refreshForms(): void {
     this.tunableFormComponent = new TunableFormComponent(this.ws, this.sysGeneralService);
     this.consoleFormComponent = new ConsoleFormComponent(
       this.router,
@@ -491,6 +535,12 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
       this.loader,
       this.http,
       this.storage,
+      this.sysGeneralService,
+      this.modalService,
+    );
+    this.isolatedGpuPcisFormComponent = new IsolatedGpuPcisFormComponent(
+      this.ws,
+      this.loader,
       this.sysGeneralService,
       this.modalService,
     );
@@ -518,9 +568,17 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     );
     this.cronFormComponent = new CronFormComponent(this.userService, this.modalService);
     this.initShutdownFormComponent = new InitshutdownFormComponent(this.modalService);
+    this.systemDatasetPoolComponent = new SystemDatasetPoolComponent(
+      this.ws,
+      this.loader,
+      this.dialog,
+      this.translate,
+      this.modalService,
+      this.sysGeneralService,
+    );
   }
 
-  cronDataSourceHelper(data: any[]) {
+  cronDataSourceHelper(data: any[]): any[] {
     return data.map((job) => {
       job.cron_schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
 
@@ -533,7 +591,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.refreshCardData.unsubscribe();
     this.refreshTable.unsubscribe();
     this.refreshForm.unsubscribe();

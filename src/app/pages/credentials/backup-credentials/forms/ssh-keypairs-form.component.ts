@@ -11,24 +11,25 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { WebSocketService, DialogService, StorageService } from '../../../../services';
 import { ModalService } from 'app/services/modal.service';
 import { atLeastOne } from 'app/pages/common/entity/entity-form/validators/at-least-one-validation';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-ssh-keypairs-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class SshKeypairsFormComponent {
-  protected queryCall = 'keychaincredential.query';
-  protected queryCallOption: any[];
-  protected addCall = 'keychaincredential.create';
-  protected editCall = 'keychaincredential.update';
-  protected isEntity = true;
+export class SshKeypairsFormComponent implements FormConfiguration {
+  queryCall: 'keychaincredential.query' = 'keychaincredential.query';
+  queryCallOption: any[];
+  addCall: 'keychaincredential.create' = 'keychaincredential.create';
+  editCall: 'keychaincredential.update' = 'keychaincredential.update';
+  isEntity = true;
   protected entityForm: any;
   protected isOneColumnForm = true;
   private rowNum: any;
   title = helptext.formTitle;
   private getRow = new Subscription();
 
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
       name: helptext.fieldset_basic,
@@ -87,7 +88,7 @@ export class SshKeypairsFormComponent {
     },
   ];
 
-  protected compactCustomActions = [
+  compactCustomActions = [
     {
       id: 'download_private',
       name: helptext.download_private,
@@ -112,7 +113,7 @@ export class SshKeypairsFormComponent {
     });
   }
 
-  isCustActionDisabled(actionId: string) {
+  isCustActionDisabled(actionId: string): boolean {
     if (this.entityForm.formGroup.controls['name'].value) {
       if (actionId === 'download_private') {
         return !this.entityForm.formGroup.controls['private_key'].value;
@@ -123,14 +124,14 @@ export class SshKeypairsFormComponent {
     return true;
   }
 
-  preInit() {
+  preInit(): void {
     if (this.rowNum) {
       this.queryCallOption = [['id', '=', this.rowNum]];
       this.rowNum = null;
     }
   }
 
-  generateKeypair() {
+  generateKeypair(): void {
     this.loader.open();
     this.clearPreviousErrors();
     const elements = document.getElementsByTagName('mat-error');
@@ -148,7 +149,7 @@ export class SshKeypairsFormComponent {
     );
   }
 
-  downloadKey(key_type: any) {
+  downloadKey(key_type: any): void {
     const name = this.entityForm.formGroup.controls['name'].value;
     const key = this.entityForm.formGroup.controls[key_type].value;
     const filename = name + '_' + key_type + '_rsa';
@@ -156,7 +157,7 @@ export class SshKeypairsFormComponent {
     this.storage.downloadBlob(blob, filename);
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
     this.entityForm.formGroup.controls['private_key'].valueChanges.subscribe(() => {
@@ -167,20 +168,20 @@ export class SshKeypairsFormComponent {
     });
   }
 
-  clearPreviousErrors() {
+  clearPreviousErrors(): void {
     // Clears error messages from MW from previous attempts to Save
     const elements = document.getElementsByTagName('mat-error');
     while (elements[0]) elements[0].parentNode.removeChild(elements[0]);
   }
 
-  resourceTransformIncomingRestData(wsResponse: any) {
+  resourceTransformIncomingRestData(wsResponse: any): any {
     for (const item in wsResponse.attributes) {
       wsResponse[item] = wsResponse.attributes[item];
     }
     return wsResponse;
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): any {
     if (data.remote_host_key_button || data.remote_host_key_button === '') {
       delete data.remote_host_key_button;
     }
@@ -199,7 +200,7 @@ export class SshKeypairsFormComponent {
     return data;
   }
 
-  afterSubmit() {
+  afterSubmit(): void {
     this.modalService.refreshTable();
   }
 }

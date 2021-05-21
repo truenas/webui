@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { IscsiIpChoices, IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { T } from 'app/translate-marker';
 import { IscsiService } from '../../../../../services';
 
@@ -11,8 +12,8 @@ import { IscsiService } from '../../../../../services';
 })
 export class PortalListComponent {
   tableTitle = 'Portals';
-  protected queryCall = 'iscsi.portal.query';
-  protected wsDelete = 'iscsi.portal.delete';
+  protected queryCall: 'iscsi.portal.query' = 'iscsi.portal.query';
+  protected wsDelete: 'iscsi.portal.delete' = 'iscsi.portal.delete';
   protected route_add: string[] = ['sharing', 'iscsi', 'portals', 'add'];
   protected route_add_tooltip = 'Add Portal';
   protected route_edit: string[] = ['sharing', 'iscsi', 'portals', 'edit'];
@@ -49,14 +50,14 @@ export class PortalListComponent {
       key_props: ['tag'],
     },
   };
-  ipChoicies: any[];
+  ipChoices: IscsiIpChoices;
   constructor(protected router: Router, protected iscsiService: IscsiService) {}
 
   prerequisite(): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       await this.iscsiService.getIpChoices().toPromise().then(
-        (res) => {
-          this.ipChoicies = res;
+        (ips) => {
+          this.ipChoices = ips;
           resolve(true);
         },
         (err) => {
@@ -66,10 +67,10 @@ export class PortalListComponent {
     });
   }
 
-  dataHandler(data: any) {
+  dataHandler(data: any): void {
     for (const i in data.rows) {
       for (const ip in data.rows[i].listen) {
-        const listenIP = this.ipChoicies[data.rows[i].listen[ip].ip] || data.rows[i].listen[ip].ip;
+        const listenIP = this.ipChoices[data.rows[i].listen[ip].ip] || data.rows[i].listen[ip].ip;
         data.rows[i].listen[ip] = listenIP + ':' + data.rows[i].listen[ip].port;
       }
     }

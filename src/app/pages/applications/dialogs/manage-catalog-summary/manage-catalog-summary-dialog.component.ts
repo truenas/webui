@@ -34,7 +34,7 @@ export class ManageCatalogSummaryDialog implements OnInit {
     this.catalog = data;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.appService.getCatItems(this.catalog.label).subscribe((evt) => {
       this.catalogItems = [];
       this.trainOptions = ['All'];
@@ -56,7 +56,7 @@ export class ManageCatalogSummaryDialog implements OnInit {
     });
   }
 
-  onOptionChanged() {
+  onOptionChanged(): void {
     this.filteredItems = this.catalogItems.filter((item) => {
       let isSeletectedTrain = false;
       if (this.selectedTrain == this.trainOptions[0]
@@ -75,7 +75,7 @@ export class ManageCatalogSummaryDialog implements OnInit {
     });
   }
 
-  versionStatusLabel(item: any) {
+  versionStatusLabel(item: any): string {
     let label = '';
     if (this.selectedStatus == this.statusOptions[0]) {
       if (item.healthy) {

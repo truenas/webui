@@ -20,7 +20,7 @@ export class ServiceRSYNCComponent implements OnInit {
   ];
   constructor(protected router: Router, protected aroute: ActivatedRoute) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.aroute.params.subscribe((params) => {
       this.activedTab = params['pk'];
     });

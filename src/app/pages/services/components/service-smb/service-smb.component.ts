@@ -2,6 +2,7 @@ import { ApplicationRef, Component, Injector } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ValidationErrors, FormControl } from '@angular/forms';
+import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -13,6 +14,7 @@ import {
   IdmapService, RestService, ServicesService, UserService, WebSocketService,
 } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'smb-edit',
@@ -20,15 +22,15 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
   providers: [ServicesService, IdmapService],
 })
 
-export class ServiceSMBComponent {
-  protected queryCall = 'smb.config';
-  protected route_success: string[] = ['services'];
+export class ServiceSMBComponent implements FormConfiguration {
+  queryCall: 'smb.config' = 'smb.config';
+  route_success: string[] = ['services'];
   formGroup: any;
   error: string;
-  protected query_call = 'directoryservice.idmap_';
+  query_call = 'directoryservice.idmap_';
   protected idmap_type = 'tdb';
   protected targetDS = '5';
-  protected isBasicMode = true;
+  isBasicMode = true;
 
   private cifs_srv_bindip: any;
   private cifs_srv_guest: any;
@@ -41,7 +43,7 @@ export class ServiceSMBComponent {
   private validBindIps: any;
   title = helptext.formTitle;
 
-  protected advanced_field = [
+  advanced_field = [
     'unixcharset',
     'loglevel',
     'syslog',
@@ -298,20 +300,20 @@ export class ServiceSMBComponent {
       }
     });
 
-    this.ws.call('user.query').subscribe((res: any[]) => {
+    this.ws.call('user.query').subscribe((users) => {
       this.cifs_srv_guest = otherColTwoSet.config.find((config) => config.name === 'guest');
-      res.forEach((user) => {
+      users.forEach((user) => {
         this.cifs_srv_guest.options.push({ label: user.username, value: user.username });
       });
     });
 
-    this.userService.groupQueryDSCache('', true).subscribe((items: any[]) => {
-      const groups: any[] = [];
-      items.forEach((item) => {
-        groups.push({ label: item.group, value: item.group });
+    this.userService.groupQueryDSCache('', true).subscribe((groups) => {
+      const groupOptions: Option[] = [];
+      groups.forEach((item) => {
+        groupOptions.push({ label: item.group, value: item.group });
       });
       this.cifs_srv_admin_group = otherSet.config.find((config) => config.name === 'admin_group');
-      groups.forEach((group) => {
+      groupOptions.forEach((group) => {
         this.cifs_srv_admin_group.options.push({ label: group.label, value: group.value });
       });
     });
@@ -352,12 +354,12 @@ export class ServiceSMBComponent {
   }
 
   updateGroupSearchOptions(value = '', parent: any) {
-    parent.userService.groupQueryDSCache(value, true).subscribe((items: any[]) => {
-      const groups = [];
+    (parent.userService as UserService).groupQueryDSCache(value, true).subscribe((items) => {
+      const groupOptions: Option[] = [];
       for (let i = 0; i < items.length; i++) {
-        groups.push({ label: items[i].group, value: items[i].group });
+        groupOptions.push({ label: items[i].group, value: items[i].group });
       }
-      parent.cifs_srv_admin_group.searchOptions = groups;
+      parent.cifs_srv_admin_group.searchOptions = groupOptions;
     });
   }
 

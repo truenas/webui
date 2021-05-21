@@ -37,7 +37,7 @@ export class ConfigResetComponent implements OnInit {
     });
   }
 
-  isWSConnected() {
+  isWSConnected(): void {
     if (this.ws.connected) {
       this.loader.close();
       // ws is connected
@@ -49,14 +49,14 @@ export class ConfigResetComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.product_type = window.localStorage.getItem('product_type') as ProductType;
 
     this.dialog.closeAll();
     this.resetConfigSubmit();
   }
 
-  resetConfigSubmit() {
+  resetConfigSubmit(): void {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Resetting. Please wait...' }, disableClose: true });
     this.dialogRef.componentInstance.setCall('config.reset', [{ reboot: true }]);
     this.dialogRef.componentInstance.setDescription(T('Resetting system configuration to default settings. The system will restart.'));

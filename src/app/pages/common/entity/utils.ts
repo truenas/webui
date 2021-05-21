@@ -1,12 +1,10 @@
 import * as _ from 'lodash';
 import { Relation } from './entity-form/models/field-relation.interface';
 
-export const FORM_KEY_SEPERATOR = '__';
-export const FORM_LABEL_KEY_PREFIX = '__label__';
 export const NULL_VALUE = 'null_value';
 
 export class EntityUtils {
-  handleError(entity: any, res: any) {
+  handleError(entity: any, res: any): void {
     if (res.code === 409) {
       this.handleObjError(entity, res);
     } else if (res.code === 400) {
@@ -27,7 +25,7 @@ export class EntityUtils {
     }
   }
 
-  handleObjError(entity: any, res: any) {
+  handleObjError(entity: any, res: any): void {
     let scroll = false;
     entity.error = '';
     for (const i in res.error) {
@@ -60,7 +58,7 @@ export class EntityUtils {
     }
   }
 
-  handleWSError(entity: any, res: any, dialogService?: any, targetFieldConfig?: any) {
+  handleWSError(entity: any, res: any, dialogService?: any, targetFieldConfig?: any): void {
     let dialog;
     if (dialogService) {
       dialog = dialogService;
@@ -123,7 +121,7 @@ export class EntityUtils {
     }
   }
 
-  errorReport(res: any, dialog: any) {
+  errorReport(res: any, dialog: any): void {
     if (res.trace && res.trace.formatted && dialog) {
       dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
     } else if (res.state && res.error && res.exception && dialog) {
@@ -138,7 +136,7 @@ export class EntityUtils {
     return (!!a) && (a.constructor === Object);
   };
 
-  flattenData(data: any | any[], level = 0, parent?: any) {
+  flattenData(data: any | any[], level = 0, parent?: any): any[] {
     let ndata: any[] = [];
     if (this.isObject(data)) {
       data = [data];
@@ -159,7 +157,7 @@ export class EntityUtils {
 
   bool(v: any): boolean {
     return v === 'false' || v === 'null' || v === 'NaN' || v === 'undefined'
-                   || v === '0'
+      || v === '0'
       ? false
       : !!v;
   }
@@ -171,7 +169,7 @@ export class EntityUtils {
   /**
    * make cron time dow consistence
    */
-  parseDOW(cron: string) {
+  parseDOW(cron: string): string {
     const dowOptions = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
     const cronArray = cron.replace(/00/g, '0').split(' ');
     if (cronArray[cronArray.length - 1] !== '*') {
@@ -184,31 +182,31 @@ export class EntityUtils {
     return cronArray.join(' ');
   }
 
-  filterArrayFunction(item: any) {
+  filterArrayFunction(item: any): boolean {
     /**
      * This function is for validation.
      * If the value of a control is invaild, we ignore it during sending payload
      */
     let result = true;
-
     if (item === undefined || item === null || item === '') {
       result = false;
+    } else if (Array.isArray(item)) {
+      let isAllEmpty = true;
+      item.forEach((subValue) => {
+        if (this.filterArrayFunction(subValue)) {
+          isAllEmpty = false;
+        }
+      });
+      if (isAllEmpty) {
+        result = false;
+      }
     } else if (typeof item === 'object') {
       let isAllEmpty = true;
       Object.values(item).forEach((value) => {
-        if (value !== undefined && value !== null && value !== '') {
-          if (Array.isArray(value)) {
-            value.forEach((subValue) => {
-              if (this.filterArrayFunction(subValue)) {
-                isAllEmpty = false;
-              }
-            });
-          } else {
-            isAllEmpty = false;
-          }
+        if (this.filterArrayFunction(value)) {
+          isAllEmpty = false;
         }
       });
-
       if (isAllEmpty) {
         result = false;
       }
@@ -217,62 +215,7 @@ export class EntityUtils {
     return result;
   }
 
-  parseFormControlValues(data: any, result: any) {
-    Object.keys(data).forEach((key) => {
-      const value = data[key];
-      if (key == 'release_name' || key == 'undefined' || key.startsWith(FORM_LABEL_KEY_PREFIX)) {
-        return;
-      }
-
-      const key_list = key.split(FORM_KEY_SEPERATOR);
-      if (key_list.length > 1) {
-        let parent = result;
-        for (let i = 0; i < key_list.length; i++) {
-          const temp_key = key_list[i];
-          if (i == key_list.length - 1) {
-            if (Array.isArray(value)) {
-              const arrayValues = value.map((item) => {
-                if (Object.keys(item).length > 1) {
-                  const subValue = {};
-                  this.parseFormControlValues(item, subValue);
-                  return subValue;
-                }
-                return item[Object.keys(item)[0]];
-              });
-              if (arrayValues.length > 0) {
-                parent[temp_key] = arrayValues.filter(this.filterArrayFunction);
-              }
-            } else {
-              parent[temp_key] = value;
-            }
-          } else {
-            if (!parent[temp_key]) {
-              parent[temp_key] = {};
-            }
-            parent = parent[temp_key];
-          }
-        }
-      } else if (Array.isArray(value)) {
-        const arrayValues = value.map((item) => {
-          if (Object.keys(item).length > 1) {
-            const subValue = {};
-            this.parseFormControlValues(item, subValue);
-            return subValue;
-          }
-          return item[Object.keys(item)[0]];
-        });
-        if (arrayValues.length > 0) {
-          result[key] = arrayValues.filter(this.filterArrayFunction);
-        }
-      } else {
-        result[key] = value;
-      }
-    });
-
-    return result;
-  }
-
-  changeNull2String(value: any) {
+  changeNull2String(value: any): any {
     let result = value;
     if (value === null) {
       result = NULL_VALUE;
@@ -281,7 +224,7 @@ export class EntityUtils {
     return result;
   }
 
-  changeNullString2Null(data: any) {
+  changeNullString2Null(data: any): any {
     let result: any;
     if (data === undefined || data === null || data === '') {
       result = data;
@@ -303,12 +246,9 @@ export class EntityUtils {
     return result;
   }
 
-  createRelations(relations: Relation[], parentName: string) {
+  createRelations(relations: Relation[]) {
     const result = relations.map((relation) => {
-      let relationFieldName = relation.fieldName;
-      if (parentName) {
-        relationFieldName = `${parentName}${FORM_KEY_SEPERATOR}${relationFieldName}`;
-      }
+      const relationFieldName = relation.fieldName;
 
       return {
         action: 'SHOW',
@@ -330,10 +270,7 @@ export class EntityUtils {
       return results;
     }
 
-    let name = schemaConfig.variable;
-    if (!parentIsList && parentName) {
-      name = `${parentName}${FORM_KEY_SEPERATOR}${name}`;
-    }
+    const name = schemaConfig.variable;
 
     let fieldConfig: any = {
       required: schemaConfig.schema.required,
@@ -408,38 +345,62 @@ export class EntityUtils {
 
       fieldConfig['templateListField'] = listFields;
     } else if (schemaConfig.schema.type == 'dict') {
-      fieldConfig = null;
+      if (parentIsList) {
+        fieldConfig = null;
+        if (schemaConfig.schema.attrs.length > 0) {
+          const dictLabel = {
+            label: schemaConfig.label,
+            name,
+            type: 'label',
+          };
 
-      if (schemaConfig.schema.attrs.length > 0) {
-        const dictLabel: any = {
-          label: schemaConfig.label,
-          name: FORM_LABEL_KEY_PREFIX + name,
-          type: 'label',
-        };
+          if (relations) {
+            (dictLabel as any)['relation'] = this.createRelations(relations);
+          }
 
-        if (relations) {
-          dictLabel['relation'] = this.createRelations(relations, parentName);
-        }
+          results = results.concat(dictLabel);
 
-        results = results.concat(dictLabel);
-      }
+          (schemaConfig.schema.attrs as any[]).forEach((dictConfig) => {
+            const subResults = this.parseSchemaFieldConfig(dictConfig, name, parentIsList);
 
-      (schemaConfig.schema.attrs as any[]).forEach((dictConfig) => {
-        const subResults = this.parseSchemaFieldConfig(dictConfig, name, parentIsList);
-
-        if (relations) {
-          subResults.forEach((subResult) => {
-            subResult['relation'] = this.createRelations(relations, parentName);
+            if (relations) {
+              subResults.forEach((subResult) => {
+                subResult['relation'] = this.createRelations(relations);
+              });
+            }
+            results = results.concat(subResults);
           });
         }
-        results = results.concat(subResults);
-      });
+      } else {
+        fieldConfig['type'] = 'dict';
+        fieldConfig['label'] = schemaConfig.label;
+        fieldConfig['width'] = '100%';
+
+        if (schemaConfig.schema.attrs.length > 0) {
+          if (relations) {
+            fieldConfig['relation'] = this.createRelations(relations);
+          }
+
+          let subFields: any[] = [];
+          (schemaConfig.schema.attrs as any[]).forEach((dictConfig) => {
+            const fields = this.parseSchemaFieldConfig(dictConfig, null, false);
+            subFields = subFields.concat(fields);
+
+            if (relations) {
+              subFields.forEach((subResult) => {
+                subResult['relation'] = this.createRelations(relations);
+              });
+            }
+          });
+          fieldConfig['subFields'] = subFields;
+        }
+      }
     }
 
     if (fieldConfig) {
       if (fieldConfig['type']) {
         if (relations) {
-          fieldConfig['relation'] = this.createRelations(relations, parentName);
+          fieldConfig['relation'] = this.createRelations(relations);
         }
 
         results.push(fieldConfig);
@@ -470,22 +431,5 @@ export class EntityUtils {
     }
 
     return results;
-  }
-
-  parseConfigData(configData: any, parentKey: string, result: any) {
-    if (configData !== undefined && configData !== null) {
-      Object.keys(configData).forEach((key) => {
-        const value = configData[key];
-        let fullKey = key;
-        if (parentKey) {
-          fullKey = `${parentKey}${FORM_KEY_SEPERATOR}${key}`;
-        }
-        if (!Array.isArray(value) && typeof value === 'object') {
-          this.parseConfigData(value, fullKey, result);
-        } else {
-          result[fullKey] = value;
-        }
-      });
-    }
   }
 }

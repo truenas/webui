@@ -6,11 +6,12 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { CoreEvent } from 'app/core/services/core.service';
 import { LayoutService } from 'app/core/services/layout.service';
+import { CoreEvent } from 'app/interfaces/events';
+import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { TranslatedMessages } from 'app/interfaces/translated-messages.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { Subscription, interval, Subject } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
 import { FailoverDisabledReason } from '../../../enums/failover-disabled-reason.enum';
 import { ProductType } from '../../../enums/product-type.enum';
 import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
@@ -89,8 +90,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   protected dialogRef: any;
   protected tcConnected = false;
-  protected tc_queryCall = 'truecommand.config';
-  protected tc_updateCall = 'truecommand.update';
+  protected tc_queryCall: 'truecommand.config' = 'truecommand.config';
+  protected tc_updateCall: 'truecommand.update' = 'truecommand.update';
   protected isTcStatusOpened = false;
   protected tcStatusDialogRef: MatDialogRef<TruecommandComponent>;
   tcStatus: any;
@@ -233,7 +234,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.core.register({
       observerClass: this,
       eventName: 'SysInfo',
-    }).subscribe((evt: CoreEvent) => {
+    }).subscribe((evt: SysInfoEvent) => {
       this.hostname = evt.data.hostname;
     });
 
@@ -369,9 +370,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
             T('I Agree'), false, null, '', null, null, true).subscribe((accept_eula: boolean) => {
             if (accept_eula) {
               window.localStorage.removeItem('upgrading_status');
-              this.ws.call('truenas.accept_eula')
-                .subscribe(),
-              (err: any) => { console.error(err); };
+              this.ws.call('truenas.accept_eula').subscribe();
             }
           });
         });

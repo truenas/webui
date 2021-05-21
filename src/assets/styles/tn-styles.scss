@@ -263,6 +263,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .mat-list .mat-list-item,
   .mat-menu-panel button,
+  .mat-menu-panel a,
   .mat-paginator-navigation-next, .mat-paginator-navigation-previous,
 
   .mat-nav-list .mat-list-item,
@@ -289,6 +290,14 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .mat-checkbox-disabled .mat-checkbox-frame, .mat-checkbox-disabled .mat-checkbox-inner-container {
     opacity: 0.75;
+  }
+
+  .menu-toggle {
+    .mat-icon {
+      position: relative;
+      right: -10px;
+      vertical-align: middle;
+    }
   }
 
   .mat-menu-panel,
@@ -1580,6 +1589,18 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     width: 540px;
     height: 280px;
     resize: none;
+  }
+
+  button.menu-toggle {
+    .mat-button-wrapper {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .mat-icon {
+      position: relative;
+      right: -10px;
+    }
   }
 
 } // end of ix theme

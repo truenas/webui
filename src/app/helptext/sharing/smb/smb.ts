@@ -69,7 +69,7 @@ export const helptext_sharing_smb = {
  prevent excessive space usage, files larger than 20 MiB are deleted \
  rather than moved. Adjust the <i>Auxiliary Parameter</i> \
  <samp>crossrename:sizelimit=</samp> setting to allow larger files. \
- For example, <samp>crossrename:sizelimit={50}</samp> allows moves of \
+ For example, <samp>crossrename:sizelimit=\'{\'50\'}\'</samp> allows moves of \
  files up to 50 MiB in size. This means files can be permanently \
  deleted or moved from the recycle bin. <b>This is not a replacement \
  for ZFS snapshots.</b>'),
@@ -222,7 +222,8 @@ export const helptext_sharing_smb = {
  <i>Allowed</i> denies all permissions by default except those that are manually defined.\
  <i>Denied</i> allows all permissions by default except those that are manually defined.'),
 
-  formTitle: T('SMB'),
+  formTitleAdd: T('Add SMB'),
+  formTitleEdit: T('Edit SMB'),
 
   stripACLDialog: {
     title: T('Warning'),

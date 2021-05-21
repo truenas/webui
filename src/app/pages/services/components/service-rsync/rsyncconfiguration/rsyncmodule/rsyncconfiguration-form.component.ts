@@ -7,21 +7,22 @@ import * as _ from 'lodash';
 import helptext from '../../../../../../helptext/services/components/service-rsync';
 import { UserService, WebSocketService } from '../../../../../../services';
 import { FieldConfig } from '../../../../../common/entity/entity-form/models/field-config.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-rsync-configuration-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class RYSNCConfigurationFormComponent {
-  protected queryCall = 'rsyncmod.query';
-  protected route_success: string[] = ['services', 'rsync', 'rsync-module'];
-  protected isEntity = true;
+export class RYSNCConfigurationFormComponent implements FormConfiguration {
+  queryCall: 'rsyncmod.query' = 'rsyncmod.query';
+  route_success: string[] = ['services', 'rsync', 'rsync-module'];
+  isEntity = true;
   formGroup: FormGroup;
-  protected pk: any;
+  pk: any;
   title = helptext.moduleFormTitle;
-  protected addCall = 'rsyncmod.create';
-  protected isNew: boolean;
+  addCall: 'rsyncmod.create' = 'rsyncmod.create';
+  isNew: boolean;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
     {
@@ -133,26 +134,26 @@ export class RYSNCConfigurationFormComponent {
   private rsyncmod_group: any;
   private rsyncmod_user: any;
   protected entityForm: any;
-  protected customFilter: any;
+  customFilter: any;
   constructor(protected ws: WebSocketService, protected router: Router,
     protected userService: UserService, protected route: ActivatedRoute) {
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.entityForm = entityForm;
     this.isNew = entityForm.isNew;
 
     const accessSet = _.find(this.fieldSets, { name: helptext.rsyncd_fieldset_access });
 
     this.rsyncmod_user = accessSet.config.find((config) => config.name === 'user');
-    this.userService.userQueryDSCache().subscribe((users: any[]) => {
+    this.userService.userQueryDSCache().subscribe((users) => {
       users.forEach((user) => {
         this.rsyncmod_user.options.push({ label: user.username, value: user.username });
       });
     });
 
     this.rsyncmod_group = accessSet.config.find((config) => config.name === 'group');
-    this.userService.groupQueryDSCache().subscribe((groups: any[]) => {
+    this.userService.groupQueryDSCache().subscribe((groups) => {
       groups.forEach((group) => {
         this.rsyncmod_group.options.push({ label: group.group, value: group.group });
       });
@@ -184,18 +185,18 @@ export class RYSNCConfigurationFormComponent {
     }
   }
 
-  updateGroupSearchOptions(value = '', parent: any) {
-    parent.userService.groupQueryDSCache(value).subscribe((items: any[]) => {
-      const groups: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        groups.push({ label: items[i].group, value: items[i].group });
+  updateGroupSearchOptions(value = '', parent: any): void {
+    (parent.userService as UserService).groupQueryDSCache(value).subscribe((groups) => {
+      const groupOptions: Option[] = [];
+      for (let i = 0; i < groups.length; i++) {
+        groupOptions.push({ label: groups[i].group, value: groups[i].group });
       }
-      parent.rsyncmod_group.searchOptions = groups;
+      parent.rsyncmod_group.searchOptions = groupOptions;
     });
   }
 
-  updateUserSearchOptions(value = '', parent: any) {
-    parent.userService.userQueryDSCache(value).subscribe((items: any[]) => {
+  updateUserSearchOptions(value = '', parent: any): void {
+    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });

@@ -12,21 +12,22 @@ import { ModalService } from '../../../../services/modal.service';
 import { T } from '../../../../translate-marker';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-cloudcredentials-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [CloudCredentialService, ReplicationService],
 })
-export class CloudCredentialsFormComponent {
-  protected isEntity = true;
-  protected addCall = 'cloudsync.credentials.create';
-  protected queryCall = 'cloudsync.credentials.query';
-  protected editCall = 'cloudsync.credentials.update';
-  protected queryCallOption: any[];
+export class CloudCredentialsFormComponent implements FormConfiguration {
+  isEntity = true;
+  addCall: 'cloudsync.credentials.create' = 'cloudsync.credentials.create';
+  queryCall: 'cloudsync.credentials.query' = 'cloudsync.credentials.query';
+  editCall: 'cloudsync.credentials.update' = 'cloudsync.credentials.update';
+  queryCallOption: any[];
   protected formGroup: FormGroup;
   protected id: any;
-  protected pk: any;
+  pk: any;
   protected keyID: number;
   protected isOneColumnForm = true;
   private rowNum: any;
@@ -65,7 +66,39 @@ export class CloudCredentialsFormComponent {
         },
       ],
     },
-    { name: 'spacer', label: false, width: '2%' },
+    // show if provider support oauth
+    {
+      name: helptext.fieldset_oauth_authentication,
+      label: true,
+      class: 'oauth',
+      width: '100%',
+      config: [
+        {
+          type: 'button',
+          name: 'oauth_signin_button',
+          isHidden: true,
+          customEventActionLabel: T('Log in to Provider'),
+          value: '',
+          customEventMethod: () => {
+            this.logInToProvider();
+          },
+        },
+        {
+          type: 'input',
+          name: 'client_id',
+          placeholder: helptext.client_id.placeholder,
+          tooltip: helptext.client_id.tooltip,
+          isHidden: true,
+        },
+        {
+          type: 'input',
+          name: 'client_secret',
+          placeholder: helptext.client_secret.placeholder,
+          tooltip: helptext.client_secret.tooltip,
+          isHidden: true,
+        }],
+    },
+    { name: 'divider', divider: true },
     {
       name: helptext.fieldset_authentication,
       label: true,
@@ -1138,41 +1171,9 @@ export class CloudCredentialsFormComponent {
         },
       ],
     },
-    // show if provider support oauth
-    {
-      name: helptext.fieldset_oauth_advanced_options,
-      label: true,
-      class: 'oauth',
-      width: '50%',
-      config: [
-        {
-          type: 'button',
-          name: 'oauth_signin_button',
-          isHidden: true,
-          customEventActionLabel: T('Log in to Provider'),
-          value: '',
-          customEventMethod: () => {
-            this.logInToProvider();
-          },
-        },
-        {
-          type: 'input',
-          name: 'client_id',
-          placeholder: helptext.client_id.placeholder,
-          tooltip: helptext.client_id.tooltip,
-          isHidden: true,
-        },
-        {
-          type: 'input',
-          name: 'client_secret',
-          placeholder: helptext.client_secret.placeholder,
-          tooltip: helptext.client_secret.tooltip,
-          isHidden: true,
-        }],
-    },
   ];
 
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
 
   protected providers: any[];
   protected providerField: any;
@@ -1259,28 +1260,28 @@ export class CloudCredentialsFormComponent {
     );
   }
 
-  isCustActionVisible(actionname: string) {
+  isCustActionVisible(actionname: string): boolean {
     if (actionname === 'authenticate' && this.credentialsOauth === false) {
       return false;
     }
     return true;
   }
 
-  isCustActionDisabled(actionId: string) {
+  isCustActionDisabled(actionId: string): boolean {
     if (actionId === 'validCredential' || actionId === 'customSave') {
       return this.entityForm.formGroup.invalid;
     }
     return false;
   }
 
-  preInit() {
+  preInit(): void {
     if (this.rowNum) {
       this.queryCallOption = [['id', '=', this.rowNum]];
       this.id = this.rowNum;
     }
   }
 
-  setFieldRequired(name: string, required: boolean, entityform: any) {
+  setFieldRequired(name: string, required: boolean, entityform: any): void {
     const field = _.find(this.fieldConfig, { name });
     const controller = entityform.formGroup.controls[name];
     if (field.required !== required) {
@@ -1294,7 +1295,7 @@ export class CloudCredentialsFormComponent {
     }
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
@@ -1374,7 +1375,7 @@ export class CloudCredentialsFormComponent {
     );
   }
 
-  verifyCredentials(value: any) {
+  verifyCredentials(value: any): void {
     delete value['name'];
     this.ws.call('cloudsync.credentials.verify', [value]).subscribe(
       (res) => {
@@ -1392,7 +1393,7 @@ export class CloudCredentialsFormComponent {
     );
   }
 
-  logInToProvider() {
+  logInToProvider(): void {
     window.open(this.oauthURL + '?origin=' + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
     const controls = this.entityForm.formGroup.controls;
     const selectedProvider = this.selectedProvider;
@@ -1401,7 +1402,7 @@ export class CloudCredentialsFormComponent {
 
     window.addEventListener('message', doAuth, false);
 
-    function doAuth(message: any) {
+    function doAuth(message: any): void {
       if (message.data.oauth_portal) {
         if (message.data.error) {
           dialogService.errorReport(T('Error'), message.data.error);
@@ -1424,7 +1425,7 @@ export class CloudCredentialsFormComponent {
     }
   }
 
-  async makeNewKeyPair(value: any, submitting?: boolean) {
+  async makeNewKeyPair(value: any, submitting?: boolean): Promise<void> {
     await this.replicationService.genSSHKeypair().then(
       async (res) => {
         const payload = {
@@ -1459,7 +1460,7 @@ export class CloudCredentialsFormComponent {
     );
   }
 
-  finishSubmit(value: any) {
+  finishSubmit(value: any): void {
     this.entityForm.loader.open();
     const attributes: any = {};
     let attr_name: string;
@@ -1492,14 +1493,14 @@ export class CloudCredentialsFormComponent {
     );
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     if (!this.credentialsOauth) {
       delete value['client_id'];
       delete value['client_secret'];
     }
   }
 
-  async customSubmit(value: any) {
+  customSubmit(value: any): void {
     delete value['oauth_signin_button'];
     if (value['private_key-SFTP'] === 'NEW') {
       this.makeNewKeyPair(value, true);
@@ -1508,7 +1509,7 @@ export class CloudCredentialsFormComponent {
     }
   }
 
-  dataAttributeHandler(entityForm: any) {
+  dataAttributeHandler(entityForm: any): void {
     const provider = entityForm.formGroup.controls['provider'].value;
     if (provider == 'S3'
     && (entityForm.wsResponseIdx['endpoint'] || entityForm.wsResponseIdx['skip_region'] || entityForm.wsResponseIdx['signatures_v2'])) {
@@ -1526,7 +1527,7 @@ export class CloudCredentialsFormComponent {
     }
   }
 
-  getOnedriveList(data: any) {
+  getOnedriveList(data: any): void {
     if (data.error) {
       this.entityForm.setDisabled('drives-ONEDRIVE', true, true);
       return;

@@ -11,10 +11,6 @@ import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/view
 export class ViewChartPieComponent extends ViewChartDonutComponent implements OnInit {
   chartType = 'pie';
 
-  constructor() {
-    super();
-  }
-
-  ngOnInit() {
+  ngOnInit(): void {
   }
 }

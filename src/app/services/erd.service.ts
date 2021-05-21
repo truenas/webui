@@ -8,15 +8,13 @@ import { Injectable } from '@angular/core';
  */
 @Injectable()
 export class ErdService {
-  constructor() {}
-
   /**
    * This method would typically be called in a component's
    * ngAfterViewInit() implementation.
    *
    * @param elementId - Name of element on view to attach to.
    */
-  attachResizeEventToElement(elementId: string) {
+  attachResizeEventToElement(elementId: string): void {
     setTimeout(() => {
       let erd: any = null;
 

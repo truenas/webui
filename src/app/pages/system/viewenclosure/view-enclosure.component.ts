@@ -2,11 +2,14 @@ import {
   ApplicationRef, Component, Injector, AfterContentInit, OnChanges, SimpleChanges, OnDestroy, ViewChild, ElementRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { CoreEvent } from 'app/interfaces/events';
+import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
+import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { RestService, WebSocketService } from 'app/services/';
 import { MaterialModule } from 'app/appMaterial.module';
 import { EnclosureDisksComponent } from './enclosure-disks/enclosure-disks.component';
 
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
 import { ErrorMessage } from 'app/core/classes/ix-interfaces';
@@ -25,7 +28,7 @@ interface ViewConfig {
   templateUrl: './view-enclosure.component.html',
   styleUrls: ['./view-enclosure.component.css'],
 })
-export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDestroy {
+export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
   errors: ErrorMessage[] = [];
   events: Subject<CoreEvent> ;
   @ViewChild('navigation', { static: false }) nav: ElementRef;
@@ -47,8 +50,8 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
   supportedHardware = false;
   system_manufacturer: string;
-  private _system_product: any;
-  get system_product() {
+  private _system_product: string;
+  get system_product(): string {
     return this._system_product;
   }
   set system_product(value) {
@@ -58,7 +61,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     }
   }
 
-  changeView(index: number) {
+  changeView(index: number): void {
     this.currentView = this.views[index];
   }
 
@@ -113,7 +116,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
       this.events.next(evt);
     });
 
-    core.register({ observerClass: this, eventName: 'PoolData' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'PoolData' }).subscribe((evt: PoolDataEvent) => {
       this.system.pools = evt.data;
       this.events.next({ name: 'PoolsChanged', sender: this });
       this.addViews();
@@ -140,42 +143,37 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
       }, 1500);
     });
 
-    core.register({ observerClass: this, eventName: 'SysInfo' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'SysInfo' }).subscribe((evt: SysInfoEvent) => {
       if (!this.system_product) {
         this.system_product = evt.data.system_product;
         this.system_manufacturer = evt.data.system_manufacturer.toLowerCase();
         this.supportedHardware = evt.data.features.enclosure;
-      } else {
-
       }
     });
 
     core.emit({ name: 'SysInfoRequest', sender: this });
   }
 
-  fetchData() {
+  fetchData(): void {
     this.core.emit({ name: 'DisksRequest', sender: this });
   }
 
-  ngAfterContentInit() {
+  ngAfterContentInit(): void {
     this.scrollContainer = document.querySelector('.rightside-content-hold');
     this.scrollContainer.style.overflow = 'hidden';
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-  }
-
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
     this.scrollContainer.style.overflow = 'auto';
   }
 
-  selectEnclosure(index: number) {
+  selectEnclosure(index: number): void {
     this.selectedEnclosure = this.system.profile[index];
     this.addViews();
   }
 
-  extractVisualizations() {
+  extractVisualizations(): void {
     this.system.profile.forEach((item, index) => {
       if (this.system.rearIndex && item.enclosureKey == this.system.rearIndex) { return; }
       if (this.system.profile) {
@@ -184,7 +182,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     });
   }
 
-  addViews() {
+  addViews(): void {
     const views = [];
     const disks = {
       name: 'Disks',

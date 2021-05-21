@@ -5,13 +5,14 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { WebSocketService, DialogService, AppLoaderService } from 'app/services/';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { helptext } from 'app/helptext/system/2FA';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-two-factor',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class TwoFactorComponent {
-  protected queryCall = 'auth.twofactor.config';
+export class TwoFactorComponent implements FormConfiguration {
+  queryCall: 'auth.twofactor.config' = 'auth.twofactor.config';
   private entityEdit: any;
   private TwoFactorEnabled: boolean;
   qrInfo: string;
@@ -184,7 +185,7 @@ export class TwoFactorComponent {
     protected loader: AppLoaderService,
     protected mdDialog: MatDialog) { }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     data.ssh = data.services.ssh;
     this.secret = data.secret;
     this.TwoFactorEnabled = data.enabled;
@@ -194,7 +195,7 @@ export class TwoFactorComponent {
     return data;
   }
 
-  isCustActionVisible(actionId: string) {
+  isCustActionVisible(actionId: string): boolean {
     if (actionId === 'enable_action' && this.TwoFactorEnabled === true) {
       return false;
     } if (actionId === 'disable_action' && this.TwoFactorEnabled === false) {
@@ -203,7 +204,7 @@ export class TwoFactorComponent {
     return true;
   }
 
-  isCustActionDisabled(action_id: string) {
+  isCustActionDisabled(action_id: string): boolean {
     // Disables the 'Enable 2F' & 'Show QR' buttons if there is no secret
     if (action_id === 'renew_secret') {
       return !this.TwoFactorEnabled;
@@ -212,7 +213,7 @@ export class TwoFactorComponent {
     }
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
     this.getURI();
     const intervalValue = _.find(this.fieldConfig, { name: 'interval' });
@@ -225,7 +226,7 @@ export class TwoFactorComponent {
     });
   }
 
-  getURI() {
+  getURI(): void {
     this.ws.call('auth.twofactor.provisioning_uri').subscribe((res) => {
       this.entityEdit.formGroup.controls['uri'].setValue(res);
       this.qrInfo = (res);
@@ -236,14 +237,14 @@ export class TwoFactorComponent {
     });
   }
 
-  updateEnabledStatus() {
+  updateEnabledStatus(): void {
     const enabled = _.find(this.fieldConfig, { name: 'enabled_status' });
     this.TwoFactorEnabled
       ? enabled.paraText = helptext.two_factor.enabled_status_true
       : enabled.paraText = helptext.two_factor.enabled_status_false;
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     if (data.otp_digits === this.digitsOnLoad && data.interval === this.intervalOnLoad) {
       this.doSubmit(data);
     } else {
@@ -259,7 +260,7 @@ export class TwoFactorComponent {
     }
   }
 
-  doSubmit(data: any, openQR = false) {
+  doSubmit(data: any, openQR = false): void {
     data.enabled = this.TwoFactorEnabled;
     data.services = { ssh: data.ssh };
     const extras = ['instructions', 'enabled_status', 'secret', 'uri', 'ssh'];
@@ -286,7 +287,7 @@ export class TwoFactorComponent {
     });
   }
 
-  renewSecret() {
+  renewSecret(): void {
     this.dialog.confirm(helptext.two_factor.renewSecret.title,
       helptext.two_factor.renewSecret.message, true,
       helptext.two_factor.renewSecret.btn).subscribe((res: boolean) => {
@@ -305,7 +306,7 @@ export class TwoFactorComponent {
     });
   }
 
-  updateSecretAndUri() {
+  updateSecretAndUri(): void {
     this.ws.call('auth.twofactor.config').subscribe((res) => {
       this.entityEdit.formGroup.controls['secret'].setValue(res.secret);
       this.secret = res.secret;

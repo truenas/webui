@@ -2,7 +2,6 @@ import {
   Component, AfterViewInit, Input, ViewChild, OnDestroy,
 } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
@@ -10,6 +9,7 @@ import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
+import { CoreEvent } from 'app/interfaces/events';
 import * as d3 from 'd3';
 
 import filesize from 'filesize';
@@ -30,7 +30,7 @@ export interface TimeData {
   templateUrl: './widgetchart.component.html',
   styleUrls: ['./widgetchart.component.scss'],
 })
-export class WidgetChartComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
+export class WidgetChartComponent extends WidgetComponent implements OnDestroy {
   // Labels
   title: string = T('CPU Usage');
   subtitle: string = T('% of all cores');
@@ -41,7 +41,7 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
   // Loader
   loader = false;
   private _dataRcvd = false;
-  get dataRcvd() {
+  get dataRcvd(): boolean {
     return this._dataRcvd;
   }
   set dataRcvd(val) {
@@ -73,18 +73,12 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
     this.widgetColorCssVar = (theme as any)[this.utils.colorFromMeta(theme.primary)];
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 
-  ngAfterViewInit() {
-  }
-
   // Override this method in subclasses
-  chartSetup() {
-  }
-
-  setChartData(evt: CoreEvent) {
+  chartSetup(): void {
   }
 
   protected makeTimeAxis(td: TimeData, data: any, axis?: string): any[] {
@@ -98,7 +92,7 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
     return labels;
   }
 
-  timeFromDate(date: Date) {
+  timeFromDate(date: Date): string {
     let hh = date.getHours().toString();
     let mm = date.getMinutes().toString();
     let ss = date.getSeconds().toString();
@@ -115,7 +109,7 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
     return hh + ':' + mm + ':' + ss;
   }
 
-  aggregateData(wanted: string[], parsedData: ChartData[], operation?: string) {
+  aggregateData(wanted: string[], parsedData: ChartData[], operation?: string): ChartData {
     // operation options: total(default) or average
     if (!operation) {
       operation = 'total';
@@ -149,7 +143,7 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
     return result;
   }
 
-  makeColumns(parsedData: ChartData[]) {
+  makeColumns(parsedData: ChartData[]): any[] {
     const columns: any[] = [];
     for (let i = 0; i < parsedData.length; i++) {
       const stat = parsedData[i].data;
@@ -160,7 +154,7 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
   }
 
   // Will be used for back of flip card
-  setPreferences(form: NgForm) {
+  setPreferences(form: NgForm): void {
     const filtered: string[] = [];
     for (const i in form.value) {
       if (form.value[i]) {

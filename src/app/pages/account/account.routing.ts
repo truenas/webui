@@ -1,8 +1,8 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { GroupListComponent } from './groups/group-list';
-import { GroupFormComponent } from './groups/group-form';
+import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
+import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { MembersComponent } from './groups/members/members.component';
 import { UserListComponent } from './users/user-list';
 import { UserFormComponent } from './users/user-form';

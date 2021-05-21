@@ -11,28 +11,29 @@ export class ModalService {
   getRow$ = new Subject();
   message$ = new Subject();
 
-  refreshTable() {
+  refreshTable(): void {
     this.refreshTable$.next();
   }
 
-  refreshForm() {
+  refreshForm(): void {
     this.refreshForm$.next();
   }
-  message(message: any) {
+
+  message(message: any): void {
     this.message$.next(message);
   }
 
-  add(modal: any) {
+  add(modal: any): void {
     // add modal to array of active modals
     this.modals.push(modal);
   }
 
-  remove(id: string) {
+  remove(id: string): void {
     // remove modal from array of active modals
     this.modals = this.modals.filter((x) => x.id !== id);
   }
 
-  open(id: string, conf: any, rowid?: any) {
+  open(id: string, conf: any, rowid?: any): void {
     if (rowid) {
       conf.rowid = rowid;
       this.getRow$.next(rowid);

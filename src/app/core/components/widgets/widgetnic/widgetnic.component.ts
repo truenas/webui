@@ -3,8 +3,9 @@ import {
 } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { NavigationExtras, Router } from '@angular/router';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
+import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
+import { CoreEvent } from 'app/interfaces/events';
 
 import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
@@ -64,7 +65,7 @@ interface Slide {
   templateUrl: './widgetnic.component.html',
   styleUrls: ['./widgetnic.component.css'],
 })
-export class WidgetNicComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
+export class WidgetNicComponent extends WidgetComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() stats: any;
   @Input() nicState: any;
   @ViewChild('carousel', { static: true }) carousel: ElementRef;
@@ -72,11 +73,11 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   traffic: NetTraffic;
   currentSlide = '0';
 
-  get currentSlideName() {
+  get currentSlideName(): string {
     return this.path[parseInt(this.currentSlide)].name;
   }
 
-  get previousSlide() {
+  get previousSlide(): number {
     return this.currentSlide == '0' ? 0 : parseInt(this.currentSlide) - 1;
   }
 
@@ -88,26 +89,24 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     { name: T('empty') },
   ];
 
-  get ipAddresses() {
+  get ipAddresses(): any[] {
     if (!this.nicState && !this.nicState.aliases) { return []; }
 
-    const result = this.nicState.aliases.filter((item: any) => item.type == 'INET' || item.type == 'INET6');
-
-    return result;
+    return this.nicState.aliases.filter((item: any) =>
+      [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
   }
 
-  get vlanAddresses() {
+  get vlanAddresses(): any[] {
     if (!this.nicState) { return []; }
     if (this.path[2].name == 'empty' || this.nicState.vlans.length == 0 || !this.nicState.vlans[parseInt(this.path[2].index)]) { return []; }
 
     const vlan = this.nicState.vlans[parseInt(this.path[2].index)];
-    const result = vlan.aliases.filter((item: any) => item.type == 'INET' || item.type == 'INET6');
-
-    return result;
+    return vlan.aliases.filter((item: any) =>
+      [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
   }
 
-  get linkState() {
-    if (!this.nicState && !this.nicState.aliases) { return []; }
+  get linkState(): string {
+    if (!this.nicState && !this.nicState.aliases) { return ''; }
     return this.nicState.link_state.replace(/_/g, ' ');
   }
 
@@ -116,39 +115,34 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     this.configurable = false;
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.emit({ name: 'StatsRemoveListener', data: { name: 'NIC', obj: this } });
     this.core.unregister({ observerClass: this });
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.nicState) {
       this.title = this.currentSlide == '0' ? 'Interface' : this.nicState.name;
     }
   }
 
-  ngOnInit() {
-  }
-
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.stats.subscribe((evt: CoreEvent) => {
       if (evt.name == 'NetTraffic_' + this.nicState.name) {
         const sent: Converted = this.convert(evt.data.sent_bytes_rate);
         const received: Converted = this.convert(evt.data.received_bytes_rate);
 
-        const t = {
+        this.traffic = {
           sent: sent.value,
           sentUnits: sent.units,
           received: received.value,
           receivedUnits: received.units,
         };
-
-        this.traffic = t; // evt.data;
       }
     });
   }
 
-  updateSlide(name: string, verified: boolean, slideIndex: number, dataIndex?: number) {
+  updateSlide(name: string, verified: boolean, slideIndex: number, dataIndex?: number): void {
     if (name !== 'overview' && !verified) { return; }
     const slide: Slide = {
       name,
@@ -159,7 +153,7 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     this.updateSlidePosition(slideIndex);
   }
 
-  updateSlidePosition(value: number) {
+  updateSlidePosition(value: number): void {
     if (value.toString() == this.currentSlide) { return; }
     const carousel = this.carouselParent.nativeElement.querySelector('.carousel');
     const slide = this.carouselParent.nativeElement.querySelector('.slide');
@@ -177,14 +171,14 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     this.title = this.currentSlide == '0' ? 'Interface' : this.nicState.name;
   }
 
-  vlanAliases(vlanIndex: string|number) {
+  vlanAliases(vlanIndex: string|number): any[] {
     if (typeof vlanIndex == 'string') { vlanIndex = parseInt(vlanIndex); }
     const vlan = this.nicState.vlans[vlanIndex];
-    const result = vlan.aliases.filter((item: any) => item.type == 'INET' || item.type == 'INET6');
-    return result;
+    return vlan.aliases.filter((item: any) =>
+      [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
   }
 
-  getMbps(arr: number[]) {
+  getMbps(arr: number[]): number | string {
     // NOTE: Stat is in bytes so we convert
     // no average
     const result = arr[0] / 1024 / 1024;
@@ -201,8 +195,8 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   }
 
   convert(value: number): Converted {
-    let result;
-    let units;
+    let result: number;
+    let units: string;
 
     // uppercase so we handle bits and bytes...
     switch (this.optimizeUnits(value)) {
@@ -235,7 +229,7 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     return result ? { value: result.toFixed(2), units } : { value: '0.00', units };
   }
 
-  optimizeUnits(value: number) {
+  optimizeUnits(value: number): string {
     let units = 'B';
     if (value > 1024 && value < (1024 * 1024)) {
       units = 'KB';
@@ -250,7 +244,7 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     return units;
   }
 
-  manageInterface(_interface: any) {
+  manageInterface(_interface: any): void {
     const navigationExtras: NavigationExtras = { state: { editInterface: _interface.name } };
     this.router.navigate(['network'], navigationExtras);
   }

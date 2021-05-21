@@ -1,5 +1,5 @@
 // import { Component } from '@angular/core';
-import { CoreEvent } from 'app/core/services/core.service';
+import { CoreEvent } from 'app/interfaces/events';
 import { Subject } from 'rxjs';
 
 export abstract class View {
@@ -7,6 +7,4 @@ export abstract class View {
   subViews?: any[]; // Component reference to child components
   viewController: Subject<CoreEvent>;// (Send actions back to ViewController via this Subject)
   data: any = <any>{};
-
-  constructor() {}
 }

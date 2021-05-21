@@ -5,22 +5,23 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import helptext from '../../../helptext/network/staticroutes/staticroutes';
 import { NetworkService, WebSocketService } from '../../../services';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-staticroute-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class StaticRouteFormComponent {
-  protected queryCall = 'staticroute.query';
-  protected queryKey = 'id';
-  protected addCall = 'staticroute.create';
-  protected editCall = 'staticroute.update';
+export class StaticRouteFormComponent implements FormConfiguration {
+  queryCall: 'staticroute.query' = 'staticroute.query';
+  queryKey = 'id';
+  addCall: 'staticroute.create' = 'staticroute.create';
+  editCall: 'staticroute.update' = 'staticroute.update';
 
-  protected isEntity = true;
+  isEntity = true;
   protected isOneColumnForm = true;
   afterModalFormClosed: any;
 
-  protected fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext.sr_fieldset_general,
       label: true,
@@ -55,7 +56,7 @@ export class StaticRouteFormComponent {
     protected ws: WebSocketService,
     protected networkService: NetworkService) { }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     if (entityForm.pk !== undefined) {
       this.title = helptext.title_edit;
     } else {

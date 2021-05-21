@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SortDirection } from '@angular/material/sort';
+import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { WebSocketService } from './ws.service';
 import { RestService } from './rest.service';
 
@@ -10,7 +11,7 @@ import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class StorageService {
-  protected diskResource = 'disk.query';
+  protected diskResource: 'disk.query' = 'disk.query';
 
   ids: any;
   diskNames: any;
@@ -18,13 +19,12 @@ export class StorageService {
   diskToggleStatus: boolean;
   SMARToptions: any;
   advPowerMgt: any;
-  acousticLevel: any;
   humanReadable: any;
   IECUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
   constructor(protected ws: WebSocketService, protected rest: RestService) {}
 
-  filesystemStat(path: string) {
+  filesystemStat(path: string): Observable<FileSystemStat> {
     return this.ws.call('filesystem.stat', [path]);
   }
 

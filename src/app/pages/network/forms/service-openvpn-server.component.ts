@@ -8,14 +8,14 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 
 import helptext from 'app/helptext/services/components/service-openvpn';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'openvpn-server',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class OpenvpnServerComponent {
-  protected queryCall = 'openvpn.server.config';
+export class OpenvpnServerComponent implements FormConfiguration {
+  queryCall: 'openvpn.server.config' = 'openvpn.server.config';
   protected certID: number;
   protected serverAddress: string;
   protected entityEdit: any;
@@ -213,7 +213,7 @@ export class OpenvpnServerComponent {
     return data;
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
     entityEdit.submitFunction = (body: any) => this.services.updateOpenVPN('openvpn.server.update', body);
 
@@ -255,7 +255,7 @@ export class OpenvpnServerComponent {
     });
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     const serverInfo = data.server.split('/');
     data.server = serverInfo[0];
     data.netmask = parseInt(serverInfo[1]);

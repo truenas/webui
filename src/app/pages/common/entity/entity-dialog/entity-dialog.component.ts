@@ -22,8 +22,8 @@ import { T } from '../../../../translate-marker';
   styleUrls: ['./entity-dialog.component.css'],
   providers: [EntityFormService, DatePipe, FieldRelationService],
 })
-export class EntityDialogComponent implements OnInit {
-  @Input() conf: any;
+export class EntityDialogComponent<P = any> implements OnInit {
+  @Input() conf: DialogFormConfiguration<P>;
 
   title: string;
   warning: string;
@@ -36,7 +36,7 @@ export class EntityDialogComponent implements OnInit {
   error: string;
   formValue: any;
   showPassword = false;
-  parent: any;
+  parent: P;
   submitEnabled = true;
   instructions: string;
   confirmCheckbox = false;
@@ -51,7 +51,7 @@ export class EntityDialogComponent implements OnInit {
     public datePipe: DatePipe,
     protected fieldRelationService: FieldRelationService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.translate.get(this.conf.title).subscribe((title) => {
       this.title = title;
     });
@@ -81,7 +81,7 @@ export class EntityDialogComponent implements OnInit {
     for (const i in this.fieldConfig) {
       const config = this.fieldConfig[i];
       if (config.relation.length > 0) {
-        this.fieldRelationService.setRelation(config, this.formGroup, this.fieldConfig);
+        this.fieldRelationService.setRelation(config, this.formGroup);
       }
     }
 
@@ -91,7 +91,7 @@ export class EntityDialogComponent implements OnInit {
     this.instructions = T(`Enter <strong>${(this.conf as any)['name']}</strong> below to confirm.`);
   }
 
-  submit() {
+  submit(): void {
     this.clearErrors();
     this.formValue = _.cloneDeep(this.formGroup.value);
 
@@ -114,12 +114,12 @@ export class EntityDialogComponent implements OnInit {
     }
   }
 
-  cancel() {
+  cancel(): void {
     this.dialogRef.close(false);
     this.clearErrors();
   }
 
-  clearErrors() {
+  clearErrors(): void {
     this.error = null;
     for (let f = 0; f < this.fieldConfig.length; f++) {
       this.fieldConfig[f]['errors'] = '';
@@ -127,7 +127,7 @@ export class EntityDialogComponent implements OnInit {
     }
   }
 
-  togglePW() {
+  togglePW(): void {
     const inputs = document.getElementsByTagName('input');
     for (let i = 0; i < inputs.length; i++) {
       if (!inputs[i].placeholder.toLowerCase().includes('current')
@@ -146,7 +146,7 @@ export class EntityDialogComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
-  setDisabled(name: string, disable: boolean, hide?: boolean, status?: string) {
+  setDisabled(name: string, disable: boolean, hide?: boolean, status?: string): void {
     // if field is hidden, disable it too
     if (hide) {
       disable = hide;
@@ -168,7 +168,7 @@ export class EntityDialogComponent implements OnInit {
     }
   }
 
-  toggleSubmit(data: MatCheckboxChange) {
+  toggleSubmit(data: MatCheckboxChange): void {
     this.submitEnabled = data.checked;
   }
 }

@@ -1,4 +1,4 @@
-import { CoreEvent } from 'app/core/services/core.service';
+import { CoreEvent } from 'app/interfaces/events';
 import { Subject } from 'rxjs';
 
 export interface Action {
@@ -11,7 +11,7 @@ export abstract class ViewControl {
   isEnabled = true;
   layout: any;
 
-  sendAction() {
+  sendAction(): void {
     this.target.next(this.action);
   }
 }

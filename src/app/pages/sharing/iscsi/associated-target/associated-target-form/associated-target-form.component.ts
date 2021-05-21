@@ -10,19 +10,20 @@ import { IscsiService, WebSocketService } from '../../../../../services';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-iscsi-associated-target-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [IscsiService],
 })
-export class AssociatedTargetFormComponent {
-  protected addCall = 'iscsi.targetextent.create';
-  protected queryCall = 'iscsi.targetextent.query';
-  protected editCall = 'iscsi.targetextent.update';
-  protected route_success: string[] = ['sharing', 'iscsi', 'associatedtarget'];
-  protected isEntity = true;
-  protected customFilter: any[] = [[['id', '=']]];
+export class AssociatedTargetFormComponent implements FormConfiguration {
+  addCall: 'iscsi.targetextent.create' = 'iscsi.targetextent.create';
+  queryCall: 'iscsi.targetextent.query' = 'iscsi.targetextent.query';
+  editCall: 'iscsi.targetextent.update' = 'iscsi.targetextent.update';
+  route_success: string[] = ['sharing', 'iscsi', 'associatedtarget'];
+  isEntity = true;
+  customFilter: any[] = [[['id', '=']]];
 
   fieldSets: FieldSet[] = [
     {
@@ -64,17 +65,17 @@ export class AssociatedTargetFormComponent {
     },
   ];
 
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
 
   protected target_control: any;
   protected extent_control: any;
-  protected pk: any;
+  pk: any;
   protected entityForm: any;
 
   constructor(protected router: Router, protected iscsiService: IscsiService, protected aroute: ActivatedRoute,
     protected loader: AppLoaderService, protected ws: WebSocketService) {}
 
-  preInit() {
+  preInit(): void {
     this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
@@ -83,34 +84,34 @@ export class AssociatedTargetFormComponent {
     });
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
     this.target_control = _.find(this.fieldConfig, { name: 'target' });
     this.target_control.options.push({ label: '----------', value: '' });
-    this.iscsiService.getTargets().subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        this.target_control.options.push({ label: res[i].name, value: res[i].id });
+    this.iscsiService.getTargets().subscribe((targets) => {
+      for (let i = 0; i < targets.length; i++) {
+        this.target_control.options.push({ label: targets[i].name, value: targets[i].id });
       }
     });
 
     this.extent_control = _.find(this.fieldConfig, { name: 'extent' });
     this.extent_control.options.push({ label: '----------', value: '' });
-    this.iscsiService.getExtents().subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        this.extent_control.options.push({ label: res[i].name, value: res[i].id });
+    this.iscsiService.getExtents().subscribe((extents) => {
+      for (let i = 0; i < extents.length; i++) {
+        this.extent_control.options.push({ label: extents[i].name, value: extents[i].id });
       }
     });
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     if (value['lunid'] === '') {
       delete value['lunid'];
     }
   }
 
-  customEditCall(value: any) {
+  customEditCall(value: any): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
       (res) => {

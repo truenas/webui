@@ -14,7 +14,6 @@
  "transfermode": "Auto",
  "hddstandby": "ALWAYS ON",
  "advpowermgmt": "DISABLED",
- "acousticlevel": "DISABLED",
  "togglesmart": true,
  "smartoptions": "",
  "expiretime": null,
@@ -26,6 +25,9 @@
 
  */
 
+import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
+import { DiskStandby } from 'app/enums/disk-standby.enum';
+
 interface Template {
   slots: number;
   id: number;
@@ -34,10 +36,7 @@ interface Template {
 export class ExampleData {
   private templates: Template[] = [];
 
-  constructor() {
-  }
-
-  addEnclosure(slots: number) {
+  addEnclosure(slots: number): void {
     const template = {
       id: this.templates.length,
       slots,
@@ -59,14 +58,13 @@ export class ExampleData {
           subsystem: 'da',
           number: tally,
           serial: 'K5H5G09A',
-          size: '2000398934016',
+          size: 2000398934016,
           multipath_name: '',
           multipath_member: '',
           description: '',
           transfermode: 'Auto',
-          hddstandby: 'ALWAYS ON',
-          advpowermgmt: 'DISABLED',
-          acousticlevel: 'DISABLED',
+          hddstandby: DiskStandby.AlwaysOn,
+          advpowermgmt: DiskPowerLevel.Disabled,
           togglesmart: true,
           smartoptions: '',
           expiretime: null as string,

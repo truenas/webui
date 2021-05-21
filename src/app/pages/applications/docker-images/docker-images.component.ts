@@ -1,4 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { latestVersion } from 'app/constants/catalog.constants';
+import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
+import { CoreEvent } from 'app/interfaces/events';
 import { ApplicationsService } from '../applications.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService, StorageService, ValidationService } from 'app/services';
@@ -7,7 +10,6 @@ import { WebSocketService } from '../../../services/ws.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { ModalService } from '../../../services/modal.service';
 import helptext from '../../../helptext/apps/apps';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { PullImageFormComponent } from '../forms/pull-image-form.component';
 import { EntityUtils } from '../../common/entity/utils';
@@ -65,7 +67,7 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     parent: this,
   };
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.refreshUserForm();
 
     this.modalService.refreshForm$.subscribe(() => {
@@ -73,22 +75,22 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.refreshTableSubscription) {
       this.refreshTableSubscription.unsubscribe();
     }
   }
 
-  refreshUserForm() {
+  refreshUserForm(): void {
     this.addComponent = new PullImageFormComponent(this.mdDialog, this.dialogService, this.modalService);
   }
 
-  refresh() {
+  refresh(): void {
     this.entityList.getData();
     this.entityList.filter(this.filterString);
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
   }
 
@@ -116,7 +118,7 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     return actions;
   }
 
-  resourceTransformIncomingRestData(d: any[]) {
+  resourceTransformIncomingRestData(d: any[]): any[] {
     const data: any[] = [];
     d.forEach((row) => {
       if (!row.system_image) {
@@ -127,11 +129,11 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     return data;
   }
 
-  doAdd() {
+  doAdd(): void {
     this.modalService.open('slide-in-form', this.addComponent);
   }
 
-  onToolbarAction(evt: CoreEvent) {
+  onToolbarAction(evt: CoreEvent): void {
     if (evt.data.event_control == 'filter') {
       this.filterString = evt.data.filter;
       this.entityList.filter(this.filterString);
@@ -140,7 +142,7 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickUpdateImage(row: any) {
+  onClickUpdateImage(row: any): void {
     if (row.repo_tags.length > 0) {
       this.chooseTag.fieldConfig[0].options = row.repo_tags.map((item: any) => ({
         label: item,
@@ -151,19 +153,18 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateImage(entityDialog: any) {
+  updateImage(entityDialog: any): void {
     const self = entityDialog.parent;
     const tag = entityDialog.formGroup.controls['tag'].value;
     const params = tag.split(':');
-    const payload = [{
+    const payload: [PullContainerImageParams] = [{
       from_image: params[0],
-      tag: params.length > 1 ? params[1] : 'latest',
+      tag: params.length > 1 ? params[1] : latestVersion,
     }];
 
     self.dialogRef = self.mdDialog.open(EntityJobComponent, {
       data: {
-        title: (
-          helptext.dockerImages.pulling),
+        title: helptext.dockerImages.pulling,
       },
       disableClose: true,
     });

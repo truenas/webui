@@ -5,17 +5,20 @@
   gdColumns="50% 50%"
   gdColumns.lt-lg="50% 50%"
   gdColumns.lt-md="auto"
-  gdAreas="data-card1 data-card2 | sysctl-card data-card3 | cron-card initshutdown-card"
-  gdAreas.lt-lg="data-card1 data-card2 | sysctl-card data-card3 | cron-card initshutdown-card"
-  gdAreas.lt-md="data-card1 | data-card2 | sysctl-card | data-card3 | cron-card | initshutdown-card"
+  gdAreas="data-card1 data-card2 | sysctl-card data-card3 | cron-card initshutdown-card | data-card7 data-card8"
+  gdAreas.lt-md="data-card1 | data-card2 | sysctl-card | data-card3 | cron-card | initshutdown-card | data-card7 | data-card8"
 >
   <ng-container *ngFor="let card of dataCards; index as i">
-    <mat-card class="data-card{{ i + 1 }}" gdArea="data-card{{ i + 1 }}">
+    <mat-card
+      *ngIf="[CardId.Cron, CardId.InitShutdown, CardId.Sysctl].includes(card.id) === false"
+      class="data-card{{ i + 1 }}"
+      gdArea="data-card{{ i + 1 }}"
+    >
       <mat-toolbar-row>
         <h3>{{ card.title | translate }}</h3>
         <div class="actions action-icon">
-          <button mat-button color="default" (click)="doAdd(card.id)">
-            {{ 'Settings' | translate }}
+          <button mat-button color="default" (click)="onSettingsPressed(card.id)">
+            {{ 'Configure' | translate }}
           </button>
         </div>
       </mat-toolbar-row>
@@ -30,6 +33,10 @@
       </mat-card-content>
     </mat-card>
 
-    <app-table [conf]="card.tableConf" *ngIf="['cron', 'initshutdown', 'sysctl'].includes(card.id)" [gdArea]="card.id + '-card'"></app-table>
+    <app-table
+      *ngIf="[CardId.Cron, CardId.InitShutdown, CardId.Sysctl].includes(card.id)"
+      [conf]="card.tableConf"
+      [gdArea]="card.id + '-card'"
+    ></app-table>
   </ng-container>
 </div>

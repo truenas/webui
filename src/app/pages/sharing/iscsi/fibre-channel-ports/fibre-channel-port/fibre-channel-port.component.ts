@@ -84,22 +84,20 @@ export class FibreChannelPortComponent implements OnInit {
     private iscsiService: IscsiService,
   ) {
     const targetField = _.find(this.fieldSets[1].config, { name: 'target' });
-    this.iscsiService.getTargets().subscribe(
-      (res) => {
-        for (let i = 0; i < res.length; i++) {
-          targetField.options.push({
-            label: res[i].name,
-            value: res[i].id,
-          });
-        }
-      },
-      (err) => {
-        new EntityUtils().handleWSError(this, err, this.parent.dialogService);
-      },
-    );
+    this.iscsiService.getTargets().subscribe((targets) => {
+      for (let i = 0; i < targets.length; i++) {
+        targetField.options.push({
+          label: targets[i].name,
+          value: targets[i].id,
+        });
+      }
+    },
+    (err) => {
+      new EntityUtils().handleWSError(this, err, this.parent.dialogService);
+    });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     for (let i = 0; i < this.fieldSets.length; i++) {
       const fieldset = this.fieldSets[i];
       if (fieldset.config) {
@@ -126,14 +124,14 @@ export class FibreChannelPortComponent implements OnInit {
     }
   }
 
-  isShow(field: string) {
+  isShow(field: string): boolean {
     if (field === 'target' || field == 'initiators') {
       return this.formGroup.controls['mode'].value == 'TARGET';
     }
     return true;
   }
 
-  onSubmit() {
+  onSubmit(): void {
     const value = _.cloneDeep(this.formGroup.value);
     delete value['initiators'];
 

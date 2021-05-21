@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { CoreService, CoreEvent } from './core.service';
+import { CoreEvent } from 'app/interfaces/events';
+import { CoreService } from './core.service';
 import { ApiService } from './api.service';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
 
@@ -157,7 +158,7 @@ export class PreferencesService {
   }
 
   // Update local cache
-  updatePreferences(data: UserPreferences) {
+  updatePreferences(data: UserPreferences): void {
     if (data && !this.startupComplete && this.debug) {
       console.warn('Startup is not complete!');
       console.warn(data);
@@ -184,7 +185,7 @@ export class PreferencesService {
   }
 
   // Save to middleware
-  savePreferences(data?: UserPreferences) {
+  savePreferences(data?: UserPreferences): void {
     if (!data) {
       data = this.preferences;
     }
@@ -201,7 +202,7 @@ export class PreferencesService {
     return false;
   }
 
-  setShowGuide(value: boolean) {
+  setShowGuide(value: boolean): void {
     if (value) {
       localStorage.setItem(this.router.url, 'true');
     } else if (!value) {

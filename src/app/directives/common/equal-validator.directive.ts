@@ -11,7 +11,7 @@ export class EqualValidatorDirective implements Validator {
   constructor(@Attribute('appEqualValidator') public validateEqual: string,
     @Attribute('reverse') public reverse: string) { }
 
-  private get isReverse() {
+  private get isReverse(): boolean {
     if (!this.reverse) return false;
     return this.reverse === 'true';
   }

@@ -1,5 +1,5 @@
 <mat-card class="app-table" fxLayout="column" #apptable>
-  <mat-toolbar-row>
+  <mat-toolbar-row *ngIf="!_tableConf.expandable">
     <h3 class="title" *ngIf="title">
       <ng-container *ngIf="titleHref; else plainTitle">
         <a [routerLink]="titleHref">{{ title }}</a>
@@ -7,6 +7,15 @@
       <ng-template #plainTitle>{{ title }}</ng-template>
     </h3>
     <div class="actions">
+      <button
+        *ngFor="let action of _tableConf.tableActions"
+        mat-button
+        color="default"
+        class="table-action-button"
+        (click)="$event.stopPropagation(); action.onClick()"
+      >
+        {{ action.label }}
+      </button>
       <button mat-button color="default" class="action-icon" *ngIf="_tableConf.add" (click)="_tableConf.add()"
         ix-auto ix-auto-type="button" ix-auto-identifier="{{_tableConf.name}}-add"
       >{{ 'Add' | translate }}</button>

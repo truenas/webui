@@ -1,7 +1,7 @@
-export function belongs(item: any, array: any[], key: string) {
+export function belongs(item: any, array: any[], key: string): boolean {
   return !!array.find((i) => i[key] === item[key]);
 }
-export function difference(arrayOne: any[], arrayTwo: any[], key: string) {
+export function difference(arrayOne: any[], arrayTwo: any[], key: string): any[] {
   return arrayOne.filter((i) => !belongs(i, arrayTwo, key));
 }
 
@@ -39,7 +39,7 @@ export class ListSelectionImpl implements ListSelection {
     }
   }
 
-  mouseUp(item: any, event?: MouseEvent) {
+  mouseUp(item: any, event?: MouseEvent): void {
     if (!event.ctrlKey) {
       if (this._selectedItems.length > 1 && this.isSelected(item)) {
         this._selectedItems.length = 0;

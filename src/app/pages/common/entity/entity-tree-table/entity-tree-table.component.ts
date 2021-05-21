@@ -2,12 +2,13 @@ import {
   Component, ElementRef, ViewChild, Input, OnInit, AfterViewInit,
 } from '@angular/core';
 import { MatTableModule, MatTable } from '@angular/material/table';
+import { CoreEvent } from 'app/interfaces/events';
 import { DialogService, WebSocketService } from '../../../../services';
 import { EntityUtils } from '../utils';
 import { EntityTreeTable } from './entity-tree-table.model';
 import { EntityTreeTableService } from './entity-tree-table.service';
 import { TranslateService } from '@ngx-translate/core';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { Sort } from '@angular/material/sort';
 import { TreeNode } from 'primeng/api';
 
@@ -34,7 +35,10 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
       this._conf = conf;
     }
   }
-  get conf() { return this._conf; }
+  get conf(): EntityTreeTable {
+    return this._conf;
+  }
+
   @Input() expandRootNodes = false;
   @Input() parentId?: string;
 
@@ -53,18 +57,18 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     protected translate: TranslateService,
     protected core: CoreService) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.populateTable();
   }
 
-  populateTable() {
+  populateTable(): void {
     this.fillTable();
     if (this._conf.queryCall) {
       this.getData();
     }
   }
 
-  fillTable() {
+  fillTable(): void {
     const cols = this._conf.columns.filter((col) => !col.hidden || col.always_display == true);
     this.displayedColumns = cols.map((col) => col.prop);
 
@@ -75,7 +79,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     this.tableDataSource = flattened;
   }
 
-  sortTable(sort: Sort) {
+  sortTable(sort: Sort): void {
     if (!sort.active || sort.direction === '') {
       return;
     }
@@ -109,10 +113,11 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     });
   }
 
-  resolve(path: string, obj: any) {
+  resolve(path: string, obj: any): string {
     return path.split('.').reduce((prev, curr) => (prev ? prev[curr] : null), obj || self);
   }
-  ngAfterViewInit() {
+
+  ngAfterViewInit(): void {
     this.core.register({ observerClass: this, eventName: 'TreeTableGlobalFilter' }).subscribe((evt: CoreEvent) => {
       const value = evt.data.value ? evt.data.value : '';
       this.filterNodes(evt.data.column, value);
@@ -124,7 +129,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     }
   }
 
-  getData() {
+  getData(): void {
     this.ws.call(this._conf.queryCall).subscribe(
       (res) => {
         const data = this.treeTableService.buildTree(res);
@@ -139,7 +144,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     return null;
   }
 
-  expandNode(rootNode: any) {
+  expandNode(rootNode: any): void {
     const value = rootNode.expanded ? rootNode.expanded = false : true;
     this.treeDataSource = this.treeTableService.editNode('expanded', value, rootNode.indexPath, this.treeDataSource);
 
@@ -152,7 +157,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     this.table.renderRows();
   }
 
-  filterNodes(key: string, value: any) {
+  filterNodes(key: string, value: any): void {
     if (value.length > 0) {
       this.tableDataSource = this.treeTableService.filteredTable(key, value, this.treeDataSource);
     } else {
@@ -162,7 +167,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     this.table.renderRows();
   }
 
-  onHover(evt: any, over = true) {
+  onHover(evt: MouseEvent, over = true): void {
     const row = this.findRow(evt);
     const cells = row.children;
 
@@ -179,8 +184,8 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     }
   }
 
-  findRow(el: any) {
-    let target = el.target;
+  findRow(event: MouseEvent): HTMLElement {
+    let target = event.target as HTMLElement;
 
     do {
       target = target.parentElement;
@@ -188,7 +193,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     return target;
   }
 
-  isTableOverflow() {
+  isTableOverflow(): boolean {
     let hasHorizontalScrollbar = false;
     if (this.table) {
       hasHorizontalScrollbar = this.table._elementRef.nativeElement.parentNode.parentNode.scrollWidth > this.table._elementRef.nativeElement.parentNode.parentNode.clientWidth;

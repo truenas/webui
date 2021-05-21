@@ -1,12 +1,20 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { CoreEvent } from 'app/interfaces/events';
+import { QueryParams } from 'app/interfaces/query-api.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import {
+  EntityTableAction,
+  EntityTableComponent,
+  InputTableConf,
+} from 'app/pages/common/entity/entity-table/entity-table.component';
 
 import { T } from '../../../../translate-marker';
 import * as _ from 'lodash';
 import { StorageService, DialogService, WebSocketService } from '../../../../services';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { LocaleService } from 'app/services/locale.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -17,10 +25,10 @@ import { EntityUtils } from '../../../common/entity/utils';
   selector: 'disk-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class DiskListComponent {
+export class DiskListComponent implements InputTableConf {
   title = T('Disks');
-  protected queryCall = 'disk.query';
-  protected queryCallOption = [[] as any, { extra: { pools: true } }];
+  queryCall: 'disk.query' = 'disk.query';
+  queryCallOption: QueryParams<Disk, { extra: { pools: true } }> = [[], { extra: { pools: true } }];
   noAdd = true;
 
   columns: any[] = [
@@ -35,7 +43,6 @@ export class DiskListComponent {
     { name: T('Rotation Rate (RPM)'), prop: 'rotationrate', hidden: true },
     { name: T('HDD Standby'), prop: 'hddstandby', hidden: true },
     { name: T('Adv. Power Management'), prop: 'advpowermgmt', hidden: true },
-    { name: T('Acoustic Level'), prop: 'acousticlevel', hidden: true },
     { name: T('Enable S.M.A.R.T.'), prop: 'togglesmart', hidden: true },
     { name: T('S.M.A.R.T. extra options'), prop: 'smartoptions', hidden: true },
   ];
@@ -52,7 +59,6 @@ export class DiskListComponent {
   diskNames: any[] = [];
   hddStandby: any[] = [];
   advPowerMgt: any[] = [];
-  acousticLevel: any[] = [];
   diskToggle: boolean;
   SMARToptions: any[] = [];
   private SMARTdiskChoices: any = {};
@@ -70,7 +76,6 @@ export class DiskListComponent {
           this.diskNames.push(i.name);
           this.hddStandby.push(i.hddstandby);
           this.advPowerMgt.push(i.advpowermgmt);
-          this.acousticLevel.push(i.acousticlevel);
           if (i.togglesmart === true) {
             this.diskToggle = true;
             this.SMARToptions.push(i.smartoptions);
@@ -88,10 +93,6 @@ export class DiskListComponent {
         this.advPowerMgt.every((val, i, arr) => val === arr[0])
           ? this.diskbucket.advPowerMgt = this.advPowerMgt[0]
           : this.diskbucket.advPowerMgt = undefined;
-
-        this.acousticLevel.every((val, i, arr) => val === arr[0])
-          ? this.diskbucket.acousticLevel = this.acousticLevel[0]
-          : this.diskbucket.acousticLevel = undefined;
 
         this.SMARToptions.every((val, i, arr) => val === arr[0])
           ? this.diskbucket.SMARToptions = this.SMARToptions[0]
@@ -118,15 +119,22 @@ export class DiskListComponent {
   }];
 
   protected unused: any[] = [];
-  constructor(protected ws: WebSocketService, protected router: Router, public diskbucket: StorageService, protected dialogService: DialogService,
-    protected localeService: LocaleService, private dialog: MatDialog, private core: CoreService) {
+  constructor(
+    protected ws: WebSocketService,
+    protected router: Router,
+    public diskbucket: StorageService,
+    protected dialogService: DialogService,
+    protected localeService: LocaleService,
+    private dialog: MatDialog,
+    private core: CoreService,
+  ) {
     this.ws.call('disk.get_unused', []).subscribe((unused_res) => {
       this.unused = unused_res;
     }, (err) => new EntityUtils().handleWSError(this, err));
     this.ws.call('smart.test.disk_choices').subscribe((res) => this.SMARTdiskChoices = res, (err) => new EntityUtils().handleWSError(this, err));
   }
 
-  getActions(parentRow: any) {
+  getActions(parentRow: any): EntityTableAction[] {
     const actions = [{
       id: parentRow.name,
       icon: 'edit',
@@ -243,20 +251,21 @@ export class DiskListComponent {
         },
       });
     }
-    return actions;
+
+    return actions as EntityTableAction[];
   }
 
-  dataHandler(entityList: any) {
+  dataHandler(entityList: EntityTableComponent): void {
     this.diskUpdate(entityList);
   }
 
-  diskUpdate(entityList: any) {
+  diskUpdate(entityList: EntityTableComponent): void {
     for (const disk of entityList.rows) {
       disk.readable_size = (<any>window).filesize(disk.size, { standard: 'iec' });
     }
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.core.register({
       observerClass: this,
       eventName: 'DisksChanged',
@@ -268,12 +277,12 @@ export class DiskListComponent {
     });
   }
 
-  resourceTransformIncomingRestData(data: any[]) {
+  resourceTransformIncomingRestData(data: any[]): any[] {
     data.forEach((i) => i.pool = i.pool ? i.pool : 'N/A');
     return data;
   }
 
-  manualTest(selected: any) {
+  manualTest(selected: any): void {
     const parent = this;
     const disks = Array.isArray(selected) ? selected.map((item) => item.name) : [selected.name];
     const disksIdentifier = Array.isArray(selected) ? selected.map((item) => ({ identifier: item.identifier })) : [{ identifier: selected.identifier }];
@@ -332,7 +341,7 @@ export class DiskListComponent {
     this.dialogService.dialogForm(conf);
   }
 
-  generateManualTestSummary(res: any) {
+  generateManualTestSummary(res: any): void {
     let success_note = '<h4>Expected Finished Time:</h4>';
     let hasSuccessNote = false;
     let fail_note = '<h4>Errors:</h4>';

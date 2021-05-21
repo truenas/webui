@@ -1,7 +1,8 @@
 import { Injectable, OnDestroy } from '@angular/core';
+import { CoreEvent } from 'app/interfaces/events';
 import { WebSocketService } from 'app/services/ws.service';
 import { Subject } from 'rxjs';
-import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 
 /*
  * This service acts as a proxy between middleware/web worker
@@ -73,12 +74,12 @@ export class ReportsService implements OnDestroy {
     };
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
     this.reportsUtils.terminate();
   }
 
-  prepReport(evt: CoreEvent) {
+  prepReport(evt: CoreEvent): void {
     this.reportsUtils.onmessage = ({ data }) => {
       const evt = data;
     };
@@ -94,7 +95,7 @@ export class ReportsService implements OnDestroy {
     this.reportsUtils.postMessage({ name: 'ProcessCommands', data: pipeLine, sender: 'chartID' });
   }
 
-  truncateData(data: any) {
+  truncateData(data: any): any {
     let finished = false;
     let index = data.length - 1;
     do {

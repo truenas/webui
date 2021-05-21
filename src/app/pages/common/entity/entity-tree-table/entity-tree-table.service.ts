@@ -14,7 +14,7 @@ export class EntityTreeTableService {
   constructor(private ws: WebSocketService) {}
 
   // Do we still need this?
-  buildTree(data: any) {
+  buildTree(data: any): TreeNode[] {
     const tree: TreeNode[] = [];
     for (let i = 0; i < data.length; i++) {
       const node = this.getNode(data[i]);
@@ -23,7 +23,7 @@ export class EntityTreeTableService {
     return tree;
   }
 
-  buildTable(data: any, expandAll = false) {
+  buildTable(data: any, expandAll = false): TreeNode[] {
     // Converts a Tree structure to a flat list
     const flatList: TreeNode[] = [];
 
@@ -34,7 +34,7 @@ export class EntityTreeTableService {
     return flatList;
   }
 
-  walk(tree: TreeNode[], rows: TreeNode[], parentIndexPath?: number[], expandAll?: boolean) {
+  walk(tree: TreeNode[], rows: TreeNode[], parentIndexPath?: number[], expandAll?: boolean): void {
     tree.forEach((node, nodeIndex) => {
       if (expandAll && node.children.length > 0) {
         node.expanded = true;
@@ -54,7 +54,7 @@ export class EntityTreeTableService {
     });
   }
 
-  findNode(indexPath: number[], treeData: TreeNode[]) {
+  findNode(indexPath: number[], treeData: TreeNode[]): any {
     let currentNode: any;
     indexPath.forEach((tier, index) => {
       currentNode = index == 0 ? treeData[0] : currentNode.children[tier];
@@ -63,7 +63,7 @@ export class EntityTreeTableService {
     return currentNode;
   }
 
-  findParents(indexPath: number[], data: TreeNode[], asObject = true) {
+  findParents(indexPath: number[], data: TreeNode[], asObject = true): any {
     const output = asObject ? {} : [];
     const path = Object.assign([], indexPath);
 
@@ -76,7 +76,7 @@ export class EntityTreeTableService {
     return output;
   }
 
-  editNode(prop: string, value: any, indexPath: number[], treeData: TreeNode[]) {
+  editNode(prop: string, value: any, indexPath: number[], treeData: TreeNode[]): any {
     const node = this.findNode(indexPath, treeData);
 
     // Clone the data
@@ -87,7 +87,7 @@ export class EntityTreeTableService {
     return clone;
   }
 
-  filteredTable(key: any, value: any, data: any, preserveExpansion = false) {
+  filteredTable(key: any, value: any, data: any, preserveExpansion = false): TreeNode[] {
     // Fully expanded and flattened list
     const args = preserveExpansion ? [data] : [data, true];
     // let flattened = this.buildTable(...args); // ES6 way not working?
@@ -113,7 +113,7 @@ export class EntityTreeTableService {
   }
 
   // Do we still need this?
-  getNode(item: any) {
+  getNode(item: any): TreeNode {
     const nodeData: any = {};
     for (const prop in item) {
       nodeData[prop] = item[prop];

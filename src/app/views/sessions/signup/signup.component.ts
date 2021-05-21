@@ -7,7 +7,7 @@ import { MatButton } from '@angular/material/button';
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css'],
 })
-export class SignupComponent implements OnInit {
+export class SignupComponent {
   @ViewChild(MatProgressBar, { static: false }) progressBar: MatProgressBar;
   @ViewChild(MatButton, { static: false }) submitButton: MatButton;
   signupData = {
@@ -17,12 +17,7 @@ export class SignupComponent implements OnInit {
     isAgreed: '',
   };
 
-  constructor() {}
-
-  ngOnInit() {
-  }
-
-  signup() {
+  signup(): void {
     console.log(this.signupData);
 
     this.submitButton.disabled = true;

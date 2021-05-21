@@ -4,6 +4,7 @@ import {
   Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot,
 } from '@angular/router';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { CoreEvent } from 'app/interfaces/events';
 
 import { ThemeService } from 'app/services/theme/theme.service';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
@@ -14,7 +15,7 @@ import { ApiService } from 'app/core/services/api.service';
 import { AnimationService } from 'app/core/services/animation.service';
 import { InteractionManagerService } from 'app/core/services/interaction-manager.service';
 import { DataService } from 'app/core/services/data.service';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { SystemGeneralService } from './services';
 import { WebSocketService } from './services/ws.service';
@@ -69,13 +70,13 @@ export class AppComponent {
       const cachedType = window.localStorage['product_type'].toLowerCase();
       path = 'assets/images/truenas_' + cachedType + '_favicon.png';
       if (darkScheme) {
-        path = 'assets/images/truenas_' + cachedType + '_ondark' + '_favicon.png';
+        path = 'assets/images/truenas_' + cachedType + '_ondark_favicon.png';
       }
     } else {
       this.sysGeneralService.getProductType.subscribe((res) => {
         path = 'assets/images/truenas_' + res.toLowerCase() + '_favicon.png';
         if (darkScheme) {
-          path = 'assets/images/truenas_' + res.toLowerCase() + '_ondark' + '_favicon.png';
+          path = 'assets/images/truenas_' + res.toLowerCase() + '_ondark_favicon.png';
         }
       });
     }
@@ -117,7 +118,7 @@ export class AppComponent {
     };
   }
 
-  private setFavicon(str: string) {
+  private setFavicon(str: string): void {
     const link: HTMLLinkElement = document.querySelector("link[rel*='icon']") || document.createElement('link');
     link['rel'] = 'icon';
     link['type'] = 'image/png';
@@ -126,7 +127,7 @@ export class AppComponent {
     document.getElementsByTagName('head')[0].appendChild(link);
   }
 
-  private detectBrowser(name: string) {
+  private detectBrowser(name: string): boolean {
     const N = navigator.appName;
     const UA = navigator.userAgent;
     let temp;
@@ -138,7 +139,7 @@ export class AppComponent {
     return false;
   }
 
-  private globalPreviewControl() {
+  private globalPreviewControl(): void {
     const snackBarRef = this.snackBar.open('Custom theme Global Preview engaged', 'Back to form');
     snackBarRef.onAction().subscribe(() => {
       this.router.navigate(['ui-preferences', 'create-theme']);

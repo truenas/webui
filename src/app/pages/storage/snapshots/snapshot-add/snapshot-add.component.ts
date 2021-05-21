@@ -7,7 +7,8 @@ import { T } from 'app/translate-marker';
 import { map } from 'rxjs/operators';
 import helptext from '../../../../helptext/storage/snapshots/snapshots';
 import { DialogService, RestService, WebSocketService } from '../../../../services';
-import { EntityFormComponent, Formconfiguration } from '../../../common/entity/entity-form/entity-form.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from '../../../common/entity/entity-form/entity-form.component';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -21,12 +22,12 @@ import * as moment from 'moment';
   </div>`,
 })
 
-export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
+export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
   route_success = ['storage', 'snapshots'];
   isEntity = true;
   isNew = true;
   initialized = true;
-  addCall = 'zfs.snapshot.create';
+  addCall: 'zfs.snapshot.create' = 'zfs.snapshot.create';
   private entityForm: EntityFormComponent;
   private nameValidator: ValidatorFn;
 
@@ -83,8 +84,8 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
 
   ngAfterViewInit(): void {
     this.ws.call('pool.dataset.query', [[['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']],
-      { extra: { flat: false } }]).subscribe((res) => {
-      const rows = new EntityUtils().flattenData(res);
+      { extra: { flat: false } }]).subscribe((datasets) => {
+      const rows = new EntityUtils().flattenData(datasets);
 
       rows.forEach((dataItem) => {
         if (typeof (dataItem.name) !== 'undefined' && dataItem.name.length > 0) {
@@ -112,7 +113,7 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
       );
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
     const nameControl = this.entityForm.formGroup.get('name');
@@ -149,7 +150,7 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
     }
   }
 
-  updateNameValidity() {
+  updateNameValidity(): void {
     this.entityForm.formGroup.get('name').updateValueAndValidity();
   }
 }

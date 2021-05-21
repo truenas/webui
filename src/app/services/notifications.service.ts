@@ -76,12 +76,12 @@ export class NotificationsService {
     return this.notifications;
   }
 
-  dismissNotifications(notifications: NotificationAlert[]) {
+  dismissNotifications(notifications: NotificationAlert[]): void {
     const notificationMap = new Map<string, NotificationAlert>();
 
     notifications.forEach((notification) => {
       notificationMap.set(notification.id, notification);
-      this.ws.call('alert.dismiss', [notification.id]).subscribe((res) => {
+      this.ws.call('alert.dismiss', [notification.id]).subscribe(() => {
         console.log('alert dismissed id:' + notification.id);
       });
     });
@@ -95,7 +95,7 @@ export class NotificationsService {
     this.subject.next(this.notifications);
   }
 
-  restoreNotifications(notifications: NotificationAlert[]) {
+  restoreNotifications(notifications: NotificationAlert[]): void {
     const notificationMap = new Map<string, NotificationAlert>();
 
     notifications.forEach((notification) => {
@@ -174,7 +174,7 @@ export class NotificationsService {
     return newNotification;
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.getGenConfig.unsubscribe();
   }
 }

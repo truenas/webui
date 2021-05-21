@@ -3,9 +3,10 @@ import {
 } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Display } from 'app/core/components/display/display.component';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { ViewController } from 'app/core/classes/viewcontroller';
 import { LayoutContainer, LayoutChild } from 'app/core/classes/layouts';
+import { CoreEvent } from 'app/interfaces/events';
 import { Subject } from 'rxjs';
 
 export interface ViewConfig {
@@ -27,7 +28,7 @@ export interface ViewConfig {
   `,
   styles: [':host {display:block;}'],
 })
-export class ViewControllerComponent extends ViewController implements AfterViewInit, OnDestroy {
+export class ViewControllerComponent extends ViewController implements OnDestroy {
   readonly componentName = ViewControllerComponent;
   @ViewChild('display', { static: true }) display: Display;
   protected core: CoreService;
@@ -41,24 +42,21 @@ export class ViewControllerComponent extends ViewController implements AfterView
     this.core = CoreServiceInjector.get(CoreService);
   }
 
-  ngAfterViewInit() {
-  }
-
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 
-  create(component: any, container?: string) {
+  create(component: any, container?: string): any {
     if (!container) { container = 'display'; }
     return (this as any)[container].create(component);
   }
 
-  addChild(instance: any, container?: string) {
+  addChild(instance: any, container?: string): void {
     if (!container) { container = 'display'; }
     (this as any)[container].addChild(instance);
   }
 
-  removeChild(instance: any, container?: string) {
+  removeChild(instance: any, container?: string): void {
     if (!container) { container = 'display'; }
     (this as any)[container].removeChild(instance);
   }

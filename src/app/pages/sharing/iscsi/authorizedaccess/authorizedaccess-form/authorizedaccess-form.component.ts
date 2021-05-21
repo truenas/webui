@@ -9,19 +9,20 @@ import { WebSocketService } from '../../../../../services/ws.service';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-iscsi-authorizedaccess-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class AuthorizedAccessFormComponent {
-  protected addCall = 'iscsi.auth.create';
-  protected queryCall = 'iscsi.auth.query';
-  protected editCall = 'iscsi.auth.update';
+export class AuthorizedAccessFormComponent implements FormConfiguration {
+  addCall: 'iscsi.auth.create' = 'iscsi.auth.create';
+  queryCall: 'iscsi.auth.query' = 'iscsi.auth.query';
+  editCall: 'iscsi.auth.update' = 'iscsi.auth.update';
   // protected resource_name: string = 'services/iscsi/authcredential';
-  protected route_success: string[] = ['sharing', 'iscsi', 'auth'];
-  protected isEntity = true;
-  protected customFilter: any[] = [[['id', '=']]];
+  route_success: string[] = ['sharing', 'iscsi', 'auth'];
+  isEntity = true;
+  customFilter: any[] = [[['id', '=']]];
 
   fieldSets: FieldSet[] = [
     {
@@ -114,14 +115,14 @@ export class AuthorizedAccessFormComponent {
     },
   ];
 
-  protected pk: any;
+  pk: any;
   protected peeruser_field: any;
   protected peersecret_field: any;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected loader: AppLoaderService,
     protected ws: WebSocketService) {}
 
-  preInit() {
+  preInit(): void {
     this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
@@ -130,7 +131,7 @@ export class AuthorizedAccessFormComponent {
     });
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     const secretControl = entityForm.formGroup.controls['secret'] as FormControl;
     const peersecretControl = entityForm.formGroup.controls['peersecret'] as FormControl;
     const peeruserFieldset = _.find(this.fieldSets, { class: 'peeruser' });
@@ -185,12 +186,12 @@ export class AuthorizedAccessFormComponent {
     });
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     delete value['secret_confirm'];
     delete value['peersecret_confirm'];
   }
 
-  customEditCall(value: any) {
+  customEditCall(value: any): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
       (res) => {

@@ -14,7 +14,7 @@ import {
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { MatDialog } from '@angular/material/dialog';
-import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-key';
@@ -23,10 +23,10 @@ import helptext from '../../../../helptext/storage/volumes/volume-key';
   selector: 'app-addkey-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class VolumeAddkeyFormComponent implements Formconfiguration {
+export class VolumeAddkeyFormComponent implements FormConfiguration {
   saveSubmitText = T('Add Recovery Key');
 
-  queryCall = 'pool.query';
+  queryCall: 'pool.query' = 'pool.query';
   queryKey = 'id';
   route_return: string[] = ['storage', 'pools'];
   isNew = false;
@@ -111,13 +111,13 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
     protected encryptionService: EncryptionService,
   ) {}
 
-  preInit(entityForm: any) {
+  preInit(): void {
     this.route.params.subscribe((params) => {
       this.pk = params['pk'];
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     entityForm.formGroup.controls['password'].valueChanges.subscribe((res: string) => {
       this.admin_pw = res;
       const btn = <HTMLInputElement> document.getElementById('cust_button_Invalidate Existing Key');
@@ -125,7 +125,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
     });
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     this.ws.call('auth.check_user', ['root', value.password]).subscribe((res) => {
       if (res) {
         this.encryptionService.makeRecoveryKey(this.pk, value.name, this.route_return);

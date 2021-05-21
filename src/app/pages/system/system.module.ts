@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { NgxUploaderModule } from 'ngx-uploader';
 
 import { QRCodeModule } from 'angular2-qrcode';
@@ -52,6 +53,7 @@ import { CronFormComponent } from './advanced/cron/cron-form/cron-form.component
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
 import { InitshutdownFormComponent } from './advanced/initshutdown/initshutdown-form/initshutdown-form.component';
 import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
+import { IsolatedGpuPcisFormComponent } from './advanced/isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 
 @NgModule({
   imports: [
@@ -93,12 +95,14 @@ import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-
     GuiFormComponent,
     LicenseComponent,
     ConsoleFormComponent,
+    IsolatedGpuPcisFormComponent,
     KernelFormComponent,
     SyslogFormComponent,
     InitshutdownFormComponent,
     InitshutdownListComponent,
     CronFormComponent,
     CronListComponent,
+    SystemDatasetPoolComponent,
   ],
   entryComponents: [QRDialog],
   providers: [],

@@ -1,25 +1,27 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { DiskStandby } from 'app/enums/disk-standby.enum';
 import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/storage/disks/disks';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-disk-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class DiskFormComponent {
-  protected route_success: string[] = ['storage', 'disks'];
-  protected queryCall = 'disk.query';
-  protected editCall = 'disk.update';
-  protected customFilter: any[] = [[['identifier', '=']]];
-  protected isEntity = true;
+export class DiskFormComponent implements FormConfiguration {
+  route_success: string[] = ['storage', 'disks'];
+  queryCall: 'disk.query' = 'disk.query';
+  editCall: 'disk.update' = 'disk.update';
+  customFilter: any[] = [[['identifier', '=']]];
+  isEntity = true;
 
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
       name: helptext.fieldset_disk,
@@ -109,7 +111,7 @@ export class DiskFormComponent {
               when: [
                 {
                   name: 'hddstandby',
-                  value: 'ALWAYS ON',
+                  value: DiskStandby.AlwaysOn,
                 },
               ],
             },
@@ -121,13 +123,6 @@ export class DiskFormComponent {
           placeholder: helptext.disk_form_advpowermgmt_placeholder,
           tooltip: helptext.disk_form_advpowermgmt_tooltip,
           options: helptext.disk_form_advpowermgmt_options,
-        },
-        {
-          type: 'select',
-          name: 'acousticlevel',
-          placeholder: helptext.disk_form_acousticlevel_placeholder,
-          tooltip: helptext.disk_form_acousticlevel_tooltip,
-          options: helptext.disk_form_acousticlevel_options,
         },
       ],
     },
@@ -182,8 +177,7 @@ export class DiskFormComponent {
 
   protected disk_hddstandby: any;
   protected disk_advpowermgmt: any;
-  protected disk_acousticlevel: any;
-  protected title: String;
+  title: string;
 
   rowid: any;
 
@@ -195,12 +189,12 @@ export class DiskFormComponent {
   ) {
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     delete data.passwd;
     return data;
   }
 
-  preInit() {
+  preInit(): void {
     this.aroute.params.subscribe((params) => {
       /*
        * Make sure the route is "storage/disks" before
@@ -212,15 +206,15 @@ export class DiskFormComponent {
     });
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     entityEdit.formGroup.controls['hddstandby'].valueChanges.subscribe((value: any) => {
-      if (value === 'ALWAYS ON') {
+      if (value === DiskStandby.AlwaysOn) {
         entityEdit.formGroup.controls['hddstandby_force'].setValue(false);
       }
     });
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     if (!value.hddstandby_force) {
       value.hddstandby_force = false;
     }
@@ -241,7 +235,7 @@ export class DiskFormComponent {
     value.informational = value.informational === '' ? null : value.informational;
   }
 
-  inIt(pk: string) {
+  inIt(pk: string): void {
     this.title = helptext.disk_form_title;
 
     delete this.route_success;

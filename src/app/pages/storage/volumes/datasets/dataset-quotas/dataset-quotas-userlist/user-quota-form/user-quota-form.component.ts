@@ -1,4 +1,4 @@
-import { Component, IterableDiffers } from '@angular/core';
+import { Component, DoCheck, IterableDiffers } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
@@ -9,19 +9,20 @@ import {
   DialogService, StorageService, WebSocketService, AppLoaderService, UserService,
 } from 'app/services';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-user-quota-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class UserQuotaFormComponent {
+export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
   isEntity = true;
   entityForm: any;
   pk: string;
-  protected route_success: string[];
+  route_success: string[];
   searchedEntries: any[] = [];
   entryField: FieldConfig;
-  private isNew = true;
+  isNew = true;
   private dq: string;
   private oq: string;
   private selectedEntriesField: any;
@@ -100,12 +101,12 @@ export class UserQuotaFormComponent {
     this.differ = differs.find([]).create(null);
   }
 
-  preInit(entityForm: EntityFormComponent) {
+  preInit(entityForm: EntityFormComponent): void {
     const paramMap: any = (<any> this.aroute.params).getValue();
     this.pk = paramMap.pk;
   }
 
-  async validateEntry(value: any) {
+  async validateEntry(value: any): Promise<void> {
     const validEntry = await this.userService.getUserObject(value);
     const chips = document.getElementsByTagName('mat-chip');
     if (!validEntry) {
@@ -116,7 +117,7 @@ export class UserQuotaFormComponent {
     this.allowSubmit();
   }
 
-  allowSubmit() {
+  allowSubmit(): void {
     if ((this.dq || this.oq)
         && (this.selectedEntriesValue.value && this.selectedEntriesValue.value.length > 0
         || this.searchedEntries && this.searchedEntries.length > 0)
@@ -129,14 +130,14 @@ export class UserQuotaFormComponent {
 
   // This is here because selecting an item from autocomplete doesn't trigger value change
   // Unsubscribes automatically
-  ngDoCheck() {
+  ngDoCheck(): void {
     this.differ.diff(this.searchedEntries);
     if (this.searchedEntries.length > 0) {
       this.allowSubmit();
     }
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
     this.route_success = ['storage', 'pools', 'user-quotas', this.pk];
     this.selectedEntriesField = _.find(this.fieldConfig, { name: 'system_entries' });
@@ -144,7 +145,7 @@ export class UserQuotaFormComponent {
     this.entryField = _.find(this.fieldSets.find((set) => set.name === helptext.users.user_title).config,
       { name: 'searched_entries' });
 
-    this.ws.call('user.query').subscribe((res: any[]) => {
+    this.ws.call('user.query').subscribe((res) => {
       res.map((entry) => {
         this.selectedEntriesField.options.push({ label: entry.username, value: entry.uid });
       });
@@ -182,19 +183,19 @@ export class UserQuotaFormComponent {
     });
   }
 
-  blurEvent(parent: any) {
+  blurEvent(parent: any): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'data_quota');
     }
   }
 
-  transformValue(parent: any, fieldname: string) {
+  transformValue(parent: any, fieldname: string): void {
     parent.entityForm.formGroup.controls[fieldname].setValue(parent.storageService.humanReadable || 0);
     parent.storageService.humanReadable = '';
   }
 
-  updateSearchOptions(value = '', parent: any) {
-    parent.userService.userQueryDSCache(value).subscribe((items: any[]) => {
+  updateSearchOptions(value = '', parent: any): void {
+    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const entries: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         entries.push({ label: items[i].username, value: items[i].username });
@@ -203,7 +204,7 @@ export class UserQuotaFormComponent {
     });
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     const payload: any[] = [];
     if (!data.system_entries) {
       data.system_entries = [];

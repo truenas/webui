@@ -61,10 +61,6 @@ export class ViewChartBarComponent implements AfterViewInit, OnChanges {
   @Input() config: BarChartConfig;
   @ViewChild('wrapper', { static: true }) el: ElementRef;
 
-  constructor() {
-    // super();
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.config) {
       if (changes.config.currentValue && changes.config.currentValue.data) {
@@ -83,7 +79,7 @@ export class ViewChartBarComponent implements AfterViewInit, OnChanges {
     this.render();
   }
 
-  get data() {
+  get data(): any {
     return this._data;
   }
 
@@ -110,7 +106,7 @@ export class ViewChartBarComponent implements AfterViewInit, OnChanges {
     });
   }
 
-  makeConfig() {
+  makeConfig(): any {
     this.chartConfig = {
       bindto: '#bar-' + this.chartId,
       data: {

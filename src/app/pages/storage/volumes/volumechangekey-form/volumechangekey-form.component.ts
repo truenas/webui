@@ -14,7 +14,7 @@ import {
 import { DialogService } from 'app/services/dialog.service';
 import { EncryptionService } from '../../../../services/encryption.service';
 import { MatDialog } from '@angular/material/dialog';
-import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-key';
@@ -23,10 +23,10 @@ import helptext from '../../../../helptext/storage/volumes/volume-key';
   selector: 'app-createpassphrase-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class VolumeChangekeyFormComponent implements Formconfiguration {
+export class VolumeChangekeyFormComponent implements FormConfiguration {
   saveSubmitText = T('Change Passphrase');
 
-  queryCall = 'pool.query';
+  queryCall: 'pool.query' = 'pool.query';
   queryKey = 'id';
   route_return: string[] = ['storage', 'pools'];
   isNew = false;
@@ -127,13 +127,13 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
 
   }
 
-  preInit(entityForm: any) {
+  preInit(): void {
     this.route.params.subscribe((params) => {
       this.pk = params['pk'];
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     entityForm.formGroup.controls['remove_passphrase'].valueChanges.subscribe((res: any) => {
       if (res) {
         entityForm.setDisabled('passphrase', true);
@@ -150,7 +150,7 @@ export class VolumeChangekeyFormComponent implements Formconfiguration {
     });
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     let success_msg: string;
     if (value.remove_passphrase) {
       value.passphrase = null;

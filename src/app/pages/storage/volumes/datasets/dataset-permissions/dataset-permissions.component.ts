@@ -1,23 +1,25 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AclType } from 'app/enums/acl-type.enum';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import * as _ from 'lodash';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-permissions';
 import {
-  DialogService, StorageService, WebSocketService, UserService,
+  DialogService, StorageService, UserService, WebSocketService,
 } from '../../../../../services';
-import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
 import { T } from '../../../../../translate-marker';
-import * as _ from 'lodash';
+import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector: 'app-dataset-permissions',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class DatasetPermissionsComponent implements OnDestroy {
+export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy {
   protected updateCall = 'pool.dataset.permission';
   protected datasetPath: string;
   protected datasetId: string;
@@ -25,8 +27,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
   protected recursive_subscription: any;
   formGroup: FormGroup;
   error: string;
-  protected route_success: string[] = ['storage'];
-  protected isEntity = true;
+  route_success: string[] = ['storage'];
+  isEntity = true;
   protected dialogRef: any;
   private entityForm: any;
   protected userField: any;
@@ -143,8 +145,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
       id: 'use_acl',
       name: helptext.acl_manager_button,
       function: () => {
-        this.ws.call('filesystem.getacl', [this.datasetPath]).subscribe((res) => {
-          if (res.acltype === 'POSIX1E') {
+        this.ws.call('filesystem.getacl', [this.datasetPath]).subscribe((acl) => {
+          if (acl.acltype === AclType.Posix1e) {
             this.router.navigate(new Array('/').concat([
               'storage', 'id', this.datasetId.split('/')[0], 'dataset',
               'posix-acl', this.datasetId,
@@ -160,7 +162,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
     },
   ];
 
-  protected datasetMode: any;
+  protected datasetMode: string;
 
   constructor(
     protected aroute: ActivatedRoute,
@@ -172,7 +174,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
     protected router: Router,
   ) { }
 
-  preInit(entityEdit: any) {
+  preInit(entityEdit: any): void {
     entityEdit.isNew = true; // remove me when we find a way to get the permissions
     this.aroute.params.subscribe((params) => {
       this.datasetId = params['pk'];
@@ -190,23 +192,23 @@ export class DatasetPermissionsComponent implements OnDestroy {
       this.userField.options = users;
     });
 
-    this.userService.groupQueryDSCache().subscribe((items) => {
-      const groups: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        groups.push({ label: items[i].group, value: items[i].group });
+    this.userService.groupQueryDSCache().subscribe((groups) => {
+      const groupOptions: Option[] = [];
+      for (let i = 0; i < groups.length; i++) {
+        groupOptions.push({ label: groups[i].group, value: groups[i].group });
       }
       this.groupField = _.find(this.fieldSets.find((set) => set.name === helptext.heading_owner).config, { name: 'group' });
-      this.groupField.options = groups;
+      this.groupField.options = groupOptions;
     });
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
-    this.storageService.filesystemStat(this.datasetPath).subscribe((res) => {
-      this.datasetMode = res.mode.toString(8).substring(2, 5);
+    this.storageService.filesystemStat(this.datasetPath).subscribe((stat) => {
+      this.datasetMode = stat.mode.toString(8).substring(2, 5);
       entityEdit.formGroup.controls['mode'].setValue(this.datasetMode);
-      entityEdit.formGroup.controls['user'].setValue(res.user);
-      entityEdit.formGroup.controls['group'].setValue(res.group);
+      entityEdit.formGroup.controls['user'].setValue(stat.user);
+      entityEdit.formGroup.controls['group'].setValue(stat.group);
     });
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value: any) => {
@@ -221,22 +223,22 @@ export class DatasetPermissionsComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.recursive_subscription.unsubscribe();
   }
 
-  updateGroupSearchOptions(value = '', parent: any) {
-    parent.userService.groupQueryDSCache(value).subscribe((items: any) => {
-      const groups = [];
-      for (let i = 0; i < items.length; i++) {
-        groups.push({ label: items[i].group, value: items[i].group });
+  updateGroupSearchOptions(value = '', parent: any): void {
+    (parent.userService as UserService).groupQueryDSCache(value).subscribe((groups) => {
+      const groupOptions: Option[] = [];
+      for (let i = 0; i < groups.length; i++) {
+        groupOptions.push({ label: groups[i].group, value: groups[i].group });
       }
-      parent.groupField.searchOptions = groups;
+      parent.groupField.searchOptions = groupOptions;
     });
   }
 
-  updateUserSearchOptions(value = '', parent: any) {
-    parent.userService.userQueryDSCache(value).subscribe((items: any) => {
+  updateUserSearchOptions(value = '', parent: any): void {
+    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -245,7 +247,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
     });
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     if (!data.apply_user) {
       delete data.user;
     }
@@ -271,7 +273,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
     }
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Saving Permissions') } });
     this.dialogRef.componentInstance.setDescription(T('Saving Permissions...'));
     this.dialogRef.componentInstance.setCall(this.updateCall, [this.datasetId, data]);
@@ -288,8 +290,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
     });
   }
 
-  loadMoreOptions(length: number, parent: any, searchText: string) {
-    parent.userService.userQueryDSCache(searchText, length).subscribe((items: any[]) => {
+  loadMoreOptions(length: number, parent: any, searchText: string): void {
+    (parent.userService as UserService).userQueryDSCache(searchText, length).subscribe((items) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -302,16 +304,16 @@ export class DatasetPermissionsComponent implements OnDestroy {
     });
   }
 
-  loadMoreGroupOptions(length: number, parent: any, searchText: string) {
-    parent.userService.groupQueryDSCache(searchText, false, length).subscribe((items: any[]) => {
-      const groups = [];
-      for (let i = 0; i < items.length; i++) {
-        groups.push({ label: items[i].group, value: items[i].group });
+  loadMoreGroupOptions(length: number, parent: any, searchText: string): void {
+    (parent.userService as UserService).groupQueryDSCache(searchText, false, length).subscribe((groups) => {
+      const groupOptions: Option[] = [];
+      for (let i = 0; i < groups.length; i++) {
+        groupOptions.push({ label: groups[i].group, value: groups[i].group });
       }
       if (searchText == '') {
-        parent.groupField.options = parent.groupField.options.concat(groups);
+        parent.groupField.options = parent.groupField.options.concat(groupOptions);
       } else {
-        parent.groupField.searchOptions = parent.groupField.searchOptions.concat(groups);
+        parent.groupField.searchOptions = parent.groupField.searchOptions.concat(groupOptions);
       }
     });
   }
