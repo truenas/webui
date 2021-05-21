@@ -10410,10 +10410,10 @@ pixi-gl-core@^1.1.4:
   resolved "https://registry.yarnpkg.com/pixi-gl-core/-/pixi-gl-core-1.1.4.tgz#8b4b5c433b31e419bc379dc565ce1b835a91b372"
   integrity sha1-i0tcQzsx5Bm8N53FZc4bg1qRs3I=
 
-pixi-projection@0.2.7:
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/pixi-projection/-/pixi-projection-0.2.7.tgz#4df10f28a0f1487dc01d4ef659837cd3f1b9a795"
-  integrity sha512-zrMUs2lDmPQX8AHXr14/MNGKXRlqr/XBjyI4Pm9fwz2sxMkz+QRLCa1weUrHXbfv1e6GjUe4tJ8KgqeNuRkc3w==
+pixi-projection@0.2.8:
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/pixi-projection/-/pixi-projection-0.2.8.tgz#ec1e3ae280518141635c44c336461b1b0a1d2854"
+  integrity sha512-3K06VHVDNm0rnCd72HhH9cZF/davWZXIMcJMFzwAuIV9Io2ExQrUv3Eauri4A682jsoriM+stHgm+6n75Ps5lg==
   dependencies:
     "@types/pixi.js" "^4.7.1"
 

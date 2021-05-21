@@ -1,5 +1,5 @@
 <mat-card class="app-table" fxLayout="column" #apptable>
-  <mat-toolbar-row>
+  <mat-toolbar-row *ngIf="!_tableConf.expandable">
     <h3 class="title" *ngIf="title">
       <ng-container *ngIf="titleHref; else plainTitle">
         <a [routerLink]="titleHref">{{ title }}</a>

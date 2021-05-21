@@ -10,6 +10,8 @@ import { EntityUtils } from '../../../../common/entity/utils';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { T } from 'app/translate-marker';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 @Component({
   selector: 'app-iscsi-target-form',
@@ -142,7 +144,7 @@ export class TargetFormComponent implements FormConfiguration {
     },
   ];
   fieldConfig: FieldConfig[];
-
+  title = T('Add ISCSI Target');
   pk: any;
   protected entityForm: any;
   constructor(protected router: Router,
@@ -228,9 +230,10 @@ export class TargetFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
+    this.title = entityForm.isNew ? T('Add ISCSI Target') : T('Edit ISCSI Target');
   }
 
   customEditCall(value: any): void {
