@@ -298,10 +298,13 @@ export class ZvolWizardComponent {
 
   constructor(
     protected core: CoreService,
-    protected router: Router, protected aroute: ActivatedRoute,
+    protected router: Router,
+    protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
-    protected loader: AppLoaderService, protected dialogService: DialogService,
-    protected storageService: StorageService, private translate: TranslateService,
+    protected loader: AppLoaderService,
+    protected dialogService: DialogService,
+    protected storageService: StorageService,
+    private translate: TranslateService,
     protected modalService: ModalService,
   ) {}
 
