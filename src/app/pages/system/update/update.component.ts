@@ -143,8 +143,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
     });
     this.core.emit({ name: 'SysInfoRequest', sender: this });
 
-    this.busy = this.ws.call('update.get_auto_download').subscribe((res) => {
-      this.autoCheck = res;
+    this.busy = this.ws.call('update.get_auto_download').subscribe((isAutoDownloadOn) => {
+      this.autoCheck = isAutoDownloadOn;
 
       this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
         this.fullTrainList = res.trains;
