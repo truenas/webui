@@ -351,18 +351,17 @@ export class DeviceEditComponent implements OnInit {
 
   readonly VmDeviceType = VmDeviceType;
 
-  constructor(protected router: Router,
+  constructor(
+    protected router: Router,
     protected aroute: ActivatedRoute,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
-    public translate: TranslateService,
     protected loader: AppLoaderService,
-    protected systemGeneralService: SystemGeneralService,
     protected networkService: NetworkService,
     protected dialogService: DialogService,
     private core: CoreService,
-    protected vmService: VmService) {}
+    protected vmService: VmService,
+  ) {}
 
   preInit(): void {
     // Display

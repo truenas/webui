@@ -460,6 +460,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         case VmDeviceType.Nic:
           this.activeFormGroup = this.nicFormGroup;
           this.isCustActionVisible = true;
+          this.generateRandomMac();
           break;
         case VmDeviceType.Disk:
           this.activeFormGroup = this.diskFormGroup;
@@ -538,12 +539,8 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.custActions = [
       {
         id: 'generate_mac_address',
-        name: 'Generate MAC Address',
-        function: () => {
-          this.ws.call('vm.random_mac').subscribe((random_mac) => {
-            this.nicFormGroup.controls['mac'].setValue(random_mac);
-          });
-        },
+        name: T('Generate MAC Address'),
+        function: () => this.generateRandomMac(),
       },
     ];
     this.displayFormGroup.controls['bind'].setValue('0.0.0.0');
@@ -553,7 +550,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.router.navigate(new Array('/').concat(this.route_success));
   }
 
-  onSubmit(event: Event): void {
+  onSubmit(): void {
     this.error = '';
     this.aroute.params.subscribe((params) => {
       const device = _.cloneDeep(this.formGroup.value);
@@ -608,5 +605,11 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
+  }
+
+  private generateRandomMac(): void {
+    this.ws.call('vm.random_mac').subscribe((randomMac) => {
+      this.nicFormGroup.controls['mac'].setValue(randomMac);
+    });
   }
 }

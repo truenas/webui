@@ -602,7 +602,7 @@ export type ApiDirectory = {
   'vm.get_display_web_uri': { params: any; response: any };
   'vm.device.passthrough_device_choices': { params: any; response: any };
   'vm.device.create': { params: any; response: any };
-  'vm.random_mac': { params: any; response: any };
+  'vm.random_mac': { params: void; response: string };
   'vm.device.query': { params: any; response: any };
   'vm.stop': { params: any; response: any };
   'vm.maximum_supported_vcpus': { params: any; response: any };
