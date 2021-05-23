@@ -11,7 +11,7 @@ import { Subject } from 'rxjs';
 
 @Component({
   selector: 'form-permissions',
-  styleUrls: ['../dynamic-field/dynamic-field.css', 'form-permissions.css'],
+  styleUrls: ['../dynamic-field/dynamic-field.scss', 'form-permissions.scss'],
   templateUrl: './form-permissions.component.html',
 })
 export class FormPermissionsComponent implements Field, OnInit, OnDestroy {

@@ -10,7 +10,7 @@ import { T } from '../../../translate-marker';
 @Component({
   selector: 'app-plugins-list',
   templateUrl: './available-plugins.component.html',
-  styleUrls: ['./available-plugins.component.css'],
+  styleUrls: ['./available-plugins.component.scss'],
   providers: [JailService],
 })
 export class AvailablePluginsComponent implements OnInit {

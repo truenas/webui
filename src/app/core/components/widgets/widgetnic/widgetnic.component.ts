@@ -63,7 +63,7 @@ interface Slide {
 @Component({
   selector: 'widget-nic',
   templateUrl: './widgetnic.component.html',
-  styleUrls: ['./widgetnic.component.css'],
+  styleUrls: ['./widgetnic.component.scss'],
 })
 export class WidgetNicComponent extends WidgetComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() stats: any;

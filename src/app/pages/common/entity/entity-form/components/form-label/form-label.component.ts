@@ -11,7 +11,7 @@ import { Field } from '../../models/field.interface';
 @Component({
   selector: 'form-label',
   templateUrl: './form-label.component.html',
-  styleUrls: ['../dynamic-field/dynamic-field.css'],
+  styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })
 export class FormLabelComponent implements Field {
   config: FieldConfig;

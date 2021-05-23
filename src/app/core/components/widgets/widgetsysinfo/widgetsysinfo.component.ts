@@ -28,7 +28,7 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
 @Component({
   selector: 'widget-sysinfo',
   templateUrl: './widgetsysinfo.component.html',
-  styleUrls: ['./widgetsysinfo.component.css'],
+  styleUrls: ['./widgetsysinfo.component.scss'],
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy, AfterViewInit {
   // HA

@@ -3,7 +3,7 @@ import { Component, OnInit, Input } from '@angular/core';
 @Component({
   selector: 'temperature-meter',
   templateUrl: './temperature-meter.component.html',
-  styleUrls: ['./temperature-meter.component.css'],
+  styleUrls: ['./temperature-meter.component.scss'],
 })
 export class TemperatureMeterComponent {
   @Input('source') source: string;

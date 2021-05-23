@@ -8,7 +8,7 @@ import { WebSocketService } from '../../../../services';
 @Component({
   selector: 'app-directory-services-monitor',
   templateUrl: './directory-services-monitor.component.html',
-  styleUrls: ['./directory-services-monitor.component.css'],
+  styleUrls: ['./directory-services-monitor.component.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed, void', style({ height: '0px', minHeight: '0', display: 'none' })),

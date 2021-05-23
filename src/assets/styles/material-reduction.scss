@@ -6,12 +6,12 @@ body {
 
 @font-face {
   font-family: 'IBM Plex Sans';
-  src: url("assets/fonts/IBM_Plex_Sans/IBMPlexSans-Regular.ttf") format("truetype");
+  src: url("../fonts/IBM_Plex_Sans/IBMPlexSans-Regular.ttf") format("truetype");
 }
 
 @font-face {
   font-family: Epilogue;
-  src: url("assets/fonts/Epilogue/Epilogue-VariableFont_wght.ttf") format("truetype");
+  src: url("../fonts/Epilogue/Epilogue-VariableFont_wght.ttf") format("truetype");
 }
 
 html {font-size: 87.5%;} /*14px*/
@@ -76,7 +76,7 @@ span.code{
 }
 
 /*
- * Variables 
+ * Variables
  * height 36px
  *
  * */
@@ -156,9 +156,9 @@ entity-table .mat-card > *{
 /* FreeNAS Specific */
 
 /* This element is part of entity-table.
- * It currently uses css to do artificially 
+ * It currently uses css to do artificially
  * put itselt inside the title bar.
- * This needs to be changed in the markup 
+ * This needs to be changed in the markup
  * instead of using this type of hack */
 #filter{
   position: static !important;
@@ -265,7 +265,7 @@ input.mat-input-element::placeholder {
 .form-element select{
   /*width: calc(100% - 24px) !important;*/
   width: 100% !important;
-  line-height: normal !important; 
+  line-height: normal !important;
   min-height: 33px;
 }
 
@@ -316,7 +316,7 @@ entity-form-list .list-action-block-wrapper .form-element select{
 }
 
 .form-element.form-combobox .mat-menu-trigger .mat-icon{
-  position: relative !important; 
+  position: relative !important;
   top: 7px !important;
 }
 
@@ -499,7 +499,7 @@ tooltip button i{
   opacity: 0.5;
 }
 
-.mat-card-actions .mat-button, 
+.mat-card-actions .mat-button,
 .mat-card-actions .mat-flat-button{
   background:var(--btn-default-bg) !important;
   background-color:var(--btn-default-bg) !important;
@@ -507,8 +507,8 @@ tooltip button i{
 }
 
 .mat-button, .mat-flat-button,
-button.mat-button.btn-default, 
-button.mat-button.mat-default, 
+button.mat-button.btn-default,
+button.mat-button.mat-default,
 .mat-card-actions button.mat-default, button.mat-default,
 button.mat-button.mat-accent.btn-default,
 button.mat-button[type="button"]:not(button.mat-primary) {
@@ -566,7 +566,7 @@ button.mat-menu-trigger.menu-toggle.mat-button{
 
 /* Nested Cards */
 .mat-card .form-card.mat-card{
-  box-shadow: unset; 
+  box-shadow: unset;
   border: none;
 }
 
@@ -649,20 +649,20 @@ tr.mat-header-row,
 }
 
 .ui-treetable tr,
-.mat-row, 
-.mat-header-row, 
-.mat-footer-row, 
-th.mat-header-cell, 
-td.mat-cell, 
+.mat-row,
+.mat-header-row,
+.mat-footer-row,
+th.mat-header-cell,
+td.mat-cell,
 td.mat-footer-cell{
   border-bottom-color: var(--lines) !important;
 }
 
-mat-row, 
-mat-header-row, 
-mat-footer-row, 
-th.mat-header-cell, 
-td.mat-cell, 
+mat-row,
+mat-header-row,
+mat-footer-row,
+th.mat-header-cell,
+td.mat-cell,
 td.mat-footer-cell{
   color: var(--fg2) !important;
   vertical-align: middle;
@@ -866,7 +866,7 @@ mat-card.mat-card .mat-list-base{
   list-style-type: none;
 }
 
-.ix-tree-node { 
+.ix-tree-node {
 }
 
 .ix-tree-node .ix-tree-node {

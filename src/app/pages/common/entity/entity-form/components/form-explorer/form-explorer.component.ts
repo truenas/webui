@@ -14,7 +14,7 @@ import { T } from '../../../../../../translate-marker';
   selector: 'form-explorer',
   templateUrl: './form-explorer.component.html',
   styleUrls: [
-    '../dynamic-field/dynamic-field.css',
+    '../dynamic-field/dynamic-field.scss',
     './form-explorer.component.scss',
   ],
 })

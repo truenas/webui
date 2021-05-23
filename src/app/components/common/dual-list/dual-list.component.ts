@@ -6,7 +6,7 @@ import { CdkDragDrop, CdkDragStart } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-dual-listbox',
-  styleUrls: ['./dual-list.component.css'],
+  styleUrls: ['./dual-list.component.scss'],
   templateUrl: 'dual-list.component.html',
 })
 export class DualListboxComponent implements OnInit {

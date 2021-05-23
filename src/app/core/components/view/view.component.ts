@@ -11,13 +11,11 @@ import { View } from 'app/core/classes/view';
 export const ViewComponentMetadata = {
   selector: 'view',
   templateUrl: './view.component.html',
-  styleUrls: ['./view.component.css'],
 };
 
 @Component({
   selector: 'view',
   templateUrl: './view.component.html',
-  styleUrls: ['./view.component.css'],
 })
 export class ViewComponent extends View {
   readonly componentName = ViewComponent;

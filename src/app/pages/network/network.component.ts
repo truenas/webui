@@ -36,7 +36,7 @@ import { StaticRouteFormComponent } from './forms/staticroute-form.component';
 @Component({
   selector: 'app-interfaces-list',
   templateUrl: './network.component.html',
-  styleUrls: ['./network.component.css'],
+  styleUrls: ['./network.component.scss'],
 })
 export class NetworkComponent extends ViewControllerComponent implements OnInit, OnDestroy {
   protected summayCall: 'network.general.summary' = 'network.general.summary';

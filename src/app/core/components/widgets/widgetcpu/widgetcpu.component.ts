@@ -31,7 +31,7 @@ import { T } from '../../../../translate-marker';
 @Component({
   selector: 'widget-cpu',
   templateUrl: './widgetcpu.component.html',
-  styleUrls: ['./widgetcpu.component.css'],
+  styleUrls: ['./widgetcpu.component.scss'],
 })
 export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
   @ViewChild('load', { static: true }) cpuLoad: ViewChartGaugeComponent;

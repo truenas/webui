@@ -30,7 +30,7 @@ import { Subject } from 'rxjs';
 
   </mat-card>
   `,
-  styleUrls: ['./preferences.component.css'],
+  styleUrls: ['./preferences.component.scss'],
 })
 export class PreferencesPage implements OnDestroy {
   /*

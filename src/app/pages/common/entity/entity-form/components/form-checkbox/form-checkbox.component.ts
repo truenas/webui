@@ -10,7 +10,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
 @Component({
   selector: 'form-checkbox',
   styleUrls:
-      ['form-checkbox.component.scss', '../dynamic-field/dynamic-field.css'],
+      ['form-checkbox.component.scss', '../dynamic-field/dynamic-field.scss'],
   templateUrl: './form-checkbox.component.html',
 })
 export class FormCheckboxComponent implements Field {

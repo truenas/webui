@@ -22,7 +22,7 @@ import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialo
 @Component({
   selector: 'app-pod-shell',
   templateUrl: './pod-shell.component.html',
-  styleUrls: ['./pod-shell.component.css'],
+  styleUrls: ['./pod-shell.component.scss'],
   providers: [ShellService],
   encapsulation: ViewEncapsulation.None,
 })

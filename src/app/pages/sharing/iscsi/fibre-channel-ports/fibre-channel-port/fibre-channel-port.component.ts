@@ -13,7 +13,7 @@ import { T } from 'app/translate-marker';
 @Component({
   selector: 'app-iscsi-fibre-channel-port',
   templateUrl: './fibre-channel-port.component.html',
-  styleUrls: ['./fibre-channel-port.component.css', '../../../../common/entity/entity-form/entity-form.component.scss'],
+  styleUrls: ['./fibre-channel-port.component.scss', '../../../../common/entity/entity-form/entity-form.component.scss'],
   providers: [IscsiService],
 })
 export class FibreChannelPortComponent implements OnInit {

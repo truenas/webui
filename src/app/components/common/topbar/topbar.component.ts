@@ -40,7 +40,7 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'topbar',
-  styleUrls: ['./topbar.component.css'],
+  styleUrls: ['./topbar.component.scss'],
   templateUrl: './topbar.component.html',
 })
 export class TopbarComponent extends ViewControllerComponent implements OnInit, OnDestroy {

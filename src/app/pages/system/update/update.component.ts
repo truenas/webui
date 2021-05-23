@@ -23,7 +23,7 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'app-update',
-  styleUrls: ['update.component.css'],
+  styleUrls: ['update.component.scss'],
   templateUrl: './update.component.html',
 })
 export class UpdateComponent implements OnInit, OnDestroy {

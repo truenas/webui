@@ -102,7 +102,7 @@ export interface VolumeData {
 @Component({
   selector: 'widget-pool',
   templateUrl: './widgetpool.component.html',
-  styleUrls: ['./widgetpool.component.css'],
+  styleUrls: ['./widgetpool.component.scss'],
 })
 export class WidgetPoolComponent extends WidgetComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() poolState: Pool;

@@ -13,7 +13,7 @@ export interface CardWidgetConf {
 @Component({
   selector: 'card-widget',
   templateUrl: './card-widget.component.html',
-  styleUrls: ['./card-widget.component.css'],
+  styleUrls: ['./card-widget.component.scss'],
 })
 export class CardWidgetComponent {
   @Input('conf') widgetConf: CardWidgetComponent;
