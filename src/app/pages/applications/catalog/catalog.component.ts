@@ -164,9 +164,6 @@ export class CatalogComponent implements OnInit {
       case EmptyType.no_search_results:
         title = helptext.catalogMessage.no_search_result;
         break;
-      case EmptyType.errors:
-        title = helptext.catalogMessage.has_api_error;
-        break;
     }
 
     this.emptyPageConf.type = type;
