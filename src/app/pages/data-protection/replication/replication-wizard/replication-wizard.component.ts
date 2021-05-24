@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -1027,7 +1028,7 @@ export class ReplicationWizardComponent {
     }
   }
 
-  parsePickerTime(picker: string): { minute: string; hour: string; dom: string; month: string; dow: string } {
+  parsePickerTime(picker: string): Schedule {
     const spl = picker.split(' ');
     return {
       minute: spl[0],
