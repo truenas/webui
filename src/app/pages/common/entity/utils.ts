@@ -325,6 +325,8 @@ export class EntityUtils {
       }
     } else if (schemaConfig.schema.type == 'boolean') {
       fieldConfig['type'] = 'checkbox';
+    } else if (schemaConfig.schema.type == 'ipaddr') {
+      fieldConfig['type'] = 'ipwithnetmask';
     } else if (schemaConfig.schema.type == 'hostpath') {
       fieldConfig['type'] = 'explorer';
       fieldConfig['explorerType'] = 'file';
