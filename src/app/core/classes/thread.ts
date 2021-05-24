@@ -133,7 +133,7 @@ export class Thread extends iXAbstractObject {
     this._onmessage = fn;
   } */
 
-  sort = function (data: any[], compareFunction?: any) { // Just like JS sort but now we can run in a worker
+  sort = function (data: any[], compareFunction?: any): any[] { // Just like JS sort but now we can run in a worker
     const result = compareFunction ? data.sort(compareFunction) : data.sort();
     return result;
   };
