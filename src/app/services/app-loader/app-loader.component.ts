@@ -11,7 +11,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 @Component({
   selector: 'app-app-loader',
   templateUrl: './app-loader.component.html',
-  styleUrls: ['./app-loader.component.css'],
+  styleUrls: ['./app-loader.component.scss'],
 })
 export class AppLoaderComponent implements OnDestroy {
   title: string;

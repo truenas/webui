@@ -13,7 +13,7 @@ import { ModalService } from '../../../../../services/modal.service';
 @Component({
   selector: 'app-cron-job-add',
   templateUrl: './cron-form.component.html',
-  styleUrls: ['cron-form.component.css'],
+  styleUrls: ['cron-form.component.scss'],
   providers: [UserService],
 })
 export class CronFormComponent {
@@ -137,7 +137,7 @@ export class CronFormComponent {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     const schedule = data['schedule'];
     data['cron_picker'] = `${schedule.minute} ${schedule.hour} ${schedule.dom} ${schedule.month} ${schedule.dow}`;
     return data;

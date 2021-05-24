@@ -3,10 +3,10 @@ import {
 } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
+import { CoreEvent } from 'app/interfaces/events';
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 
 import filesize from 'filesize';
@@ -102,7 +102,7 @@ export interface VolumeData {
 @Component({
   selector: 'widget-pool',
   templateUrl: './widgetpool.component.html',
-  styleUrls: ['./widgetpool.component.css'],
+  styleUrls: ['./widgetpool.component.scss'],
 })
 export class WidgetPoolComponent extends WidgetComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() poolState: Pool;
@@ -121,26 +121,25 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   // NAVIGATION
   currentSlide = '0';
 
-  get currentSlideTopology() {
+  get currentSlideTopology(): string {
     return this.path[parseInt(this.currentSlide)].topology;
   }
 
-  get currentSlideIndex() {
+  get currentSlideIndex(): number | string {
     return this.path.length > 0 ? parseInt(this.currentSlide) : this.title;
   }
 
-  get currentSlideName() {
+  get currentSlideName(): string {
     return this.path[parseInt(this.currentSlide)].name;
   }
 
-  get previousSlide() {
+  get previousSlide(): number {
     return this.currentSlide == '0' ? 0 : parseInt(this.currentSlide) - 1;
   }
 
   path: Slide[] = [];
 
-  private _totalDisks = '';
-  get totalDisks() {
+  get totalDisks(): string {
     if (this.poolState && this.poolState.topology) {
       let total = 0;
       this.poolState.topology.data.forEach((item) => {
@@ -155,8 +154,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     return '';
   }
 
-  private _unhealthyDisks: string[];
-  get unhealthyDisks() {
+  get unhealthyDisks(): { totalErrors: number | string; disks: any[] } {
     if (this.poolState && this.poolState.topology) {
       const unhealthy: any[] = []; // Disks with errors
       this.poolState.topology.data.forEach((item: any) => {
@@ -227,8 +225,8 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
   currentMultipathDetails: any;
   currentDiskDetails: Disk;
-  get currentDiskDetailsKeys() {
-    return this.currentDiskDetails ? Object.keys(this.currentDiskDetails) : [];
+  get currentDiskDetailsKeys(): (keyof Disk)[] {
+    return this.currentDiskDetails ? Object.keys(this.currentDiskDetails) as (keyof Disk)[] : [];
   }
 
   constructor(public router: Router, public translate: TranslateService, private cdr: ChangeDetectorRef) {
@@ -236,17 +234,17 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     this.configurable = false;
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.volumeData) {
       this.getAvailableSpace();
     }
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.templates = {
       overview: this.overview,
       data: this.data,
@@ -297,7 +295,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     this.checkVolumeHealth();
   }
 
-  getAvailableSpace() {
+  getAvailableSpace(): number {
     if (!this.volumeData || typeof this.volumeData.avail == undefined) {
       this.displayValue = 'Unknown';
       return;
@@ -352,7 +350,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     this.checkVolumeHealth();
   }
 
-  getDiskDetails(key: string, value: string, isMultipath?: boolean) {
+  getDiskDetails(key: string, value: string, isMultipath?: boolean): void {
     if (isMultipath && key == 'name') {
       const v = 'multipath/' + this.checkMultipathLabel(value);
       this.core.emit({ name: 'MultipathRequest', data: [[[key, '=', v]]] });
@@ -364,7 +362,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     }
   }
 
-  checkMultipathLabel(name: string) {
+  checkMultipathLabel(name: string): string {
     if (name == null) {
       name = 'N/A';
     }
@@ -378,7 +376,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     return diskName;
   }
 
-  checkMultipath(name: string) {
+  checkMultipath(name: string): boolean {
     if (name) {
       const truth = name.startsWith('multipath/');
       return truth;
@@ -386,7 +384,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     return false;
   }
 
-  trimMultipath(disk: string) {
+  trimMultipath(disk: string): { isMultipath?: boolean; name: string; fullName?: string } {
     if (!disk || disk == null) {
       return { name: disk };
     }
@@ -405,7 +403,14 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     };
   }
 
-  updateSlide(name: string, verified: boolean, slideIndex: number, dataIndex?: number, topology?: PoolTopologyCategory, vdev?: any) {
+  updateSlide(
+    name: string,
+    verified: boolean,
+    slideIndex: number,
+    dataIndex?: number,
+    topology?: PoolTopologyCategory,
+    vdev?: any,
+  ): void {
     if (name !== 'overview' && !verified) { return; }
     const dataSource = vdev || { children: this.poolState.topology[topology] };
     const direction = parseInt(this.currentSlide) < slideIndex ? 'forward' : 'back';
@@ -428,7 +433,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     this.updateSlidePosition(slideIndex);
   }
 
-  updateSlidePosition(value: any) {
+  updateSlidePosition(value: any): void {
     if (value.toString() == this.currentSlide) { return; }
 
     const carousel = this.carouselParent.nativeElement.querySelector('.carousel');
@@ -450,7 +455,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     this.title = this.currentSlide == '0' ? 'Pool' : this.poolState.name;
   }
 
-  checkVolumeHealth() {
+  checkVolumeHealth(): void {
     switch (this.poolState.status as string) {
       // TODO: Unexpected statuses, possibly introduced on frontend
       case 'HEALTHY':
@@ -473,7 +478,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     }
   }
 
-  updateVolumeHealth(symptom: string, isCritical?: boolean, condition?: string) {
+  updateVolumeHealth(symptom: string, isCritical?: boolean, condition?: string): void {
     if (isCritical) {
       this.poolHealth.errors.push(symptom);
     } else {
@@ -504,12 +509,12 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     }
   }
 
-  nextPath(obj: any, index: number|string) {
+  nextPath(obj: any, index: number|string): any {
     if (typeof index == 'string') { index = parseInt(index); }
     return obj[index];
   }
 
-  percentAsNumber(value: string) {
+  percentAsNumber(value: string): number {
     const spl = value.split('%');
     return parseInt(spl[0]);
   }

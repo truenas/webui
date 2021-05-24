@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 import { DialogService, WebSocketService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -61,11 +62,11 @@ export class StorageListComponent {
     });
   }
 
-  afterInit(entityTable: any) {
+  afterInit(entityTable: any): void {
     this.entityList = entityTable;
   }
 
-  dataHandler(entityList: any) {
+  dataHandler(entityList: any): void {
     const data = entityList.rows;
     const rows = [];
 
@@ -87,7 +88,7 @@ export class StorageListComponent {
     }
   }
 
-  doDelete(item: any) {
+  doDelete(item: any): void {
     this.ws.call('jail.query', [
       [
         ['host_hostuuid', '=', this.jailId],
@@ -117,16 +118,16 @@ export class StorageListComponent {
     });
   }
 
-  getAddActions() {
+  getAddActions(): EntityTableAction[] {
     return [{
       label: T('Go Back to Jails'),
       onClick: () => {
         this.router.navigate(new Array('').concat(['jails']));
       },
-    }];
+    }] as EntityTableAction[];
   }
 
-  doAdd() {
+  doAdd(): void {
     this.ws.call('jail.query', [
       [
         ['host_hostuuid', '=', this.jailId],
@@ -140,7 +141,7 @@ export class StorageListComponent {
     });
   }
 
-  getActions(row: any) {
+  getActions(row: any): EntityTableAction[] {
     const rowName = row.source.replace('/mnt/', '');
     const poolName = rowName.split('/')[0];
     let optionDisabled;
@@ -172,6 +173,6 @@ export class StorageListComponent {
         label: T('Delete'),
         onClick: (rowinner: any) => { this.doDelete(rowinner); },
       },
-    ];
+    ] as EntityTableAction[];
   }
 }

@@ -35,7 +35,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
   private dialogRef: any;
   hideCancel = true;
   summary: any = {};
-  summary_title = 'Chart Release Summary';
+  summaryTitle = 'Chart Release Summary';
   private entityWizard: any;
   private destroy$ = new Subject();
   // private isLinear = true;
@@ -368,7 +368,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
     });
   }
 
-  parseSchema(catalogApp: any) {
+  parseSchema(catalogApp: any): void {
     try {
       const gpuConfiguration = catalogApp.schema.questions.find((question: any) => question.variable == 'gpuConfiguration');
 
@@ -382,7 +382,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
         this.wizardConfig.push(gpuWizardConfig);
       }
     } catch (error) {
-      return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
+      this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
   }
 
@@ -402,7 +402,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
     entity.setDisabled(fieldName, show, show);
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     let envVars = [];
     if (data.containerEnvironmentVariables && data.containerEnvironmentVariables.length > 0 && data.containerEnvironmentVariables[0].name) {
       envVars = data.containerEnvironmentVariables;

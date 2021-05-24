@@ -13,7 +13,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 @Component({
   selector: 'app-system-kmip',
   templateUrl: './kmip.component.html',
-  styleUrls: ['./kmip.component.css'],
+  styleUrls: ['./kmip.component.scss'],
 })
 export class KmipComponent {
   protected queryCall: 'kmip.config' = 'kmip.config';

@@ -1,28 +1,37 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+
+import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+
 import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
 import vol_helptext from 'app/helptext/storage/volumes/volume-list';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
-import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import {
+  AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
+} from 'app/services';
 import { T } from 'app/translate-marker';
-import { ProductType } from '../../../../enums/product-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
+import { ModalService } from 'app/services/modal.service';
+import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @Component({
   selector: 'app-smb-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class SMBListComponent implements InputTableConf {
+export class SMBListComponent implements InputTableConf, OnDestroy {
   title = 'Samba';
   queryCall: 'sharing.smb.query' = 'sharing.smb.query';
+  updateCall: 'sharing.smb.update' = 'sharing.smb.update';
   wsDelete: 'sharing.smb.delete' = 'sharing.smb.delete';
   route_add: string[] = ['sharing', 'smb', 'add'];
   protected route_add_tooltip = 'Add Windows (SMB) Share';
-  route_edit: string[] = ['sharing', 'smb', 'edit'];
   protected route_delete: string[] = ['sharing', 'smb', 'delete'];
   private entityList: EntityTableComponent;
+  private refreshTable: Subscription;
   productType = window.localStorage.getItem('product_type') as ProductType;
   emptyTableConfigMessages = {
     first_use: {
@@ -33,14 +42,14 @@ export class SMBListComponent implements InputTableConf {
       title: T('No SMB Shares'),
       message: T('The system could not retrieve any SMB Shares from the database. Please click the button below to add an SMB Share.'),
     },
-    buttonText: 'Add SMB Share',
+    buttonText: T('Add SMB Share'),
   };
 
   columns: any[] = [
     { name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
     { name: helptext_sharing_smb.column_path, prop: 'path' },
     { name: helptext_sharing_smb.column_comment, prop: 'comment' },
-    { name: helptext_sharing_smb.column_enabled, prop: 'enabled' },
+    { name: helptext_sharing_smb.column_enabled, prop: 'enabled', checkbox: true },
   ];
   rowIdentifier = 'cifs_name';
   config: any = {
@@ -62,15 +71,30 @@ export class SMBListComponent implements InputTableConf {
   constructor(
     private ws: WebSocketService,
     private router: Router,
-    private dialogService: DialogService,
+    private dialog: DialogService,
     private translate: TranslateService,
+    private modalService: ModalService,
+    private loader: AppLoaderService,
+    private sysGeneralService: SystemGeneralService,
   ) {}
 
   afterInit(entityList: any): void {
     this.entityList = entityList;
+
+    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
-  getActions(row: SmbShare): any[] {
+  doAdd(id?: number): void {
+    this.modalService.open('slide-in-form', new SMBFormComponent(this.router, this.ws, this.dialog, this.loader, this.sysGeneralService, this.modalService), id);
+  }
+
+  doEdit(id: number): void {
+    this.doAdd(id);
+  }
+
+  getActions(row: SmbShare): EntityTableAction[] {
     const rowName = row.path.replace('/mnt/', '');
     const poolName = rowName.split('/')[0];
     let optionDisabled;
@@ -80,7 +104,7 @@ export class SMBListComponent implements InputTableConf {
         id: row.name,
         icon: 'edit',
         name: 'edit',
-        label: 'Edit',
+        label: T('Edit'),
         onClick: (row: any) => this.entityList.doEdit(row.id),
       },
       {
@@ -131,7 +155,7 @@ export class SMBListComponent implements InputTableConf {
                 );
               }
             }, (err) => {
-              this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
+              this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
                 err.reason, err.trace.formatted);
             },
           );
@@ -141,10 +165,10 @@ export class SMBListComponent implements InputTableConf {
         id: row.name,
         icon: 'delete',
         name: 'delete',
-        label: 'Delete',
+        label: T('Delete'),
         onClick: (row: any) => this.entityList.doDelete(row),
       },
-    ];
+    ] as EntityTableAction[];
     // Temporary: Drop from menu if SCALE
     if (this.productType.includes(ProductType.Scale)) {
       const shareAclRow = rows.find((row: any) => row.name === 'share_acl');
@@ -154,11 +178,27 @@ export class SMBListComponent implements InputTableConf {
   }
 
   lockedPathDialog(path: string): void {
-    this.translate.get(helptext_sharing_smb.action_edit_acl_dialog.message1).subscribe((msg1) => {
-      this.translate.get(helptext_sharing_smb.action_edit_acl_dialog.message2).subscribe((msg2) => {
-        this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
-          `${msg1} <i>${path}</i> ${msg2}`);
-      });
-    });
+    const thePath = this.translate.instant(helptext_sharing_smb.action_edit_acl_dialog.message1);
+    const isInALockedDataset = this.translate.instant(helptext_sharing_smb.action_edit_acl_dialog.message2);
+    this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, `${thePath} <i>${path}</i> ${isInALockedDataset}`);
+  }
+
+  onCheckboxChange(row: SmbShare): void {
+    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).subscribe(
+      (res) => {
+        row.enabled = res.enabled;
+        if (!res) {
+          row.enabled = !row.enabled;
+        }
+      },
+      (err) => {
+        row.enabled = !row.enabled;
+        new EntityUtils().handleWSError(this, err, this.dialog);
+      },
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.refreshTable?.unsubscribe();
   }
 }

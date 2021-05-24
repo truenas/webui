@@ -7,7 +7,7 @@ import { CdkDrag } from '@angular/cdk/drag-drop';
 @Component({
   selector: 'tooltip',
   templateUrl: 'tooltip.component.html',
-  styleUrls: ['tooltip.component.css'],
+  styleUrls: ['tooltip.component.scss'],
 })
 export class TooltipComponent {
   @Input('message') message: string;
@@ -27,7 +27,7 @@ export class TooltipComponent {
 
   constructor(public translate: TranslateService) {}
 
-  showTooltip(isTooltipShown: boolean) {
+  showTooltip(isTooltipShown: boolean): void {
     this.isShowTooltip = isTooltipShown;
     const formParent = this.findParent();
     const posRight = this.tooltip.nativeElement.offsetLeft + this.tooltip.nativeElement.offsetWidth;
@@ -53,7 +53,7 @@ export class TooltipComponent {
     }
   }
 
-  toggleVis() {
+  toggleVis(): void {
     /* Resets 'isShowTooltip' for any tooltip closed by removing the class (below)
      so it will reopen on first click */
     const el = this.tooltiptext.nativeElement.classList;
@@ -82,7 +82,7 @@ export class TooltipComponent {
     }
   }
 
-  findParent() {
+  findParent(): any {
     const formParent = this.tooltip.nativeElement.offsetParent;
     let card = formParent;
     if (this.tooltip.nativeElement.closest('mat-dialog-container')) {
@@ -108,7 +108,7 @@ export class TooltipComponent {
     return card;
   }
 
-  hideTail() {
+  hideTail(): void {
     this.isMoved = true;
   }
 }

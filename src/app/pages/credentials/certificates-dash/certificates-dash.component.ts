@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Option } from 'app/interfaces/option.interface';
+import { AppTableAction } from 'app/pages/common/entity/table/table.component';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -190,11 +191,10 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
           },
         },
       },
-
     ];
   }
 
-  certificatesDataSourceHelper(res: any[]) {
+  certificatesDataSourceHelper(res: any[]): any[] {
     res.forEach((certificate) => {
       if (_.isObject(certificate.issuer)) {
         certificate.issuer = certificate.issuer.name;
@@ -203,11 +203,11 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
     return res.filter((item) => item.certificate !== null);
   }
 
-  csrDataSourceHelper(res: any[]) {
+  csrDataSourceHelper(res: any[]): any[] {
     return res.filter((item) => item.CSR !== null);
   }
 
-  caDataSourceHelper(res: any[]) {
+  caDataSourceHelper(res: any[]): any[] {
     res.forEach((row) => {
       if (_.isObject(row.issuer)) {
         row.issuer = row.issuer.name;
@@ -232,7 +232,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
     this.acmeDNSComponent = new AcmednsFormComponent(this.ws, this.loader, this.dialogService, this.modalService);
   }
 
-  certificateActions() {
+  certificateActions(): AppTableAction[] {
     this.downloadActions = [{
       icon: 'save_alt',
       name: 'download',
@@ -277,7 +277,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
     return this.downloadActions;
   }
 
-  csrActions() {
+  csrActions(): AppTableAction[] {
     const csrRowActions = [...this.downloadActions];
     const acmeAction = {
       icon: 'build',
@@ -292,7 +292,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
     return csrRowActions;
   }
 
-  caActions() {
+  caActions(): AppTableAction[] {
     const caRowActions = [...this.downloadActions];
     const acmeAction = {
       icon: 'beenhere',
@@ -308,7 +308,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
     return caRowActions;
   }
 
-  openForm(component: any, id: any) {
+  openForm(component: any, id: any): void {
     setTimeout(() => {
       this.modalService.open('slide-in-form', component, id);
     }, 200);

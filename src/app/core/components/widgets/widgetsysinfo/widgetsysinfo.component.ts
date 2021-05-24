@@ -3,12 +3,13 @@ import {
 } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
+import { CoreEvent } from 'app/interfaces/events';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { WebSocketService, SystemGeneralService } from '../../../../services';
 import { LocaleService } from 'app/services/locale.service';
@@ -27,7 +28,7 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
 @Component({
   selector: 'widget-sysinfo',
   templateUrl: './widgetsysinfo.component.html',
-  styleUrls: ['./widgetsysinfo.component.css'],
+  styleUrls: ['./widgetsysinfo.component.scss'],
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy, AfterViewInit {
   // HA
@@ -87,14 +88,16 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
       this.retroLogo = evt.data.retroLogo ? 1 : 0;
     });
 
-    this.ws.call('update.get_auto_download').subscribe((res) => {
-      if (res == true) {
-        this.core.register({ observerClass: this, eventName: 'UpdateChecked' }).subscribe((evt: CoreEvent) => {
-          if (evt.data.status == 'AVAILABLE') {
-            this.updateAvailable = true;
-          }
-        });
+    this.ws.call('update.get_auto_download').subscribe((isAutoDownloadOn) => {
+      if (!isAutoDownloadOn) {
+        return;
       }
+
+      this.core.register({ observerClass: this, eventName: 'UpdateChecked' }).subscribe((evt: CoreEvent) => {
+        if (evt.data.status == 'AVAILABLE') {
+          this.updateAvailable = true;
+        }
+      });
     });
 
     if (this.isHA && this.isPassive) {
@@ -108,8 +111,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
         this.ha_status = evt.data.status;
       });
     } else {
-      this.ws.call('system.info').subscribe((res) => {
-        const evt = { name: 'SysInfo', data: res };
+      this.ws.call('system.info').subscribe((systemInfo) => {
+        const evt = { name: 'SysInfo', data: systemInfo };
         this.processSysInfo(evt);
       });
 
@@ -118,8 +121,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
       this.core.emit({ name: 'HAStatusRequest' });
     }
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-      this.ws.call('failover.licensed').subscribe((res) => {
-        if (res) {
+      this.ws.call('failover.licensed').subscribe((hasFailover) => {
+        if (hasFailover) {
           this.updateMethod = 'failover.upgrade';
           this.is_ha = true;
         }
@@ -145,7 +148,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     this.core.unregister({ observerClass: this });
   }
 
-  get themeAccentColors() {
+  get themeAccentColors(): string[] {
     const theme = this.themeService.currentTheme();
     this._themeAccentColors = [];
     for (const color in theme.accentColors) {
@@ -229,7 +232,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     return result;
   }
 
-  setProductImage(data: any): void {
+  setProductImage(data: SystemInfo): void {
     if (this.manufacturer !== 'ixsystems') return;
 
     if (data.system_product.includes('MINI')) {
@@ -241,7 +244,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     }
   }
 
-  setTrueNASImage(sys_product: any): void {
+  setTrueNASImage(sys_product: string): void {
     this.product_enclosure = 'rackmount';
 
     if (sys_product.includes('X10')) {
@@ -285,7 +288,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     }
   }
 
-  setMiniImage(sys_product: any): void {
+  setMiniImage(sys_product: string): void {
     this.product_enclosure = 'tower';
 
     if (sys_product && sys_product.includes('CERTIFIED')) {

@@ -43,7 +43,7 @@ export class SmartResultsComponent {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     return data.tests || [];
   }
 }

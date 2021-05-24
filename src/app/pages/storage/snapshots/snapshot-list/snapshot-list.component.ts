@@ -4,6 +4,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { WebSocketService, StorageService, DialogService } from 'app/services';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { Subscription } from 'rxjs';
@@ -161,7 +162,7 @@ export class SnapshotListComponent {
     }
   }
 
-  resourceTransformIncomingRestData(rows: any[]) {
+  resourceTransformIncomingRestData(rows: any[]): any[] {
     /// /
     rows.forEach((row) => {
       if (row.properties) {
@@ -174,7 +175,7 @@ export class SnapshotListComponent {
     return rows;
   }
 
-  rowValue(row: any, attr: any) {
+  rowValue(row: any, attr: any): any {
     switch (attr) {
       case 'used':
         return (<any>window).filesize(row[attr], { standard: 'iec' });
@@ -185,7 +186,7 @@ export class SnapshotListComponent {
     }
   }
 
-  getActions() {
+  getActions(): EntityTableAction[] {
     return [
       {
         id: 'delete',
@@ -209,18 +210,18 @@ export class SnapshotListComponent {
         label: helptext.label_rollback,
         onClick: (snapshot: any) => this.doRollback(snapshot),
       },
-    ];
+    ] as EntityTableAction[];
   }
 
-  afterInit(entityList: any) {
+  afterInit(entityList: any): void {
     this.entityList = entityList;
   }
 
-  preInit(entityList: any) {
+  preInit(entityList: any): void {
     this.sub = this._route.params.subscribe((params) => { });
   }
 
-  callGetFunction(entityList: any) {
+  callGetFunction(entityList: any): void {
     this.ws.call('systemdataset.config').toPromise().then((res) => {
       if (res && res.basename && res.basename !== '') {
         this.queryCallOption[0][2] = (['name', '!^', res.basename]);
@@ -243,7 +244,7 @@ export class SnapshotListComponent {
     });
   }
 
-  wsMultiDeleteParams(selected: any[]) {
+  wsMultiDeleteParams(selected: any[]): any[] {
     const params: any[] = ['zfs.snapshot.delete'];
 
     const snapshots = selected.map((item) => [item.dataset + '@' + item.snapshot]);
@@ -253,7 +254,7 @@ export class SnapshotListComponent {
     return params;
   }
 
-  doDelete(item: any) {
+  doDelete(item: any): void {
     const deleteMsg = T('Delete snapshot ') + item.name + '?';
     this.entityList.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).subscribe((res: boolean) => {
       if (res) {
@@ -273,7 +274,7 @@ export class SnapshotListComponent {
     });
   }
 
-  doMultiDelete(selected: any) {
+  doMultiDelete(selected: any): void {
     const multiDeleteMsg = this.entityList.getMultiDeleteMessage(selected);
     this.dialogService.confirm('Delete', multiDeleteMsg, false, T('Delete')).subscribe((res: boolean) => {
       if (res) {
@@ -282,7 +283,7 @@ export class SnapshotListComponent {
     });
   }
 
-  startMultiDeleteProgress(selected: any) {
+  startMultiDeleteProgress(selected: any): void {
     const params = this.wsMultiDeleteParams(selected);
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Deleting Snapshots') }, disableClose: true });
     dialogRef.componentInstance.setCall(this.wsMultiDelete, params);
@@ -330,7 +331,7 @@ export class SnapshotListComponent {
     });
   }
 
-  doRollback(item: any) {
+  doRollback(item: any): void {
     this.entityList.loader.open();
     this.entityList.loaderOpen = true;
     this.ws.call(this.queryCall, [[['id', '=', item.name]]]).subscribe((res) => {
@@ -349,7 +350,7 @@ export class SnapshotListComponent {
     });
   }
 
-  rollbackSubmit(entityDialog: EntityDialogComponent) {
+  rollbackSubmit(entityDialog: EntityDialogComponent): void {
     const parent = entityDialog.parent;
     const item = entityDialog.parent.rollback;
     const recursive = entityDialog.formValue.recursive;
@@ -376,7 +377,7 @@ export class SnapshotListComponent {
       );
   }
 
-  toggleExtraCols() {
+  toggleExtraCols(): void {
     let title; let message; let
       button;
     if (this.snapshotXtraCols) {

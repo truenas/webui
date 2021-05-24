@@ -24,7 +24,7 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
 @Component({
   selector: 'task-manager',
   templateUrl: './task-manager.component.html',
-  styleUrls: ['./task-manager.component.css'],
+  styleUrls: ['./task-manager.component.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed, void', style({ height: '0px', minHeight: '0', display: 'none' })),
@@ -59,8 +59,8 @@ export class TaskManagerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.sysGeneralService.getSysInfo().subscribe((res) => {
-      this.timeZone = res.timezone;
+    this.sysGeneralService.getSysInfo().subscribe((systemInfo) => {
+      this.timeZone = systemInfo.timezone;
     });
     this.ws.call('core.get_jobs', [[], { order_by: ['-id'], limit: 50 }]).subscribe(
       (res) => {

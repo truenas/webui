@@ -1,0 +1,19 @@
+.description-panel div {
+  display: flex;
+  flex-direction: row-reverse;
+  width: 100%;
+}
+
+.actions-row {
+  align-items: center;
+  border-top: 1px solid grey;
+  display: flex;
+  flex-direction: row;
+  height: 10%;
+  justify-content: center;
+  width: 100%;
+
+  a {
+    height: min-content;
+  }
+}

@@ -9,7 +9,7 @@ import { ComponentPortal } from '@angular/cdk/portal';
   template: `<div class="tooltip-container">
               <div class="html-tooltip" [innerHTML]="html"></div>
             </div>`,
-  styleUrls: ['./html-tooltip.directive.css'],
+  styleUrls: ['./html-tooltip.directive.scss'],
 })
 
 export class HtmlTooltipComponent {

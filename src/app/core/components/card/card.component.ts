@@ -17,13 +17,11 @@ export interface CardData {
 export const CardComponentMetadata = {
   selector: '[card]',
   templateUrl: './card.component.html',
-  styleUrls: ['./card.component.css'],
 };
 
 @Component({
   selector: '[card]',
   templateUrl: './card.component.html',
-  styleUrls: ['./card.component.css'],
 })
 export class CardComponent extends ViewControllerComponent {
   readonly componentName = CardComponent;

@@ -5,8 +5,10 @@ import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, Router } from '@angular/router';
-import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { LayoutService } from 'app/core/services/layout.service';
+import { CoreEvent } from 'app/interfaces/events';
+import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { Subscription } from 'rxjs';
 import { ProductType } from '../../../../enums/product-type.enum';
 import * as domHelper from '../../../../helpers/dom.helper';
@@ -21,7 +23,7 @@ import { LocaleService } from 'app/services/locale.service';
 @Component({
   selector: 'app-admin-layout',
   templateUrl: './admin-layout.component.html',
-  styleUrls: ['./admin-layout.component.css'],
+  styleUrls: ['./admin-layout.component.scss'],
 })
 export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   private isMobile: boolean;
@@ -108,7 +110,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     core.register({
       observerClass: this,
       eventName: 'SysInfo',
-    }).subscribe((evt: CoreEvent) => {
+    }).subscribe((evt: SysInfoEvent) => {
       this.hostname = evt.data.hostname;
     });
 

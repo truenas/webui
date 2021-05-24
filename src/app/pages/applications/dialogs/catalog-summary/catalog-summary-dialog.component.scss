@@ -1,100 +1,102 @@
 .ix-blue catalog-summary-dialog div.mat-dialog-content {
-    overflow: auto !important;
+  overflow: auto !important;
 }
 
 catalog-summary-dialog {
-    font-size: 14px;
+  font-size: 14px;
 
-    .status-filter {
-        display: flex;
-        align-items: center;
+  .status-filter {
+    align-items: center;
+    display: flex;
 
         
-        .mat-form-field {
-            width: unset!important;
-            margin: 0 0 0 10px;
+    .mat-form-field {
+      margin: 0 0 0 10px;
+      width: unset !important;
 
-            .mat-form-field-infix {
-                width: 80px;
-            }
-        }
+      .mat-form-field-infix {
+        width: 80px;
+      }
     }
+  }
 
-    .title-div {
-        width: 100%;
-        margin: 10px 0;
-    }
+  .title-div {
+    margin: 10px 0;
+    width: 100%;
+  }
 
-    .catalog-name {
-        font-size: 20px;
-    }
+  .catalog-name {
+    font-size: 20px;
+  }
 
-    .status {
-        padding: 3px;
-        opacity: 0.75;
-    }
+  .status {
+    opacity: 0.75;
+    padding: 3px;
+  }
 
-    .other {
-        border: 1px solid var(--fg1);
-    }
+  .other {
+    border: 1px solid var(--fg1);
+  }
 
-    .active {
-        border: 1px solid var(--green);
-        color: var(--green);
-    }
+  .active {
+    border: 1px solid var(--green);
+    color: var(--green);
+  }
 
-    .description {
-        opacity: 0.5;
-        p {
-            margin-bottom: 0;
-        }
-    }
+  .description {
+    opacity: 0.5;
 
-    .categories {
-        margin-top: 5px;
+    p {
+      margin-bottom: 0;
     }
+  }
 
-    .version-number{
-        opacity: 0.5;
-    }
+  .categories {
+    margin-top: 5px;
+  }
 
-    .value {
-        margin-left: 12px;
-        opacity: 0.5;
-        display: inline-block;
-    }
+  .version-number {
+    opacity: 0.5;
+  }
 
-    .resource {
-        width: 100%;
-    }
+  .value {
+    display: inline-block;
+    margin-left: 12px;
+    opacity: 0.5;
+  }
+
+  .resource {
+    width: 100%;
+  }
     
-    .version-list {
-        width: 100%;
-        margin-top: 10px;
-    }
+  .version-list {
+    margin-top: 10px;
+    width: 100%;
+  }
 
-    .row-dark {
-        background: rgba(0, 0, 0, 0.2);
-    }
+  .row-dark {
+    background: rgba(0, 0, 0, 0.2);
+  }
 
-    .row-light {
-        background: rgba(0, 0, 0, 0.1);
-    }
+  .row-light {
+    background: rgba(0, 0, 0, 0.1);
+  }
     
-    .detail-row {
-        padding: 5px 10px;
-        div {
-            align-items: center;
-        }
+  .detail-row {
+    padding: 5px 10px;
 
-        .info-col {
-            height: 20px;
-        }        
+    div {
+      align-items: center;
     }
+
+    .info-col {
+      height: 20px;
+    }        
+  }
     
-    .button-bar {
-        margin-bottom: -8px;
-    }
+  .button-bar {
+    margin-bottom: -8px;
+  }
 }
 
 

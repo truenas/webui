@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { Observable } from 'rxjs';
 import helptext from '../../../../helptext/services/components/service-ftp';
 import global_helptext from '../../../../helptext/global-helptext';
 import * as _ from 'lodash';
@@ -391,7 +392,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
 
   private ssltls_certificate: any;
 
-  isCustActionVisible(actionId: string) {
+  isCustActionVisible(actionId: string): boolean {
     if (actionId == 'advanced_mode' && this.isBasicMode == false) {
       return false;
     } if (actionId == 'basic_mode' && this.isBasicMode == true) {
@@ -406,7 +407,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     protected dialog: DialogService, protected storageService: StorageService,
     protected systemGeneralService: SystemGeneralService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.systemGeneralService.getCertificates().subscribe((res: any[]) => {
       if (res.length > 0) {
         this.fieldSets.config('ssltls_certificate').options = res.map((cert) => ({ label: cert.name, value: cert.id }));
@@ -414,7 +415,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     });
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
     entityEdit.submitFunction = this.submitFunction;
     this.rootlogin_fg = entityEdit.formGroup.controls['rootlogin'];
@@ -451,7 +452,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     }, 1000);
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     this.bwFields.forEach((field) =>
       data[field] = this.storageService.convertBytestoHumanReadable(data[field] * 1024, 0, 'KiB'));
     this.rootlogin = data['rootlogin'];
@@ -477,7 +478,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     return data;
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     this.bwFields.forEach((field) =>
       data[field] = this.storageService.convertHumanStringToNum(data[field]) / 1024);
 
@@ -496,39 +497,39 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     data['dirmask'] = dirmask;
   }
 
-  submitFunction(this: any, body: any) {
+  submitFunction(this: any, body: any): Observable<any> {
     return this.ws.call('ftp.update', [body]);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.rootloginSubscription.unsubscribe();
   }
 
-  blurEvent(parent: any) {
+  blurEvent(parent: any): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'localuserbw');
     }
   }
 
-  blurEvent2(parent: any) {
+  blurEvent2(parent: any): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'localuserdlbw');
     }
   }
 
-  blurEvent3(parent: any) {
+  blurEvent3(parent: any): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'anonuserbw');
     }
   }
 
-  blurEvent4(parent: any) {
+  blurEvent4(parent: any): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'anonuserdlbw');
     }
   }
 
-  transformValue(parent: any, fieldname: string) {
+  transformValue(parent: any, fieldname: string): void {
     parent.entityForm.formGroup.controls[fieldname].setValue(parent.storageService.humanReadable || 0);
     // Clear humanReadable value to keep from accidentally setting it elsewhere
     parent.storageService.humanReadable = '';

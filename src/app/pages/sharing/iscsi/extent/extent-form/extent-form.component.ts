@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators, FormControl, ValidationErrors } from '@angular/forms';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import * as _ from 'lodash';
 
@@ -347,7 +347,7 @@ export class ExtentFormComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     this.originalFilesize = parseInt(data.filesize, 10);
     if (data.type == 'DISK') {
       if (_.startsWith(data['path'], 'zvol')) {

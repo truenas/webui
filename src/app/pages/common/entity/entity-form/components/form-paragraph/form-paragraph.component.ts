@@ -7,7 +7,7 @@ import { Field } from '../../models/field.interface';
 @Component({
   selector: 'form-paragraph',
   templateUrl: './form-paragraph.component.html',
-  styleUrls: ['../dynamic-field/dynamic-field.css'],
+  styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })
 export class FormParagraphComponent implements Field {
   config: FieldConfig;

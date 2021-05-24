@@ -1,167 +1,169 @@
-@import "cssvars";
+@import 'cssvars';
 
-.session-form-hold{
-  width: 100%;
-  max-width: 480px; 
+.session-form-hold {
   margin: 0 auto;
+  max-width: 480px;
+  width: 100%;
 }
 
 .page-wrap {
-  background-color:var(--bg1);
+  background-color: var(--bg1);
   height: 100vh;
   padding: 0;
 }
 
 .copyright-line {
-  text-align: center;
   padding-top: 32px;
+  text-align: center;
 }
 
 .copyright-txt {
-    text-align: center;
-    opacity:0.5;
-    font-size:85%
+  font-size: 85%;
+  opacity: 0.5;
+  text-align: center;
 }
 
 .truecommand {
-  text-align: center;
   cursor: pointer;
+  text-align: center;
 }
+
 #truecommand-logo {
-  height: 24px;
-  top: 7px;
-  position: relative;
   cursor: pointer;
+  height: 24px;
+  position: relative;
+  top: 7px;
 }
+
 .truecommand-txt {
-  text-align: center;
-  opacity:0.5;
+  opacity: 0.5;
   padding-left: 5px;
+  text-align: center;
 }
 
 .ha-status-txt {
-    text-align: center;
+  text-align: center;
 }
 
 .copyright-txt a:link {
-    color: #396f9d;
+  color: #396f9d;
 }
 
 #signin_button {
-    font-weight: 700;
+  font-weight: 700;
 }
 
 .mat-card {
   background-color: var(--bg2);
   color: var(--fg2);
-  padding:0 0 32px 0 !important;
+  padding: 0 0 32px !important;
 }
 
-.mat-card .mat-card-content > div{
+.mat-card .mat-card-content > div {
   padding: 0;
 }
 
-.mat-card .mat-card-content > div.disconnected{
-  padding:32px 32px 0;
+.mat-card .mat-card-content > div.disconnected {
+  padding: 32px 32px 0;
 }
 
 .card-bottom {
   padding: 0 16px;
 }
 
-div.fake-icon{
-  border-radius:50%;
+div.fake-icon {
   background-color: $fg2; //var(--fg2);
+  border-radius: 50%;
   color: $bg2; //var(--bg2);
-  padding:2px 8px;
-  float:left;
-  margin:6px 12px 12px 0;
-  font-weight:700;
+  float: left;
+  font-weight: 700;
+  margin: 6px 12px 12px 0;
+  padding: 2px 8px;
 }
 
-#legacy-btn-wrapper{
-  text-align:center;
-  margin:0px 32px 0;
+#legacy-btn-wrapper {
+  margin: 0 32px;
+  text-align: center;
 }
 
-#legacy-btn-wrapper button.mat-button{
-  font-weight:normal !important;
-  opacity:0.75;
-  background: rgba(0,0,0,0.4);
+#legacy-btn-wrapper button.mat-button {
+  background: rgba(0, 0, 0, 0.4);
+  font-weight: normal !important;
+  opacity: 0.75;
 }
 
 form {
-  margin:32px 32px 0;
+  margin: 32px 32px 0;
 }
 
 form > div {
-  margin:8px 0;
+  margin: 8px 0;
 }
 
-form button{
-  margin:16px 0 ;
+form button {
+  margin: 16px 0;
 }
 
 .logo-wrapper {
-  /*padding:76px 0;*/
-  padding:20% 0;
   background-color: $bg2; //var(--bg2);
-  position:relative;
+  /*padding:76px 0;*/
+  padding: 20% 0;
+  position: relative;
 }
 
-.logo-wrapper img.logo-bg{
-  position:absolute;
-  z-index:1;
-  opacity:0.75;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
+.logo-wrapper img.logo-bg {
   border-bottom: solid 1px #000;
+  height: 100%;
+  left: 0;
+  opacity: 0.75;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 1;
 }
 
-.logo-wrapper .logo{
-  position:relative;
-  z-index:2; 
-  width: 256px;
+.logo-wrapper .logo {
   height: auto;
+  position: relative;
+  width: 256px;
+  z-index: 2;
 }
 
 #full-logo {
-  height: 40px;
-  top: 14px;
-  position: relative;
   cursor: pointer;
+  height: 40px;
   margin-left: 5px;
+  position: relative;
+  top: 14px;
 }
 
-@media ( max-width:600px ) {
-  .page-wrap { 
-     height: 100vh;
-     width: 100vw;
-     max-width: 100%;
-     position: absolute;
-     top: 0;
-     bottom: 0;
-     left: 0;
-     right: 0;
-     overflow-x: hidden;
-  }
-
-  .mat-card{
+@media (max-width:600px) {
+  .page-wrap {
+    bottom: 0;
+    height: 100vh;
+    left: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+    position: absolute;
+    right: 0;
     top: 0;
-    min-height: 100vh;
+    width: 100vw;
   }
 
-  .card-bottom{
+  .mat-card {
+    min-height: 100vh;
+    top: 0;
+  }
+
+  .card-bottom {
     padding: 0;
   }
 
-  /* Not sure how to workaround browser bug. 
+  /* Not sure how to workaround browser bug.
   *  Apparently 100vw is actually viewport width + scrollbar width
   *  if vertical scrollbar is present
   */
-  .page-wrap > * { 
+  .page-wrap > * {
     max-width: 100%;
     width: 100%;
   }
@@ -176,15 +178,14 @@ form button{
   }
 }
 
-
-
-
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active  {
-  -webkit-text-fill-color: white !important;
-  -webkit-box-shadow: 0 0 0 30px transparent inset !important;
-  transition: background-color 5000s ease-in-out 0s;
+input:-webkit-autofill:hover,
+
+input:-webkit-autofill:focus,
+
+input:-webkit-autofill:active {
+  box-shadow: 0 0 0 30px transparent inset !important;
   caret-color: white;
+  -webkit-text-fill-color: white !important;
+  transition: background-color 5000s ease-in-out 0s;
 }

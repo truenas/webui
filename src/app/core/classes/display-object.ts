@@ -1,7 +1,7 @@
 import { ValueReaction } from 'popmotion/lib/reactions/value';
 import { ColdSubscription } from 'popmotion/src/action/types';
 import { Styler } from 'stylefire/lib/styler/types';
-import { CoreService, CoreEvent } from '../services/core.service';
+import { CoreService } from '../services/core.service';
 import { Subject } from 'rxjs';
 import { UUID } from 'angular2-uuid';
 import {

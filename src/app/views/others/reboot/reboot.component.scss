@@ -1,0 +1,43 @@
+#wrapper {
+  background-color: #0095d5;
+  height: 100%;
+}
+
+#shutdown-card {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: auto;
+  position: relative;
+  top: 75px;
+  width: 275px;
+}
+
+.copyright-txt,
+#message,
+.logo {
+  text-align: center;
+}
+
+.logo {
+  height: auto;
+  width: 256px;
+}
+
+.copyright-txt {
+  margin-top: 10px;
+}
+
+@media screen and (max-height: 700px) {
+  #shutdown-card {
+    font-size: 80%;
+    top: 20px;
+    width: 225px;
+  }
+
+  .mat-dialog-container {
+    height: 100px;
+    width: 100px;
+  }
+}

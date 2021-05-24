@@ -5,11 +5,11 @@ import {
   DomSanitizer, SafeHtml, SafeStyle, SafeScript, SafeUrl, SafeResourceUrl,
 } from '@angular/platform-browser';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
+import { CoreEvent } from 'app/interfaces/events';
 import { Theme } from 'app/services/theme/theme.service';
 import { Subject } from 'rxjs';
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
@@ -29,7 +29,7 @@ import { T } from '../../../../translate-marker';
 @Component({
   selector: 'widget-memory',
   templateUrl: './widgetmemory.component.html',
-  styleUrls: ['./widgetmemory.component.css'],
+  styleUrls: ['./widgetmemory.component.scss'],
 })
 export class WidgetMemoryComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
   @ViewChild('memorygauge', { static: true }) cpuLoad: ViewChartGaugeComponent;
@@ -103,7 +103,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     return value / 1024 / 1024 / 1024;
   }
 
-  parseMemData(data: any) {
+  parseMemData(data: any): string[][] {
     /*
      * PROVIDED BY MIDDLEWARE
      * total

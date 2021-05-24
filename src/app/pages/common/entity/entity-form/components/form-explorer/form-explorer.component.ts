@@ -14,7 +14,7 @@ import { T } from '../../../../../../translate-marker';
   selector: 'form-explorer',
   templateUrl: './form-explorer.component.html',
   styleUrls: [
-    '../dynamic-field/dynamic-field.css',
+    '../dynamic-field/dynamic-field.scss',
     './form-explorer.component.scss',
   ],
 })
@@ -109,7 +109,7 @@ export class FormExplorerComponent implements Field, OnInit {
     }
   }
 
-  getChildren(node: any) {
+  getChildren(node: any): Promise<any> {
     return new Promise((resolve, reject) => {
       if (this.config.explorerType === 'zvol') {
         resolve(this.entityFormService.getDatasetsAndZvolsListChildren(node));

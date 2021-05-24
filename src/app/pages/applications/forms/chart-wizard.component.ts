@@ -53,7 +53,7 @@ export class ChartWizardComponent implements OnDestroy {
     this.parseSchema();
   }
 
-  parseSchema() {
+  parseSchema(): void {
     try {
       this.title = this.catalogApp.name;
       const versionKeys: any[] = [];
@@ -118,7 +118,7 @@ export class ChartWizardComponent implements OnDestroy {
         });
       }
     } catch (error) {
-      return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
+      this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
   }
 
@@ -135,7 +135,7 @@ export class ChartWizardComponent implements OnDestroy {
     });
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     const apiCall = this.addCall;
     delete data.version;
 

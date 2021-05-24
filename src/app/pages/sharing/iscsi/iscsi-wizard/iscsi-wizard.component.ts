@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard';
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
-import { Validators, FormControl, ValidationErrors } from '@angular/forms';
+import {
+  Validators, FormControl, ValidationErrors, ValidatorFn,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
@@ -25,7 +28,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 export class IscsiWizardComponent {
   route_success: string[] = ['sharing', 'iscsi'];
   isLinear = true;
-  summary_title = 'iSCSI Summary';
+  summaryTitle = 'iSCSI Summary';
   summaryObj: { [name: string]: any } = {
     name: null,
     type: null,
@@ -533,7 +536,7 @@ export class IscsiWizardComponent {
     });
   }
 
-  afterInit(entityWizard: EntityWizardComponent) {
+  afterInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
 
     this.summaryInit();
@@ -541,7 +544,7 @@ export class IscsiWizardComponent {
     this.step1Init();
   }
 
-  step0Init() {
+  step0Init(): void {
     const disk_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' });
     // get device options
     this.iscsiService.getExtentDevices().subscribe((res) => {
@@ -593,7 +596,7 @@ export class IscsiWizardComponent {
     });
   }
 
-  step1Init() {
+  step1Init(): void {
     const authGroupField = _.find(this.wizardConfig[1].fieldConfig, { name: 'discovery_authgroup' });
     const listenIpField = _.find(this.wizardConfig[1].fieldConfig, { name: 'listen' }).templateListField[0];
 
@@ -648,7 +651,7 @@ export class IscsiWizardComponent {
     });
   }
 
-  summaryInit() {
+  summaryInit(): void {
     for (let step = 0; step < 3; step++) {
       Object.entries(this.entityWizard.formArray.controls[step].controls).forEach(([name, control]) => {
         if (name in this.summaryObj) {
@@ -671,7 +674,8 @@ export class IscsiWizardComponent {
       });
     }
   }
-  getSummary() {
+
+  getSummary(): { [key: string]: any } {
     const summary = {
       Name: this.summaryObj.name,
       Extent: {
@@ -726,7 +730,7 @@ export class IscsiWizardComponent {
     return summary;
   }
 
-  disablefieldGroup(fieldGroup: any[], disabled: boolean, stepIndex: number) {
+  disablefieldGroup(fieldGroup: any[], disabled: boolean, stepIndex: number): void {
     fieldGroup.forEach((field) => {
       if (_.indexOf(this.hiddenFieldGroup, field) < 0) {
         const control: any = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
@@ -740,14 +744,14 @@ export class IscsiWizardComponent {
     });
   }
 
-  formTypeUpdate(type: any) {
+  formTypeUpdate(type: any): void {
     const isDevice = type != 'FILE';
 
     this.disablefieldGroup(this.fileFieldGroup, isDevice, 0);
     this.disablefieldGroup(this.deviceFieldGroup, !isDevice, 0);
   }
 
-  formUseforValueUpdate(selected: any) {
+  formUseforValueUpdate(selected: any): void {
     const settings = _.find(this.defaultUseforSettings, { key: selected });
     for (const i in settings.values) {
       const controller = this.entityWizard.formArray.controls[0].controls[i];
@@ -755,21 +759,21 @@ export class IscsiWizardComponent {
     }
   }
 
-  getDatasetValue(dataset: any) {
+  getDatasetValue(dataset: any): void {
     const datasetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'dataset' });
     datasetField.hasErrors = false;
 
     const pool = dataset.split('/')[0];
     this.ws.call('pool.dataset.query', [[['id', '=', dataset]]]).subscribe(
-      (res) => {
-        if (res.length == 0) {
+      (datasets) => {
+        if (datasets.length == 0) {
           datasetField.hasErrors = true;
         } else {
           for (const i in this.zvolFieldGroup) {
             const fieldName = this.zvolFieldGroup[i];
-            if (fieldName in res[0]) {
+            if (fieldName in datasets[0]) {
               const controller = this.entityWizard.formArray.controls[0].controls[fieldName];
-              controller.setValue(res[0][fieldName].value);
+              controller.setValue((datasets[0][fieldName as keyof Dataset] as any).value);
             }
           }
         }
@@ -785,7 +789,7 @@ export class IscsiWizardComponent {
     );
   }
 
-  async customSubmit(value: any) {
+  async customSubmit(value: any): Promise<void> {
     this.loader.open();
     let toStop = false;
     const createdItems: any = {
@@ -833,13 +837,13 @@ export class IscsiWizardComponent {
     }
   }
 
-  getRoundVolsize(value: any) {
+  getRoundVolsize(value: any): number {
     const volsize = this.cloudcredentialService.getByte(value['volsize'] + value['volsize_unit']);
     const volblocksize = this.cloudcredentialService.getByte(value['volblocksize']);
     return volsize + (volblocksize - volsize % volblocksize);
   }
 
-  doCreate(value: any, item: any) {
+  doCreate(value: any, item: any): Promise<any> {
     let payload: any;
     if (item === 'zvol') {
       payload = {
@@ -915,7 +919,7 @@ export class IscsiWizardComponent {
     return this.ws.call((this.createCalls as any)[item], [payload]).toPromise();
   }
 
-  rollBack(items: any[]) {
+  rollBack(items: any[]): void {
     for (const item in items) {
       if (items[item] != null) {
         this.ws.call((this.deleteCalls as any)[item], [items[item]]).subscribe(
@@ -927,7 +931,7 @@ export class IscsiWizardComponent {
     }
   }
 
-  IPValidator(name: string) {
+  IPValidator(name: string): ValidatorFn {
     const self = this;
     return function validIPs(control: FormControl) {
       const config = self.wizardConfig[2].fieldConfig.find((c) => c.name === name);
@@ -956,7 +960,7 @@ export class IscsiWizardComponent {
     };
   }
 
-  blurFilesize(parent: any) {
+  blurFilesize(parent: any): void {
     if (parent.entityWizard) {
       parent.entityWizard.formArray.controls[0].controls['filesize'].setValue(parent.storageService.humanReadable);
     }

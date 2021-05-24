@@ -2,14 +2,16 @@
   <mat-card class="chart-item" *ngFor="let item of filteredChartItems">
       <div class="content-wrapper" fxLayout="row">
         <div class="logo-container">
-          <div class="logo" style="background-image: url('{{ item.icon }}');"></div>
+          <div class="logo">
+            <img src="{{ item.icon }}" src-fallback="{{ imagePlaceholder }}"/>
+          </div>
           <div class="badge-area">
             <div class="partner-badge capitalized-text">
                 {{ item.catalog }}
-            </div>                    
+            </div>
             <div class="train-badge capitalized-text">
                 {{ item.catalog_train }}
-            </div>                    
+            </div>
           </div>
           <mat-checkbox color="primary" class="bulk-checkbox" [(ngModel)]="item.selected" (change)="onChangeCheck()"></mat-checkbox>
         </div>
@@ -18,7 +20,7 @@
             <strong class="chart-name" textLimiter threshold="20">{{ item.name }}</strong>
             <div><span class="version" textLimiter threshold="50"> {{ item.human_version}}</span></div>
             <div *ngIf="item.update_available || item.container_images_update_available; else elseBlock">
-              <span class="update-label" matTooltip="Available version: {{ item.human_latest_version }}">{{ 'Update available' | translate}}</span> 
+              <span class="update-label" matTooltip="Available version: {{ item.human_latest_version }}">{{ 'Update available' | translate}}</span>
             </div>
             <ng-template #elseBlock><div class="update-label">{{ 'Up to date' | translate }}</div></ng-template>
           </div>
@@ -27,17 +29,17 @@
             <button mat-button (click)="portal(item.portal)" *ngIf="item.status === 'ACTIVE' && item.portal"
               ix-auto ix-auto-type="button" ix-auto-identifier="{{ item.name}}-portal">
               {{ 'Portal' | translate }}
-            </button>                  
+            </button>
             <button mat-button (click)="stop(item.name)" *ngIf="item.status !== 'STOPPED'"
               ix-auto ix-auto-type="button" ix-auto-identifier="{{ item.name}}-stop">
               {{ 'Stop' | translate }}
-            </button>                  
+            </button>
             <button mat-button (click)="start(item.name)" *ngIf="item.status === 'STOPPED'"
               ix-auto ix-auto-type="button" ix-auto-identifier="{{ item.name}}-start">
               {{ 'Start' | translate }}
             </button>
           </div>
-       
+
         </div>
       </div>
 
@@ -55,7 +57,7 @@
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #actionsMenu="matMenu">
-            <button name="update" mat-menu-item (click)="update(item.name)" 
+            <button name="update" mat-menu-item (click)="update(item.name)"
               [disabled]="!item.update_available && !item.container_images_update_available"
               ix-auto ix-auto-type="option" ix-auto-identifier="update">
               <mat-icon>call_made</mat-icon>
@@ -90,6 +92,6 @@
         </mat-menu>
       </div>
   </mat-card>
-  
+
   <entity-empty *ngIf="getChartItems().length == 0" [conf]="emptyPageConf"></entity-empty>
 </div>

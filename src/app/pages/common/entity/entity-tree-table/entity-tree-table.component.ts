@@ -2,12 +2,13 @@ import {
   Component, ElementRef, ViewChild, Input, OnInit, AfterViewInit,
 } from '@angular/core';
 import { MatTableModule, MatTable } from '@angular/material/table';
+import { CoreEvent } from 'app/interfaces/events';
 import { DialogService, WebSocketService } from '../../../../services';
 import { EntityUtils } from '../utils';
 import { EntityTreeTable } from './entity-tree-table.model';
 import { EntityTreeTableService } from './entity-tree-table.service';
 import { TranslateService } from '@ngx-translate/core';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { Sort } from '@angular/material/sort';
 import { TreeNode } from 'primeng/api';
 
@@ -19,7 +20,7 @@ interface FilterValue {
 @Component({
   selector: 'entity-tree-table',
   templateUrl: './entity-tree-table.component.html',
-  styleUrls: ['./entity-tree-table.component.css'],
+  styleUrls: ['./entity-tree-table.component.scss'],
   providers: [EntityTreeTableService],
 })
 export class EntityTreeTableComponent implements OnInit, AfterViewInit {
@@ -112,7 +113,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     });
   }
 
-  resolve(path: string, obj: any) {
+  resolve(path: string, obj: any): string {
     return path.split('.').reduce((prev, curr) => (prev ? prev[curr] : null), obj || self);
   }
 
@@ -166,7 +167,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     this.table.renderRows();
   }
 
-  onHover(evt: any, over = true): void {
+  onHover(evt: MouseEvent, over = true): void {
     const row = this.findRow(evt);
     const cells = row.children;
 
@@ -183,8 +184,8 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     }
   }
 
-  findRow(el: any) {
-    let target = el.target;
+  findRow(event: MouseEvent): HTMLElement {
+    let target = event.target as HTMLElement;
 
     do {
       target = target.parentElement;

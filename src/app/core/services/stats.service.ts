@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import { CoreEvent } from 'app/interfaces/events';
+import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
+import { Subscription } from 'rxjs';
 import { BaseService } from './base.service';
-import { CoreEvent } from './core.service';
 
 @Injectable({
   providedIn: 'root',
@@ -24,8 +25,8 @@ export class StatsService extends BaseService {
     const queryOptions = { select: ['name', 'type'] };
 
     if (this.subscribers > 0 && !this.realtimeEvents) {
-      this.realtimeEvents = this.websocket.sub('reporting.realtime').subscribe((res) => {
-        this.core.emit({ name: 'RealtimeStats', data: res, sender: this });
+      this.realtimeEvents = this.websocket.sub<ReportingRealtimeUpdate>('reporting.realtime').subscribe((update) => {
+        this.core.emit({ name: 'RealtimeStats', data: update, sender: this });
       });
     }
   }

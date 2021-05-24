@@ -23,3 +23,4 @@ export * from './keychaincredential.services';
 export * from './replication.service';
 export * from './services.service';
 export * from './validation.service';
+export * from './modal.service';

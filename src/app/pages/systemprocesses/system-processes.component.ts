@@ -2,6 +2,7 @@ import {
   Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
 import { ShellConnectedEvent } from '../../interfaces/shell.interface';
 import { ShellService, WebSocketService } from '../../services';
 import { CopyPasteMessageComponent } from '../shell/copy-paste-message.component';
@@ -33,10 +34,10 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
   font_size = 14;
   font_name = 'Inconsolata';
 
-  ngOnInit() {
+  ngOnInit(): void {
     const self = this;
-    this.getAuthToken().subscribe((res) => {
-      this.initializeWebShell(res);
+    this.getAuthToken().subscribe((token) => {
+      this.initializeWebShell(token);
       this.shellSubscription = this.ss.shellOutput.subscribe(() => {
         // this.xterm.write(value);
         if (!this.top_displayed) {
@@ -53,7 +54,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.shellSubscription) {
       this.shellSubscription.unsubscribe();
     }
@@ -62,7 +63,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     }
   }
 
-  getSize() {
+  getSize(): { rows: number; cols: number } {
     const domWidth = this.container.nativeElement.offsetWidth;
     const domHeight = this.container.nativeElement.offsetHeight;
     var span = document.createElement('span');
@@ -94,7 +95,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     };
   }
 
-  initializeTerminal() {
+  initializeTerminal(): void {
     const size = this.getSize();
 
     const setting = {
@@ -124,7 +125,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     });
   }
 
-  resizeTerm() {
+  resizeTerm(): boolean {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
@@ -134,8 +135,8 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  initializeWebShell(res: string) {
-    this.ss.token = res;
+  initializeWebShell(token: string): void {
+    this.ss.token = token;
     this.ss.connect();
 
     this.ss.shellConnected.subscribe((res: ShellConnectedEvent) => {
@@ -144,7 +145,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     });
   }
 
-  getAuthToken() {
+  getAuthToken(): Observable<string> {
     return this.ws.call('auth.generate_token');
   }
 
@@ -153,15 +154,15 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  onResize() {
+  onResize(): void {
     this.resizeTerm();
   }
 
-  onFontSizeChanged() {
+  onFontSizeChanged(): void {
     this.resizeTerm();
   }
 
-  resetDefault() {
+  resetDefault(): void {
     this.font_size = 14;
     this.resizeTerm();
   }

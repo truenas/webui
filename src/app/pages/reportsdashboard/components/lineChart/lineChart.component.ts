@@ -2,7 +2,7 @@ import {
   Component, Input, AfterViewInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef,
 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import { Report, ReportData } from '../report/report.component';
@@ -23,7 +23,7 @@ interface Conversion {
 @Component({
   selector: 'linechart',
   templateUrl: './lineChart.component.html',
-  styleUrls: ['./lineChart.component.css'],
+  styleUrls: ['./lineChart.component.scss'],
 })
 export class LineChartComponent extends ViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('wrapper', { static: true }) el: ElementRef;
@@ -247,7 +247,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     return colors;
   }
 
-  private createColorObject() {
+  private createColorObject(): any {
     const obj: any = {};
     this.legends.forEach((item, index) => {
       obj[item] = this.colorPattern[index];

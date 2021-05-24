@@ -4,10 +4,11 @@ import {
 import {
   Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot,
 } from '@angular/router';
+import { CoreEvent } from 'app/interfaces/events';
 import { filter } from 'rxjs/operators';
 import { ProductType } from '../../../enums/product-type.enum';
 import { RoutePartsService } from '../../../services/route-parts/route-parts.service';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { Display } from 'app/core/components/display/display.component';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { ViewButtonComponent } from 'app/core/components/viewbutton/viewbutton.component';
@@ -25,7 +26,6 @@ export interface GlobalAction {
 @Component({
   selector: 'pagetitle',
   templateUrl: './pagetitle.component.html',
-  styleUrls: ['./pagetitle.component.css'],
 })
 export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('viewcontroller', { static: false }) viewcontroller: ViewControllerComponent;

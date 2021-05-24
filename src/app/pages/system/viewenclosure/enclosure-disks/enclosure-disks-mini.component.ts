@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 import { MaterialModule } from 'app/appMaterial.module';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import {
   Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils, Point,
 } from 'pixi.js';
@@ -30,7 +30,7 @@ import { DialogService } from 'app/services/dialog.service';
 @Component({
   selector: 'enclosure-disks-mini',
   templateUrl: './enclosure-disks-mini.component.html',
-  styleUrls: ['./enclosure-disks.component.css'],
+  styleUrls: ['./enclosure-disks.component.scss'],
 })
 
 export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {

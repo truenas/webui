@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
+import { CoreEvent } from 'app/interfaces/events';
 import { BaseService } from './base.service';
-import { CoreEvent } from './core.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface Temperature {

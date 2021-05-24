@@ -308,7 +308,7 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
     this.modalService.refreshTable();
   }
 
-  customSubmit(body: any) {
+  customSubmit(body: any): Subscription {
     this.loader.open();
     return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();
@@ -322,10 +322,6 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
-  }
-
-  getKeyByValue(object: any, value: any) {
-    return Object.keys(object).find((key) => object[key] === value);
   }
 
   ngOnDestroy(): void {

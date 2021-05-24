@@ -1,15 +1,11 @@
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { VDev, VDevStats } from 'app/interfaces/storage.interface';
 
 export interface Pool {
-  autotrim: {
-    // TODO: Confirm types
-    value: any; // 'on', 'off'
-    rawvalue: any; // 'on', 'off'
-    parsed: any; // 'on', 'off',
-    source: any; // 'DEFAULT';
-  };
+  autotrim: ZfsProperty<string>;
   encrypt: number;
   encryptkey: string;
   encryptkey_path: string;
@@ -40,12 +36,12 @@ export interface PoolScan {
   bytes_issued: number;
   bytes_processed: number;
   bytes_to_process: number;
-  end_time: { $date: number };
+  end_time: ApiTimestamp;
   errors: number;
   function: 'SCRUB'; // TODO: Unknown what other values are
   pause: any;
   percentage: number;
-  start_time: { $date: number };
+  start_time: ApiTimestamp;
   state: PoolScanState;
   total_secs_left: number;
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
+import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
@@ -23,7 +24,7 @@ import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-status';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { EntityToolbarComponent } from '../../../common/entity/entity-toolbar/entity-toolbar.component';
 import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
@@ -31,7 +32,7 @@ import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/con
 import { ModalService } from 'app/services/modal.service';
 import { DiskFormComponent } from '../../disks/disk-form';
 
-interface poolDiskInfo {
+interface PoolDiskInfo {
   name: any;
   read: any;
   write: any;
@@ -45,7 +46,7 @@ interface poolDiskInfo {
 @Component({
   selector: 'volume-status',
   templateUrl: './volume-status.component.html',
-  styleUrls: ['./volume-status.component.css'],
+  styleUrls: ['./volume-status.component.scss'],
 })
 export class VolumeStatusComponent implements OnInit {
   actionEvents: Subject<CoreEvent>;
@@ -472,7 +473,7 @@ export class VolumeStatusComponent implements OnInit {
     return actions;
   }
 
-  extendAction() {
+  extendAction(): any[] {
     return [{
       id: 'extend',
       label: helptext.actions_label.extend,
@@ -545,7 +546,7 @@ export class VolumeStatusComponent implements OnInit {
     }];
   }
 
-  parseData(data: any, category?: any, vdev_type?: any) {
+  parseData(data: any, category?: any, vdev_type?: any): PoolDiskInfo {
     let stats: any = {
       read_errors: 0,
       write_errors: 0,
@@ -563,7 +564,7 @@ export class VolumeStatusComponent implements OnInit {
       data.disk = data.path;
     }
 
-    const item: poolDiskInfo = {
+    const item: PoolDiskInfo = {
       name: data.name ? data.name : data.disk,
       read: stats.read_errors ? stats.read_errors : 0,
       write: stats.write_errors ? stats.write_errors : 0,
@@ -604,7 +605,7 @@ export class VolumeStatusComponent implements OnInit {
     return node;
   }
 
-  dataHandler(pool: Pool) {
+  dataHandler(pool: Pool): void {
     const node: TreeNode = {};
     node.data = this.parseData(pool);
     node.expanded = true;

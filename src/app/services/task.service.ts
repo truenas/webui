@@ -3,7 +3,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { RestService } from './rest.service';
 import { WebSocketService } from './ws.service';
 

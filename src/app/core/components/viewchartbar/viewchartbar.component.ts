@@ -46,7 +46,7 @@ export interface BarDataSource {
 @Component({
   selector: 'viewchartbar',
   templateUrl: './viewchartbar.component.html',
-  styleUrls: ['./viewchartbar.component.css'],
+  styleUrls: ['./viewchartbar.component.scss'],
 })
 export class ViewChartBarComponent implements AfterViewInit, OnChanges {
   title = '';

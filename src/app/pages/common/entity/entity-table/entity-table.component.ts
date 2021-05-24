@@ -11,9 +11,10 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router, NavigationStart } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { CoreEvent } from 'app/interfaces/events';
 import * as _ from 'lodash';
 import {
   fromEvent as observableFromEvent, Observable, of, Subscription,
@@ -109,7 +110,8 @@ export interface EntityTableAction {
   actionName: string;
   icon: string;
   label: string;
-  onClick: (row: any) => void;
+  onClick: (row?: any) => void;
+  disabled?: boolean;
 }
 
 export interface SortingConfig {
@@ -250,10 +252,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return result;
   }
 
-  hasDetails = () =>
+  hasDetails = (): boolean =>
     this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
 
-  getRowDetailHeight = () =>
+  getRowDetailHeight = (): number =>
     (this.hasDetails() && !this.conf.rowDetailComponent
       ? (this.allColumns.length - this.conf.columns.length) * DETAIL_HEIGHT + 76 // add space for padding
       : this.conf.detailRowHeight || 100);
@@ -549,7 +551,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  dropLastMaxWidth() {
+  dropLastMaxWidth(): any[] {
     // Reset all column maxWidths
     this.conf.columns.forEach((column) => {
       if (this.colMaxWidths.length > 0) {
@@ -799,7 +801,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return classes.join(' ');
   }
 
-  getActions(row: any) {
+  getActions(row: any): EntityTableAction[] {
     if (this.conf.getActions) {
       return this.conf.getActions(row);
     }
@@ -815,17 +817,17 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       icon: 'delete',
       label: T('Delete'),
       onClick: (rowinner: any) => { this.doDelete(rowinner); },
-    }];
+    }] as EntityTableAction[];
   }
 
-  getAddActions() {
+  getAddActions(): EntityTableAction[] {
     if (this.conf.getAddActions) {
       return this.conf.getAddActions();
     }
     return [];
   }
 
-  rowValue(row: any, attr: string) {
+  rowValue(row: any, attr: string): any {
     if (this.conf.rowValue) {
       try {
         return this.conf.rowValue(row, attr);
@@ -837,7 +839,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return row[attr];
   }
 
-  convertDisplayValue(value: any) {
+  convertDisplayValue(value: any): any {
     let val;
     if (value === true) {
       this.translate.get('yes').subscribe((yes) => {
@@ -873,7 +875,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // generate delete msg
-  getDeleteMessage(item: any, action = T('Delete ')) {
+  getDeleteMessage(item: any, action = T('Delete ')): string {
     let deleteMsg = T('Delete the selected item?');
     if (this.conf.config.deleteMsg) {
       deleteMsg = action + this.conf.config.deleteMsg.title;
@@ -1022,7 +1024,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.currentRows = this.rows;
   }
 
-  getMultiDeleteMessage(items: any) {
+  getMultiDeleteMessage(items: any): string {
     let deleteMsg = 'Delete the selected items?';
     if (this.conf.config.deleteMsg) {
       deleteMsg = 'Delete selected ' + this.conf.config.deleteMsg.title + '(s)?';
@@ -1151,7 +1153,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // Toggle between all/none cols selected
-  checkAll() {
+  checkAll(): any[] {
     this.anythingClicked = true;
     if (this.conf.columns.length < this.allColumns.length) {
       this.conf.columns = this.allColumns;
@@ -1165,7 +1167,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // Used by the select all checkbox to determine whether it should be checked
-  checkLength() {
+  checkLength(): boolean {
     if (this.allColumns && this.conf.columns) {
       return this.conf.columns.length === this.allColumns.length;
     }
@@ -1217,7 +1219,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  columnsToString(cols: any, key: any) {
+  columnsToString(cols: any, key: any): any {
     return cols.map((c: any) => c[key]);
   }
 
@@ -1227,7 +1229,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       : this.currentRows.forEach((row) => this.selection.select(row));
   }
 
-  getFirstKey() {
+  getFirstKey(): any {
     return this.conf.config.multiSelect ? this.currentColumns[1].prop : this.currentColumns[0].prop;
   }
 
@@ -1247,8 +1249,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  findRow(el: any) {
-    let target = el.target;
+  findRow(event: MouseEvent): HTMLElement {
+    let target = event.target as HTMLElement;
     do {
       target = target.parentElement;
     } while (target.tagName.toLowerCase() !== 'tr');

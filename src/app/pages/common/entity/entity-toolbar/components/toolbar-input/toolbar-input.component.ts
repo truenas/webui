@@ -7,7 +7,7 @@ import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
 
 import { Control } from '../../models/control.interface';
 import { ControlConfig } from '../../models/control-config.interface';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'toolbar-input',
@@ -40,31 +40,31 @@ export class ToolbarInputComponent extends iXAbstractObject {
     super();
   }
 
-  reset() {
+  reset(): void {
     this.filterValue = '';
     this.filter.nativeElement.value = '';
     this.send();
   }
 
-  onChange() {
+  onChange(): void {
     this.filterValue = this.filter.nativeElement.value ? this.filter.nativeElement.value : '';
     this.send();
   }
 
-  send() {
+  send(): void {
     this.config.value = this.filterValue;
     this.controller.next({ name: this.config.name, value: this.config.value });
   }
 
-  onFocus() {
+  onFocus(): void {
     this.hasFocus = true;
   }
 
-  onBlur() {
+  onBlur(): void {
     this.hasFocus = false;
   }
 
-  isShowPlaceholder() {
+  isShowPlaceholder(): boolean {
     return this.config.placeholder && !this.hasFocus && !this.filterValue;
   }
 }

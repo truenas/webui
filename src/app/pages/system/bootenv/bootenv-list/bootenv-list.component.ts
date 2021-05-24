@@ -85,7 +85,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
     });
   }
 
-  rowValue(row: any, attr: string) {
+  rowValue(row: any, attr: string): any {
     if (attr === 'created') {
       return this.localeService.formatDateTime(row.created.$date);
     }
@@ -206,7 +206,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
     },
   }];
 
-  getSelectedNames(selectedBootenvs: any) {
+  getSelectedNames(selectedBootenvs: any): any[] {
     const selected: any[] = [];
     for (const i in selectedBootenvs) {
       if (selectedBootenvs[i].active === '-' || selectedBootenvs[i].active === '') {
@@ -216,13 +216,13 @@ export class BootEnvironmentListComponent implements OnDestroy {
     return selected;
   }
 
-  wsMultiDeleteParams(selected: any) {
+  wsMultiDeleteParams(selected: any): any[] {
     const params: any[] = ['bootenv.do_delete'];
     params.push(this.getSelectedNames(selected));
     return params;
   }
 
-  doActivate(id: string) {
+  doActivate(id: string): void {
     this.dialog.confirm(T('Activate'), T('Activate this Boot Environment?'), false, helptext_system_bootenv.list_dialog_activate_action).subscribe((res: boolean) => {
       if (res) {
         this.loader.open();
@@ -299,7 +299,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
     }
   }
 
-  getAddActions() {
+  getAddActions(): EntityTableAction[] {
     return [{
       label: T('Stats/Settings'),
       onClick: () => {
@@ -371,7 +371,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
         this.scrub();
       },
     },
-    ];
+    ] as EntityTableAction[];
   }
 
   goToStatus(): void {

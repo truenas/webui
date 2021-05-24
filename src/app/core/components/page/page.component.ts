@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import { CoreEvent } from 'app/interfaces/events';
 import { Subject } from 'rxjs';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { CardComponent } from 'app/core/components/card/card.component';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Display } from 'app/core/components/display/display.component';
 
@@ -18,13 +19,11 @@ export interface PageOptions {
 export const PageComponentMetadata = {
   selector: 'page',
   template: '',
-  styleUrls: ['./page.component.css'],
 };
 
 @Component({
   selector: 'page',
   template: '',
-  styleUrls: ['./page.component.css'],
 })
 export class PageComponent {
   name = 'PageComponent';

@@ -1,9 +1,10 @@
 import { Injectable, OnInit } from '@angular/core';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { CoreEvent } from 'app/interfaces/events';
 import { Subject } from 'rxjs';
 import { WebSocketService } from '../../services/ws.service';
 import { RestService } from '../../services/rest.service';
-import { CoreService, CoreEvent } from './core.service';
+import { CoreService } from './core.service';
 import { DialogService } from '../../services';
 // import { DataService } from './data.service';
 
@@ -638,7 +639,7 @@ export class ApiService {
             }
           }
         },
-        (err) => {
+        () => {
           // DEBUG: console.log(err)
         },
       );

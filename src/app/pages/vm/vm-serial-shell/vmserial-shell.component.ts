@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import helptext from '../../../helptext/vm/vm-cards/vm-cards';
 import { ShellConnectedEvent } from '../../../interfaces/shell.interface';
 import { ShellService, WebSocketService } from '../../../services';
@@ -17,7 +17,7 @@ import * as FontFaceObserver from 'fontfaceobserver';
 @Component({
   selector: 'app-vmserial-shell',
   templateUrl: './vmserial-shell.component.html',
-  styleUrls: ['./vmserial-shell.component.css'],
+  styleUrls: ['./vmserial-shell.component.scss'],
   providers: [ShellService],
   encapsulation: ViewEncapsulation.None,
 })
@@ -50,8 +50,8 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     const self = this;
     this.aroute.params.subscribe((params) => {
       this.pk = params['pk'];
-      this.getAuthToken().subscribe((res) => {
-        this.initializeWebShell(res);
+      this.getAuthToken().subscribe((token) => {
+        this.initializeWebShell(token);
         this.shellSubscription = this.ss.shellOutput.subscribe((value: any) => {
           if (value !== undefined) {
             // this.xterm.write(value);
@@ -84,7 +84,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     this.resizeTerm();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     const log: string[] = [];
     for (const propName in changes) {
       const changedProp = changes[propName];
@@ -163,9 +163,9 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     return true;
   }
 
-  initializeWebShell(res: string): void {
+  initializeWebShell(token: string): void {
     this.ss.vmId = Number(this.pk);
-    this.ss.token = res;
+    this.ss.token = token;
     this.ss.connect();
 
     this.ss.shellConnected.subscribe((res: ShellConnectedEvent) => {
@@ -174,7 +174,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  getAuthToken(): Observable<any> {
+  getAuthToken(): Observable<string> {
     return this.ws.call('auth.generate_token');
   }
 

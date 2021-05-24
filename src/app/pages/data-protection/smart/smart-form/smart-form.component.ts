@@ -114,19 +114,19 @@ export class SmartFormComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     data['smarttest_picker'] = `0 ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
     return data;
   }
 
-  async afterInit(entityForm: EntityFormComponent) {
+  async afterInit(entityForm: EntityFormComponent): Promise<any> {
     this.entityForm = entityForm;
     this.pk = entityForm.pk;
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.smart_test_add : helptext.smart_test_edit;
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     const spl = value.smarttest_picker.split(' ');
     delete value.smarttest_picker;
 

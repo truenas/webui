@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { CoreEvent } from 'app/interfaces/events';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { DialogService } from '../../../../services/dialog.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -9,7 +10,7 @@ import { T } from '../../../../translate-marker';
 import { AppLoaderService } from '../../../../services';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/about';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { LocaleService } from 'app/services/locale.service';
 
 export interface DialogData {
@@ -19,7 +20,7 @@ export interface DialogData {
 
 @Component({
   selector: 'about-dialog',
-  styleUrls: ['./about-dialog.component.css'],
+  styleUrls: ['./about-dialog.component.scss'],
   templateUrl: './about-dialog.component.html',
 })
 export class AboutModalDialog {

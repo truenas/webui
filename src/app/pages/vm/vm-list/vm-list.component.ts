@@ -3,10 +3,11 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { ProductType } from '../../../enums/product-type.enum';
 
 import {
-  WebSocketService, StorageService, AppLoaderService, DialogService, RestService, VmService, NetworkService,
+  WebSocketService, StorageService, AppLoaderService, DialogService, RestService, VmService, NetworkService, SystemGeneralService,
 } from '../../../services';
 import { ModalService } from 'app/services/modal.service';
 import { MessageService } from '../../common/entity/entity-form/services/message.service';
@@ -39,7 +40,7 @@ interface DisplayWebUri {
         <p *ngIf="availMem"><strong>{{memTitle | translate}}</strong> {{availMem}} - {{memWarning | translate}}</p>
     </div>
     <entity-table [title]='title' [conf]='this'></entity-table>`,
-  styleUrls: ['./vm-list.component.css'],
+  styleUrls: ['./vm-list.component.scss'],
   providers: [VmService, MessageService],
 })
 export class VMListComponent implements OnDestroy {
@@ -102,7 +103,7 @@ export class VMListComponent implements OnDestroy {
     private http: HttpClient, private modalService: ModalService, private rest: RestService,
     private vmService: VmService, private networkService: NetworkService,
     private messageService: MessageService, private prefService: PreferencesService,
-    private translate: TranslateService,
+    private translate: TranslateService, private systemGeneralService: SystemGeneralService,
   ) {
     if (this.productType !== ProductType.Scale) {
       this.columns.push({ name: T('Com Port'), prop: 'com_port', hidden: true });
@@ -125,7 +126,7 @@ export class VMListComponent implements OnDestroy {
   refreshVMWizard(): void {
     this.addComponent = new VMWizardComponent(this.rest, this.ws, this.vmService, this.networkService, this.loader,
       this.dialog, this.messageService, this.dialogService, this.storageService, this.prefService,
-      this.translate, this.modalService);
+      this.translate, this.modalService, this.systemGeneralService);
   }
 
   afterInit(entityList: any): void {
@@ -341,7 +342,7 @@ export class VMListComponent implements OnDestroy {
     this.doRowAction(row, this.wsMethods.update, [row.id, { autostart: row.autostart }]);
   }
 
-  getActions(row: any) {
+  getActions(row: any): EntityTableAction[] {
     return [{
       id: 'START',
       icon: 'play_arrow',
@@ -580,7 +581,7 @@ export class VMListComponent implements OnDestroy {
           },
         );
       },
-    }];
+    }] as EntityTableAction[];
   }
 
   showPasswordDialog(display_vm: any, display_device: any): void {

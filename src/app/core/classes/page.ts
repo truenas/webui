@@ -1,8 +1,8 @@
 // import { SubComponent } from '../../decorators/subcomponent';
 import { Observer } from 'rxjs';
 import { Subject } from 'rxjs';
+import { CoreEvent } from 'app/interfaces/events';
 import { ViewController, ViewControllerOptions } from './viewcontroller';
-import { CoreService, CoreEvent } from '../services/core.service';
 
 export interface PageOptions {
   events: Subject<CoreEvent>;

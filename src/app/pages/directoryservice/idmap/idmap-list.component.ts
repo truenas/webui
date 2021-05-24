@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { T } from '../../../translate-marker';
 import {
   IdmapService, ValidationService, SystemGeneralService, WebSocketService,
@@ -63,7 +64,7 @@ export class IdmapListComponent implements OnDestroy {
     protected dialogService: DialogService,
   ) { }
 
-  resourceTransformIncomingRestData(data: any[]) {
+  resourceTransformIncomingRestData(data: any[]): any[] {
     data.forEach((item) => {
       if (item.certificate) {
         item.cert_name = item.certificate.cert_name;
@@ -91,7 +92,7 @@ export class IdmapListComponent implements OnDestroy {
     }
   }
 
-  getAddActions() {
+  getAddActions(): EntityTableAction[] {
     return [{
       label: T('Add'),
       onClick: () => {
@@ -108,10 +109,10 @@ export class IdmapListComponent implements OnDestroy {
           }
         });
       },
-    }];
+    }] as EntityTableAction[];
   }
 
-  getActions(row: any) {
+  getActions(row: any): EntityTableAction[] {
     const actions = [];
     actions.push({
       id: 'edit',
@@ -138,7 +139,7 @@ export class IdmapListComponent implements OnDestroy {
         },
       });
     }
-    return actions;
+    return actions as EntityTableAction[];
   }
 
   doAdd(id?: number): void {

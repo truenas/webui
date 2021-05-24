@@ -4,10 +4,11 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { CoreEvent } from 'app/interfaces/events';
 import * as _ from 'lodash';
 import { DialogService, ShellService, WebSocketService } from '../../../services';
 import helptext from '../../../helptext/apps/apps';
-import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -26,7 +27,7 @@ interface PodLogEvent {
 @Component({
   selector: 'app-pod-logs',
   templateUrl: './pod-logs.component.html',
-  styleUrls: ['./pod-logs.component.css'],
+  styleUrls: ['./pod-logs.component.scss'],
   providers: [ShellService],
   encapsulation: ViewEncapsulation.None,
 })

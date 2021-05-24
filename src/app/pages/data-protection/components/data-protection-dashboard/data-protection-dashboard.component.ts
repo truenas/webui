@@ -32,7 +32,7 @@ import { JobService } from 'app/services/job.service';
 import { KeychainCredentialService } from 'app/services/keychaincredential.services';
 import { ModalService } from 'app/services/modal.service';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { InputTableConf } from 'app/pages/common/entity/table/table.component';
+import { AppTableAction, InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/rsync-form.component';
@@ -139,7 +139,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  getCardData() {
+  getCardData(): void {
     this.dataCards = [
       {
         name: 'scrub',
@@ -167,6 +167,14 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           edit(row) {
             this.parent.modalService.open('slide-in-form', this.parent.scrubFormComponent, row.id);
           },
+          tableActions: [
+            {
+              label: T('Adjust Priority'),
+              onClick: () => {
+                this.router.navigate(['/data-protection/scrub/priority']);
+              },
+            },
+          ],
         },
       },
       {
@@ -405,7 +413,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     this.smartFormComponent = new SmartFormComponent(this.ws, this.modalService);
   }
 
-  scrubDataSourceHelper(data: any[]) {
+  scrubDataSourceHelper(data: any[]): any[] {
     return data.map((task) => {
       task.schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
 
@@ -422,7 +430,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  cloudsyncDataSourceHelper(data: any[]) {
+  cloudsyncDataSourceHelper(data: any[]): any[] {
     return data.map((task) => {
       task.minute = task.schedule['minute'];
       task.hour = task.schedule['hour'];
@@ -452,7 +460,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  replicationDataSourceHelper(data: any[]) {
+  replicationDataSourceHelper(data: any[]): any[] {
     return data.map((task) => {
       task.ssh_connection = task.ssh_credentials ? task.ssh_credentials.name : '-';
       task.task_last_snapshot = task.state.last_snapshot ? task.state.last_snapshot : T('No snapshots sent yet');
@@ -469,7 +477,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  smartTestsDataSourceHelper(data: any[]) {
+  smartTestsDataSourceHelper(data: any[]): any[] {
     return data.map((test) => {
       test.schedule = `${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
       if (test.all_disks) {
@@ -489,7 +497,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  snapshotDataSourceHelper(data: any[]) {
+  snapshotDataSourceHelper(data: any[]): any[] {
     return data.map((task) => {
       task.state = task.state.state;
       task.keepfor = `${task.lifetime_value} ${task.lifetime_unit}(S)`;
@@ -498,7 +506,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  rsyncDataSourceHelper(data: any[]) {
+  rsyncDataSourceHelper(data: any[]): any[] {
     return data.map((task) => {
       task.minute = task.schedule['minute'];
       task.hour = task.schedule['hour'];
@@ -522,7 +530,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  getReplicationActions() {
+  getReplicationActions(): AppTableAction[] {
     return [
       {
         id: 'replication_run_now',
@@ -604,10 +612,10 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           this.dialog.dialogFormWide(conf);
         },
       },
-    ];
+    ] as unknown as AppTableAction[];
   }
 
-  getCloudsyncActions() {
+  getCloudsyncActions(): AppTableAction[] {
     return [
       {
         id: 'cloudsync_run_now',
@@ -783,10 +791,10 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           this.dialog.dialogFormWide(conf);
         },
       },
-    ];
+    ] as unknown as AppTableAction[];
   }
 
-  getRsyncActions() {
+  getRsyncActions(): AppTableAction[] {
     return [
       {
         id: 'rsync_run_now',
@@ -820,7 +828,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           });
         },
       },
-    ];
+    ] as unknown as AppTableAction[];
   }
 
   isActionVisible(name: string, row: any): boolean {

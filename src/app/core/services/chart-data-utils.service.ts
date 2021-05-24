@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { CoreEvent } from 'app/interfaces/events';
 import { Observable } from 'rxjs';
 import { Observer } from 'rxjs';
 import { Subject } from 'rxjs';
-import { CoreService, CoreEvent } from './core.service';
+import { CoreService } from './core.service';
 import { Thread } from 'app/core/classes/thread';
-import * as moment from 'moment';
 
 export interface ProcessTask {
   responseEvent: string;
@@ -30,10 +30,10 @@ export class ChartDataUtilsService {
 
   constructor(protected core: CoreService) {
     // Operations are what will run on the thread
-    const operations = () => {
+    const operations = (): void => {
       const context: Worker = self as any; // Required so Typescript doesn't complain
 
-      var callback = (data: any) => {
+      var callback = (data: any): void => {
         context.postMessage({ name: 'TEST FROM THREAD CALLBACK', data });
       };
 

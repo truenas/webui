@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AppTableAction } from 'app/pages/common/entity/table/table.component';
 import {
   WebSocketService, KeychainCredentialService, AppLoaderService,
   DialogService, ReplicationService, StorageService, CloudCredentialService,
@@ -51,7 +52,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     );
   }
 
-  getCards() {
+  getCards(): void {
     this.cards = [
       {
         name: 'cloudCredentials',
@@ -122,7 +123,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     ];
   }
 
-  cloudCredentialsDataSourceHelper(res: any[]) {
+  cloudCredentialsDataSourceHelper(res: any[]): any[] {
     return res.map((item) => {
       if (this.providers) {
         const credentialProvider = this.providers.find((provider) => provider.name == item.provider);
@@ -134,15 +135,15 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     });
   }
 
-  sshConnectionsDataSourceHelper(res: any[]) {
+  sshConnectionsDataSourceHelper(res: any[]): any[] {
     return res.filter((item) => item.type === 'SSH_CREDENTIALS');
   }
 
-  sshKeyPairsDataSourceHelper(res: any[]) {
+  sshKeyPairsDataSourceHelper(res: any[]): any[] {
     return res.filter((item) => item.type === 'SSH_KEY_PAIR');
   }
 
-  sshKeyPairActions() {
+  sshKeyPairActions(): AppTableAction[] {
     return [{
       icon: 'save_alt',
       name: 'download',

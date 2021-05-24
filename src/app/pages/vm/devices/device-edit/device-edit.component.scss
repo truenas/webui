@@ -4,47 +4,47 @@
 }*/
 
 .form-wrap {
-	display: flex;
-    flex-flow: row wrap;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    box-sizing: border-box;
+  box-direction: normal;
+  box-orient: horizontal;
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: row wrap;
 }
 
 .form-line {
-	flex: 1 1 100%;
-    box-sizing: border-box;
-    -webkit-box-flex: 1;
-    max-width: 100%;
+  box-flex: 1;
+  box-sizing: border-box;
+  flex: 1 1 100%;
+  max-width: 100%;
 }
 
 .form-inline {
-	flex: 1 1 33.33%;
-    box-sizing: border-box;
-    -webkit-box-flex: 1;
-    max-width: 33.33%;
+  box-flex: 1;
+  box-sizing: border-box;
+  flex: 1 1 33.33%;
+  max-width: 33.33%;
 }
 
 .form-card {
-    z-index:2;
+  z-index: 2;
 }
 
 .buttons {
-    margin-left: 1px;
+  margin-left: 1px;
 }
 
 
 /* Imported from embedded */
 /* Embedded Form Styles */
 .mat-content {
-  padding:0 ;
-  width:100%;
-  height:100%;
+  height: 100%;
+  padding: 0;
+  width: 100%;
 }
 
-.mat-card-actions{
+.mat-card-actions {
+  margin-bottom: 0;
   width: 100%;
-  margin-bottom:0;
   /*height: 10%;*/
   /*text-align: center;*/
   /*background-color: #fff;*/
@@ -53,42 +53,44 @@
   /*bottom: 0; */
 }
 
-.fieldset-container{
-  /*position: fixed;*/
-  width:100%;
-  height: 85%;
+.fieldset-container {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-}
-.fieldset-container .fieldset{
-  display:flex;
-  flex-flow:row wrap;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal; 
+  height: 85%;
+  /*position: fixed;*/
+  width: 100%;
 }
 
-.fieldset.divider-true{
-  min-height:32px;
-  padding-top:16px;
+.fieldset-container .fieldset {
+  box-direction: normal;
+  box-orient: horizontal;
+  display: flex;
+  flex-flow: row wrap; 
 }
 
-.fieldset-container .fieldset .tooltip .material-icons{
-  font-size:12px;
+.fieldset.divider-true {
+  min-height: 32px;
+  padding-top: 16px;
+}
+
+.fieldset-container .fieldset .tooltip .material-icons {
+  font-size: 12px;
 }
 
 /* Default View */
-.fieldset-container.fieldset-display-default{
+.fieldset-container.fieldset-display-default {
   /*padding: 3%;*/
 }
-.fieldset-container.fieldset-display-default .fieldset{
-  width:100%;
-  margin:24px 0;
+
+.fieldset-container.fieldset-display-default .fieldset {
+  margin: 24px 0;
+  width: 100%;
   /*height: 100%;*/
   /*float: left;*/
 }
 
 /* No Margins*/
-.fieldset-container.fieldset-display-default .fieldset{
-  margin:0;
+.fieldset-container.fieldset-display-default .fieldset {
+  margin: 0;
 }

@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
+import { CoreEvent } from 'app/interfaces/events';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { Subject } from 'rxjs';
-import { CoreEvent } from 'app/core/services/core.service';
 import { View } from 'app/core/classes/view';
 
 // This makes the metadata available globally
@@ -11,13 +11,11 @@ import { View } from 'app/core/classes/view';
 export const ViewComponentMetadata = {
   selector: 'view',
   templateUrl: './view.component.html',
-  styleUrls: ['./view.component.css'],
 };
 
 @Component({
   selector: 'view',
   templateUrl: './view.component.html',
-  styleUrls: ['./view.component.css'],
 })
 export class ViewComponent extends View {
   readonly componentName = ViewComponent;

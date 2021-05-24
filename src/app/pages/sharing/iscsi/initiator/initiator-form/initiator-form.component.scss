@@ -1,0 +1,14 @@
+div.connected-initiators-container {
+  margin-right: 10px;
+}
+
+div.connected-initiators-container.disabled {
+  opacity: 0.38;
+}
+
+mat-selection-list.connected-initiators-list {
+  border: 1px solid var(--bg1);
+  height: 500px;
+  margin-bottom: 5px;
+  overflow: auto;
+}

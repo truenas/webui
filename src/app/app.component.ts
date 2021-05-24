@@ -4,6 +4,7 @@ import {
   Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot,
 } from '@angular/router';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { CoreEvent } from 'app/interfaces/events';
 
 import { ThemeService } from 'app/services/theme/theme.service';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
@@ -14,7 +15,7 @@ import { ApiService } from 'app/core/services/api.service';
 import { AnimationService } from 'app/core/services/animation.service';
 import { InteractionManagerService } from 'app/core/services/interaction-manager.service';
 import { DataService } from 'app/core/services/data.service';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { SystemGeneralService } from './services';
 import { WebSocketService } from './services/ws.service';
@@ -28,7 +29,6 @@ import productText from './helptext/product';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
   appTitle = 'TrueNAS';

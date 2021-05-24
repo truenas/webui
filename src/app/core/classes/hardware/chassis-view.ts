@@ -1,8 +1,8 @@
+import { CoreEvent } from 'app/interfaces/events';
 import { Container, Texture, Sprite } from 'pixi.js';
 import { OutlineFilter } from '@pixi/filter-outline';
 import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
 import { Subject, Observable } from 'rxjs';
-import { CoreEvent } from 'app/core/services/core.service';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { DriveTray } from './drivetray';
 
@@ -95,9 +95,9 @@ export class ChassisView {
     this.columns = 4;
   }
 
-  requiredAssets() {
+  requiredAssets(): { alias: string; path: string }[] {
     // Return a list of assets for the loader to fetch
-    const assets: any[] = [];
+    const assets: { alias: string; path: string }[] = [];
     assets.push({ alias: this.model + '_chassis', path: this.chassisPath });
     assets.push({ alias: this.model + '_drivetray_bg', path: this.driveTrayBackgroundPath });
     assets.push({ alias: this.model + '_drivetray_handle', path: this.driveTrayHandlePath });
@@ -173,7 +173,7 @@ export class ChassisView {
       dt.handle.filters = this.filters;
 
       dt.container.interactive = true;
-      const clickHandler = (evt: MouseEvent) => { this.onTap(evt, dt); };
+      const clickHandler = (evt: MouseEvent): void => { this.onTap(evt, dt); };
       dt.container.on('click', clickHandler);
 
       this.driveTrays.addChild(dt.container);
@@ -200,7 +200,7 @@ export class ChassisView {
     driveTray.background.alpha = 1;
 
     setTimeout(() => {
-      const glow = (v: number) => driveTray.background.alpha = v;
+      const glow = (v: number): number => driveTray.background.alpha = v;
       tween({
         from: 1,
         to: startAlpha,
@@ -215,7 +215,7 @@ export class ChassisView {
     const duration = 50;
 
     setTimeout(() => {
-      const fade = (v: number) => this.chassis.alpha = v;
+      const fade = (v: number): number => this.chassis.alpha = v;
       tween({
         from: 0,
         to: this.chassisOpacity ? this.chassisOpacity : opacity,
@@ -226,7 +226,7 @@ export class ChassisView {
     this.driveTrayObjects.forEach((item, index) => {
       // Staggered handles fade in
       setTimeout(() => {
-        const updateAlpha = (v: number) => item.handle.alpha = v;
+        const updateAlpha = (v: number): number => item.handle.alpha = v;
 
         tween({
           from: item.handle.alpha,
@@ -246,7 +246,7 @@ export class ChassisView {
 
       // Staggered tray backgrounds fade in
       setTimeout(() => {
-        const updateAlpha = (v: number) => item.background.alpha = v;
+        const updateAlpha = (v: number): number => item.background.alpha = v;
 
         tween({
           from: item.background.alpha,

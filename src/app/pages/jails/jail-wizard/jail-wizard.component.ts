@@ -25,7 +25,7 @@ export class JailWizardComponent {
   protected addWsCall = 'jail.create';
   route_success: string[] = ['jails'];
   summary: any = {};
-  summary_title = 'Jail Summary';
+  summaryTitle = 'Jail Summary';
   objectKeys = Object.keys;
   entityWizard: any;
   protected namesInUse: string[] = [];
@@ -312,7 +312,7 @@ export class JailWizardComponent {
 
   }
 
-  preInit() {
+  preInit(): void {
     this.releaseField = _.find(this.wizardConfig[0].fieldConfig, { name: 'release' });
     this.template_list = new Array<string>();
     this.jailService.getTemplates().subscribe(
@@ -367,7 +367,7 @@ export class JailWizardComponent {
     );
   }
 
-  updateIpAddress(entityWizard: EntityWizardComponent, type: any) {
+  updateIpAddress(entityWizard: EntityWizardComponent, type: any): void {
     if (type == 'ipv4') {
       const ip4_interface_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip4_interface'];
       const ip4_address_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip4_addr'];
@@ -411,7 +411,7 @@ export class JailWizardComponent {
     }
   }
 
-  async afterInit(entityWizard: EntityWizardComponent) {
+  async afterInit(entityWizard: EntityWizardComponent): Promise<void> {
     this.entityWizard = entityWizard;
     this.entityWizard.formGroup.disable();
     await this.jailService.listJails().toPromise().then((res: any[]) => {
@@ -521,7 +521,7 @@ export class JailWizardComponent {
     });
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): any {
     const property: any = [];
 
     if (value['jailtype'] === 'basejail') {
@@ -568,7 +568,7 @@ export class JailWizardComponent {
     return value;
   }
 
-  customSubmit(value: any) {
+  customSubmit(value: any): void {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Creating Jail') }, disableClose: true });
     this.dialogRef.componentInstance.setDescription(T('Creating Jail...'));
     this.dialogRef.componentInstance.setCall(this.addWsCall, [value]);
@@ -583,7 +583,7 @@ export class JailWizardComponent {
     });
   }
 
-  isCustActionVisible(id: any, stepperIndex: any) {
+  isCustActionVisible(id: any, stepperIndex: any): boolean {
     if (stepperIndex == 0) {
       return true;
     }

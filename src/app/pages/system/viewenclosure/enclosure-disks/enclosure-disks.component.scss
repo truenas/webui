@@ -1,0 +1,525 @@
+nav.view-nav-bar {
+  background-color: var(--bg2);
+  color: var(--fg2);
+  height: 32px;
+  margin: -15px 0 32px;
+  padding-bottom: 4px;
+  width: 100%;
+}
+
+.enclosure-label-actions {
+  position: absolute;
+  right: 16px;
+}
+
+.view-nav-bar .view-nav-btn {
+  /*display:inline-block;*/
+  height: 40px;
+  text-transform: capitalize !important;
+  /*font-weight:500;
+  padding:0 16px;
+  text-align:center;*/
+}
+
+.view-card {
+  margin: 0 auto;
+  max-width: 960px;
+  min-height: 480px;
+  min-width: 700px;
+  padding: 0;
+}
+
+.view-card .mat-toolbar {
+  /*border-bottom:solid 1px var(--lines);*/
+  background-color: unset;
+  color: var(--fg2);
+}
+
+.view-card #disks-overview {
+  /*color:#ccc;*/
+  color: var(--fg2);
+  cursor: default;
+  height: 304px;
+  overflow: hidden;
+  /*background-color:rgba(0, 0, 0, 0.85);*/
+  position: relative;
+  user-select: none;
+}
+
+.view-card .expanders .caption,
+.view-card .expanders canvas {
+  opacity: 0;
+}
+
+.view-card #disks-details {
+  height: 250px;
+}
+
+.view-card #disks-details-header {
+  /*border-top:solid 1px var(--lines);*/
+  border-bottom: solid 1px var(--lines);
+  font-size: 1.15rem;
+  padding: 12px 16px;
+  /*background-color: rgba(0,0,0,0.05);*/
+}
+
+.view-card #disks-details,
+.view-card #disks-details-header {
+  background: var(--bg2);
+}
+
+.view-card .tiles {
+  border-left: solid 1px var(--lines);
+  text-align: center;
+}
+
+.view-card .tiles:first-child {
+  border-left: none;
+}
+
+.view-card .details-wrapper {
+  min-height: 400;
+  width: 100%;
+}
+
+.view-card .tiles.active {
+  background-color: rgba(0, 0, 0, 0.1);
+  background-color: var(--contrast-darker);
+}
+
+.view-card .primary-number {
+  font-size: 3.25rem;
+  font-weight: 100;
+}
+
+.view-card .title {
+  font-size: 1rem;
+}
+
+.view-card .subtitle {
+  font-size: 0.65rem;
+  opacity: 0.85;
+}
+
+.view-card .tiles .mat-button {
+  margin: 16px;
+}
+
+.view-card .disk-actions {
+  margin: 16px;
+  text-align: center;
+}
+
+.view-card .disk-actions button {
+  margin: 4px 16px;
+}
+
+.view-card #disks-details-header {
+  position: relative;
+}
+
+.view-card #disks-details-header.details {
+  padding-left: 56px;
+}
+
+.view-card #disks-details-header .back {
+  background: var(--primary);
+  border-radius: 50%;
+  cursor: pointer;
+  height: 24px;
+  left: 12px;
+  padding: 4px;
+  position: absolute;
+  top: 8px;
+  width: 24px;
+}
+
+.view-card .disk-advanced-details .detail {
+  margin: 8px 0;
+  text-align: left;
+}
+
+.view-card .disk-advanced-details .detail .label {
+  font-size: 100%;
+  font-weight: 500;
+}
+
+.view-card .disk-advanced-details .detail .value {
+  font-size: 120%;
+  font-weight: 300;
+  line-height: 85%;
+  text-align: left;
+  word-break: break-word;
+  /*
+  text-align: left;
+  font-weight: 300;
+  font-size: 120%;
+  line-height: 85%;
+   */
+}
+
+.view-card .disk-advanced-details .detail {
+  padding: 8px 16px;
+}
+
+.view-card .disk-basic-details .capacity {
+  font-size: 120%;
+  font-weight: 500;
+}
+
+.view-card .dom-overlay {
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  z-index: 3;
+}
+
+.view-card .dom-overlay .content {
+  opacity: 0; /* animations will change this */
+  padding: 3px;
+  position: absolute;
+  text-align: center;
+}
+
+.view-card .dom-overlay .content .legend {
+  margin: 0 auto;
+  text-align: left;
+  width: fit-content;
+}
+
+.view-card .dom-overlay.expanders .content {
+  width: 100%;
+}
+
+.view-card .dom-overlay.stage-left,
+.view-card .dom-overlay.stage-right {
+  display: block;
+  position: absolute;
+  width: 25%;
+}
+
+.view-card .dom-overlay.stage-right {
+  /*right: 0;*/
+  left: calc(75%);
+}
+
+.view-card .dom-overlay.stage-right .vdev-type {
+  border-bottom: solid 1px rgba(255, 255, 255, 0.5);
+  text-transform: capitalize;
+}
+
+.view-card .caption.dom-overlay {
+  bottom: 20px;
+  height: auto;
+  opacity: 0.5;
+  text-align: center;
+  z-index: 2;
+}
+
+
+.view-card .model.dom-overlay {
+  height: auto;
+  left: 0;
+  position: absolute;
+  /*top:12px;*/
+  text-align: center;
+  z-index: 3;
+}
+
+.view-card .model.dom-overlay img.logo.mark {
+  height: 30px;
+  left: -8px;
+  position: relative;
+  top: 4px;
+}
+
+.view-card .model.dom-overlay img.logo.type {
+  height: 18px;
+  left: 2px;
+  margin-right: 12px;
+  position: relative;
+  top: 0;
+}
+
+.view-card .model.dom-overlay .text {
+  font-size: 20px;
+}
+
+div.vdev-disk {
+  margin: 0;
+  /*border-left: solid 2px var(--blue);*/
+  padding: 0 8px 0 0;
+}
+
+.view-card .dom-overlay.stage-right.list > div {
+  text-align: left;
+}
+
+.view-card .dom-overlay.stage-right.list .swatch {
+  border-radius: 50%;
+  display: inline-block;
+  height: 10px;
+  margin-right: 12px;
+  width: 10px;
+}
+
+.view-card .dom-overlay.stage-right .vdev-disk .swatch {
+  border-radius: 50%;
+  display: inline-block;
+  height: 6px;
+  margin: 0 8px 2px 0;
+  width: 6px;
+}
+
+/*.view-card .mat-toolbar#Disks-toolbar,*/
+.view-card mat-card-content#Disks-content {
+  display: none;
+}
+
+.view-card mat-card-content#Disks-content.Disks {
+  display: block;
+}
+
+
+/*.view-card#Disks .mat-toolbar#Disks-toolbar,*/
+.view-card#Disks .mat-card-content#Disks-content {
+  background: var(--contrast-darkest);
+  opacity: 1;
+  position: static;
+}
+
+.semibold {
+  font-weight: 500;
+}
+
+.disks-overview-wrapper {
+  /*background:#000;*/
+}
+
+/* lt-lg */
+.view-card.md {
+  width: 750px;
+}
+
+.view-card.sm
+.view-card.xs {
+  width: 640px;
+}
+
+.view-card #disks-overview svg,
+.view-card #disks-overview canvas {
+  position: relative;
+}
+
+.view-card .dom-overlay#visualizer {
+  z-index: 2;
+}
+
+.view-card.rackmount .dom-overlay#visualizer {
+  width: auto;
+}
+
+/* MINI OVERRIDES */
+.view-card.mini {
+  /*color: #fff;*/
+  min-width: 960px;
+}
+
+.view-card.mini .alert {
+  color: var(--accent);
+}
+
+.view-card.mini .online {
+  color: var(--green);
+}
+
+.view-card.mini ul.disk-stats {
+  margin-left: 32px;
+}
+
+.view-card.mini .capacity {
+  margin-top: 16px;
+}
+
+.view-card.mini .dom-overlay#visualizer { left: 0 !important; }
+
+.view-card.mini #legend,
+.view-card.mini #disks-overview,
+.view-card.mini #disks-details,
+.view-card.mini .dom-overlay#visualizer,
+.view-card.mini #general-overview,
+.view-card.mini #drive-temps {
+  /*background-color: var(--contrast-darker);*/
+}
+
+.view-card.mini #legend {
+  padding: 16px;
+  position: absolute;
+  width: 60%;
+  z-index: 12;
+}
+
+.view-card.mini #disks-overview {
+  height: calc(600px - 96px);
+  margin-top: 48px;
+}
+
+.view-card.mini.mini-xl #disks-overview {
+  height: calc(640px - 96px);
+}
+
+.view-card.mini #disks-details,
+.view-card.mini .dom-overlay#visualizer {
+  height: calc(600px - 48px);
+}
+
+.view-card.mini.mini-xl #disks-details,
+.view-card.mini.mini-xl .dom-overlay#visualizer {
+  height: calc(640px - 48px);
+}
+
+.view-card.mini #general-overview {
+  height: calc(260px - 16px - 48px);
+}
+
+.view-card.mini #drive-temps {
+  height: calc(300px - 16px - 48px);
+}
+
+.view-card.mini.mini-xl #drive-temps {
+  height: calc(320px - 16px - 48px);
+}
+
+.view-card.mini #disks-details {
+  background-color: unset;
+  padding: 16px;
+}
+
+.view-card.mini #disks-details,
+.view-card.mini #disks-overview {
+  padding-bottom: 64px;
+
+}
+
+.view-card.mini #disks-details .back-btn {
+  background: unset !important;
+}
+
+.view-card.mini #disks-details li {
+  margin: 6px 0;
+}
+
+.mini div.header-container {
+  position: relative;
+}
+
+.mini h3.header {
+  border-bottom: solid 1px var(--lines);
+  padding-bottom: 4px;
+}
+
+.mini .header-container .mat-button.back-btn {
+  position: absolute;
+  right: 0;
+  top: -10px;
+}
+
+.mini .legend-item {
+  display: inline-block;
+  margin-right: 12px;
+}
+
+.mini .legend-item .swatch {
+  border-radius: 6px;
+  float: left;
+  height: 8px;
+  margin: 6px;
+  width: 8px;
+}
+
+.mini .disk-basic-details {
+  padding: 8px;
+}
+
+.mini .overlay {
+  height: 100%;
+  min-width: 25%;
+  position: absolute;
+  z-index: 3;
+}
+
+.mini .overlay.names {
+  min-width: 20%;
+}
+
+.mini .overlay.status {
+  min-width: 30%;
+}
+
+.mini .overlay.status .status-text {
+  bottom: 26px;
+  display: block;
+  left: 32px;
+  position: relative;
+}
+
+.mini .no-temp {
+  margin-top: 8px;
+}
+
+.mini .slot-label {
+  border-radius: 50%;
+  font-size: 0.65rem;
+  height: 18px;
+  padding: 2px 0 16px;
+  text-align: center;
+  width: 18px;
+}
+
+.mini .mat-card-content {
+  background-color: var(--contrast-color-darker);
+  background-color: var(--contrast-darker);
+  height: 600px;
+  min-height: 600px;
+}
+
+/* END MINI OVERRIDES */
+
+.view-card.md .dom-overlay.stage-left,
+.view-card.md .dom-overlay.stage-right,
+.view-card.md .dom-overlay .visualizer {
+  transform: scale3D(0.9, 0.9, 1);
+}
+
+.view-card.xs .dom-overlay.stage-left,
+.view-card.xs .dom-overlay.stage-right,
+.view-card.sm .dom-overlay.stage-left,
+.view-card.sm .dom-overlay.stage-right,
+.view-card.xs .dom-overlay .visualizer,
+.view-card.sm .dom-overlay .visualizer {
+  transform: scale3D(0.9, 0.9, 1);
+}
+
+.view-card.gt-md .dom-overlay.stage-left,
+.view-card.gt-md .dom-overlay.stage-right,
+.view-card.gt-md .dom-overlay .visualizer {
+  transform: scale3D(1, 1, 1);
+}
+
+.view-card .caption.dom-overlay.front-rear-toggle {
+  background-color: rgba(0, 0, 0, 0);
+  bottom: 10px;
+  opacity: 1;
+  text-align: center;
+  width: 100%;
+  z-index: 20;
+}
+
+.front-rear-toggle button {
+  color: #fff;
+  margin: 0 8px;
+}
+
+.front-rear-toggle button:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}

@@ -185,7 +185,7 @@ export class TwoFactorComponent implements FormConfiguration {
     protected loader: AppLoaderService,
     protected mdDialog: MatDialog) { }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     data.ssh = data.services.ssh;
     this.secret = data.secret;
     this.TwoFactorEnabled = data.enabled;
@@ -195,7 +195,7 @@ export class TwoFactorComponent implements FormConfiguration {
     return data;
   }
 
-  isCustActionVisible(actionId: string) {
+  isCustActionVisible(actionId: string): boolean {
     if (actionId === 'enable_action' && this.TwoFactorEnabled === true) {
       return false;
     } if (actionId === 'disable_action' && this.TwoFactorEnabled === false) {
@@ -204,7 +204,7 @@ export class TwoFactorComponent implements FormConfiguration {
     return true;
   }
 
-  isCustActionDisabled(action_id: string) {
+  isCustActionDisabled(action_id: string): boolean {
     // Disables the 'Enable 2F' & 'Show QR' buttons if there is no secret
     if (action_id === 'renew_secret') {
       return !this.TwoFactorEnabled;
@@ -213,7 +213,7 @@ export class TwoFactorComponent implements FormConfiguration {
     }
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityEdit = entityEdit;
     this.getURI();
     const intervalValue = _.find(this.fieldConfig, { name: 'interval' });
@@ -226,25 +226,24 @@ export class TwoFactorComponent implements FormConfiguration {
     });
   }
 
-  getURI() {
-    this.ws.call('auth.twofactor.provisioning_uri').subscribe((res) => {
-      this.entityEdit.formGroup.controls['uri'].setValue(res);
-      this.qrInfo = (res);
+  getURI(): void {
+    this.ws.call('auth.twofactor.provisioning_uri').subscribe((provisioningUri) => {
+      this.entityEdit.formGroup.controls['uri'].setValue(provisioningUri);
+      this.qrInfo = provisioningUri;
     }, (err) => {
       this.loader.close();
-      this.dialog.errorReport(helptext.two_factor.error,
-        err.reason, err.trace.formatted);
+      this.dialog.errorReport(helptext.two_factor.error, err.reason, err.trace.formatted);
     });
   }
 
-  updateEnabledStatus() {
+  updateEnabledStatus(): void {
     const enabled = _.find(this.fieldConfig, { name: 'enabled_status' });
     this.TwoFactorEnabled
       ? enabled.paraText = helptext.two_factor.enabled_status_true
       : enabled.paraText = helptext.two_factor.enabled_status_false;
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     if (data.otp_digits === this.digitsOnLoad && data.interval === this.intervalOnLoad) {
       this.doSubmit(data);
     } else {
@@ -260,7 +259,7 @@ export class TwoFactorComponent implements FormConfiguration {
     }
   }
 
-  doSubmit(data: any, openQR = false) {
+  doSubmit(data: any, openQR = false): void {
     data.enabled = this.TwoFactorEnabled;
     data.services = { ssh: data.ssh };
     const extras = ['instructions', 'enabled_status', 'secret', 'uri', 'ssh'];
@@ -287,7 +286,7 @@ export class TwoFactorComponent implements FormConfiguration {
     });
   }
 
-  renewSecret() {
+  renewSecret(): void {
     this.dialog.confirm(helptext.two_factor.renewSecret.title,
       helptext.two_factor.renewSecret.message, true,
       helptext.two_factor.renewSecret.btn).subscribe((res: boolean) => {
@@ -306,7 +305,7 @@ export class TwoFactorComponent implements FormConfiguration {
     });
   }
 
-  updateSecretAndUri() {
+  updateSecretAndUri(): void {
     this.ws.call('auth.twofactor.config').subscribe((res) => {
       this.entityEdit.formGroup.controls['secret'].setValue(res.secret);
       this.secret = res.secret;

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { RestService, WebSocketService, DialogService } from '../../../../services';
 import { FormGroup, Validators } from '@angular/forms';
@@ -32,7 +32,7 @@ export class VolumeImportWizardComponent {
   firstFormGroup: FormGroup;
   protected dialogRef: any;
   objectKeys = Object.keys;
-  summary_title = 'Pool Import Summary';
+  summaryTitle = 'Pool Import Summary';
   subs: any;
   saveSubmitText = T('Import');
   entityWizard: any;

@@ -35,9 +35,9 @@ interface CronDate {
 @Component({
   selector: 'form-scheduler',
   templateUrl: './form-scheduler.component.html',
-  styleUrls: ['./form-scheduler.component.css', '../dynamic-field/dynamic-field.css'],
+  styleUrls: ['./form-scheduler.component.scss', '../dynamic-field/dynamic-field.scss'],
 })
-export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterViewInit,
+export class FormSchedulerComponent implements Field, OnInit, AfterViewInit,
   AfterViewChecked {
   // Basic form-select props
   config: FieldConfig;
@@ -60,7 +60,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   isOpen = false;
   formControl = new FormControl();
   private _currentValue: string;
-  get currentValue() {
+  get currentValue(): any {
     return this.group.controls[this.config.name].value;
   }
 
@@ -98,7 +98,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   // private _daysOfWeekValues: boolean[] = [];
   private _daysOfWeek = '*';
 
-  get minutes() { return this._minutes; }
+  get minutes(): string { return this._minutes; }
   set minutes(val) {
     if (val !== '') {
       const string = '* ' + val + ' * * * *';
@@ -115,7 +115,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  get hours() { return this._hours; }
+  get hours(): string { return this._hours; }
   set hours(val) {
     if (val !== '' && val.indexOf(' ') === -1) {
       const string = '* * ' + val + ' * * *';
@@ -132,7 +132,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  get days() { return this._days; }
+  get days(): string { return this._days; }
   set days(val) {
     if (val !== '') {
       const string = '* * * ' + val + ' * *';
@@ -149,44 +149,44 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  get jan() { return this._jan; }
+  get jan(): boolean { return this._jan; }
   set jan(val) { this._jan = val; this.formatMonths(); }
-  get feb() { return this._feb; }
+  get feb(): boolean { return this._feb; }
   set feb(val) { this._feb = val; this.formatMonths(); }
-  get mar() { return this._mar; }
+  get mar(): boolean { return this._mar; }
   set mar(val) { this._mar = val; this.formatMonths(); }
-  get apr() { return this._apr; }
+  get apr(): boolean { return this._apr; }
   set apr(val) { this._apr = val; this.formatMonths(); }
-  get may() { return this._may; }
+  get may(): boolean { return this._may; }
   set may(val) { this._may = val; this.formatMonths(); }
-  get jun() { return this._jun; }
+  get jun(): boolean { return this._jun; }
   set jun(val) { this._jun = val; this.formatMonths(); }
-  get jul() { return this._jul; }
+  get jul(): boolean { return this._jul; }
   set jul(val) { this._jul = val; this.formatMonths(); }
-  get aug() { return this._aug; }
+  get aug(): boolean { return this._aug; }
   set aug(val) { this._aug = val; this.formatMonths(); }
-  get sep() { return this._sep; }
+  get sep(): boolean { return this._sep; }
   set sep(val) { this._sep = val; this.formatMonths(); }
-  get oct() { return this._oct; }
+  get oct(): boolean { return this._oct; }
   set oct(val) { this._oct = val; this.formatMonths(); }
-  get nov() { return this._nov; }
+  get nov(): boolean { return this._nov; }
   set nov(val) { this._nov = val; this.formatMonths(); }
-  get dec() { return this._dec; }
+  get dec(): boolean { return this._dec; }
   set dec(val) { this._dec = val; this.formatMonths(); }
 
-  get sun() { return this._sun; }
+  get sun(): boolean { return this._sun; }
   set sun(val) { this._sun = val; this.formatDaysOfWeek(); }
-  get mon() { return this._mon; }
+  get mon(): boolean { return this._mon; }
   set mon(val) { this._mon = val; this.formatDaysOfWeek(); }
-  get tue() { return this._tue; }
+  get tue(): boolean { return this._tue; }
   set tue(val) { this._tue = val; this.formatDaysOfWeek(); }
-  get wed() { return this._wed; }
+  get wed(): boolean { return this._wed; }
   set wed(val) { this._wed = val; this.formatDaysOfWeek(); }
-  get thu() { return this._thu; }
+  get thu(): boolean { return this._thu; }
   set thu(val) { this._thu = val; this.formatDaysOfWeek(); }
-  get fri() { return this._fri; }
+  get fri(): boolean { return this._fri; }
   set fri(val) { this._fri = val; this.formatDaysOfWeek(); }
-  get sat() { return this._sat; }
+  get sat(): boolean { return this._sat; }
   set sat(val) { this._sat = val; this.formatDaysOfWeek(); }
 
   minDate: moment.Moment;
@@ -224,7 +224,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     },
   ];
 
-  get textInput() {
+  get textInput(): string {
     return this._textInput;
   }
 
@@ -232,7 +232,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     this._textInput = val;
   }
 
-  get colorProxy() {
+  get colorProxy(): string {
     return this.group.value[this.config.name];
   }
 
@@ -240,7 +240,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     this.group.controls[this.config.name].setValue(val);
   }
 
-  get preset() {
+  get preset(): CronPreset {
     return this._preset;
   }
 
@@ -281,13 +281,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     });
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.group) {
-      // Change callback
-    }
-  }
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.control = this.group.controls[this.config.name];
     this.control.valueChanges.subscribe((evt: string) => {
       this.crontab = evt;
@@ -300,24 +294,24 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     this.ngDateFormat = `E ${this.localeService.getAngularFormat()} Z`;
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.cd.detectChanges();
     if (this.isOpen) { this.generateSchedule(); }
   }
 
-  ngAfterViewChecked() {
+  ngAfterViewChecked(): void {
     if (this.isOpen) {
       this.cd.detectChanges();
     }
   }
 
-  onChangeOption($event: Event) {
+  onChangeOption($event: Event): void {
     if (this.config.onChangeOption !== undefined && this.config.onChangeOption != null) {
       this.config.onChangeOption({ event: $event });
     }
   }
 
-  validPopup() {
+  validPopup(): boolean {
     // Assigned to disabled attribute
     if (this.validMinutes === false || this.validHours === false || this.validDays === false) {
       return true;
@@ -325,18 +319,18 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     return false;
   }
 
-  onPopupSave() {
+  onPopupSave(): void {
     this.togglePopup();
     if (this.formControl) {
       this.group.controls[this.config.name].setValue(this.crontab);
     }
   }
 
-  backdropClicked() {
+  backdropClicked(): void {
     this.togglePopup();
   }
 
-  togglePopup() {
+  togglePopup(): void {
     this.isOpen = !this.isOpen;
     if (this.isOpen) {
       setTimeout(() => {
@@ -351,7 +345,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  onScroll() {
+  onScroll(): void {
     const lastChild = this.schedulePreview.nativeElement.lastElementChild;
     const el = this.schedulePreview.nativeElement;
     if ((el.scrollHeight - el.scrollTop) == el.offsetHeight) {
@@ -359,7 +353,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  private setCalendar(direction: 'next' | 'previous') {
+  private setCalendar(direction: 'next' | 'previous'): void {
     let newDate;
     if (direction == 'next') {
       newDate = moment(this.minDate).add(1, 'months');
@@ -377,7 +371,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     this.generateSchedule();
   }
 
-  private getMinDate(d: moment.Moment) {
+  private getMinDate(d: moment.Moment): moment.Moment {
     const dt = moment(d).add(1, 'seconds');
     let newMinDate;
     const thisMonth = moment().month();
@@ -404,7 +398,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     return true;
   }
 
-  private generateSchedule(nextSubset?: boolean) {
+  private generateSchedule(nextSubset?: boolean): void {
     // get beginTime and endTime value;
     // config should define options with begin prop and end prop
     // e.g. options: ['schedule_begin', 'schedule_end']
@@ -486,7 +480,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  private updateCalendar(schedule: any) {
+  private updateCalendar(schedule: any): void {
     const nodes = this.getCalendarCells();
     for (let i = 0; i < nodes.length; i++) {
       const nodeClass = 'mat-calendar-body-cell ng-star-inserted';
@@ -500,7 +494,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  private getCalendarCells() {
+  private getCalendarCells(): any[] {
     const rows = this.calendar.nativeElement.children[0].children[1].children;
     let cells: any[] = [];
     for (let i = 0; i < rows.length; i++) {
@@ -516,21 +510,21 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     return cells;
   }
 
-  getAttribute(attr: string, node: HTMLElement) {
+  getAttribute(attr: string, node: HTMLElement): string {
     const a = node.attributes.getNamedItem(attr);
     if (a) {
       return a.value;
     }
   }
 
-  setAttribute(attr: string, node: HTMLElement, value: string) {
+  setAttribute(attr: string, node: HTMLElement, value: string): void {
     const a = document.createAttribute(attr);
     a.value = value;
     node.attributes.removeNamedItem(attr);
     node.attributes.setNamedItem(a);
   }
 
-  private checkSchedule(aria?: string, sched?: any) {
+  private checkSchedule(aria?: string, sched?: any): boolean {
     if (!aria) { return; }
     if (!sched) { sched = this.generatedSchedule; }
 
@@ -553,7 +547,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  formatMonths() {
+  formatMonths(): void {
     const months = [this._jan, this._feb, this._mar, this._apr, this._may, this._jun, this._jul, this._aug, this._sep, this._oct, this._nov, this._dec];
     const months_str = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
     let rule = '';
@@ -570,7 +564,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     this.updateCronTab();
   }
 
-  formatDaysOfWeek() {
+  formatDaysOfWeek(): void {
     const dow = [this._sun, this._mon, this._tue, this._wed, this._thu, this._fri, this._sat];
     const dow_str = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
     let rule = '';
@@ -587,7 +581,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     this.updateCronTab();
   }
 
-  updateMonthsFields(rule: string) {
+  updateMonthsFields(rule: string): void {
     // Wild card
     if (rule == '*') {
       this._jan = false;
@@ -649,7 +643,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  updateDaysOfWeekFields(rule: string) {
+  updateDaysOfWeekFields(rule: string): void {
     // Wild card
     if (rule == '*') {
       this._sun = false;
@@ -692,7 +686,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  updateCronTab(preset?: any) {
+  updateCronTab(preset?: any): void {
     this.crontab = '';
     if (!preset) {
       const result = this.minutes + ' ' + this.hours + ' ' + this.days + ' ' + this._months + ' ' + this._daysOfWeek;
@@ -703,7 +697,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  convertPreset(value: string) {
+  convertPreset(value: string): void {
     const arr = value.split(' ');
     this._minutes = arr[0];
     this._hours = arr[1];
@@ -734,7 +728,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     return tempOffset;
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.getGenConfig.unsubscribe();
   }
 }

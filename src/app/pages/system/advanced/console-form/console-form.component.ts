@@ -140,7 +140,7 @@ export class ConsoleFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  customSubmit(body: any) {
+  customSubmit(body: any): Subscription {
     this.loader.open();
     return this.ws.call('system.advanced.update', [body]).subscribe(() => {
       this.loader.close();
@@ -152,10 +152,6 @@ export class ConsoleFormComponent implements FormConfiguration, OnDestroy {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
-  }
-
-  getKeyByValue(object: any, value: any) {
-    return Object.keys(object).find((key) => object[key] === value);
   }
 
   ngOnDestroy(): void {

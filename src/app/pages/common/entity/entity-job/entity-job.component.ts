@@ -13,7 +13,7 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
 @Component({
   selector: 'entity-job',
   templateUrl: 'entity-job.component.html',
-  styleUrls: ['./entity-job.component.css'],
+  styleUrls: ['./entity-job.component.scss'],
 })
 export class EntityJobComponent implements OnInit {
   job: any = {};

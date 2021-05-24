@@ -51,18 +51,18 @@ export class SupportComponent implements OnInit {
     private dialog: DialogService, private mdDialog: MatDialog,
     private router: Router, private translate: TranslateService) {}
 
-  ngOnInit() {
-    this.ws.call('system.info').subscribe((res) => {
-      this.systemInfo = res;
-      this.systemInfo.memory = (res.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
-      if (res.system_product.includes('MINI')) {
-        this.getMiniImage(res.system_product);
+  ngOnInit(): void {
+    this.ws.call('system.info').subscribe((systemInfo) => {
+      this.systemInfo = systemInfo;
+      this.systemInfo.memory = (systemInfo.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
+      if (systemInfo.system_product.includes('MINI')) {
+        this.getMiniImage(systemInfo.system_product);
       } else {
-        this.getServerImage(res.system_product);
+        this.getServerImage(systemInfo.system_product);
       }
-      if (res.license) {
+      if (systemInfo.license) {
         this.hasLicense = true;
-        this.licenseInfo = res.license;
+        this.licenseInfo = systemInfo.license;
         this.parseLicenseInfo();
         this.ws.call('support.is_available').subscribe((res) => {
           if (res) {
@@ -80,7 +80,7 @@ export class SupportComponent implements OnInit {
     }, 500);
   }
 
-  parseLicenseInfo() {
+  parseLicenseInfo(): void {
     this.licenseInfo.features.length === 0 ? this.licenseInfo.featuresString = 'NONE'
       : this.licenseInfo.featuresString = this.licenseInfo.features.join(', ');
     const expDateConverted = new Date(this.licenseInfo.contract_end.$value);
@@ -96,12 +96,12 @@ export class SupportComponent implements OnInit {
     this.licenseInfo.daysLeftinContract = this.daysTillExpiration(now, then);
   }
 
-  daysTillExpiration(now: Date, then: Date) {
+  daysTillExpiration(now: Date, then: Date): number {
     const oneDay = 24 * 60 * 60 * 1000; // milliseconds in a day
     return Math.round((then.getTime() - now.getTime()) / (oneDay));
   }
 
-  getServerImage(sys_product: string) {
+  getServerImage(sys_product: string): void {
     let imagePath = '';
     this.serverList.forEach((model) => {
       if (sys_product.includes(model)) {
@@ -118,7 +118,7 @@ export class SupportComponent implements OnInit {
     }
   }
 
-  getMiniImage(sys_product: string) {
+  getMiniImage(sys_product: string): void {
     switch (sys_product) {
       case 'FREENAS-MINI-2.0':
       case 'FREENAS-MINI-3.0-E':
@@ -147,20 +147,20 @@ export class SupportComponent implements OnInit {
     this.extraMargin = false;
   }
 
-  updateLicense() {
+  updateLicense(): void {
     this.modalService.open('slide-in-form', this.licenseComponent);
   }
 
-  fileTicket() {
+  fileTicket(): void {
     const component = this.hasLicense ? this.supportFormLicensed : this.supportFormUnlicensed;
     this.modalService.open('slide-in-form', component);
   }
 
-  openProactive() {
+  openProactive(): void {
     this.modalService.open('slide-in-form', this.proactiveComponent);
   }
 
-  updateProductionStatus(e: any) {
+  updateProductionStatus(e: any): void {
     if (e.checked) {
       this.dialog.dialogForm(this.updateProdStatusConf);
     } else {
@@ -193,7 +193,7 @@ export class SupportComponent implements OnInit {
     message: helptext.updateProd.message,
   };
 
-  doProdUpdate(entityDialog: any) {
+  doProdUpdate(entityDialog: any): void {
     const self = entityDialog;
     self.loader.open();
     const dialogRef = entityDialog.mdDialog.open(EntityJobComponent,
