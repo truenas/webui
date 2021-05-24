@@ -1,27 +1,27 @@
 mat-card.card-widget {
-    height: calc(100% - 8px);
-    min-width: fit-content;
+  height: calc(100% - 8px);
+  min-width: fit-content;
 }
 
 mat-list-item.card-widget-list-item {
-    min-height: 48px;
-    height: auto;
-    display: flex;
+  display: flex;
+  height: auto;
+  min-height: 48px;
 }
 
 mat-icon.card-widget-list-icon {
-    padding: 4px 5px 4px 0;
+  padding: 4px 5px 4px 0;
 }
 
 .section-title {
-    font-size: 120%;
-    font-weight: bold;
+  font-size: 120%;
+  font-weight: bold;
 }
 
 .extra-top {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 .standard-list li {
-    line-height: 2;
+  line-height: 2;
 }

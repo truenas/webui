@@ -1,24 +1,21 @@
 .fa-spin {
-  -webkit-animation: fa-spin 2s infinite linear;
   animation: fa-spin 2s infinite linear;
 }
-@-webkit-keyframes fa-spin {
+@keyframes fa-spin {
   0% {
-    -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
+
   100% {
-    -webkit-transform: rotate(359deg);
     transform: rotate(359deg);
   }
 }
 @keyframes fa-spin {
   0% {
-    -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
+
   100% {
-    -webkit-transform: rotate(359deg);
     transform: rotate(359deg);
   }
 }
@@ -28,7 +25,8 @@
 }
 
 @keyframes nudge {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0);
   }
 
@@ -51,7 +49,7 @@
 }
 
 .hidden-button {
-  height: 0px !important;
+  height: 0 !important;
 }
 
 .topbar {
@@ -60,16 +58,17 @@
 }
 
 .ix-logo {
-  width: 175px;
-  height: 50px;
-  top: 5px;
-  right: -10px;
-  position: relative;
   cursor: pointer;
   fill: var(--topbar-txt) !important;
+  height: 50px;
+  position: relative;
+  right: -10px;
+  top: 5px;
+  width: 175px;
 }
-.ix-logo.xs{
-  width:50px;
-  height:50px;
+
+.ix-logo.xs {
+  height: 50px;
   right: 0;
+  width: 50px;
 }

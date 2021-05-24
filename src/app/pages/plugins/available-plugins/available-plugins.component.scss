@@ -1,35 +1,38 @@
 mat-card-content.plugin-info {
-    padding: 15px 15px 0px 15px;
+  padding: 15px 15px 0;
 }
 
 mat-button-toggle-group.plugin-buttons {
-    width: 100%;
-    overflow-x: auto;
+  overflow-x: auto;
+  width: 100%;
 }
+
 img.plugin-img {
-    padding-top: 10px;
+  padding-top: 10px;
 }
 
 p.plugin-description {
-    height: 100px;
+  height: 100px;
 }
+
 div.plugin-vinfo {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
+
 mat-icon.official-plugin {
-    vertical-align: middle;
+  vertical-align: middle;
 }
 
 figcaption {
-    color: var(--fg1);
+  color: var(--fg1);
 }
 
 button.plugin-button {
-    background: var(--primary);
-    color: white;
-    margin-left: 16px;
+  background: var(--primary);
+  color: white;
+  margin-left: 16px;
 }
 
 span.subtitle {
-    font-size: 1.1rem;
+  font-size: 1.1rem;
 }

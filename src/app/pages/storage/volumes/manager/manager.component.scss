@@ -1,189 +1,195 @@
 .custom_cell_styling {
-	overflow: hidden;
-	height: 20px;
-	width: 100%;
-	padding-left: 5px;
+  height: 20px;
+  overflow: hidden;
+  padding-left: 5px;
+  width: 100%;
 }
 
 .wrapper {
-	display: flex;
-	flex-flow: row wrap;
-	-webkit-box-orient: horizontal;
-	-webkit-box-direction: normal;
+  box-direction: normal;
+  box-orient: horizontal;
+  display: flex;
+  flex-flow: row wrap;
 }
 
 .disks {
-	/* flex-basis: auto;
+  /* flex-basis: auto;
 	-webkit-box-flex: 1;
 	flex-grow: 1; */
-	width: 510px;
-	/* max-width: 400px; */
+  width: 510px;
+  /* max-width: 400px; */
 }
 
 .disk-details-icon {
-	float: right;
-	width: 50px;
+  float: right;
+  width: 50px;
 }
 
 .disk-icon {
-	font-size: 24px;
+  font-size: 24px;
 }
 
 .disk-details {
-	float: left;
+  float: left;
 }
 
 .pool {
-	flex-basis: auto;
-	-webkit-box-flex: 1;
-	flex-grow: 1;
-	min-width: 520px;
-	max-width: 580px;
-	top: -10px;
-    position: relative;
+  box-flex: 1;
+  flex-basis: auto;
+  flex-grow: 1;
+  max-width: 580px;
+  min-width: 520px;
+  position: relative;
+  top: -10px;
 }
 
 .manager {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .buttons {
-	display: flex;
+  display: flex;
 }
 
 button {
-	margin-right: 5px;
+  margin-right: 5px;
 }
 
 h4 {
-	text-align: center;
+  text-align: center;
 }
 
 #avail-disks-title {
-	margin-bottom: 25px;
+  margin-bottom: 25px;
 }
 
 .volumeTooltip {
-	display: auto;
+  display: auto;
 }
 
 .sizeMessage {
-	margin: 0.5rem 1rem;
+  margin: 0.5rem 1rem;
 }
 
 .vdev-h4 {
-	margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .data-div {
-	display: flex;
-	padding:0;
-	margin-left: 102px;
-	width: 477px;
-	align-items: center;
+  align-items: center;
+  display: flex;
+  margin-left: 102px;
+  padding: 0;
+  width: 477px;
 }
 
 .data-title {
-	flex: 1;
+  flex: 1;
 }
 
 .duplicate-button {
-	width: 60px;
+  width: 60px;
 }
 
 #pool-manager__encryption-checkbox {
-	margin-left: 10px;
+  margin-left: 10px;
 }
 
 #pool-manager__reset-layout-button:disabled,
 #pool-manager__suggest-layout-button:disabled {
-	color: var(--fg2);
-	opacity: .38;
+  color: var(--fg2);
+  opacity: 0.38;
 }
 
 .pool-manager-title {
-	margin: 16px !important;
+  margin: 16px !important;
 }
+
 .fields {
-	/*display: flex;*/
-        width: 600px;
-	margin: 0.75rem 3rem 3rem 1rem !important;
+  margin: 0.75rem 3rem 3rem 1rem !important;
+  /*display: flex;*/
+  width: 600px;
 }
-#filter-wrapper, #pool-manager__button-group {
-	margin-left: 1rem;
+
+#filter-wrapper,
+#pool-manager__button-group {
+  margin-left: 1rem;
 }
+
 #create-pool-card {
-	min-width: 660px !important;
+  min-width: 660px !important;
 }
 
 .adjust-upward {
-	position: relative;
-	bottom: 5px;
+  bottom: 5px;
+  position: relative;
 }
 
-tooltip, tooltip.vdevTooltip{
-  position:relative;
-  top:5px;
+tooltip,
+tooltip.vdevTooltip {
+  position: relative;
+  top: 5px;
 }
 
 @media screen and (max-width: 1399px) {
-	.pool {
-		top: 40px;
-		margin-bottom: 50px;
-	}
-	.data-div {
-		margin-left: 118px;
-	}
+  .pool {
+    margin-bottom: 50px;
+    top: 40px;
+  }
+
+  .data-div {
+    margin-left: 118px;
+  }
 }
 
 .forceCreateCheckbox {
-	margin-left: 13px;
-	margin-bottom: 13px;
+  margin-bottom: 13px;
+  margin-left: 13px;
 }
 
-.tbl{display:table;}
-.tr{display:table-row;}
-.td{display:table-cell}
+.tbl {display: table;}
+.tr {display: table-row;}
+.td {display: table-cell;}
 
-button.vdev-option{
-  width:98.5% !important;
-  height:auto !important;
-  padding:12px 12px 12px 0;
+button.vdev-option {
+  height: auto !important;
+  padding: 12px 12px 12px 0;
+  width: 98.5% !important;
 }
 
-button.vdev-option .td.icon{
-  font-size:200%;
-  padding:0 16px;
-  vertical-align: middle;
+button.vdev-option .td.icon {
+  font-size: 200%;
   line-height: 0.5;
+  padding: 0 16px;
+  vertical-align: middle;
 }
 
-button.vdev-option h3{
-  font-weight:500;
-  font-size:1rem;
+button.vdev-option h3 {
+  font-size: 1rem;
+  font-weight: 500;
 }
 
-button.vdev-option p{
-  white-space:normal;
-  line-height:normal;
-  font-size:90%;
+button.vdev-option p {
+  font-size: 90%;
+  line-height: normal;
+  white-space: normal;
 }
 
 .button-bar {
-	display:flex;
-        margin-top:12px;
+  display: flex;
+  margin-top: 12px;
 }
 
 .button-spacer {
-	width: 50px;
+  width: 50px;
 }
 
 .inline {
-	margin-right: 5px;
-	display: inline-block;
+  display: inline-block;
+  margin-right: 5px;
 }
 
 .encryption-select.inline {
-	width: 200px;
+  width: 200px;
 }

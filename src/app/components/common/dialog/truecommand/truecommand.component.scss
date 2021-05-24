@@ -1,28 +1,28 @@
 .tc-dialog-content {
-    margin-top: 10px;
-    margin-bottom: 20px;
+  margin-bottom: 20px;
+  margin-top: 10px;
 }
 
 mat-icon.status-connected {
-    color: var(--blue);
+  color: var(--blue);
 }
 
 mat-icon.status-failed {
-    color: var(--red);
+  color: var(--red);
 }
 
 mat-icon.status-disabled {
-    color: var(--grey);
+  color: var(--grey);
 }
 
 mat-icon.tc-icon {
-    height: 21px;
-    width: 21px;
-    padding: 2px 0px 2px 2px;
+  height: 21px;
+  padding: 2px 0 2px 2px;
+  width: 21px;
 }
 
 div.tc-dialog-content mat-icon {
-    position: relative;
-    top: 5px;
-    margin-right: 10px;
+  margin-right: 10px;
+  position: relative;
+  top: 5px;
 }

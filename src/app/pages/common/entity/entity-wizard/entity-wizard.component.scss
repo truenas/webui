@@ -1,25 +1,30 @@
 .wizard-action {
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
   padding: 20px 1px;
-  margin-bottom: 0px;
-  margin-left: 0px;
-  margin-right: 0px;
 }
 
-#goback_button, #noconfirm_button {
-  margin-right: 0px;
+#goback_button,
+#noconfirm_button {
+  margin-right: 0;
 }
 
 ul.wizard-ul {
   list-style-type: none;
 }
-ul.wizard-ul li{
+
+ul.wizard-ul li {
   padding-inline-start: 20px;
 }
-#entity-spinner {
-  position: absolute;
-  top: 10px; left: 0; bottom: 0; right: 0;
-  z-index: 10;
+
+#entity-spinner { bottom: 0;
+  left: 0;
   margin: 0 auto;
+  position: absolute;
+  right: 0;
+  top: 10px;
+  z-index: 10;
 }
 
 :host mat-vertical-stepper {
