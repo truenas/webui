@@ -1,5 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { ServiceStatus } from 'app/enums/service-status.enum';
+import { Service } from 'app/interfaces/service.interface';
 import { InputTableConf } from 'app/pages/common/entity/table/table.component';
+import { Observable } from 'rxjs';
 
 export interface InputExpandableTableConf extends InputTableConf {
   alwaysCollapsed?: boolean;
@@ -8,6 +11,7 @@ export interface InputExpandableTableConf extends InputTableConf {
   expandedIfNotEmpty?: boolean;
   detailsHref?: string;
   limitRows?: number;
+  serviceStatus?: ServiceStatus;
 }
 
 @Component({
@@ -22,6 +26,7 @@ export class ExpandableTableComponent {
   disabled = false;
   isEmpty = true;
   isExpanded = false;
+  readonly ServiceStatus = ServiceStatus;
 
   @Input('conf') tableConf: InputExpandableTableConf;
 
@@ -48,6 +53,17 @@ export class ExpandableTableComponent {
       }
       return data;
     };
+  }
+
+  getStatusClass(status: ServiceStatus): string {
+    switch (status) {
+      case ServiceStatus.Running:
+        return 'fn-theme-primary';
+      case ServiceStatus.Stopped:
+        return 'fn-theme-red';
+      default:
+        return 'fn-theme-orange';
+    }
   }
 
   shouldBeCollapsed(): boolean {

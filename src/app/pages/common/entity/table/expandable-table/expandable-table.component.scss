@@ -1,7 +1,16 @@
-.description-panel div {
-  display: flex;
-  flex-direction: row-reverse;
-  width: 100%;
+.expanded-table-container {
+  .mat-expansion-panel-header.hasExtraActions {
+    padding-right: 0;
+  }
+}
+
+.description-panel {
+  .actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    width: 100%;
+  }
 }
 
 .actions-row {
@@ -16,4 +25,8 @@
   a {
     height: min-content;
   }
+}
+
+.service-status {
+  margin-left: 32px;
 }
