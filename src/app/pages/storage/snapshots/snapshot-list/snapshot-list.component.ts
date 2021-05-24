@@ -296,7 +296,11 @@ export class SnapshotListComponent {
 
   getMultiDeleteMessage(selected: Snapshot[]): string {
     const grandTotal: string = selected.length > 1 ? selected.length.toString() : '';
-    let message = `<strong>The following ${grandTotal} snapshots will be deleted. Are you sure you want to proceed?</strong>`;
+    let message = this.translate.instant(
+      '<strong>The following { n, plural, one {snapshot} other {# snapshots} } will be deleted. Are you sure you want to proceed?</strong>',
+      { n: selected.length },
+    );
+
     message += '<br>';
     const info: DialogData = this.restructureData(selected);
 
@@ -308,7 +312,11 @@ export class SnapshotListComponent {
 
     info.datasets.forEach((dataset: any) => {
       const totalSnapshots: number = info.snapshots[dataset].length;
-      const header = `<br/> <div><strong>${dataset}</strong> (${totalSnapshots} snapshots) </div>`;
+      const snapshotText = this.translate.instant(
+        '{ n, plural, one {# snapshot} other {# snapshots} }',
+        { n: totalSnapshots },
+      );
+      const header = `<br/> <div><strong>${dataset}</strong> (${snapshotText}) </div>`;
       const listContent: string[] = [];
 
       info.snapshots[dataset].forEach((snapshot: any) => {
