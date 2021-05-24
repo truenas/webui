@@ -31,6 +31,7 @@ module.exports = {
         // Consciously altered from Airbnb
         "no-return-assign": "off",
         "no-empty": ["error", { "allowEmptyCatch": true }],
+        "arrow-body-style": "off",
 
         // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically
         "max-len": "off",

@@ -118,6 +118,7 @@ export class ChartWizardComponent implements OnDestroy {
         });
       }
     } catch (error) {
+      console.error(error);
       this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
   }

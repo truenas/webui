@@ -101,6 +101,7 @@ export class ChartFormComponent implements FormConfiguration {
 
       fieldSets = fieldSets.filter((fieldSet) => fieldSet.config.length > 0);
     } catch (error) {
+      console.error(error);
       this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
 
