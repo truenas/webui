@@ -65,7 +65,7 @@ export class SharesDashboardComponent {
     private loader: AppLoaderService, private sysGeneralService: SystemGeneralService, private aroute: ActivatedRoute,
     private iscsiService: IscsiService, private translate: TranslateService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.webdavHasItems) {
       this.webdavTableConf.alwaysExpanded = true;
     }

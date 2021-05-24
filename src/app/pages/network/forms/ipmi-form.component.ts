@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Option } from 'app/interfaces/option.interface';
 
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { ProductType } from '../../../enums/product-type.enum';
 import { DialogService, WebSocketService } from '../../../services';
 import { ipv4Validator } from '../../common/entity/entity-form/validators/ip-validation';
@@ -14,6 +14,7 @@ import { EntityUtils } from '../../common/entity/utils';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { T } from '../../../translate-marker';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+
 @Component({
   selector: 'app-ipmi',
   template: '<entity-form [conf]="this"></entity-form>',

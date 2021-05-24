@@ -28,8 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { TreeNode } from 'primeng/api';
-import { combineLatest } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
+import { combineLatest, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ProductType } from '../../../../enums/product-type.enum';
 import dataset_helptext from '../../../../helptext/storage/volumes/datasets/dataset-form';
@@ -162,7 +161,7 @@ export class VolumesListTableConfig implements InputTableConf {
     return false;
   }
 
-  getEncryptedActions(rowData: Pool) {
+  getEncryptedActions(rowData: Pool): any[] {
     const actions = [];
     const self = this;
     if (rowData.encrypt === 2) {

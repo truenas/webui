@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 
 import * as _ from 'lodash';
