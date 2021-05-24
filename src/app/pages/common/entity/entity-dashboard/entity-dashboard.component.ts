@@ -51,18 +51,8 @@ export class EntityDashboardComponent implements OnInit {
     if (!this.productType.includes(ProductType.Enterprise)) {
       exclude = exclude.concat(this.enterpriseOnly);
     }
-    // if (window.localStorage.getItem('is_freenas') === 'false') {
-    // 	exclude = exclude.concat(this.truenas_exclude);
-    // 	this.ws.call('failover.licensed').subscribe((is_ha) => {
-    // 		if (!is_ha) { // allow failover
-    // 			this.remove('failover');
-    // 		}
-    // 	});
-    // } else { // if freenas
-    // 	exclude = exclude.concat(this.freenas_exclude);
-    // }
-    this.ws.call('ipmi.is_loaded').subscribe((res) => {
-      if (res !== true) {
+    this.ws.call('ipmi.is_loaded').subscribe((isIpmiLoaded) => {
+      if (!isIpmiLoaded) {
         this.remove('ipmi');
       }
     });

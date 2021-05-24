@@ -223,8 +223,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.init();
 
-    this.ws.call('failover.licensed').subscribe((res) => {
-      if (res) {
+    this.ws.call('failover.licensed').subscribe((hasFailover) => {
+      if (hasFailover) {
         this.isHA = true;
       }
     });

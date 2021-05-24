@@ -224,8 +224,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   checkBuildtime(): void {
-    this.ws.call('system.build_time').subscribe((res) => {
-      const buildtime = res.$date;
+    this.ws.call('system.build_time').subscribe((buildTime) => {
+      const buildtime = String(buildTime.$date);
       const previous_buildtime = window.localStorage.getItem('buildtime');
       if (buildtime !== previous_buildtime) {
         window.localStorage.setItem('buildtime', buildtime);
@@ -368,11 +368,13 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   successLogin(): void {
     this.snackBar.dismiss();
-    this.tokenObservable = this.ws.call('auth.generate_token', [300]).subscribe((result) => {
-      if (result) {
-        this.ws.token = result;
-        this.redirect();
+    this.tokenObservable = this.ws.call('auth.generate_token', [300]).subscribe((token) => {
+      if (!token) {
+        return;
       }
+
+      this.ws.token = token;
+      this.redirect();
     });
   }
 

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Alert } from 'app/interfaces/alert.interface';
 
 import { Observable, Subject, Subscription } from 'rxjs';
 import * as _ from 'lodash';
@@ -41,14 +42,14 @@ export class NotificationsService {
         this.timeZone = res.timezone;
       }
 
-      this.ws.call('alert.list', []).subscribe((res) => {
-        this.notifications = this.alertsArrivedHandler(res);
+      this.ws.call('alert.list').subscribe((alerts) => {
+        this.notifications = this.alertsArrivedHandler(alerts);
         this.subject.next(this.notifications);
       });
 
-      this.ws.sub('alert.list').subscribe((res) => {
+      this.ws.sub<Alert>('alert.list').subscribe((alert) => {
         // check for updates to alerts
-        const notification = this.alertsArrivedHandler([res])[0];
+        const notification = this.alertsArrivedHandler([alert])[0];
         if (!_.find(this.notifications, { id: notification.id })) {
           this.notifications.push(notification);
         }
@@ -100,7 +101,7 @@ export class NotificationsService {
 
     notifications.forEach((notification) => {
       notificationMap.set(notification.id, notification);
-      this.ws.call('alert.restore', [notification.id]).subscribe((res) => {
+      this.ws.call('alert.restore', [notification.id]).subscribe(() => {
         console.log('alert restore id:' + notification.id);
       });
     });
@@ -114,29 +115,24 @@ export class NotificationsService {
     this.subject.next(this.notifications);
   }
 
-  private alertsArrivedHandler(res: any): NotificationAlert[] {
-    const returnAlerts = new Array<NotificationAlert>();
-    const data: any[] = res;
-
-    if (data && data.length > 0) {
-      data.forEach((alertObj: NotificationAlert) => {
-        returnAlerts.push(this.addNotification(alertObj));
-      });
+  private alertsArrivedHandler(alerts: Alert[]): NotificationAlert[] {
+    if (!alerts) {
+      return [];
     }
 
-    return returnAlerts;
+    return alerts.map((alert) => this.addNotification(alert));
   }
 
-  private addNotification(alertObj: any): NotificationAlert {
-    const id: string = alertObj.id;
-    const dismissed: boolean = alertObj.dismissed;
-    const message: string = <string>alertObj.formatted;
-    const level: AlertLevel = alertObj.level;
-    const date: Date = new Date(alertObj.datetime.$date);
+  private addNotification(alert: Alert): NotificationAlert {
+    const id: string = alert.id;
+    const dismissed: boolean = alert.dismissed;
+    const message: string = <string>alert.formatted;
+    const level: AlertLevel = alert.level;
+    const date: Date = new Date(alert.datetime.$date);
     const dateStr = date.toUTCString();
     const dateStrLocale = date.toLocaleString(this.locale, { timeZone: this.timeZone });
-    const one_shot: boolean = alertObj.one_shot;
-    let icon_tooltip: string = <string>alertObj.level;
+    const one_shot: boolean = alert.one_shot;
+    let icon_tooltip: string = <string>alert.level;
     const routeName = '/dashboard';
     let icon = 'info';
     let color = 'primary';

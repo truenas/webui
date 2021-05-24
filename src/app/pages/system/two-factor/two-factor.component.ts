@@ -227,13 +227,12 @@ export class TwoFactorComponent implements FormConfiguration {
   }
 
   getURI(): void {
-    this.ws.call('auth.twofactor.provisioning_uri').subscribe((res) => {
-      this.entityEdit.formGroup.controls['uri'].setValue(res);
-      this.qrInfo = (res);
+    this.ws.call('auth.twofactor.provisioning_uri').subscribe((provisioningUri) => {
+      this.entityEdit.formGroup.controls['uri'].setValue(provisioningUri);
+      this.qrInfo = provisioningUri;
     }, (err) => {
       this.loader.close();
-      this.dialog.errorReport(helptext.two_factor.error,
-        err.reason, err.trace.formatted);
+      this.dialog.errorReport(helptext.two_factor.error, err.reason, err.trace.formatted);
     });
   }
 
