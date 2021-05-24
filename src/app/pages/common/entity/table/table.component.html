@@ -88,7 +88,7 @@
                 </ng-template>
               </ng-container>
             </ng-container>
-            <button mat-icon-button (click)="deleteRow(element)" *ngIf="_tableConf.deleteCall">
+            <button mat-icon-button (click)="$event.stopPropagation(); deleteRow(element)" *ngIf="_tableConf.deleteCall">
               <mat-icon class="table-action-button" [matTooltip]="'Delete' | translate">delete</mat-icon>
             </button>
           </div>

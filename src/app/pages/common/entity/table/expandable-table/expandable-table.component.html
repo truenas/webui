@@ -20,7 +20,7 @@
     </mat-expansion-panel-header>
     <app-table [conf]="tableConf"></app-table>
   </mat-expansion-panel>
-  <div [ngClass]="{'actions-row': isExpanded && tableConf.detailsHref}" *ngIf="isExpanded && tableConf.detailsHref">
+  <div [ngClass]="{'actions-row': isExpanded && tableConf.detailsHref}" *ngIf="shouldDetailsShow()">
     <a [routerLink]="tableConf.detailsHref.split('/')">View Details</a>
   </div>
 </mat-card>

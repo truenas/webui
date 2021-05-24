@@ -57,4 +57,8 @@ export class ExpandableTableComponent {
   shouldBeExpanded(): boolean {
     return this.tableConf.alwaysExpanded || (!this.isEmpty && this.tableConf.expandedIfNotEmpty);
   }
+
+  shouldDetailsShow(): boolean {
+    return this.shouldBeExpanded() && (!!this.tableConf.detailsHref);
+  }
 }

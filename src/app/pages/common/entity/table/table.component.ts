@@ -38,6 +38,7 @@ export interface InputTableConf {
 
   add?(): any; // add action function
   afterGetData?(data: any): void;
+  afterDelete?(tableComponent: any): void;
   edit?(any: any): any; // edit row
   delete?(item: any, table: any): any; // customize delete row method
   dataSourceHelper?(any: any): any; // customise handle/modify dataSource
