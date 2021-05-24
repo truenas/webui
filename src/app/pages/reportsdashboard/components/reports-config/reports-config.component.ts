@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { helptext } from 'app/helptext/system/reporting';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 import { DialogService, WebSocketService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -87,7 +89,7 @@ export class ReportsConfigComponent implements FormConfiguration {
     protected dialog: DialogService,
   ) {}
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     this.graphPoints = data.graph_points;
     this.graphAge = data.graph_age;
     this.isCpuCheckboxChecked = data.cpu_in_percentage;
@@ -95,11 +97,11 @@ export class ReportsConfigComponent implements FormConfiguration {
     return data;
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
   }
 
-  customSubmit(body: any) {
+  customSubmit(body: any): void {
     if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints
       || body.cpu_in_percentage !== this.isCpuCheckboxChecked) {
       this.dialog.confirm(helptext.dialog.title, helptext.dialog.message, false,
@@ -114,7 +116,7 @@ export class ReportsConfigComponent implements FormConfiguration {
     }
   }
 
-  doSubmit(body: any) {
+  doSubmit(body: any): Subscription {
     this.graphAge = body.graph_age;
     this.graphPoints = body.graph_points;
     this.isCpuCheckboxChecked = body.cpu_in_percentage;

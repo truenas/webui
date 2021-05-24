@@ -208,7 +208,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
     protected storageService: StorageService,
   ) { }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     data.server = `${data.server}/${data.netmask}`;
     return data;
   }

@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DatasetType } from 'app/enums/dataset-type.enum';
-import { Subscription, combineLatest } from 'rxjs';
+import { Subscription, combineLatest, Observable } from 'rxjs';
 import * as _ from 'lodash';
 
 import { RestService, WebSocketService, StorageService } from '../../../../../services';
@@ -729,7 +729,7 @@ export class ZvolFormComponent implements FormConfiguration {
     }
   }
 
-  addSubmit(body: any) {
+  addSubmit(body: any): Observable<any> {
     const data: any = this.sendAsBasicOrAdvanced(body);
 
     if (data.sync === 'INHERIT') {

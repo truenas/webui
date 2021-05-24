@@ -141,7 +141,7 @@ const tableUtils = {
   },
 };
 
-function processTableCommands(list: any[]) {
+function processTableCommands(list: any[]): any {
   let output: any;
   list.forEach((item, index) => {
     const input = item.input == '--pipe' || item.input == '|' ? output : item.input;
@@ -151,7 +151,7 @@ function processTableCommands(list: any[]) {
   return output;
 }
 
-function tableUtilsEmit(evt: any) {
+function tableUtilsEmit(evt: any): void {
   postMessage(evt);
 }
 

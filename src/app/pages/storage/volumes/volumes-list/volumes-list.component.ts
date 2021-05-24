@@ -240,7 +240,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 this.loader.close();
                 new EntityUtils().handleWSError(helptext.dataErrMsg, err, this.dialogService);
               });
-              function doLock() {
+              function doLock(): void {
                 const conf: DialogFormConfiguration = {
                   title: T('Enter passphrase to lock pool ') + row1.name + '.',
                   fieldConfig: [
@@ -1341,7 +1341,7 @@ export class VolumesListTableConfig implements InputTableConf {
     return actions;
   }
 
-  getEncryptedDatasetActions(rowData: any) {
+  getEncryptedDatasetActions(rowData: any): any[] {
     const encryption_actions = [];
     if (rowData.encrypted) {
       if (rowData.locked) {

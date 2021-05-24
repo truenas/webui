@@ -131,7 +131,7 @@ export class ScrubFormComponent implements FormConfiguration {
     delete value.scrub_picker;
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     this.entityForm.formGroup.controls['threshold'].setValue(data.threshold);
     this.entityForm.formGroup.controls['enabled'].setValue(data.enabled);
     this.entityForm.formGroup.controls['description'].setValue(data.description);
