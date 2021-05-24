@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
+import { LoginParams } from 'app/interfaces/auth.interface';
 import { LocalStorage } from 'ngx-webstorage';
 import { Observable, Observer, Subject } from 'rxjs';
 
@@ -12,7 +13,7 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
 @Injectable()
 export class WebSocketService {
   private debug = true;
-  private _authStatus: Subject<any>;
+  private _authStatus: Subject<boolean>;
   onCloseSubject: Subject<any>;
   onOpenSubject: Subject<any>;
   pendingCalls: any;
@@ -32,7 +33,7 @@ export class WebSocketService {
   subscriptions: Map<string, any[]> = new Map<string, any[]>();
 
   constructor(private _router: Router) {
-    this._authStatus = new Subject();
+    this._authStatus = new Subject<boolean>();
     this.onOpenSubject = new Subject();
     this.onCloseSubject = new Subject();
     this.pendingCalls = new Map();
@@ -253,15 +254,17 @@ export class WebSocketService {
   }
 
   login(username: string, password: string, otp_token?: string): Observable<any> {
-    const params = otp_token ? [username, password, otp_token] : [username, password];
-    return Observable.create((observer: any) => {
-      this.call('auth.login', params).subscribe((result) => {
-        this.loginCallback(result, observer);
+    const params: LoginParams = otp_token
+      ? [username, password, otp_token]
+      : [username, password];
+    return Observable.create((observer: Observer<boolean>) => {
+      this.call('auth.login', params).subscribe((wasLoggedIn) => {
+        this.loginCallback(wasLoggedIn, observer);
       });
     });
   }
 
-  loginCallback(result: any, observer: Observer<any>) {
+  loginCallback(result: boolean, observer: Observer<boolean>) {
     if (result === true) {
       if (!this.loggedIn) {
         this._authStatus.next(this.loggedIn);

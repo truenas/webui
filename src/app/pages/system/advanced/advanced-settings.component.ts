@@ -270,7 +270,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   }
 
   getDataCardData(): void {
-    this.getAdvancedConfig = this.ws.call('system.advanced.config').subscribe((advancedConfig: AdvancedConfig) => {
+    this.getAdvancedConfig = this.ws.call('system.advanced.config').subscribe((advancedConfig) => {
       this.configData = advancedConfig;
 
       this.dataCards = [
