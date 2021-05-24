@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 
@@ -9,6 +10,8 @@ import { EntityUtils } from '../../../../common/entity/utils';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { T } from 'app/translate-marker';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 @Component({
   selector: 'app-iscsi-target-form',
@@ -141,7 +144,7 @@ export class TargetFormComponent implements FormConfiguration {
     },
   ];
   fieldConfig: FieldConfig[];
-
+  title = T('Add ISCSI Target');
   pk: any;
   protected entityForm: any;
   constructor(protected router: Router,
@@ -152,8 +155,8 @@ export class TargetFormComponent implements FormConfiguration {
     protected ws: WebSocketService) {
     const basicFieldset = _.find(this.fieldSets, { class: 'basic' });
     this.ws.call('system.info').subscribe(
-      (res) => {
-        if (res.license && res.license.features.indexOf('FIBRECHANNEL') > -1) {
+      (systemInfo) => {
+        if (systemInfo.license && systemInfo.license.features.indexOf(LicenseFeature.FibreChannel) > -1) {
           _.find(basicFieldset.config, { name: 'mode' }).isHidden = false;
         }
       },
@@ -218,7 +221,7 @@ export class TargetFormComponent implements FormConfiguration {
     );
   }
 
-  preInit() {
+  preInit(): void {
     this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
@@ -227,12 +230,13 @@ export class TargetFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
+    this.title = entityForm.isNew ? T('Add ISCSI Target') : T('Edit ISCSI Target');
   }
 
-  customEditCall(value: any) {
+  customEditCall(value: any): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
       (res) => {

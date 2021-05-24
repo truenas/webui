@@ -157,7 +157,7 @@ export class PortalFormComponent implements FormConfiguration {
     });
   }
 
-  preInit() {
+  preInit(): void {
     this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
@@ -175,7 +175,7 @@ export class PortalFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
@@ -184,7 +184,7 @@ export class PortalFormComponent implements FormConfiguration {
     });
   }
 
-  customEditCall(value: any) {
+  customEditCall(value: any): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
       (res) => {
@@ -198,7 +198,7 @@ export class PortalFormComponent implements FormConfiguration {
     );
   }
 
-  genPortalAddress(data: any) {
+  genPortalAddress(data: any): void {
     let ips: any[] = [];
     for (let i = 0; i < data.length; i++) {
       if (data[i]['ip']) {
@@ -212,11 +212,11 @@ export class PortalFormComponent implements FormConfiguration {
     this.ip = ips;
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     data['listen'] = this.ip;
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     const ports = new Map() as any;
     const groupedIp = [];
     for (let i = 0; i < data['listen'].length; i++) {

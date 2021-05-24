@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Subscription } from 'rxjs';
 
 import * as _ from 'lodash';
@@ -670,13 +671,13 @@ export class CertificateAddComponent {
       }
     });
 
-    this.ws.call('certificate.query').subscribe((res: any[]) => {
+    this.ws.call('certificate.query').subscribe((certificates) => {
       this.csrlist = this.getTarget('csrlist');
-      res.forEach((item) => {
-        if (item.CSR !== null) {
-          this.CSRList.push(item);
+      certificates.forEach((certificate) => {
+        if (certificate.CSR !== null) {
+          this.CSRList.push(certificate);
           this.csrlist.options.push(
-            { label: item.name, value: item.id },
+            { label: certificate.name, value: certificate.id },
           );
         }
       });
@@ -702,7 +703,7 @@ export class CertificateAddComponent {
     this.currentStep = stepper._selectedIndex;
   }
 
-  getSummaryValueLabel(fieldConfig: any, value: any) {
+  getSummaryValueLabel(fieldConfig: any, value: any): any {
     if (fieldConfig.type == 'select') {
       const option = fieldConfig.options.find((option: any) => option.value == value);
       if (option) {
@@ -951,7 +952,7 @@ export class CertificateAddComponent {
     }
   }
 
-  getStep(fieldName: string) {
+  getStep(fieldName: string): number {
     const stepNumber = this.wizardConfig.findIndex((step) => {
       const index = step.fieldConfig.findIndex((field) => fieldName == field.name);
       return index > -1;
@@ -960,7 +961,7 @@ export class CertificateAddComponent {
     return stepNumber;
   }
 
-  getField(fieldName: any) {
+  getField(fieldName: any): AbstractControl {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
       const target = (< FormGroup > this.entityWizard.formArray.get([stepNumber])).controls[fieldName];
@@ -969,7 +970,7 @@ export class CertificateAddComponent {
     return null;
   }
 
-  getTarget(fieldName: string) {
+  getTarget(fieldName: string): FieldConfig {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
       const target = _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName });
@@ -992,7 +993,7 @@ export class CertificateAddComponent {
     }
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): any {
     if (data.san) {
       for (let i = 0; i < data.san.length; i++) {
         let sanValue = '';

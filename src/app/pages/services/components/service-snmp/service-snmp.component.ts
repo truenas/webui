@@ -1,6 +1,7 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs';
 
 import {
   IdmapService, IscsiService, RestService, WebSocketService,
@@ -148,17 +149,17 @@ export class ServiceSNMPComponent implements FormConfiguration {
     protected iscsiService: IscsiService,
     protected idmapService: IdmapService) {}
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     entityForm.submitFunction = this.submitFunction;
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     delete data['v3_privpassphrase'];
     delete data['v3_password'];
     return data;
   }
 
-  clean(value: any) {
+  clean(value: any): any {
     if (!value['v3']) {
       value['v3_password'] = '';
       value['v3_privpassphrase'] = '';
@@ -169,7 +170,7 @@ export class ServiceSNMPComponent implements FormConfiguration {
     return value;
   }
 
-  submitFunction(this: any, entityForm: any) {
+  submitFunction(this: any, entityForm: any): Observable<any> {
     return this.ws.call('snmp.update', [entityForm]);
   }
 }

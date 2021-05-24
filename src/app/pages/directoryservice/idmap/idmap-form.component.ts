@@ -306,11 +306,11 @@ export class IdmapFormComponent implements FormConfiguration {
       this.hideField(option, true, entityEdit);
     });
 
-    this.idmapService.getCerts().subscribe((res: any[]) => {
+    this.idmapService.getCerts().subscribe((certificates) => {
       const config = this.fieldConfig.find((c) => c.name === 'certificate');
       config.options.push({ label: '---', value: null });
-      res.forEach((item) => {
-        config.options.push({ label: item.name, value: item.id });
+      certificates.forEach((certificate) => {
+        config.options.push({ label: certificate.name, value: certificate.id });
       });
     });
 

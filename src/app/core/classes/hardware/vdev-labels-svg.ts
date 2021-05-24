@@ -1,7 +1,7 @@
+import { CoreEvent } from 'app/interfaces/events';
 import { Theme } from 'app/services/theme/theme.service';
 import { Container, Texture, Sprite } from 'pixi.js';
 import { Subject, Observable } from 'rxjs';
-import { CoreEvent } from 'app/core/services/core.service';
 import { LabelFactory } from './label-factory';
 import { ChassisView } from './chassis-view';
 import { DriveTray } from './drivetray';

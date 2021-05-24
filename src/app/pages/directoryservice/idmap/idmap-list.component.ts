@@ -63,7 +63,7 @@ export class IdmapListComponent implements OnDestroy {
     protected dialogService: DialogService,
   ) { }
 
-  resourceTransformIncomingRestData(data: any[]) {
+  resourceTransformIncomingRestData(data: any[]): any[] {
     data.forEach((item) => {
       if (item.certificate) {
         item.cert_name = item.certificate.cert_name;

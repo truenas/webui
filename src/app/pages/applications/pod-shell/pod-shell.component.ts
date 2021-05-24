@@ -4,15 +4,17 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { CoreEvent } from 'app/interfaces/events';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs/Observable';
 import { DialogService, ShellService, WebSocketService } from '../../../services';
 import helptext from '../../../helptext/shell/shell';
 import { Terminal } from 'xterm';
 import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
 import * as FontFaceObserver from 'fontfaceobserver';
-import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -85,8 +87,8 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
           this.conatiner_name = podDetail[0];
           this.updateChooseShellDialog();
 
-          this.getAuthToken().subscribe((res) => {
-            this.initializeWebShell(res);
+          this.getAuthToken().subscribe((token) => {
+            this.initializeWebShell(token);
 
             this.shellSubscription = this.ss.shellOutput.subscribe((value: any) => {
               if (value !== undefined) {
@@ -288,8 +290,8 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     return true;
   }
 
-  initializeWebShell(res: string): void {
-    this.ss.token = res;
+  initializeWebShell(token: string): void {
+    this.ss.token = token;
     this.reconnect();
     this.initializeTerminal();
     this.refreshToolbarButtons();
@@ -303,7 +305,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  getAuthToken() {
+  getAuthToken(): Observable<string> {
     return this.ws.call('auth.generate_token');
   }
 

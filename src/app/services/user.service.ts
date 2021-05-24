@@ -19,11 +19,11 @@ export class UserService {
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {}
 
-  listUsers() {
+  listUsers(): Observable<User[]> {
     return this.ws.call(this.userQuery, { limit: 50 } as any);
   }
 
-  listGroups() {
+  listGroups(): Observable<Group[]> {
     return this.ws.call(this.groupQuery, { limit: 50 });
   }
 
@@ -40,11 +40,11 @@ export class UserService {
     return this.ws.call(this.groupQuery, [queryArgs, { ...this.queryOptions, offset }]);
   }
 
-  getGroupByGID(gid: string) {
+  getGroupByGID(gid: string): Observable<Group[]> {
     return this.ws.call(this.groupQuery, [[['gid', '=', gid]], this.queryOptions]);
   }
 
-  getGroupByName(group: string) {
+  getGroupByName(group: string): Observable<any> {
     return this.ws.call(this.uncachedGroupQuery, [group]);
   }
 
@@ -57,15 +57,15 @@ export class UserService {
     return this.ws.call(this.userQuery, [queryArgs, { ...this.queryOptions, offset }]);
   }
 
-  getUserByUID(uid: string) {
+  getUserByUID(uid: string): Observable<User[]> {
     return this.ws.call(this.userQuery, [[['uid', '=', uid]], this.queryOptions]);
   }
 
-  getUserByName(username: string) {
+  getUserByName(username: string): Observable<any> {
     return this.ws.call(this.uncachedUserQuery, [username]);
   }
 
-  async getUserObject(userId: string | number) {
+  async getUserObject(userId: string | number): Promise<any> {
     let user;
     await this.ws
       .call('user.get_user_obj', [typeof userId === 'string' ? { username: userId } : { uid: userId }])
@@ -74,7 +74,7 @@ export class UserService {
     return user;
   }
 
-  async getGroupObject(groupId: string | number) {
+  async getGroupObject(groupId: string | number): Promise<any> {
     let group;
     await this.ws
       .call('group.get_group_obj', [typeof groupId === 'string' ? { groupname: groupId } : { gid: groupId }])

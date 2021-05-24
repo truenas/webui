@@ -236,7 +236,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     });
   }
 
-  async preInit() {
+  async preInit(): Promise<void> {
     if (this.rowNum) {
       this.queryCallOption = [['id', '=', this.rowNum]];
       _.find(this.fieldSets[0].config, { name: 'setup_method' }).isHidden = true;
@@ -265,7 +265,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     );
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
     this.updateDiscoverButtonDisabled();
@@ -302,7 +302,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     });
   }
 
-  updateDiscoverButtonDisabled() {
+  updateDiscoverButtonDisabled(): void {
     if (this.entityForm.formGroup.controls['setup_method'].value === 'manual') {
       this.setDisabled(this.fieldSets[1].config, 'remote_host_key_button', !this.isManualAuthFormValid(), false);
     } else {
@@ -310,11 +310,11 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     }
   }
 
-  isManualAuthFormValid() {
+  isManualAuthFormValid(): boolean {
     return this.entityForm.formGroup.controls['host'].valid && this.entityForm.formGroup.controls['private_key'].valid && this.entityForm.formGroup.controls['username'].valid;
   }
 
-  setDisabled(fieldConfig: any, fieldName: string, disable: boolean, hide = false) {
+  setDisabled(fieldConfig: any, fieldName: string, disable: boolean, hide = false): void {
     if (hide) {
       disable = hide;
     }
@@ -330,7 +330,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     }
   }
 
-  getRemoteHostKey() {
+  getRemoteHostKey(): void {
     this.loader.open();
     const payload = {
       host: this.entityForm.value['host'],
@@ -350,14 +350,14 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     );
   }
 
-  resourceTransformIncomingRestData(wsResponse: any) {
+  resourceTransformIncomingRestData(wsResponse: any): any {
     for (const item in wsResponse.attributes) {
       wsResponse[item] = wsResponse.attributes[item];
     }
     return wsResponse;
   }
 
-  async customSubmit(data: any) {
+  async customSubmit(data: any): Promise<any> {
     delete data.remote_host_key_button;
     this.loader.open();
     if (data['private_key'] == 'NEW') {

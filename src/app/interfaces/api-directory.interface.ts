@@ -2,8 +2,19 @@ import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum'
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Acl } from 'app/interfaces/acl.interface';
-import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { Alert } from 'app/interfaces/alert.interface';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { LoginParams } from 'app/interfaces/auth.interface';
+import { Certificate } from 'app/interfaces/certificate.interface';
+import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { Catalog } from 'app/interfaces/catalog.interface';
+import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
+import {
+  AuthenticatorSchema,
+  CreateDnsAuthenticator,
+  DnsAuthenticator, UpdateDnsAuthenticator,
+} from 'app/interfaces/dns-authenticator.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import {
   IscsiAuthAccess, IscsiExtent,
@@ -13,6 +24,7 @@ import {
   IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Group } from 'app/interfaces/group.interface';
@@ -20,6 +32,9 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { Disk, DiskQueryOptions, DiskUpdate } from 'app/interfaces/storage.interface';
+import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 
@@ -34,15 +49,15 @@ export type ApiDirectory = {
   'afp.config': { params: any; response: any };
 
   // Acme
-  'acme.dns.authenticator.query': { params: any; response: any };
-  'acme.dns.authenticator.create': { params: any; response: any };
-  'acme.dns.authenticator.update': { params: any; response: any };
-  'acme.dns.authenticator.authenticator_schemas': { params: any; response: any };
+  'acme.dns.authenticator.query': { params: void; response: DnsAuthenticator[] };
+  'acme.dns.authenticator.create': { params: CreateDnsAuthenticator; response: DnsAuthenticator };
+  'acme.dns.authenticator.update': { params: [number, UpdateDnsAuthenticator]; response: DnsAuthenticator };
+  'acme.dns.authenticator.authenticator_schemas': { params: void; response: AuthenticatorSchema[] };
 
   // Alert
-  'alert.list': { params: any; response: any };
-  'alert.dismiss': { params: any; response: any };
-  'alert.restore': { params: any; response: any };
+  'alert.list': { params: void; response: Alert[] };
+  'alert.dismiss': { params: string[]; response: void };
+  'alert.restore': { params: string[]; response: void };
   'alert.list_policies': { params: any; response: any };
   'alert.list_categories': { params: any; response: any };
 
@@ -56,14 +71,23 @@ export type ApiDirectory = {
   'alertservice.query': { params: any; response: any };
   'alertservice.test': { params: any; response: any };
 
+  // Api Key
+  'api_key.create': { params: any; response: any };
+  'api_key.update': { params: any; response: any };
+  'api_key.delete': { params: any; response: any };
+  'api_key.query': { params: any; response: any };
+
   // Auth
-  'auth.generate_token': { params: any; response: any };
+  'auth.generate_token': { params: [number]; response: string };
   'auth.check_user': { params: any; response: any };
-  'auth.login': { params: any; response: any };
+  'auth.login': {
+    params: LoginParams;
+    response: boolean;
+  };
   'auth.token': { params: any; response: any };
-  'auth.logout': { params: any; response: any };
+  'auth.logout': { params: void; response: void };
   'auth.twofactor.update': { params: any; response: any };
-  'auth.twofactor.provisioning_uri': { params: any; response: any };
+  'auth.twofactor.provisioning_uri': { params: void; response: string };
   'auth.two_factor_auth': { params: any; response: any };
   'auth.twofactor.renew_secret': { params: any; response: any };
   'auth.twofactor.config': { params: any; response: any };
@@ -94,7 +118,7 @@ export type ApiDirectory = {
 
   // Certificate
   'certificate.create': { params: any; response: any };
-  'certificate.query': { params: any; response: any };
+  'certificate.query': { params: QueryParams<Certificate>; response: Certificate[] };
   'certificate.update': { params: any; response: any };
   'certificate.ec_curve_choices': { params: any; response: any };
   'certificate.country_choices': { params: any; response: any };
@@ -108,6 +132,7 @@ export type ApiDirectory = {
   'certificateauthority.query': { params: any; response: any };
   'certificateauthority.update': { params: any; response: any };
   'certificateauthority.profiles': { params: any; response: any };
+  'certificateauthority.ca_sign_csr': { params: any; response: any };
 
   // Chart
   'chart.release.pod_logs_choices': { params: any; response: any };
@@ -118,6 +143,7 @@ export type ApiDirectory = {
   'chart.release.pod_console_choices': { params: any; response: any };
   'chart.release.nic_choices': { params: any; response: any };
   'chart.release.events': { params: any; response: any };
+  'chart.release.rollback': { params: any; response: any };
 
   // CRON
   'cronjob.run': { params: any; response: any };
@@ -128,6 +154,10 @@ export type ApiDirectory = {
   'core.job_abort': { params: any; response: any };
   'core.bulk': { params: any; response: any };
   'core.resize_shell': { params: any; response: any };
+
+  // Config
+  'config.upload': { params: any; response: any };
+  'config.reset': { params: any; response: any };
 
   // Cloudsync
   'cloudsync.providers': { params: any; response: any };
@@ -149,7 +179,7 @@ export type ApiDirectory = {
   // Container
   'container.config': { params: any; response: any };
   'container.update': { params: any; response: any };
-  'container.image.query': { params: any; response: any };
+  'container.image.query': { params: void; response: ContainerImage[] };
   'container.image.pull': { params: [PullContainerImageParams]; response: any };
 
   // Docker
@@ -161,6 +191,10 @@ export type ApiDirectory = {
 
   // Datastore
   'datastore.delete': { params: any; response: any };
+
+  // Device
+  'device.gpu_pci_ids_choices': { params: any; response: any };
+  'device.get_info': { params: any; response: any };
 
   // Disk
   'disk.query': { params: QueryParams<Disk, DiskQueryOptions>; response: Disk[] };
@@ -190,7 +224,7 @@ export type ApiDirectory = {
   'filesystem.getacl': { params: [/* path */ string]; response: Acl };
 
   // Failover
-  'failover.licensed': { params: any; response: any };
+  'failover.licensed': { params: void; response: boolean };
   'failover.upgrade_pending': { params: any; response: any };
   'failover.sync_from_peer': { params: any; response: any };
   'failover.status': { params: any; response: any };
@@ -245,10 +279,10 @@ export type ApiDirectory = {
   'interface.lag_supported_protocols': { params: any; response: any };
   'interface.lag_ports_choices': { params: any; response: any };
   'interface.vlan_parent_interface_choices': { params: any; response: any };
-  'interface.query': { params: any; response: any };
+  'interface.query': { params: QueryParams<NetworkInterface>; response: NetworkInterface[] };
   'interface.create': { params: any; response: any };
   'interface.update': { params: any; response: any };
-  'interface.has_pending_changes': { params: any; response: any };
+  'interface.has_pending_changes': { params: void; response: boolean };
   'interface.checkin_waiting': { params: any; response: any };
   'interface.checkin': { params: any; response: any };
 
@@ -280,7 +314,7 @@ export type ApiDirectory = {
   'iscsi.target.create': { params: any; response: any };
 
   // IPMI
-  'ipmi.is_loaded': { params: any; response: any };
+  'ipmi.is_loaded': { params: void; response: boolean };
   'ipmi.identify': { params: any; response: any };
   'ipmi.update': { params: any; response: any };
   'ipmi.query': { params: any; response: any };
@@ -389,7 +423,10 @@ export type ApiDirectory = {
   'pool.snapshottask.update': { params: any; response: any };
   'pool.import_disk_msdosfs_locales': { params: any; response: any };
   'pool.snapshottask.delete': { params: any; response: any };
-  'pool.dataset.query': { params: any; response: any[] };
+  'pool.dataset.query': {
+    params: QueryParams<Dataset, ExtraDatasetQueryOptions>;
+    response: Dataset[];
+  };
   'pool.scrub.delete': { params: any; response: any };
   'pool.scrub.query': { params: QueryParams<PoolScrub>; response: PoolScrub[] };
   'pool.scrub.update': { params: any; response: any };
@@ -412,7 +449,7 @@ export type ApiDirectory = {
   'pool.dataset.promote': { params: any; response: any };
   'pool.dataset.update': { params: any; response: any };
   'pool.dataset.create': { params: any; response: any };
-  'pool.is_upgraded': { params: any; response: any };
+  'pool.is_upgraded': { params: [/* pool id */ number]; response: boolean };
   'pool.dataset.encryption_summary': { params: any; response: any };
   'pool.dataset.unlock': { params: any; response: any };
   'pool.resilver.config': { params: any; response: any };
@@ -473,26 +510,24 @@ export type ApiDirectory = {
   // System
   'system.feature_enabled': { params: any; response: any };
   'system.advanced.update': { params: any; response: any };
-  'device.gpu_pci_ids_choices': { params: any; response: any };
-  'device.get_info': { params: any; response: any };
   'system.reboot': { params: any; response: any };
   'system.shutdown': { params: any; response: any };
   'system.advanced.serial_port_choices': { params: any; response: any };
-  'system.info': { params: any; response: any };
-  'system.advanced.config': { params: any; response: any };
+  'system.info': { params: any; response: SystemInfo };
+  'system.advanced.config': { params: void; response: AdvancedConfig };
   'system.general.update': { params: any; response: any };
   'system.ntpserver.delete': { params: any; response: any };
   'system.ntpserver.query': { params: any; response: any };
   'system.ntpserver.create': { params: any; response: any };
   'system.ntpserver.update': { params: any; response: any };
-  'system.general.config': { params: any; response: any };
+  'system.general.config': { params: void; response: SystemGeneralConfig };
   'system.general.kbdmap_choices': { params: any; response: any };
   'system.general.language_choices': { params: any; response: any };
   'system.general.timezone_choices': { params: any; response: any };
   'system.general.ui_address_choices': { params: any; response: any };
   'system.license_update': { params: any; response: any };
   'system.general.ui_v6address_choices': { params: any; response: any };
-  'system.build_time': { params: any; response: any };
+  'system.build_time': { params: void; response: ApiTimestamp };
   'system.product_type': { params: void; response: ProductType };
 
   // Support
@@ -511,8 +546,9 @@ export type ApiDirectory = {
   'smart.test.update': { params: any; response: any };
 
   // SystemDataset
-  'systemdataset.pool_choices': { params: any; response: any };
-  'systemdataset.config': { params: any; response: any };
+  'systemdataset.pool_choices': { params: void; response: { [key: string]: string } };
+  'systemdataset.config': { params: void; response: SystemDatasetConfig };
+  'systemdataset.update': { params: [{ [poolName: string]: string }]; response: any };
 
   // Service
   'service.started': { params: any; response: any };
@@ -563,9 +599,9 @@ export type ApiDirectory = {
   'truecommand.connected': { params: any; response: any };
 
   // TrueNAS
-  'truenas.is_eula_accepted': { params: any; response: any };
+  'truenas.is_eula_accepted': { params: void; response: boolean };
   'truenas.get_eula': { params: any; response: any };
-  'truenas.accept_eula': { params: any; response: any };
+  'truenas.accept_eula': { params: void; response: void };
   'truenas.is_production': { params: any; response: any };
   'truenas.set_production': { params: any; response: any };
 
@@ -620,7 +656,7 @@ export type ApiDirectory = {
   'ups.port_choices': { params: any; response: any };
 
   // Update
-  'update.get_auto_download': { params: any; response: any };
+  'update.get_auto_download': { params: void; response: boolean };
   'update.get_trains': { params: any; response: any };
   'update.set_auto_download': { params: any; response: any };
   'update.get_pending': { params: any; response: any };
@@ -633,6 +669,7 @@ export type ApiDirectory = {
   'zfs.snapshot.query': { params: any; response: any };
   'zfs.snapshot.delete': { params: any; response: any };
   'zfs.snapshot.clone': { params: any; response: any };
+  'zfs.snapshot.rollback': { params: any; response: any };
 
   // staticroute
   'staticroute.query': { params: any; response: any };

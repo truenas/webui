@@ -68,7 +68,7 @@ export class ChartFormComponent implements FormConfiguration {
     this.title = title;
   }
 
-  parseSchema(catalogApp: any) {
+  parseSchema(catalogApp: any): FieldSet[] {
     let fieldSets: FieldSet[] = [];
     try {
       this.catalogApp = catalogApp;
@@ -107,7 +107,7 @@ export class ChartFormComponent implements FormConfiguration {
     return fieldSets;
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     const chartSchema = {
       name: data.chart_metadata.name,
       catalog: {
@@ -125,7 +125,7 @@ export class ChartFormComponent implements FormConfiguration {
     return data.config;
   }
 
-  customSubmit(data: any) {
+  customSubmit(data: any): void {
     const payload = [];
     payload.push({
       catalog: this.catalogApp.catalog.id,

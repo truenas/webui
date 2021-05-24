@@ -222,7 +222,8 @@ export const helptext_sharing_smb = {
  <i>Allowed</i> denies all permissions by default except those that are manually defined.\
  <i>Denied</i> allows all permissions by default except those that are manually defined.'),
 
-  formTitle: T('SMB'),
+  formTitleAdd: T('Add SMB'),
+  formTitleEdit: T('Edit SMB'),
 
   stripACLDialog: {
     title: T('Warning'),

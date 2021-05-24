@@ -1,4 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { Subject, Observable } from 'rxjs';
 import * as _ from 'lodash';
 import { map } from 'rxjs/operators';
@@ -26,8 +27,8 @@ export class SystemGeneralService {
       // Since the api call can be made many times before the first response comes back,
       // set waiting to true to make if condition false after the first call
       this.generalConfigInfo = { waiting: true };
-      this.ws.call('system.general.config').subscribe((res) => {
-        this.generalConfigInfo = res;
+      this.ws.call('system.general.config').subscribe((configInfo) => {
+        this.generalConfigInfo = configInfo;
         observer.next(this.generalConfigInfo);
       });
     } else {
@@ -49,8 +50,8 @@ export class SystemGeneralService {
   getAdvancedConfig = new Observable<any>((observer) => {
     if ((!this.advancedConfigInfo || _.isEmpty(this.advancedConfigInfo))) {
       this.advancedConfigInfo = { waiting: true };
-      this.ws.call('system.advanced.config').subscribe((res) => {
-        this.advancedConfigInfo = res;
+      this.ws.call('system.advanced.config').subscribe((advancedConfig) => {
+        this.advancedConfigInfo = advancedConfig;
         observer.next(this.advancedConfigInfo);
       });
     } else {
@@ -109,7 +110,7 @@ export class SystemGeneralService {
     return this.ws.call('notifier.choices', ['IPChoices', [true, false]]);
   }
 
-  getSysInfo() {
+  getSysInfo(): Observable<SystemInfo> {
     return this.ws.call('system.info', []);
   }
 

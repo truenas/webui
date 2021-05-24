@@ -11,6 +11,7 @@ import {
   ViewChildren,
   OnChanges, SimpleChanges,
 } from '@angular/core';
+import { CoreEvent } from 'app/interfaces/events';
 
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';

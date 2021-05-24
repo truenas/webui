@@ -190,11 +190,10 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
           },
         },
       },
-
     ];
   }
 
-  certificatesDataSourceHelper(res: any[]) {
+  certificatesDataSourceHelper(res: any[]): any[] {
     res.forEach((certificate) => {
       if (_.isObject(certificate.issuer)) {
         certificate.issuer = certificate.issuer.name;
@@ -203,11 +202,11 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
     return res.filter((item) => item.certificate !== null);
   }
 
-  csrDataSourceHelper(res: any[]) {
+  csrDataSourceHelper(res: any[]): any[] {
     return res.filter((item) => item.CSR !== null);
   }
 
-  caDataSourceHelper(res: any[]) {
+  caDataSourceHelper(res: any[]): any[] {
     res.forEach((row) => {
       if (_.isObject(row.issuer)) {
         row.issuer = row.issuer.name;
@@ -308,7 +307,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
     return caRowActions;
   }
 
-  openForm(component: any, id: any) {
+  openForm(component: any, id: any): void {
     setTimeout(() => {
       this.modalService.open('slide-in-form', component, id);
     }, 200);

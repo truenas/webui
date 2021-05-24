@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CoreEvent } from 'app/interfaces/events';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import {
   WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService,
 }
   from '../../../services';
-import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core.service';
 import { LocaleService } from '../../../services/locale.service';
 import { ModalService } from '../../../services/modal.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -254,13 +255,13 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   saveConfigSubmit(entityDialog: any): void {
     parent = entityDialog.parent;
     entityDialog.loader.open();
-    entityDialog.ws.call('system.info', []).subscribe((res: any) => {
+    (entityDialog.ws as WebSocketService).call('system.info', []).subscribe((systemInfo) => {
       let fileName = '';
       let mimetype: string;
-      if (res) {
-        const hostname = res.hostname.split('.')[0];
+      if (systemInfo) {
+        const hostname = systemInfo.hostname.split('.')[0];
         const date = entityDialog.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
-        fileName = hostname + '-' + res.version + '-' + date;
+        fileName = hostname + '-' + systemInfo.version + '-' + date;
         if (entityDialog.formValue['secretseed']) {
           mimetype = 'application/x-tar';
           fileName += '.tar';

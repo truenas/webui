@@ -144,7 +144,7 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
     return actions;
   }
 
-  resourceTransformIncomingRestData(data: any[]) {
+  resourceTransformIncomingRestData(data: any[]): any[] {
     return data.map((task) => {
       task.minute = task.schedule['minute'];
       task.hour = task.schedule['hour'];
@@ -167,11 +167,11 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  onButtonClick(row: any) {
+  onButtonClick(row: any): void {
     this.stateButton(row);
   }
 
-  stateButton(row: any) {
+  stateButton(row: any): void {
     if (row.job) {
       if (row.state.state === EntityJobState.Running) {
         this.entityList.runningStateButton(row.job.id);
@@ -183,7 +183,7 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
     }
   }
 
-  doAdd(id?: number) {
+  doAdd(id?: number): void {
     this.modalService.open(
       'slide-in-form',
       new RsyncFormComponent(this.router, this.aroute, this.taskService, this.userService, this.modalService),
@@ -191,7 +191,7 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
     );
   }
 
-  doEdit(id: number) {
+  doEdit(id: number): void {
     this.doAdd(id);
   }
 

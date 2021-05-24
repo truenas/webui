@@ -19,6 +19,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs/Observable';
 
 import { RestService, WebSocketService, SystemGeneralService } from '../../../../services';
 import { Subscription } from 'rxjs';
@@ -67,12 +68,18 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   protected loaderOpen = false;
   protected keepLoaderOpen = false;
 
-  get controls() {
+  get controls(): FieldConfig[] {
     return this.fieldConfig.filter(({ type }) => type !== 'button');
   }
-  get changes() { return this.formGroup.valueChanges; }
-  get valid() { return this.formGroup.valid; }
-  get value() { return this.formGroup.value; }
+  get changes(): Observable<any> {
+    return this.formGroup.valueChanges;
+  }
+  get valid(): boolean {
+    return this.formGroup.valid;
+  }
+  get value(): any {
+    return this.formGroup.value;
+  }
 
   templateTop: TemplateRef<any>;
   @ContentChildren(EntityTemplateDirective)
@@ -101,7 +108,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.loader.callDone.subscribe(() => this.showSpinner = false);
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.templates.forEach((item) => {
       if (item.type === 'TOP') {
         this.templateTop = item.templateRef;
@@ -109,7 +116,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     });
   }
 
-  ngAfterViewChecked() {
+  ngAfterViewChecked(): void {
     // detect form.pending which will be changed if form use async validator
     if (this.formGroup && this.formGroup.pending !== this.isFromPending) {
       this.isFromPending = this.formGroup.pending;
@@ -117,7 +124,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
   }
 
-  makeFormGroup() {
+  makeFormGroup(): void {
     // Fallback if no fieldsets are defined
     if (this.conf.fieldSets) {
       this.fieldConfig = [];
@@ -162,7 +169,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
   }
 
-  addFormControls(fieldSets: FieldSet[]) {
+  addFormControls(fieldSets: FieldSet[]): void {
     this.fieldSets = this.fieldSets.concat(fieldSets);
 
     let fieldConfigs: FieldConfig[] = [];
@@ -195,7 +202,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.conf.fieldConfig = this.fieldConfig;
   }
 
-  async ngOnInit() {
+  async ngOnInit(): Promise<void> {
     // get system general setting
     this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res) => {
       if (res) {
@@ -391,11 +398,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
   }
 
-  noGetFunction() {
+  noGetFunction(): void {
 
   }
 
-  ngOnChanges() {
+  ngOnChanges(): void {
     if (this.formGroup) {
       const controls = Object.keys(this.formGroup.controls);
       const configControls = this.controls.map((item) => item.name);
@@ -411,7 +418,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
   }
 
-  goBack() {
+  goBack(): void {
     let route = this.conf.route_cancel;
     if (!route) {
       route = this.conf.route_success;
@@ -419,14 +426,14 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.router.navigate(new Array('/').concat(route));
   }
 
-  addCall(body: any) {
+  addCall(body: any): Observable<any> {
     const payload = [];
     const call = this.conf.addCall;
     payload.push(body);
     return this.ws.call(call, payload);
   }
 
-  editSubmit(body: any) {
+  editSubmit(body: any): void {
     let resource = this.resourceName;
     if (this.conf.custom_edit_query) {
       resource = this.conf.custom_edit_query;
@@ -435,7 +442,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.rest.put(resource, { body }, this.conf.route_usebaseUrl);
   }
 
-  editCall(body: any) {
+  editCall(body: any): Observable<any> {
     const payload = [body];
     if (this.pk) {
       payload.unshift(this.pk);
@@ -447,7 +454,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.ws.call(this.conf.editCall, payload);
   }
 
-  addSubmit(body: any) {
+  addSubmit(body: any): void {
     let resource = this.resourceName;
     if (this.conf.custom_add_query) {
       resource = this.conf.custom_add_query;
@@ -456,7 +463,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.rest.post(resource, { body }, this.conf.route_usebaseUrl);
   }
 
-  onSubmit(event: Event) {
+  onSubmit(event: Event): void {
     if (this.conf.confirmSubmit && this.conf.confirmSubmitDialog) {
       this.dialog.confirm(
         this.conf.confirmSubmitDialog['title'],
@@ -479,7 +486,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
   }
 
-  doSubmit(event: Event) {
+  doSubmit(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
     this.error = null;
@@ -569,14 +576,14 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
   }
 
-  clearErrors() {
+  clearErrors(): void {
     for (let f = 0; f < this.fieldConfig.length; f++) {
       this.fieldConfig[f]['errors'] = '';
       this.fieldConfig[f]['hasErrors'] = false;
     }
   }
 
-  isFieldsetAvailabel(fieldset: any) {
+  isFieldsetAvailabel(fieldset: any): boolean {
     if (fieldset.config) {
       for (let i = 0; i < fieldset.config.length; i++) {
         if (!fieldset.config[i].isHidden) {
@@ -604,7 +611,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return true;
   }
 
-  goConf() {
+  goConf(): void {
     let route = this.conf.route_conf;
     if (!route) {
       route = this.conf.route_success;
@@ -612,23 +619,23 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.router.navigate(new Array('/').concat(route));
   }
 
-  createControl(config: FieldConfig) {
+  createControl(config: FieldConfig): FormControl {
     const { disabled, validation, value } = config;
     return this.fb.control({ disabled, value }, validation);
   }
 
-  setDisabled(name: string, disable: boolean, hide?: boolean, status?: string) {
+  setDisabled(name: string, disable: boolean, hide?: boolean, status?: string): void {
     const fieldConfig = this.fieldConfig.find((item) => item.name === name);
     if (fieldConfig) {
       this.fieldRelationService.setDisabled(fieldConfig, this.formGroup, disable, hide, status);
     }
   }
 
-  setValue(name: string, value: any) {
+  setValue(name: string, value: any): void {
     this.formGroup.controls[name].setValue(value, { emitEvent: true });
   }
 
-  setArrayValue(data: any[], formArray: any, name: string) {
+  setArrayValue(data: any[], formArray: any, name: string): void {
     let array_controls: any;
     for (const i in this.fieldConfig) {
       const config = this.fieldConfig[i];
@@ -673,7 +680,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     });
   }
 
-  createFieldConfigForList(values: any[], fieldConfig: FieldConfig) {
+  createFieldConfigForList(values: any[], fieldConfig: FieldConfig): void {
     fieldConfig['listFields'] = [];
     for (let i = 0; i < values.length; i++) {
       const value = values[i];
@@ -693,7 +700,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
   }
 
-  setObjectListValue(values: object[], formArray: FormArray, fieldConfig: FieldConfig) {
+  setObjectListValue(values: object[], formArray: FormArray, fieldConfig: FieldConfig): void {
     this.createFieldConfigForList(values, fieldConfig);
 
     for (let i = 0; i < fieldConfig['listFields'].length; i++) {
@@ -710,7 +717,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     formArray.markAllAsTouched();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (typeof (this.sub) !== 'undefined' && typeof (this.sub.unsubscribe) !== 'undefined') {
       this.sub.unsubscribe();
     }

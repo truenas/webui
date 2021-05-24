@@ -94,6 +94,7 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
 import { EntityEmptyComponent } from './entity-empty/entity-empty.component';
 
 import { TableComponent } from './table/table.component';
+import { ExpandableTableComponent } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
 
 @NgModule({
   imports: [
@@ -165,6 +166,7 @@ import { TableComponent } from './table/table.component';
     FormStatusComponent,
     EntityComingsoonComponent,
     TableComponent,
+    ExpandableTableComponent,
     EntityDashboardComponent,
     EntityEmptyComponent,
     FormDictComponent,
@@ -202,6 +204,7 @@ import { TableComponent } from './table/table.component';
     ToolbarMultiSelectComponent,
     EntityComingsoonComponent,
     TableComponent,
+    ExpandableTableComponent,
     CdkTreeModule,
     EntityEmptyComponent,
   ],

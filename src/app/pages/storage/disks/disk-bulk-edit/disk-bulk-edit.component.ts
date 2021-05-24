@@ -67,14 +67,6 @@ export class DiskBulkEditComponent implements FormConfiguration {
           options: helptext.disk_form_advpowermgmt_options,
         },
         {
-          type: 'select',
-          name: 'disk_acousticlevel',
-          placeholder: helptext.disk_form_acousticlevel_placeholder,
-          value: this.diskBucket.acousticLevel,
-          tooltip: helptext.disk_form_acousticlevel_tooltip,
-          options: helptext.disk_form_acousticlevel_options,
-        },
-        {
           type: 'checkbox',
           name: 'disk_togglesmart',
           placeholder: helptext.disk_form_togglesmart_placeholder,
@@ -94,7 +86,6 @@ export class DiskBulkEditComponent implements FormConfiguration {
 
   protected disk_hddstandby: any;
   protected disk_advpowermgmt: any;
-  protected disk_acousticlevel: any;
   protected entityList: any;
 
   constructor(
@@ -112,7 +103,7 @@ export class DiskBulkEditComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(): void {
     if (!this.diskBucket.ids) {
       this._router.navigate(this.route_success);
     }
@@ -124,7 +115,6 @@ export class DiskBulkEditComponent implements FormConfiguration {
     const data = {
       hddstandby: event.disk_hddstandby,
       advpowermgmt: event.disk_advpowermgmt,
-      acousticlevel: event.disk_acousticlevel,
       togglesmart: event.disk_togglesmart,
       smartoptions: event.disk_smartoptions,
     };

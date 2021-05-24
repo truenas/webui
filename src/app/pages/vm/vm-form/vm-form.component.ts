@@ -361,7 +361,7 @@ export class VmFormComponent implements FormConfiguration {
     return data;
   }
 
-  customSubmit(updatedVmData: any) {
+  customSubmit(updatedVmData: any): void {
     const pciDevicesToCreate = [];
     const vmPciDeviceIdsToRemove = [];
 

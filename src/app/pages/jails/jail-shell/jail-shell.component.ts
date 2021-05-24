@@ -1,11 +1,12 @@
 import {
-  Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild, ViewEncapsulation,
+  Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, SimpleChanges, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs/Observable';
 import { ShellService, WebSocketService } from '../../../services';
 import helptext from '../../../helptext/shell/shell';
 import { Terminal } from 'xterm';
@@ -49,11 +50,11 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     private dialog: MatDialog) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.aroute.params.subscribe((params) => {
       this.pk = params['pk'];
-      this.getAuthToken().subscribe((res) => {
-        this.initializeWebShell(res);
+      this.getAuthToken().subscribe((token) => {
+        this.initializeWebShell(token);
         this.shellSubscription = this.ss.shellOutput.subscribe((value: any) => {
           if (value !== undefined) {
             // this.xterm.write(value);
@@ -69,7 +70,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.shellSubscription) {
       this.shellSubscription.unsubscribe();
     }
@@ -83,22 +84,20 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     return false;
   }
 
-  onResize() {
+  onResize(): void {
     this.resizeTerm();
   }
 
-  onFontSizeChanged() {
+  onFontSizeChanged(): void {
     this.resizeTerm();
   }
 
-  resetDefault() {
+  resetDefault(): void {
     this.font_size = 14;
     this.resizeTerm();
   }
 
-  ngOnChanges(changes: {
-    [propKey: string]: SimpleChange;
-  }) {
+  ngOnChanges(changes: SimpleChanges): void {
     const log: string[] = [];
     for (const propName in changes) {
       const changedProp = changes[propName];
@@ -109,7 +108,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  getSize() {
+  getSize(): { rows: number; cols: number } {
     const domWidth = this.container.nativeElement.offsetWidth;
     const domHeight = this.container.nativeElement.offsetHeight;
     var span = document.createElement('span');
@@ -141,7 +140,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     };
   }
 
-  initializeTerminal() {
+  initializeTerminal(): void {
     const size = this.getSize();
 
     const setting = {
@@ -171,7 +170,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  resizeTerm() {
+  resizeTerm(): boolean {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
@@ -181,8 +180,8 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     return true;
   }
 
-  initializeWebShell(res: string) {
-    this.ss.token = res;
+  initializeWebShell(token: string): void {
+    this.ss.token = token;
     this.ss.jailId = this.pk;
     this.ss.connect();
 
@@ -192,7 +191,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  getAuthToken() {
+  getAuthToken(): Observable<string> {
     return this.ws.call('auth.generate_token');
   }
 

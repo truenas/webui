@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { CoreEvent } from 'app/interfaces/events';
+import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { BaseService } from './base.service';
-import { CoreEvent } from './core.service';
 import helptext from '../../helptext/topbar';
 
 interface InfoObject {
@@ -33,7 +35,7 @@ interface HAStatus {
   providedIn: 'root',
 })
 export class SystemProfileService extends BaseService {
-  cache: any;
+  cache: SystemInfo;
   private buffer: CoreEvent[] = [];
   private emulateHardware?: InfoObject;
   private mini: InfoObject = {
@@ -58,7 +60,7 @@ export class SystemProfileService extends BaseService {
 
   private ha_status: HAStatus;
 
-  features = {
+  features: SystemFeatures = {
     HA: false,
     enclosure: false,
   };
@@ -94,11 +96,11 @@ export class SystemProfileService extends BaseService {
     });
   }
 
-  protected onAuthenticated(evt: CoreEvent) {
+  protected onAuthenticated(evt: CoreEvent): void {
     this.authenticated = true;
   }
 
-  private dataAvailable(evt: CoreEvent) {
+  private dataAvailable(evt: CoreEvent): boolean {
     if (this.cache && this.authenticated) {
       return true;
     } if (!this.cache && this.authenticated) {
@@ -112,9 +114,9 @@ export class SystemProfileService extends BaseService {
     }
   }
 
-  fetchProfile(localOnly?: boolean) {
-    this.websocket.call('system.info').subscribe((res) => {
-      this.cache = res;
+  fetchProfile(localOnly?: boolean): void {
+    this.websocket.call('system.info').subscribe((systemInfo) => {
+      this.cache = systemInfo;
       if (localOnly) {
         this.buffer.push({ name: 'SysInfoRequest', sender: this });
         return;
@@ -126,28 +128,30 @@ export class SystemProfileService extends BaseService {
     });
   }
 
-  clearBuffer() {
+  clearBuffer(): void {
     this.buffer.forEach((evt) => {
       this.respond(evt);
     });
   }
 
-  respond(evt: CoreEvent) {
-    let data;
-    let responseEvent;
-    switch (evt.name) {
-      case 'SysInfoRequest':
-        data = this.cache;
-        responseEvent = 'SysInfo';
-        break;
+  respond(evt: CoreEvent): void {
+    if (evt.name !== 'SysInfoRequest') {
+      return;
     }
-    data.features = this.detectFeatures(data);
-    this.core.emit({ name: responseEvent, data, sender: this });
+
+    this.core.emit({
+      name: 'SysInfo',
+      data: {
+        ...this.cache,
+        features: this.detectFeatures(this.cache),
+      },
+      sender: this,
+    });
   }
 
-  detectFeatures(_profile: any) {
+  detectFeatures(systemInfo: SystemInfo): SystemFeatures {
     // ENCLOSURE SUPPORT
-    const profile = { ..._profile };
+    const profile = { ...systemInfo };
 
     if (!profile.system_product) {
       // Stick with defaults if value is null
@@ -171,7 +175,7 @@ export class SystemProfileService extends BaseService {
     return this.features;
   }
 
-  updateHA(res: FailoverDisabledReason[]) {
+  updateHA(res: FailoverDisabledReason[]): void {
     const ha_enabled = res.length == 0;
     const ha_status_text = res.length == 0 ? helptext.ha_status_text_enabled : helptext.ha_status_text_disabled;
 

@@ -1,6 +1,6 @@
+import { CoreEvent } from 'app/interfaces/events';
 import { Container, Texture, Sprite } from 'pixi.js';
 import { Subject, Observable } from 'rxjs';
-import { CoreEvent } from 'app/core/services/core.service';
 import { Chassis } from './chassis';
 import { DriveTray } from './drivetray';
 import {
