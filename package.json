@@ -18,7 +18,8 @@
     "build:prod": "node scripts/setup_prod.js && yarn run build -- --prod",
     "build:prod:aot": "yarn run build:prod --aot --source-map --base-href /ui/ && node scripts/verify_build.js",
     "test": "ng test",
-    "lint": "ng lint",
+    "lint": "ng lint && stylelint src/**/*.scss",
+    "lint:fix": "ng lint --fix && stylelint --fix src/**/*.scss",
     "snyk": "snyk test",
     "clean:dist": "yarn run rimraf dist",
     "clean:coverage": "yarn run rimraf coverage",
@@ -147,11 +148,15 @@
     "karma-jasmine-html-reporter": "1.5.2",
     "lint-staged": "^10.0.10",
     "snyk": "^1.467.0",
+    "stylelint": "^13.13.1",
+    "stylelint-config-sass-guidelines": "~8.0.0",
+    "stylelint-config-standard": "^22.0.0",
     "ts-node": "8.6.2",
     "typescript": "3.9.6",
     "webpack-cli": "3.3.11"
   },
   "lint-staged": {
-    "*.{ts,html}": "eslint --cache --fix"
+    "*.{ts,html}": "eslint --cache --fix",
+    "*.scss": "stylelint --fix"
   }
 }

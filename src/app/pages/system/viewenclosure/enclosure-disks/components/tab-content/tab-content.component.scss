@@ -1,6 +1,6 @@
-table#tab-data{
-  width: 100%;
+table#tab-data {
   padding: 16px 0;
+  width: 100%;
 }
 
 table#tab-data,
@@ -11,16 +11,16 @@ table#tab-data .mat-header-cell {
 
 table#tab-data,
 table#tab-data .mat-header-cell {
-  background-color:var(--bg2);
+  background-color: var(--bg2);
 }
 
 table#tab-data th,
-table#tab-data td{
-  vertical-align:middle;
+table#tab-data td {
+  vertical-align: middle;
 }
 
-table#tab-data tr.mat-header-row{
-  height:48px;
+table#tab-data tr.mat-header-row {
+  height: 48px;
 }
 
 /*table#tab-data tr.mat-header-row,

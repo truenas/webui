@@ -1,19 +1,21 @@
 .empty-page {
-  margin: 32px auto;
   color: var(--fg2);
+  margin: 32px auto;
   max-width: 300px;
 
   .icon-div {
     text-align: center;
+
     .mat-icon {
-      height: auto;
-      width: auto;
-      font-size: 50px;
       color: var(--fg2);
-      opacity:0.1;
+      font-size: 50px;
+      height: auto;
+      opacity: 0.1;
+      width: auto;
+
       &.logo {
-        height: 40px;
         font-size: unset;
+        height: 40px;
         margin: 10px 0;
       }
     }
@@ -25,30 +27,30 @@
   }
 
   .empty-message {
+    font-size: 0.875rem;
     margin-bottom: 10px;
-    font-size: .875rem;
   }
 
 
   &.large {
     .icon-div {
       .mat-icon {
-        height: auto;
-        width: auto;
         font-size: 150px;
+        height: auto;
         margin-top: -50px;
+        width: auto;
 
         &.logo {
-          height: 80px;
           font-size: unset;
+          height: 80px;
           margin: 20px 0;
         }
       }
     }
 
     .empty-title {
-      margin-bottom: 20px;
       font-size: 16px;
+      margin-bottom: 20px;
     }
 
     .empty-message {

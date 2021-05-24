@@ -1,17 +1,18 @@
 /* content padding top 14px bottom 15px*/
 div.dashboard {
-    height: calc(100vh - 175px);
+  height: calc(100vh - 175px);
 }
 
 div.dashboard.has-footer {
-    height: calc(100vh - 165px);
+  height: calc(100vh - 165px);
 }
 
 div.content {
-    flex: 1;
+  flex: 1;
 }
+
 div.right-column div.left-column {
-    height: inherit;
+  height: inherit;
 }
 /* div.title {
     display: flex;
@@ -21,11 +22,11 @@ div.right-column div.left-column {
 
 mat-card > mat-card-actions.interface-pending-actions,
 div.disabled-notice {
-    margin: 0;
-    padding: 0 16px 16px;
+  margin: 0;
+  padding: 0 16px 16px;
 }
 
 .pseudolink {
-    text-decoration: underline;
-    cursor: pointer;
+  cursor: pointer;
+  text-decoration: underline;
 }

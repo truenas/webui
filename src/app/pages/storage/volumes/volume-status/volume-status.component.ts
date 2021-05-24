@@ -32,7 +32,7 @@ import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/con
 import { ModalService } from 'app/services/modal.service';
 import { DiskFormComponent } from '../../disks/disk-form';
 
-interface poolDiskInfo {
+interface PoolDiskInfo {
   name: any;
   read: any;
   write: any;
@@ -473,7 +473,7 @@ export class VolumeStatusComponent implements OnInit {
     return actions;
   }
 
-  extendAction() {
+  extendAction(): any[] {
     return [{
       id: 'extend',
       label: helptext.actions_label.extend,
@@ -546,7 +546,7 @@ export class VolumeStatusComponent implements OnInit {
     }];
   }
 
-  parseData(data: any, category?: any, vdev_type?: any) {
+  parseData(data: any, category?: any, vdev_type?: any): PoolDiskInfo {
     let stats: any = {
       read_errors: 0,
       write_errors: 0,
@@ -564,7 +564,7 @@ export class VolumeStatusComponent implements OnInit {
       data.disk = data.path;
     }
 
-    const item: poolDiskInfo = {
+    const item: PoolDiskInfo = {
       name: data.name ? data.name : data.disk,
       read: stats.read_errors ? stats.read_errors : 0,
       write: stats.write_errors ? stats.write_errors : 0,

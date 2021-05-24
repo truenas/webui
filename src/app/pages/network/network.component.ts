@@ -8,6 +8,7 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { AppTableAction } from 'app/pages/common/entity/table/table.component';
 import * as ipRegex from 'ip-regex';
 import { Subject, Subscription } from 'rxjs';
 import { ProductType } from '../../enums/product-type.enum';
@@ -569,7 +570,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     return res;
   }
 
-  getIpmiActions() {
+  getIpmiActions(): AppTableAction[] {
     return [{
       icon: 'highlight',
       name: 'identify',
@@ -588,7 +589,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         window.open(`http://${rowinner.ipaddress}`);
         event.stopPropagation();
       },
-    }];
+    }] as any[];
   }
 
   showConfigForm(): void {
@@ -604,7 +605,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     });
   }
 
-  getOpenVpnActions() {
+  getOpenVpnActions(): AppTableAction[] {
     return [{
       icon: 'stop',
       name: 'stop',
@@ -654,7 +655,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         );
         event.stopPropagation();
       },
-    }];
+    }] as any[];
   }
 
   isOpenVpnActionVisible(name: string, row: any): boolean {

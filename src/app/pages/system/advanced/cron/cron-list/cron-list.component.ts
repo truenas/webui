@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
@@ -85,7 +86,7 @@ export class CronListComponent {
     this.doAdd(id);
   }
 
-  getActions(tableRow: any) {
+  getActions(tableRow: any): EntityTableAction[] {
     return [
       {
         name: this.config.name,
@@ -132,7 +133,7 @@ export class CronListComponent {
           this.entityList.doDelete(row);
         },
       },
-    ];
+    ] as EntityTableAction[];
   }
 
   resourceTransformIncomingRestData(data: any): any {

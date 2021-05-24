@@ -8,7 +8,7 @@ mat-card.app-table {
   max-width: 100%;
 }
 
-mat-card-content.table-container{
+mat-card-content.table-container {
   height: inherit;
   max-width: 100%;
 }
@@ -16,23 +16,25 @@ mat-card-content.table-container{
 .mat-cell:not(:first-child):not(:last-child) {
   padding: 0 2px;
 }
+
 .mat-cell:first-child {
   padding-right: 2px;
 }
+
 .mat-cell:last-child {
   padding-left: 2px;
 }
 
 div.table-container {
-  padding: 0px;
   height: calc(100% - 41px);
   max-width: 100%;
+  padding: 0;
 }
 
 .text-overflow-ellipsis {
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  overflow: hidden;
 }
 
 .table-component {
@@ -45,8 +47,8 @@ div.table-container {
 }
 
 div.table-row-action {
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: flex-end;
 }
 
@@ -57,16 +59,16 @@ mat-icon.table-action-button {
 }
 
 div.state-info {
-  display: flex;
   align-items: center;
+  display: flex;
 }
 
 div.view-more-row {
+  cursor: pointer;
   padding: 9px;
   text-align: center;
-  cursor: pointer;
 }
 
 div.view-more-row:hover {
-  background: rgba(0,0,0,0.1);
+  background: rgba(0, 0, 0, 0.1);
 }

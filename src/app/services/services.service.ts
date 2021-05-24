@@ -11,49 +11,49 @@ import { WebSocketService } from './ws.service';
 export class ServicesService {
   constructor(protected ws: WebSocketService) {}
 
-  getSmbBindIPChoices() {
+  getSmbBindIPChoices(): Observable<any[]> {
     return this.ws.call('smb.bindip_choices');
   }
 
   // OpenVPN Service
-  getOpenVPNClientAuthAlgorithmChoices() {
+  getOpenVPNClientAuthAlgorithmChoices(): Observable<any[]> {
     return this.ws.call('openvpn.client.authentication_algorithm_choices');
   }
 
-  getOpenVPNClientCipherChoices() {
+  getOpenVPNClientCipherChoices(): Observable<any[]> {
     return this.ws.call('openvpn.client.cipher_choices');
   }
   getCerts(): Observable<Certificate[]> {
     return this.ws.call('certificate.query');
   }
 
-  getCAs() {
+  getCAs(): Observable<any[]> {
     return this.ws.call('certificateauthority.query');
   }
 
-  getOpenVPNServerAuthAlgorithmChoices() {
+  getOpenVPNServerAuthAlgorithmChoices(): Observable<any[]> {
     return this.ws.call('openvpn.server.authentication_algorithm_choices');
   }
 
-  getOpenServerCipherChoices() {
+  getOpenServerCipherChoices(): Observable<any[]> {
     return this.ws.call('openvpn.server.cipher_choices');
   }
 
-  generateOpenServerClientConfig(id: number, address: string) {
+  generateOpenServerClientConfig(id: number, address: string): Observable<any> {
     return this.ws.call('openvpn.server.client_configuration_generation', [id, address]);
   }
-  renewStaticKey() {
+  renewStaticKey(): Observable<any> {
     return this.ws.call('openvpn.server.renew_static_key');
   }
-  updateOpenVPN(call: ApiMethod, body: any) {
+  updateOpenVPN(call: ApiMethod, body: any): Observable<any> {
     return this.ws.call(call, [body]);
   }
-  getClientInfo() {
+  getClientInfo(): Observable<any> {
     return this.ws.call('openvpn.client.config');
   }
 
   // -- end of OpenVPN Service
-  getLLDPCountries() {
+  getLLDPCountries(): Observable<any[]> {
     return this.ws.call('lldp.country_choices');
   }
 }

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import * as _ from 'lodash';
 
 import * as myIP from 'what-is-my-ip-address';
@@ -318,7 +319,7 @@ export class PluginsComponent {
     }
   }
 
-  getSelectedNames(selectedJails: any[]) {
+  getSelectedNames(selectedJails: any[]): any[] {
     const selected: any = [];
     for (const i in selectedJails) {
       selected.push([selectedJails[i]['name']]);
@@ -366,13 +367,13 @@ export class PluginsComponent {
     }
   }
 
-  wsMultiDeleteParams(selected: any) {
+  wsMultiDeleteParams(selected: any): any[] {
     const params: any[] = ['jail.delete'];
     params.push(this.getSelectedNames(selected));
     return params;
   }
 
-  getActions(parentrow: any) {
+  getActions(parentrow: any): EntityTableAction[] {
     const actions = [{
       name: parentrow.name,
       id: 'start',
@@ -517,7 +518,7 @@ export class PluginsComponent {
         },
       });
     }
-    return actions;
+    return actions as EntityTableAction[];
   }
 
   isActionVisible(actionId: string, row: any): boolean {
@@ -559,11 +560,11 @@ export class PluginsComponent {
     document.body.removeChild(form);
   }
 
-  wsDeleteParams(row: any, id: string) {
+  wsDeleteParams(row: any, id: string): [string, { force: boolean }?] {
     return row.state === 'up' ? [id, { force: true }] : [id];
   }
 
-  resourceTransformIncomingRestData(data: any[]) {
+  resourceTransformIncomingRestData(data: any[]): any[] {
     return data.map((plugin) => {
       plugin['boot'] = plugin['boot'] === 'on';
       plugin['icon'] = _.find(this.allPlugins, { plugin: plugin.plugin })

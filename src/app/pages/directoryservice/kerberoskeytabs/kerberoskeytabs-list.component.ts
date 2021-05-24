@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { ModalService } from '../../../services/modal.service';
 import helptext from '../../../helptext/directoryservice/kerberoskeytabs-form-list';
 import { T } from '../../../translate-marker';
@@ -43,16 +44,16 @@ export class KerberosKeytabsListComponent {
     }
   }
 
-  getAddActions() {
+  getAddActions(): EntityTableAction[] {
     return [{
       label: T('Add'),
       onClick: () => {
         this.doAdd();
       },
-    }];
+    }] as EntityTableAction[];
   }
 
-  getActions(row: any) {
+  getActions(row: any): EntityTableAction[] {
     const actions = [];
     actions.push({
       id: 'edit',
@@ -69,7 +70,7 @@ export class KerberosKeytabsListComponent {
       },
     });
 
-    return actions;
+    return actions as EntityTableAction[];
   }
 
   doAdd(id?: number): void {

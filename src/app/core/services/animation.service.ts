@@ -19,7 +19,7 @@ import {
   // velocity,
   multicast,
   action,
-  transform,
+  transform, ColdSubscription,
   // transformMap,
   // clamp
 } from 'popmotion';
@@ -227,7 +227,7 @@ export class AnimationService {
     const startY = animationTarget.target.get('y');
     const targetY = value(startY, animationTarget.target.set('y'));
 
-    const gravity = (start: number) => {
+    const gravity = (start: number): ColdSubscription => {
       const g = physics({
         acceleration: 2500,
         to: (startY - 200),
@@ -277,7 +277,7 @@ export class AnimationService {
       }),
     );
 
-    const radiation = (start: any, elementBorder: any) => {
+    const radiation = (start: any, elementBorder: any): void => {
       const r = keyframes({
         values: [
           { borderWidth: 0, borderColor: 'rgb(204, 0, 0, 1)' },

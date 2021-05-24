@@ -1,45 +1,47 @@
 #wrapper {
-    height: 100%;
-    background-color: #0095d5;
+  background-color: #0095d5;
+  height: 100%;
 }
 
 #shutdown-card {
-    width: 275px;
-    position: relative;
-    margin: auto;
-    top: 75px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: auto;
+  position: relative;
+  top: 75px;
+  width: 275px;
 }
 
-.copyright-txt, #message, #logo {
-    text-align: center;
+.copyright-txt,
+#message,
+#logo {
+  text-align: center;
 }
 
 #logo {
-    width: 80%;
+  width: 80%;
 }
 
 .copyright-txt {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 .logo {
-  width: 256px;
   height: auto;
+  width: 256px;
 }
 
 @media screen and (max-height: 700px) {
-    #shutdown-card {
-        width: 225px;
-        font-size: 80%;
-        top: 20px;
-    }
+  #shutdown-card {
+    font-size: 80%;
+    top: 20px;
+    width: 225px;
+  }
 
-    .mat-dialog-container {
-        height: 100px;
-        width: 100px;
-    }
+  .mat-dialog-container {
+    height: 100px;
+    width: 100px;
+  }
 }

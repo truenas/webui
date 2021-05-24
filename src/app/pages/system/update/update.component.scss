@@ -1,142 +1,147 @@
 #train-card {
-    padding: 15px 20px 20px 20px;
-    max-height: 85px;
-    /* min-width: 660px; */
+  max-height: 85px;
+  padding: 15px 20px 20px;
+  /* min-width: 660px; */
 }
 
 .train-card-row {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 #train-label {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 #train-selector {
-    max-width: 85%;
-    border: 1px solid;
-    padding: 3px 5px;
+  border: 1px solid;
+  max-width: 85%;
+  padding: 3px 5px;
 }
 
 #upgrades-card {
-    max-height: 180px;
+  max-height: 180px;
 }
 
 #upgrades-card-scrollbox {
-    height:170px;
-    overflow-y: auto;
+  height: 170px;
+  overflow-y: auto;
 }
 
 #changelog-card {
-    height: 230px;
-    padding-right: 40px !important;
+  height: 230px;
+  padding-right: 40px !important;
 }
 
 #changelog-title {
-    margin: 10px 25px;
-    padding-top: 15px;
-    font-weight: 700;
+  font-weight: 700;
+  margin: 10px 25px;
+  padding-top: 15px;
 }
 
 #changelog-scrollbox {
-    height:140px;
-    overflow-y: auto;
+  height: 140px;
+  overflow-y: auto;
 }
 
 #stable-warning-card {
-    padding: 2px 20px;
+  padding: 2px 20px;
 }
 
 .stable-warning {
-    margin: 10px 0 !important;
-    font-size: 1.1rem;
+  font-size: 1.1rem;
+  margin: 10px 0 !important;
 }
 
 .stable-warning a {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 #stable_warning_line_2 {
-    padding-left: 35px;
+  padding-left: 35px;
 }
 
 .update-button {
-    margin-right: 3px;
-    top: 6px;
-    /* float: right; */
+  margin-right: 3px;
+  top: 6px;
+  /* float: right; */
 }
 
 #update-info {
-    position: relative;
-    top: 3px;
-    margin-right: 10px;
+  margin-right: 10px;
+  position: relative;
+  top: 3px;
 }
 
-#update-spinner {
-    position: absolute;
-    top: 30px; left: 0; bottom: 0; right: 0;
-    margin: 0 auto;
-    z-index: 10;
+#update-spinner { bottom: 0;
+  left: 0;
+  margin: 0 auto;
+  position: absolute;
+  right: 0;
+  top: 30px;
+  z-index: 10;
 }
 
 #single-train-name {
-    display: inline-block;
-    /* min-width: 550px; */
+  display: inline-block;
+  /* min-width: 550px; */
 }
 
 .train-select-row {
-    margin-top: -6px;
-    margin-bottom: 3px;
-    vertical-align: top;
+  margin-bottom: 3px;
+  margin-top: -6px;
+  vertical-align: top;
 }
 
-#refresh-button, #single-train-refresh-button {
-    margin-left: 20px;
+#refresh-button,
+#single-train-refresh-button {
+  margin-left: 20px;
 }
 
 #single-train-refresh-button {
-    vertical-align: top;
-    margin-top: -12px;
-    float: right;
+  float: right;
+  margin-top: -12px;
+  vertical-align: top;
 }
 
 #update-running-msg {
-    margin-left: 10px;
-    font-size: larger;
-    font-weight: 500;
-    position: relative;
-    bottom: 3px;
+  bottom: 3px;
+  font-size: larger;
+  font-weight: 500;
+  margin-left: 10px;
+  position: relative;
 }
 
 mat-card {
-    max-width: 960px;
-    margin: 0 auto 15px auto;
-    padding: 20px !important;
+  margin: 0 auto 15px;
+  max-width: 960px;
+  padding: 20px !important;
 }
 
 #update-running-msg {
-    margin-left: 10px;
-    font-size: larger;
-    font-weight: 500;
-    position: relative;
-    bottom: 3px;
+  bottom: 3px;
+  font-size: larger;
+  font-weight: 500;
+  margin-left: 10px;
+  position: relative;
 }
 
 .updatecheckTooltip {
-    position: relative;
-    top: 5px;
+  position: relative;
+  top: 5px;
 }
 
 @media screen and (max-width: 1270px) {
-    #train-selector, #single-train-name {
-        max-width: 75%;
-    }
+  #train-selector,
+  #single-train-name {
+    max-width: 75%;
+  }
 }
 
 @media screen and (max-width: 595px) {
-    #train-selector, #single-train-name {
-        max-width: 65%;
-    }
+  #train-selector,
+  #single-train-name {
+    max-width: 65%;
+  }
 }
 
 

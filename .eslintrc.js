@@ -98,6 +98,7 @@ module.exports = {
         "@typescript-eslint/member-delimiter-style": "error",
         "@typescript-eslint/type-annotation-spacing": "error",
         "@typescript-eslint/ban-ts-comment": "error",
+        "@typescript-eslint/explicit-function-return-type": ["error", { allowExpressions: true }],
       }
     },
     {

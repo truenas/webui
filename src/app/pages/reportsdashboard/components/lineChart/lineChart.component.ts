@@ -247,7 +247,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     return colors;
   }
 
-  private createColorObject() {
+  private createColorObject(): any {
     const obj: any = {};
     this.legends.forEach((item, index) => {
       obj[item] = this.colorPattern[index];

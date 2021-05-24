@@ -1,32 +1,32 @@
 .notific-icon {
-    padding-right: 5px;
+  padding-right: 5px;
 }
 
 h3.notific-title.warn {
-    color: var(--red);
+  color: var(--red);
 }
 
 h3.notific-title.accent {
-    color: var(--accent);
+  color: var(--accent);
 }
 
 a.dismiss {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .notific-item {
-    margin-top: 10px;
-    margin-bottom: 10px;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 a:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .mat-list-base .mat-list-item {
-    height: unset;
+  height: unset;
 }
 
 .dismissed {
-  opacity: .6;
+  opacity: 0.6;
 }

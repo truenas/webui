@@ -675,7 +675,7 @@ export class IscsiWizardComponent {
     }
   }
 
-  getSummary() {
+  getSummary(): { [key: string]: any } {
     const summary = {
       Name: this.summaryObj.name,
       Extent: {

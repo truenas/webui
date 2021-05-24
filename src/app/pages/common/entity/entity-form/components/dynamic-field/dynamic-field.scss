@@ -1,20 +1,21 @@
 .dynamic-field.hide {
-    display: none;
+  display: none;
 }
+
 .full-width {
-	width: 100%;
+  width: 100%;
 }
 
 .drop-container {
-  background: #fff;
-  border-radius: 6px;
-  height: 150px;
-  width: 100%;
-  box-shadow: 1px 2px 20px hsla(0, 0%, 4%, .1);
-  display: flex;
   align-items: center;
+  background: #fff;
+  border: 2px dashed #c0c4c7;
+  border-radius: 6px;
+  box-shadow: 1px 2px 20px hsla(0, 0%, 4%, 0.1);
+  display: flex;
+  height: 150px;
   justify-content: center;
-  border: 2px dashed #c0c4c7
+  width: 100%;
 }
 
 :host mat-icon.paragraph-icon {
@@ -48,9 +49,10 @@
   position: relative;
   top: -12px;
 }
+
 .form-input-spinner {
-  position: absolute;
   left: 150px;
+  position: absolute;
 }
 
 .textarea-filereader {

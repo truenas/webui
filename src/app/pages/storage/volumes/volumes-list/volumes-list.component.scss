@@ -1,104 +1,104 @@
 ::ng-deep #tree-list-demo {
-    min-height: 530px;
+  min-height: 530px;
 }
 
 ::ng-deep #employees {
-   max-height: 530px;
+  max-height: 530px;
 }
 
-.hov:hover{
-    cursor: pointer;
+.hov:hover {
+  cursor: pointer;
 }
 
-.ion-android-more-vertical:before {
-    color: black;
+.ion-android-more-vertical::before {
+  color: black;
 }
 
 
 :host ::ng-deep .global_volume_based_action_menu .panel_container {
-  text-align:right;
+  text-align: right;
 }
 
 .panel_status_enc {
-    font-size: 16px;
-    padding-left: 4px;
+  font-size: 16px;
+  padding-left: 4px;
 }
 
 .encryption_icon {
-    float: right;
-    padding-bottom: 20px;
-    padding-top: 4px;
-    position:relative;
-    z-index:50;
+  float: right;
+  padding-bottom: 20px;
+  padding-top: 4px;
+  position: relative;
+  z-index: 50;
 }
 
 .unlock_button {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 #pools-spinner {
-    position: absolute;
-    left: 47%;
-    top: 12px;
+  left: 47%;
+  position: absolute;
+  top: 12px;
 }
 
 .pool-icon {
   position: relative;
-  top: -6px;
   right: 16px;
+  top: -6px;
   z-index: 123;
 }
 
 .green-icon {
-    color: var(--green);
+  color: var(--green);
 }
 
 .orange-icon {
-    color: var(--orange);
+  color: var(--orange);
 }
 
 .yellow-icon {
-    color: var(--yellow);
+  color: var(--yellow);
 }
 
 .blue-icon {
-    color: var(--blue);
+  color: var(--blue);
 }
 
 .red-icon {
-    color: var(--red);
+  color: var(--red);
 }
 
-.mat-expansion-panel-header[aria-disabled=true]{
+.mat-expansion-panel-header[aria-disabled=true] {
   color: unset;
 }
 
 .mat-expansion-panel-header-title {
-    max-width: 30%;
-    width: 30%;
-    min-width: 30%;
+  max-width: 30%;
+  min-width: 30%;
+  width: 30%;
 }
 
 .mat-expansion-panel-header-title,
-.mat-expansion-panel-header-description{
+.mat-expansion-panel-header-description {
+  max-height: 24px;
   position: relative;
   top: 4px;
-  max-height: 24px;
 }
 
 .mat-expansion-panel-header.offline .mat-expansion-panel-header-title,
-.mat-expansion-panel-header.offline .mat-expansion-panel-header-description{
+.mat-expansion-panel-header.offline .mat-expansion-panel-header-description {
   top: 8px;
 }
 
-.mat-expansion-panel-body{
+.mat-expansion-panel-body {
   padding: 0;
 }
 
 .icons {
-    font-size: 24px;
+  font-size: 24px;
 }
 
 .entity-tree-table-container {
-    overflow: auto;
+  overflow: auto;
 }

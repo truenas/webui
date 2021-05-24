@@ -1,18 +1,18 @@
 .pod-logs-wrapper {
-  width: calc(100% - 16px);
+  color: white;
   height: calc(100% - 100px);
   margin-left: 8px;
   margin-right: 8px;
-  color: white;
+  width: calc(100% - 16px);
 }
 
 .pod-logs {
-  width: 100%;
-  height: calc(100% - 30px);
   background: black;
-  overflow: auto;  
   font-family: 'Inconsolata';
+  height: calc(100% - 30px);
+  overflow: auto;
   padding: 5px;
+  width: 100%;
 }
 
 .meta-data {
@@ -31,9 +31,9 @@
 
 .timestamp {
   display: inline-block;
-  opacity: 0.5;
-  min-width: 155px;
   margin-right: 10px;
+  min-width: 155px;
+  opacity: 0.5;
 }
 
 .log-data {

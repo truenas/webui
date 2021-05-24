@@ -1,57 +1,66 @@
 mat-dialog-content.task-manager-dialog-content.mat-dialog-content {
-    padding: 0px;
-    overflow: scroll !important;
-    margin-top: -10px;
+  margin-top: -10px;
+  overflow: scroll !important;
+  padding: 0;
 }
+
 span.task-manager-search {
-    padding: 0 24px;
+  padding: 0 24px;
 }
-span.task-manager-search input{
-    width: 80%;
+
+span.task-manager-search input {
+  width: 80%;
 }
+
 span.task-manager-search mat-icon {
-    top: 10px;
-    position: relative;
+  position: relative;
+  top: 10px;
 }
+
 button.task-manager-action-button {
-    width: 100%;
+  width: 100%;
 }
 
 mat-icon.state-success {
-    color: var(--green);
+  color: var(--green);
 }
+
 mat-icon.state-failed {
-    color: var(--red);
+  color: var(--red);
 }
+
 mat-icon.state-running {
-    color: var(--primary);
+  color: var(--primary);
 }
+
 mat-icon.state-waiting {
-    color: var(--accent);
+  color: var(--accent);
 }
+
 mat-icon.state-aborted {
-    color: var(--orange);
+  color: var(--orange);
 }
 
 mat-cell.mat-column-percent {
-    display: inline-grid;
+  display: inline-grid;
 }
+
 mat-cell.mat-column-expandedDetail {
-    display: inline-grid;
+  display: inline-grid;
 }
 
 .element-row:not(.expanded) {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .element-row:not(.expanded):hover {
-    background: #f5f5f5;
+  background: #f5f5f5;
 }
 
 .element-row.expanded {
-    border-bottom-color: transparent;
+  border-bottom-color: transparent;
 }
 
 mat-row.detail-row {
-    padding-bottom: 12px;
+  padding-bottom: 12px;
 }

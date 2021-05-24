@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { WebSocketService } from './ws.service';
 import { EntityUtils } from '../pages/common/entity/utils';
@@ -9,19 +10,19 @@ import { reject } from 'q';
 export class ReplicationService {
   constructor(protected ws: WebSocketService) { }
 
-  getSnapshotTasks() {
+  getSnapshotTasks(): Observable<any[]> {
     return this.ws.call('pool.snapshottask.query');
   }
 
-  querySSHConnection(id: string) {
+  querySSHConnection(id: string): Observable<any[]> {
     return this.ws.call('keychaincredential.query', [[['id', '=', id]]]);
   }
 
-  genSSHKeypair() {
+  genSSHKeypair(): Promise<any> {
     return this.ws.call('keychaincredential.generate_ssh_key_pair').toPromise();
   }
 
-  getRemoteDataset(transport: any, sshCredentials: string, parentComponent: any) {
+  getRemoteDataset(transport: any, sshCredentials: string, parentComponent: any): Promise<any> {
     const queryParams = [transport];
     if (transport !== 'LOCAL') {
       queryParams.push(sshCredentials);
@@ -64,11 +65,11 @@ export class ReplicationService {
     );
   }
 
-  getReplicationTasks() {
+  getReplicationTasks(): Observable<any[]> {
     return this.ws.call('replication.query');
   }
 
-  generateEncryptionHexKey(length: number) {
+  generateEncryptionHexKey(length: number): string {
     const characters = '0123456789abcdef';
     let res = '';
     for (let i = 0; i < length; i++) {

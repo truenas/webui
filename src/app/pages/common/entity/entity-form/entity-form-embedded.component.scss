@@ -1,69 +1,72 @@
 /* Embedded Form Styles */
 .mat-content {
-  padding:0 ;
-  width:100%;
-  height:100%;
-}
-
-.mat-card-actions{
+  height: 100%;
+  padding: 0;
   width: 100%;
-  height: 10%;
-  text-align: center;
-  /*background-color: #fff;*/
-  margin: 5px 0px;
-  /*position: absolute;*/
-  bottom: 0; 
 }
 
-.fieldset-container{
-  /*position: fixed;*/
-  width:100%;
-  height: 85%;
+.mat-card-actions {
+  /*position: absolute;*/
+  bottom: 0;
+  height: 10%;
+  /*background-color: #fff;*/
+  margin: 5px 0;
+  text-align: center;
+  width: 100%; 
+}
+
+.fieldset-container {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  height: 85%;
+  /*position: fixed;*/
+  width: 100%;
 }
-.fieldset-container .fieldset{
-  display:flex;
-  flex-flow:row wrap;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal; 
+
+.fieldset-container .fieldset {
+  box-direction: normal;
+  box-orient: horizontal;
+  display: flex;
+  flex-flow: row wrap; 
 }
-.fieldset-container .fieldset .tooltip .material-icons{
-  font-size:12px;
+
+.fieldset-container .fieldset .tooltip .material-icons {
+  font-size: 12px;
 }
 
 /* Default View */
-.fieldset-container.fieldset-display-default{
+.fieldset-container.fieldset-display-default {
   padding: 3%;
 }
-.fieldset-container.fieldset-display-default .fieldset{
-  width:100%;
-  margin:24px 0;
+
+.fieldset-container.fieldset-display-default .fieldset {
+  margin: 24px 0;
+  width: 100%;
   /*height: 100%;
   float: left;*/
 }
 
 
 /* Carousel View */
-.fieldset-container.fieldset-display-carousel{
+.fieldset-container.fieldset-display-carousel {
   width: 200%;
 }
 
-.fieldset-container.fieldset-display-carousel .fieldset{
+.fieldset-container.fieldset-display-carousel .fieldset {
   width: 50%;
 }
 
 div.form-line,
-div.form-inline{
-  margin:8px;
+div.form-inline {
+  margin: 8px;
 }
 
 /* No Margins*/
-.fieldset-container.fieldset-display-default .fieldset{
-  margin:0;
+.fieldset-container.fieldset-display-default .fieldset {
+  margin: 0;
 }
 
-.fieldset.hidden{
-  display:none !important;
+.fieldset.hidden {
+  display: none !important;
 }

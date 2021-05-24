@@ -161,7 +161,7 @@ export class VolumesListTableConfig implements InputTableConf {
     return false;
   }
 
-  getEncryptedActions(rowData: Pool) {
+  getEncryptedActions(rowData: Pool): any[] {
     const actions = [];
     const self = this;
     if (rowData.encrypt === 2) {
