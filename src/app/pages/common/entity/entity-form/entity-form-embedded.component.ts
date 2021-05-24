@@ -89,7 +89,7 @@ export interface FormConfig {
 @Component({
   selector: 'entity-form-embedded',
   templateUrl: './entity-form-embedded.component.html',
-  styleUrls: ['./entity-form-embedded.component.css'],
+  styleUrls: ['./entity-form-embedded.component.scss'],
   providers: [EntityFormService, FieldRelationService],
 })
 export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {

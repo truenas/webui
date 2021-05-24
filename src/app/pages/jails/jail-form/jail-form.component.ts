@@ -23,7 +23,7 @@ import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interf
 @Component({
   selector: 'app-jail-form',
   templateUrl: './jail-form.component.html',
-  styleUrls: ['../../common/entity/entity-form/entity-form.component.scss', '../jail-list/jail-list.component.css'],
+  styleUrls: ['../../common/entity/entity-form/entity-form.component.scss', '../jail-list/jail-list.component.scss'],
   providers: [JailService, NetworkService, JailFormService, EntityFormService, FieldRelationService],
 })
 export class JailFormComponent implements OnInit, AfterViewInit {

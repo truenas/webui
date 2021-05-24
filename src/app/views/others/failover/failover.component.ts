@@ -13,7 +13,7 @@ import { LocaleService } from 'app/services/locale.service';
 @Component({
   selector: 'system-failover',
   templateUrl: './failover.component.html',
-  styleUrls: ['./failover.component.css'],
+  styleUrls: ['./failover.component.scss'],
 })
 export class FailoverComponent implements OnInit {
   product_type: ProductType;

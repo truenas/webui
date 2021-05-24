@@ -30,7 +30,7 @@ import { DialogService } from 'app/services/dialog.service';
 @Component({
   selector: 'enclosure-disks-mini',
   templateUrl: './enclosure-disks-mini.component.html',
-  styleUrls: ['./enclosure-disks.component.css'],
+  styleUrls: ['./enclosure-disks.component.scss'],
 })
 
 export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {

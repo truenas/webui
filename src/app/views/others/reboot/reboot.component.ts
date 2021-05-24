@@ -13,7 +13,7 @@ import { LocaleService } from 'app/services/locale.service';
 @Component({
   selector: 'system-reboot',
   templateUrl: './reboot.component.html',
-  styleUrls: ['./reboot.component.css'],
+  styleUrls: ['./reboot.component.scss'],
 })
 export class RebootComponent implements OnInit {
   product_type: ProductType;

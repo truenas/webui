@@ -19,13 +19,11 @@ export interface PageOptions {
 export const PageComponentMetadata = {
   selector: 'page',
   template: '',
-  styleUrls: ['./page.component.css'],
 };
 
 @Component({
   selector: 'page',
   template: '',
-  styleUrls: ['./page.component.css'],
 })
 export class PageComponent {
   name = 'PageComponent';

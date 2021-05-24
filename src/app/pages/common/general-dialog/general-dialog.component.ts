@@ -24,7 +24,7 @@ export interface GeneralDialogConfig {
 @Component({
   selector: 'app-general-dialog',
   templateUrl: './general-dialog.component.html',
-  styleUrls: ['./general-dialog.component.css'],
+  styleUrls: ['./general-dialog.component.scss'],
 })
 export class GeneralDialogComponent {
   @Input() conf: GeneralDialogConfig;

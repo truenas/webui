@@ -15,7 +15,7 @@ import { ipv4or6OptionalCidrValidator } from '../../../../common/entity/entity-f
 @Component({
   selector: 'app-iscsi-initiator-form',
   templateUrl: './initiator-form.component.html',
-  styleUrls: ['./initiator-form.component.css', '../../../../common/entity/entity-form/entity-form.component.scss'],
+  styleUrls: ['./initiator-form.component.scss', '../../../../common/entity/entity-form/entity-form.component.scss'],
   providers: [FieldRelationService, NetworkService],
 })
 export class InitiatorFormComponent implements OnInit {

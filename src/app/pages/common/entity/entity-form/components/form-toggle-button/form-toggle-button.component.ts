@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 @Component({
   selector: 'form-toggle-button',
   templateUrl: './form-toggle-button.component.html',
-  styleUrls: ['./form-toggle-button.component.css'],
+  styleUrls: ['./form-toggle-button.component.scss'],
 })
 export class FormToggleButtonComponent implements Field, OnInit {
   config: FieldConfig;

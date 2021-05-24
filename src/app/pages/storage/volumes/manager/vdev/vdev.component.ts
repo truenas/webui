@@ -13,7 +13,7 @@ import helptext from '../../../../../helptext/storage/volumes/manager/vdev';
 @Component({
   selector: 'app-vdev',
   templateUrl: 'vdev.component.html',
-  styleUrls: ['vdev.component.css'],
+  styleUrls: ['vdev.component.scss'],
 })
 export class VdevComponent implements OnInit {
   @Input() index: any;

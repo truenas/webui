@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 @Component({
   selector: 'entity-dashboard',
   templateUrl: './entity-dashboard.component.html',
-  styleUrls: ['./entity-dashboard.component.css'],
+  styleUrls: ['./entity-dashboard.component.scss'],
 })
 export class EntityDashboardComponent implements OnInit {
   routeParts: any[] = [];

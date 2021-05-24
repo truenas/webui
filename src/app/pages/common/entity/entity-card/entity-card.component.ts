@@ -17,7 +17,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 @Component({
   selector: 'entity-card',
   templateUrl: './entity-card.component.html',
-  styleUrls: ['./entity-card.component.css'],
+  styleUrls: ['./entity-card.component.scss'],
   providers: [DialogService],
 })
 export class EntityCardComponent extends iXObject implements OnInit {
