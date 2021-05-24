@@ -823,6 +823,7 @@
   "Frequency": "",
   "From <a  href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"  target=\"_blank\">rsyncd.conf(5)</a>. A list of patterns to match with  the hostname and IP address of a connecting client. The connection is  rejected if no patterns match. Separate entries by pressing  <code>Enter</code>.": "",
   "From <a  href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"  target=\"_blank\">rsyncd.conf(5)</a>. A list of patterns to match with  the hostname and IP address of a connecting client. The connection is  rejected when the patterns match. Separate entries by pressing  <code>Enter</code>.": "",
+  "From {task_begin} to {task_end}": "",
   "Full": "",
   "Full Control": "",
   "Full Filesystem Replication": "",

@@ -1,5 +1,9 @@
-import { Subscription } from 'rxjs';
 import { Component, OnDestroy } from '@angular/core';
+
+import { TranslateService } from '@ngx-translate/core';
+import cronstrue from 'cronstrue/i18n';
+import { Options as CronOptions } from 'cronstrue/dist/options';
+import { Subscription } from 'rxjs';
 
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -10,6 +14,7 @@ import { ModalService } from 'app/services/modal.service';
 import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { LanguageService } from 'app/services/language.service';
 
 @Component({
   selector: 'app-snapshot-task-list',
@@ -30,6 +35,8 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
     { name: T('Pool/Dataset'), prop: 'dataset', always_display: true },
     { name: T('Recursive'), prop: 'recursive' },
     { name: T('Naming Schema'), prop: 'naming_schema' },
+    { name: T('When'), prop: 'when' },
+    { name: T('Frequency'), prop: 'frequency' },
     { name: T('Keep snapshot for'), prop: 'keepfor', hidden: true },
     { name: T('Legacy'), prop: 'legacy', hidden: true },
     { name: T('VMware Sync'), prop: 'vmware_sync', hidden: true },
@@ -48,6 +55,7 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
     },
   };
   private onModalClose: Subscription;
+  private cronOptions: CronOptions;
 
   constructor(
     private dialogService: DialogService,
@@ -56,7 +64,11 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
     private modalService: ModalService,
     private storageService: StorageService,
     private dialog: DialogService,
-  ) {}
+    private translate: TranslateService,
+    private language: LanguageService,
+  ) {
+    this.cronOptions = { verbose: true, locale: this.language.currentLanguage };
+  }
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
@@ -65,9 +77,11 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  dataHandler(table: any): void {
-    for (let i = 0; i < table.rows.length; i++) {
-      table.rows[i].keepfor = `${table.rows[i].lifetime_value} ${table.rows[i].lifetime_unit}(S)`;
+  dataHandler(table: EntityTableComponent): void {
+    for (const task of table.rows) {
+      task.keepfor = `${task.lifetime_value} ${task.lifetime_unit}(S)`;
+      task.when = this.translate.instant(T('From {task_begin} to {task_end}'), { task_begin: task.schedule.begin, task_end: task.schedule.end });
+      task.frequency = cronstrue.toString(`${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`, this.cronOptions);
     }
   }
 
