@@ -30,3 +30,7 @@ ul.wizard-ul li {
 :host mat-vertical-stepper {
   overflow: hidden;
 }
+
+.mat-vertical-stepper-content[style*='visibility: visible'] {
+  overflow: visible !important;
+}
