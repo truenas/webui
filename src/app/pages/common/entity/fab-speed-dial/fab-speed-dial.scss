@@ -42,7 +42,6 @@ smd-fab-speed-dial {
   .smd-fab-speed-dial-container {
     align-items: center;
     box-align: center;
-    display: box;
     display: flex;
     position: relative;
     z-index: 20;
@@ -57,7 +56,6 @@ smd-fab-speed-dial {
     }
 
     smd-fab-actions {
-      display: box;
       display: flex;
       height: auto;
     }
