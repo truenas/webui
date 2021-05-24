@@ -16,7 +16,7 @@ import helptext from '../../../../helptext/storage/snapshots/snapshots';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { SnapshotData, SnapshotProperties, SnapshotProperty } from 'app/interfaces/storage.interface';
+import { SnapshotData } from 'app/interfaces/storage.interface';
 
 interface DialogData {
   datasets: string[];
@@ -282,7 +282,6 @@ export class SnapshotListComponent {
   restructureData(selected: SnapshotData[]): DialogData {
     const datasets: string[] = [];
     const snapshots: any = {};
-    console.log(selected);
     selected.forEach((item: SnapshotData) => {
       if (!snapshots[item.dataset]) {
         datasets.push(item.dataset);

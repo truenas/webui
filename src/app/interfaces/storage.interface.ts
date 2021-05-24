@@ -1,6 +1,7 @@
 import { DiskAcousticLevel } from 'app/enums/disk-acoustic-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
+import { ZfsProperty } from './zfs-property.interface';
 
 // As returned by pool.query under topology[<vdevtype>]
 export interface VDev {
@@ -123,62 +124,55 @@ export interface SnapshotData {
   snapshot: string;
   dataset: string;
   created?: string;
-  properties?: SnapshotProperties;
+  properties?: ZfsProperties;
   referenced?: string;
   used?: string;
 }
 
-export interface SnapshotProperty {
-  parsed: string;
-  rawvalue: string;
-  value: string;
-  source: string;
-}
-
-export interface SnapshotProperties {
-  acltype: SnapshotProperty;
-  casesensitivity: SnapshotProperty;
-  clones: SnapshotProperty;
-  compressratio: SnapshotProperty;
-  context: SnapshotProperty;
-  createtxg: SnapshotProperty;
-  creation: SnapshotProperty;
-  defcontext: SnapshotProperty;
-  defer_destroy: SnapshotProperty;
-  devices: SnapshotProperty;
-  encryption: SnapshotProperty;
-  encryptionroot: SnapshotProperty;
-  exec: SnapshotProperty;
-  fscontext: SnapshotProperty;
-  guid: SnapshotProperty;
-  inconsistent: SnapshotProperty;
-  ivsetguid: SnapshotProperty;
-  keyguid: SnapshotProperty;
-  keystatus: SnapshotProperty;
-  logicalreferenced: SnapshotProperty;
-  mlslabel: SnapshotProperty;
-  name: SnapshotProperty;
-  nbmand: SnapshotProperty;
-  normalization: SnapshotProperty;
-  numclones: SnapshotProperty;
-  objsetid: SnapshotProperty;
-  primarycache: SnapshotProperty;
-  redact_snaps: SnapshotProperty;
-  redacted: SnapshotProperty;
-  refcompressratio: SnapshotProperty;
-  referenced: SnapshotProperty;
-  remaptxg: SnapshotProperty;
-  rootcontext: SnapshotProperty;
-  secondarycache: SnapshotProperty;
-  setuid: SnapshotProperty;
-  type: SnapshotProperty;
-  unique: SnapshotProperty;
-  used: SnapshotProperty;
-  useraccounting: SnapshotProperty;
-  userrefs: SnapshotProperty;
-  utf8only: SnapshotProperty;
-  version: SnapshotProperty;
-  volsize: SnapshotProperty;
-  written: SnapshotProperty;
-  xattr: SnapshotProperty;
+export interface ZfsProperties {
+  acltype: ZfsProperty<string>;
+  casesensitivity: ZfsProperty<string>;
+  clones: ZfsProperty<string>;
+  compressratio: ZfsProperty<string>;
+  context: ZfsProperty<string>;
+  createtxg: ZfsProperty<string>;
+  creation: ZfsProperty<string>;
+  defcontext: ZfsProperty<string>;
+  defer_destroy: ZfsProperty<string>;
+  devices: ZfsProperty<string>;
+  encryption: ZfsProperty<string>;
+  encryptionroot: ZfsProperty<string>;
+  exec: ZfsProperty<string>;
+  fscontext: ZfsProperty<string>;
+  guid: ZfsProperty<string>;
+  inconsistent: ZfsProperty<string>;
+  ivsetguid: ZfsProperty<string>;
+  keyguid: ZfsProperty<string>;
+  keystatus: ZfsProperty<string>;
+  logicalreferenced: ZfsProperty<string>;
+  mlslabel: ZfsProperty<string>;
+  name: ZfsProperty<string>;
+  nbmand: ZfsProperty<string>;
+  normalization: ZfsProperty<string>;
+  numclones: ZfsProperty<string>;
+  objsetid: ZfsProperty<string>;
+  primarycache: ZfsProperty<string>;
+  redact_snaps: ZfsProperty<string>;
+  redacted: ZfsProperty<string>;
+  refcompressratio: ZfsProperty<string>;
+  referenced: ZfsProperty<string>;
+  remaptxg: ZfsProperty<string>;
+  rootcontext: ZfsProperty<string>;
+  secondarycache: ZfsProperty<string>;
+  setuid: ZfsProperty<string>;
+  type: ZfsProperty<string>;
+  unique: ZfsProperty<string>;
+  used: ZfsProperty<string>;
+  useraccounting: ZfsProperty<string>;
+  userrefs: ZfsProperty<string>;
+  utf8only: ZfsProperty<string>;
+  version: ZfsProperty<string>;
+  volsize: ZfsProperty<string>;
+  written: ZfsProperty<string>;
+  xattr: ZfsProperty<string>;
 }
