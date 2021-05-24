@@ -1,0 +1,10 @@
+.general-dialog-content-container {
+  height: calc(100% - 100px);
+  overflow: auto !important;
+}
+
+mat-icon.general-dialog-icon {
+  margin-right: 5px;
+  position: relative;
+  top: 5px;
+}

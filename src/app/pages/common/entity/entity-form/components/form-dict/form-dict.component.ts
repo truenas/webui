@@ -10,7 +10,7 @@ import { FieldRelationService } from '../../services/field-relation.service';
 @Component({
   selector: 'entity-form-dict',
   templateUrl: './form-dict.component.html',
-  styleUrls: ['../dynamic-field/dynamic-field.css'],
+  styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })
 export class FormDictComponent implements Field, OnInit {
   config: FieldConfig;

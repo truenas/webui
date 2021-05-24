@@ -1,0 +1,32 @@
+.notific-icon {
+  padding-right: 5px;
+}
+
+h3.notific-title.warn {
+  color: var(--red);
+}
+
+h3.notific-title.accent {
+  color: var(--accent);
+}
+
+a.dismiss {
+  text-decoration: underline;
+}
+
+.notific-item {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+a:hover {
+  cursor: pointer;
+}
+
+.mat-list-base .mat-list-item {
+  height: unset;
+}
+
+.dismissed {
+  opacity: 0.6;
+}

@@ -246,7 +246,7 @@ export class EntityUtils {
     return result;
   }
 
-  createRelations(relations: Relation[]) {
+  createRelations(relations: Relation[]): { action: string; when: { name: string; operator: string; value: any }[] }[] {
     const result = relations.map((relation) => {
       const relationFieldName = relation.fieldName;
 
@@ -263,7 +263,7 @@ export class EntityUtils {
     return result;
   }
 
-  parseSchemaFieldConfig(schemaConfig: any, parentName: string = null, parentIsList = false) {
+  parseSchemaFieldConfig(schemaConfig: any, parentName: string = null, parentIsList = false): any[] {
     let results: any[] = [];
 
     if (schemaConfig.schema.hidden) {

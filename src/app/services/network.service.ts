@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Option } from 'app/interfaces/option.interface';
+import { Observable } from 'rxjs';
 import { RestService } from './rest.service';
 import { WebSocketService } from './ws.service';
 import * as isCidr from 'is-cidr';
@@ -30,23 +31,23 @@ export class NetworkService {
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {}
 
-  getVlanParentInterfaceChoices() {
+  getVlanParentInterfaceChoices(): Observable<any[]> {
     return this.ws.call('interface.vlan_parent_interface_choices');
   }
 
-  getLaggPortsChoices(id: string = null) {
+  getLaggPortsChoices(id: string = null): Observable<any[]> {
     return this.ws.call('interface.lag_ports_choices', [id]);
   }
 
-  getLaggProtocolChoices() {
+  getLaggProtocolChoices(): Observable<any[]> {
     return this.ws.call('interface.lag_supported_protocols', []);
   }
 
-  getBridgeMembersChoices(id: string = null) {
+  getBridgeMembersChoices(id: string = null): Observable<any[]> {
     return this.ws.call('interface.bridge_members_choices', [id]);
   }
 
-  getVmNicChoices() {
+  getVmNicChoices(): Observable<any[]> {
     return this.ws.call('vm.device.nic_attach_choices', []);
   }
 

@@ -1,23 +1,23 @@
-@import "../../../../../assets/styles/tn-styles.scss";
+@import '../../../../../assets/styles/tn-styles';
 
-div.mat-card{
+div.mat-card {
   overflow: hidden;
 }
 
 div.table-container,
-div.mat-card{
-  width: 100%;
+div.mat-card {
   max-width: 100%;
-}
-
-div.table-container{
-  overflow: auto;
-  padding: 0px !important;
-}
-
-table{
   width: 100%;
-  min-width:800px;
+}
+
+div.table-container {
+  overflow: auto;
+  padding: 0 !important;
+}
+
+table {
+  min-width: 800px;
+  width: 100%;
 }
 
 /*.threedot-column {
@@ -28,19 +28,24 @@ table{
 //.multiselect-column,
 // .threedot-column,
 // .expansion-chevrons-column {
-  //max-width: 0px !important;
+//max-width: 0px !important;
 // }
 
-th.threedot-column, td.threedot-column, th.expansion-chevrons-column, td.expansion-chevrons-column  {
-  padding-right: 12px !important;
+th.threedot-column,
+td.threedot-column,
+th.expansion-chevrons-column,
+td.expansion-chevrons-column {
   padding-left: 12px !important;
+  padding-right: 12px !important;
 }
 
-th.sticky-border-left, td.sticky-border-left  {
+th.sticky-border-left,
+td.sticky-border-left {
   border-left: 1px solid var(--lines);
 }
 
-th.expansion-chevrons-column, td.expansion-chevrons-column {
+th.expansion-chevrons-column,
+td.expansion-chevrons-column {
   padding-right: 24px !important;
 }
 
@@ -49,7 +54,7 @@ th.expansion-chevrons-column, td.expansion-chevrons-column {
   //box-shadow: 1px 0 1px rgba(0,0,0,0.5);
 }
 
-td.mat-cell.data-column{
+td.mat-cell.data-column {
   max-width: 150px !important;
 }
 
@@ -58,7 +63,7 @@ td.mat-cell.data-column{
 }
 
 th.mat-header-cell.data-column,
-td.mat-cell.data-column{
+td.mat-cell.data-column {
   //padding-left: 12px;
 }
 
@@ -75,84 +80,88 @@ tr.details-row:hover {
 }
 
 .padding_all {
-    padding: 20px;
+  padding: 20px;
 }
 
 .padding_top {
-    padding-top: 30px;
+  padding-top: 30px;
 }
 
 .custom_cell_styling {
-    overflow: hidden; 
-    height: 20px; 
-    width: 100%; 
-    padding-left: 5px;
+  height: 20px;
+  overflow: hidden;
+  padding-left: 5px;
+  width: 100%;
 }
 
 .multiActionsButton {
-    position: relative;
-    top: 1px;
+  position: relative;
+  top: 1px;
 }
 
 #col-select-box {
-    margin-left: 20px;
+  margin-left: 20px;
 
-    li {
-       list-style: none;
-       display: inline-block;
-       margin: 2px;
-       padding: 0;
-       width: 220px;
-    }   
+  li {
+    display: inline-block;
+    list-style: none;
+    margin: 2px;
+    padding: 0;
+    width: 220px;
+  }
 }
 
- #select-all-checkbox-and-label {
-     max-width: 100px;
-     font-weight: 700;
-     margin-left: 2px;
- }
- 
+#select-all-checkbox-and-label {
+  font-weight: 700;
+  margin-left: 2px;
+  max-width: 100px;
+}
+
 #footer {
-    padding: 15px;
+  padding: 15px;
 }
 
 #footer-text {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 // Small page-loading spinner for entity tables
-#entity-spinner {
-  position: absolute;
-  top: 10px; left: 0; bottom: 0; right: 0;
-  z-index: 10;
+#entity-spinner { bottom: 0;
+  left: 0;
   margin: 0 auto;
+  position: absolute;
+  right: 0;
+  top: 10px;
+  z-index: 10;
 }
 
 .mat-card-title-text {
-    margin: 20px;
-    display: inline-block;
+  display: inline-block;
+  margin: 20px;
 }
 
-#filter{
-  margin-right:16px;
+#filter {
+  margin-right: 16px;
 }
 
-#filter, .mat-toolbar {
-    display: inline-block;
+#filter,
+.mat-toolbar {
+  display: inline-block;
 }
 
-#filter, .tooltiptext {
-    font-size: 14px;
+#filter,
+.tooltiptext {
+  font-size: 14px;
 }
 
-#filter .mat-icon{
-  position:relative;
-  left:25px;
+#filter .mat-icon {
+  left: 25px;
+  position: relative;
   top: 8px;
 }
 
-#filter .mat-form-field{
-  padding-left:32px;
+#filter .mat-form-field {
+  padding-left: 32px;
 }
 
 //#filter {
@@ -163,116 +172,115 @@ tr.details-row:hover {
 //}
 
 #action-button-wrapper {
-    height: 36px;
+  height: 36px;
 }
 
 .legacy-warning {
-  font-weight:500;
-  margin:0 24px;
-  color:var(--fg2);
-//    position: absolute;
-//    font-size: .8rem;
-//    top: 75px;
-//    right: 10px;
-//    z-index: 10;
+  color: var(--fg2);
+  font-weight: 500;
+  margin: 0 24px;
+  //    position: absolute;
+  //    font-size: .8rem;
+  //    top: 75px;
+  //    right: 10px;
+  //    z-index: 10;
 }
 
 .legacy-warning-link {
-    border-bottom: 1px solid;
-    cursor: pointer;
+  border-bottom: 1px solid;
+  cursor: pointer;
 }
 
 .clickable {
-    height: 28px;
-    width: 40px;
-    position: absolute;
-    background: rgba(0,0,0, .0);
-    z-index: 10;
-    
-    &:hover,
-    &:focus {
-      cursor: pointer;
-    }
+  background: rgba(0, 0, 0, 0);
+  height: 28px;
+  position: absolute;
+  width: 40px;
+  z-index: 10;
+
+  &:hover,
+  &:focus {
+    cursor: pointer;
   }
+}
 
 :host {
-    ::ng-deep datatable-row-wrapper {
-        width: auto;
-    }
+  ::ng-deep datatable-row-wrapper {
+    width: auto;
+  }
 
-    mat-icon.widget-icon {
-        cursor: pointer;
-        font-size: 24px;
-        line-height: 24px;
-    }
+  mat-icon.widget-icon {
+    cursor: pointer;
+    font-size: 24px;
+    line-height: 24px;
+  }
 }
 
 
 .entity-table-controls {
-    width: 460px;
-    min-width: 460px;
+  min-width: 460px;
+  width: 460px;
 }
 
-.datatable-icon-right:focus, .datatable-icon-down:focus {
-    outline: none;
+.datatable-icon-right:focus,
+.datatable-icon-down:focus {
+  outline: none;
 }
 
 @media (max-width: 600px) {
-    .entity-table-controls {
-        width: 300px;
-        min-width: 300px;
-        
-        button, #filter {
-        margin-bottom: 5px;
-        }
+  .entity-table-controls {
+    min-width: 300px;
+    width: 300px;
+
+    button,
+    #filter {
+      margin-bottom: 5px;
     }
+  }
 }
 
 div#cardHeaderContainer {
-    padding: 0px !important;
+  padding: 0 !important;
 }
 
 /* The fake mat-checkbox */
 .fake-mat-checkbox {
-  display: block;
-  position: absolute;
-  left: 24px;
-  padding-left: 35px;
-  margin-bottom: 12px;
   cursor: pointer;
+  display: block;
   font-size: 22px;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+  left: 24px;
+  margin-bottom: 12px;
   min-height: 24px;
+  padding-left: 35px;
+  position: absolute;
+  user-select: none;
 }
 
 /* Hide the browser's default checkbox */
 .fake-mat-checkbox input {
-  position: absolute;
-  opacity: 0;
+  border: solid black 3px;
   cursor: pointer;
   height: 0;
-  width: 0;
-  border:solid black 3px;
-  top: 6px;
-  left: 6px;
-  width: 6px;
   height: 6px;
+  left: 6px;
+  opacity: 0;
+  position: absolute;
+  top: 6px;
+  width: 0;
+  width: 6px;
   z-index: 10;
 }
 
 /* Create a custom checkbox */
 .checkmark {
-  position: absolute;
-  top: 9px;
-  left: 9px;
-  height: 1.06rem;
-  width: 16px;
   border: solid 1.85px var(--fg2);
   border-radius: 10%;
   display: block;
+  height: 1.06rem;
+  left: 9px;
+  position: absolute;
+  top: 9px;
+  width: 16px;
 }
 
 /* On mouse-over, add a grey background color */
@@ -287,26 +295,26 @@ div#cardHeaderContainer {
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
-.checkmark:after {
-  content: "";
-  position: absolute;
+.checkmark::after {
+  content: '';
   display: none;
+  position: absolute;
 }
 
 /* Show the checkmark when checked */
-.fake-mat-checkbox input:checked ~ .checkmark:after {
+.fake-mat-checkbox input:checked ~ .checkmark::after {
   display: block;
 }
 
 /* Style the checkmark/indicator */
-.fake-mat-checkbox .checkmark:after {
-  left: 4px;
-  top: 0px;
-  width: 5px;
-  height: 11px;
+.fake-mat-checkbox .checkmark::after {
   border: solid white 0.05px;
   border-width: 0 1px 1px 0;
+  height: 11px;
+  left: 4px;
+  top: 0;
   transform: rotate(45deg);
+  width: 5px;
 }
 
 #entity-table-component {
@@ -322,7 +330,7 @@ div#cardHeaderContainer {
 }
 
 .text-overflow-ellipsis {
-  white-space: nowrap;
-  text-overflow: ellipsis;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

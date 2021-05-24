@@ -4,13 +4,13 @@
 
 .one-table-container {
   display: grid;
+  grid-template-areas: 
+    'first'
+    'second'
+    'third'
+    'fourth';
   grid-template-columns: 100%;
   grid-template-rows: 70% 58px 58px 58px;
-  grid-template-areas: 
-  "first"
-  "second"
-  "third"
-  "fourth";
 }
 
 .one-table-container .first {
@@ -35,12 +35,12 @@
 
 .two-table-container {
   display: grid;
+  grid-template-areas: 
+    'first second'
+    'third third'
+    'fourth fourth';
   grid-template-columns: 50% 50%;
   grid-template-rows: 80% 58px 58px;
-  grid-template-areas: 
-  "first second"
-  "third third"
-  "fourth fourth";
 }
 
 .two-table-container .first {
@@ -56,26 +56,26 @@
 }
 
 .two-table-container .third {
+  column-span: 2;
   grid-area: third;
   margin: 5px 0;
-  column-span: 2;
 }
 
 .two-table-container .fourth {
+  column-span: 2;
   grid-area: fourth;
   margin: 5px 0;
-  column-span: 2;
 }
 
 
 .three-table-container {
   display: grid;
+  grid-template-areas: 
+    'first second'
+    'third .'
+    'fourth fourth';
   grid-template-columns: 50% 50%;
   grid-template-rows: 45% 45% 58px;
-  grid-template-areas: 
-  "first second"
-  "third ."
-  "fourth fourth";
 }
 
 .three-table-container .first {
@@ -103,11 +103,11 @@
 
 .four-table-container {
   display: grid;
+  grid-template-areas: 
+    'first second'
+    'third fourth';
   grid-template-columns: 50% 50%;
   grid-template-rows: 49% 49%;
-  grid-template-areas: 
-  "first second"
-  "third fourth"
 }
 
 .four-table-container .first {

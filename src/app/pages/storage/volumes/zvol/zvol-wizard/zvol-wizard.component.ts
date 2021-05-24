@@ -5,6 +5,7 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DatasetType } from 'app/enums/dataset-type.enum';
+import { Observable } from 'rxjs/Observable';
 import globalHelptext from '../../../../../helptext/global-helptext';
 import helptext from '../../../../../helptext/storage/volumes/zvol-form';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -498,7 +499,7 @@ export class ZvolWizardComponent {
     }
   }
 
-  addSubmit(body: any) {
+  addSubmit(body: any): Observable<any> {
     delete body.path;
     const data: any = this.sendAsBasicOrAdvanced(body);
 

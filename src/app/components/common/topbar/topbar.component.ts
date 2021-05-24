@@ -40,7 +40,7 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'topbar',
-  styleUrls: ['./topbar.component.css'],
+  styleUrls: ['./topbar.component.scss'],
   templateUrl: './topbar.component.html',
 })
 export class TopbarComponent extends ViewControllerComponent implements OnInit, OnDestroy {
@@ -363,8 +363,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   checkEULA(): void {
-    this.ws.call('truenas.is_eula_accepted').subscribe((eula_accepted) => {
-      if (!eula_accepted || window.localStorage.getItem('upgrading_status') === 'upgrading') {
+    this.ws.call('truenas.is_eula_accepted').subscribe((isEulaAccepted) => {
+      if (!isEulaAccepted || window.localStorage.getItem('upgrading_status') === 'upgrading') {
         this.ws.call('truenas.get_eula').subscribe((eula) => {
           this.dialogService.confirm(T('End User License Agreement - TrueNAS'), eula, true,
             T('I Agree'), false, null, '', null, null, true).subscribe((accept_eula: boolean) => {
@@ -379,8 +379,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   checkNetworkChangesPending(): void {
-    this.ws.call('interface.has_pending_changes').subscribe((res) => {
-      this.pendingNetworkChanges = res;
+    this.ws.call('interface.has_pending_changes').subscribe((hasPendingChanges) => {
+      this.pendingNetworkChanges = hasPendingChanges;
     });
   }
 

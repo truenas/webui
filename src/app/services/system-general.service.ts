@@ -1,4 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
+import { Option } from 'app/interfaces/option.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { Subject, Observable } from 'rxjs';
 import * as _ from 'lodash';
@@ -27,8 +28,8 @@ export class SystemGeneralService {
       // Since the api call can be made many times before the first response comes back,
       // set waiting to true to make if condition false after the first call
       this.generalConfigInfo = { waiting: true };
-      this.ws.call('system.general.config').subscribe((res) => {
-        this.generalConfigInfo = res;
+      this.ws.call('system.general.config').subscribe((configInfo) => {
+        this.generalConfigInfo = configInfo;
         observer.next(this.generalConfigInfo);
       });
     } else {
@@ -50,8 +51,8 @@ export class SystemGeneralService {
   getAdvancedConfig = new Observable<any>((observer) => {
     if ((!this.advancedConfigInfo || _.isEmpty(this.advancedConfigInfo))) {
       this.advancedConfigInfo = { waiting: true };
-      this.ws.call('system.advanced.config').subscribe((res) => {
-        this.advancedConfigInfo = res;
+      this.ws.call('system.advanced.config').subscribe((advancedConfig) => {
+        this.advancedConfigInfo = advancedConfig;
         observer.next(this.advancedConfigInfo);
       });
     } else {
@@ -90,23 +91,27 @@ export class SystemGeneralService {
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {}
 
-  getCA() { return this.ws.call(this.caList, []); }
+  getCA(): Observable<any[]> {
+    return this.ws.call(this.caList, []);
+  }
 
-  getCertificates() { return this.ws.call(this.certificateList); }
+  getCertificates(): Observable<any[]> {
+    return this.ws.call(this.certificateList);
+  }
 
-  getUnsignedCertificates() {
+  getUnsignedCertificates(): Observable<any[]> {
 	  return this.ws.call(this.certificateList, [[['CSR', '!=', null]]]);
   }
 
-  getUnsignedCAs() {
+  getUnsignedCAs(): Observable<any[]> {
     return this.ws.call(this.caList, [[['privatekey', '!=', null]]]);
   }
 
-  getCertificateCountryChoices() {
+  getCertificateCountryChoices(): Observable<any> {
     return this.ws.call('certificate.country_choices');
   }
 
-  getIPChoices() {
+  getIPChoices(): Observable<any> {
     return this.ws.call('notifier.choices', ['IPChoices', [true, false]]);
   }
 
@@ -114,7 +119,7 @@ export class SystemGeneralService {
     return this.ws.call('system.info', []);
   }
 
-  ipChoicesv4() {
+  ipChoicesv4(): Observable<any> {
     return this.ws.call('system.general.ui_address_choices', []).pipe(
       map((response) =>
         Object.keys(response || {}).map((key) => ({
@@ -124,7 +129,7 @@ export class SystemGeneralService {
     );
   }
 
-  ipChoicesv6() {
+  ipChoicesv6(): Observable<any> {
     return this.ws.call('system.general.ui_v6address_choices', []).pipe(
       map((response) =>
         Object.keys(response || {}).map((key) => ({
@@ -134,7 +139,7 @@ export class SystemGeneralService {
     );
   }
 
-  kbdMapChoices() {
+  kbdMapChoices(): Observable<Option[]> {
     return this.ws.call('system.general.kbdmap_choices', []).pipe(
       map((response) =>
         Object.keys(response || {}).map((key) => ({
@@ -144,11 +149,11 @@ export class SystemGeneralService {
     );
   }
 
-  languageChoices() {
+  languageChoices(): Observable<any> {
     return this.ws.call('system.general.language_choices');
   }
 
-  timezoneChoices() {
+  timezoneChoices(): Observable<any> {
     return this.ws.call('system.general.timezone_choices', []).pipe(
       map((response) =>
         Object.keys(response || {}).map((key) => ({
@@ -158,23 +163,23 @@ export class SystemGeneralService {
     );
   }
 
-  refreshDirServicesCache() {
+  refreshDirServicesCache(): Observable<any> {
     return this.ws.call('directoryservices.cache_refresh');
   }
 
-  updateDone() {
+  updateDone(): void {
     this.updateIsDone$.next();
   }
 
-  sendConfigData(data: any) {
+  sendConfigData(data: any): void {
     this.sendConfigData$.next(data);
   }
 
-  refreshSysGeneral() {
+  refreshSysGeneral(): void {
     this.refreshSysGeneral$.next();
   }
 
-  checkRootPW(password: string) {
+  checkRootPW(password: string): Observable<any> {
     return this.ws.call('auth.check_user', ['root', password]);
   }
 }

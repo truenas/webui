@@ -10,7 +10,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
 @Component({
   selector: 'form-slider',
   templateUrl: './form-slider.component.html',
-  styleUrls: ['./form-slider.component.css'],
+  styleUrls: ['./form-slider.component.scss'],
 })
 export class FormSliderComponent implements Field, OnInit {
   config: FieldConfig;

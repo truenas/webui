@@ -15,7 +15,7 @@ import { LocaleService } from 'app/services/locale.service';
 @Component({
   selector: 'app-config-reset',
   templateUrl: './config-reset.component.html',
-  styleUrls: ['./config-reset.component.css'],
+  styleUrls: ['./config-reset.component.scss'],
   providers: [],
 })
 export class ConfigResetComponent implements OnInit {

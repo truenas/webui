@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ValidationErrors, FormControl } from '@angular/forms';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import {
   WebSocketService, StorageService, DialogService, AppLoaderService,
 } from 'app/services';
@@ -50,7 +51,7 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
     protected router: Router, protected aroute: ActivatedRoute,
     private translate: TranslateService) { }
 
-  getAddActions() {
+  getAddActions(): EntityTableAction[] {
     return [{
       label: T('Toggle Display'),
       onClick: () => {
@@ -63,10 +64,10 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
         this.router.navigate(['storage', 'user-quotas-form', this.pk]);
       },
     },
-    ];
+    ] as EntityTableAction[];
   }
 
-  getActions(row: any) {
+  getActions(row: any): EntityTableAction[] {
     const self = this;
     const actions = [];
     actions.push({
@@ -160,7 +161,7 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
         });
       },
     });
-    return actions;
+    return actions as EntityTableAction[];
   }
 
   preInit(entityList: any): void {

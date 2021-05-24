@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -792,7 +793,7 @@ export class ReplicationWizardComponent {
     this.step1Init();
   }
 
-  step0Init() {
+  step0Init(): void {
     const exist_replicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' });
     this.replicationService.getReplicationTasks().subscribe(
       (res: ReplicationTask[]) => {
@@ -905,7 +906,7 @@ export class ReplicationWizardComponent {
     this.selectedReplicationTask = task;
   }
 
-  step1Init() {
+  step1Init(): void {
     this.entityWizard.formArray.controls[1].controls['retention_policy'].valueChanges.subscribe((value: any) => {
       const disable = value === RetentionPolicy.Source;
       disable ? this.entityWizard.formArray.controls[1].controls['lifetime_value'].disable() : this.entityWizard.formArray.controls[1].controls['lifetime_value'].enable();
@@ -913,7 +914,7 @@ export class ReplicationWizardComponent {
     });
   }
 
-  getSourceChildren(node: any) {
+  getSourceChildren(node: any): Promise<any> {
     const fromLocal = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === DatasetSource.Local;
     const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value;
 
@@ -937,7 +938,7 @@ export class ReplicationWizardComponent {
     });
   }
 
-  getTargetChildren(node: any) {
+  getTargetChildren(node: any): Promise<any> {
     const fromLocal = this.entityWizard.formArray.controls[0].controls['target_dataset_from'].value === DatasetSource.Local;
     const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].value;
     if (fromLocal) {
@@ -960,7 +961,7 @@ export class ReplicationWizardComponent {
     });
   }
 
-  setDisable(field: any, disabled: boolean, isHidden: boolean, stepIndex: number) {
+  setDisable(field: any, disabled: boolean, isHidden: boolean, stepIndex: number): void {
     const control: any = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
     control['isHidden'] = isHidden;
     control.disabled = disabled;
@@ -1015,7 +1016,7 @@ export class ReplicationWizardComponent {
     }
   }
 
-  clearReplicationTask() {
+  clearReplicationTask(): void {
     this.entityWizard.formArray.reset();
     for (let i = 0; i < this.entityWizard.formArray.controls.length; i++) {
       for (const item in this.entityWizard.formArray.controls[i].controls) {
@@ -1027,7 +1028,7 @@ export class ReplicationWizardComponent {
     }
   }
 
-  parsePickerTime(picker: string) {
+  parsePickerTime(picker: string): Schedule {
     const spl = picker.split(' ');
     return {
       minute: spl[0],
@@ -1038,7 +1039,7 @@ export class ReplicationWizardComponent {
     };
   }
 
-  async doCreate(data: any, item: string) {
+  async doCreate(data: any, item: string): Promise<any> {
     let payload: any;
     if (item === 'private_key') {
       payload = {
@@ -1199,7 +1200,7 @@ export class ReplicationWizardComponent {
     }
   }
 
-  async customSubmit(value: any) {
+  async customSubmit(value: any): Promise<any> {
     if (typeof (value.source_datasets) === 'string') {
       value.source_datasets = _.filter(value.source_datasets.split(',').map(_.trim));
     }
@@ -1252,7 +1253,7 @@ export class ReplicationWizardComponent {
     }
   }
 
-  async rollBack(items: any) {
+  async rollBack(items: any): Promise<void> {
     const keys = Object.keys(items).reverse();
     for (let i = 0; i < keys.length; i++) {
       if (items[keys[i]] != null) {
@@ -1265,7 +1266,7 @@ export class ReplicationWizardComponent {
     }
   }
 
-  createSSHConnection(activedField: any) {
+  createSSHConnection(activedField: any): void {
     const self = this;
 
     const conf: DialogFormConfiguration = {
@@ -1344,7 +1345,7 @@ export class ReplicationWizardComponent {
     this.dialogService.dialogForm(conf, true);
   }
 
-  getRemoteHostKey(value: any) {
+  getRemoteHostKey(value: any): Promise<any> {
     const payload = {
       host: value['host'],
       port: value['port'],
@@ -1352,7 +1353,7 @@ export class ReplicationWizardComponent {
     return this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]).toPromise();
   }
 
-  genTaskName() {
+  genTaskName(): void {
     const source = this.entityWizard.formArray.controls[0].controls['source_datasets'].value || [];
     const target = this.entityWizard.formArray.controls[0].controls['target_dataset'].value;
     let suggestName = '';
@@ -1364,7 +1365,7 @@ export class ReplicationWizardComponent {
     this.entityWizard.formArray.controls[0].controls['name'].setValue(suggestName);
   }
 
-  getSnapshots() {
+  getSnapshots(): void {
     let transport = this.entityWizard.formArray.controls[0].controls['transport'].enabled ? this.entityWizard.formArray.controls[0].controls['transport'].value : TransportMode.Local;
     // count local snapshots if transport is SSH/SSH-NETCAT, and direction is PUSH
     if (this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].value) {
@@ -1405,7 +1406,7 @@ export class ReplicationWizardComponent {
     }
   }
 
-  async isSnapshotTaskExist(payload: any) {
+  async isSnapshotTaskExist(payload: any): Promise<any> {
     return this.ws.call('pool.snapshottask.query', [[
       ['dataset', '=', payload['dataset']],
       ['schedule.minute', '=', payload['schedule']['minute']],

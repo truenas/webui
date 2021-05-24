@@ -248,7 +248,7 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
     protected modalService: ModalService,
   ) {}
 
-  async afterInit(entityForm: EntityFormComponent) {
+  async afterInit(entityForm: EntityFormComponent): Promise<void> {
     this.entityForm = entityForm;
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.rsync_task_add : helptext.rsync_task_edit;
@@ -269,7 +269,7 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  beforeSubmit(value: any) {
+  beforeSubmit(value: any): void {
     const spl = value.rsync_picker.split(' ');
     delete value.rsync_picker;
     const schedule: any = {};
@@ -281,14 +281,14 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
     value['schedule'] = schedule;
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     data[
       'rsync_picker'
     ] = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
     return data;
   }
 
-  updateUserSearchOptions(value = '', parent: any) {
+  updateUserSearchOptions(value = '', parent: any): void {
     (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
@@ -298,7 +298,7 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  hideFields(mode: any) {
+  hideFields(mode: any): void {
     let hide_fields;
     let show_fields;
     if (mode === 'SSH') {
@@ -316,7 +316,7 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.mode_subscription.unsubscribe();
   }
 }

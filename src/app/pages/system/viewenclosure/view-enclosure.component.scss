@@ -1,0 +1,119 @@
+.mat-card.error {
+  margin: 16px auto 0;
+  /*padding: 16px 16px 24px;*/
+  padding: 0 16px;
+  width: 600px;
+}
+
+.mat-card.error .error-message {
+  text-align: left;
+}
+
+.mat-card.error .error-message,
+.mat-card.error .error-header,
+.mat-card.error .error-footer {
+  padding: 16px 0;
+}
+
+nav.view-nav-bar {
+  background-color: var(--bg2);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  color: var(--alt-fg1);
+  position: relative;
+  width: 100%;
+  z-index: 2;
+}
+
+.view-nav-btn-icon,
+ 
+.view-nav-btn-label {
+  display: inline-block;
+}
+
+.view-nav-btn-icon {
+  font-size: 155%;
+}
+
+.view-nav-btn-label {
+  font-size: 120%;
+  left: 2px;
+  position: relative;
+  top: -2px;
+}
+
+.view-nav-bar .view-nav-btn {
+  border-bottom: solid 2px rgba(0, 0, 0, 0);
+  border-radius: 0;
+  color: var(--fg2);
+  height: 38px; /* Componensate for border width*/
+  text-transform: capitalize !important;
+}
+
+.view-nav-bar .view-nav-btn.active {
+  border-bottom-color: var(--blue);
+}
+
+.view-card {
+  margin: 0 auto;
+  max-width: 960px;
+  min-height: 480px;
+  padding: 0;
+}
+
+.enclosure-selector {
+  background-color: var(--bg2);
+  color: var(--fg2);
+  height: 100%;
+  overflow: auto;
+  width: 240px;
+}
+
+.enclosure-selector .enclosure {
+  border-bottom: solid 1px #333;
+  border-left: solid 4px rgba(0, 0, 0, 0);
+  min-height: 164px;
+  padding: 12px 0 24px;
+  text-align: center;
+}
+
+.enclosure-selector .enclosure.active {
+  border-left: solid 4px var(--primary);
+}
+
+.enclosure-selector .enclosure:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.enclosure-selector .enclosure > div {
+  margin-bottom: 16px;
+}
+
+.enclosure canvas {
+  width: 80% !important;
+}
+
+.page-viewport {
+  height: calc(100vh - 88px);
+  left: 0;
+  overflow-x: auto;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.main-content {
+  /*height:100%;*/
+  overflow: auto;
+  position: relative;
+}
+
+.spinner {
+  left: calc(50% - 20px);
+  position: absolute;
+  top: 64px;
+  z-index: 4;
+}
+
+.lt-lg.enclosure-selector {
+  color: var(--red);
+}

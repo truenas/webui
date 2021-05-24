@@ -19,7 +19,7 @@ import { EntityUtils, NULL_VALUE } from '../../../utils';
 
 @Component({
   selector: 'form-select',
-  styleUrls: ['form-select.component.scss', '../dynamic-field/dynamic-field.css'],
+  styleUrls: ['form-select.component.scss', '../dynamic-field/dynamic-field.scss'],
   templateUrl: './form-select.component.html',
 })
 export class FormSelectComponent implements Field, AfterViewInit, AfterViewChecked {

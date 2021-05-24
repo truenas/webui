@@ -22,7 +22,7 @@ import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialo
 @Component({
   selector: 'app-pod-shell',
   templateUrl: './pod-shell.component.html',
-  styleUrls: ['./pod-shell.component.css'],
+  styleUrls: ['./pod-shell.component.scss'],
   providers: [ShellService],
   encapsulation: ViewEncapsulation.None,
 })
@@ -87,8 +87,8 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
           this.conatiner_name = podDetail[0];
           this.updateChooseShellDialog();
 
-          this.getAuthToken().subscribe((res) => {
-            this.initializeWebShell(res);
+          this.getAuthToken().subscribe((token) => {
+            this.initializeWebShell(token);
 
             this.shellSubscription = this.ss.shellOutput.subscribe((value: any) => {
               if (value !== undefined) {
@@ -290,8 +290,8 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     return true;
   }
 
-  initializeWebShell(res: string): void {
-    this.ss.token = res;
+  initializeWebShell(token: string): void {
+    this.ss.token = token;
     this.reconnect();
     this.initializeTerminal();
     this.refreshToolbarButtons();
@@ -305,7 +305,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  getAuthToken(): Observable<any> {
+  getAuthToken(): Observable<string> {
     return this.ws.call('auth.generate_token');
   }
 

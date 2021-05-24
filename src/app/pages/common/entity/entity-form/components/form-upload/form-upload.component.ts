@@ -14,7 +14,7 @@ import { T } from '../../../../../../translate-marker';
 @Component({
   selector: 'app-form-upload',
   templateUrl: './form-upload.component.html',
-  styleUrls: ['../dynamic-field/dynamic-field.css', 'form-upload.component.css'],
+  styleUrls: ['../dynamic-field/dynamic-field.scss', 'form-upload.component.scss'],
 })
 export class FormUploadComponent {
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef<HTMLInputElement>;

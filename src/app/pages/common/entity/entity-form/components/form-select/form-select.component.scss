@@ -1,23 +1,23 @@
-.fn-mat-select .mat-menu-panel{
+.fn-mat-select .mat-menu-panel {
   //min-width:calc(100% - 32px);
-  max-width:none !important;
+  max-width: none !important;
 }
 
 .inline-label div.label.half-width,
 .inline-label .mat-form-field {
-  display:inline-block;
+  display: inline-block;
 }
 
-.inline-label div.label.half-width{
-  width:calc(50% - 16px);
-}
-
-.inline-label .mat-form-field {
-  width:calc(40% - 16px);
+.inline-label div.label.half-width {
+  width: calc(50% - 16px);
 }
 
 .inline-label .mat-form-field {
-  padding:8px;
+  width: calc(40% - 16px);
+}
+
+.inline-label .mat-form-field {
+  padding: 8px;
 }
 
 mat-selection-list {
@@ -26,7 +26,7 @@ mat-selection-list {
 }
 
 :host-context(app-system-alert) {
-  .inline-label label.label.input-select{
+  .inline-label label.label.input-select {
     padding: 8px !important;
   }
 }
@@ -38,6 +38,6 @@ mat-selection-list {
 
 .alert-icon mat-icon {
   font-size: 1rem;
-  width: auto;
   height: auto;
+  width: auto;
 }
