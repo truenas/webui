@@ -1,16 +1,6 @@
-import { Schedule } from './schedule.interface';
+import { PoolScrub } from './pool-scrub.interface';
 
-export interface ScrubTask {
-  description: string;
-  enabled: boolean;
-  id: number;
-  pool: number;
-  pool_name: string;
-  schedule: Schedule;
-  threshold: number;
-}
-
-export interface ScrubTaskUi extends ScrubTask {
+export interface ScrubTaskUi extends PoolScrub {
   cron_schedule: string;
   frequency: string;
   next_run: string;

@@ -37,6 +37,11 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
+import { RsyncTask } from 'app/interfaces/rsync-task.interface';
+import { SmartTest } from 'app/interfaces/smart-test.interface';
+import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 
 export type ApiDirectory = {
   // Active Directory
@@ -173,7 +178,7 @@ export type ApiDirectory = {
   'cloudsync.sync': { params: any; response: any };
   'cloudsync.abort': { params: any; response: any };
   'cloudsync.restore': { params: any; response: any };
-  'cloudsync.query': { params: any; response: any };
+  'cloudsync.query': { params: QueryParams<CloudSyncTask>; response: CloudSyncTask[] };
   'cloudsync.delete': { params: any; response: any };
 
   // Container
@@ -416,7 +421,7 @@ export type ApiDirectory = {
   'pool.dataset.recommended_zvol_blocksize': { params: any; response: any };
   'pool.unlock_services_restart_choices': { params: any; response: any };
   'pool.dataset.get_quota': { params: any; response: any };
-  'pool.snapshottask.query': { params: any; response: any };
+  'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
   'pool.import_disk_autodetect_fs_type': { params: any; response: any };
   'pool.download_encryption_key': { params: any; response: any };
   'pool.snapshottask.create': { params: any; response: any };
@@ -458,7 +463,7 @@ export type ApiDirectory = {
   // Replication
   'replication.list_datasets': { params: any; response: any };
   'replication.create': { params: any; response: any };
-  'replication.query': { params: any; response: any };
+  'replication.query': { params: QueryParams<ReplicationTask>; response: ReplicationTask[] };
   'replication.restore': { params: any; response: any };
   'replication.run': { params: any; response: any };
   'replication.delete': { params: any; response: any };
@@ -469,7 +474,7 @@ export type ApiDirectory = {
 
   // Rsync
   'rsynctask.run': { params: any; response: any };
-  'rsynctask.query': { params: any; response: any };
+  'rsynctask.query': { params: QueryParams<RsyncTask>; response: RsyncTask[] };
   'rsynctask.create': { params: any; response: any };
   'rsynctask.update': { params: any; response: any };
   'rsynctask.delete': { params: any; response: any };
@@ -541,7 +546,7 @@ export type ApiDirectory = {
   'smart.update': { params: any; response: any };
   'smart.config': { params: any; response: any };
   'smart.test.manual_test': { params: any; response: any };
-  'smart.test.query': { params: any; response: any };
+  'smart.test.query': { params: QueryParams<SmartTest>; response: SmartTest[] };
   'smart.test.create': { params: any; response: any };
   'smart.test.update': { params: any; response: any };
 
