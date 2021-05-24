@@ -1784,7 +1784,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
 @Component({
   selector: 'app-volumes-list',
-  styleUrls: ['./volumes-list.component.css'],
+  styleUrls: ['./volumes-list.component.scss'],
   templateUrl: './volumes-list.component.html',
   providers: [],
 })

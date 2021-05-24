@@ -26,7 +26,6 @@ export interface GlobalAction {
 @Component({
   selector: 'pagetitle',
   templateUrl: './pagetitle.component.html',
-  styleUrls: ['./pagetitle.component.css'],
 })
 export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('viewcontroller', { static: false }) viewcontroller: ViewControllerComponent;

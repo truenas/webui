@@ -11,7 +11,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
 @Component({
   selector: 'form-radio',
   styleUrls:
-      ['form-radio.component.scss', '../dynamic-field/dynamic-field.css'],
+      ['form-radio.component.scss', '../dynamic-field/dynamic-field.scss'],
   templateUrl: './form-radio.component.html',
 })
 export class FormRadioComponent implements Field {

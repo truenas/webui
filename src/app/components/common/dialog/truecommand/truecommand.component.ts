@@ -8,7 +8,7 @@ import helptext from 'app/helptext/topbar';
 @Component({
   selector: 'truecommand-status',
   templateUrl: './truecommand.component.html',
-  styleUrls: ['./truecommand.component.css'],
+  styleUrls: ['./truecommand.component.scss'],
 })
 export class TruecommandComponent {
   parent = this.data.parent;

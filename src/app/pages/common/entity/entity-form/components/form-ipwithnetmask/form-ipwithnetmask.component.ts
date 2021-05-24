@@ -13,7 +13,7 @@ import { NetworkService } from '../../../../../../services';
 @Component({
   selector: 'form-ipwithnetmask',
   templateUrl: './form-ipwithnetmask.component.html',
-  styleUrls: ['../dynamic-field/dynamic-field.css'],
+  styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })
 export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
   config: FieldConfig;

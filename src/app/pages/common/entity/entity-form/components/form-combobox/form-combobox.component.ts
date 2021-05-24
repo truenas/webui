@@ -16,7 +16,7 @@ import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'form-combobox',
-  styleUrls: ['form-combobox.component.scss', '../dynamic-field/dynamic-field.css'],
+  styleUrls: ['form-combobox.component.scss', '../dynamic-field/dynamic-field.scss'],
   templateUrl: './form-combobox.component.html',
 })
 export class FormComboboxComponent implements Field {

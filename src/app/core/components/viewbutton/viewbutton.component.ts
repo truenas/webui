@@ -5,7 +5,6 @@ import { ViewControlComponent } from 'app/core/components/viewcontrol/viewcontro
 @Component({
   selector: 'viewbutton',
   templateUrl: './viewbutton.component.html',
-  // styleUrls: ['./viewbutton.component.css']
 })
 export class ViewButtonComponent extends ViewControlComponent {
   readonly componentName = ViewButtonComponent;

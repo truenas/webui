@@ -6,7 +6,7 @@ import { MaterialModule } from '../../../appMaterial.module';
 @Component({
   selector: 'copy-btn',
   templateUrl: './copy-btn.component.html',
-  styleUrls: ['./copy-btn.component.css'],
+  styleUrls: ['./copy-btn.component.scss'],
 })
 export class CopyButtonComponent {
   @ViewChild('el', { static: false }) el: ElementRef;

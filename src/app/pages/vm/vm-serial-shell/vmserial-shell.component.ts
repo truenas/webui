@@ -17,7 +17,7 @@ import * as FontFaceObserver from 'fontfaceobserver';
 @Component({
   selector: 'app-vmserial-shell',
   templateUrl: './vmserial-shell.component.html',
-  styleUrls: ['./vmserial-shell.component.css'],
+  styleUrls: ['./vmserial-shell.component.scss'],
   providers: [ShellService],
   encapsulation: ViewEncapsulation.None,
 })

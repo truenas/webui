@@ -6,7 +6,7 @@ import { NavigationService } from '../../../services/navigation/navigation.servi
 @Component({
   selector: 'app-customizer',
   templateUrl: './customizer.component.html',
-  styleUrls: ['./customizer.component.css'],
+  styleUrls: ['./customizer.component.scss'],
 })
 export class CustomizerComponent {
   isCustomizerOpen = false;

@@ -20,7 +20,7 @@ export interface DialogData {
 
 @Component({
   selector: 'about-dialog',
-  styleUrls: ['./about-dialog.component.css'],
+  styleUrls: ['./about-dialog.component.scss'],
   templateUrl: './about-dialog.component.html',
 })
 export class AboutModalDialog {

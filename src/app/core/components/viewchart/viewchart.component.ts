@@ -45,7 +45,7 @@ export const ViewChartMetadata = {
 @Component({
   selector: 'viewchart',
   template: ViewChartMetadata.template,
-  styleUrls: ['./viewchart.component.css'],
+  styleUrls: ['./viewchart.component.scss'],
 })
 export class ViewChartComponent extends ViewComponent implements AfterViewInit {
   chartColors: string[];

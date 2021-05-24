@@ -17,7 +17,7 @@ import * as FontFaceObserver from 'fontfaceobserver';
 @Component({
   selector: 'app-jail-shell',
   templateUrl: './jail-shell.component.html',
-  styleUrls: ['./jail-shell.component.css'],
+  styleUrls: ['./jail-shell.component.scss'],
   providers: [ShellService],
   encapsulation: ViewEncapsulation.None,
 })

@@ -9,7 +9,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-reports-config',
   template: '<entity-form [conf]="this"></entity-form>',
-  styleUrls: ['reports-config.component.css'],
+  styleUrls: ['reports-config.component.scss'],
 })
 export class ReportsConfigComponent implements FormConfiguration {
   job: any = {};

@@ -22,7 +22,7 @@ import helptext from '../../../helptext/plugins/plugins';
 @Component({
   selector: 'app-plugin-add',
   templateUrl: './plugin-add.component.html',
-  styleUrls: ['../../common/entity/entity-form/entity-form.component.scss', './plugin-add.component.css'],
+  styleUrls: ['../../common/entity/entity-form/entity-form.component.scss', './plugin-add.component.scss'],
   providers: [EntityFormService, FieldRelationService, NetworkService, TranslateService, JailService],
 })
 export class PluginAddComponent implements OnInit {

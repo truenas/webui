@@ -1,8 +1,8 @@
-/deep/ #tree-list-demo {
-    min-height: 530px;   
+::ng-deep #tree-list-demo {
+    min-height: 530px;
 }
 
-/deep/ #employees {
+::ng-deep #employees {
    max-height: 530px;
 }
 
@@ -25,7 +25,7 @@
 }
 
 .encryption_icon {
-    float: right; 
+    float: right;
     padding-bottom: 20px;
     padding-top: 4px;
     position:relative;
@@ -96,7 +96,7 @@
 }
 
 .icons {
-    font-size: 24px; 
+    font-size: 24px;
 }
 
 .entity-tree-table-container {

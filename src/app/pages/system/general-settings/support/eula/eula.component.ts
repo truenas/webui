@@ -6,7 +6,7 @@ import { ProductType } from '../../../../../enums/product-type.enum';
 @Component({
   selector: 'app-eula',
   templateUrl: './eula.component.html',
-  styleUrls: ['./eula.component.css'],
+  styleUrls: ['./eula.component.scss'],
 })
 export class EulaComponent implements OnInit {
   eula: any;

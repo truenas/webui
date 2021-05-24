@@ -9,7 +9,7 @@ import { T } from '../../../../../../translate-marker';
 @Component({
   selector: 'app-unlock-dialog',
   templateUrl: './unlock-dialog.component.html',
-  styleUrls: ['./unlock-dialog.component.css'],
+  styleUrls: ['./unlock-dialog.component.scss'],
 })
 export class UnlockDialogComponent {
   title: string = helptext.unlock_dataset_dialog.title;
