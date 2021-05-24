@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatCellDef } from '@angular/material/table/cell';
 
 import * as _ from 'lodash';
 
@@ -10,6 +11,13 @@ import { WebSocketService } from 'app/services';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { TableService } from './table.service';
+
+export interface AppTableAction {
+  name: string;
+  icon: string;
+  matTooltip?: string;
+  onClick: (element: MatCellDef) => void;
+}
 
 export interface InputTableConf {
   title?: string;
@@ -42,7 +50,7 @@ export interface InputTableConf {
   delete?(item: any, table: any): any; // customize delete row method
   dataSourceHelper?(any: any): any; // customise handle/modify dataSource
   getInOutInfo?(any: any): any; // get in out info if has state column
-  getActions?(): any; // actions for each row
+  getActions?: () => AppTableAction[]; // actions for each row
   isActionVisible?(actionId: string, entity: any): boolean; // determine if action is visible
   getDeleteCallParams?(row: any, id: any): any; // get delete Params
   onButtonClick?(row: any): any;

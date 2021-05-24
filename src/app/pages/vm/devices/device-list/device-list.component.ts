@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -17,7 +18,7 @@ import * as _ from 'lodash';
 @Component({
   selector: 'app-device-list',
   template: `
-  <entity-table [title]="title" [conf]="this"></entity-table>
+    <entity-table [title]="title" [conf]="this"></entity-table>
   `,
 })
 export class DeviceListComponent {
@@ -64,7 +65,7 @@ export class DeviceListComponent {
     return !(actionId === 'delete' && row.id === true);
   }
 
-  getActions(row: any) {
+  getActions(row: any): EntityTableAction[] {
     const self = this;
     const actions = [];
     actions.push({
@@ -142,7 +143,7 @@ export class DeviceListComponent {
         });
       },
     });
-    return actions;
+    return actions as EntityTableAction[];
   }
 
   deviceDelete(row: any): void {

@@ -173,7 +173,7 @@ export class ChassisView {
       dt.handle.filters = this.filters;
 
       dt.container.interactive = true;
-      const clickHandler = (evt: MouseEvent) => { this.onTap(evt, dt); };
+      const clickHandler = (evt: MouseEvent): void => { this.onTap(evt, dt); };
       dt.container.on('click', clickHandler);
 
       this.driveTrays.addChild(dt.container);
@@ -200,7 +200,7 @@ export class ChassisView {
     driveTray.background.alpha = 1;
 
     setTimeout(() => {
-      const glow = (v: number) => driveTray.background.alpha = v;
+      const glow = (v: number): number => driveTray.background.alpha = v;
       tween({
         from: 1,
         to: startAlpha,
@@ -215,7 +215,7 @@ export class ChassisView {
     const duration = 50;
 
     setTimeout(() => {
-      const fade = (v: number) => this.chassis.alpha = v;
+      const fade = (v: number): number => this.chassis.alpha = v;
       tween({
         from: 0,
         to: this.chassisOpacity ? this.chassisOpacity : opacity,
@@ -226,7 +226,7 @@ export class ChassisView {
     this.driveTrayObjects.forEach((item, index) => {
       // Staggered handles fade in
       setTimeout(() => {
-        const updateAlpha = (v: number) => item.handle.alpha = v;
+        const updateAlpha = (v: number): number => item.handle.alpha = v;
 
         tween({
           from: item.handle.alpha,
@@ -246,7 +246,7 @@ export class ChassisView {
 
       // Staggered tray backgrounds fade in
       setTimeout(() => {
-        const updateAlpha = (v: number) => item.background.alpha = v;
+        const updateAlpha = (v: number): number => item.background.alpha = v;
 
         tween({
           from: item.background.alpha,
