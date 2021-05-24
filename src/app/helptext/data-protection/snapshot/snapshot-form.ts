@@ -32,12 +32,12 @@ export default {
 
   naming_schema_placeholder: T('Naming Schema'),
   naming_schema_tooltip: T('Snapshot name format string. The default \
- is <code>auto-\%Y-\%m-\%d_\%H-\%M</code>. Must include the strings <i>\%Y</i>, \
- <i>\%m</i>, <i>\%d</i>, <i>\%H</i>, and <i>\%M</i>, which are replaced with \
+ is <code>auto-&percnt;Y-&percnt;m-&percnt;d_&percnt;H-&percnt;M</code>. Must include the strings <i>&percnt;Y</i>, \
+ <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i>, which are replaced with \
  the four-digit year, month, day of month, hour, and minute as defined \
  in <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" target="_blank">strftime(3)</a>.<br><br> \
  For example, snapshots of <i>pool1</i> with a Naming Schema of \
- <i>customsnap-\%Y\%m\%d.\%H\%M</i> have names like \
+ <i>customsnap-&percnt;Y&percnt;m&percnt;d.&percnt;H&percnt;M</i> have names like \
  <i>pool1@customsnap-20190315.0527</i>.'),
 
   begin_placeholder: T('Begin'),

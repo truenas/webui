@@ -17,7 +17,7 @@ export default {
  the SSH login. <i>Warning:</i> when directory services are enabled, allowing password \
  authentication can grant access to all users imported by the directory service.<br> \
  Disabling changes authentication to require keys for all users. This requires \
- <a href="http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html" target="_blank">additional setup</a> \
+ <a href="http://the.earth.li/&percnt;7Esgtatham/putty/0.55/htmldoc/Chapter8.html" target="_blank">additional setup</a> \
  on both the SSH client and server.'),
 
   ssh_kerberosauth_placeholder: T('Allow Kerberos Authentication'),

@@ -25,10 +25,9 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
 
   protected entityList: any;
   protected loaderOpen = false;
-  protected queryCall = 'container.image.query';
+  protected queryCall: 'container.image.query' = 'container.image.query';
   protected wsDelete = 'container.image.delete';
   protected disableActionsConfig = true;
-  private dialogRef: any;
   private refreshTableSubscription: any;
   protected addComponent: PullImageFormComponent;
 

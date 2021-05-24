@@ -24,7 +24,7 @@ import { EntityUtils } from '../utils';
 @Component({
   selector: 'entity-wizard',
   templateUrl: './entity-wizard.component.html',
-  styleUrls: ['./entity-wizard.component.css', '../entity-form/entity-form.component.scss'],
+  styleUrls: ['./entity-wizard.component.scss', '../entity-form/entity-form.component.scss'],
   providers: [EntityFormService, FieldRelationService],
 })
 export class EntityWizardComponent implements OnInit {

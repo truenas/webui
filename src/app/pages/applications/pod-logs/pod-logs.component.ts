@@ -27,7 +27,7 @@ interface PodLogEvent {
 @Component({
   selector: 'app-pod-logs',
   templateUrl: './pod-logs.component.html',
-  styleUrls: ['./pod-logs.component.css'],
+  styleUrls: ['./pod-logs.component.scss'],
   providers: [ShellService],
   encapsulation: ViewEncapsulation.None,
 })

@@ -37,7 +37,7 @@ import { StaticRouteFormComponent } from './forms/staticroute-form.component';
 @Component({
   selector: 'app-interfaces-list',
   templateUrl: './network.component.html',
-  styleUrls: ['./network.component.css'],
+  styleUrls: ['./network.component.scss'],
 })
 export class NetworkComponent extends ViewControllerComponent implements OnInit, OnDestroy {
   protected summayCall: 'network.general.summary' = 'network.general.summary';
@@ -203,7 +203,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   protected openvpnServerComponent: OpenvpnServerComponent;
   protected impiFormComponent: IPMIFromComponent;
 
-  hasConsoleFooter: false;
+  hasConsoleFooter = false;
   constructor(
     private ws: WebSocketService,
     private router: Router,
@@ -273,8 +273,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       },
     );
 
-    this.ws.call('ipmi.is_loaded').subscribe((res) => {
-      this.impiEnabled = res;
+    this.ws.call('ipmi.is_loaded').subscribe((isIpmiLoaded) => {
+      this.impiEnabled = isIpmiLoaded;
     });
   }
 
@@ -284,8 +284,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       this.refreshNetworkForms();
     });
 
-    this.ws.call('system.advanced.config').subscribe((res) => {
-      this.hasConsoleFooter = res.consolemsg;
+    this.ws.call('system.advanced.config').subscribe((advancedConfig) => {
+      this.hasConsoleFooter = advancedConfig.consolemsg;
     });
 
     this.checkInterfacePendingChanges();
@@ -322,8 +322,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   checkPendingChanges(): void {
-    this.ws.call('interface.has_pending_changes').subscribe((res) => {
-      this.hasPendingChanges = res;
+    this.ws.call('interface.has_pending_changes').subscribe((hasPendingChanges) => {
+      this.hasPendingChanges = hasPendingChanges;
     });
   }
 

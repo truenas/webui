@@ -29,7 +29,7 @@ import { T } from '../../../../translate-marker';
 @Component({
   selector: 'widget-memory',
   templateUrl: './widgetmemory.component.html',
-  styleUrls: ['./widgetmemory.component.css'],
+  styleUrls: ['./widgetmemory.component.scss'],
 })
 export class WidgetMemoryComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
   @ViewChild('memorygauge', { static: true }) cpuLoad: ViewChartGaugeComponent;

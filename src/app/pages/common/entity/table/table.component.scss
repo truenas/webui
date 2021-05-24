@@ -1,0 +1,74 @@
+:host {
+  display: block;
+  max-width: 100%;
+}
+
+mat-card.app-table {
+  height: calc(100% - 8px);
+  max-width: 100%;
+}
+
+mat-card-content.table-container {
+  height: inherit;
+  max-width: 100%;
+}
+
+.mat-cell:not(:first-child):not(:last-child) {
+  padding: 0 2px;
+}
+
+.mat-cell:first-child {
+  padding-right: 2px;
+}
+
+.mat-cell:last-child {
+  padding-left: 2px;
+}
+
+div.table-container {
+  height: calc(100% - 41px);
+  max-width: 100%;
+  padding: 0;
+}
+
+.text-overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table-component {
+  max-width: 100%;
+  table-layout: fixed;
+}
+
+.table-action-button {
+  margin-right: 5px;
+}
+
+div.table-row-action {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+}
+
+mat-icon.state-icon,
+mat-icon.state-info-icon,
+mat-icon.table-action-button {
+  position: inherit;
+}
+
+div.state-info {
+  align-items: center;
+  display: flex;
+}
+
+div.view-more-row {
+  cursor: pointer;
+  padding: 9px;
+  text-align: center;
+}
+
+div.view-more-row:hover {
+  background: rgba(0, 0, 0, 0.1);
+}

@@ -81,7 +81,7 @@ export interface ReportData {
 @Component({
   selector: 'report',
   templateUrl: './report.component.html',
-  styleUrls: ['./report.component.css'],
+  styleUrls: ['./report.component.scss'],
 })
 export class ReportComponent extends WidgetComponent implements AfterViewInit, OnChanges, OnDestroy {
   // Labels

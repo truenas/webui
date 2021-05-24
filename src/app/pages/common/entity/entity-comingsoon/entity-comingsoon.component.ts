@@ -5,7 +5,7 @@ import urls from '../../../../helptext/urls';
 @Component({
   selector: 'entity-comingsoon',
   templateUrl: './entity-comingsoon.component.html',
-  styleUrls: ['./entity-comingsoon.component.css', '../entity-form/entity-form.component.scss'],
+  styleUrls: ['./entity-comingsoon.component.scss', '../entity-form/entity-form.component.scss'],
   providers: [],
 })
 export class EntityComingsoonComponent {

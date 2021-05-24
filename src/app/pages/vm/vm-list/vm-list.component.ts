@@ -40,7 +40,7 @@ interface DisplayWebUri {
         <p *ngIf="availMem"><strong>{{memTitle | translate}}</strong> {{availMem}} - {{memWarning | translate}}</p>
     </div>
     <entity-table [title]='title' [conf]='this'></entity-table>`,
-  styleUrls: ['./vm-list.component.css'],
+  styleUrls: ['./vm-list.component.scss'],
   providers: [VmService, MessageService],
 })
 export class VMListComponent implements OnDestroy {

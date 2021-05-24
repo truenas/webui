@@ -26,7 +26,7 @@ interface ViewConfig {
 @Component({
   selector: 'view-enclosure',
   templateUrl: './view-enclosure.component.html',
-  styleUrls: ['./view-enclosure.component.css'],
+  styleUrls: ['./view-enclosure.component.scss'],
 })
 export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
   errors: ErrorMessage[] = [];

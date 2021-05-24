@@ -1,12 +1,13 @@
 input {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.7);
   display: block;
   font-family: inherit;
   font-size: 14px;
-  width: 100%;
-  border: 1px solid rgba(0, 0, 0, 0.1);
   outline: none;
   padding: 10px 15px;
-  color: rgba(0, 0, 0, 0.7);
+  width: 100%;
+
   &:focus {
     border: 1px solid rgba(0, 0, 0, 0.4);
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
@@ -15,9 +16,10 @@ input {
 
 .form-checkbox {
   &.form-element {
-    min-height: 24px;
     margin: 1px 0 22px;
+    min-height: 24px;
   }
+
   &.expanded-height {
     margin: 48px 0 22px;
   }

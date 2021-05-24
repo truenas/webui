@@ -1,77 +1,78 @@
 .ix-blue manage-catalog-summary-dialog div.mat-dialog-content {
-    overflow: auto !important;
+  overflow: auto !important;
 }
 
 manage-catalog-summary-dialog {
-    font-size: 14px;
+  font-size: 14px;
 
-    .status {
-        padding: 3px;
-        opacity: 0.75;
-    }
+  .status {
+    opacity: 0.75;
+    padding: 3px;
+  }
 
-    .other {
-        border: 1px solid var(--fg1);
-    }
+  .other {
+    border: 1px solid var(--fg1);
+  }
 
-    .active {
-        border: 1px solid var(--green);
-        color: var(--green);
-    }
+  .active {
+    border: 1px solid var(--green);
+    color: var(--green);
+  }
     
-    .status-filter {
-        display: flex;
-        align-items: center;
+  .status-filter {
+    align-items: center;
+    display: flex;
 
         
-        .mat-form-field {
-            width: unset!important;
-            margin: 0 0 0 10px;
+    .mat-form-field {
+      margin: 0 0 0 10px;
+      width: unset !important;
 
-            .mat-form-field-infix {
-                width: 80px;
-            }
-        }
+      .mat-form-field-infix {
+        width: 80px;
+      }
     }
+  }
 
-    .title-div {
-        width: 100%;
-        margin: 10px 0;
-    }
+  .title-div {
+    margin: 10px 0;
+    width: 100%;
+  }
     
-    .version-list {
-        width: 100%;
-        margin-top: 10px;
-        overflow-y: auto;
-        height: 200px;
-    }
+  .version-list {
+    height: 200px;
+    margin-top: 10px;
+    overflow-y: auto;
+    width: 100%;
+  }
 
-    .row-dark {
-        background: rgba(0, 0, 0, 0.5);
-    }
+  .row-dark {
+    background: rgba(0, 0, 0, 0.5);
+  }
 
-    .row-light {
-        background: rgba(0, 0, 0, 0.1);
-    }
+  .row-light {
+    background: rgba(0, 0, 0, 0.1);
+  }
     
-    .detail-row {
-        padding: 5px 10px;
-        div {
-            align-items: center;
-        }
+  .detail-row {
+    padding: 5px 10px;
 
-        .info-col {
-            height: 20px;
-        }        
+    div {
+      align-items: center;
     }
+
+    .info-col {
+      height: 20px;
+    }        
+  }
     
-    .value-row {
-        opacity: 0.5;
-    }
+  .value-row {
+    opacity: 0.5;
+  }
 
-    .button-bar {
-        margin-bottom: -8px;
-    }
+  .button-bar {
+    margin-bottom: -8px;
+  }
 }
 
 

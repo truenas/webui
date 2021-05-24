@@ -12,7 +12,7 @@ import { LocaleService } from 'app/services/locale.service';
 @Component({
   selector: 'system-shutdown',
   templateUrl: './shutdown.component.html',
-  styleUrls: ['./shutdown.component.css'],
+  styleUrls: ['./shutdown.component.scss'],
 })
 export class ShutdownComponent implements OnInit {
   product_type: ProductType;

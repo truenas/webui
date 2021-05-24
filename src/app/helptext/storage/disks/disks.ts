@@ -1,4 +1,3 @@
-import { DiskAcousticLevel } from 'app/enums/disk-acoustic-level.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { T } from '../../../translate-marker';
@@ -53,17 +52,6 @@ export default {
     { label: T('Level 128 - Minimum power usage without Standby (no spindown)'), value: DiskPowerLevel.Level128 },
     { label: T('Level 192 - Intermediate power usage without Standby'), value: DiskPowerLevel.Level192 },
     { label: T('Level 254 - Maximum performance, maximum power usage'), value: DiskPowerLevel.Level254 },
-  ],
-
-  disk_form_acousticlevel_placeholder: T('Acoustic Level'),
-  disk_form_acousticlevel_tooltip: T('Modify for disks that understand <a\
- href="https://en.wikipedia.org/wiki/Automatic_acoustic_management"\
- target="_blank">AAM</a>.'),
-  disk_form_acousticlevel_options: [
-    { label: T('Disabled'), value: DiskAcousticLevel.Disabled },
-    { label: T('Minimum'), value: DiskAcousticLevel.Minimum },
-    { label: T('Medium'), value: DiskAcousticLevel.Medium },
-    { label: T('Maximum'), value: DiskAcousticLevel.Maximum },
   ],
 
   disk_form_togglesmart_placeholder: T('Enable S.M.A.R.T.'),

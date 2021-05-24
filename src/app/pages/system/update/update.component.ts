@@ -23,7 +23,7 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'app-update',
-  styleUrls: ['update.component.css'],
+  styleUrls: ['update.component.scss'],
   templateUrl: './update.component.html',
 })
 export class UpdateComponent implements OnInit, OnDestroy {
@@ -143,8 +143,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
     });
     this.core.emit({ name: 'SysInfoRequest', sender: this });
 
-    this.busy = this.ws.call('update.get_auto_download').subscribe((res) => {
-      this.autoCheck = res;
+    this.busy = this.ws.call('update.get_auto_download').subscribe((isAutoDownloadOn) => {
+      this.autoCheck = isAutoDownloadOn;
 
       this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
         this.fullTrainList = res.trains;

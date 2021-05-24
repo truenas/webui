@@ -10,7 +10,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
 @Component({
   selector: 'form-readfile',
   templateUrl: './form-readfile.component.html',
-  styleUrls: ['../dynamic-field/dynamic-field.css'],
+  styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })
 export class FormReadFileComponent implements Field {
   config: FieldConfig;

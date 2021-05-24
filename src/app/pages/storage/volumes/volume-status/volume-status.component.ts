@@ -46,7 +46,7 @@ interface PoolDiskInfo {
 @Component({
   selector: 'volume-status',
   templateUrl: './volume-status.component.html',
-  styleUrls: ['./volume-status.component.css'],
+  styleUrls: ['./volume-status.component.scss'],
 })
 export class VolumeStatusComponent implements OnInit {
   actionEvents: Subject<CoreEvent>;

@@ -191,7 +191,6 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
           },
         },
       },
-
     ];
   }
 

@@ -9,7 +9,7 @@ import { EntityUtils } from '../entity/utils';
 @Component({
   selector: 'app-password-dialog',
   templateUrl: './password-dialog.component.html',
-  styleUrls: ['./password-dialog.component.css'],
+  styleUrls: ['./password-dialog.component.scss'],
 })
 export class PasswordDialog {
   title: string = globalHelptext.rootpw.dialog_title;

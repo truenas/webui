@@ -16,7 +16,7 @@ import { EntityUtils } from '../utils';
 @Component({
   selector: 'entity-task',
   templateUrl: './entity-task.component.html',
-  styleUrls: ['entity-task.component.css'],
+  styleUrls: ['entity-task.component.scss'],
   providers: [TaskService, UserService, EntityFormService],
 })
 export class EntityTaskComponent implements OnInit {
