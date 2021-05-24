@@ -20,7 +20,6 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { EntityTemplateDirective } from '../entity-template.directive';
 import { EntityUtils } from '../utils';
 
-import { CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { Control } from './models/control.interface';
 import { ToolbarConfig, ControlConfig } from './models/control-config.interface';

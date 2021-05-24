@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard';
-import { Observable } from 'rxjs/Observable';
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
 import {
   Validators, FormControl, ValidationErrors, ValidatorFn,

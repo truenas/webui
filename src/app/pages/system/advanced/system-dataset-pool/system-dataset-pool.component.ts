@@ -5,14 +5,13 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ModalService } from 'app/services/modal.service';
-import { of, Subscription } from 'rxjs';
+import { of, Subscription, Observable } from 'rxjs';
 import {
   DialogService, WebSocketService, AppLoaderService, SystemGeneralService,
 } from 'app/services';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import _ from 'lodash';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { Observable } from 'rxjs/Observable';
 import { filter, switchMap } from 'rxjs/operators';
 
 const poolFieldName = 'pool';

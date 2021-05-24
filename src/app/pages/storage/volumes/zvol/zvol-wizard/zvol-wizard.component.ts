@@ -5,7 +5,6 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DatasetType } from 'app/enums/dataset-type.enum';
-import { Observable } from 'rxjs/Observable';
 import globalHelptext from '../../../../../helptext/global-helptext';
 import helptext from '../../../../../helptext/storage/volumes/zvol-form';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -18,7 +17,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { CoreService } from 'app/core/services/core.service';
