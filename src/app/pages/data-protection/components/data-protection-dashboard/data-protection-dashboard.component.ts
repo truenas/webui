@@ -156,7 +156,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           columns: [
             { name: T('Pool'), prop: 'pool_name' },
             { name: T('Description'), prop: 'description' },
-            { name: T('Frequency'), prop: 'frequency' },
+            { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
             { name: T('Next Run'), prop: 'next_run', width: '80px' },
             { name: T('Enabled'), prop: 'enabled', width: '50px' },
           ],
@@ -195,7 +195,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           columns: [
             { name: T('Pool/Dataset'), prop: 'dataset' },
             { name: T('Keep for'), prop: 'keepfor' },
-            { name: T('Frequency'), prop: 'frequency' },
+            { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
             { name: T('Next Run'), prop: 'next_run' },
             {
               name: T('Enabled'),
@@ -282,7 +282,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           isActionVisible: this.isActionVisible,
           columns: [
             { name: T('Description'), prop: 'description' },
-            { name: T('Frequency'), prop: 'frequency' },
+            { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
             {
               name: T('Next Run'),
               prop: 'next_run',
@@ -322,7 +322,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           columns: [
             { name: T('Path'), prop: 'path' },
             { name: T('Remote Host'), prop: 'remotehost' },
-            { name: T('Frequency'), prop: 'frequency' },
+            { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
             { name: T('Next Run'), prop: 'next_run' },
             { name: T('Enabled'), prop: 'enabled', width: '50px' },
             {
@@ -373,6 +373,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             {
               name: helptext_smart.smartlist_column_frequency,
               prop: 'frequency',
+              enableMatTooltip: true,
             },
             {
               name: helptext_smart.smartlist_column_next_run,

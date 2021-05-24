@@ -51,6 +51,8 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
         component: 'TaskScheduleListComponent',
       },
     },
+    { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
+    { name: T('Next Run'), prop: 'next_run', hidden: true },
     { name: T('Short Description'), prop: 'desc', hidden: true },
     { name: T('User'), prop: 'user' },
     { name: T('Delay Updates'), prop: 'delayupdates', hidden: true },
@@ -152,6 +154,8 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
   resourceTransformIncomingRestData(data: RsyncTaskUi[]): RsyncTaskUi[] {
     return data.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
+      task.frequency = this.taskService.getTaskNextRun(task.cron_schedule);
+      task.next_run = this.taskService.getTaskCronDescription(task.cron_schedule);
 
       if (task.job == null) {
         task.state = { state: EntityJobState.Pending };

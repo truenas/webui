@@ -35,7 +35,7 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
     { name: T('Recursive'), prop: 'recursive' },
     { name: T('Naming Schema'), prop: 'naming_schema' },
     { name: T('When'), prop: 'when' },
-    { name: T('Schedule'), prop: 'frequency' },
+    { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
     { name: T('Next Run'), prop: 'next_run', hidden: true },
     { name: T('Keep snapshot for'), prop: 'keepfor', hidden: true },
     { name: T('Legacy'), prop: 'legacy', hidden: true },

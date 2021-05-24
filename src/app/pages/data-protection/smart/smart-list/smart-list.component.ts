@@ -41,7 +41,11 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
       always_display: true,
     },
     { name: helptext.smartlist_column_description, prop: 'desc' },
-    { name: helptext.smartlist_column_frequency, prop: 'frequency' },
+    { name: helptext.smartlist_column_frequency, prop: 'frequency', enableMatTooltip: true },
+    {
+      name: helptext.smartlist_column_next_run,
+      prop: 'next_run',
+    },
   ];
   rowIdentifier = 'type';
   config: any = {
@@ -80,8 +84,10 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
 
   resourceTransformIncomingRestData(data: SmartTestUi[]): SmartTestUi[] {
     return data.map((test) => {
-      test.cron_schedule = `${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
+      test.cron_schedule = `0 ${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
+      test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
       test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);
+
       if (test.all_disks) {
         test.disks = [this.translate.instant(helptext.smarttest_all_disks_placeholder)];
       } else if (test.disks.length) {

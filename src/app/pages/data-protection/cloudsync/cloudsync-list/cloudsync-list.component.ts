@@ -61,6 +61,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
         component: 'TaskScheduleListComponent',
       },
     },
+    { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
     { name: T('Next Run'), prop: 'next_run', hidden: true },
     {
       name: T('Status'),

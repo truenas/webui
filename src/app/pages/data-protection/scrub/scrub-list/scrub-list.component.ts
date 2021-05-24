@@ -41,6 +41,7 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
         component: 'TaskScheduleListComponent',
       },
     },
+    { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
     { name: T('Next Run'), prop: 'next_run' },
     { name: T('Enabled'), prop: 'enabled' },
   ];
@@ -76,6 +77,7 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
   resourceTransformIncomingRestData(data: ScrubTaskUi[]): ScrubTaskUi[] {
     return data.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
+      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
       task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
 
       return task;
