@@ -293,7 +293,7 @@ export class ServiceUPSComponent implements FormConfiguration {
     });
   }
 
-  getKeyByValue(object: any, value: any) {
+  getKeyByValue(object: any, value: any): any {
     return Object.keys(object).find((key) => object[key] === value);
   }
 

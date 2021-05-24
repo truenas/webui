@@ -50,8 +50,8 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     const self = this;
     this.aroute.params.subscribe((params) => {
       this.pk = params['pk'];
-      this.getAuthToken().subscribe((res) => {
-        this.initializeWebShell(res);
+      this.getAuthToken().subscribe((token) => {
+        this.initializeWebShell(token);
         this.shellSubscription = this.ss.shellOutput.subscribe((value: any) => {
           if (value !== undefined) {
             // this.xterm.write(value);
@@ -163,9 +163,9 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     return true;
   }
 
-  initializeWebShell(res: string): void {
+  initializeWebShell(token: string): void {
     this.ss.vmId = Number(this.pk);
-    this.ss.token = res;
+    this.ss.token = token;
     this.ss.connect();
 
     this.ss.shellConnected.subscribe((res: ShellConnectedEvent) => {
@@ -174,7 +174,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  getAuthToken(): Observable<any> {
+  getAuthToken(): Observable<string> {
     return this.ws.call('auth.generate_token');
   }
 

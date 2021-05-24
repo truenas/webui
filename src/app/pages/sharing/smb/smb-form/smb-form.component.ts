@@ -393,7 +393,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  checkACLactions(entityForm: EntityFormComponent) {
+  checkACLactions(entityForm: EntityFormComponent): void {
     const sharePath: string = entityForm.formGroup.get('path').value;
     const datasetId = sharePath.replace('/mnt/', '');
     const poolName = datasetId.split('/')[0];
@@ -401,7 +401,8 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     const ACLRoute = ['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId];
 
     if (homeShare && entityForm.isNew) {
-      return this.router.navigate(['/'].concat(ACLRoute), { queryParams: { homeShare: true } });
+      this.router.navigate(['/'].concat(ACLRoute), { queryParams: { homeShare: true } });
+      return;
     }
     // If this call returns true OR an [ENOENT] err comes back, just return to table
     // because the pool or ds is encrypted. Otherwise, do the next checks

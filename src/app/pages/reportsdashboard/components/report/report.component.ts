@@ -83,7 +83,7 @@ export interface ReportData {
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.scss'],
 })
-export class ReportComponent extends WidgetComponent implements AfterViewInit, AfterContentInit, OnChanges, OnDestroy {
+export class ReportComponent extends WidgetComponent implements AfterViewInit, OnChanges, OnDestroy {
   // Labels
   @Input() localControls?: boolean = true;
   @Input() dateFormat?: DateTime;
@@ -100,7 +100,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
 
   readonly ProductType = ProductType;
 
-  get reportTitle() {
+  get reportTitle(): string {
     let trimmed = this.report.title.replace(/[\(\)]/g, '');
     if (this.multipathTitle) {
       trimmed = trimmed.replace(this.identifier, '');
@@ -109,7 +109,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     return this.identifier ? trimmed.replace(/{identifier}/, this.identifier) : this.report.title;
   }
 
-  get aggregationKeys() {
+  get aggregationKeys(): any {
     return Object.keys(this.data.aggregations);
   }
 
@@ -131,11 +131,11 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   stepForwardDisabled = true;
 
   private _zoomInDisabled = false;
-  get zoomInDisabled() {
+  get zoomInDisabled(): boolean {
     return this.timeZoomIndex >= (this.zoomLevels.length - 1);
   }
   _zoomOutDisabled = false;
-  get zoomOutDisabled() {
+  get zoomOutDisabled(): boolean {
     return this.timeZoomIndex <= 0;
   }
 
@@ -150,7 +150,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   // Loader
   loader = false;
   private _dataRcvd = false;
-  get dataRcvd() {
+  get dataRcvd(): boolean {
     return this._dataRcvd;
   }
   set dataRcvd(val) {
@@ -165,14 +165,14 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   chartId = 'chart-' + UUID.UUID();
   chartColors: string[];
 
-  get startTime() {
+  get startTime(): string {
     return this.localeService.formatDateTime(new Date(this.currentStartDate), this.timezone);
   }
-  get endTime() {
+  get endTime(): string {
     return this.localeService.formatDateTime(new Date(this.currentEndDate), this.timezone);
   }
 
-  formatTime(stamp: any) {
+  formatTime(stamp: any): string {
     const parsed = Date.parse(stamp);
     const result = this.localeService.formatDateTimeWithNoTz(new Date(parsed));
     return result.toLowerCase() !== 'invalid date' ? result : null;
@@ -208,12 +208,12 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe((res) => this.timezone = res.timezone);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
     this.getGenConfig.unsubscribe();
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.stepForwardDisabled = true;
     const zoom = this.zoomLevels[this.timeZoomIndex];
     const rrdOptions = this.convertTimespan(zoom.timespan);
@@ -221,9 +221,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     this.currentEndDate = rrdOptions.end;
   }
 
-  ngAfterContentInit() {}
-
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.report) {
       if (changes.report.previousValue && this.ready == false) {
         this.setupData(changes);
@@ -238,7 +236,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     }
   }
 
-  private setupData(changes: SimpleChanges) {
+  private setupData(changes: SimpleChanges): void {
     const zoom = this.zoomLevels[this.timeZoomIndex];
     const rrdOptions = this.convertTimespan(zoom.timespan);
     const identifier = changes.report.currentValue.identifiers ? changes.report.currentValue.identifiers[0] : null;
@@ -254,11 +252,11 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     return colors;
   }
 
-  setChartInteractive(value: boolean) {
+  setChartInteractive(value: boolean): void {
     this.isActive = value;
   }
 
-  timeZoomIn() {
+  timeZoomIn(): void {
     // more detail
     const max = 4;
     if (this.timeZoomIndex == max) { return; }
@@ -272,7 +270,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
-  timeZoomOut() {
+  timeZoomOut(): void {
     // less detail
     const min = Number(0);
     if (this.timeZoomIndex == min) { return; }
@@ -286,7 +284,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
-  stepBack() {
+  stepBack(): void {
     const zoom = this.zoomLevels[this.timeZoomIndex];
     const rrdOptions = this.convertTimespan(zoom.timespan, 'backward', this.currentStartDate);
     this.currentStartDate = rrdOptions.start;
@@ -296,7 +294,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
-  stepForward() {
+  stepForward(): void {
     const zoom = this.zoomLevels[this.timeZoomIndex];
 
     const rrdOptions = this.convertTimespan(zoom.timespan, 'forward', this.currentEndDate);
@@ -307,7 +305,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
-  getServerTime() {
+  getServerTime(): Date {
     const xmlHttp = new XMLHttpRequest();
     xmlHttp.open('HEAD', window.location.origin.toString(), false);
     xmlHttp.setRequestHeader('Content-Type', 'text/html');
@@ -387,7 +385,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     };
   }
 
-  fetchReportData(rrdOptions: any, report: Report, identifier?: string) {
+  fetchReportData(rrdOptions: any, report: Report, identifier?: string): void {
     // Report options
     const params = identifier ? { name: report.name, identifier } : { name: report.name };
 
@@ -407,7 +405,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   }
 
   // Will be used for back of flip card
-  setPreferences(form: NgForm) {
+  setPreferences(form: NgForm): void {
     const filtered: string[] = [];
     for (const i in form.value) {
       if (form.value[i]) {

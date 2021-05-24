@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { Certificate } from 'app/interfaces/certificate.interface';
 import { Observable, Subject, Subscription } from 'rxjs';
 
 import { EntityUtils } from '../pages/common/entity/utils';
@@ -22,7 +23,7 @@ export class ServicesService {
   getOpenVPNClientCipherChoices() {
     return this.ws.call('openvpn.client.cipher_choices');
   }
-  getCerts() {
+  getCerts(): Observable<Certificate[]> {
     return this.ws.call('certificate.query');
   }
 

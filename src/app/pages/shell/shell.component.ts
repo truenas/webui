@@ -50,8 +50,8 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   connectionId: string;
 
   ngOnInit(): void {
-    this.getAuthToken().subscribe((res) => {
-      this.initializeWebShell(res);
+    this.getAuthToken().subscribe((token) => {
+      this.initializeWebShell(token);
       this.shellSubscription = this.ss.shellOutput.subscribe(() => {
       });
       this.initializeTerminal();
@@ -235,8 +235,8 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     return true;
   }
 
-  initializeWebShell(res: string): void {
-    this.ss.token = res;
+  initializeWebShell(token: string): void {
+    this.ss.token = token;
     this.ss.connect();
 
     this.refreshToolbarButtons();
@@ -257,7 +257,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  getAuthToken(): Observable<any> {
+  getAuthToken(): Observable<string> {
     return this.ws.call('auth.generate_token');
   }
 

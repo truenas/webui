@@ -35,8 +35,8 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
     this.iconTypeMenuTitle = this.navService.iconTypeMenuTitle;
     // Loads menu items from NavigationService
     this.navService.menuItems$.subscribe((menuItem) => {
-      this.ws.call('failover.licensed', []).subscribe((res) => {
-        _.find(_.find(menuItem, { state: 'system' }).sub, { state: 'failover' }).disabled = !res;
+      this.ws.call('failover.licensed').subscribe((hasFailover) => {
+        _.find(_.find(menuItem, { state: 'system' }).sub, { state: 'failover' }).disabled = !hasFailover;
       });
       if (window.localStorage.getItem('product_type') === ProductType.Enterprise) {
         this.ws
