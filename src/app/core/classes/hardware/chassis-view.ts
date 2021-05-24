@@ -79,7 +79,7 @@ export class ChassisView {
     this.utils = new ThemeUtils();
 
     this.container = new PIXI.Container();
-    this.driveTrays = new PIXI.projection.Container2d();
+    this.driveTrays = new PIXI.Container();
     this.events = new Subject<CoreEvent>();
 
     this.events.subscribe((evt: CoreEvent) => {
