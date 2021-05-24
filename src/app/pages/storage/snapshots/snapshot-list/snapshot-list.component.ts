@@ -16,7 +16,7 @@ import helptext from '../../../../helptext/storage/snapshots/snapshots';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { SnapshotData } from 'app/interfaces/storage.interface';
+import { Snapshot } from 'app/interfaces/storage.interface';
 
 interface DialogData {
   datasets: string[];
@@ -279,10 +279,10 @@ export class SnapshotListComponent {
     });
   }
 
-  restructureData(selected: SnapshotData[]): DialogData {
+  restructureData(selected: Snapshot[]): DialogData {
     const datasets: string[] = [];
     const snapshots: any = {};
-    selected.forEach((item: SnapshotData) => {
+    selected.forEach((item: Snapshot) => {
       if (!snapshots[item.dataset]) {
         datasets.push(item.dataset);
         snapshots[item.dataset] = [];
@@ -294,7 +294,7 @@ export class SnapshotListComponent {
     return { datasets, snapshots };
   }
 
-  getMultiDeleteMessage(selected: SnapshotData[]): string {
+  getMultiDeleteMessage(selected: Snapshot[]): string {
     const grandTotal: string = selected.length > 1 ? selected.length.toString() : '';
     let message = `<strong>The following ${grandTotal} snapshots will be deleted. Are you sure you want to proceed?</strong>`;
     message += '<br>';

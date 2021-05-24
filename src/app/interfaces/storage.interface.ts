@@ -119,7 +119,7 @@ export interface DiskUpdate {
 /**
  * As returned by snapshot.query
  */
-export interface SnapshotData {
+export interface Snapshot {
   name: string;
   snapshot: string;
   dataset: string;
