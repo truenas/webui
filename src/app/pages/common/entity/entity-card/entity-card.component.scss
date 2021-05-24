@@ -1,15 +1,15 @@
 .fab-br {
-  top: auto !important;
-  right: 30px !important;
   bottom: 48px !important;
   left: auto !important;
   position: fixed !important;
+  right: 30px !important;
+  top: auto !important;
   z-index: 1;
 }
 
 .action-menu {
-  text-align: right;
   float: right;
+  text-align: right;
 }
 
 .table>thead>tr>th:first-child {
@@ -27,10 +27,10 @@
 .table-bordered>thead>tr>td,
 .table-bordered>tbody>tr>td,
 .table-bordered>tfoot>tr>td {
-  line-height: 1.5em;
+  font-size: 0.9em;
   height: 1.5em;
-  padding: .5em;
-  font-size: .9em;
+  line-height: 1.5em;
+  padding: 0.5em;
 }
 
 i {
@@ -38,17 +38,17 @@ i {
 }
 
 .card-wrap {
+  box-direction: normal;
+  box-orient: horizontal;
+  box-sizing: border-box;
   display: flex;
   flex-flow: row wrap;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-  box-sizing: border-box;
 }
 
 .card-item {
-  flex: 1 1 25%;
+  box-flex: 1;
   box-sizing: border-box;
-  -webkit-box-flex: 1;
+  flex: 1 1 25%;
   max-width: 50%;
 }
 
@@ -58,49 +58,49 @@ i {
 /* Cards */
 
 .card {
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  border-radius: 3px;
+  border-radius: 3px;
   /*margin: 10px 0 20px 0;*/
   border-top-width: 0;
-  border-bottom-width: 2px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
+  box-shadow: none;
+  box-shadow: none;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  box-sizing: border-box;
   box-sizing: border-box;
 }
 
 .card .card-footer {
-  /*background-color:#fff;*/
-  position: absolute;
-  width: 100%;
+  border-top: solid 1px rgba(0, 0, 0, 0.1);
   bottom: 15px;
   min-height: 60px;
-  border-top: solid 1px rgba(0, 0, 0, 0.1);
+  /*background-color:#fff;*/
+  position: absolute;
   text-align: center;
+  width: 100%;
 }
 /* Flip Card Animations */
 
 .flip {
-  perspective: 1520px !important;
-  perspective-origin: 50% 50% !important;
   /*width: 400px;*/
   height: 420px;
+  perspective: 1520px !important;
+  perspective-origin: 50% 50% !important;
   position: relative;
   /*margin: 50px auto;*/
 }
 
 .flip .card-container {
-  width: 100%;
   height: 100%;
-  -webkit-transform-style: preserve-3d;
-  -webkit-transition: 0.5s;
+  transform-style: preserve-3d;
+  transition: 0.5s;
+  width: 100%;
 }
 
-.raised.flip{
-  z-index:2;
+.raised.flip {
+  z-index: 2;
 }
 
 .flip .card-container.flipped {
@@ -113,17 +113,17 @@ i {
 }
 
 .flip .card-container .back {
-  transform: rotatey(-180deg);
   min-height: 250px;
+  transform: rotatey(-180deg);
 }
 
 .flip .card-container .face {
-  width: 100%;
+  backface-visibility: hidden;
   height: 100%;
+  margin: 0;
+  padding: 0 !important;
   position: absolute;
-  -webkit-backface-visibility: hidden;
+  width: 100%;
   z-index: 2;
-  margin:0;
-  padding:0 !important;
   /*overflow:hidden;*/
 }

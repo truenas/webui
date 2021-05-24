@@ -1,16 +1,18 @@
 .dashboard-wrap {
+  align-content: stretch;
+  align-items: stretch;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: stretch;
-  align-items: stretch;
-  align-content: stretch;
 }
+
 .dashboard-item {
+  box-flex: 1;
   flex-basis: 33.3333%;
-  -webkit-box-flex: 1;
   flex-grow: 1;
 }
+
 ul.ct-legend {
   top: -2em !important;
 }
@@ -20,55 +22,55 @@ ul.ct-legend {
 }
 
 #reporting-spinner {
-  position: relative;
   left: 47%;
+  position: relative;
   top: 110px;
 }
 
-.reports-dash-global-controls{
+.reports-dash-global-controls {
   //padding:16px;
   color: var(--fg2);
   //margin: 24px 24px 0px;
 }
 
-.reports-dash-global-controls > *{
+.reports-dash-global-controls > * {
   //margin-bottom:32px;
 }
 
-.mat-card.ghost-card{
-  min-height:430px;
+.mat-card.ghost-card {
+  min-height: 430px;
 }
 
-.mat-button-toggle .mat-icon{
-  font-size:24px;
+.mat-button-toggle .mat-icon {
+  font-size: 24px;
   line-height: normal;
   margin-bottom: 4px;
 }
 
-#dashboardcontainerdiv{
+#dashboardcontainerdiv {
   // Adjustment should really be applied to .rightside-content-hold (margin-top 90px instead of 104px),
   // but didn't want to risk breaking layouts of other pages so I applied this instead
   margin-top: -14px;
 }
 
-nav.reports-toolbar{
-  position: absolute;
-  z-index:2;
-  width: 100%;
-  top: 0;
-  left: 0;
-  box-shadow: 0 2px 3px rgba(0,0,0,0.5);
-  padding: 4px 32px;
+nav.reports-toolbar {
   background-color: var(--alt-bg1);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
+  left: 0;
+  padding: 4px 32px;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 2;
 }
 
-.master-container{
-  position: absolute;
-  width: 100%;
-  top: 96;
-  left: 0;
+.master-container {
   height: calc(100vh - 92px - 4px); /* 92 is for the topbar && 48 is for the entity-toolbar */
+  left: 0;
   padding-bottom: 16px;
+  position: absolute;
+  top: 96;
+  width: 100%;
 
 }
 
@@ -76,30 +78,30 @@ nav.reports-toolbar{
   height: calc(100vh - 92px - 48px - 45px);
 }
 
-.reports-navigation-spacer{
+.reports-navigation-spacer {
   width: 282px;
 }
 
-.reports-navigation{
+.reports-navigation {
   width: 270px;
 }
 
-.reports-navigation{
-  position:fixed;
-  height:100%;
-  top:150;
-  right:0;
-  overflow: auto;
+.reports-navigation {
   background-color: var(--bg2);
-  color:var(--fg2);
-  box-shadow:2px 0 3px rgba(0,0,0,0.1) ;
+  box-shadow: 2px 0 3px rgba(0, 0, 0, 0.1);
+  color: var(--fg2);
+  height: 100%;
+  overflow: auto;
+  position: fixed;
+  right: 0;
+  top: 150;
 }
 
-.reports-navigation .mat-list-item.onscreen{
-  border-left:solid 3px var(--primary);
+.reports-navigation .mat-list-item.onscreen {
+  border-left: solid 3px var(--primary);
 }
 
-cdk-virtual-scroll-viewport{
+cdk-virtual-scroll-viewport {
   height: 100%;
   width: 100%;
 

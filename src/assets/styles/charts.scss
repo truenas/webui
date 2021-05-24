@@ -1,90 +1,87 @@
-.widget{
-  margin-bottom:32px;
+.widget {
+  margin-bottom: 32px;
 }
 
-.widget .viewchart-wrapper{
-  width:100%;
+.widget .viewchart-wrapper {
+  width: 100%;
 }
 
 .widget.line .viewchart-wrapper,
 .widget.spline .viewchart-wrapper,
 .widget.area .viewchart-wrapper,
-.widget.area-spline .viewchart-wrapper{
-  position:absolute !important;
-  bottom:0;
+.widget.area-spline .viewchart-wrapper {
+  bottom: 0;
+  position: absolute !important;
 }
 
-.widget .chart-wrapper{
-  border-top:solid 1px var(--bg1);
-}
-
-.widget .mat-toolbar-row{
-  
+.widget .chart-wrapper {
+  border-top: solid 1px var(--bg1);
 }
 
 /* Legends */
 
-.legend-wrapper{
+.legend-wrapper {
+  min-height: 45px;
   padding: 0 8px;
-  min-height:45px;
 }
 
-.legend-html{}
-
-.legend-item{
-  padding:8px 0;
-  cursor:pointer;
+.legend-item {
+  cursor: pointer;
+  padding: 8px 0;
 }
 
-.legend-item-disabled{
-  opacity:0.15;
+.legend-item-disabled {
+  opacity: 0.15;
 }
 
-.legend-x.legend-item{
-  font-weight: bold;
+.legend-x.legend-item {
   font-size: larger;
+  font-weight: bold;
   text-align: left;
 }
 
-.legend-item .legend-name{
-  text-transform:capitalize;
+.legend-item .legend-name {
+  text-transform: capitalize;
 }
 
-.legend-item .legend-value{
-  min-width:60px;
+.legend-item .legend-value {
   /*text-align:right;*/
-  display:inline-block;
+  display: inline-block;
+  min-width: 60px;
 }
 
-.legend-item .legend-swatch{
-  width: 12px;
-  height: 12px;
-  border: solid #000 0px;
+.legend-item .legend-swatch {
+  border: solid #000 0;
   border-radius: 50%;
   display: inline-block;
+  height: 12px;
   margin: 12px 2px 0;
+  width: 12px;
 }
 
 /* Charts */
-.c3 text,.c3-tooltip-container,
-.c3-chart-arcs-title, .c3-gauge-value{
-  font-family:"Droid Sans Mono";
-  color:rgba(0,0,0,0.55);
+.c3 text,
+.c3-tooltip-container,
+.c3-chart-arcs-title,
+.c3-gauge-value {
+  color: rgba(0, 0, 0, 0.55);
+  font-family: 'Droid Sans Mono';
 }
 
-.c3-axis-y-label{
-  font-size:16px;
+.c3-axis-y-label {
+  font-size: 16px;
 }
 
-.c3-legend-item text{
-  font-family:Roboto;
+.c3-legend-item text {
+  font-family: Roboto;
 }
 
 /* Chart Tooltips */
-.c3-tooltip-container{
-  display:none;
+.c3-tooltip-container {
+  display: none;
 }
-#dashboardcontainerdiv .c3-tooltip-container{
+
+#dashboardcontainerdiv .c3-tooltip-container {
   /*background-color: rgba(0,0,0,0.9) !important;*/
   /*background:linear-gradient(0deg,rgba(0,0,0,0.49),rgba(33,33,33,0.79)) !important;*/
   /*background:linear-gradient(0deg,rgba(0,0,0,0.7), rgba(33,33,33,1))!important;
@@ -94,88 +91,93 @@
   overflow: hidden;
   padding:16px;
   border-radius:2px;*/
-  display:none;
+  display: none;
   /*font-family:"Roboto Medium";*/
 }
 
 .c3-tooltip,
 .c3-tooltip tbody,
 .c3-tooltip th,
-.c3-tooltip td{
-  background:none;
-  border:none;
-  box-shadow:none;
+.c3-tooltip td {
+  background: none;
+  border: none;
+  box-shadow: none;
 }
 
-.c3-tooltip tr{
-  border:none;
+.c3-tooltip tr {
+  border: none;
   /*background-color:rgba(0,0,0,0.25);*/
 }
 
-.c3-tooltip tr:nth-child(even){
+.c3-tooltip tr:nth-child(even) {
   /*background-color:rgba(63,63,63,0.25);*/
 }
 
 
-.c3-tooltip tr:first-child{
-  background-color:none;
+.c3-tooltip tr:first-child {
+  background-color: none;
 }
 
-.c3-tooltip td>span{
+.c3-tooltip td>span {
   /*border:solid #fff 2px;*/
-  border-radius:8px
+  border-radius: 8px;
 }
 
 /* GENERAL CHART STYLES */
 .c3 .tick text {
-  fill:#bbb;
-  font-weight:900;
+  fill: #bbb;
+  font-weight: 900;
 }
-.c3 path.domain,.c3 .tick line {
-  stroke: #ddd  !important;
-  stroke-opacity:0.15 !important;
+
+.c3 path.domain,
+.c3 .tick line {
+  stroke: #ddd !important;
+  stroke-opacity: 0.15 !important;
 }
 
 .c3-xgrid {
   /*stroke-opacity:0 !important;*/
 }
-.c3-ygrid, .c3-xgrid {
-  stroke-dasharray:none!important;
-  stroke: #999  !important;
-  stroke-opacity:0.15;
+
+.c3-ygrid,
+.c3-xgrid {
+  stroke: #999 !important;
+  stroke-dasharray: none !important;
+  stroke-opacity: 0.15;
 }
 
 .c3-area {
-  opacity: 0.65!important;
+  opacity: 0.65 !important;
 }
 
-.c3-chart-arc path{
-  stroke:none;
+.c3-chart-arc path {
+  stroke: none;
 }
 
-g.c3-chart:nth-child(1){opacity:0.55;}
-.c3-brush .extent{fill-opacity:0.3;}
+g.c3-chart:nth-child(1) {opacity: 0.55;}
+.c3-brush .extent {fill-opacity: 0.3;}
 
 /* Line/Spline charts */
-.c3-chart-line .c3-circles circle{
-  opacity:0 !important;
+.c3-chart-line .c3-circles circle {
+  opacity: 0 !important;
 }
 
-.c3-chart-line .c3-circles circle._expanded_{
-  r:4;
-  stroke: white;
+.c3-chart-line .c3-circles circle._expanded_ {
   fill-opacity: 1;
-  stroke-width: 2px;
-  stroke-opacity: 1;
   opacity: 1 !important;
+  r: 4;
+  stroke: white;
+  stroke-opacity: 1;
+  stroke-width: 2px;
 }
-.c3-chart-line .c3-lines path.c3-line{
-  stroke-width:1px;
+
+.c3-chart-line .c3-lines path.c3-line {
+  stroke-width: 1px;
 }
 
 div.c3.area .c3-chart-line .c3-lines path.c3-line,
-div.c3.area-spline .c3-chart-line .c3-lines path.c3-line{
-  stroke-width:0px;
+div.c3.area-spline .c3-chart-line .c3-lines path.c3-line {
+  stroke-width: 0;
 }
 
 /* Y axis & ticks  */
@@ -183,16 +185,16 @@ div.c3.area-spline .c3-chart-line .c3-lines path.c3-line{
   stroke-width: 0;
 }
 
-.c3-axis-y g.tick line{
-  stroke-width:0;
+.c3-axis-y g.tick line {
+  stroke-width: 0;
 }
 
 /* Event Rects (Can't decide if I like these. Will ask Kris) */
 .line .c3-event-rects,
 .spline .c3-event-rects,
 .area .c3-event-rects,
-.area-spline .c3-event-rects{
-  cursor:crosshair !important;
+.area-spline .c3-event-rects {
+  cursor: crosshair !important;
 }
 
 /*.bar-chart .c3-event-rects:nth-child(odd){
@@ -219,44 +221,44 @@ div.c3.area-spline .c3-chart-line .c3-lines path.c3-line{
 */
 
 /* SUBCHARTS */
-g.c3-brush + g{
-  opacity:0 !important;
+g.c3-brush + g {
+  opacity: 0 !important;
 }
 
 /* Titles and text */
 .c3-chart-arcs-title,
-.gauge .c3-chart-arc text.c3-gauge-value{
-  fill:#999;
+.gauge .c3-chart-arc text.c3-gauge-value {
+  fill: #999;
 }
 
-.donut text.c3-chart-arcs-title{
-  font-size:24px;
+.donut text.c3-chart-arcs-title {
+  font-size: 24px;
 }
 
-.widget .c3 .c3-axis g.tick tspan{
-  fill-opacity:0.5;
+.widget .c3 .c3-axis g.tick tspan {
+  fill-opacity: 0.5;
 }
 
-.widget .mat-progress-bar-buffer{
+.widget .mat-progress-bar-buffer {
   background-color: var(--bg1);
 }
 
-.widget .bar-chart .c3-xgrid-focus{
+.widget .bar-chart .c3-xgrid-focus {
   opacity: 0;
 }
 
 /* DyGraph */
 .dygraph-axis-label-y,
-.dygraph-axis-label-x{
-  opacity:0.5;
+.dygraph-axis-label-x {
+  opacity: 0.5;
 }
 
-.dygraph-label{
-  opacity:0.75;
+.dygraph-label {
+  opacity: 0.75;
 }
 
-.dygraph-ylabel{
+.dygraph-ylabel {
+  text-align: center;
   transform: rotate(-90deg);
-  text-align:center;
 }
 

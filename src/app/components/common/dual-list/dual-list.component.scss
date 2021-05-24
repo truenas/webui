@@ -3,32 +3,26 @@
 }
 
 .container-dualListBox {
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-
-  -webkit-box-align: center;
-  -moz-box-align: center;
-  -ms-flex-align: center;
-  -webkit-align-items: center;
   align-items: center;
+
+  box-align: center;
+  display: flex;
+  flex-align: center;
 }
 
 .container-dualListBox > div {
-  height: 100%;
-  max-height: 100%;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  max-height: 100%;
   place-content: flex-start;
 }
 
 .container-items {
   align-items: flex-start;
-  width: 40%;
   border: 1px solid var(--lines);
   overflow-y: auto;
+  width: 40%;
 }
 
 .container-buttons {
@@ -37,40 +31,41 @@
 }
 
 .btn-arrow {
-  border: 1px solid #afa7a7;
   background: #9c9797;
+  border: 1px solid #afa7a7;
   color: white;
-  padding: 3px;
   margin: 5px;
-  width: 90px;
+  padding: 3px;
   text-align: center;
+  width: 90px;
 }
 
 .draggable {
   width: 100%;
 }
 
-.chosen, .draggable:active {
-  width: 100%;
+.chosen,
+.draggable:active {
   background: var(--primary);
+  width: 100%;
 }
 
 .cdk-drag-placeholder {
-  background: rgba(145,148,156, 0.1);
-  opacity: .5;
+  background: rgba(145, 148, 156, 0.1);
   border: 1px dashed var(--fg1);
+  opacity: 0.5;
   width: 100%;
 }
 
 .list-title {
-  position: sticky;
-  top: 0;
-  left: 0;
-  display: flex;
-  right: 0;
-  width: 100%;
-  padding: 16px;
   background-color: var(--lines);
-  z-index: 1;
   border-bottom: 1px solid var(--lines);
+  display: flex;
+  left: 0;
+  padding: 16px;
+  position: sticky;
+  right: 0;
+  top: 0;
+  width: 100%;
+  z-index: 1;
 }

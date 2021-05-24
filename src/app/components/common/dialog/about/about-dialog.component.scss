@@ -1,18 +1,20 @@
 .header {
-  text-align: center;
-  background-size:cover;
-  background-image: url('../../../../../assets/images/backgrounds/hard_drive_2.jpg');
-  background-position-y:20%;
-  background-position-x:50%;
   background-color: black;
-  margin: -24px -24px 20px -24px;
-}
-.header-overlay {
+  background-image: url('../../../../../assets/images/backgrounds/hard_drive_2.jpg');
+  background-position-x: 50%;
+  background-position-y: 20%;
+  background-size: cover;
+  margin: -24px -24px 20px;
   text-align: center;
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 30px 10px;
-  color: white;
 }
+
+.header-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 30px 10px;
+  text-align: center;
+}
+
 #title {
   font-weight: 700;
   padding-bottom: 1rem;
@@ -32,15 +34,15 @@
 }
 
 .bullet-icon {
-  width: 36px;
+  font-size: 36px;
   height: 36px;
-  font-size: 36px;;
+  width: 36px;;
 }
 
 #ix-img {
-  right: 10px;
-  position: relative;
   bottom: 3px;
+  position: relative;
+  right: 10px;
 }
 
 .external-link {
@@ -58,14 +60,14 @@
 }
 
 .copyright-txt {
+  align-self: flex-end;
   font-size: 11px;
   text-align: center;
-  align-self: flex-end;
 }
 
 #findme {
-  text-align: center;
   font-weight: 700;
+  text-align: center;
 }
 
 #findme mat-icon {
@@ -91,26 +93,27 @@
 }
 
 .logo-wrapper .logo {
-  position: relative;
-  z-index: 2;
-  width: 256px;
   height: auto;
+  position: relative;
+  width: 256px;
+  z-index: 2;
 }
 
 @media (max-width: 599px) {
   #button-wrapper {
-    text-align: center;
     margin-top: 10px;
+    text-align: center;
   }
 }
 
 @media (max-width: 540px) {
   .medium-font {
-    font-size: .8rem;
+    font-size: 0.8rem;
   }
+
   .bullet-icon {
-    width: 24px;
+    font-size: 24px;
     height: 24px;
-    font-size: 24px;;
+    width: 24px;;
   }
 }

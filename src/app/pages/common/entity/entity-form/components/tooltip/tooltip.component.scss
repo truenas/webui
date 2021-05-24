@@ -6,29 +6,29 @@
 
 /* Tooltip text */
 .tooltip .tooltiptext {
-  position: absolute;
   background-color: black;
-  max-width: 400px;
-  width: 90vw;
-  margin: auto;
-  padding: 11px;
-  padding-top: 32px;
   border-radius: 6px;
   color: #fff;
   font-size: 110%;
+  margin: auto;
+  max-width: 400px;
+  opacity: 0;
+  padding: 11px;
+  padding-top: 32px;
+  position: absolute;
   text-align: left;
+  transition: visibility 0s linear 0.33s, opacity 0.33s linear;
   /*z-index: 1;*/
   visibility: hidden;
-  opacity: 0;
-  transition: visibility 0s linear 0.33s, opacity 0.33s linear;
   white-space: normal;
+  width: 90vw;
 }
 
 /* Show the tooltip text when the mouse is hovering over the tooltip container */
 .tooltip .tooltiptext.show {
-  visibility: visible;
   opacity: 1;
   transition-delay: 0s;
+  visibility: visible;
 }
 
 .tooltip .material-icons {
@@ -40,36 +40,36 @@
 }
 
 .tooltip .tooltiptext.lock {
-  visibility: visible !important;
   opacity: 1;
   transition-delay: 0s;
+  visibility: visible !important;
 }
 
 .pin {
-  position:absolute;
-  z-index:101;
   cursor: pointer;
-  top: 0px;
+  position: absolute;
   right: 0;
+  top: 0;
+  z-index: 101;
 }
 
-.pin .mat-icon{
-  margin:8px 8px 0;
+.pin .mat-icon {
+  margin: 8px 8px 0;
 }
 
 .pin-icon {
-  width: 18px;
   height: auto;
+  width: 18px;
 }
 
 #tooltip-header {
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  text-align:right;
-  padding:0 12px;
   border-radius: 6px 6px 0 0;
+  left: 0;
+  padding: 0 12px;
+  position: absolute;
+  text-align: right;
+  top: 0;
+  width: 100%;
   z-index: 99;
 }
 
@@ -78,127 +78,127 @@
 }
 
 .tooltip-header-text {
-  position:absolute;
-  width:calc(100% - 48px);
-  top:8px;
-  font-weight:500;
-  text-align:left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-weight: 500;
   overflow: hidden;
+  position: absolute;
+  text-align: left;
+  text-overflow: ellipsis;
+  top: 8px;
+  white-space: nowrap;
+  width: calc(100% - 48px);
 }
 
 /* speech bubble styles */
-div.tooltiptext{
+div.tooltiptext {
   background-color: var(--primary) !important;
   color: var(--primary-txt) !important;
 
   padding: 40px 16px 6px;
-  z-index:100;
+  z-index: 100;
 }
 
-div.tooltiptext:before{
-  content: "";
-  position: absolute;
-  display: block;
-  width: 20px;
-  height:20px;
-  z-index: 99;
-  transform: rotate( 45deg );
-  -moz-transform:    rotate( 45deg );
-  -ms-transform:     rotate( 45deg );
-  -o-transform:      rotate( 45deg );
-  -webkit-transform: rotate( 45deg );
+div.tooltiptext::before {
 
   background-color: var(--primary);
+  content: '';
+  display: block;
+  height: 20px;
+  position: absolute;
+  transform: rotate(45deg);
+  transform: rotate(45deg);
+  transform: rotate(45deg);
+  transform: rotate(45deg);
+  transform: rotate(45deg);
+  width: 20px;
+  z-index: 99;
 
 }
 
-div.tooltiptext.left{
-  top:-42px !important;
-  right:42px !important;
-  min-height:64px;
+div.tooltiptext.left {
+  min-height: 64px;
+  right: 42px !important;
+  top: -42px !important;
 }
 
-div.tooltiptext.right{
-  top:-42px !important;
-  left:42px !important;
-  min-height:64px;
+div.tooltiptext.right {
+  left: 42px !important;
+  min-height: 64px;
+  top: -42px !important;
 }
 
-div.tooltiptext.above{
-  bottom:42px !important;
-  left:-42px !important;
-  min-height:64px;
+div.tooltiptext.above {
+  bottom: 42px !important;
+  left: -42px !important;
+  min-height: 64px;
 }
 
-div.tooltiptext.below{
-  top:16px !important;
-  left:-42px !important;
-  min-height:64px;
+div.tooltiptext.below {
+  left: -42px !important;
+  min-height: 64px;
+  top: 16px !important;
 }
 
 /* Special classes for slide-in form */
-div.tooltiptext.center{
-  top: 25px !important;
+div.tooltiptext.center {
   left: -65px !important;
-  min-height: 64px;
   max-width: 275px !important;
+  min-height: 64px;
+  top: 25px !important;
 }
 
-div.tooltiptext.center-left{
-  top: 25px !important;
+div.tooltiptext.center-left {
   left: -200px !important;
-  min-height: 64px;
   max-width: 275px !important;
+  min-height: 64px;
+  top: 25px !important;
 }
 /* -- end -- */
 
 /* Arrow */
-div.tooltiptext.above:before{
+div.tooltiptext.above::before {
   bottom: -8px;
   left: 42px; /*calc(50% - 10px);*/
 }
 
-div.tooltiptext.below:before{
-  top: -8px;
+div.tooltiptext.below::before {
   left: 42px; /*calc(50% - 10px);*/
+  top: -8px;
 }
 
-div.tooltiptext.left:before{
-  top: calc(32px - 10px);
+div.tooltiptext.left::before {
   right: -8px;
+  top: calc(32px - 10px);
 }
 
-div.tooltiptext.right:before{
-  top: calc(32px - 10px);
+div.tooltiptext.right::before {
   left: -8px;
+  top: calc(32px - 10px);
 }
 
 /* Special classes for slide-in form */
-div.tooltiptext.center:before{
-  top: -8px;
+div.tooltiptext.center::before {
   left: 62px; /*calc(50% - 10px);*/
+  top: -8px;
 }
 
-div.tooltiptext.center-left:before{
-  top: -8px;
+div.tooltiptext.center-left::before {
   right: 57px; /*calc(50% - 10px);*/
+  top: -8px;
 }
 /* -- end -- */
 
-.moved div.tooltiptext:before{
-  display:none;
+.moved div.tooltiptext::before {
+  display: none;
 }
 
-.tooltip-container{
-  position:relative;
-  filter: drop-shadow(0 4px 4px rgba(0,0,0, 0.5));
-  z-index:100;
+.tooltip-container {
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.5));
+  position: relative;
+  z-index: 100;
 }
 
-.tooltip-container.wizard{
-  position:fixed;
+.tooltip-container.wizard {
+  position: fixed;
 }
 
 

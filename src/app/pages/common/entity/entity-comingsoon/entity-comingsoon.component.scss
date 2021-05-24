@@ -1,19 +1,19 @@
 .center {
-    text-align: center;
+  text-align: center;
 }
 
 .icon {
-    font-size: 96px;
-    width: 96px;
-    height: auto;
+  font-size: 96px;
+  height: auto;
+  width: 96px;
 }
 
 .card {
-    width: 275px;
-    position: relative;
-    margin: auto;
-    top: 150px;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  margin: auto;
+  position: relative;
+  top: 150px;
+  width: 275px;
 }
