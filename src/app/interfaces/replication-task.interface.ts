@@ -65,3 +65,8 @@ export interface ReplicationTask {
   target_dataset_from: string;
   transport: TransportMode;
 }
+
+export interface ReplicationTaskUI extends ReplicationTask {
+  ssh_connection: string;
+  task_last_snapshot: string;
+}

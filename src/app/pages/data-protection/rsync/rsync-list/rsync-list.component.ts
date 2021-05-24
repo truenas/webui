@@ -18,6 +18,7 @@ import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { RsyncTaskUI } from 'app/interfaces/rsync-task.interface';
 
 @Component({
   selector: 'app-rsync-list',
@@ -29,7 +30,7 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
   queryCall: 'rsynctask.query' = 'rsynctask.query';
   wsDelete: 'rsynctask.delete' = 'rsynctask.delete';
   route_add: string[] = ['tasks', 'rsync', 'add'];
-  route_add_tooltip = 'Add Rsync Task';
+  route_add_tooltip = T('Add Rsync Task');
   route_edit: string[] = ['tasks', 'rsync', 'edit'];
   entityList: EntityTableComponent;
   asyncView = true;
@@ -89,15 +90,19 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  getActions(row: any): any[] {
-    const actions: any[] = [];
-    actions.push({
+  getActions(row: any): EntityTableAction[] {
+    return [{
       id: row.path,
       icon: 'play_arrow',
       label: T('Run Now'),
       name: 'run',
+      actionName: 'run',
       onClick: () => {
-        this.dialog.confirm(T('Run Now'), T('Run this rsync now?'), true).subscribe((run: boolean) => {
+        this.dialog.confirm({
+          title: T('Run Now'),
+          message: T('Run this rsync now?'),
+          hideCheckBox: true,
+        }).subscribe((run: boolean) => {
           if (run) {
             row.state = { state: EntityJobState.Running };
             this.ws.call('rsynctask.run', [row.id]).subscribe(
@@ -121,38 +126,32 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
           }
         });
       },
-    });
-    actions.push({
+    },
+    {
       id: row.path,
       icon: 'edit',
       label: T('Edit'),
       name: 'edit',
+      actionName: 'edit',
       onClick: () => {
         this.doEdit(row.id);
       },
-    });
-    actions.push({
+    },
+    {
       id: row.path,
       icon: 'delete',
       name: 'delete',
+      actionName: 'delete',
       label: T('Delete'),
       onClick: () => {
         this.entityList.doDelete(row);
       },
-    });
-
-    return actions;
+    }];
   }
 
-  resourceTransformIncomingRestData(data: any[]): any[] {
+  resourceTransformIncomingRestData(data: RsyncTaskUI[]): RsyncTaskUI[] {
     return data.map((task) => {
-      task.minute = task.schedule['minute'];
-      task.hour = task.schedule['hour'];
-      task.dom = task.schedule['dom'];
-      task.month = task.schedule['month'];
-      task.dow = task.schedule['dow'];
-
-      task.cron = `${task.minute} ${task.hour} ${task.dom} ${task.month} ${task.dow}`;
+      task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
 
       if (task.job == null) {
         task.state = { state: EntityJobState.Pending };

@@ -11,6 +11,8 @@ import { EntityFormService } from 'app/pages/common/entity/entity-form/services/
 import { TaskService, WebSocketService } from 'app/services';
 import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { TranslateService } from '@ngx-translate/core';
+import { SmartTestUI } from 'app/interfaces/smart-test.interface';
 
 @Component({
   selector: 'app-smart-list',
@@ -21,11 +23,11 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
   title = T('S.M.A.R.T. Tests');
   queryCall = 'smart.test.query';
   route_add: string[] = ['tasks', 'smart', 'add'];
-  route_add_tooltip = 'Add S.M.A.R.T. Test';
+  route_add_tooltip = T('Add S.M.A.R.T. Test');
   route_edit: string[] = ['tasks', 'smart', 'edit'];
   wsDelete = 'smart.test.delete';
   entityList: EntityTableComponent;
-  parent: any;
+  parent: SmartListComponent;
 
   columns: any[] = [
     {
@@ -39,7 +41,7 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
       always_display: true,
     },
     { name: helptext.smartlist_column_description, prop: 'desc' },
-    { name: helptext.smartlist_column_schedule, prop: 'schedule' },
+    { name: helptext.smartlist_column_schedule, prop: 'cron_schedule' },
   ];
   rowIdentifier = 'type';
   config: any = {
@@ -62,6 +64,7 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
     protected aroute: ActivatedRoute,
     protected taskService: TaskService,
     protected entityFormService: EntityFormService,
+    protected translate: TranslateService,
   ) {
     this.disksSubscription = this.storageService.listDisks().subscribe((listDisks) => {
       this.listDisks = listDisks;
@@ -75,11 +78,11 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  resourceTransformIncomingRestData(data: any[]): any[] {
+  resourceTransformIncomingRestData(data: SmartTestUI[]): SmartTestUI[] {
     return data.map((test) => {
-      test.schedule = `${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
+      test.cron_schedule = `${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
       if (test.all_disks) {
-        test.disks = [T('All Disks')];
+        test.disks = [this.translate.instant(helptext.smarttest_all_disks_placeholder)];
       } else if (test.disks.length) {
         const readableDisks = test.disks.map((disk: any) => this.listDisks.find((item) => item.identifier === disk).devname);
         test.disks = readableDisks;

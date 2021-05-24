@@ -64,7 +64,7 @@ export class ScrubFormComponent implements FormConfiguration {
         },
         {
           type: 'scheduler',
-          name: 'scrub_picker',
+          name: 'cron_schedule',
           placeholder: helptext.scrub_picker_placeholder,
           tooltip: helptext.scrub_picker_tooltip,
           required: true,
@@ -121,14 +121,14 @@ export class ScrubFormComponent implements FormConfiguration {
   }
 
   beforeSubmit(value: any): void {
-    const spl = value.scrub_picker.split(' ');
+    const spl = value.cron_schedule.split(' ');
     value.schedule = {};
     value.schedule['minute'] = spl[0];
     value.schedule['hour'] = spl[1];
     value.schedule['dom'] = spl[2];
     value.schedule['month'] = spl[3];
     value.schedule['dow'] = spl[4];
-    delete value.scrub_picker;
+    delete value.cron_schedule;
   }
 
   resourceTransformIncomingRestData(data: any): any {
@@ -137,9 +137,7 @@ export class ScrubFormComponent implements FormConfiguration {
     this.entityForm.formGroup.controls['description'].setValue(data.description);
     this.entityForm.formGroup.controls['pool'].setValue(data.id);
 
-    data[
-      'scrub_picker'
-    ] = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
+    data.cron_schedule = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
 
     return data;
   }

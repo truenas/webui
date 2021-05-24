@@ -17,6 +17,8 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { ModalService } from 'app/services/modal.service';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { TransferMode } from 'app/enums/transfer-mode.enum';
+import { Direction } from 'app/enums/direction.enum';
 
 @Component({
   selector: 'app-cloudsync-add',
@@ -52,10 +54,10 @@ export class CloudsyncFormComponent implements FormConfiguration {
           placeholder: helptext.direction_placeholder,
           tooltip: helptext.direction_tooltip,
           options: [
-            { label: 'PUSH', value: 'PUSH' },
-            { label: 'PULL', value: 'PULL' },
+            { label: T('PUSH'), value: Direction.Push },
+            { label: T('PULL'), value: Direction.Pull },
           ],
-          value: 'PULL',
+          value: Direction.Pull,
           required: true,
           validation: helptext.direction_validation,
         }, {
@@ -64,11 +66,11 @@ export class CloudsyncFormComponent implements FormConfiguration {
           placeholder: helptext.transfer_mode_placeholder,
           tooltip: helptext.transfer_mode_warning_sync + ' ' + helptext.transfer_mode_warning_copy + ' ' + helptext.transfer_mode_warning_move,
           options: [
-            { label: 'SYNC', value: 'SYNC' },
-            { label: 'COPY', value: 'COPY' },
-            { label: 'MOVE', value: 'MOVE' },
+            { label: T('SYNC'), value: TransferMode.Sync },
+            { label: T('COPY'), value: TransferMode.Copy },
+            { label: T('MOVE'), value: TransferMode.Move },
           ],
-          value: 'COPY',
+          value: TransferMode.Copy,
           required: true,
           validation: helptext.transfer_mode_validation,
         },

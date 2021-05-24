@@ -1,8 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
-import cronstrue from 'cronstrue/i18n';
-import { Options as CronOptions } from 'cronstrue/dist/options';
 import { Subscription } from 'rxjs';
 
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
@@ -14,7 +12,7 @@ import { ModalService } from 'app/services/modal.service';
 import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { LanguageService } from 'app/services/language.service';
+import { PeriodicSnapshotTaskUI } from 'app/interfaces/periodic-snapshot-task.interface';
 
 @Component({
   selector: 'app-snapshot-task-list',
@@ -24,6 +22,7 @@ import { LanguageService } from 'app/services/language.service';
 export class SnapshotListComponent implements InputTableConf, OnDestroy {
   title = T('Periodic Snapshot Tasks');
   queryCall: 'pool.snapshottask.query' = 'pool.snapshottask.query';
+  updateCall: 'pool.snapshottask.update' = 'pool.snapshottask.update';
   wsDelete: 'pool.snapshottask.delete' = 'pool.snapshottask.delete';
   route_add: string[] = ['tasks', 'snapshot', 'add'];
   route_add_tooltip = 'Add Periodic Snapshot Task';
@@ -36,7 +35,8 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
     { name: T('Recursive'), prop: 'recursive' },
     { name: T('Naming Schema'), prop: 'naming_schema' },
     { name: T('When'), prop: 'when' },
-    { name: T('Frequency'), prop: 'frequency' },
+    { name: T('Schedule'), prop: 'frequency' },
+    { name: T('Next Run'), prop: 'next_run', hidden: true },
     { name: T('Keep snapshot for'), prop: 'keepfor', hidden: true },
     { name: T('Legacy'), prop: 'legacy', hidden: true },
     { name: T('VMware Sync'), prop: 'vmware_sync', hidden: true },
@@ -55,7 +55,6 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
     },
   };
   private onModalClose: Subscription;
-  private cronOptions: CronOptions;
 
   constructor(
     private dialogService: DialogService,
@@ -65,10 +64,7 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
     private storageService: StorageService,
     private dialog: DialogService,
     private translate: TranslateService,
-    private language: LanguageService,
-  ) {
-    this.cronOptions = { verbose: true, locale: this.language.currentLanguage };
-  }
+  ) {}
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
@@ -77,12 +73,16 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  dataHandler(table: EntityTableComponent): void {
-    for (const task of table.rows) {
+  resourceTransformIncomingRestData(data: PeriodicSnapshotTaskUI[]): PeriodicSnapshotTaskUI[] {
+    return data.map((task) => {
       task.keepfor = `${task.lifetime_value} ${task.lifetime_unit}(S)`;
       task.when = this.translate.instant(T('From {task_begin} to {task_end}'), { task_begin: task.schedule.begin, task_end: task.schedule.end });
-      task.frequency = cronstrue.toString(`${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`, this.cronOptions);
-    }
+      task.cron = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
+      task.next_run = this.taskService.getTaskNextRun(task.cron);
+      task.frequency = this.taskService.getTaskCronDescription(task.cron);
+
+      return task;
+    });
   }
 
   onButtonClick(row: any): void {
@@ -97,7 +97,7 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
 
   onCheckboxChange(row: any): void {
     row.enabled = !row.enabled;
-    this.ws.call('pool.snapshottask.update', [row.id, { enabled: row.enabled }]).subscribe(
+    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).subscribe(
       (res) => {
         if (!res) {
           row.enabled = !row.enabled;

@@ -6,10 +6,8 @@ import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 
-import * as cronParser from 'cron-parser';
-import { Moment } from 'moment';
-
-import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { CloudSyncTask, CloudSyncTaskUI } from 'app/interfaces/cloud-sync-task.interface';
+import { EntityTableComponent, InputTableConf, EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import {
   AppLoaderService,
   CloudCredentialService,
@@ -27,6 +25,7 @@ import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/clou
 import { ModalService } from 'app/services/modal.service';
 import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { TransferMode } from 'app/enums/transfer-mode.enum';
 
 @Component({
   selector: 'app-cloudsync-list',
@@ -59,11 +58,6 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
       },
     },
     { name: T('Next Run'), prop: 'next_run', hidden: true },
-    { name: T('Minute'), prop: 'minute', hidden: true },
-    { name: T('Hour'), prop: 'hour', hidden: true },
-    { name: T('Day of Month'), prop: 'dom', hidden: true },
-    { name: T('Month'), prop: 'month', hidden: true },
-    { name: T('Day of Week'), prop: 'dow', hidden: true },
     {
       name: T('Status'), prop: 'state', state: 'state', button: true,
     },
@@ -91,6 +85,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
     protected modalService: ModalService,
     protected cloudCredentialService: CloudCredentialService,
     protected loader: AppLoaderService,
+    protected taskService: TaskService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -100,23 +95,14 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  resourceTransformIncomingRestData(data: any[]): any[] {
+  resourceTransformIncomingRestData(data: CloudSyncTaskUI[]): CloudSyncTaskUI[] {
     return data.map((task) => {
-      task.minute = task.schedule['minute'];
-      task.hour = task.schedule['hour'];
-      task.dom = task.schedule['dom'];
-      task.month = task.schedule['month'];
-      task.dow = task.schedule['dow'];
-      task.credential = task.credentials['name'];
+      task.credential = task.credentials.name;
+      task.cron = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
+      task.frequency = this.taskService.getTaskCronDescription(task.cron);
+      task.next_run = this.taskService.getTaskNextRun(task.cron);
 
-      task.cron = `${task.minute} ${task.hour} ${task.dom} ${task.month} ${task.dow}`;
-
-      /* Weird type assertions are due to a type definition error in the cron-parser library */
-      task.next_run = ((cronParser.parseExpression(task.cron, { iterator: true }).next() as unknown) as {
-        value: { _date: Moment };
-      }).value._date.fromNow();
-
-      if (task.job == null) {
+      if (task.job === null) {
         task.state = { state: EntityJobState.Pending };
       } else {
         task.state = { state: task.job.state };
@@ -130,7 +116,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  getActions(parentrow: any): any[] {
+  getActions(parentrow: any): EntityTableAction[] {
     return [
       {
         actionName: parentrow.description,
@@ -139,7 +125,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
         icon: 'play_arrow',
         name: 'run',
         onClick: (row: any) => {
-          this.dialog.confirm(T('Run Now'), T('Run this cloud sync now?'), true).subscribe((res: boolean) => {
+          this.dialog.confirm({ title: T('Run Now'), message: T('Run this cloud sync now?'), hideCheckBox: true }).subscribe((res: boolean) => {
             if (res) {
               row.state = { state: EntityJobState.Running };
               this.ws.call('cloudsync.sync', [row.id]).subscribe(
@@ -167,10 +153,15 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
       {
         actionName: parentrow.description,
         id: 'stop',
+        name: 'stop',
         label: T('Stop'),
         icon: 'stop',
         onClick: (row: any) => {
-          this.dialog.confirm(T('Stop'), T('Stop this cloud sync?'), true).subscribe((res: any) => {
+          this.dialog.confirm({
+            title: T('Stop'),
+            message: T('Stop this cloud sync?'),
+            hideCheckBox: true,
+          }).subscribe((res: boolean) => {
             if (res) {
               this.ws.call('cloudsync.abort', [row.id]).subscribe(
                 (wsRes) => {
@@ -193,11 +184,16 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
       {
         actionName: parentrow.description,
         id: 'dryrun',
+        name: 'dryrun',
         label: helptext.action_button_dry_run,
         icon: 'sync',
         onClick: (row: any) => {
-          this.dialog.confirm(helptext.dry_run_title, helptext.dry_run_dialog, true).subscribe((dialog_res: any) => {
-            if (dialog_res) {
+          this.dialog.confirm({
+            title: helptext.dry_run_title,
+            message: helptext.dry_run_dialog,
+            hideCheckBox: true,
+          }).subscribe((res: boolean) => {
+            if (res) {
               this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).subscribe(
                 (jobId: number) => {
                   this.dialog.Info(
@@ -223,6 +219,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
       {
         actionName: parentrow.description,
         id: 'restore',
+        name: 'restore',
         label: T('Restore'),
         icon: 'restore',
         onClick: (row: any) => {
@@ -245,10 +242,10 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
                 validation: helptext.transfer_mode_validation,
                 required: true,
                 options: [
-                  { label: 'SYNC', value: 'SYNC' },
-                  { label: 'COPY', value: 'COPY' },
+                  { label: T('SYNC'), value: TransferMode.Sync },
+                  { label: T('COPY'), value: TransferMode.Copy },
                 ],
-                value: 'COPY',
+                value: TransferMode.Copy,
               },
               {
                 type: 'paragraph',
@@ -268,12 +265,12 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
                 required: true,
               },
             ],
-            saveButtonText: 'Restore',
+            saveButtonText: T('Restore'),
             afterInit(entityDialog: EntityDialogComponent) {
               entityDialog.formGroup.get('transfer_mode').valueChanges.subscribe((mode) => {
                 const paragraph = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
                 switch (mode) {
-                  case 'SYNC':
+                  case TransferMode.Sync:
                     paragraph.paraText = helptext.transfer_mode_warning_sync;
                     paragraph.paragraphIcon = 'sync';
                     break;
@@ -303,6 +300,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
       {
         id: 'edit',
         actionName: parentrow.description,
+        name: 'edit',
         icon: 'edit',
         label: T('Edit'),
         onClick: (row: any) => {
@@ -312,6 +310,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
       {
         actionName: parentrow.description,
         id: 'delete',
+        name: 'delete',
         label: T('Delete'),
         icon: 'delete',
         onClick: (row: any) => {

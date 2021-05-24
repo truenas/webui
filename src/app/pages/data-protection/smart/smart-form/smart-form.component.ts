@@ -10,6 +10,9 @@ import helptext from '../../../../helptext/data-protection/smart/smart';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { take } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { SmartTestType } from 'app/enums/smart-test-type.enum';
+import { SmartTestUI } from 'app/interfaces/smart-test.interface';
+
 @Component({
   selector: 'app-smart-test-add',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -19,7 +22,6 @@ export class SmartFormComponent implements FormConfiguration {
   addCall: 'smart.test.create' = 'smart.test.create';
   editCall: 'smart.test.update' = 'smart.test.update';
   customFilter: any[] = [];
-  // protected route_success: string[] = ['tasks', 'smart'];
   protected entityForm: EntityFormComponent;
   isEntity = true;
   isNew = false;
@@ -62,19 +64,19 @@ export class SmartFormComponent implements FormConfiguration {
           options: [
             {
               label: 'LONG',
-              value: 'LONG',
+              value: SmartTestType.Long,
             },
             {
               label: 'SHORT',
-              value: 'SHORT',
+              value: SmartTestType.Short,
             },
             {
               label: 'CONVEYANCE',
-              value: 'CONVEYANCE',
+              value: SmartTestType.Conveyance,
             },
             {
               label: 'OFFLINE',
-              value: 'OFFLINE',
+              value: SmartTestType.Offline,
             },
           ],
           required: true,
@@ -87,7 +89,7 @@ export class SmartFormComponent implements FormConfiguration {
         },
         {
           type: 'scheduler',
-          name: 'smarttest_picker',
+          name: 'cron_schedule',
           placeholder: helptext.smarttest_picker_placeholder,
           tooltip: helptext.smarttest_picker_tooltip,
           validation: helptext.smarttest_picker_validation,
@@ -114,12 +116,12 @@ export class SmartFormComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any): any {
-    data['smarttest_picker'] = `0 ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
+  resourceTransformIncomingRestData(data: SmartTestUI): SmartTestUI {
+    data.cron_schedule = `0 ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
     return data;
   }
 
-  async afterInit(entityForm: EntityFormComponent): Promise<any> {
+  async afterInit(entityForm: EntityFormComponent): Promise<void> {
     this.entityForm = entityForm;
     this.pk = entityForm.pk;
     this.isNew = entityForm.isNew;
@@ -127,10 +129,10 @@ export class SmartFormComponent implements FormConfiguration {
   }
 
   beforeSubmit(value: any): void {
-    const spl = value.smarttest_picker.split(' ');
-    delete value.smarttest_picker;
+    const spl = value.cron_schedule.split(' ');
+    delete value.cron_schedule;
 
-    value['schedule'] = {
+    value.schedule = {
       hour: spl[1],
       dom: spl[2],
       month: spl[3],

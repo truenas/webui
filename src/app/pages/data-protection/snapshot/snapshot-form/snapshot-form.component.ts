@@ -1,16 +1,18 @@
-import { ModalService } from 'app/services/modal.service';
-import { Subscription } from 'rxjs';
-import { EntityFormComponent } from '../../../common/entity/entity-form/entity-form.component';
 import { Component, OnDestroy } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+
+import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
+
+import { ModalService } from 'app/services/modal.service';
+import { EntityFormComponent } from '../../../common/entity/entity-form/entity-form.component';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import helptext from '../../../../helptext/data-protection/snapshot/snapshot-form';
 import { DialogService, StorageService, TaskService } from '../../../../services';
-import { FieldConfig, UnitType } from '../../../common/entity/entity-form/models/field-config.interface';
+import { UnitType } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+
 @Component({
   selector: 'app-cron-snapshot-task-add',
   template: '<entity-form [conf]="this"></entity-form>',
