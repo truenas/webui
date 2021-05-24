@@ -324,7 +324,7 @@ export class SnapshotListComponent {
       });
 
       const listContentString: string = listContent.toString();
-      message += datasetStart + header + listStart + listContentString.replaceAll(',', '') + listEnd + breakTag + datasetEnd;
+      message += datasetStart + header + listStart + listContentString.replace(/\,/g, '') + listEnd + breakTag + datasetEnd;
     });
 
     return message;
