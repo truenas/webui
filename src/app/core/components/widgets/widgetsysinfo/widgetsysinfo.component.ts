@@ -28,7 +28,7 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
 @Component({
   selector: 'widget-sysinfo',
   templateUrl: './widgetsysinfo.component.html',
-  styleUrls: ['./widgetsysinfo.component.css'],
+  styleUrls: ['./widgetsysinfo.component.scss'],
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy, AfterViewInit {
   // HA
@@ -88,14 +88,16 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
       this.retroLogo = evt.data.retroLogo ? 1 : 0;
     });
 
-    this.ws.call('update.get_auto_download').subscribe((res) => {
-      if (res == true) {
-        this.core.register({ observerClass: this, eventName: 'UpdateChecked' }).subscribe((evt: CoreEvent) => {
-          if (evt.data.status == 'AVAILABLE') {
-            this.updateAvailable = true;
-          }
-        });
+    this.ws.call('update.get_auto_download').subscribe((isAutoDownloadOn) => {
+      if (!isAutoDownloadOn) {
+        return;
       }
+
+      this.core.register({ observerClass: this, eventName: 'UpdateChecked' }).subscribe((evt: CoreEvent) => {
+        if (evt.data.status == 'AVAILABLE') {
+          this.updateAvailable = true;
+        }
+      });
     });
 
     if (this.isHA && this.isPassive) {
@@ -119,8 +121,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
       this.core.emit({ name: 'HAStatusRequest' });
     }
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-      this.ws.call('failover.licensed').subscribe((res) => {
-        if (res) {
+      this.ws.call('failover.licensed').subscribe((hasFailover) => {
+        if (hasFailover) {
           this.updateMethod = 'failover.upgrade';
           this.is_ha = true;
         }

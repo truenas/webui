@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs';
 
 import {
   SystemGeneralService,
@@ -229,7 +230,7 @@ export class LdapComponent implements FormConfiguration {
     private dialogservice: DialogService,
     protected systemGeneralService: SystemGeneralService) { }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     delete data['bindpw'];
     data['hostname_noreq'] = data['hostname'];
     this.ldap_hostname = data['hostname'];
@@ -316,7 +317,7 @@ export class LdapComponent implements FormConfiguration {
     delete (data['hostname_noreq']);
   }
 
-  submitFunction(body: any) {
+  submitFunction(body: any): Observable<any> {
     return this.ws.call('ldap.update', [body]);
   }
 

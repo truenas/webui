@@ -110,7 +110,8 @@ export interface EntityTableAction {
   actionName: string;
   icon: string;
   label: string;
-  onClick: (row: any) => void;
+  onClick: (row?: any) => void;
+  disabled?: boolean;
 }
 
 export interface SortingConfig {
@@ -251,10 +252,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return result;
   }
 
-  hasDetails = () =>
+  hasDetails = (): boolean =>
     this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
 
-  getRowDetailHeight = () =>
+  getRowDetailHeight = (): number =>
     (this.hasDetails() && !this.conf.rowDetailComponent
       ? (this.allColumns.length - this.conf.columns.length) * DETAIL_HEIGHT + 76 // add space for padding
       : this.conf.detailRowHeight || 100);
@@ -800,7 +801,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return classes.join(' ');
   }
 
-  getActions(row: any) {
+  getActions(row: any): EntityTableAction[] {
     if (this.conf.getActions) {
       return this.conf.getActions(row);
     }
@@ -816,10 +817,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       icon: 'delete',
       label: T('Delete'),
       onClick: (rowinner: any) => { this.doDelete(rowinner); },
-    }];
+    }] as EntityTableAction[];
   }
 
-  getAddActions() {
+  getAddActions(): EntityTableAction[] {
     if (this.conf.getAddActions) {
       return this.conf.getAddActions();
     }

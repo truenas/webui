@@ -10,7 +10,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
 @Component({
   selector: 'form-colorpicker',
   templateUrl: './form-colorpicker.component.html',
-  styleUrls: ['./form-colorpicker.component.css'],
+  styleUrls: ['./form-colorpicker.component.scss'],
 })
 export class FormColorpickerComponent implements Field, OnInit {
   config: FieldConfig;

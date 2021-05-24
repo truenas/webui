@@ -1,0 +1,79 @@
+.copy-btn-trigger {
+  margin-left: 12px;
+}
+
+.copy-btn-close-trigger {
+  position: absolute;
+  right: 0;
+  top: 2px;
+}
+
+.copy-btn-icon {
+  font-size: 18px;
+}
+
+.copy-btn-popup {
+  position: absolute;
+  right: 10px;
+  top: -96px;
+  width: 90%;
+  z-index: 16;
+}
+
+.copy-btn-popup .copy-btn-header {
+  border-bottom: solid 1px var(--lines);
+  max-width: 100%;
+  padding: 6px 16px;
+  width: 100%;
+}
+
+.copy-btn-popup .copy-btn-header {
+  display: inline-block;
+}
+
+.copy-btn-popup .copy-btn-copied-txt {
+  background-color: rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  padding: 8px 16px;
+}
+
+div.text-limiter-tooltip {
+  background-color: var(--bg2);
+  border-radius: 4px;
+  color: var(--fg2);
+  padding: 6px 0;
+}
+
+div.text-limiter-tooltip::before {
+  background-color: var(--bg2);
+  bottom: -10px;
+  content: '';
+  display: block;
+  height: 20px;
+  position: absolute;
+  /*left: calc(50% - 10px);*/
+  right: 26px;
+  transform: rotate(45deg);
+  width: 20px;
+  z-index: -1;
+
+}
+
+.tooltip-container {
+  /*box-shadow: 0px 4px 6px 2px rgba(0,0,0,0.5);*/
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.75));
+}
+
+.invisible {
+  left: 0;
+  opacity: 0;
+  position: fixed;
+}
+
+@media (max-width: 599px) {
+  .copy-btn-trigger {
+    position: absolute;
+    right: 26px;
+    top: 4px;
+  }
+}

@@ -3,7 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 @Component({
   selector: 'form-status',
   templateUrl: './form-status.component.html',
-  styleUrls: ['./form-status.component.css'],
+  styleUrls: ['./form-status.component.scss'],
 })
 export class FormStatusComponent {
   @Input() statusIcon = 'checkmark';

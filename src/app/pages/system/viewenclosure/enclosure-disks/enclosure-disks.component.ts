@@ -54,7 +54,7 @@ export interface DiskFailure {
 @Component({
   selector: 'enclosure-disks',
   templateUrl: './enclosure-disks.component.html',
-  styleUrls: ['./enclosure-disks.component.css'],
+  styleUrls: ['./enclosure-disks.component.scss'],
 })
 
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {

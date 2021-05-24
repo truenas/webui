@@ -1,5 +1,5 @@
-.ion-android-more-vertical:before {
-    color: black;
+.ion-android-more-vertical::before {
+  color: black;
 }
 
 
@@ -7,23 +7,23 @@
   text-align: center;
 }
 
-.global_volume_based_action_menu {
-    margin-top: 8px; 
-    float: right; 
-    padding-bottom: 20px;
+.global_volume_based_action_menu { 
+  float: right;
+  margin-top: 8px;
+  padding-bottom: 20px;
 }
 
-.group-menu-header{
+.group-menu-header {
+  margin-top: 12px;
   min-width: 200px;
   padding-bottom: 16px;
-  margin-top: 12px;
 }
 
-.group-menu-header div.title{
+.group-menu-header div.title {
+  font-size: 0.85rem;
   margin-left: 16px;
   margin-top: 4px;
   opacity: 0.5;
-  font-size: 0.85rem;
 }
 
 .group-menu-header mat-divider {
@@ -31,7 +31,7 @@
   opacity: 0.35;
 }
 
-.action-length-1 button{
+.action-length-1 button {
   position: relative;
   right: -16px;
 }

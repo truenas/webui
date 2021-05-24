@@ -27,7 +27,7 @@ export class RestService {
     });
   }
 
-  handleResponse(res: Response) {
+  handleResponse(res: Response): { data: any; code: number; total: number } {
     const range = res.headers.get('CONTENT-RANGE');
     let total = null;
     let data = null;
@@ -51,14 +51,14 @@ export class RestService {
     };
   }
 
-  handleError(error: any) {
+  handleError(error: any): Observable<never> {
     return observableThrowError({
       error: error.json(),
       code: error.status,
     });
   }
 
-  request(method: HttpClient, path: string, options: Object, useBaseUrl?: boolean) {
+  request(method: HttpClient, path: string, options: Object, useBaseUrl?: boolean): void {
     const headers = new Headers({
       'Content-Type': 'application/json',
       Authorization: 'Token ' + this.ws.token,

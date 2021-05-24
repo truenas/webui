@@ -23,7 +23,7 @@ interface Conversion {
 @Component({
   selector: 'linechart',
   templateUrl: './lineChart.component.html',
-  styleUrls: ['./lineChart.component.css'],
+  styleUrls: ['./lineChart.component.scss'],
 })
 export class LineChartComponent extends ViewComponent implements AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('wrapper', { static: true }) el: ElementRef;
@@ -247,7 +247,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     return colors;
   }
 
-  private createColorObject() {
+  private createColorObject(): any {
     const obj: any = {};
     this.legends.forEach((item, index) => {
       obj[item] = this.colorPattern[index];

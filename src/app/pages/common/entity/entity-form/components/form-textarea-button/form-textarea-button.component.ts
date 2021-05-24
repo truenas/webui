@@ -11,7 +11,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
 @Component({
   selector: 'form-textarea-button',
   templateUrl: './form-textarea-button.component.html',
-  styleUrls: ['../dynamic-field/dynamic-field.css'],
+  styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })
 export class FormTextareaButtonComponent implements Field {
   config: FieldConfig;

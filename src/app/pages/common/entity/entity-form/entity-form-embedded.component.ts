@@ -21,7 +21,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CoreEvent } from 'app/interfaces/events';
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { T } from '../../../../translate-marker';
 
 import { RestService, WebSocketService } from '../../../../services';
@@ -89,7 +89,7 @@ export interface FormConfig {
 @Component({
   selector: 'entity-form-embedded',
   templateUrl: './entity-form-embedded.component.html',
-  styleUrls: ['./entity-form-embedded.component.css'],
+  styleUrls: ['./entity-form-embedded.component.scss'],
   providers: [EntityFormService, FieldRelationService],
 })
 export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {

@@ -7,7 +7,7 @@ import { CdkDrag } from '@angular/cdk/drag-drop';
 @Component({
   selector: 'tooltip',
   templateUrl: 'tooltip.component.html',
-  styleUrls: ['tooltip.component.css'],
+  styleUrls: ['tooltip.component.scss'],
 })
 export class TooltipComponent {
   @Input('message') message: string;

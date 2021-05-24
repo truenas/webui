@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AppTableAction } from 'app/pages/common/entity/table/table.component';
 import {
   WebSocketService, KeychainCredentialService, AppLoaderService,
   DialogService, ReplicationService, StorageService, CloudCredentialService,
@@ -142,7 +143,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     return res.filter((item) => item.type === 'SSH_KEY_PAIR');
   }
 
-  sshKeyPairActions() {
+  sshKeyPairActions(): AppTableAction[] {
     return [{
       icon: 'save_alt',
       name: 'download',

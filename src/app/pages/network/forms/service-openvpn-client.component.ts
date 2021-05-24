@@ -141,10 +141,10 @@ export class OpenvpnClientComponent implements FormConfiguration {
         );
       }
     });
-    this.services.getCerts().subscribe((res: any[]) => {
+    this.services.getCerts().subscribe((certificates) => {
       const config = this.fieldConfig.find((c) => c.name === 'client_certificate');
-      res.forEach((item) => {
-        config.options.push({ label: item.name, value: item.id });
+      certificates.forEach((certificate) => {
+        config.options.push({ label: certificate.name, value: certificate.id });
       });
     });
     this.services.getCAs().subscribe((res: any[]) => {

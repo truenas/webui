@@ -17,7 +17,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { CoreService } from 'app/core/services/core.service';
@@ -495,7 +495,7 @@ export class ZvolWizardComponent {
     }
   }
 
-  addSubmit(body: any) {
+  addSubmit(body: any): Observable<any> {
     delete body.path;
     const data: any = this.sendAsBasicOrAdvanced(body);
 

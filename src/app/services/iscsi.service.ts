@@ -31,11 +31,11 @@ export class IscsiService {
     return this.ws.call('iscsi.initiator.query', []);
   }
 
-  getVolumes() {
+  getVolumes(): void {
     return this.rest.get(this.volumeResource, {});
   }
 
-  getExtentDevices() {
+  getExtentDevices(): Observable<any[]> {
     return this.ws.call('iscsi.extent.disk_choices', []);
   }
 
@@ -51,7 +51,7 @@ export class IscsiService {
     return this.ws.call('iscsi.auth.query', []);
   }
 
-  getGlobalSessions() {
+  getGlobalSessions(): Observable<any[]> {
     return this.ws.call('iscsi.global.sessions');
   }
 }

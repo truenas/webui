@@ -1,7 +1,6 @@
 import { DisplayObject } from './display-object';
 import { CoreService } from '../services/core.service';
-import { timer } from 'rxjs/observable/timer';
-import { debounceTime } from 'rxjs/operators/debounceTime';
+import { debounceTime } from 'rxjs/operators';
 import {
   tween,
   styler,

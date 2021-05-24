@@ -4,6 +4,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { WebSocketService, StorageService, DialogService } from 'app/services';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { Subscription } from 'rxjs';
@@ -185,7 +186,7 @@ export class SnapshotListComponent {
     }
   }
 
-  getActions() {
+  getActions(): EntityTableAction[] {
     return [
       {
         id: 'delete',
@@ -209,7 +210,7 @@ export class SnapshotListComponent {
         label: helptext.label_rollback,
         onClick: (snapshot: any) => this.doRollback(snapshot),
       },
-    ];
+    ] as EntityTableAction[];
   }
 
   afterInit(entityList: any): void {

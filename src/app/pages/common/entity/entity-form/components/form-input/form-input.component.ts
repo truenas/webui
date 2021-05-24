@@ -12,7 +12,7 @@ import globalHelptext from '../../../../../../helptext/global-helptext';
 @Component({
   selector: 'form-input',
   templateUrl: './form-input.component.html',
-  styleUrls: ['./form-input.component.scss', '../dynamic-field/dynamic-field.css'],
+  styleUrls: ['./form-input.component.scss', '../dynamic-field/dynamic-field.scss'],
 })
 export class FormInputComponent implements Field {
   @ViewChild('fileInput', { static: true }) fileInput: HTMLInputElement;

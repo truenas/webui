@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { T } from '../../../../translate-marker';
 import {
   DialogService, StorageService, ValidationService, UserService,
@@ -133,7 +134,7 @@ export class UserListComponent implements OnDestroy {
     });
   }
 
-  getActions(row: any) {
+  getActions(row: any): EntityTableAction[] {
     const actions = [];
     actions.push({
       id: row.username,
@@ -185,7 +186,7 @@ export class UserListComponent implements OnDestroy {
         },
       });
     }
-    return actions;
+    return actions as EntityTableAction[];
   }
 
   ableToDeleteGroup(id: any): boolean {

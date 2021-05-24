@@ -308,7 +308,7 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
     this.modalService.refreshTable();
   }
 
-  customSubmit(body: any) {
+  customSubmit(body: any): Subscription {
     this.loader.open();
     return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();

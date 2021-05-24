@@ -75,7 +75,7 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  resourceTransformIncomingRestData(data: any[]) {
+  resourceTransformIncomingRestData(data: any[]): any[] {
     return data.map((test) => {
       test.schedule = `${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
       if (test.all_disks) {
@@ -88,15 +88,15 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  doAdd(id?: number) {
+  doAdd(id?: number): void {
     this.modalService.open('slide-in-form', new SmartFormComponent(this.ws, this.modalService), id);
   }
 
-  doEdit(id: number) {
+  doEdit(id: number): void {
     this.doAdd(id);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.disksSubscription?.unsubscribe();
     this.onModalClose?.unsubscribe();
   }

@@ -1,7 +1,8 @@
 mat-tab-group {
   width: 100%;
+
   .mat-tab-body-wrapper {
-    padding: 16px 16px 16px;
+    padding: 16px;
   }
 }
 
@@ -18,72 +19,73 @@ mat-tab-group {
 }
 
 .catalog-item {
-    height: 160px;
-    width: 350px;
+  height: 160px;
+  width: 350px;
 
-    .content-wrapper {
-        .logo-container {
-          height: 160px;
-          width: 160px;
-          background-color: var(--contrast-lighter);
-          display: flex;
-          flex-direction: column;
+  .content-wrapper {
+    .logo-container {
+      background-color: var(--contrast-lighter);
+      display: flex;
+      flex-direction: column;
+      height: 160px;
+      width: 160px;
 
-          .logo {
-            width: calc(100% - 32px);
-            flex: 1;
-            margin-left: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            img {
-              width: 100%;
-              height: 100px;
-              object-fit: contain;
-            }
-          }
+      .logo {
+        align-items: center;
+        display: flex;
+        flex: 1;
+        justify-content: center;
+        margin-left: 16px;
+        width: calc(100% - 32px);
 
-          .badge-area {
-            margin: 0 16px 16px;
-            text-align: center;
-            color: rgba($color: #000000, $alpha: 1.0);
-            background-color: var(--yellow);
+        img {
+          height: 100px;
+          object-fit: contain;
+          width: 100%;
+        }
+      }
 
-            .partner-badge {
-              background-color: var(--yellow);
-            }
+      .badge-area {
+        background-color: var(--yellow);
+        color: rgba($color: #000, $alpha: 1);
+        margin: 0 16px 16px;
+        text-align: center;
 
-            .train-badge {
-              background-color: #00000052;
-            }
-          }
+        .partner-badge {
+          background-color: var(--yellow);
         }
 
-        .content {
-            text-align: center;
-            padding: 1rem;
-            position: relative;
-            left: 15px;
-            width: 140px;
-
-            .button-row {
-              position: relative;
-            }
+        .train-badge {
+          background-color: #00000052;
         }
+      }
     }
 
-    .content-wrapper:hover {
-        cursor: pointer;
-        background-color: var(--contrast-lighter);
+    .content {
+      left: 15px;
+      padding: 1rem;
+      position: relative;
+      text-align: center;
+      width: 140px;
+
+      .button-row {
+        position: relative;
+      }
     }
+  }
+
+  .content-wrapper:hover {
+    background-color: var(--contrast-lighter);
+    cursor: pointer;
+  }
 
 
-    .more-info {
-      position: absolute;
-      top: 0;
-      right: 0;
-      margin: 10px;
-    }
+  .more-info {
+    margin: 10px;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
 
 }
 
@@ -93,31 +95,32 @@ mat-tab-group {
 
   .content-wrapper {
     .logo-container {
-      height: 160px;
-      width: 160px;
       background-color: var(--contrast-lighter);
       display: flex;
       flex-direction: column;
+      height: 160px;
+      width: 160px;
 
       .logo {
-        width: calc(100% - 32px);
-        flex: 1;
-        margin-left: 16px;
-        display: flex;
         align-items: center;
+        display: flex;
+        flex: 1;
         justify-content: center;
+        margin-left: 16px;
+        width: calc(100% - 32px);
+
         img {
-          width: 100%;
           height: 100px;
           object-fit: contain;
+          width: 100%;
         }
       }
 
       .badge-area {
+        background-color: var(--yellow);
+        color: rgba($color: #000, $alpha: 1);
         margin: 0 16px 16px;
         text-align: center;
-        color: rgba($color: #000000, $alpha: 1.0);
-        background-color: var(--yellow);
 
         .partner-badge {
           background-color: var(--yellow);
@@ -129,16 +132,16 @@ mat-tab-group {
       }
 
       .bulk-checkbox {
+        left: 2px;
         position: absolute;
         top: 2px;
-        left: 2px;
       }
     }
 
 
     .content-box {
-      width: 340px;
       height: 160px;
+      width: 340px;
     }
 
     .chart-name {
@@ -146,9 +149,10 @@ mat-tab-group {
     }
 
     .content {
-      text-align: center;
-      padding: 1rem;
       margin-right: 50px;
+      padding: 1rem;
+      text-align: center;
+
       .version {
         opacity: 0.5;
       }
@@ -157,38 +161,40 @@ mat-tab-group {
         color: rgba(255, 255, 255);
         white-space: nowrap;
       }
+
       .version-value {
         color: rgba(255, 255, 255, 0.5);
-        word-break: break-all;
         padding-left: 5px;
+        word-break: break-all;
       }
     }
+
     .chart-button-row {
-      position: absolute;
       bottom: 5px;
+      position: absolute;
       right: 15px;
     }
   }
 
   .content-box:hover {
-      cursor: pointer;
-      background-color: var(--contrast-lighter);
+    background-color: var(--contrast-lighter);
+    cursor: pointer;
   }
 
   .more-info {
     position: absolute;
-    top: 10px;
     right: 0;
+    top: 10px;
   }
 
   .docker-info {
     font-size: smaller;
-    opacity: .7;
+    opacity: 0.7;
   }
 
   .status {
-    padding: 3px;
     opacity: 0.75;
+    padding: 3px;
   }
 
   .active {
@@ -206,9 +212,9 @@ mat-tab-group {
   }
 
   .ports {
-    position: absolute;
     bottom: 20px;
     left: 170px;
+    position: absolute;
   }
 
 }
@@ -219,9 +225,9 @@ mat-tab-group {
 
 .docker-item {
   height: 150px;
-  width: 300px;
-  text-align: center;
   padding: 15px !important;
+  text-align: center;
+  width: 300px;
 }
 
 app-manage-catalogs {
@@ -230,6 +236,7 @@ app-manage-catalogs {
       margin: 0;
     }
   }
+
   .mat-column-label {
     text-transform: lowercase;
 

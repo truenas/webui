@@ -1,0 +1,47 @@
+.copyright-txt,
+#shutdown-message,
+#shark,
+#signin-link {
+  text-align: center;
+}
+
+.logo {
+  height: auto;
+  width: 256px;
+}
+
+.copyright-txt {
+  margin-top: 10px;
+}
+
+#wrapper {
+  align-items: center;
+  background-color: #0095d5;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+}
+
+#shutdown-card {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 275px;
+}
+
+#overlay {
+  background: black !important;
+  height: 100%;
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  z-index: 10;
+}
+
+#overlay.blackout {
+  -webkit-opacity: 1;
+  -moz-opacity: 1;
+  opacity: 1;
+  transition: all 3s ease;
+}

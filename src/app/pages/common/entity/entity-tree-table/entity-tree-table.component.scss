@@ -1,0 +1,64 @@
+p-treetabletoggler {
+  margin-right: 6px;
+  position: relative;
+  top: 1px;
+}
+
+.icons {
+  font-size: 24px;
+}
+
+/* Lock Icons */
+span.icons .mat-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+span.icons .mat-icon[svgIcon='anti-lock'] {
+  top: 4px;
+}
+
+.group-menu-header {
+  margin-top: 12px;
+  min-width: 200px;
+  padding-bottom: 16px;
+}
+
+.group-menu-header div.title {
+  font-size: xx-small;
+  margin-left: 16px;
+  margin-top: 4px;
+  opacity: 0.75;
+}
+
+th.mat-header-cell:last-of-type,
+td.mat-cell:last-of-type,
+td.mat-footer-cell:last-of-type,
+th.action-class,
+td.action-class {
+  background: var(--bg2);
+  max-width: 24px;
+  padding: 0 16px;
+  position: sticky;
+  right: 0;
+  text-align: right;
+}
+
+th.sticky-border-right,
+td.sticky-border-right {
+  border-right: 1px solid var(--lines);
+  padding-right: 0.5rem;
+}
+
+th.sticky-border-left,
+td.sticky-border-left {
+  border-left: 1px solid var(--lines);
+}
+
+
+th.scroll-padding,
+td.scroll-padding {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}

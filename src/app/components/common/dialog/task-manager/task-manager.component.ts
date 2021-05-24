@@ -24,7 +24,7 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
 @Component({
   selector: 'task-manager',
   templateUrl: './task-manager.component.html',
-  styleUrls: ['./task-manager.component.css'],
+  styleUrls: ['./task-manager.component.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed, void', style({ height: '0px', minHeight: '0', display: 'none' })),

@@ -6,6 +6,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import * as _ from 'lodash';
 import helptext from '../../../helptext/jails/jails-list';
 import { DialogService, RestService, WebSocketService } from '../../../services';
@@ -291,7 +292,7 @@ export class JailListComponent {
     }
   }
 
-  getActions(parentRow: any) {
+  getActions(parentRow: any): EntityTableAction[] {
     return [{
       name: parentRow.host_hostuuid,
       icon: 'edit',
@@ -411,7 +412,7 @@ export class JailListComponent {
         this.entityList.doDelete(row);
       },
     },
-    ];
+    ] as EntityTableAction[];
   }
 
   isActionVisible(actionId: string, row: any): boolean {

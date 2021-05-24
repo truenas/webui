@@ -5,7 +5,6 @@ import { FormGroup } from '@angular/forms';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelect, MatSelectChange } from '@angular/material/select';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
@@ -19,7 +18,7 @@ import { EntityUtils, NULL_VALUE } from '../../../utils';
 
 @Component({
   selector: 'form-select',
-  styleUrls: ['form-select.component.scss', '../dynamic-field/dynamic-field.css'],
+  styleUrls: ['form-select.component.scss', '../dynamic-field/dynamic-field.scss'],
   templateUrl: './form-select.component.html',
 })
 export class FormSelectComponent implements Field, AfterViewInit, AfterViewChecked {

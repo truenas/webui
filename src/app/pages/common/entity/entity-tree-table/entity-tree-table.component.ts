@@ -20,7 +20,7 @@ interface FilterValue {
 @Component({
   selector: 'entity-tree-table',
   templateUrl: './entity-tree-table.component.html',
-  styleUrls: ['./entity-tree-table.component.css'],
+  styleUrls: ['./entity-tree-table.component.scss'],
   providers: [EntityTreeTableService],
 })
 export class EntityTreeTableComponent implements OnInit, AfterViewInit {

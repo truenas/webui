@@ -31,7 +31,7 @@ import { T } from '../../../../translate-marker';
 @Component({
   selector: 'widget-cpu',
   templateUrl: './widgetcpu.component.html',
-  styleUrls: ['./widgetcpu.component.css'],
+  styleUrls: ['./widgetcpu.component.scss'],
 })
 export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
   @ViewChild('load', { static: true }) cpuLoad: ViewChartGaugeComponent;
@@ -147,7 +147,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     });
   }
 
-  parseCpuData(cpuData: AllCpusUpdate) {
+  parseCpuData(cpuData: AllCpusUpdate): any[][] {
     this.tempAvailable = Boolean(cpuData.temperature && Object.keys(cpuData.temperature).length > 0);
     const usageColumn: any[] = ['Usage'];
     let temperatureColumn: any[] = ['Temperature'];
