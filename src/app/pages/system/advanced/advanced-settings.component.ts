@@ -192,7 +192,6 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     public datePipe: DatePipe,
     protected userService: UserService,
     private translate: TranslateService,
-    protected taskService: TaskService,
   ) {}
 
   ngOnInit(): void {
