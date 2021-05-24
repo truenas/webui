@@ -20,7 +20,7 @@ import { Snapshot } from 'app/interfaces/storage.interface';
 
 interface DialogData {
   datasets: string[];
-  snapshots: any;
+  snapshots: { [index: string]: string[] };
 }
 
 @Component({
@@ -281,7 +281,7 @@ export class SnapshotListComponent {
 
   restructureData(selected: Snapshot[]): DialogData {
     const datasets: string[] = [];
-    const snapshots: any = {};
+    const snapshots: { [index: string]: string[] } = {};
     selected.forEach((item: Snapshot) => {
       if (!snapshots[item.dataset]) {
         datasets.push(item.dataset);
