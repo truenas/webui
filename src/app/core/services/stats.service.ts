@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CoreEvent } from 'app/interfaces/events';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { BaseService } from './base.service';
 
 @Injectable({

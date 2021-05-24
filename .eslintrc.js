@@ -47,7 +47,6 @@ module.exports = {
         "no-restricted-syntax": "off",
         "guard-for-in": "off",
         "no-param-reassign": "off",
-        "import/no-extraneous-dependencies": "off",
         "no-tabs": "off",
         "no-mixed-spaces-and-tabs": "off",
         "@typescript-eslint/no-unused-expressions": "off",

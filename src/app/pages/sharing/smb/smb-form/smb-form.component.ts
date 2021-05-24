@@ -3,8 +3,9 @@ import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 
 import * as _ from 'lodash';
-import { combineLatest, of, Subscription } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
+import {
+  combineLatest, of, Subscription, Observable,
+} from 'rxjs';
 import {
   catchError, map, switchMap, take, tap, debounceTime,
 } from 'rxjs/operators';

@@ -639,7 +639,7 @@ export class ApiService {
             }
           }
         },
-        (err) => {
+        () => {
           // DEBUG: console.log(err)
         },
       );

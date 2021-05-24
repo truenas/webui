@@ -10,8 +10,7 @@ import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { AppTableAction } from 'app/pages/common/entity/table/table.component';
 import * as ipRegex from 'ip-regex';
-import { Subject } from 'rxjs';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject, Subscription } from 'rxjs';
 import { ProductType } from '../../enums/product-type.enum';
 import helptext from '../../helptext/network/interfaces/interfaces-list';
 
