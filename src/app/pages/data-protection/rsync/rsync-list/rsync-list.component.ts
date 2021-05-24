@@ -44,7 +44,7 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
     { name: T('Direction'), prop: 'direction', hidden: true },
     {
       name: T('Schedule'),
-      prop: 'cron',
+      prop: 'cron_schedule',
       hidden: true,
       widget: {
         icon: 'calendar-range',

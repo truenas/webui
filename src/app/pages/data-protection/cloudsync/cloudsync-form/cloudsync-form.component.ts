@@ -2,23 +2,25 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+
 import { Observable } from 'rxjs/Observable';
 import { filter, take } from 'rxjs/operators';
-
 import * as _ from 'lodash';
-import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import {
   WebSocketService, DialogService, CloudCredentialService, AppLoaderService, JobService,
-} from '../../../../services';
-import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/data-protection/cloudsync/cloudsync-form';
-import { EntityUtils } from '../../../common/entity/utils';
+} from 'app/services';
+import { T } from 'app/translate-marker';
+import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { ModalService } from 'app/services/modal.service';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { Direction } from 'app/enums/direction.enum';
+import { Schedule } from 'app/interfaces/schedule.interface';
 
 @Component({
   selector: 'app-cloudsync-add',
@@ -766,7 +768,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
   submitDataHandler(formValue: any): any {
     const value = _.cloneDeep(formValue);
     const attributes: any = {};
-    const schedule: any = {};
+    const schedule: Schedule = {};
 
     value['credentials'] = parseInt(value.credentials, 10);
 

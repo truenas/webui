@@ -2,17 +2,18 @@ import { Component } from '@angular/core';
 
 import * as _ from 'lodash';
 
-import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { WebSocketService } from '../../../../services';
-import { ModalService } from '../../../../services/modal.service';
-import { FieldSets } from '../../../common/entity/entity-form/classes/field-sets';
-import helptext from '../../../../helptext/data-protection/smart/smart';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { WebSocketService } from 'app/services';
+import { ModalService } from 'app/services/modal.service';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import helptext from 'app/helptext/data-protection/smart/smart';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { take } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { T } from 'app/translate-marker';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector: 'app-smart-test-add',
@@ -26,7 +27,7 @@ export class SmartFormComponent implements FormConfiguration {
   protected entityForm: EntityFormComponent;
   isEntity = true;
   isNew = false;
-  protected disk_field: any;
+  protected disk_field: FieldConfig;
   pk: number;
   title: string;
   protected isOneColumnForm = true;

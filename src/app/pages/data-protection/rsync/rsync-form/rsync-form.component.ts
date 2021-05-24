@@ -1,19 +1,23 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Option } from 'app/interfaces/option.interface';
 
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
-import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { TaskService, UserService } from '../../../../services';
-import { ModalService } from '../../../../services/modal.service';
-import helptext from '../../../../helptext/data-protection/resync/resync-form';
-import { FieldSets } from '../../../common/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { TaskService, UserService } from 'app/services';
+import { ModalService } from 'app/services/modal.service';
+import helptext from 'app/helptext/data-protection/resync/resync-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Direction } from 'app/enums/direction.enum';
 import { T } from 'app/translate-marker';
+import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
+import { RsyncMode } from 'app/enums/rsync-mode.enum';
+import { Schedule } from 'app/interfaces/schedule.interface';
+import { Option } from 'app/interfaces/option.interface';
+
 @Component({
   selector: 'app-rsync-task-add',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -148,7 +152,7 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
       config: [
         {
           type: 'scheduler',
-          name: 'rsync_picker',
+          name: 'cron_schedule',
           placeholder: helptext.rsync_picker_placeholder,
           tooltip: helptext.rsync_picker_tooltip,
           required: true,
@@ -239,7 +243,7 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
 
   protected rsync_module_field: string[] = ['remotemodule'];
   protected rsync_ssh_field: string[] = ['remoteport', 'remotepath', 'validate_rpath'];
-  protected user_field: any;
+  protected user_field: FieldConfig;
   protected mode_subscription: Subscription;
 
   constructor(
@@ -272,9 +276,9 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
   }
 
   beforeSubmit(value: any): void {
-    const spl = value.rsync_picker.split(' ');
-    delete value.rsync_picker;
-    const schedule: any = {};
+    const spl = value.cron_schedule.split(' ');
+    delete value.cron_schedule;
+    const schedule: Schedule = {};
     schedule['minute'] = spl[0];
     schedule['hour'] = spl[1];
     schedule['dom'] = spl[2];
@@ -283,10 +287,8 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
     value['schedule'] = schedule;
   }
 
-  resourceTransformIncomingRestData(data: any): any {
-    data[
-      'rsync_picker'
-    ] = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
+  resourceTransformIncomingRestData(data: RsyncTaskUi): RsyncTaskUi {
+    data.cron_schedule = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
     return data;
   }
 
@@ -300,10 +302,10 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  hideFields(mode: any): void {
+  hideFields(mode: RsyncMode): void {
     let hide_fields;
     let show_fields;
-    if (mode === 'SSH') {
+    if (mode === RsyncMode.Ssh) {
       hide_fields = this.rsync_module_field;
       show_fields = this.rsync_ssh_field;
     } else {
@@ -319,6 +321,6 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.mode_subscription.unsubscribe();
+    this.mode_subscription?.unsubscribe();
   }
 }

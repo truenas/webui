@@ -5,12 +5,12 @@ import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
 import { ModalService } from 'app/services/modal.service';
-import { EntityFormComponent } from '../../../common/entity/entity-form/entity-form.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import helptext from '../../../../helptext/data-protection/snapshot/snapshot-form';
-import { DialogService, StorageService, TaskService } from '../../../../services';
-import { UnitType } from '../../../common/entity/entity-form/models/field-config.interface';
-import { EntityUtils } from '../../../common/entity/utils';
+import helptext from 'app/helptext/data-protection/snapshot/snapshot-form';
+import { DialogService, StorageService, TaskService } from 'app/services';
+import { UnitType } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
@@ -90,7 +90,7 @@ export class SnapshotFormComponent implements FormConfiguration, OnDestroy {
           validation: [Validators.required, Validators.pattern('[^/]+')],
         }, {
           type: 'scheduler',
-          name: 'snapshot_picker',
+          name: 'cron_schedule',
           placeholder: helptext.snapshot_picker_placeholder,
           tooltip: helptext.snapshot_picker_tooltip,
           options: ['begin', 'end'],
@@ -177,7 +177,7 @@ export class SnapshotFormComponent implements FormConfiguration, OnDestroy {
       }
     });
 
-    entityForm.formGroup.controls['snapshot_picker'].valueChanges.subscribe((value) => {
+    entityForm.formGroup.controls['cron_schedule'].valueChanges.subscribe((value) => {
       if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
         this.entityForm.setDisabled('begin', true, true);
         this.entityForm.setDisabled('end', true, true);
@@ -189,13 +189,11 @@ export class SnapshotFormComponent implements FormConfiguration, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.dataset_subscription) {
-      this.dataset_subscription.unsubscribe();
-    }
+    this.dataset_subscription?.unsubscribe();
   }
 
   resourceTransformIncomingRestData(data: any): any {
-    data['snapshot_picker'] = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
+    data['cron_schedule'] = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
     data['begin'] = data.schedule.begin;
     data['end'] = data.schedule.end;
 
@@ -210,8 +208,8 @@ export class SnapshotFormComponent implements FormConfiguration, OnDestroy {
     value['lifetime_unit'] = _.endsWith(lifetime[1], 'S') ? lifetime[1].substring(0, lifetime[1].length - 1) : lifetime[1];
     delete value.lifetime;
 
-    const spl = value.snapshot_picker.split(' ');
-    delete value.snapshot_picker;
+    const spl = value.cron_schedule.split(' ');
+    delete value.cron_schedule;
 
     value['schedule'] = {
       begin: value['begin'],

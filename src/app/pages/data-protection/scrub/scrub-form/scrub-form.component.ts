@@ -1,16 +1,15 @@
-import { Subscription } from 'rxjs';
 import { ModalService } from 'app/services/modal.service';
 import { Component } from '@angular/core';
 
 import * as _ from 'lodash';
 
-import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { TaskService } from '../../../../services';
-
-import helptext from '../../../../helptext/data-protection/scrub/scrub-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { TaskService } from 'app/services';
+import helptext from 'app/helptext/data-protection/scrub/scrub-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+
 @Component({
   selector: 'app-scrub-task-add',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -84,12 +83,12 @@ export class ScrubFormComponent implements FormConfiguration {
     },
   ]);
 
-  protected volume_field: any;
-  protected month_field: any;
-  protected day_field: any;
-  protected minute_field: any;
-  protected hour_field: any;
-  protected daymonth_field: any;
+  protected volume_field: FieldConfig;
+  protected month_field: FieldConfig;
+  protected day_field: FieldConfig;
+  protected minute_field: FieldConfig;
+  protected hour_field: FieldConfig;
+  protected daymonth_field: FieldConfig;
 
   constructor(protected taskService: TaskService, protected modalService: ModalService) {}
 

@@ -27,7 +27,7 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
   route_add_tooltip = this.translate.instant(T('Add Scrub Task'));
   route_edit: string[] = ['tasks', 'scrub', 'edit'];
   entityList: EntityTableComponent;
-  parent: any;
+  parent: ScrubListComponent;
 
   columns: any[] = [
     { name: T('Pool'), prop: 'pool_name', always_display: true },
