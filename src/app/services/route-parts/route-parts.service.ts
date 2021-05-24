@@ -3,7 +3,7 @@ import {
   Router, ActivatedRoute, NavigationEnd, ActivatedRouteSnapshot, Params, PRIMARY_OUTLET,
 } from '@angular/router';
 
-interface IRoutePart {
+interface RoutePart {
   title: string;
   breadcrumb: string;
   params?: Params;
@@ -12,10 +12,9 @@ interface IRoutePart {
 
 @Injectable()
 export class RoutePartsService {
-  routeParts: IRoutePart[];
-  constructor(private activatedRoute: ActivatedRoute, private router: Router) {}
+  routeParts: RoutePart[];
 
-  generateRouteParts(snapshot: ActivatedRouteSnapshot): IRoutePart[] {
+  generateRouteParts(snapshot: ActivatedRouteSnapshot): RoutePart[] {
     var routeParts = <any[]>[];
     if (snapshot) {
       if (snapshot.firstChild) {

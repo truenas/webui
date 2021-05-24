@@ -671,13 +671,13 @@ export class CertificateAddComponent {
       }
     });
 
-    this.ws.call('certificate.query').subscribe((res: any[]) => {
+    this.ws.call('certificate.query').subscribe((certificates) => {
       this.csrlist = this.getTarget('csrlist');
-      res.forEach((item) => {
-        if (item.CSR !== null) {
-          this.CSRList.push(item);
+      certificates.forEach((certificate) => {
+        if (certificate.CSR !== null) {
+          this.CSRList.push(certificate);
           this.csrlist.options.push(
-            { label: item.name, value: item.id },
+            { label: certificate.name, value: certificate.id },
           );
         }
       });

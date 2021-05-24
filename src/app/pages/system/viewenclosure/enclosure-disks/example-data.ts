@@ -14,7 +14,6 @@
  "transfermode": "Auto",
  "hddstandby": "ALWAYS ON",
  "advpowermgmt": "DISABLED",
- "acousticlevel": "DISABLED",
  "togglesmart": true,
  "smartoptions": "",
  "expiretime": null,
@@ -26,7 +25,6 @@
 
  */
 
-import { DiskAcousticLevel } from 'app/enums/disk-acoustic-level.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 
@@ -67,7 +65,6 @@ export class ExampleData {
           transfermode: 'Auto',
           hddstandby: DiskStandby.AlwaysOn,
           advpowermgmt: DiskPowerLevel.Disabled,
-          acousticlevel: DiskAcousticLevel.Disabled,
           togglesmart: true,
           smartoptions: '',
           expiretime: null as string,

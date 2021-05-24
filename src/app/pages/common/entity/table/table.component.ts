@@ -37,6 +37,7 @@ export interface InputTableConf {
   }[];
 
   add?(): any; // add action function
+  afterGetData?(data: any): void;
   edit?(any: any): any; // edit row
   delete?(item: any, table: any): any; // customize delete row method
   dataSourceHelper?(any: any): any; // customise handle/modify dataSource
@@ -45,6 +46,9 @@ export interface InputTableConf {
   isActionVisible?(actionId: string, entity: any): boolean; // determine if action is visible
   getDeleteCallParams?(row: any, id: any): any; // get delete Params
   onButtonClick?(row: any): any;
+
+  expandable?: boolean; // field introduced by ExpandableTable, "fake" field
+  afterGetDataExpandable?(data: any): void; // field introduced by ExpandableTable, "fake" field
 }
 
 @Component({

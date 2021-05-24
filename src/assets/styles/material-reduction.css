@@ -76,7 +76,7 @@ span.code{
 }
 
 /*
- * Variables 
+ * Variables
  * height 36px
  *
  * */
@@ -156,9 +156,9 @@ entity-table .mat-card > *{
 /* FreeNAS Specific */
 
 /* This element is part of entity-table.
- * It currently uses css to do artificially 
+ * It currently uses css to do artificially
  * put itselt inside the title bar.
- * This needs to be changed in the markup 
+ * This needs to be changed in the markup
  * instead of using this type of hack */
 #filter{
   position: static !important;
@@ -265,7 +265,7 @@ input.mat-input-element::placeholder {
 .form-element select{
   /*width: calc(100% - 24px) !important;*/
   width: 100% !important;
-  line-height: normal !important; 
+  line-height: normal !important;
   min-height: 33px;
 }
 
@@ -316,7 +316,7 @@ entity-form-list .list-action-block-wrapper .form-element select{
 }
 
 .form-element.form-combobox .mat-menu-trigger .mat-icon{
-  position: relative !important; 
+  position: relative !important;
   top: 7px !important;
 }
 
@@ -499,7 +499,7 @@ tooltip button i{
   opacity: 0.5;
 }
 
-.mat-card-actions .mat-button, 
+.mat-card-actions .mat-button,
 .mat-card-actions .mat-flat-button{
   background:var(--btn-default-bg) !important;
   background-color:var(--btn-default-bg) !important;
@@ -507,8 +507,8 @@ tooltip button i{
 }
 
 .mat-button, .mat-flat-button,
-button.mat-button.btn-default, 
-button.mat-button.mat-default, 
+button.mat-button.btn-default,
+button.mat-button.mat-default,
 .mat-card-actions button.mat-default, button.mat-default,
 button.mat-button.mat-accent.btn-default,
 button.mat-button[type="button"]:not(button.mat-primary) {
@@ -523,7 +523,8 @@ button.mat-button.mat-accent[type="button"]:hover{
   color: var(--fg2) !important;
 }
 
-button.mat-button.mat-primary{
+a.mat-button.mat-primary,
+button.mat-button.mat-primary {
   background-color:var(--primary) !important;
   color:var(--primary-txt) !important;
   opacity: 1 !important;
@@ -566,7 +567,7 @@ button.mat-menu-trigger.menu-toggle.mat-button{
 
 /* Nested Cards */
 .mat-card .form-card.mat-card{
-  box-shadow: unset; 
+  box-shadow: unset;
   border: none;
 }
 
@@ -649,20 +650,20 @@ tr.mat-header-row,
 }
 
 .ui-treetable tr,
-.mat-row, 
-.mat-header-row, 
-.mat-footer-row, 
-th.mat-header-cell, 
-td.mat-cell, 
+.mat-row,
+.mat-header-row,
+.mat-footer-row,
+th.mat-header-cell,
+td.mat-cell,
 td.mat-footer-cell{
   border-bottom-color: var(--lines) !important;
 }
 
-mat-row, 
-mat-header-row, 
-mat-footer-row, 
-th.mat-header-cell, 
-td.mat-cell, 
+mat-row,
+mat-header-row,
+mat-footer-row,
+th.mat-header-cell,
+td.mat-cell,
 td.mat-footer-cell{
   color: var(--fg2) !important;
   vertical-align: middle;
@@ -866,7 +867,7 @@ mat-card.mat-card .mat-list-base{
   list-style-type: none;
 }
 
-.ix-tree-node { 
+.ix-tree-node {
 }
 
 .ix-tree-node .ix-tree-node {
@@ -909,4 +910,41 @@ ul.nested-list{
 
 ul.nested-list li{
   margin-left: 24px;
+}
+
+.expanded-table-container {
+  height: 100%;
+}
+.expanded-table {
+  height: 100%;
+}
+.expanded-table.expanded-height {
+  height: 90%;
+}
+.expanded-table .mat-expansion-panel-body {
+  padding: 0 !important;
+}
+
+.expanded-table .mat-expansion-panel-header {
+  height: auto !important;
+  margin: 5px 0;
+  padding: inherit 0;
+}
+
+.expanded-table .mat-expansion-panel-header span {
+  padding: 0;
+}
+
+
+.expanded-table mat-card {
+  margin: 0 !important;
+}
+
+.expanded-table mat-panel-title, .expanded-table mat-panel-description {
+  margin: 0 !important;
+}
+
+.expanded-table mat-panel-title {
+  display: flex;
+  align-items: center;
 }
