@@ -2,21 +2,25 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+
 import { Observable } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
-
 import * as _ from 'lodash';
-import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import {
   WebSocketService, DialogService, CloudCredentialService, AppLoaderService, JobService,
-} from '../../../../services';
-import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/data-protection/cloudsync/cloudsync-form';
-import { EntityUtils } from '../../../common/entity/utils';
+} from 'app/services';
+import { T } from 'app/translate-marker';
+import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { ModalService } from 'app/services/modal.service';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { TransferMode } from 'app/enums/transfer-mode.enum';
+import { Direction } from 'app/enums/direction.enum';
+import { Schedule } from 'app/interfaces/schedule.interface';
 
 @Component({
   selector: 'app-cloudsync-add',
@@ -52,10 +56,10 @@ export class CloudsyncFormComponent implements FormConfiguration {
           placeholder: helptext.direction_placeholder,
           tooltip: helptext.direction_tooltip,
           options: [
-            { label: 'PUSH', value: 'PUSH' },
-            { label: 'PULL', value: 'PULL' },
+            { label: T('PUSH'), value: Direction.Push },
+            { label: T('PULL'), value: Direction.Pull },
           ],
-          value: 'PULL',
+          value: Direction.Pull,
           required: true,
           validation: helptext.direction_validation,
         }, {
@@ -64,11 +68,11 @@ export class CloudsyncFormComponent implements FormConfiguration {
           placeholder: helptext.transfer_mode_placeholder,
           tooltip: helptext.transfer_mode_warning_sync + ' ' + helptext.transfer_mode_warning_copy + ' ' + helptext.transfer_mode_warning_move,
           options: [
-            { label: 'SYNC', value: 'SYNC' },
-            { label: 'COPY', value: 'COPY' },
-            { label: 'MOVE', value: 'MOVE' },
+            { label: T('SYNC'), value: TransferMode.Sync },
+            { label: T('COPY'), value: TransferMode.Copy },
+            { label: T('MOVE'), value: TransferMode.Move },
           ],
-          value: 'COPY',
+          value: TransferMode.Copy,
           required: true,
           validation: helptext.transfer_mode_validation,
         },
@@ -201,10 +205,10 @@ export class CloudsyncFormComponent implements FormConfiguration {
               connective: 'OR',
               when: [{
                 name: 'direction',
-                value: 'PULL',
+                value: Direction.Pull,
               }, {
                 name: 'transfer_mode',
-                value: 'MOVE',
+                value: TransferMode.Move,
               }],
             },
           ],
@@ -680,21 +684,21 @@ export class CloudsyncFormComponent implements FormConfiguration {
     // When user interacts with direction dropdown, change transfer_mode to COPY
     this.formGroup
       .get('direction')
-      .valueChanges.pipe(filter(() => this.formGroup.get('transfer_mode').value !== 'COPY'))
+      .valueChanges.pipe(filter(() => this.formGroup.get('transfer_mode').value !== TransferMode.Copy))
       .subscribe(() => {
         this.dialog.Info(helptext.resetTransferModeDialog.title, helptext.resetTransferModeDialog.content, '500px', 'info', true);
-        this.formGroup.get('transfer_mode').setValue('COPY');
+        this.formGroup.get('transfer_mode').setValue(TransferMode.Copy);
       });
 
     // Update transfer_mode paragraphs when the mode is changed
-    this.formGroup.get('transfer_mode').valueChanges.subscribe((mode: any) => {
+    this.formGroup.get('transfer_mode').valueChanges.subscribe((mode: TransferMode) => {
       const paragraph = entityForm.fieldConfig.find((config: any) => config.name === 'transfer_mode_warning');
       switch (mode) {
-        case 'SYNC':
+        case TransferMode.Sync:
           paragraph.paraText = helptext.transfer_mode_warning_sync;
           paragraph.paragraphIcon = 'sync';
           break;
-        case 'MOVE':
+        case TransferMode.Move:
           paragraph.paraText = helptext.transfer_mode_warning_move;
           paragraph.paragraphIcon = 'move_to_inbox';
           break;
@@ -763,7 +767,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
   submitDataHandler(formValue: any): any {
     const value = _.cloneDeep(formValue);
     const attributes: any = {};
-    const schedule: any = {};
+    const schedule: Schedule = {};
 
     value['credentials'] = parseInt(value.credentials, 10);
 
@@ -816,7 +820,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       return;
     }
 
-    if (value['direction'] == 'PULL') {
+    if (value['direction'] == Direction.Pull) {
       value['snapshot'] = false;
     }
     return value;

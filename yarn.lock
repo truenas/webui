@@ -4459,10 +4459,10 @@ cron-parser@2.13.0:
     is-nan "^1.2.1"
     moment-timezone "^0.5.25"
 
-cronstrue@1.91.0:
-  version "1.91.0"
-  resolved "https://registry.yarnpkg.com/cronstrue/-/cronstrue-1.91.0.tgz#97b5520f0ea60f62ff6628df61af16c13f9959ec"
-  integrity sha512-nl50/1Nmi2LVz246KbzQ/ySPjV8bst4G2vqoXHFmWpBHsq7TVxInsrM0/KNpDJxeOZtOzFKqECJ7OjAKc8tx1w==
+cronstrue@1.113.0:
+  version "1.113.0"
+  resolved "https://registry.yarnpkg.com/cronstrue/-/cronstrue-1.113.0.tgz#43d437f75604f70c5badfcca26ac7619f50cd849"
+  integrity sha512-j0+CQsQx0g0Iv6nQs0bHkLcpeCzYShWUdQ3QwSHV+dUyTLqI/3NPrHceeDfTXmC3Re4osMli5+wAYpffNO+e9w==
 
 cross-spawn@6.0.5, cross-spawn@^6.0.0:
   version "6.0.5"

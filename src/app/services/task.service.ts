@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Option } from 'app/interfaces/option.interface';
-import { Pool } from 'app/interfaces/pool.interface';
+
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
 import { Observable } from 'rxjs';
-import { RestService } from './rest.service';
+import cronstrue from 'cronstrue/i18n';
+import { Options as CronOptions } from 'cronstrue/dist/options';
+
+import { Option } from 'app/interfaces/option.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { WebSocketService } from './ws.service';
+import { LanguageService } from './language.service';
 
 @Injectable()
 export class TaskService {
@@ -109,8 +113,12 @@ export class TaskService {
     { label: '23:45:00', value: '23:45' },
     { label: '23:59:00', value: '23:59' },
   ];
+  protected cronOptions: CronOptions = {
+    verbose: true,
+    locale: this.language.currentLanguage,
+  };
 
-  constructor(protected rest: RestService, protected ws: WebSocketService) {}
+  constructor(protected ws: WebSocketService, protected language: LanguageService) {}
 
   getTimeOptions(): Option[] {
     return this.time_options;
@@ -133,5 +141,15 @@ export class TaskService {
     return new Array(count)
       .fill(null)
       .map(() => ((schedule.next() as unknown) as { value: { _date: Moment } }).value._date);
+  }
+
+  getTaskNextRun(scheduleExpression: string): string {
+    const schedule = cronParser.parseExpression(scheduleExpression, { iterator: true });
+
+    return ((schedule.next() as unknown) as { value: { _date: Moment } }).value._date.fromNow();
+  }
+
+  getTaskCronDescription(scheduleExpression: string, options: CronOptions = this.cronOptions): string {
+    return cronstrue.toString(scheduleExpression, options);
   }
 }

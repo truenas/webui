@@ -67,7 +67,7 @@
        matColumnDef="{{column}}">
           <th [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" class="data-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
           <td [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" [ngStyle]="{'cursor': (checkLength() && !conf.onRowClick) ? 'auto' : 'pointer'}" class="data-column" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" mat-cell *matCellDef="let element">
-            <div class="text-overflow-ellipsis">{{element[column]}}</div>
+            <div class="text-overflow-ellipsis" [matTooltip]="currentColumns[i].enableMatTooltip ? element[column] : null">{{element[column]}}</div>
           </td>
         </ng-container>
 
