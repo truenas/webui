@@ -19,7 +19,7 @@ interface ServiceRow extends Service {
 
 @Component({
   selector: 'services',
-  styleUrls: ['./services.component.css'],
+  styleUrls: ['./services.component.scss'],
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [IscsiService],
 })

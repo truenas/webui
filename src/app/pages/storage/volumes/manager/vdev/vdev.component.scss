@@ -1,0 +1,48 @@
+.vdev-wrapper {
+  display: flex;
+}
+
+.vdev-table {
+  padding-bottom: 10px;
+}
+
+.vdev-actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  padding: 50px 0;
+}
+
+.vdev-action-btn {
+  border: none;
+  outline: none;
+}
+
+.vdev-type {
+  flex: 1 1 auto;
+}
+
+.vdev-close {
+  flex: 0 0 auto;
+}
+
+.vdevTooltip {
+  display: auto; 
+}
+
+.custom_cell_styling { 
+  height: 20px;
+  overflow: hidden;
+  padding-left: 5px;
+  width: 100%;
+}
+
+.datainfo {
+  margin-left: 16px;
+}
+
+@media screen and (max-width: 1399px) {
+  .vdev-wrapper {
+    margin-left: 1rem;
+  }
+}

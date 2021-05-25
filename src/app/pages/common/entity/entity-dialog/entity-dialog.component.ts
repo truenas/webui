@@ -19,7 +19,7 @@ import { T } from '../../../../translate-marker';
 @Component({
   selector: 'app-entity-dialog',
   templateUrl: './entity-dialog.component.html',
-  styleUrls: ['./entity-dialog.component.css'],
+  styleUrls: ['./entity-dialog.component.scss'],
   providers: [EntityFormService, DatePipe, FieldRelationService],
 })
 export class EntityDialogComponent<P = any> implements OnInit {

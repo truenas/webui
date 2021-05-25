@@ -178,7 +178,7 @@ export class ServiceNFSComponent implements FormConfiguration {
     protected rest: RestService, protected ws: WebSocketService,
     private dialog: DialogService) {}
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     this.v4krbValue = data.v4_krb;
     // If validIps is slow to load, skip check on load (It's still done on save)
     if (this.validBindIps?.length) {
@@ -187,7 +187,7 @@ export class ServiceNFSComponent implements FormConfiguration {
     return data;
   }
 
-  isCustActionVisible(actionname: string) {
+  isCustActionVisible(actionname: string): boolean {
     if (actionname === 'has_nfs_status' && (!this.hasNfsStatus && this.v4krbValue
       && this.adHealth === 'HEALTHY')) {
       return true;
@@ -195,7 +195,7 @@ export class ServiceNFSComponent implements FormConfiguration {
     return false;
   }
 
-  compareBindIps(data: any) {
+  compareBindIps(data: any): any {
     // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
     data.bindip = data.bindip ? data.bindip : [];
     if (this.validBindIps && this.validBindIps.length > 0) {
@@ -210,7 +210,7 @@ export class ServiceNFSComponent implements FormConfiguration {
     return data;
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     if (this.productType.includes(ProductType.Scale)) {
       this.hideOnScale.forEach((name) => {
         entityForm.setDisabled(name, true, true);
@@ -247,7 +247,7 @@ export class ServiceNFSComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     if (!data.userd_manage_gids) {
       data.userd_manage_gids = false;
     }
@@ -260,14 +260,14 @@ export class ServiceNFSComponent implements FormConfiguration {
     data = this.compareBindIps(data);
   }
 
-  afterSave(data: any) {
+  afterSave(data: any): void {
     this.router.navigate(this.route_success);
     if (data.formGroup.value.v4_krb && !this.v4krbValue) {
       this.addSPN();
     }
   }
 
-  addSPN() {
+  addSPN(): void {
     const that = this;
     if (!this.hasNfsStatus && this.adHealth === 'HEALTHY') {
       this.dialog.confirm(helptext.add_principal_prompt.title,

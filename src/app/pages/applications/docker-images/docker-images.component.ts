@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { latestVersion } from 'app/constants/catalog.constants';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { ApplicationsService } from '../applications.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService, StorageService, ValidationService } from 'app/services';
@@ -24,10 +25,9 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
 
   protected entityList: any;
   protected loaderOpen = false;
-  protected queryCall = 'container.image.query';
+  protected queryCall: 'container.image.query' = 'container.image.query';
   protected wsDelete = 'container.image.delete';
   protected disableActionsConfig = true;
-  private dialogRef: any;
   private refreshTableSubscription: any;
   protected addComponent: PullImageFormComponent;
 
@@ -94,7 +94,7 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     this.entityList = entityList;
   }
 
-  getActions(row: any) {
+  getActions(row: any): EntityTableAction[] {
     const actions = [];
     actions.push({
       id: row.id,
@@ -115,7 +115,7 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
       },
     });
 
-    return actions;
+    return actions as EntityTableAction[];
   }
 
   resourceTransformIncomingRestData(d: any[]): any[] {

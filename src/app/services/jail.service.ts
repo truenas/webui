@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { RestService } from './rest.service';
 import { WebSocketService } from './ws.service';
@@ -9,33 +10,35 @@ export class JailService {
 
   constructor(protected rest: RestService, protected ws: WebSocketService) { }
 
-  listJails() { return this.ws.call('jail.query', {}); }
+  listJails(): Observable<any[]> {
+    return this.ws.call('jail.query', {});
+  }
 
-  getReleaseChoices() {
+  getReleaseChoices(): Observable<any[]> {
     return this.ws.call('jail.releases_choices', [true]);
   }
 
-  getBranches() {
+  getBranches(): Observable<any> {
     return this.ws.job('plugin.official_repositories');
   }
 
-  getVersion() {
+  getVersion(): Observable<any> {
     return this.ws.call('jail.get_version');
   }
 
-  getInstalledPlugins() {
+  getInstalledPlugins(): Observable<any[]> {
     return this.ws.job('plugin.query');
   }
 
-  getTemplates() {
+  getTemplates(): Observable<any[]> {
     return this.ws.call('jail.query', [[['type', '=', 'template']]]);
   }
 
-  getInterfaceChoice() {
+  getInterfaceChoice(): Observable<any> {
     return this.ws.call('jail.interface_choices');
   }
 
-  getDefaultConfiguration() {
+  getDefaultConfiguration(): Observable<any> {
     return this.ws.call('jail.default_configuration');
   }
 }

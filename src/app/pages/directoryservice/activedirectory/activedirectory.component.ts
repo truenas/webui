@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { ProductType } from '../../../enums/product-type.enum';
 
 import { EntityUtils } from '../../common/entity/utils';
@@ -61,7 +61,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       id: helptext.activedirectory_custactions_clearcache_id,
       name: helptext.activedirectory_custactions_clearcache_name,
       function: async () => {
-        this.systemGeneralService.refreshDirServicesCache().subscribe((cache_status) => {
+        this.systemGeneralService.refreshDirServicesCache().subscribe(() => {
           this.dialogservice.Info(helptext.activedirectory_custactions_clearcache_dialog_title,
             helptext.activedirectory_custactions_clearcache_dialog_message);
         });

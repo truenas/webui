@@ -13,7 +13,7 @@ import { ModalService } from '../../../../../services/modal.service';
 @Component({
   selector: 'app-cron-job-add',
   templateUrl: './cron-form.component.html',
-  styleUrls: ['cron-form.component.css'],
+  styleUrls: ['cron-form.component.scss'],
   providers: [UserService],
 })
 export class CronFormComponent {

@@ -262,7 +262,7 @@ export class ServiceSMBComponent implements FormConfiguration {
     },
   ];
 
-  isCustActionVisible(actionId: string) {
+  isCustActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
     } if (actionId === 'basic_mode' && this.isBasicMode === true) {
@@ -271,7 +271,7 @@ export class ServiceSMBComponent implements FormConfiguration {
     return true;
   }
 
-  preInit(entityForm: any) {
+  preInit(entityForm: any): void {
     this.entityEdit = entityForm;
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
@@ -326,7 +326,7 @@ export class ServiceSMBComponent implements FormConfiguration {
     protected idmapService: IdmapService, protected userService: UserService,
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     // If validIps is slow to load, skip check on load (It's still done on save)
     if (this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
       return this.compareBindIps(data);
@@ -334,7 +334,7 @@ export class ServiceSMBComponent implements FormConfiguration {
     return data;
   }
 
-  compareBindIps(data: any) {
+  compareBindIps(data: any): any {
     // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
     data.bindip = data.bindip ? data.bindip : [];
     if (this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
@@ -349,11 +349,11 @@ export class ServiceSMBComponent implements FormConfiguration {
     return data;
   }
 
-  afterInit(entityEdit: EntityFormComponent) {
+  afterInit(entityEdit: EntityFormComponent): void {
     entityEdit.submitFunction = (body) => this.ws.call('smb.update', [body]);
   }
 
-  updateGroupSearchOptions(value = '', parent: any) {
+  updateGroupSearchOptions(value = '', parent: any): void {
     (parent.userService as UserService).groupQueryDSCache(value, true).subscribe((items) => {
       const groupOptions: Option[] = [];
       for (let i = 0; i < items.length; i++) {
@@ -363,7 +363,7 @@ export class ServiceSMBComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(data: any) {
-    data = this.compareBindIps(data);
+  beforeSubmit(data: any): void {
+    this.compareBindIps(data);
   }
 }

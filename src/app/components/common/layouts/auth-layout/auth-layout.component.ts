@@ -5,8 +5,6 @@ import { Theme, DefaultTheme } from 'app/services/theme/theme.service';
 @Component({
   selector: 'app-auth-layout',
   templateUrl: './auth-layout.component.html',
-  styleUrls: ['./auth-layout.component.css'],
-
 })
 export class AuthLayoutComponent implements OnInit {
   private theme: Theme = DefaultTheme;
@@ -27,7 +25,6 @@ export class AuthLayoutComponent implements OnInit {
     const admin_layout_el = (<any>document).getElementsByTagName('APP-AUTH-LAYOUT')[0];
 
     palette.forEach((color) => {
-      const swatch = theme[color];
       admin_layout_el.style.setProperty('--' + color, theme[color]);
       (<any>document).documentElement.style.setProperty('--' + color, theme[color]);
     });

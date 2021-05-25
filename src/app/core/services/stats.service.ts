@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CoreEvent } from 'app/interfaces/events';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { BaseService } from './base.service';
 
 @Injectable({
@@ -14,15 +14,13 @@ export class StatsService extends BaseService {
   protected realtimeEvents: Subscription;
   protected diskQueryEvents: Subscription;
 
-  protected onAuthenticated(evt: CoreEvent): void {
+  protected onAuthenticated(): void {
     this.authenticated = true;
 
     // TODO: use disk.query to detect drive change events
     this.diskQueryEvents = this.websocket.sub('disk.query').subscribe((res) => {
       this.core.emit({ name: 'DiskStateChanged', data: res, sender: this });
     });
-
-    const queryOptions = { select: ['name', 'type'] };
 
     if (this.subscribers > 0 && !this.realtimeEvents) {
       this.realtimeEvents = this.websocket.sub<ReportingRealtimeUpdate>('reporting.realtime').subscribe((update) => {

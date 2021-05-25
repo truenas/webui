@@ -106,7 +106,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
     this.entityList = entityList;
   }
 
-  isActionVisible(actionId: string, row: any): boolean {
+  isActionVisible(actionId: string): boolean {
     if (actionId == 'edit' || actionId == 'add') {
       return false;
     }
@@ -299,7 +299,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
     }
   }
 
-  getAddActions() {
+  getAddActions(): EntityTableAction[] {
     return [{
       label: T('Stats/Settings'),
       onClick: () => {
@@ -371,7 +371,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
         this.scrub();
       },
     },
-    ];
+    ] as EntityTableAction[];
   }
 
   goToStatus(): void {

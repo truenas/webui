@@ -11,17 +11,17 @@ export interface AdvancedConfig {
   id: number;
   isolated_gpu_pci_ids: string[];
   kdump_enabled: boolean;
-  motd: string;
+  motd: string; // Enum? FREENAS_MOTD
   overprovision: number;
   powerdaemon: boolean;
-  sed_user: string;
+  sed_user: string; // Enum? "USER"
   serialconsole: boolean;
   serialport: string;
   serialspeed: string;
   swapondrive: number;
   syslog_tls_certificate: number;
-  syslog_transport: string;
-  sysloglevel: string;
+  syslog_transport: string; // Enum? UDP
+  sysloglevel: string; // Enum? F_CRIT
   syslogserver: string;
   traceback: boolean;
   uploadcrash: boolean;

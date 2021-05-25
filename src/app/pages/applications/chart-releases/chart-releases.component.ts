@@ -235,7 +235,7 @@ export class ChartReleasesComponent implements OnInit {
     this.chartItems = {};
     this.filerChartItems();
     this.showLoadStatus(EmptyType.loading);
-    const checkTitle = setTimeout(() => {
+    setTimeout(() => {
       this.updateChartReleases();
     }, 1000);
   }
@@ -376,7 +376,7 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  edit(name: string, id: string): void {
+  edit(name: string): void {
     const catalogApp = this.chartItems[name];
     if (catalogApp && catalogApp.chart_name != ixChartApp) {
       const chartFormComponent = new ChartFormComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
@@ -544,7 +544,7 @@ export class ChartReleasesComponent implements OnInit {
         }));
         this.dialogService.dialogForm(this.choosePod, true);
       }
-    }, (err) => {
+    }, () => {
       this.appLoaderService.close();
     });
   }
@@ -573,7 +573,7 @@ export class ChartReleasesComponent implements OnInit {
         }));
         this.dialogService.dialogForm(this.choosePodForLogs, true);
       }
-    }, (err) => {
+    }, () => {
       this.appLoaderService.close();
     });
   }
@@ -624,7 +624,7 @@ export class ChartReleasesComponent implements OnInit {
   showChartEvents(name: string): void {
     const catalogApp = this.chartItems[name];
     if (catalogApp) {
-      const dialogRef = this.mdDialog.open(ChartEventsDialog, {
+      this.mdDialog.open(ChartEventsDialog, {
         width: '686px',
         maxWidth: '686px',
         data: catalogApp,

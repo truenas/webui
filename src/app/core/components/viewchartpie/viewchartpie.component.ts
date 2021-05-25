@@ -6,7 +6,6 @@ import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/view
   selector: 'viewchartpie',
   template: ViewChartMetadata.template,
   // templateUrl: './viewchartpie.component.html',
-  styleUrls: ['./viewchartpie.component.css'],
 })
 export class ViewChartPieComponent extends ViewChartDonutComponent implements OnInit {
   chartType = 'pie';

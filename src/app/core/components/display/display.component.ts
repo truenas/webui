@@ -31,9 +31,6 @@ export class Display {
     // Insert into DOM
     this.viewContainerRef.insert(compRef.hostView);// addChild();
 
-    // Deal with component's selector element
-    const container = this.viewContainerRef.element.nativeElement;
-
     // Setup ChangeDetection and add to DisplayList
     compRef.changeDetectorRef.detectChanges();
     this.displayList.push(instance);
@@ -42,7 +39,6 @@ export class Display {
   private moveContents(compRef: any, container: any): void {
     const selector = compRef.hostView.rootNodes['0'];
     const contents = compRef.hostView.rootNodes['0'].childNodes;
-    let node: any;
 
     for (let i = 0; i < contents.length; i++) {
       if (contents[i].tagName == 'MD-CARD') {

@@ -4,6 +4,7 @@
 /dist
 /tmp
 /out-tsc
+yarn-error.log
 
 # dependencies
 /node_modules

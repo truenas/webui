@@ -128,7 +128,7 @@ export class SMBAclComponent implements FormConfiguration {
 
   constructor(private aroute: ActivatedRoute) { }
 
-  preInit() {
+  preInit(): void {
     this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.customFilter[0][0].push(parseInt(params['pk'], 10));
@@ -136,7 +136,7 @@ export class SMBAclComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.shareACLField = _.find(entityForm.fieldConfig, { name: 'share_acl' });
 
@@ -163,7 +163,7 @@ export class SMBAclComponent implements FormConfiguration {
     });
   }
 
-  updateRequiredValidator(fieldName: string, index: number, required: boolean) {
+  updateRequiredValidator(fieldName: string, index: number, required: boolean): void {
     const fieldCtrl = this.entityForm.formGroup.controls['share_acl'].controls[index].controls[fieldName];
     const fieldConfig = _.find(this.shareACLField['listFields'][index], { name: fieldName });
     if (fieldConfig.required !== required) {
@@ -177,7 +177,7 @@ export class SMBAclComponent implements FormConfiguration {
     }
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     for (let i = 0; i < data['share_acl'].length; i++) {
       if (data['share_acl'][i]['ae_who_name']) {
         data['share_acl'][i]['ae_who_name_domain'] = data['share_acl'][i]['ae_who_name']['domain'];
@@ -188,7 +188,7 @@ export class SMBAclComponent implements FormConfiguration {
     return data;
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     delete data['share_name'];
     for (const acl of data.share_acl) {
       if (acl['ae_who_sid'] !== undefined && acl['ae_who_sid'] !== '') {

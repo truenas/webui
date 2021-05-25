@@ -6,42 +6,42 @@
 }
 
 // Solarized Color Palette - don't forget to add accents to theme.service!
-$bg1:    #171E26; // Canvas like behind the cards
-$bg2:    #242424; // Main elements like cards
+$bg1: #171e26; // Canvas like behind the cards
+$bg2: #242424; // Main elements like cards
 // $bg2:    #232d35; // Main elements like cards
-$fg1:    #aaaaaa; // brighter fonts
-$fg2:    #cccccc; // normal fonts
-$alt-bg1:     rgba(122,122,122,0.25); // Tables
-$alt-bg2:     #6F6E6C; // Menus
-$alt-fg1:     #c1c1c1; // Tables
-$alt-fg2:     #e1e1e1; // Menus
-$yellow:#f0cb00;
-$orange:#ee9302;
-$red:#ff0013;
-$magenta:#d238ff;
-$violet:#c17ecc;
-$blue:#0D5788;
-$cyan:#00d0d6;
-$green:#1F9642;
+$fg1: #aaa; // brighter fonts
+$fg2: #ccc; // normal fonts
+$alt-bg1: rgba(122, 122, 122, 0.25); // Tables
+$alt-bg2: #6f6e6c; // Menus
+$alt-fg1: #c1c1c1; // Tables
+$alt-fg2: #e1e1e1; // Menus
+$yellow: #f0cb00;
+$orange: #ee9302;
+$red: #ff0013;
+$magenta: #d238ff;
+$violet: #c17ecc;
+$blue: #0d5788;
+$cyan: #00d0d6;
+$green: #1f9642;
 
 // Generated txt colors
-$yellow-txt:#333;
-$orange-txt:#eee;
-$red-txt:#fff;
-$magenta-txt:#fff;
-$violet-txt:#fff;
-$blue-txt:#fff;
-$cyan-txt:#333;
-$green-txt:#fff;
-$primary-txt:#fff;
-$accent-txt:#333;
+$yellow-txt: #333;
+$orange-txt: #eee;
+$red-txt: #fff;
+$magenta-txt: #fff;
+$violet-txt: #fff;
+$blue-txt: #fff;
+$cyan-txt: #333;
+$green-txt: #fff;
+$primary-txt: #fff;
+$accent-txt: #333;
 
 $primary: $blue;
 $accent: $yellow;
 $warn: $red;
-$tooltip:'inline';//display property
-$toggle_pw_display_prop: inline;
-$enableWarning: inline;
+$tooltip: 'inline';//display property
+$toggle-pw-display-prop: inline;
+$enable-warning: inline;
 
 $font-family-body: 'IBM Plex Sans';
 
@@ -50,67 +50,67 @@ $logo: url('assets/images/light-logo.svg');
 $logo-text: url('assets/images/light-logo-text.svg');
 
 $md-primary: (
-    50 : #e0f2fa,
-    100 : #b3dff2,
-    200 : #80caea,
-    300 : #4db5e2,
-    400 : #26a5db,
-    500 : #0095d5,
-    600 : #008dd0,
-    700 : #0082ca,
-    800 : #0078c4,
-    900 : #0067ba,
-    A100 : #e3f1ff,
-    A200 : #b0d7ff,
-    A400 : #7dbdff,
-    A700 : #63b0ff,
-    contrast: (
-        50 : #000000,
-        100 : #000000,
-        200 : #000000,
-        300 : #000000,
-        400 : #000000,
-        500 : #ffffff,
-        600 : #ffffff,
-        700 : #ffffff,
-        800 : #ffffff,
-        900 : #ffffff,
-        A100 : #000000,
-        A200 : #000000,
-        A400 : #000000,
-        A700 : #000000,
-    )
+  50 : #e0f2fa,
+  100 : #b3dff2,
+  200 : #80caea,
+  300 : #4db5e2,
+  400 : #26a5db,
+  500 : #0095d5,
+  600 : #008dd0,
+  700 : #0082ca,
+  800 : #0078c4,
+  900 : #0067ba,
+  A100 : #e3f1ff,
+  A200 : #b0d7ff,
+  A400 : #7dbdff,
+  A700 : #63b0ff,
+  contrast: (
+    50 : #000,
+    100 : #000,
+    200 : #000,
+    300 : #000,
+    400 : #000,
+    500 : #fff,
+    600 : #fff,
+    700 : #fff,
+    800 : #fff,
+    900 : #fff,
+    A100 : #000,
+    A200 : #000,
+    A400 : #000,
+    A700 : #000,
+  )
 );
 
 $md-accent: (
-    50 : #fff8e1,
-    100 : #ffecb5,
-    200 : #ffe083,
-    300 : #ffd451,
-    400 : #ffca2c,
-    500 : #ffc107,
-    600 : #ffbb06,
-    700 : #ffb305,
-    800 : #ffab04,
-    900 : #ff9e02,
-    A100 : #ffffff,
-    A200 : #fffaf2,
-    A400 : #ffe4bf,
-    A700 : #ffd9a6,
-    contrast: (
-        50 : #000000,
-        100 : #000000,
-        200 : #000000,
-        300 : #000000,
-        400 : #000000,
-        500 : #000000,
-        600 : #000000,
-        700 : #000000,
-        800 : #000000,
-        900 : #000000,
-        A100 : #000000,
-        A200 : #000000,
-        A400 : #000000,
-        A700 : #000000,
-    )
+  50 : #fff8e1,
+  100 : #ffecb5,
+  200 : #ffe083,
+  300 : #ffd451,
+  400 : #ffca2c,
+  500 : #ffc107,
+  600 : #ffbb06,
+  700 : #ffb305,
+  800 : #ffab04,
+  900 : #ff9e02,
+  A100 : #fff,
+  A200 : #fffaf2,
+  A400 : #ffe4bf,
+  A700 : #ffd9a6,
+  contrast: (
+    50 : #000,
+    100 : #000,
+    200 : #000,
+    300 : #000,
+    400 : #000,
+    500 : #000,
+    600 : #000,
+    700 : #000,
+    800 : #000,
+    900 : #000,
+    A100 : #000,
+    A200 : #000,
+    A400 : #000,
+    A700 : #000,
+  )
 );

@@ -16,7 +16,7 @@ import * as _ from 'lodash';
 @Component({
   selector: 'form-task',
   templateUrl: './form-task.component.html',
-  styleUrls: ['./form-task.component.css'],
+  styleUrls: ['./form-task.component.scss'],
 })
 export class FormTaskComponent implements Field, AfterViewInit, OnInit {
   config: FieldConfig;

@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs';
 
 import { DialogService } from '../../../../services';
 import { RestService, SystemGeneralService, WebSocketService } from '../../../../services';
@@ -115,11 +116,11 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected systemGeneralService: SystemGeneralService, private dialog: DialogService) {}
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.storage_path_subscription.unsubscribe();
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: any): void {
     this.storage_path = entityForm.formGroup.controls['storage_path'];
     this.storage_path_subscription = this.storage_path.valueChanges.subscribe((res: any) => {
       if (res && res != this.initial_path && !this.warned) {
@@ -158,7 +159,7 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
     entityForm.submitFunction = this.submitFunction;
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     if (data.certificate && data.certificate.id) {
       data['certificate'] = data.certificate.id;
     }
@@ -174,7 +175,7 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
     return data;
   }
 
-  compareBindIps(data: any) {
+  compareBindIps(data: any): any {
     if (data.bindip && this.validBindIps.length > 0) {
       if (!this.validBindIps.includes(data.bindip)) {
         data.bindip = '';
@@ -183,11 +184,11 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
     return data;
   }
 
-  submitFunction(this: any, entityForm: any) {
+  submitFunction(this: any, entityForm: any): Observable<any> {
     return this.ws.call('s3.update', [entityForm]);
   }
 
-  beforeSubmit(data: any) {
-    data = this.compareBindIps(data);
+  beforeSubmit(data: any): void {
+    this.compareBindIps(data);
   }
 }

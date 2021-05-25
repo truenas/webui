@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CoreEvent } from 'app/interfaces/events';
-import { Subject } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
+import { Subject, Observable } from 'rxjs';
 
 /*
  * Heavily influenced by Objective C's NSNotificationCenter
@@ -51,15 +50,6 @@ export class CoreService {
       console.log('*** New Instance of Core Service ***');
     }
     this.coreEvents = new Subject();
-    this.coreEvents.subscribe(
-      (evt: CoreEvent) => {
-        // Do Stuff
-        // DEBUG: console.log("*** CoreEvent: " + evt.name);
-      },
-      (err) => {
-        console.log(err);
-      },
-    );
   }
 
   private dispatchTable: any[] = [];

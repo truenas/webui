@@ -47,7 +47,6 @@ module.exports = {
         "no-restricted-syntax": "off",
         "guard-for-in": "off",
         "no-param-reassign": "off",
-        "import/no-extraneous-dependencies": "off",
         "no-tabs": "off",
         "no-mixed-spaces-and-tabs": "off",
         "@typescript-eslint/no-unused-expressions": "off",
@@ -99,12 +98,16 @@ module.exports = {
         "@typescript-eslint/member-delimiter-style": "error",
         "@typescript-eslint/type-annotation-spacing": "error",
         "@typescript-eslint/ban-ts-comment": "error",
+        "@typescript-eslint/explicit-function-return-type": ["error", { allowExpressions: true }],
       }
     },
     {
       "files": ["*.html"],
       "parser": "@angular-eslint/template-parser",
-      "plugins": ["@angular-eslint/template"],
+      "plugins": [
+        "@angular-eslint/template",
+        "unused-imports"
+      ],
       "rules": {}
     }
   ]

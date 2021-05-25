@@ -4,7 +4,7 @@
 // and add it to our commands below
 const debug = true;
 
-const maxDecimals = (input: number, max?: number) => {
+const maxDecimals = (input: number, max?: number): number => {
   if (!max) {
     max = 2;
   }
@@ -18,14 +18,14 @@ const maxDecimals = (input: number, max?: number) => {
   return parseFloat(output as any);
 };
 
-function arrayAvg(input: number[]) {
+function arrayAvg(input: number[]): number {
   const sum = input.reduce((acc, cv) => acc + cv);
   const avg = sum / input.length;
   return maxDecimals(avg);
 }
 
-function avgFromReportData(input: any[]) {
-  const output: any[] = [];
+function avgFromReportData(input: any[]): number[][] {
+  const output: number[][] = [];
   input.forEach((item, index) => {
     const avg = arrayAvg(item);
     output.push([avg]);
@@ -33,7 +33,7 @@ function avgFromReportData(input: any[]) {
   return output;
 }
 
-function inferUnits(label: string) {
+function inferUnits(label: string): string {
   // Figures out from the label what the unit is
   let units = label;
   if (label.includes('%')) {
@@ -53,7 +53,7 @@ function inferUnits(label: string) {
   return units;
 }
 
-function convertKMGT(input: number, units: string, fixed?: number) {
+function convertKMGT(input: number, units: string, fixed?: number): { value: number; prefix: string; shortName: string } {
   const kilo = 1024;
   const mega = kilo * 1024;
   const giga = mega * 1024;
@@ -95,7 +95,7 @@ function convertKMGT(input: number, units: string, fixed?: number) {
   return { value: output, prefix, shortName };
 }
 
-function convertByKilo(input: number) {
+function convertByKilo(input: number): { value: number; suffix: string; shortName: string } {
   if (typeof input !== 'number') { return input; }
   let output = input;
   const prefix = '';
@@ -112,7 +112,7 @@ function convertByKilo(input: number) {
   return { value: output, suffix, shortName: '' };
 }
 
-function formatValue(value: number, units: string, fixed?: number) {
+function formatValue(value: number, units: string, fixed?: number): string | number {
   let output: any = value;
   if (!fixed) { fixed = -1; }
   if (typeof value !== 'number') { return value; }
@@ -138,7 +138,7 @@ function formatValue(value: number, units: string, fixed?: number) {
   return output; // ? output : value;
 }
 
-function convertAggregations(input: any, labelY?: string) {
+function convertAggregations(input: any, labelY?: string): any {
   const output = { ...input };
   const units = inferUnits(labelY);
   const keys = Object.keys(output.aggregations);
@@ -152,7 +152,7 @@ function convertAggregations(input: any, labelY?: string) {
   return output;
 }
 
-function optimizeLegend(input: any) {
+function optimizeLegend(input: any): any {
   const output: { legend: string[] } = input;
   // Do stuff
   switch (input.name) {
@@ -250,7 +250,7 @@ function optimizeLegend(input: any) {
   return output;
 }
 
-function avgCpuTempReport(report: any) {
+function avgCpuTempReport(report: any): any {
   const output = { ...report };
   // Handle Data
   output.data = avgFromReportData(report.data);
@@ -315,7 +315,7 @@ const commands = {
   },
 };
 
-function processCommands(list: any[]) {
+function processCommands(list: any[]): any {
   let output: any;
   list.forEach((item, index) => {
     const input = item.input == '--pipe' || item.input == '|' ? output : item.input;
@@ -325,7 +325,7 @@ function processCommands(list: any[]) {
   return output;
 }
 
-function emit(evt: any) {
+function emit(evt: any): void {
   postMessage(evt);
 }
 

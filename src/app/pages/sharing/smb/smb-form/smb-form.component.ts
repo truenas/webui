@@ -3,7 +3,9 @@ import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 
 import * as _ from 'lodash';
-import { combineLatest, of, Subscription } from 'rxjs';
+import {
+  combineLatest, of, Subscription, Observable,
+} from 'rxjs';
 import {
   catchError, map, switchMap, take, tap, debounceTime,
 } from 'rxjs/operators';
@@ -393,7 +395,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  checkACLactions(entityForm: EntityFormComponent) {
+  checkACLactions(entityForm: EntityFormComponent): void {
     const sharePath: string = entityForm.formGroup.get('path').value;
     const datasetId = sharePath.replace('/mnt/', '');
     const poolName = datasetId.split('/')[0];
@@ -401,7 +403,8 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     const ACLRoute = ['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId];
 
     if (homeShare && entityForm.isNew) {
-      return this.router.navigate(['/'].concat(ACLRoute), { queryParams: { homeShare: true } });
+      this.router.navigate(['/'].concat(ACLRoute), { queryParams: { homeShare: true } });
+      return;
     }
     // If this call returns true OR an [ENOENT] err comes back, just return to table
     // because the pool or ds is encrypted. Otherwise, do the next checks
@@ -414,7 +417,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
            * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
            * nav to SMB shares list view.
            */
-          const promptUserACLEdit = () =>
+          const promptUserACLEdit = (): Observable<[boolean, {}] | [boolean]> =>
             this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
               switchMap((isTrivialACL) => {
                 let nextStep;

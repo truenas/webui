@@ -223,8 +223,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.init();
 
-    this.ws.call('failover.licensed').subscribe((res) => {
-      if (res) {
+    this.ws.call('failover.licensed').subscribe((hasFailover) => {
+      if (hasFailover) {
         this.isHA = true;
       }
     });
@@ -336,7 +336,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (update.interfaces) {
         const keys = Object.keys(update.interfaces);
-        keys.forEach((key, index) => {
+        keys.forEach((key) => {
           const data = update.interfaces[key];
           this.statsDataEvents.next({ name: 'NetTraffic_' + key, data });
         });
@@ -380,8 +380,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getDisksData(): void {
-    const uuid = UUID.UUID();
-
     this.core.register({ observerClass: this, eventName: 'PoolData' }).subscribe((evt: PoolDataEvent) => {
       this.pools = evt.data;
 
@@ -472,7 +470,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     conf.push({ name: 'CPU', rendered: true, id: conf.length.toString() });
     conf.push({ name: 'Memory', rendered: true, id: conf.length.toString() });
 
-    this.pools.forEach((pool, index) => {
+    this.pools.forEach((pool) => {
       conf.push({
         name: 'Pool', identifier: 'name,' + pool.name, rendered: true, id: conf.length.toString(),
       });

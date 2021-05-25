@@ -8,9 +8,9 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { AppTableAction } from 'app/pages/common/entity/table/table.component';
 import * as ipRegex from 'ip-regex';
-import { Subject } from 'rxjs';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject, Subscription } from 'rxjs';
 import { ProductType } from '../../enums/product-type.enum';
 import helptext from '../../helptext/network/interfaces/interfaces-list';
 
@@ -36,7 +36,7 @@ import { StaticRouteFormComponent } from './forms/staticroute-form.component';
 @Component({
   selector: 'app-interfaces-list',
   templateUrl: './network.component.html',
-  styleUrls: ['./network.component.css'],
+  styleUrls: ['./network.component.scss'],
 })
 export class NetworkComponent extends ViewControllerComponent implements OnInit, OnDestroy {
   protected summayCall: 'network.general.summary' = 'network.general.summary';
@@ -202,7 +202,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   protected openvpnServerComponent: OpenvpnServerComponent;
   protected impiFormComponent: IPMIFromComponent;
 
-  hasConsoleFooter: false;
+  hasConsoleFooter = false;
   constructor(
     private ws: WebSocketService,
     private router: Router,
@@ -272,8 +272,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       },
     );
 
-    this.ws.call('ipmi.is_loaded').subscribe((res) => {
-      this.impiEnabled = res;
+    this.ws.call('ipmi.is_loaded').subscribe((isIpmiLoaded) => {
+      this.impiEnabled = isIpmiLoaded;
     });
   }
 
@@ -283,8 +283,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       this.refreshNetworkForms();
     });
 
-    this.ws.call('system.advanced.config').subscribe((res) => {
-      this.hasConsoleFooter = res.consolemsg;
+    this.ws.call('system.advanced.config').subscribe((advancedConfig) => {
+      this.hasConsoleFooter = advancedConfig.consolemsg;
     });
 
     this.checkInterfacePendingChanges();
@@ -321,8 +321,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   checkPendingChanges(): void {
-    this.ws.call('interface.has_pending_changes').subscribe((res) => {
-      this.hasPendingChanges = res;
+    this.ws.call('interface.has_pending_changes').subscribe((hasPendingChanges) => {
+      this.hasPendingChanges = hasPendingChanges;
     });
   }
 
@@ -570,14 +570,14 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     return res;
   }
 
-  getIpmiActions() {
+  getIpmiActions(): AppTableAction[] {
     return [{
       icon: 'highlight',
       name: 'identify',
       label: T('Identify Light'),
       onClick: () => {
         this.dialog.select(
-          'IPMI Identify', this.impiFormComponent.options, 'IPMI flash duration', 'ipmi.identify', 'seconds', 'IPMI identify command issued',
+          'IPMI Identify', this.impiFormComponent.options, 'IPMI flash duration', 'ipmi.identify', 'seconds',
         );
         event.stopPropagation();
       },
@@ -589,7 +589,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         window.open(`http://${rowinner.ipaddress}`);
         event.stopPropagation();
       },
-    }];
+    }] as any[];
   }
 
   showConfigForm(): void {
@@ -605,7 +605,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     });
   }
 
-  getOpenVpnActions() {
+  getOpenVpnActions(): AppTableAction[] {
     return [{
       icon: 'stop',
       name: 'stop',
@@ -655,7 +655,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         );
         event.stopPropagation();
       },
-    }];
+    }] as any[];
   }
 
   isOpenVpnActionVisible(name: string, row: any): boolean {

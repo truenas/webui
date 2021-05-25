@@ -23,7 +23,7 @@ import { LocaleService } from 'app/services/locale.service';
 @Component({
   selector: 'app-admin-layout',
   templateUrl: './admin-layout.component.html',
-  styleUrls: ['./admin-layout.component.css'],
+  styleUrls: ['./admin-layout.component.scss'],
 })
 export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   private isMobile: boolean;
@@ -85,17 +85,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.isMobile = this.layoutService.isMobile;
       this.updateSidenav();
       core.emit({ name: 'MediaChange', data: change, sender: this });
-    });
-
-    // Subscribe to Theme Changes
-    core.register({
-      observerClass: this,
-      eventName: 'ThemeChanged',
-      sender: themeService,
-    }).subscribe((evt: CoreEvent) => {
-      const theme = evt.data;
-      // this.logoPath = theme.logoPath;
-      // this.logoTextPath = theme.logoTextPath;
     });
 
     // Subscribe to Preference Changes

@@ -19,13 +19,10 @@ import {
   // velocity,
   multicast,
   action,
-  transform,
+  transform, ColdSubscription,
   // transformMap,
   // clamp
 } from 'popmotion';
-
-const transformMap = transform.transformMap;
-const { clamp } = transform;
 
 export interface AnimationConfig {
   animationTarget: DisplayObject; // Support DisplayObject
@@ -55,7 +52,6 @@ export class AnimationService {
 
     core.register({ observerClass: this, eventName: 'Animate' }).subscribe((evt: CoreEvent) => {
       const config: AnimationConfig = evt.data;
-      const missingFinishState = 'This animation requires you to specify a finishState property which was not given.';
       switch (config.animation) {
         case 'Flip':
           this.flip(config.animationTarget, config.finishState);
@@ -76,12 +72,6 @@ export class AnimationService {
           this.radiate(config.animationTarget, config.finishState);
           break;
       }
-    });
-
-    this.core.register({ observerClass: this, eventName: 'AnimateGroup' }).subscribe((evt: CoreEvent) => {
-      const config: GroupAnimationConfig = evt.data;
-      const animationTargets = config.animationTargets;
-      const animation = config.animation;
     });
   }
 
@@ -218,16 +208,15 @@ export class AnimationService {
     if (finishState == 'Stop') {
       const savedState = this.activeAnimations[animationTarget.id];
       const animation = savedState.animation;
-      const finishPosition = savedState.originalState;
       clearInterval(animation);
       delete this.activeAnimations[animationTarget.id];
       return;
     }
 
     const startY = animationTarget.target.get('y');
-    const targetY = value(startY, animationTarget.target.set('y'));
+    value(startY, animationTarget.target.set('y'));
 
-    const gravity = (start: number) => {
+    const gravity = (start: number): ColdSubscription => {
       const g = physics({
         acceleration: 2500,
         to: (startY - 200),
@@ -277,8 +266,8 @@ export class AnimationService {
       }),
     );
 
-    const radiation = (start: any, elementBorder: any) => {
-      const r = keyframes({
+    const radiation = (start: any, elementBorder: any): void => {
+      keyframes({
         values: [
           { borderWidth: 0, borderColor: 'rgb(204, 0, 0, 1)' },
           { borderWidth: 30, borderColor: 'rgb(204, 0, 0, 0)' },
@@ -294,21 +283,9 @@ export class AnimationService {
     this.activeAnimations[animationTarget.id] = { animation: radiate, originalState: startShadow };
   }
 
-  private scrollTo(destination: string, obj?: any): void {
-    let container;
-    let rawContainer;
-    if (!obj) {
-      rawContainer = (<any>document).querySelector('body');
-      container = styler(rawContainer, {});
-    } else {
-      // Grab reference to the element that has the scroll bar
-      rawContainer = (<any>document).querySelector(obj);
-      container = styler(rawContainer, {});
-    }
+  private scrollTo(destination: string): void {
     const rawScrollTarget = (<any>document).querySelector(destination);
-    const scrollTarget = styler(rawScrollTarget, {});
 
-    // container.set('scrollTop', rawScrollTarget.offsetTop);// Taken from popmotion docs examples but does not work
     rawScrollTarget.scrollIntoView(); // native method works but without a smooth transition
   }
 }

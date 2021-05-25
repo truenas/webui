@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { WebSocketService } from '../../services/index';
 
 @Injectable({ providedIn: 'root' })
@@ -13,11 +13,11 @@ export class ApplicationsService {
     return this.ws.call('pool.query');
   }
 
-  getKubernetesConfig() {
+  getKubernetesConfig(): Observable<any> {
     return this.ws.call('kubernetes.config');
   }
 
-  getKubernetesServiceStarted() {
+  getKubernetesServiceStarted(): Observable<any> {
     return this.ws.call('service.started', ['kubernetes']);
   }
 
@@ -25,19 +25,19 @@ export class ApplicationsService {
     return this.ws.call('catalog.query', [[], { extra: { item_details: true } }]);
   }
 
-  getBindIPChoices() {
+  getBindIPChoices(): Observable<any[]> {
     return this.ws.call('kubernetes.bindip_choices');
   }
 
-  getDockerImages() {
+  getDockerImages(): Observable<any[]> {
     return this.ws.call('docker.images.query');
   }
 
-  getCatItems(label: string) {
+  getCatItems(label: string): Observable<any> {
     return this.ws.call('catalog.items', [label]);
   }
 
-  getChartReleases(name?: string) {
+  getChartReleases(name?: string): Observable<any[]> {
     const secondOption = { extra: { history: true } };
 
     if (name) {
@@ -46,19 +46,19 @@ export class ApplicationsService {
     return this.ws.call('chart.release.query', [[], secondOption]);
   }
 
-  getChartReleaseNames() {
+  getChartReleaseNames(): Observable<any[]> {
     return this.ws.call('chart.release.query', [[], { select: ['name'] }]);
   }
 
-  setReplicaCount(name: string, count: number) {
+  setReplicaCount(name: string, count: number): Observable<any> {
     return this.ws.call('chart.release.scale', [name, { replica_count: count }]);
   }
 
-  getPodConsoleChoices(name: string) {
+  getPodConsoleChoices(name: string): Observable<any[]> {
     return this.ws.call('chart.release.pod_console_choices', [name]);
   }
 
-  getNICChoices() {
+  getNICChoices(): Observable<any[]> {
     return this.ws.call('chart.release.nic_choices');
   }
 
@@ -66,20 +66,20 @@ export class ApplicationsService {
     return this.ws.call('interface.query');
   }
 
-  getChartReleaseWithResources(name: string) {
+  getChartReleaseWithResources(name: string): Observable<any[]> {
     const secondOption = { extra: { retrieve_resources: true } };
     return this.ws.call('chart.release.query', [[['name', '=', name]], secondOption]);
   }
 
-  getChartReleaseEvents(name: string) {
+  getChartReleaseEvents(name: string): Observable<any[]> {
     return this.ws.call('chart.release.events', [name]);
   }
 
-  getContainerConfig() {
+  getContainerConfig(): Observable<any> {
     return this.ws.call('container.config');
   }
 
-  updateContainerConfig(enable_image_updates: boolean) {
+  updateContainerConfig(enable_image_updates: boolean): Observable<any> {
     return this.ws.call('container.update', [{ enable_image_updates }]);
   }
 }

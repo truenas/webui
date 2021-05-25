@@ -1,5 +1,5 @@
 import {
-  Component, Input, OnInit, ViewChild,
+  Component, Input, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService, WebSocketService } from '../../../../services';
@@ -24,8 +24,9 @@ import { EntityUtils } from '../utils';
 @Component({
   selector: 'entity-wizard',
   templateUrl: './entity-wizard.component.html',
-  styleUrls: ['./entity-wizard.component.css', '../entity-form/entity-form.component.scss'],
+  styleUrls: ['./entity-wizard.component.scss', '../entity-form/entity-form.component.scss'],
   providers: [EntityFormService, FieldRelationService],
+  encapsulation: ViewEncapsulation.None,
 })
 export class EntityWizardComponent implements OnInit {
   @Input('conf') conf: any;

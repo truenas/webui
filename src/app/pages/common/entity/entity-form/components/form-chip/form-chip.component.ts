@@ -14,7 +14,7 @@ import { Field } from '../../models/field.interface';
 @Component({
   selector: 'form-chip',
   templateUrl: './form-chip.component.html',
-  styleUrls: ['../dynamic-field/dynamic-field.css', './form-chip.component.css'],
+  styleUrls: ['../dynamic-field/dynamic-field.scss', './form-chip.component.scss'],
 })
 export class FormChipComponent implements Field, OnInit {
   config: FieldConfig;

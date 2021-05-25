@@ -1,6 +1,7 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs';
 
 import {
   RestService, UserService, WebSocketService, IscsiService,
@@ -124,7 +125,7 @@ export class ServiceAFPComponent implements FormConfiguration {
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected userService: UserService, protected iscsiService: IscsiService) {}
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     // If validIps is slow to load, skip check on load (It's still done on save)
     if (this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
       return this.compareBindIps(data);
@@ -132,7 +133,7 @@ export class ServiceAFPComponent implements FormConfiguration {
     return data;
   }
 
-  compareBindIps(data: any) {
+  compareBindIps(data: any): any {
     // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
     data.bindip = data.bindip ? data.bindip : [];
     if (this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
@@ -147,7 +148,7 @@ export class ServiceAFPComponent implements FormConfiguration {
     return data;
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityEdit: any): void {
     entityEdit.submitFunction = this.submitFunction;
     const self = this;
     this.userService.listUsers().subscribe((res: any) => {
@@ -168,11 +169,11 @@ export class ServiceAFPComponent implements FormConfiguration {
     });
   }
 
-  submitFunction(this: any, body: any) {
+  submitFunction(this: any, body: any): Observable<any> {
     return this.ws.call('afp.update', [body]);
   }
 
-  beforeSubmit(data: any) {
+  beforeSubmit(data: any): void {
     data = this.compareBindIps(data);
   }
 }

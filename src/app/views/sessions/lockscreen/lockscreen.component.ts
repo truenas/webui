@@ -5,7 +5,6 @@ import { MatButton } from '@angular/material/button';
 @Component({
   selector: 'app-lockscreen',
   templateUrl: './lockscreen.component.html',
-  styleUrls: ['./lockscreen.component.css'],
 })
 export class LockscreenComponent {
   @ViewChild(MatProgressBar, { static: false }) progressBar: MatProgressBar;

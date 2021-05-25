@@ -10,7 +10,7 @@ import { FieldRelationService } from '../../services/field-relation.service';
 @Component({
   selector: 'entity-form-list',
   templateUrl: './form-list.component.html',
-  styleUrls: ['./form-list.component.css', '../dynamic-field/dynamic-field.css'],
+  styleUrls: ['./form-list.component.scss', '../dynamic-field/dynamic-field.scss'],
 })
 export class FormListComponent implements Field, OnInit {
   config: FieldConfig;

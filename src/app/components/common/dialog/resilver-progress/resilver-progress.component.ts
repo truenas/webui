@@ -3,14 +3,14 @@ import {
   Component, Output, EventEmitter, OnInit, OnDestroy,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { T } from '../../../../translate-marker';
 import { WebSocketService } from '../../../../services/ws.service';
 
 @Component({
   selector: 'app-resilver-progress-dialog',
   templateUrl: './resilver-progress.component.html',
-  styleUrls: ['./resilver-progress.component.css'],
+  styleUrls: ['./resilver-progress.component.scss'],
 })
 export class ResilverProgressDialogComponent implements OnInit, OnDestroy {
   tooltip: string;

@@ -64,7 +64,7 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
         });
     });
 
-    this.actions = this.parent.conf.getActions();
+    this.actions = this.parent.conf.getActions() as EntityAction[];
   }
 
   ngOnDestroy(): void {

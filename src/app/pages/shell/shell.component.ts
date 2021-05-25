@@ -4,7 +4,6 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CoreEvent } from 'app/interfaces/events';
-import { Observable } from 'rxjs/Observable';
 import { ShellService, WebSocketService } from '../../services';
 import helptext from '../../helptext/shell/shell';
 import { CopyPasteMessageComponent } from './copy-paste-message.component';
@@ -13,7 +12,7 @@ import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
 import * as FontFaceObserver from 'fontfaceobserver';
 import { CoreService } from 'app/core/services/core.service';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { T } from 'app/translate-marker';
 
@@ -50,8 +49,8 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   connectionId: string;
 
   ngOnInit(): void {
-    this.getAuthToken().subscribe((res) => {
-      this.initializeWebShell(res);
+    this.getAuthToken().subscribe((token) => {
+      this.initializeWebShell(token);
       this.shellSubscription = this.ss.shellOutput.subscribe(() => {
       });
       this.initializeTerminal();
@@ -235,8 +234,8 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     return true;
   }
 
-  initializeWebShell(res: string): void {
-    this.ss.token = res;
+  initializeWebShell(token: string): void {
+    this.ss.token = token;
     this.ss.connect();
 
     this.refreshToolbarButtons();
@@ -257,7 +256,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  getAuthToken(): Observable<any> {
+  getAuthToken(): Observable<string> {
     return this.ws.call('auth.generate_token');
   }
 

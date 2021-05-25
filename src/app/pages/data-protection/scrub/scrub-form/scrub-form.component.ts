@@ -1,16 +1,15 @@
-import { Subscription } from 'rxjs';
 import { ModalService } from 'app/services/modal.service';
 import { Component } from '@angular/core';
 
 import * as _ from 'lodash';
 
-import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { TaskService } from '../../../../services';
-
-import helptext from '../../../../helptext/data-protection/scrub/scrub-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { TaskService } from 'app/services';
+import helptext from 'app/helptext/data-protection/scrub/scrub-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+
 @Component({
   selector: 'app-scrub-task-add',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -64,7 +63,7 @@ export class ScrubFormComponent implements FormConfiguration {
         },
         {
           type: 'scheduler',
-          name: 'scrub_picker',
+          name: 'cron_schedule',
           placeholder: helptext.scrub_picker_placeholder,
           tooltip: helptext.scrub_picker_tooltip,
           required: true,
@@ -84,12 +83,12 @@ export class ScrubFormComponent implements FormConfiguration {
     },
   ]);
 
-  protected volume_field: any;
-  protected month_field: any;
-  protected day_field: any;
-  protected minute_field: any;
-  protected hour_field: any;
-  protected daymonth_field: any;
+  protected volume_field: FieldConfig;
+  protected month_field: FieldConfig;
+  protected day_field: FieldConfig;
+  protected minute_field: FieldConfig;
+  protected hour_field: FieldConfig;
+  protected daymonth_field: FieldConfig;
 
   constructor(protected taskService: TaskService, protected modalService: ModalService) {}
 
@@ -121,25 +120,23 @@ export class ScrubFormComponent implements FormConfiguration {
   }
 
   beforeSubmit(value: any): void {
-    const spl = value.scrub_picker.split(' ');
+    const spl = value.cron_schedule.split(' ');
     value.schedule = {};
     value.schedule['minute'] = spl[0];
     value.schedule['hour'] = spl[1];
     value.schedule['dom'] = spl[2];
     value.schedule['month'] = spl[3];
     value.schedule['dow'] = spl[4];
-    delete value.scrub_picker;
+    delete value.cron_schedule;
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any): any {
     this.entityForm.formGroup.controls['threshold'].setValue(data.threshold);
     this.entityForm.formGroup.controls['enabled'].setValue(data.enabled);
     this.entityForm.formGroup.controls['description'].setValue(data.description);
     this.entityForm.formGroup.controls['pool'].setValue(data.id);
 
-    data[
-      'scrub_picker'
-    ] = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
+    data.cron_schedule = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
 
     return data;
   }

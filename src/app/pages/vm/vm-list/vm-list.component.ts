@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { ProductType } from '../../../enums/product-type.enum';
 
 import {
@@ -39,7 +40,7 @@ interface DisplayWebUri {
         <p *ngIf="availMem"><strong>{{memTitle | translate}}</strong> {{availMem}} - {{memWarning | translate}}</p>
     </div>
     <entity-table [title]='title' [conf]='this'></entity-table>`,
-  styleUrls: ['./vm-list.component.css'],
+  styleUrls: ['./vm-list.component.scss'],
   providers: [VmService, MessageService],
 })
 export class VMListComponent implements OnDestroy {
@@ -341,7 +342,7 @@ export class VMListComponent implements OnDestroy {
     this.doRowAction(row, this.wsMethods.update, [row.id, { autostart: row.autostart }]);
   }
 
-  getActions(row: any) {
+  getActions(row: any): EntityTableAction[] {
     return [{
       id: 'START',
       icon: 'play_arrow',
@@ -580,7 +581,7 @@ export class VMListComponent implements OnDestroy {
           },
         );
       },
-    }];
+    }] as EntityTableAction[];
   }
 
   showPasswordDialog(display_vm: any, display_device: any): void {

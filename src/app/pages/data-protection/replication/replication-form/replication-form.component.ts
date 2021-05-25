@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { Schedule } from 'app/interfaces/schedule.interface';
 
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
@@ -31,6 +30,7 @@ import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Schedule } from 'app/interfaces/schedule.interface';
 
 @Component({
   selector: 'app-replication-form',
@@ -48,7 +48,7 @@ export class ReplicationFormComponent implements FormConfiguration {
   addCall: 'replication.create' = 'replication.create';
   editCall: 'replication.update' = 'replication.update';
   isEntity = true;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   protected queryRes: any;
   title: string;
   pk: number;

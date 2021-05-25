@@ -671,13 +671,13 @@ export class CertificateAddComponent {
       }
     });
 
-    this.ws.call('certificate.query').subscribe((res: any[]) => {
+    this.ws.call('certificate.query').subscribe((certificates) => {
       this.csrlist = this.getTarget('csrlist');
-      res.forEach((item) => {
-        if (item.CSR !== null) {
-          this.CSRList.push(item);
+      certificates.forEach((certificate) => {
+        if (certificate.CSR !== null) {
+          this.CSRList.push(certificate);
           this.csrlist.options.push(
-            { label: item.name, value: item.id },
+            { label: certificate.name, value: certificate.id },
           );
         }
       });
@@ -745,91 +745,91 @@ export class CertificateAddComponent {
     this.entityForm = entity;
     // this.fieldConfig = entity.fieldConfig;
     for (const i in this.csrFields) {
-      this.hideField(this.csrFields[i], true, entity);
+      this.hideField(this.csrFields[i], true);
     }
     for (const i in this.importFields) {
-      this.hideField(this.importFields[i], true, entity);
+      this.hideField(this.importFields[i], true);
     }
     for (const i in this.importCSRFields) {
-      this.hideField(this.importCSRFields[i], true, entity);
+      this.hideField(this.importCSRFields[i], true);
     }
     for (const i in this.internalFields) {
-      this.hideField(this.internalFields[i], false, entity);
+      this.hideField(this.internalFields[i], false);
     }
-    this.hideField(this.internalFields[2], true, entity);
+    this.hideField(this.internalFields[2], true);
     this.getField('csronsys').valueChanges.subscribe((res) => {
-      this.hideField('csrlist', !res, entity);
+      this.hideField('csrlist', !res);
     });
     this.getField('create_type').valueChanges.subscribe((res) => {
       this.wizardConfig[2].skip = false;
 
       if (res == 'CERTIFICATE_CREATE_INTERNAL') {
         for (const i in this.csrFields) {
-          this.hideField(this.csrFields[i], true, entity);
+          this.hideField(this.csrFields[i], true);
         }
         for (const i in this.importFields) {
-          this.hideField(this.importFields[i], true, entity);
+          this.hideField(this.importFields[i], true);
         }
         for (const i in this.importCSRFields) {
-          this.hideField(this.importCSRFields[i], true, entity);
+          this.hideField(this.importCSRFields[i], true);
         }
         for (const i in this.internalFields) {
-          this.hideField(this.internalFields[i], false, entity);
+          this.hideField(this.internalFields[i], false);
         }
         for (const i in this.extensionFields) {
-          this.hideField(this.extensionFields[i], false, entity);
+          this.hideField(this.extensionFields[i], false);
         }
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (this.getField('key_type').value === 'RSA') {
           this.setDisabled('ec_curve', true);
-          this.hideField('ec_curve', true, entity);
+          this.hideField('ec_curve', true);
         } else if (this.getField('key_type').value === 'EC') {
           this.setDisabled('key_length', true);
-          this.hideField('ec_curve', false, entity);
+          this.hideField('ec_curve', false);
         }
       } else if (res == 'CERTIFICATE_CREATE_CSR') {
         for (const i in this.internalFields) {
-          this.hideField(this.internalFields[i], true, entity);
+          this.hideField(this.internalFields[i], true);
         }
         for (const i in this.importFields) {
-          this.hideField(this.importFields[i], true, entity);
+          this.hideField(this.importFields[i], true);
         }
         for (const i in this.importCSRFields) {
-          this.hideField(this.importCSRFields[i], true, entity);
+          this.hideField(this.importCSRFields[i], true);
         }
         for (const i in this.csrFields) {
-          this.hideField(this.csrFields[i], false, entity);
+          this.hideField(this.csrFields[i], false);
         }
         for (const i in this.extensionFields) {
-          this.hideField(this.extensionFields[i], false, entity);
+          this.hideField(this.extensionFields[i], false);
         }
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (this.getField('key_type').value === 'RSA') {
           this.setDisabled('ec_curve', true);
-          this.hideField('ec_curve', true, entity);
+          this.hideField('ec_curve', true);
         } else if (this.getField('key_type').value === 'EC') {
           this.setDisabled('key_length', true);
-          this.hideField('ec_curve', false, entity);
+          this.hideField('ec_curve', false);
         }
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED') {
         for (const i in this.internalFields) {
-          this.hideField(this.internalFields[i], true, entity);
+          this.hideField(this.internalFields[i], true);
         }
         for (const i in this.csrFields) {
-          this.hideField(this.csrFields[i], true, entity);
+          this.hideField(this.csrFields[i], true);
         }
         for (const i in this.importCSRFields) {
-          this.hideField(this.importCSRFields[i], true, entity);
+          this.hideField(this.importCSRFields[i], true);
         }
         for (const i in this.importFields) {
-          this.hideField(this.importFields[i], false, entity);
+          this.hideField(this.importFields[i], false);
         }
         for (const i in this.extensionFields) {
-          this.hideField(this.extensionFields[i], true, entity);
+          this.hideField(this.extensionFields[i], true);
         }
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (!this.getField('csronsys').value) {
-          this.hideField('csrlist', true, entity);
+          this.hideField('csrlist', true);
         } else {
           this.setDisabled('privatekey', true);
           this.setDisabled('passphrase', true);
@@ -839,19 +839,19 @@ export class CertificateAddComponent {
         this.wizardConfig[2].skip = true;
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED_CSR') {
         for (const i in this.internalFields) {
-          this.hideField(this.internalFields[i], true, entity);
+          this.hideField(this.internalFields[i], true);
         }
         for (const i in this.csrFields) {
-          this.hideField(this.csrFields[i], true, entity);
+          this.hideField(this.csrFields[i], true);
         }
         for (const i in this.importFields) {
-          this.hideField(this.importFields[i], true, entity);
+          this.hideField(this.importFields[i], true);
         }
         for (const i in this.importCSRFields) {
-          this.hideField(this.importCSRFields[i], false, entity);
+          this.hideField(this.importCSRFields[i], false);
         }
         for (const i in this.extensionFields) {
-          this.hideField(this.extensionFields[i], true, entity);
+          this.hideField(this.extensionFields[i], true);
         }
 
         this.wizardConfig[2].skip = true;
@@ -979,7 +979,7 @@ export class CertificateAddComponent {
     return null;
   }
 
-  hideField(fieldName: any, show: boolean, entity: any): void {
+  hideField(fieldName: any, show: boolean): void {
     this.getTarget(fieldName).isHidden = show;
     this.setDisabled(fieldName, show);
   }

@@ -2,14 +2,19 @@ import { Component } from '@angular/core';
 
 import * as _ from 'lodash';
 
-import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { WebSocketService } from '../../../../services';
-import { ModalService } from '../../../../services/modal.service';
-import { FieldSets } from '../../../common/entity/entity-form/classes/field-sets';
-import helptext from '../../../../helptext/data-protection/smart/smart';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { WebSocketService } from 'app/services';
+import { ModalService } from 'app/services/modal.service';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import helptext from 'app/helptext/data-protection/smart/smart';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { take } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { SmartTestType } from 'app/enums/smart-test-type.enum';
+import { SmartTestUi } from 'app/interfaces/smart-test.interface';
+import { T } from 'app/translate-marker';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+
 @Component({
   selector: 'app-smart-test-add',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -19,11 +24,10 @@ export class SmartFormComponent implements FormConfiguration {
   addCall: 'smart.test.create' = 'smart.test.create';
   editCall: 'smart.test.update' = 'smart.test.update';
   customFilter: any[] = [];
-  // protected route_success: string[] = ['tasks', 'smart'];
   protected entityForm: EntityFormComponent;
   isEntity = true;
   isNew = false;
-  protected disk_field: any;
+  protected disk_field: FieldConfig;
   pk: number;
   title: string;
   protected isOneColumnForm = true;
@@ -61,20 +65,20 @@ export class SmartFormComponent implements FormConfiguration {
           tooltip: helptext.smarttest_type_tooltip,
           options: [
             {
-              label: 'LONG',
-              value: 'LONG',
+              label: T('LONG'),
+              value: SmartTestType.Long,
             },
             {
-              label: 'SHORT',
-              value: 'SHORT',
+              label: T('SHORT'),
+              value: SmartTestType.Short,
             },
             {
-              label: 'CONVEYANCE',
-              value: 'CONVEYANCE',
+              label: T('CONVEYANCE'),
+              value: SmartTestType.Conveyance,
             },
             {
-              label: 'OFFLINE',
-              value: 'OFFLINE',
+              label: T('OFFLINE'),
+              value: SmartTestType.Offline,
             },
           ],
           required: true,
@@ -87,7 +91,7 @@ export class SmartFormComponent implements FormConfiguration {
         },
         {
           type: 'scheduler',
-          name: 'smarttest_picker',
+          name: 'cron_schedule',
           placeholder: helptext.smarttest_picker_placeholder,
           tooltip: helptext.smarttest_picker_tooltip,
           validation: helptext.smarttest_picker_validation,
@@ -114,23 +118,23 @@ export class SmartFormComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
-    data['smarttest_picker'] = `0 ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
+  resourceTransformIncomingRestData(data: SmartTestUi): SmartTestUi {
+    data.cron_schedule = `0 ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
     return data;
   }
 
-  async afterInit(entityForm: EntityFormComponent) {
+  async afterInit(entityForm: EntityFormComponent): Promise<void> {
     this.entityForm = entityForm;
     this.pk = entityForm.pk;
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.smart_test_add : helptext.smart_test_edit;
   }
 
-  beforeSubmit(value: any) {
-    const spl = value.smarttest_picker.split(' ');
-    delete value.smarttest_picker;
+  beforeSubmit(value: any): void {
+    const spl = value.cron_schedule.split(' ');
+    delete value.cron_schedule;
 
-    value['schedule'] = {
+    value.schedule = {
       hour: spl[1],
       dom: spl[2],
       month: spl[3],
