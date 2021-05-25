@@ -1,7 +1,7 @@
 <mat-card class="expanded-table-container">
   <mat-expansion-panel class="expanded-table" [ngClass]="{'expanded-height': isExpanded && tableConf.detailsHref}" hideToggle [disabled]="disabled" [collapsed]="shouldBeCollapsed()"
     [expanded]="shouldBeExpanded()" (opened)="isExpanded = true" (closed)="isExpanded = false">
-    <mat-expansion-panel-header [ngClass]="{ 'hasExtraActions': !!tableConf?.tableExtraActions }">
+    <mat-expansion-panel-header [class.has-extra-actions]="tableConf?.tableExtraActions">
       <mat-panel-title>
         <h5 class="title" *ngIf="title">
           <ng-container *ngIf="titleHref; else plainTitle">
