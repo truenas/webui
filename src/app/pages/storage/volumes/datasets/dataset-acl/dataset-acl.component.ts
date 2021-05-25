@@ -324,7 +324,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     return actionId === 'strip_acl';
   }
 
-  preInit(entityEdit: any): void {
+  preInit(): void {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('homeShare')) {
       this.homeShare = true;

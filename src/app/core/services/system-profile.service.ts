@@ -96,7 +96,7 @@ export class SystemProfileService extends BaseService {
     });
   }
 
-  protected onAuthenticated(evt: CoreEvent): void {
+  protected onAuthenticated(): void {
     this.authenticated = true;
   }
 

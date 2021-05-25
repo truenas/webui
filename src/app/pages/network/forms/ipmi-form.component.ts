@@ -45,7 +45,7 @@ export class IPMIFromComponent implements FormConfiguration {
       name: T('Identify Light'),
       function: () => {
         this.dialog.select(
-          'IPMI Identify', this.options, 'IPMI flash duration', 'ipmi.identify', 'seconds', 'IPMI identify command issued',
+          'IPMI Identify', this.options, 'IPMI flash duration', 'ipmi.identify', 'seconds',
         );
       },
     },

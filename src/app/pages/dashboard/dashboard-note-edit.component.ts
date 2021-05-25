@@ -71,7 +71,6 @@ export class DashboardNoteEditComponent implements OnInit {
       for (const i in this.cardNote) {
         const fg = this.formGroup.controls[i];
         if (fg) {
-          const current_field = this.fieldConfig.find((control) => control.name === i);
           fg.setValue(this.cardNote[i]);
         }
       }
@@ -126,7 +125,7 @@ export class DashboardNoteEditComponent implements OnInit {
     this.loader.open();
     this.busy = this.ws.call('user.set_attribute', [1, attribute_key, value['content']])
       .subscribe(
-        (res) => {
+        () => {
           this.loader.close();
           this.success = true;
           this.onSuccess(attribute_key);

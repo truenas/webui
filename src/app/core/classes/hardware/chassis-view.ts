@@ -134,7 +134,6 @@ export class ChassisView {
   }
 
   onLoaded(): void {
-    const outlineFilterBlue = new PIXI.filters.OutlineFilter(2, 0x99ff99);
     const bloomFilter = new PIXI.filters.AdvancedBloomFilter({
       threshold: 0.9,
       bloomScale: 1.5,

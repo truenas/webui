@@ -435,7 +435,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     if (this.bucket_field.disabled) {
       bucket = this.formGroup.controls['bucket_input'].value;
     }
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       resolve(this.getBucketFolders(credential, bucket, node));
     });
   }
@@ -502,7 +502,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     );
   }
 
-  setDisabled(name: string, disable: boolean, hide = false, status?: string): void {
+  setDisabled(name: string, disable: boolean, hide = false): void {
     if (hide) {
       disable = hide;
     }
@@ -526,7 +526,6 @@ export class CloudsyncFormComponent implements FormConfiguration {
     for (const i in data) {
       const fg = entityForm.formGroup.controls[i];
       if (fg) {
-        const current_field = this.fieldConfig.find((control) => control.name === i);
         fg.setValue(data[i]);
       }
     }
@@ -831,7 +830,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     value = this.submitDataHandler(value);
     if (!this.pk) {
       this.loader.open();
-      this.ws.call(this.addCall, [value]).subscribe((res) => {
+      this.ws.call(this.addCall, [value]).subscribe(() => {
         this.loader.close();
         this.modalService.close('slide-in-form');
       }, (err) => {
@@ -841,7 +840,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     } else {
       this.loader.open();
       this.ws.call(this.editCall, [parseInt(this.pk, 10), value]).subscribe(
-        (res) => {
+        () => {
           this.loader.close();
           this.modalService.close('slide-in-form');
         },

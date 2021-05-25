@@ -772,7 +772,7 @@ export class AlertServiceComponent implements FormConfiguration {
     this.loader.open();
     if (this.entityForm.isNew) {
       this.ws.call(this.addCall, [payload]).subscribe(
-        (res) => {
+        () => {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
         },
@@ -783,7 +783,7 @@ export class AlertServiceComponent implements FormConfiguration {
       );
     } else {
       this.ws.call(this.editCall, [this.entityForm.pk, payload]).subscribe(
-        (res) => {
+        () => {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
         },

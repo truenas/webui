@@ -194,7 +194,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
   customEditCall(value: any): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
-      (res) => {
+      () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },
