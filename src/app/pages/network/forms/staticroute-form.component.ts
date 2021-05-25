@@ -40,7 +40,7 @@ export class StaticRouteFormComponent implements FormConfiguration {
           placeholder: helptext.sr_gateway_placeholder,
           tooltip: helptext.sr_gateway_tooltip,
           required: true,
-          validation: [ipv4or6Validator('gateway')],
+          validation: [ipv4or6Validator()],
         },
         {
           type: 'input',

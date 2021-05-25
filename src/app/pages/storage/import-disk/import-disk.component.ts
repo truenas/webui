@@ -143,7 +143,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     this.makeList();
 
     // Listen for disks being added/removed
-    this.core.register({ observerClass: this, eventName: 'DisksChanged' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'DisksChanged' }).subscribe(() => {
       this.makeList();
     });
   }

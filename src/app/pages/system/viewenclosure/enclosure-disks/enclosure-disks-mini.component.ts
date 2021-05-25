@@ -48,7 +48,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     this.pixiHeight = 480;
   }
 
-  createExtractedEnclosure(profile: any): void {
+  createExtractedEnclosure(): void {
     // MINIs have no support for expansion shelves
     // therefore we will never need to create
     // any enclosure selection UI. Leave this
@@ -84,7 +84,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
       return;
     }
 
-    this.setupEnclosureEvents(enclosure);
+    this.setupEnclosureEvents();
 
     // Slight adjustment to align with external html elements
     this.container.setTransform(-30);

@@ -110,9 +110,9 @@ export class FormExplorerComponent implements Field, OnInit {
   }
 
   getChildren(node: any): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (this.config.explorerType === 'zvol') {
-        resolve(this.entityFormService.getDatasetsAndZvolsListChildren(node));
+        resolve(this.entityFormService.getDatasetsAndZvolsListChildren());
       } else if (this.config.explorerType === 'directory') {
         resolve(this.entityFormService.getFilesystemListdirChildren(node, this.config.explorerType, this.config.hideDirs));
       } else if (this.config.explorerType === 'file') {

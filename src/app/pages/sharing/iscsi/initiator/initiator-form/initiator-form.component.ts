@@ -57,7 +57,7 @@ export class InitiatorFormComponent implements OnInit {
       name: 'auth_network',
       placeholder: helptext_sharing_iscsi.initiator_form_placeholder_auth_network,
       tooltip: helptext_sharing_iscsi.initiator_form_tooltip_auth_network,
-      validation: [ipv4or6OptionalCidrValidator('auth_network')],
+      validation: [ipv4or6OptionalCidrValidator()],
       customEventMethod: (parent) => {
         for (let i = 0; i < parent.source.selectedOptions.selected.length; i++) {
           parent.listControl.value.add(parent.source.selectedOptions.selected[i].value.initiator_addr);
@@ -173,7 +173,7 @@ export class InitiatorFormComponent implements OnInit {
 
     this.loader.open();
     submitFunction.subscribe(
-      (res) => {
+      () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },

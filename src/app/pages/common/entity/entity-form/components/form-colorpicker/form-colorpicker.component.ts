@@ -50,10 +50,6 @@ export class FormColorpickerComponent implements Field, OnInit {
     this.group.value[this.config.name] = data;
   }
 
-  onChangeColor(color: string): any {
-    // console.log(color);
-  }
-
   togglePicker(): void {
     this.picker = !this.picker;
   }

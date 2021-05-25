@@ -62,14 +62,12 @@ export class ErrorDialog {
       (res) => {
         const url = res[1];
         const mimetype = 'text/plain';
-        let failed = false;
         this.storage.streamDownloadFile(this.http, url, this.logs.id + '.log', mimetype).subscribe((file) => {
           this.storage.downloadBlob(file, this.logs.id + '.log');
           if (this.dialogRef) {
             this.dialogRef.close();
           }
         }, (err) => {
-          failed = true;
           if (this.dialogRef) {
             this.dialogRef.close();
           }
