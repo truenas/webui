@@ -26,11 +26,6 @@ import {
   // clamp
 } from 'popmotion';
 
-interface Position {
-  x: number;
-  y: number;
-}
-
 export class LabelFactory {
   /*
   * Don't use this class directly.

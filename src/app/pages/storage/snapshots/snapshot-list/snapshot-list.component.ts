@@ -217,10 +217,6 @@ export class SnapshotListComponent {
     this.entityList = entityList;
   }
 
-  preInit(entityList: any): void {
-    this.sub = this._route.params.subscribe((params) => { });
-  }
-
   callGetFunction(entityList: any): void {
     this.ws.call('systemdataset.config').toPromise().then((res) => {
       if (res && res.basename && res.basename !== '') {
@@ -229,7 +225,7 @@ export class SnapshotListComponent {
       this.ws.call(this.queryCall, this.queryCallOption).subscribe((res1) => {
         entityList.handleData(res1, true);
       },
-      (err) => {
+      () => {
         new EntityUtils().handleWSError(this, res, entityList.dialogService);
       });
     });

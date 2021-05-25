@@ -67,7 +67,7 @@ export class LdapComponent implements FormConfiguration {
       id: helptext.ldap_custactions_clearcache_id,
       name: helptext.ldap_custactions_clearcache_name,
       function: async () => {
-        this.systemGeneralService.refreshDirServicesCache().subscribe((cache_status) => {
+        this.systemGeneralService.refreshDirServicesCache().subscribe(() => {
           this.dialogservice.Info(helptext.ldap_custactions_clearcache_dialog_title,
             helptext.ldap_custactions_clearcache_dialog_message);
         });

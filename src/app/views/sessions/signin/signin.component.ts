@@ -137,7 +137,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this._autofill.monitor(this.usernameInput).subscribe((e) => {
+    this._autofill.monitor(this.usernameInput).subscribe(() => {
       if (!this.didSetFocus) {
         this.didSetFocus = true;
         this.usernameInput.nativeElement.focus();
@@ -333,7 +333,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   setpassword(): void {
     this.ws.call('user.set_root_password', [this.password.value]).subscribe(
-      (res) => {
+      () => {
         this.ws.login('root', this.password.value)
           .subscribe((result) => { this.loginCallback(result); });
       },

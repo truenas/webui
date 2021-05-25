@@ -19,9 +19,6 @@ import {
   // clamp
 } from 'popmotion';
 
-const transformMap = transform.transformMap;
-const { clamp } = transform;
-
 /*
    * Layout Object: A base class for
    * managing collections of Display Objects
@@ -90,7 +87,7 @@ export class LayoutObject {
     this.screenPositions = [];
   }
 
-  initialize(layoutStyle?: string): void {
+  initialize(): void {
     /*
        //Test animation service
        let animationTarget:DisplayObject;
@@ -162,7 +159,7 @@ export class LayoutObject {
     });
   }
 
-  insert(item: DisplayObject, at?: number): void { // Add new item to collection and regenerate screenPositions
+  insert(item: DisplayObject): void { // Add new item to collection and regenerate screenPositions
     console.log('Inserting DisplayObject into layout');
     console.warn(this.reorderedCollection);
     // update collection
@@ -220,7 +217,6 @@ export class LayoutObject {
   moveToScreenPosition(dragTarget: DisplayObject, index: number, debug?: boolean): void { // Move an existing DisplayObject to a new position.
     const startX = dragTarget.x;
     const startY = dragTarget.y;
-    const distance = 0;
     const newX = this.screenPositions[index].left;
     const newY = this.screenPositions[index].top;
     // console.log(dragTarget.id);
@@ -265,13 +261,10 @@ export class LayoutObject {
 
   beginInteractiveMovement(displayObject: DisplayObject): void { // Do collision detection and reorder collection list
     const dragTarget = displayObject;
-    // let originalDragTargetIndex = this.collection.indexOf(dragTarget);
-    const originalDragTargetIndex = this.orderedCollection.indexOf(dragTarget.id);
     let latestPosition = -1;
     const maxIndex = Object.keys(this.collection).length - 1;
 
-    dragTarget.inputStream.pipe(debounceTime(15)).subscribe((evt) => {
-      // console.log(evt);
+    dragTarget.inputStream.pipe(debounceTime(15)).subscribe(() => {
       const pad = this.margin / 2;
       /* const dragBox = {
           top: evt.y - pad,
@@ -286,7 +279,6 @@ export class LayoutObject {
         right: dragTarget.x + (dragTarget.width / 2) + pad,
       };
 
-      let cache = -1;
       // let newCollection = Object.assign(this.collection , []);
       const newCollection = Object.assign(this.orderedCollection, []);
 
@@ -303,8 +295,6 @@ export class LayoutObject {
             }
 
             latestPosition = index;
-            cache = index;
-            // console.log("Position changed to " + index);
 
             // let dragTargetIndex:number = Number(newCollection.indexOf(dragTarget));
             const dragTargetIndex = Number(newCollection.indexOf(dragTarget.id));
@@ -312,9 +302,9 @@ export class LayoutObject {
             newCollection.splice(index, 0, dragTarget.id);
 
             if (direction == 'up') {
-              this.updateCollectionPositions(index, maxIndex, dragTarget);
+              this.updateCollectionPositions(index, maxIndex);
             } else if (direction == 'down') {
-              this.updateCollectionPositions(dragTargetIndex, index, dragTarget);
+              this.updateCollectionPositions(dragTargetIndex, index);
             }
 
             this.updateInteractiveMovement(dragTarget, newCollection);
@@ -371,12 +361,7 @@ export class LayoutObject {
     // this.updateCollectionPositions(0, this.collection.length - 1);
   }
 
-  private updateCollectionPositions(startIndex: number, endIndex: number, dragTarget?: DisplayObject): void {
-    /* console.log("Collection = " + this.collection.length);
-       if(this.reorderedCollection && this.reorderedCollection.length > 0){
-        console.log("Reordered coll. = " + this.reorderedCollection.length)
-       } */
-
+  private updateCollectionPositions(startIndex: number, endIndex: number): void {
     for (let i = startIndex; i <= endIndex; i++) {
       const el = this.collection[this.orderedCollection[i]];
 

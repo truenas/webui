@@ -384,7 +384,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       ).subscribe((confirm: boolean) => {
         if (confirm) {
           this.loader.open();
-          this.ws.call('interface.commit', [{ checkin_timeout: this.checkin_timeout }]).subscribe((res) => {
+          this.ws.call('interface.commit', [{ checkin_timeout: this.checkin_timeout }]).subscribe(() => {
             this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: false }, sender: this });
             this.interfaceTableConf.tableComponent.getData();
             this.loader.close();
@@ -428,7 +428,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
 
   finishCheckin(): void {
     this.loader.open();
-    this.ws.call('interface.checkin').subscribe((success) => {
+    this.ws.call('interface.checkin').subscribe(() => {
       this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
       this.loader.close();
       this.dialog.Info(
@@ -453,7 +453,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     ).subscribe((confirm: boolean) => {
       if (confirm) {
         this.loader.open();
-        this.ws.call('interface.rollback').subscribe((res) => {
+        this.ws.call('interface.rollback').subscribe(() => {
           this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false }, sender: this });
           this.interfaceTableConf.tableComponent.getData();
           this.hasPendingChanges = false;

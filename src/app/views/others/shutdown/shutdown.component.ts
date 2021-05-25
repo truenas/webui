@@ -33,10 +33,10 @@ export class ShutdownComponent implements OnInit {
 
   ngOnInit(): void {
     this.ws.call('system.shutdown', {}).subscribe(
-      (res) => {
+      () => {
       },
       (res) => { // error on shutdown
-        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted).subscribe((closed) => {
+        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted).subscribe(() => {
           this.router.navigate(['/session/signin']);
         });
       },

@@ -177,8 +177,8 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
     const previousDir = this._direction;
     this._direction = direction;
     if (previousDir != this.direction) {
-      this._setElementClass(previousDir, false);
-      this._setElementClass(this.direction, true);
+      this._setElementClass(previousDir);
+      this._setElementClass(this.direction);
 
       if (this.isInitialized) {
         this.setActionsVisibility();
@@ -197,8 +197,8 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
     const previousAnimationMode = this._animationMode;
     this._animationMode = animationMode;
     if (previousAnimationMode != this._animationMode) {
-      this._setElementClass(previousAnimationMode, false);
-      this._setElementClass(this.animationMode, true);
+      this._setElementClass(previousAnimationMode);
+      this._setElementClass(this.animationMode);
 
       if (this.isInitialized) {
         // To start another detect lifecycle and force the "close" on the action buttons
@@ -217,8 +217,8 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
   ngAfterContentInit(): void {
     this.isInitialized = true;
     this.setActionsVisibility();
-    this._setElementClass(this.direction, true);
-    this._setElementClass(this.animationMode, true);
+    this._setElementClass(this.direction);
+    this._setElementClass(this.animationMode);
   }
 
   /**
@@ -243,7 +243,7 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
     }
   }
 
-  private _setElementClass(elemClass: string, isAdd: boolean): void {
+  private _setElementClass(elemClass: string): void {
     this.renderer.addClass(this.elementRef.nativeElement, `smd-${elemClass}`);
   }
 }

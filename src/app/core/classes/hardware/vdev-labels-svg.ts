@@ -9,11 +9,6 @@ import { ChassisView } from './chassis-view';
 import { DriveTray } from './drivetray';
 import * as d3 from 'd3';
 
-interface Position {
-  x: number;
-  y: number;
-}
-
 export class VDevLabelsSVG {
   /*
   * We create an SVG layer on top of the PIXI canvas

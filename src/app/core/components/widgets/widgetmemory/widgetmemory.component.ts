@@ -222,9 +222,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
       const bgColor = this.colorPattern[index];
       const bgColorType = this.utils.getValueType(bgColor);
 
-      const borderColor = this.currentTheme.bg2;
-      const borderColorType = this.utils.getValueType(borderColor);
-
       const bgRGB = bgColorType == 'hex' ? this.utils.hexToRGB(bgColor).rgb : this.utils.rgbToArray(bgColor);
 
       (ds.backgroundColor as ChartColor[]).push(this.rgbToString(bgRGB as any, 0.85));

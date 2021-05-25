@@ -1259,7 +1259,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       }
     });
 
-    entityForm.formGroup.controls['ssh_credentials'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['ssh_credentials'].valueChanges.subscribe(() => {
       for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
         const explorerComponent = this.fieldSets.config(item).customTemplateStringOptions.explorerComponent;
         if (explorerComponent) {
@@ -1522,7 +1522,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       return;
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       resolve(this.replicationService.getRemoteDataset(transport, sshCredentials, this));
     });
   }

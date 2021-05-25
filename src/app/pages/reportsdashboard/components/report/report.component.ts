@@ -50,12 +50,6 @@ interface TimeAxisData {
   culling: number;
 }
 
-interface LineChartConfig {
-  dataList: any;
-  divideBy: number;
-  legends: any;
-}
-
 export interface Report {
   name: string;
   title: string;
@@ -390,7 +384,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     const params = identifier ? { name: report.name, identifier } : { name: report.name };
 
     // Time scale options
-    const serverTime = this.getServerTime();
     const start = Math.floor(rrdOptions.start / 1000);
     const end = Math.floor(rrdOptions.end / 1000);
     const timeFrame = { start, end };

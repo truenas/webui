@@ -706,7 +706,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   updateFilter(event: KeyboardEvent): void {
     const input = event.target as HTMLInputElement;
     const val = input.value.toLowerCase();
-    const temp = this.temp;
     let re;
     try {
       re = new RegExp(val);

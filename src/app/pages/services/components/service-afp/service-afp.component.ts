@@ -174,6 +174,6 @@ export class ServiceAFPComponent implements FormConfiguration {
   }
 
   beforeSubmit(data: any): void {
-    data = this.compareBindIps(data);
+    this.compareBindIps(data);
   }
 }

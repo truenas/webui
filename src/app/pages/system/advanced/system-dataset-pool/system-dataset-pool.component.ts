@@ -88,7 +88,7 @@ export class SystemDatasetPoolComponent implements FormConfiguration, OnDestroy 
     });
   }
 
-  customSubmit(formValues: { pool: string }) {
+  customSubmit(formValues: { pool: string }): void {
     this.loader.open();
 
     of(formValues).pipe(

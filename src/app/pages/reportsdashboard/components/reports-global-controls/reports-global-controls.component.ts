@@ -17,11 +17,6 @@ import { ErdService } from 'app/services/erd.service';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
 
-interface Tab {
-  label: string;
-  value: string;
-}
-
 @Component({
   selector: 'reports-global-controls',
   templateUrl: './reports-global-controls.component.html',

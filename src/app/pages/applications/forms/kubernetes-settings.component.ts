@@ -166,7 +166,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     promises.push(this.ws.job(this.editCall, [data]).toPromise());
     promises.push(this.appService.updateContainerConfig(this.newEnableContainerImageUpdate).toPromise());
 
-    Promise.all(promises).then((res) => {
+    Promise.all(promises).then(() => {
       this.loader.close();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
