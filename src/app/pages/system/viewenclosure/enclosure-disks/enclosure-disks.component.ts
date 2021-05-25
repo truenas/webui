@@ -9,7 +9,6 @@ import { CoreEvent } from 'app/interfaces/events';
 import {
   Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils,
 } from 'pixi.js';
-import 'pixi-projection';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { Chassis } from 'app/core/classes/hardware/chassis';
@@ -60,7 +59,7 @@ export interface DiskFailure {
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
   protected pendingDialog: any;
   protected aborted = false;
-  // private mediaObs;
+
   mqAlias: string;
   @ViewChild('visualizer', { static: true }) visualizer: ElementRef;
   @ViewChild('disksoverview', { static: true }) overview: ElementRef;
@@ -70,6 +69,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   @Input('selected-enclosure') selectedEnclosure: any;
   @Input('current-tab') currentTab: any;
   @Input('controller-events') controllerEvents: Subject<CoreEvent>;
+
   app: Application;
   private renderer: any;
   private loader = PIXI.loader;
@@ -301,8 +301,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.core.unregister({ observerClass: this });
     this.destroyAllEnclosures();
     this.app.stage.destroy(true);
-    this.app.destroy(true, true);
-    // this.mediaObs.unsubscribe();
+    this.app.destroy(true);
   }
 
   loadEnclosure(enclosure: any, view?: EnclosureLocation, update?: boolean): void {
@@ -342,8 +341,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     PIXI.settings.SPRITE_MAX_TEXTURES = Math.min(PIXI.settings.SPRITE_MAX_TEXTURES, 16);// Fixes FireFox gl errors
     PIXI.utils.skipHello();
     this.app = new PIXI.Application({
-      width: this.pixiWidth, // 960 ,
-      height: this.pixiHeight, // 304 ,
+      width: this.pixiWidth,
+      height: this.pixiHeight,
       forceCanvas: false,
       transparent: true,
       antialias: true,
@@ -527,11 +526,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   extractEnclosure(enclosure: ChassisView, profile: any): void {
-    // let extractor = new PIXI.extract.CanvasExtract(this.renderer);
     const canvas = this.app.renderer.plugins.extract.canvas(enclosure.container);
     this.controllerEvents.next({ name: 'EnclosureCanvas', data: { canvas, profile }, sender: this });
     this.container.removeChild(enclosure.container);
-    // delete enclosure;
   }
 
   destroyEnclosure(): void {
@@ -598,7 +595,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'details':
         this.container.alpha = 1;
         this.setDisksDisabled();
-        // this.setDisksHealthState();
+
         this.setDisksPoolState();
         const vdev = this.system.getVdevInfo(this.selectedDisk.devname);
         this.selectedVdev = vdev;

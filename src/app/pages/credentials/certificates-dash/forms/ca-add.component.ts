@@ -658,15 +658,15 @@ export class CertificateAuthorityAddComponent {
     this.title = helptext_system_ca.add.title;
 
     for (const i in this.intermediatecaFields) {
-      this.hideField(this.intermediatecaFields[i], true, entity);
+      this.hideField(this.intermediatecaFields[i], true);
     }
     for (const i in this.importcaFields) {
-      this.hideField(this.importcaFields[i], true, entity);
+      this.hideField(this.importcaFields[i], true);
     }
     for (const i in this.internalcaFields) {
-      this.hideField(this.internalcaFields[i], false, entity);
+      this.hideField(this.internalcaFields[i], false);
     }
-    this.hideField(this.internalcaFields[1], true, entity);
+    this.hideField(this.internalcaFields[1], true);
 
     this.getField('create_type').valueChanges.subscribe((res) => {
       this.wizardConfig[1].skip = false;
@@ -674,53 +674,53 @@ export class CertificateAuthorityAddComponent {
 
       if (res == 'CA_CREATE_INTERNAL') {
         for (const i in this.intermediatecaFields) {
-          this.hideField(this.intermediatecaFields[i], true, entity);
+          this.hideField(this.intermediatecaFields[i], true);
         }
         for (const i in this.importcaFields) {
-          this.hideField(this.importcaFields[i], true, entity);
+          this.hideField(this.importcaFields[i], true);
         }
         for (const i in this.internalcaFields) {
-          this.hideField(this.internalcaFields[i], false, entity);
+          this.hideField(this.internalcaFields[i], false);
         }
         for (const i in this.extensionFields) {
-          this.hideField(this.extensionFields[i], false, entity);
+          this.hideField(this.extensionFields[i], false);
         }
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (this.getField('key_type').value === 'RSA') {
-          this.hideField('ec_curve', true, entity);
+          this.hideField('ec_curve', true);
         } else if (this.getField('key_type').value === 'EC') {
-          this.hideField('key_length', true, entity);
+          this.hideField('key_length', true);
         }
       } else if (res == 'CA_CREATE_INTERMEDIATE') {
         for (const i in this.internalcaFields) {
-          this.hideField(this.internalcaFields[i], true, entity);
+          this.hideField(this.internalcaFields[i], true);
         }
         for (const i in this.importcaFields) {
-          this.hideField(this.importcaFields[i], true, entity);
+          this.hideField(this.importcaFields[i], true);
         }
         for (const i in this.intermediatecaFields) {
-          this.hideField(this.intermediatecaFields[i], false, entity);
+          this.hideField(this.intermediatecaFields[i], false);
         }
         for (const i in this.extensionFields) {
-          this.hideField(this.extensionFields[i], false, entity);
+          this.hideField(this.extensionFields[i], false);
         }
         if (this.getField('key_type').value === 'RSA') {
-          this.hideField('ec_curve', true, entity);
+          this.hideField('ec_curve', true);
         } else if (this.getField('key_type').value === 'EC') {
-          this.hideField('key_length', true, entity);
+          this.hideField('key_length', true);
         }
       } else if (res == 'CA_CREATE_IMPORTED') {
         for (const i in this.internalcaFields) {
-          this.hideField(this.internalcaFields[i], true, entity);
+          this.hideField(this.internalcaFields[i], true);
         }
         for (const i in this.intermediatecaFields) {
-          this.hideField(this.intermediatecaFields[i], true, entity);
+          this.hideField(this.intermediatecaFields[i], true);
         }
         for (const i in this.importcaFields) {
-          this.hideField(this.importcaFields[i], false, entity);
+          this.hideField(this.importcaFields[i], false);
         }
         for (const i in this.extensionFields) {
-          this.hideField(this.extensionFields[i], true, entity);
+          this.hideField(this.extensionFields[i], true);
         }
 
         this.wizardConfig[1].skip = true;
@@ -767,7 +767,7 @@ export class CertificateAuthorityAddComponent {
     });
 
     for (const i in this.relationFields) {
-      this.getField(this.relationFields[i]).valueChanges.subscribe((res) => {
+      this.getField(this.relationFields[i]).valueChanges.subscribe(() => {
         this.setSummary();
       });
     }
@@ -842,7 +842,7 @@ export class CertificateAuthorityAddComponent {
     return null;
   }
 
-  hideField(fieldName: any, show: boolean, entity: any): void {
+  hideField(fieldName: any, show: boolean): void {
     this.getTarget(fieldName).isHidden = show;
     this.setDisabled(fieldName, show);
   }
@@ -899,7 +899,7 @@ export class CertificateAuthorityAddComponent {
 
   customSubmit(data: any): void {
     this.loader.open();
-    this.ws.call(this.addWsCall, [data]).subscribe((vm_res) => {
+    this.ws.call(this.addWsCall, [data]).subscribe(() => {
       this.loader.close();
       this.modalService.refreshTable();
       this.modalService.close('slide-in-form');

@@ -78,7 +78,7 @@ export class BootStatusListComponent implements OnInit {
     disk = disk.substring(5, disk.length);
     this.loader.open();
     this.busy = this.ws.call('boot.detach', [disk]).subscribe(
-      (res) => {
+      () => {
         this.loader.close();
         this._router.navigate(
           new Array('').concat('system', 'boot'),

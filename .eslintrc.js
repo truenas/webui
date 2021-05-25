@@ -104,7 +104,10 @@ module.exports = {
     {
       "files": ["*.html"],
       "parser": "@angular-eslint/template-parser",
-      "plugins": ["@angular-eslint/template"],
+      "plugins": [
+        "@angular-eslint/template",
+        "unused-imports"
+      ],
       "rules": {}
     }
   ]
