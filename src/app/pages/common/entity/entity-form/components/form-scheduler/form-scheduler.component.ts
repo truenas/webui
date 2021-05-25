@@ -27,18 +27,12 @@ interface CronPreset {
   description?: string;
 }
 
-interface CronDate {
-  value: any;
-  done: boolean;
-}
-
 @Component({
   selector: 'form-scheduler',
   templateUrl: './form-scheduler.component.html',
   styleUrls: ['./form-scheduler.component.scss', '../dynamic-field/dynamic-field.scss'],
 })
-export class FormSchedulerComponent implements Field, OnInit, AfterViewInit,
-  AfterViewChecked {
+export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, AfterViewChecked {
   // Basic form-select props
   config: FieldConfig;
   group: FormGroup;
@@ -346,7 +340,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit,
   }
 
   onScroll(): void {
-    const lastChild = this.schedulePreview.nativeElement.lastElementChild;
     const el = this.schedulePreview.nativeElement;
     if ((el.scrollHeight - el.scrollTop) == el.offsetHeight) {
       this.generateSchedule(true);

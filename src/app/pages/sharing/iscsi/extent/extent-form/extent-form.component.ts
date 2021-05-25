@@ -367,7 +367,7 @@ export class ExtentFormComponent implements FormConfiguration {
       value['path'] = value['disk'];
     }
     this.ws.call(this.editCall, [parseInt(this.pk, 10), value]).subscribe(
-      (res) => {
+      () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },

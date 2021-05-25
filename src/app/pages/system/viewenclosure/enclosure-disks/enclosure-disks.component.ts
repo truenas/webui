@@ -169,7 +169,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       clone.values = {};
       clone.keys = [];
 
-      chassisView.driveTrayObjects.forEach((dt: any, index: number) => {
+      chassisView.driveTrayObjects.forEach((dt) => {
         const disk = this.findDiskBySlotNumber(parseInt(dt.id));
         if (disk) {
           clone.keys.push(disk.name);
@@ -237,7 +237,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.pixiInit();
 
     // Listen for DOM changes to avoid race conditions with animations
-    const callback = (mutationList: any[], observer: any): void => {
+    const callback = (mutationList: any[]): void => {
       mutationList.forEach((mutation: any) => {
         switch (mutation.type) {
           case 'childList':
@@ -250,8 +250,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
             const fullStage: boolean = mutation.addedNodes[0].classList.contains('full-stage');
             const stageLeft: boolean = mutation.addedNodes[0].classList.contains('stage-left');
             const stageRight: boolean = mutation.addedNodes[0].classList.contains('stage-right');
-            const vdevLabels: boolean = mutation.addedNodes[0].classList.contains('vdev-disk');
-            const canvasClickpad: boolean = mutation.addedNodes[0].classList.contains('clickpad');
             if (stageLeft) {
               this.enter('stage-left'); // View has changed so we launch transition animations
             } else if (stageRight) {
@@ -410,10 +408,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       return;
     }
 
-    this.setupEnclosureEvents(enclosure);
+    this.setupEnclosureEvents();
   }
 
-  setupEnclosureEvents(enclosure: any): void {
+  setupEnclosureEvents(): void {
     this.enclosure.events.subscribe((evt) => {
       switch (evt.name) {
         case 'Ready':
@@ -514,7 +512,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
           this.optimizeChassisOpacity(enclosure);
 
-          profile.disks.forEach((disk: any, index: number) => {
+          profile.disks.forEach((disk: any) => {
             this.setDiskHealthState(disk, enclosure);
           });
           this.extractEnclosure(enclosure, profile);
@@ -606,7 +604,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.labels = new VDevLabelsSVG(this.enclosure, this.app, this.theme, this.selectedDisk);
 
         this.labels.events.next({ name: 'LabelDrives', data: vdev, sender: this });
-        let dl;
 
         break;
     }
@@ -717,9 +714,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   setDisksEnabledState(enclosure?: ChassisView): void {
     if (!enclosure) { enclosure = this.enclosure; }
-    enclosure.driveTrayObjects.forEach((dt: any, index: number) => {
+    enclosure.driveTrayObjects.forEach((dt) => {
       // let disk = this.findDiskBySlotNumber(index + 1);
-      const disk = this.findDiskBySlotNumber(dt.id);
+      const disk = this.findDiskBySlotNumber(Number(dt.id));
       dt.enabled = !!disk;
     });
   }
@@ -727,7 +724,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   setDisksDisabled(): void {
     this.enclosure.driveTrayObjects.forEach((dt: any, index: number) => {
       const selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
-      const disk = selectedEnclosure.disks[index];
       this.enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: dt.id, color: 'none' } });
     });
   }
@@ -739,12 +735,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       return;
     }
 
-    selectedEnclosure.disks.forEach((disk: any, index: number) => {
+    selectedEnclosure.disks.forEach((disk: any) => {
       this.setDiskHealthState(disk);
     });
   }
 
-  setDiskHealthState(disk: any, enclosure: ChassisView = this.enclosure, updateGL = false): void {
+  setDiskHealthState(disk: any, enclosure: ChassisView = this.enclosure): void {
     let index = -1;
 
     enclosure.driveTrayObjects.forEach((dto: any, i: number) => {
@@ -795,7 +791,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   getUnhealthyPools(): any[] {
     const sickPools: any[] = [];
-    const pools = this.system.pools.forEach((pool: any, index: number) => {
+    this.system.pools.forEach((pool: any, index: number) => {
       const healthy = pool.healthy;
       const inCurrentEnclosure = index == this.selectedEnclosure.poolKeys[pool.name];
       if (!healthy && inCurrentEnclosure) {
@@ -805,11 +801,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     return sickPools;
   }
 
-  getDiskFailures(enclosure: any = this.enclosure): void {
+  getDiskFailures(): void {
     const failedDisks: any[] = [];
     const selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
 
-    const analyze = (disk: any, index: number): void => {
+    const analyze = (disk: any): void => {
       let failed = false;
       const reasons = [];
 
@@ -860,7 +856,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     const keys: any[] = Object.keys(selectedEnclosure.poolKeys);
     if (keys.length > 0) {
-      selectedEnclosure.disks.forEach((disk: any, index: number) => {
+      selectedEnclosure.disks.forEach((disk: any) => {
         if (disk.enclosure.slot < this.enclosure.slotRange.start || disk.enclosure.slot > this.enclosure.slotRange.end) { return; }
         if (!disk.vdev) {
           this.enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: disk.enclosure.slot, color: '#999999' } });
@@ -1006,11 +1002,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     };
   }
 
-  onResize(evt: any): void {
+  onResize(): void {
     this.resizeView();
   }
 
-  resizeView(override?: string): void {
+  resizeView(): void {
     const visualizer = this.overview.nativeElement.querySelector('#visualizer');
     const left = this.cardWidth < 960 ? ((960 - this.cardWidth) / 2 * -1) : 0;
 

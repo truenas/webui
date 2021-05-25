@@ -129,10 +129,11 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // TODO: This block does nothing.
   getData(): void {
     this.ws.call(this._conf.queryCall).subscribe(
       (res) => {
-        const data = this.treeTableService.buildTree(res);
+        this.treeTableService.buildTree(res);
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialogService);

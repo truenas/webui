@@ -64,10 +64,10 @@ export class FormComboboxComponent implements Field {
       ) {
         fromEvent(this.autoCompleteRef.panel.nativeElement, 'scroll')
           .pipe(
-            map((x) => this.autoCompleteRef.panel.nativeElement.scrollTop),
+            map(() => this.autoCompleteRef.panel.nativeElement.scrollTop),
             takeUntil(this.autocompleteTrigger.panelClosingActions),
           )
-          .subscribe((x) => {
+          .subscribe(() => {
             const scrollTop = this.autoCompleteRef.panel.nativeElement
               .scrollTop;
             const scrollHeight = this.autoCompleteRef.panel.nativeElement
@@ -88,7 +88,7 @@ export class FormComboboxComponent implements Field {
       const menuPanel = this.menuRef ? document.getElementById(this.menuRef.panelId) : undefined;
       if (menuPanel) {
         fromEvent(menuPanel, 'scroll')
-          .subscribe((x) => {
+          .subscribe(() => {
             const scrollTop = menuPanel.scrollTop;
             const scrollHeight = menuPanel.scrollHeight;
             const elementHeight = menuPanel.clientHeight;

@@ -173,7 +173,7 @@ export class InitiatorFormComponent implements OnInit {
 
     this.loader.open();
     submitFunction.subscribe(
-      (res) => {
+      () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },
