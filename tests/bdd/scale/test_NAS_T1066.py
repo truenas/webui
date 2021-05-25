@@ -58,7 +58,7 @@ def click_on_the_credentials_on_the_side_menu_click_on_local_users():
 @then('click the down caret right of the users, then click the Edit button')
 def click_the_down_caret_right_of_the_users():
     """click the down caret right of the users, then click the Edit button."""
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]', 'clickable')
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
     assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
