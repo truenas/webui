@@ -39,7 +39,7 @@ export interface DashConfigItem {
   templateUrl: './widgetcontroller.component.html',
   styleUrls: ['./widgetcontroller.component.scss'],
 })
-export class WidgetControllerComponent extends WidgetComponent implements AfterViewInit {
+export class WidgetControllerComponent extends WidgetComponent {
   @Input() dashState: DashConfigItem[] = [];
   @Input() renderedWidgets?: number[] = [];
   @Input() hiddenWidgets?: number[] = [];
@@ -65,11 +65,6 @@ export class WidgetControllerComponent extends WidgetComponent implements AfterV
 
   ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
-  }
-
-  ngAfterViewInit(): void {
-    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).subscribe((evt: CoreEvent) => {
-    });
   }
 
   nameFromIdentifier(identifier: string): string {

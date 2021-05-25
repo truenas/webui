@@ -116,7 +116,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
 
     var font = new FontFaceObserver(this.font_name);
 
-    font.load().then((e) => {
+    font.load().then(() => {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
       this.xterm._initialized = true;
@@ -129,7 +129,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
-    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res) => {
+    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe(() => {
       this.xterm.focus();
     });
     return true;

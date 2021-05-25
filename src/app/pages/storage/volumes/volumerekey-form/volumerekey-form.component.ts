@@ -91,7 +91,7 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
     protected encryptionService: EncryptionService,
   ) {}
 
-  preInit(entityForm: any): void {
+  preInit(): void {
     this.route.params.subscribe((params) => {
       this.pk = params['pk'];
     });
@@ -99,9 +99,7 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
 
   afterInit(entityForm: any): void {
     entityForm.formGroup.controls['encryptionkey_passphrase'].valueChanges.subscribe((res: any) => {
-      const instructions = _.find(this.fieldConfig, { name: 'set_recoverykey-instructions' });
-      const field = _.find(this.fieldConfig, { name: 'set_recoverykey' });
-      res !== '' ? entityForm.setDisabled('set_recoverykey', false) : entityForm.setDisabled('set_recoverykey', true);
+      entityForm.setDisabled('set_recoverykey', res === '');
     });
   }
 

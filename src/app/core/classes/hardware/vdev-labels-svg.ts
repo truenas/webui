@@ -53,7 +53,6 @@ export class VDevLabelsSVG {
     this.app = app;
     this.mainStage = this.app.stage;
     this.d3Init();
-    const paths = this.getParent().querySelectorAll('svg path');
 
     let tiles;
     this.events = new Subject<CoreEvent>();
@@ -82,7 +81,7 @@ export class VDevLabelsSVG {
           break;
         case 'HighlightDisk':
           tiles = this.getParent().querySelectorAll('rect.tile');
-          this.hideAllTiles(tiles, ['tile tile_' + this.selectedDisk.devname]);
+          this.hideAllTiles(tiles);
 
           this.highlightedDiskName = evt.data.devname;
           this.showTile(evt.data.devname);
@@ -113,7 +112,7 @@ export class VDevLabelsSVG {
       .attr('height', op.offsetHeight)
       .attr('style', 'position:absolute; top:0; left:0;');
 
-    const clickpad = d3.select('#' + op.id).append('canvas') // This element will capture pointer for PIXI
+    d3.select('#' + op.id).append('canvas') // This element will capture pointer for PIXI
       .attr('class', 'clickpad')
       .attr('width', op.offsetWidth)
       .attr('height', op.offsetHeight)
@@ -144,12 +143,8 @@ export class VDevLabelsSVG {
 
   createVdevLabels(vdev: any): void {
     const disks = vdev.disks ? Object.keys(vdev.disks) : [this.selectedDisk.devname]; // NOTE: vdev.slots only has values for current enclosure
-    const xOffset = this.chassis.container.x + this.chassis.container.width + 16;
-    const freeSpace = this.app._options.width - xOffset;
-    const gap = 3;
 
-    disks.forEach((disk, index) => {
-      const present = !!(vdev.slots && vdev.slots[disk]); // Is the disk in this enclosure?
+    disks.forEach((disk) => {
       const slot = typeof vdev.slots !== 'undefined' ? vdev.slots[disk] : this.selectedDisk.enclosure.slot;
 
       if (slot && slot >= this.chassis.slotRange.start && slot <= this.chassis.slotRange.end) {
@@ -190,13 +185,9 @@ export class VDevLabelsSVG {
     }
 
     const disks = Object.keys(vdev.disks);// NOTE: vdev.slots only has values for current enclosure
-    const op = this.getParent();// Parent div
-    disks.forEach((disk, index) => {
-      let present = false; // Is the disk in this enclosure?
+    disks.forEach((disk) => {
       if (typeof vdev.slots[disk] !== 'undefined') {
-        present = true;
         // Create tile if the disk is in the current enclosure
-
         const tray = this.trays[disk];
 
         const el = overlay.nativeElement.querySelector('div.vdev-disk.' + disk);
@@ -240,7 +231,7 @@ export class VDevLabelsSVG {
   unhighlightAllTraces(traces: any[], exceptions: string[]): void {
     if (!exceptions) { exceptions = []; }
 
-    traces.forEach((item, index) => {
+    traces.forEach((item) => {
       if (exceptions.includes(item.className.baseVal)) { return; }
       item.setAttribute('stroke-opacity', 1);
     });
@@ -248,8 +239,7 @@ export class VDevLabelsSVG {
     this.showAllTiles(tiles);
   }
 
-  showTrace(devname: string, overlay: any): void {
-    const labels = overlay.nativeElement.querySelectorAll('.vdev-disk');
+  showTrace(devname: string): void {
     const paths = this.getParent().querySelectorAll('svg path');
     this.hideAllTraces(paths, [this.selectedDisk.devname, devname]);
     const op = this.getParent();
@@ -260,7 +250,7 @@ export class VDevLabelsSVG {
   hideAllTraces(traces: NodeListOf<any>, exceptions: string[]): void {
     if (!exceptions) { exceptions = []; }
 
-    traces.forEach((item, index) => {
+    traces.forEach((item) => {
       if (exceptions.includes(item.className.baseVal)) { return; }
       item.style['stroke-opacity'] = 0;
     });
@@ -280,14 +270,14 @@ export class VDevLabelsSVG {
     }
   }
 
-  hideAllTiles(tiles: NodeListOf<any>, exceptions?: string[]): void {
+  hideAllTiles(tiles: NodeListOf<any>): void {
     tiles.forEach((item) => {
       item.style.opacity = 0;
     });
   }
 
-  showAllTiles(tiles: NodeListOf<any>, exceptions?: string[]): void {
-    tiles.forEach((item, index) => {
+  showAllTiles(tiles: NodeListOf<any>): void {
+    tiles.forEach((item) => {
       item.style.opacity = 1;
     });
   }

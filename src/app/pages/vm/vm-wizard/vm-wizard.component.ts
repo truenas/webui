@@ -868,7 +868,7 @@ export class VMWizardComponent {
   cpuValidator(name: string): ValidatorFn {
     const self = this;
     // TODO: setTimeout breaks typing
-    return function validCPU(control: FormControl): any {
+    return function validCPU(): any {
       const config = self.wizardConfig[1].fieldConfig.find((c) => c.name === name);
       setTimeout(() => {
         const errors = self.vcpus * self.cores * self.threads > self.maxVCPUs
@@ -1084,14 +1084,14 @@ export class VMWizardComponent {
           ));
         }
         combineLatest(observables).subscribe(
-          (responses_array) => {
+          () => {
             this.loader.close();
             this.modalService.close('slide-in-form');
           },
           (error) => {
             setTimeout(() => {
               this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).subscribe(
-                (res) => {
+                () => {
                   this.loader.close();
                   this.dialogService.errorReport(T('Error creating VM.'), T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted);
                 },
@@ -1139,14 +1139,14 @@ export class VMWizardComponent {
           ));
         }
         combineLatest(observables).subscribe(
-          (responses_array) => {
+          () => {
             this.loader.close();
             this.modalService.close('slide-in-form');
           },
           (error) => {
             setTimeout(() => {
               this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).subscribe(
-                (res) => {
+                () => {
                   this.loader.close();
                   this.dialogService.errorReport(T('Error creating VM.'), T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted);
                 },

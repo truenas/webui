@@ -258,7 +258,7 @@ export class VolumeImportWizardComponent {
     });
   }
 
-  preInit(entityWizard: EntityWizardComponent): void {
+  preInit(): void {
     this.productType = window.localStorage.getItem('product_type') as ProductType;
     if (this.productType.includes(ProductType.Scale)) {
       this.wizardConfig.splice(0, 2);

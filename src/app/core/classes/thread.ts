@@ -36,7 +36,7 @@ export class Thread extends iXAbstractObject {
   // For more info: https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Functions_and_classes_available_to_workers
   operations: any;
 
-  constructor(core: CoreService) {
+  constructor() {
     super();
     this.maxThreads = navigator.hardwareConcurrency;
 

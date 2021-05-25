@@ -81,7 +81,7 @@ export class SystemProfileService extends BaseService {
     this.core.register({
       observerClass: this,
       eventName: 'HAStatusRequest',
-    }).subscribe((evt: CoreEvent) => {
+    }).subscribe(() => {
       if (this.cache && this.features.HA) {
         // This is a TrueNAS box with HA support
         if (this.ha_status && this.ha_status.status.length > 0) {
@@ -177,7 +177,6 @@ export class SystemProfileService extends BaseService {
 
   updateHA(res: FailoverDisabledReason[]): void {
     const ha_enabled = res.length == 0;
-    const ha_status_text = res.length == 0 ? helptext.ha_status_text_enabled : helptext.ha_status_text_disabled;
 
     const enabled_txt = res.length == 0 ? 'HA Enabled' : 'HA Disabled';
 

@@ -308,7 +308,7 @@ export class VmFormComponent implements FormConfiguration {
 
   cpuValidator(name: string): any {
     const self = this;
-    return function validCPU(control: FormControl) {
+    return function validCPU() {
       const config = self.fieldConfig.find((c) => c.name === name);
       setTimeout(() => {
         const errors = self.vcpus * self.cores * self.threads > self.maxVCPUs
@@ -436,7 +436,7 @@ export class VmFormComponent implements FormConfiguration {
     observables.push(this.ws.call('vm.update', [this.rawVmData.id, updatedVmData]));
 
     combineLatest(observables).subscribe(
-      (responses_array) => {
+      () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },

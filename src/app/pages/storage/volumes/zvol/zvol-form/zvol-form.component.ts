@@ -668,7 +668,6 @@ export class ZvolFormComponent implements FormConfiguration {
       this.entityForm.setDisabled('inherit_encryption', true, true);
     }
 
-    const name = _.find(this.fieldConfig, { name: 'name' });
     const sparse = _.find(this.fieldConfig, { name: 'sparse' });
     const sync = _.find(this.fieldConfig, { name: 'sync' });
     const compression = _.find(this.fieldConfig, { name: 'compression' });
@@ -829,7 +828,7 @@ export class ZvolFormComponent implements FormConfiguration {
       }
 
       if (!this.edit_data.volsize || this.edit_data.volsize >= rounded_vol_size) {
-        this.ws.call('pool.dataset.update', [this.parent, this.edit_data]).subscribe((restPostResp) => {
+        this.ws.call('pool.dataset.update', [this.parent, this.edit_data]).subscribe(() => {
           this.loader.close();
           this.modalService.close('slide-in-form');
         }, (eres) => {
@@ -848,7 +847,7 @@ export class ZvolFormComponent implements FormConfiguration {
     this.loader.open();
 
     if (this.isNew === true) {
-      this.addSubmit(body).subscribe((restPostResp) => {
+      this.addSubmit(body).subscribe(() => {
         this.loader.close();
         this.modalService.close('slide-in-form');
         this.modalService.refreshTable();

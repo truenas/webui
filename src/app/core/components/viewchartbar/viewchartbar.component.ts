@@ -90,7 +90,6 @@ export class ViewChartBarComponent implements AfterViewInit, OnChanges {
   render(): void {
     this.margin = 32;
 
-    const wrapper = d3.select('#bar-' + this.chartId);
     if (!this.el) { return; }
     console.log(this.el.nativeElement);
     this.wrapperNode = styler(this.el.nativeElement, {});
