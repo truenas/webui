@@ -73,7 +73,7 @@ export class IPMIFromComponent implements FormConfiguration {
           name: 'ipaddress',
           placeholder: helptext.ipaddress_placeholder,
           tooltip: helptext.ipaddress_tooltip,
-          validation: [ipv4Validator('ipaddress')],
+          validation: [ipv4Validator()],
           errors: helptext.ip_error,
           hasErrors: false,
           relation: [
@@ -91,7 +91,7 @@ export class IPMIFromComponent implements FormConfiguration {
           name: 'netmask',
           placeholder: helptext.netmask_placeholder,
           tooltip: helptext.netmask_tooltip,
-          validation: [ipv4Validator('netmask')],
+          validation: [ipv4Validator()],
           errors: helptext.ip_error,
           hasErrors: false,
           relation: [
@@ -109,7 +109,7 @@ export class IPMIFromComponent implements FormConfiguration {
           name: 'gateway',
           placeholder: helptext.gateway_placeholder,
           tooltip: helptext.gateway_tooltip,
-          validation: [ipv4Validator('gateway')],
+          validation: [ipv4Validator()],
           errors: helptext.ip_error,
           hasErrors: false,
           relation: [

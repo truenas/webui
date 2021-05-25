@@ -187,7 +187,7 @@ export class NFSFormComponent implements FormConfiguration {
           name: 'network',
           placeholder: helptext_sharing_nfs.placeholder_network,
           tooltip: helptext_sharing_nfs.tooltip_network,
-          validation: [ipv4or6cidrValidator('network')],
+          validation: [ipv4or6cidrValidator()],
         }],
         listFields: [],
       }],

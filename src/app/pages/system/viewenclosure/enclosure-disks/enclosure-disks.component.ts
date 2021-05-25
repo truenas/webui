@@ -834,16 +834,16 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     if (this.subenclosure) {
       // If this is a head unit with rear bays, treat both enclosures as single unit
-      this.system.profile[this.system.headIndex].disks.forEach((disk: any, index: number) => {
-        analyze(disk, index);
+      this.system.profile[this.system.headIndex].disks.forEach((disk: any) => {
+        analyze(disk);
       });
 
-      this.system.profile[this.system.rearIndex].disks.forEach((disk: any, index: number) => {
-        analyze(disk, index);
+      this.system.profile[this.system.rearIndex].disks.forEach((disk: any) => {
+        analyze(disk);
       });
     } else {
-      selectedEnclosure.disks.forEach((disk: any, index: number) => {
-        analyze(disk, index);
+      selectedEnclosure.disks.forEach((disk: any) => {
+        analyze(disk);
       });
     }
 
