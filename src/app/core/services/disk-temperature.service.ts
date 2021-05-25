@@ -22,14 +22,14 @@ export class DiskTemperatureService extends BaseService {
   constructor() {
     super();
 
-    this.core.register({ observerClass: this, eventName: 'DiskTemperaturesSubscribe' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'DiskTemperaturesSubscribe' }).subscribe(() => {
       this.subscribers++;
       if (!this.broadcast) {
         this.start();
       }
     });
 
-    this.core.register({ observerClass: this, eventName: 'DiskTemperaturesUnsubscribe' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'DiskTemperaturesUnsubscribe' }).subscribe(() => {
       this.subscribers--;
       if (this.subscribers == 0) {
         this.stop();
@@ -37,7 +37,7 @@ export class DiskTemperatureService extends BaseService {
     });
   }
 
-  protected onAuthenticated(evt: CoreEvent): void {
+  protected onAuthenticated(): void {
     this.authenticated = true;
 
     const queryOptions: QueryOptions<Disk> = { select: ['name', 'type'] };
@@ -59,10 +59,8 @@ export class DiskTemperatureService extends BaseService {
   }
 
   start(): void {
-    let tally = 0;
     this.broadcast = setInterval(() => {
       this.fetch(this.disks.map((v) => v.name));
-      tally++;
     }, 2000);
   }
 

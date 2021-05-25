@@ -22,7 +22,6 @@ import {
 } from 'popmotion';
 
 const transformMap = transform.transformMap;
-const { clamp } = transform;
 
 /*
  * Display Object is a wrapper around DOM elements
@@ -124,8 +123,6 @@ export class DisplayObject {
   }
 
   get x(): number {
-    const element = styler(this.rawElement, {});
-    // console.log(element.get('x'))
     return this.target.get('x');
   }
 
@@ -137,8 +134,6 @@ export class DisplayObject {
   }
 
   get y(): number {
-    const element = styler(this.rawElement, {});
-    // console.log(element.get('y'))
     return this.target.get('y');
   }
 
@@ -204,7 +199,6 @@ export class DisplayObject {
 
   private createTarget(): void {
     const parent = this.rawElement.parentNode;
-    const fragment = document.createDocumentFragment();
     const wrapper = document.createElement('div');
     // let handles = document.createElement(ResizeHandles.template);
     wrapper.innerHTML = ResizeHandles.template;
@@ -239,7 +233,7 @@ export class DisplayObject {
         this.moveHandle = this.rawElement.parentNode as Element;
       }
       // listen(this.rawElement, 'mousedown touchstart').while((v) => this._moveable).start(this.start.bind(this));
-      listen(this.moveHandle, 'mousedown touchstart').while((v) => this._moveable).start(this.start.bind(this));
+      listen(this.moveHandle, 'mousedown touchstart').while(() => this._moveable).start(this.start.bind(this));
 
       // let broadcast = this.inputStream.next()
       // listen(document, 'mousemove ').while((v) => this.broadcastInputPosition).start((e) => console.log(e)/*broadcast(e)*/);
@@ -274,12 +268,12 @@ export class DisplayObject {
       this.resizeHandleRight = this.rawElement.parentNode.querySelector('.resize-handle-right');
 
       // console.log(this.resizeHandleTop);
-      listen(this.resizeHandleTop, 'mousedown touchstart').while((v) => this._resizeable).start(this.startResizeTop.bind(this));
-      listen(this.resizeHandleBottom, 'mousedown touchstart').while((v) => this._resizeable).start(this.startResizeBottom.bind(this));
-      listen(this.resizeHandleLeft, 'mousedown touchstart').while((v) => this._resizeable).start(this.startResizeLeft.bind(this));
-      listen(this.resizeHandleRight, 'mousedown touchstart').while((v) => this._resizeable).start(this.startResizeRight.bind(this));
+      listen(this.resizeHandleTop, 'mousedown touchstart').while(() => this._resizeable).start(this.startResizeTop.bind(this));
+      listen(this.resizeHandleBottom, 'mousedown touchstart').while(() => this._resizeable).start(this.startResizeBottom.bind(this));
+      listen(this.resizeHandleLeft, 'mousedown touchstart').while(() => this._resizeable).start(this.startResizeLeft.bind(this));
+      listen(this.resizeHandleRight, 'mousedown touchstart').while(() => this._resizeable).start(this.startResizeRight.bind(this));
 
-      listen(document, 'mouseup touchend').while((v) => this._moveable).start(this.stopResize.bind(this));
+      listen(document, 'mouseup touchend').while(() => this._moveable).start(this.stopResize.bind(this));
       /* listen(this.resizeHandleTop, 'mouseup touchend').while((v) => this._resizeable).start(this.stopResize.bind(this));
       listen(this.resizeHandleBottom, 'mouseup touchend').while((v) => this._resizeable).start(this.stopResize.bind(this));
       listen(this.resizeHandleLeft, 'mouseup touchend').while((v) => this._resizeable).start(this.stopResize.bind(this));
@@ -308,7 +302,6 @@ export class DisplayObject {
       const viewportOffset = this.rawElement.getBoundingClientRect();
       // these are relative to the viewport, i.e. the window
       const topBounds = viewportOffset.top;
-      const leftBounds = viewportOffset.left;
       this.boundary = (topBounds - this.reservedTop) * -1;
     }
 
@@ -331,10 +324,10 @@ export class DisplayObject {
 
     // Only listen for events that trigger stop() once movement has started
     if (this.constrainX || this.constrainY) {
-      listen(document, 'mouseup touchend').while((v) => this._moveable).start(this.stopDrag.bind(this));
+      listen(document, 'mouseup touchend').while(() => this._moveable).start(this.stopDrag.bind(this));
     } else {
-      listen(this.rawElement, 'mouseup touchend').while((v) => this._moveable).start(this.stopDrag.bind(this));
-      listen(document, 'mouseleave').while((v) => this._moveable).start(this.mouseExit.bind(this));
+      listen(this.rawElement, 'mouseup touchend').while(() => this._moveable).start(this.stopDrag.bind(this));
+      listen(document, 'mouseleave').while(() => this._moveable).start(this.mouseExit.bind(this));
     }
   }
 
@@ -424,7 +417,6 @@ export class DisplayObject {
       resetProps.scaleY = 1;
     }
 
-    const props = set ? elevatedProps : resetProps;
     tween({
       from: set ? resetProps : elevatedProps,
       to: set ? elevatedProps : resetProps,
@@ -491,15 +483,12 @@ export class DisplayObject {
     this.messageBus.emit({ name: 'ResizeStarted' + this.id });
     const element = styler(this.rawElement, {});
 
-    const elementStartX = element.get('x');
     const startW = this.target.get('width');
     const startX = this.target.get('x');
     const startY = this.target.get('y');
 
     this.pointerTracker = pointer(this.anchorXY.get()).pipe(transformMap({
       x: (v: number) => {
-        const diff = v - startX;
-        const resizedW = startW - diff; // (diff / 2);
         // console.log("cursor: " + diff + " && width: " +  resizedW);
         // console.log(diff)
 
@@ -519,7 +508,6 @@ export class DisplayObject {
     this.messageBus.emit({ name: 'ResizeStarted' + this.id });
     const element = styler(this.rawElement, {});
 
-    const elementStartX = element.get('x');
     const startW = this.target.get('width');
     const startX = this.target.get('x');
     const startY = this.target.get('y');
