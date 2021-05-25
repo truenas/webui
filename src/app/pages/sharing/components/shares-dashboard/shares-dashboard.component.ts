@@ -21,6 +21,7 @@ import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form'
 import { Service } from 'app/interfaces/service.interface';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { AppTableHeaderExtraAction } from 'app/pages/common/entity/table/table.component';
 
 enum ShareType {
   SMB = 'smb',
@@ -337,7 +338,7 @@ export class SharesDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  getTableExtraActions(service: Service): any[] {
+  getTableExtraActions(service: Service): AppTableHeaderExtraAction[] {
     return [
       {
         label: service.state === ServiceStatus.Running ? T('Turn Off Service') : T('Turn On Service'),
