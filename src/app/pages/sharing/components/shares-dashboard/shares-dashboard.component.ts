@@ -346,8 +346,8 @@ export class SharesDashboardComponent implements OnInit, OnDestroy {
           const rpc = service.state === ServiceStatus.Running ? 'service.stop' : 'service.start';
           service.state = ServiceStatus.Loading;
           this.updateTableServiceStatus(service);
-          this.ws.call(rpc, [service.service]).pipe(takeUntil(this.onDestroy$)).subscribe((res) => {
-            if (res) {
+          this.ws.call(rpc, [service.service]).pipe(takeUntil(this.onDestroy$)).subscribe((hasChanged: boolean) => {
+            if (hasChanged) {
               if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
                 this.dialog.Info(
                   this.translate.instant(T('Service failed to stop')),
