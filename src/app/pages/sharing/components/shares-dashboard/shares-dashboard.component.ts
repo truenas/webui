@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { T } from 'app/translate-marker';
 import { helptext_sharing_webdav } from 'app/helptext/sharing';
-import { helptext_sharing_afp } from 'app/helptext/sharing';
 import { InputExpandableTableConf } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
 import { helptext_sharing_smb } from 'app/helptext/sharing';
+import { helptext_sharing_nfs } from 'app/helptext/sharing';
 import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form';
 import {
   AppLoaderService, DialogService, IscsiService, ModalService, NetworkService, SystemGeneralService, UserService, WebSocketService,
@@ -65,7 +65,7 @@ export class SharesDashboardComponent {
     private loader: AppLoaderService, private sysGeneralService: SystemGeneralService, private aroute: ActivatedRoute,
     private iscsiService: IscsiService, private translate: TranslateService) {}
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     if (this.webdavHasItems) {
       this.webdavTableConf.alwaysExpanded = true;
     }
@@ -80,22 +80,26 @@ export class SharesDashboardComponent {
     }
   }
 
-  refreshDashboard(shareType: ShareType = null) {
+  refreshDashboard(shareType: ShareType = null): void {
     switch (shareType) {
       case ShareType.ISCSI: {
         this.iscsiTableConf = this.getTableConfigForShareType(ShareType.ISCSI);
+        this.iscsiChecked = false;
         break;
       }
       case ShareType.NFS: {
         this.nfsTableConf = this.getTableConfigForShareType(ShareType.NFS);
+        this.nfsChecked = false;
         break;
       }
       case ShareType.SMB: {
         this.smbTableConf = this.getTableConfigForShareType(ShareType.SMB);
+        this.smbChecked = false;
         break;
       }
       case ShareType.WebDAV: {
         this.webdavTableConf = this.getTableConfigForShareType(ShareType.WebDAV);
+        this.webdavChecked = false;
         break;
       }
       default: {
@@ -103,12 +107,16 @@ export class SharesDashboardComponent {
         this.nfsTableConf = this.getTableConfigForShareType(ShareType.NFS);
         this.smbTableConf = this.getTableConfigForShareType(ShareType.SMB);
         this.iscsiTableConf = this.getTableConfigForShareType(ShareType.ISCSI);
+        this.webdavChecked = false;
+        this.nfsChecked = false;
+        this.smbChecked = false;
+        this.iscsiChecked = false;
         break;
       }
     }
   }
 
-  getTableConfigForShareType(shareType: ShareType) {
+  getTableConfigForShareType(shareType: ShareType): InputExpandableTableConf {
     switch (shareType) {
       case ShareType.NFS: {
         return {
@@ -120,17 +128,17 @@ export class SharesDashboardComponent {
             title: T('Delete'),
             key_props: ['name'],
           },
+          limitRowsByMaxHeight: true,
           emptyEntityLarge: false,
           parent: this,
           columns: [
-            { name: helptext_sharing_afp.column_name, prop: 'name', always_display: true },
-            { name: helptext_sharing_afp.column_path, prop: 'path' },
-            { name: helptext_sharing_afp.column_comment, prop: 'comment' },
-            { name: helptext_sharing_afp.column_enabled, prop: 'enabled' },
+            { name: helptext_sharing_nfs.column_path, prop: 'paths', always_display: true },
+            { name: helptext_sharing_nfs.column_comment, prop: 'comment' },
+            { name: helptext_sharing_nfs.column_enabled, prop: 'enabled' },
           ],
           detailsHref: '/sharing/nfs',
           add() {
-            this.parent.add(ShareType.NFS);
+            this.parent.add(this.tableComponent, ShareType.NFS);
           },
           edit(row: any) {
             this.parent.edit(this.tableComponent, ShareType.NFS, row.id);
@@ -164,6 +172,7 @@ export class SharesDashboardComponent {
             title: T('Delete'),
             key_props: ['name'],
           },
+          limitRowsByMaxHeight: true,
           emptyEntityLarge: false,
           parent: this,
           columns: [
@@ -222,8 +231,9 @@ export class SharesDashboardComponent {
             { prop: 'perm', name: helptext_sharing_webdav.column_perm, hidden: true },
           ],
           add() {
-            this.parent.add(ShareType.WebDAV);
+            this.parent.add(this.tableComponent, ShareType.WebDAV);
           },
+          limitRowsByMaxHeight: true,
           edit(row: any) {
             this.parent.edit(this.tableComponent, ShareType.WebDAV, row.id);
           },
@@ -265,6 +275,7 @@ export class SharesDashboardComponent {
             { name: helptext_sharing_smb.column_comment, prop: 'comment' },
             { name: helptext_sharing_smb.column_enabled, prop: 'enabled', checkbox: true },
           ],
+          limitRowsByMaxHeight: true,
           add() {
             this.parent.add(this.tableComponent, ShareType.SMB);
           },
@@ -292,11 +303,11 @@ export class SharesDashboardComponent {
     }
   }
 
-  updateNumberOfTables() {
+  updateNumberOfTables(): void {
     this.noOfPopulatedTables = this.nfsHasItems + this.smbHasItems + this.iscsiHasItems + this.webdavHasItems;
   }
 
-  allTablesChecked() {
+  allTablesChecked(): boolean {
     return this.smbChecked && this.nfsChecked && this.iscsiChecked && this.webdavChecked;
   }
 

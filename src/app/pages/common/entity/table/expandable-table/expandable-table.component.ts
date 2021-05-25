@@ -1,4 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component, ElementRef, Input, OnInit, ViewChild,
+} from '@angular/core';
 import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 
 export interface InputExpandableTableConf extends InputTableConf {
@@ -8,6 +10,7 @@ export interface InputExpandableTableConf extends InputTableConf {
   expandedIfNotEmpty?: boolean;
   detailsHref?: string;
   limitRows?: number;
+  limitRowsByMaxHeight?: boolean;
 }
 
 @Component({
@@ -22,10 +25,25 @@ export class ExpandableTableComponent {
   disabled = false;
   isEmpty = true;
   isExpanded = false;
+  _tableConf: InputExpandableTableConf;
 
-  @Input('conf') tableConf: InputExpandableTableConf;
+  get tableConf(): InputExpandableTableConf {
+    return this._tableConf;
+  }
 
-  ngOnInit(): void {
+  @Input('conf') set tableConf(conf: InputExpandableTableConf) {
+    if (!this._tableConf) {
+      this._tableConf = conf;
+    } else {
+      this._tableConf = conf;
+      this.populateTable();
+    }
+  }
+
+  @ViewChild('appTable', { read: ElementRef })
+  appTable: ElementRef;
+
+  populateTable(): void {
     this.title = this.tableConf.title || '';
     if (this.tableConf.titleHref) {
       this.titleHref = this.tableConf.titleHref;
@@ -48,6 +66,28 @@ export class ExpandableTableComponent {
       }
       return data;
     };
+  }
+
+  ngAfterViewChecked(): void {
+    if (this._tableConf.limitRows
+      && this.appTable.nativeElement.children[0].children[1].children[0].children[0].children[0].children[0].children[0].children[0]) {
+      const tableHeaderHeight = this.appTable.nativeElement.children[0].children[1].children[0].children[0].children[0].children[0].children[0].children[0].children[0].offsetHeight;
+      const expandableHeaderHeight = this.appTable.nativeElement.children[0].children[0].offsetHeight;
+      const detailsFooterHeight = this.appTable.nativeElement.children[1].offsetHeight;
+      const totalHeight = this.appTable.nativeElement.offsetHeight;
+      const maxRowsHeight = totalHeight - expandableHeaderHeight - tableHeaderHeight - detailsFooterHeight;
+      if (this._tableConf.limitRowsByMaxHeight) {
+        const prevRowsLimit = this._tableConf.limitRows;
+        this._tableConf.limitRows = Math.floor(maxRowsHeight / 48);
+        if (prevRowsLimit !== this._tableConf.limitRows) {
+          this._tableConf = { ...this.tableConf };
+        }
+      }
+    }
+  }
+
+  ngOnInit(): void {
+    this.populateTable();
   }
 
   shouldBeCollapsed(): boolean {
