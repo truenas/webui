@@ -72,8 +72,7 @@
               "node_modules/element-resize-detector/dist/element-resize-detector.min.js",
               "node_modules/filesize/lib/filesize.js",
               "node_modules/pixi.js/dist/pixi.min.js",
-              "node_modules/pixi-filters/dist/pixi-filters.js",
-              "node_modules/pixi-projection/dist/pixi-projection.js"
+              "node_modules/pixi-filters/dist/pixi-filters.js"
             ],
             "webWorkerTsConfig": "tsconfig.worker.json"
           },
