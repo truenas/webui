@@ -1,6 +1,14 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
+import time
+from function (
+    wait_on_element,
+    is_element_present,
+    attribute_value_exist,
+    wait_for_attribute_value,
+)
+
 from pytest_bdd import (
     given,
     scenario,
