@@ -344,8 +344,7 @@ export class SharesDashboardComponent implements OnInit, OnDestroy {
         label: service.state === ServiceStatus.Running ? T('Turn Off Service') : T('Turn On Service'),
         onClick: () => {
           const rpc = service.state === ServiceStatus.Running ? 'service.stop' : 'service.start';
-          service.state = ServiceStatus.Loading;
-          this.updateTableServiceStatus(service);
+          this.updateTableServiceStatus({ ...service, state: ServiceStatus.Loading });
           this.ws.call(rpc, [service.service]).pipe(takeUntil(this.onDestroy$)).subscribe((hasChanged: boolean) => {
             if (hasChanged) {
               if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
