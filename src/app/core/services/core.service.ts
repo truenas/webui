@@ -51,15 +51,6 @@ export class CoreService {
       console.log('*** New Instance of Core Service ***');
     }
     this.coreEvents = new Subject();
-    this.coreEvents.subscribe(
-      (evt: CoreEvent) => {
-        // Do Stuff
-        // DEBUG: console.log("*** CoreEvent: " + evt.name);
-      },
-      (err) => {
-        console.log(err);
-      },
-    );
   }
 
   private dispatchTable: any[] = [];

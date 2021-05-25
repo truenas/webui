@@ -18,12 +18,12 @@ export class BaseService {
     this.core.register({
       observerClass: this,
       eventName: 'Authenticated',
-    }).subscribe((evt: CoreEvent) => {
+    }).subscribe(() => {
       this.authenticated = true;
-      this.onAuthenticated(evt);
+      this.onAuthenticated();
     });
   }
 
-  protected onAuthenticated(evt: CoreEvent): void {
+  protected onAuthenticated(): void {
   }
 }

@@ -261,7 +261,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
     return actionId === 'strip_acl';
   }
 
-  preInit(entityEdit: any): void {
+  preInit(): void {
     this.sub = this.aroute.params.subscribe((params) => {
       this.datasetId = params['path'];
       this.path = '/mnt/' + params['path'];

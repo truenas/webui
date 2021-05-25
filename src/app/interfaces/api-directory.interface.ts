@@ -207,6 +207,11 @@ export type ApiDirectory = {
   'directoryservices.cache_refresh': { params: any; response: any };
   'directoryservices.get_state': { params: any; response: any };
 
+  // Enclosure
+  'enclosure.query': { params: any; response: any };
+  'enclosure.update': { params: any; response: any };
+  'enclosure.set_slot_status': { params: any; response: any };
+
   // Filesystem
   'filesystem.acl_is_trivial': {
     params: [string];
@@ -285,6 +290,7 @@ export type ApiDirectory = {
   'interface.has_pending_changes': { params: void; response: boolean };
   'interface.checkin_waiting': { params: any; response: any };
   'interface.checkin': { params: any; response: any };
+  'interface.websocket_interface': { params: any; response: any };
 
   // iSCSI
   'iscsi.portal.listen_ip_choices': { params: void; response: IscsiIpChoices };
@@ -427,6 +433,7 @@ export type ApiDirectory = {
     params: QueryParams<Dataset, ExtraDatasetQueryOptions>;
     response: Dataset[];
   };
+  'pool.get_disks': { params: any; response: any };
   'pool.scrub.delete': { params: any; response: any };
   'pool.scrub.query': { params: QueryParams<PoolScrub>; response: PoolScrub[] };
   'pool.scrub.update': { params: any; response: any };
@@ -487,6 +494,7 @@ export type ApiDirectory = {
   'reporting.get_data': { params: any; response: any };
   'reporting.update': { params: any; response: any };
   'reporting.config': { params: any; response: any };
+  'reporting.graphs': { params: any; response: any };
 
   // S3
   's3.bindip_choices': { params: any; response: any };
@@ -561,6 +569,9 @@ export type ApiDirectory = {
   };
   'service.restart': { params: any; response: any };
 
+  // Sensor
+  'sensor.query': { params: any; response: any };
+
   // Sharing
   'sharing.smb.query': { params: QueryParams<SmbShare>; response: SmbShare[] };
   'sharing.smb.create': { params: any; response: any };
@@ -578,6 +589,10 @@ export type ApiDirectory = {
   'sharing.webdav.update': { params: any; response: any };
   'sharing.webdav.create': { params: any; response: any };
   'sharing.webdav.delete': { params: any; response: any };
+
+  // Stats
+  'stats.get_data': { params: any; response: any };
+  'stats.get_sources': { params: any; response: any };
 
   // Tunable
   'tunable.tunable_type_choices': { params: any; response: any };
@@ -630,6 +645,7 @@ export type ApiDirectory = {
   'vm.restart': { params: any; response: any };
   'vm.get_display_devices': { params: any; response: any };
   'vm.start': { params: any; response: any };
+  'vm.get_vmemory_in_use': { params: any; response: any };
 
   // Vmware
   'vmware.dataset_has_vms': { params: any; response: any };

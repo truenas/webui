@@ -352,7 +352,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
 
     this.loader.open();
     this.ws.call(this.editCall, [this.rowNum, payload]).subscribe(
-      (res) => {
+      () => {
         this.loader.close();
         this.modalService.close('slide-in-form');
         this.modalService.refreshTable();

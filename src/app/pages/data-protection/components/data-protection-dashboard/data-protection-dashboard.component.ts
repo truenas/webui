@@ -597,7 +597,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             customSubmit(entityDialog: EntityDialogComponent) {
               parent.loader.open();
               parent.ws.call('replication.restore', [row.id, entityDialog.formValue]).subscribe(
-                (res) => {
+                () => {
                   entityDialog.dialogRef.close(true);
                   parent.loader.close();
                   parent.refreshTables();
@@ -776,7 +776,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             customSubmit(entityDialog: EntityDialogComponent) {
               parent.loader.open();
               parent.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).subscribe(
-                (res) => {
+                () => {
                   entityDialog.dialogRef.close(true);
                   parent.loader.close();
                   parent.refreshTables();

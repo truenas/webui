@@ -173,7 +173,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
           this.dialog.confirm(T('Stop'), T('Stop this cloud sync?'), true).subscribe((res: any) => {
             if (res) {
               this.ws.call('cloudsync.abort', [row.id]).subscribe(
-                (wsRes) => {
+                () => {
                   this.dialog.Info(
                     T('Task Stopped'),
                     T('Cloud sync <i>') + row.description + T('</i> stopped.'),
@@ -286,7 +286,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
             customSubmit(entityDialog: EntityDialogComponent) {
               parent.loader.open();
               parent.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).subscribe(
-                (res) => {
+                () => {
                   entityDialog.dialogRef.close(true);
                   parent.entityList.getData();
                 },

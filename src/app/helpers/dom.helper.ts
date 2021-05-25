@@ -45,7 +45,7 @@ export function toggleClass(el: any, className: string): void {
   }
 }
 
-export function changeTheme(themes: any[], themeName: string): void {
+export function changeTheme(): void {
   // Remove default
   /* removeClass(document.body, 'ix-blue');
 
