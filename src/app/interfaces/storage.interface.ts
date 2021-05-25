@@ -1,5 +1,6 @@
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
+import { ZfsProperty } from './zfs-property.interface';
 
 // As returned by pool.query under topology[<vdevtype>]
 export interface VDev {
@@ -110,4 +111,65 @@ export interface DiskUpdate {
   difference?: number;
   informational?: number;
   enclosure?: EnclosureSlot;
+}
+
+/**
+ * As returned by snapshot.query
+ */
+export interface Snapshot {
+  name: string;
+  snapshot: string;
+  dataset: string;
+  created?: string;
+  properties?: ZfsProperties;
+  referenced?: string;
+  used?: string;
+}
+
+export interface ZfsProperties {
+  acltype: ZfsProperty<string>;
+  casesensitivity: ZfsProperty<string>;
+  clones: ZfsProperty<string>;
+  compressratio: ZfsProperty<string>;
+  context: ZfsProperty<string>;
+  createtxg: ZfsProperty<string>;
+  creation: ZfsProperty<string>;
+  defcontext: ZfsProperty<string>;
+  defer_destroy: ZfsProperty<string>;
+  devices: ZfsProperty<string>;
+  encryption: ZfsProperty<string>;
+  encryptionroot: ZfsProperty<string>;
+  exec: ZfsProperty<string>;
+  fscontext: ZfsProperty<string>;
+  guid: ZfsProperty<string>;
+  inconsistent: ZfsProperty<string>;
+  ivsetguid: ZfsProperty<string>;
+  keyguid: ZfsProperty<string>;
+  keystatus: ZfsProperty<string>;
+  logicalreferenced: ZfsProperty<string>;
+  mlslabel: ZfsProperty<string>;
+  name: ZfsProperty<string>;
+  nbmand: ZfsProperty<string>;
+  normalization: ZfsProperty<string>;
+  numclones: ZfsProperty<string>;
+  objsetid: ZfsProperty<string>;
+  primarycache: ZfsProperty<string>;
+  redact_snaps: ZfsProperty<string>;
+  redacted: ZfsProperty<string>;
+  refcompressratio: ZfsProperty<string>;
+  referenced: ZfsProperty<string>;
+  remaptxg: ZfsProperty<string>;
+  rootcontext: ZfsProperty<string>;
+  secondarycache: ZfsProperty<string>;
+  setuid: ZfsProperty<string>;
+  type: ZfsProperty<string>;
+  unique: ZfsProperty<string>;
+  used: ZfsProperty<string>;
+  useraccounting: ZfsProperty<string>;
+  userrefs: ZfsProperty<string>;
+  utf8only: ZfsProperty<string>;
+  version: ZfsProperty<string>;
+  volsize: ZfsProperty<string>;
+  written: ZfsProperty<string>;
+  xattr: ZfsProperty<string>;
 }
