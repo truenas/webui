@@ -13,6 +13,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form';
 import { TranslateService } from '@ngx-translate/core';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
+import { ApiDirectory } from 'app/interfaces/api-directory.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 
 enum ShareType {
   SMB = 'smb',
@@ -43,9 +45,14 @@ export class SharesDashboardComponent {
       { prop: 'name', name: helptext_sharing_webdav.column_name, always_display: true },
       { prop: 'comment', name: helptext_sharing_webdav.column_comment },
       { prop: 'path', name: helptext_sharing_webdav.column_path },
-      { prop: 'enabled', name: helptext_sharing_webdav.column_enabled },
       { prop: 'ro', name: helptext_sharing_webdav.column_ro, hidden: true },
       { prop: 'perm', name: helptext_sharing_webdav.column_perm, hidden: true },
+      {
+        prop: 'enabled',
+        name: helptext_sharing_webdav.column_enabled,
+        checkbox: true,
+        onChange: (row: any) => this.onCheckboxStateToggle(ShareType.WebDAV, row),
+      },
     ],
     add() {
       this.parent.add(ShareType.WebDAV);
@@ -80,7 +87,12 @@ export class SharesDashboardComponent {
       { name: helptext_sharing_afp.column_name, prop: 'name', always_display: true },
       { name: helptext_sharing_afp.column_path, prop: 'path' },
       { name: helptext_sharing_afp.column_comment, prop: 'comment' },
-      { name: helptext_sharing_afp.column_enabled, prop: 'enabled' },
+      {
+        name: helptext_sharing_afp.column_enabled,
+        prop: 'enabled',
+        checkbox: true,
+        onChange: (row: any) => this.onCheckboxStateToggle(ShareType.NFS, row),
+      },
     ],
     detailsHref: '/sharing/nfs',
     add() {
@@ -116,7 +128,12 @@ export class SharesDashboardComponent {
       { name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
       { name: helptext_sharing_smb.column_path, prop: 'path' },
       { name: helptext_sharing_smb.column_comment, prop: 'comment' },
-      { name: helptext_sharing_smb.column_enabled, prop: 'enabled', checkbox: true },
+      {
+        name: helptext_sharing_smb.column_enabled,
+        prop: 'enabled',
+        checkbox: true,
+        onChange: (row: any) => this.onCheckboxStateToggle(ShareType.SMB, row),
+      },
     ],
     add() {
       this.parent.add(ShareType.SMB);
@@ -292,5 +309,36 @@ export class SharesDashboardComponent {
       case 3:
         return 'fourth';
     }
+  }
+
+  onCheckboxStateToggle(card: ShareType, row: any): void {
+    let updateCall: keyof ApiDirectory;
+    switch (card) {
+      case ShareType.SMB:
+        updateCall = 'sharing.smb.update';
+        break;
+      case ShareType.WebDAV:
+        updateCall = 'sharing.webdav.update';
+        break;
+      case ShareType.NFS:
+        updateCall = 'sharing.nfs.update';
+        break;
+      default:
+        return;
+    }
+
+    this.ws.call(updateCall, [row.id, { enabled: row.enabled }]).subscribe(
+      (updatedEntity) => {
+        row.enabled = updatedEntity.enabled;
+
+        if (!updatedEntity) {
+          row.enabled = !row.enabled;
+        }
+      },
+      (err) => {
+        row.enabled = !row.enabled;
+        new EntityUtils().handleWSError(this, err, this.dialog);
+      },
+    );
   }
 }
