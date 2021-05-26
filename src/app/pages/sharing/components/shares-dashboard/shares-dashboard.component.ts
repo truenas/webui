@@ -189,6 +189,11 @@ export class SharesDashboardComponent implements OnInit, OnDestroy {
   smbHasItems = 0;
   iscsiHasItems = 0;
   onDestroy$ = new Subject();
+  smbServiceStatus = ServiceStatus.Loading;
+  webdavServiceStatus = ServiceStatus.Loading;
+  nfsServiceStatus = ServiceStatus.Loading;
+  iscsiServiceStatus = ServiceStatus.Loading;
+  readonly ServiceStatus = ServiceStatus;
 
   constructor(private userService: UserService, private modalService: ModalService, private ws: WebSocketService,
     private dialog: DialogService, private networkService: NetworkService, private router: Router,
@@ -321,19 +326,19 @@ export class SharesDashboardComponent implements OnInit, OnDestroy {
   updateTableServiceStatus(service: Service): void {
     switch (service.service) {
       case ServiceName.Cifs:
-        this.smbTableConf.serviceStatus = service.state;
+        this.smbServiceStatus = service.state;
         this.smbTableConf.tableExtraActions = this.getTableExtraActions(service);
         break;
       case ServiceName.Nfs:
-        this.nfsTableConf.serviceStatus = service.state;
+        this.nfsServiceStatus = service.state;
         this.nfsTableConf.tableExtraActions = this.getTableExtraActions(service);
         break;
       case ServiceName.WebDav:
-        this.webdavTableConf.serviceStatus = service.state;
+        this.webdavServiceStatus = service.state;
         this.webdavTableConf.tableExtraActions = this.getTableExtraActions(service);
         break;
       case ServiceName.Iscsi:
-        this.iscsiTableConf.serviceStatus = service.state;
+        this.iscsiServiceStatus = service.state;
         this.iscsiTableConf.tableExtraActions = this.getTableExtraActions(service);
     }
   }
@@ -380,6 +385,17 @@ export class SharesDashboardComponent implements OnInit, OnDestroy {
         },
       },
     ];
+  }
+
+  getStatusClass(status: ServiceStatus): string {
+    switch (status) {
+      case ServiceStatus.Running:
+        return 'fn-theme-primary';
+      case ServiceStatus.Stopped:
+        return 'fn-theme-red';
+      default:
+        return 'fn-theme-orange';
+    }
   }
 
   ngOnDestroy(): void {

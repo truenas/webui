@@ -11,7 +11,6 @@ export interface InputExpandableTableConf extends InputTableConf {
   expandedIfNotEmpty?: boolean;
   detailsHref?: string;
   limitRows?: number;
-  serviceStatus?: ServiceStatus;
 }
 
 @Component({
@@ -53,17 +52,6 @@ export class ExpandableTableComponent {
       }
       return data;
     };
-  }
-
-  getStatusClass(status: ServiceStatus): string {
-    switch (status) {
-      case ServiceStatus.Running:
-        return 'fn-theme-primary';
-      case ServiceStatus.Stopped:
-        return 'fn-theme-red';
-      default:
-        return 'fn-theme-orange';
-    }
   }
 
   shouldBeCollapsed(): boolean {
