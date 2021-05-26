@@ -140,4 +140,12 @@ export class ScrubFormComponent implements FormConfiguration {
 
     return data;
   }
+
+  dataHandler(entity: EntityFormComponent): void {
+    // Setup all fields
+    for (const [key, value] of Object.entries(entity.wsResponse)) {
+      const field = entity.formGroup.controls[key];
+      if (field) field.setValue(entity.wsResponse[key]);
+    }
+  }
 }
