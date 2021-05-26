@@ -37,12 +37,6 @@ import {
   // clamp
 } from 'popmotion';
 
-interface NetIfInfo {
-  name: string;
-  primary: string;
-  aliases?: string;
-}
-
 interface NetTraffic {
   sent: string;
   sentUnits: string;

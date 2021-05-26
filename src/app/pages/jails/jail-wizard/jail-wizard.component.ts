@@ -166,7 +166,7 @@ export class JailWizardComponent {
       name: 'ip4_addr',
       placeholder: helptext.ip4_addr_placeholder,
       tooltip: helptext.ip4_addr_tooltip,
-      validation: [ipv4Validator('ip4_addr')],
+      validation: [ipv4Validator()],
       relation: [{
         action: 'ENABLE',
         connective: 'AND',
@@ -251,7 +251,7 @@ export class JailWizardComponent {
       name: 'ip6_addr',
       placeholder: helptext.ip6_addr_placeholder,
       tooltip: helptext.ip6_addr_tooltip,
-      validation: [ipv6Validator('ip6_addr')],
+      validation: [ipv6Validator()],
       class: 'inline',
       width: '50%',
       relation: [{

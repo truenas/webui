@@ -79,11 +79,7 @@ export class EntityTableService implements OnDestroy {
     this.tableUtils.terminate();
   }
 
-  prepReport(evt: CoreEvent): void {
-    this.tableUtils.onmessage = ({ data }) => {
-      const evt = data;
-    };
-
+  prepReport(): void {
     const pipeLine: Command[] = [
       {
         command: 'maxDecimals',

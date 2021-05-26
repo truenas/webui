@@ -365,7 +365,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       }
 
       const bgRGB = this.utils.convertToRGB(this.currentTheme[color]).rgb;
-      const borderRGB = this.utils.convertToRGB(this.currentTheme[color]).rgb;
 
       ds.backgroundColor = this.rgbToString(bgRGB as any, 0.85);
       ds.borderColor = this.rgbToString(bgRGB as any);

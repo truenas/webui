@@ -1,7 +1,6 @@
 import { Container, Texture, Sprite } from 'pixi.js';
 
 export class DriveTray {
-  // public container: Sprite; // Alias for background sprite
   container: Container; // Alias for background sprite
   background: Sprite;
   handle: Sprite;
@@ -17,7 +16,6 @@ export class DriveTray {
     return this._color;
   }
   set color(value) {
-    // this._color = value;
     this.colorize(value);
   }
 
@@ -30,7 +28,7 @@ export class DriveTray {
   setup(altAssets = false): void {
     const alt = altAssets ? '_alt' : '';
 
-    this.background = PIXI.projection.Sprite2d.from(this.loader.resources[this.model + alt + '_drivetray_bg'].texture.baseTexture);
+    this.background = PIXI.Sprite.from(this.loader.resources[this.model + alt + '_drivetray_bg'].texture.baseTexture);
     this.container.addChild(this.background);
 
     this.handle = PIXI.Sprite.from(this.loader.resources[this.model + alt + '_drivetray_handle'].texture.baseTexture);

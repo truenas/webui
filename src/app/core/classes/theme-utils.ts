@@ -90,7 +90,6 @@ export class ThemeUtils {
 
   rgbToHex(value: string): string {
     const arr = this.rgbToArray(value);
-    const alpha = arr.length > 3;
     const r = arr[0];
     const g = arr[1];
     const b = arr[2];
@@ -144,12 +143,7 @@ export class ThemeUtils {
 
     const adjusted = [hsl[0], hsl[1], lightness];
 
-    const css = 'hsl(' + adjusted[0] + ', ' + adjusted[1] + '%, ' + adjusted[2] + '%)';
-
-    const rgbStr = rgb.toString();
-    const hslStr = adjusted.toString();
-
-    return css;
+    return 'hsl(' + adjusted[0] + ', ' + adjusted[1] + '%, ' + adjusted[2] + '%)';
   }
 
   rgbToHSL(param: any, inputString = true, outputString = true): any {

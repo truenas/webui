@@ -101,7 +101,7 @@ export class GroupQuotaFormComponent implements FormConfiguration {
     this.differ = differs.find([]).create(null);
   }
 
-  preInit(entityForm: EntityFormComponent): void {
+  preInit(): void {
     const paramMap: any = (<any> this.aroute.params).getValue();
     this.pk = paramMap.pk;
   }
@@ -240,7 +240,7 @@ export class GroupQuotaFormComponent implements FormConfiguration {
     }
 
     this.loader.open();
-    this.ws.call('pool.dataset.set_quota', [this.pk, payload]).subscribe((res) => {
+    this.ws.call('pool.dataset.set_quota', [this.pk, payload]).subscribe(() => {
       this.loader.close();
       this.router.navigate(new Array('/').concat(this.route_success));
     }, (err) => {

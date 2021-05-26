@@ -7,7 +7,6 @@ import { CoreService } from 'app/core/services/core.service';
 import {
   Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils, Point,
 } from 'pixi.js';
-import 'pixi-projection';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { MINI } from 'app/core/classes/hardware/mini';
@@ -49,7 +48,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     this.pixiHeight = 480;
   }
 
-  createExtractedEnclosure(profile: any): void {
+  createExtractedEnclosure(): void {
     // MINIs have no support for expansion shelves
     // therefore we will never need to create
     // any enclosure selection UI. Leave this
@@ -66,9 +65,6 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
       case 'FREENAS-MINI-3.0-X+':
         this.chassis = new MINIX();
         break;
-      /* case "FREENAS-MINI-2.0-XL":
-        this.chassis = new MINIXL();
-      break; */
       case 'FREENAS-MINI-3.0-XL+':
         this.chassis = new MINIXLPLUS();
         break;
@@ -88,7 +84,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
       return;
     }
 
-    this.setupEnclosureEvents(enclosure);
+    this.setupEnclosureEvents();
 
     // Slight adjustment to align with external html elements
     this.container.setTransform(-30);

@@ -35,7 +35,7 @@ export class FormChipComponent implements Field, OnInit {
 
   ngOnInit(): void {
     this.chipLists = this.group.controls[this.config.name].value || [];
-    this.group.controls[this.config.name].valueChanges.subscribe((res) => {
+    this.group.controls[this.config.name].valueChanges.subscribe(() => {
       if (this.chipLists !== this.group.controls[this.config.name].value && typeof this.group.controls[this.config.name].value === 'object') {
         this.chipLists = this.group.controls[this.config.name].value;
       }

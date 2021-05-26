@@ -39,7 +39,7 @@ export class ChartDataUtilsService {
     };
 
     // Create the new thread
-    const thread = new Thread(core);
+    const thread = new Thread();
 
     // Give the thread instructions
     thread.operations = operations;

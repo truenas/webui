@@ -148,13 +148,13 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
       .attr('y', top + 24 + offsetY);
 
     // Arc background
-    const background = g.append('path')
+    g.append('path')
       .datum({ endAngle: this.doublePI })
       .style('fill', 'var(--bg1)')
       .attr('d', this.arc);
 
     // Arc foreground
-    const foreground = g.append('path')
+    g.append('path')
       .datum({ endAngle: 0.127 * this.doublePI })
       .style('fill', 'var(--primary)')
       .attr('class', 'value')
@@ -170,7 +170,7 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
         .duration(750)
         .attrTween('d', this.load(this.percentToAngle(value)));
 
-      const txt = d3.select('#gauge-' + this.chartId + ' text#text-value')
+      d3.select('#gauge-' + this.chartId + ' text#text-value')
         .text(value + this.config.units);
     }
   }
@@ -192,8 +192,8 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
   }
 
   updateSubtitle(): void {
-    const txt = d3.select('#gauge-' + this.chartId + ' #text-value');
-    const subtxt = d3.select('#gauge-' + this.chartId + ' #text-subtitle')
+    d3.select('#gauge-' + this.chartId + ' #text-value');
+    d3.select('#gauge-' + this.chartId + ' #text-subtitle')
       .text(this.subtitle);
   }
 }

@@ -3,7 +3,7 @@
   <label class="form-task-label">{{ config.placeholder | translate }}</label>
   <br>
   <mat-card>
-    <mat-tab-group #tabGroup (selectChange)="onSelectChange($event)">
+    <mat-tab-group #tabGroup (selectChange)="onSelectChange()">
       <mat-tab *ngFor="let field of config.tabs;" label="{{field.tabName | translate}}"
         ix-auto ix-auto-type="tab" ix-auto-identifier="{{field.tabName}}">
         <ng-container dynamicField [config]="field" [group]="tabFormGroup" [fieldShow]="'show'">

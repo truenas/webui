@@ -145,8 +145,7 @@ export class EntityFormService {
     });
   }
 
-  getDatasetsAndZvolsListChildren(node: any): void {
-    const children = [];
+  getDatasetsAndZvolsListChildren(): void {
 
     // if we ever need this we should convert to websocket
     /* return this.rest.get('storage/volume/', {}).toPromise().then(res => {
