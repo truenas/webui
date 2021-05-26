@@ -1,6 +1,6 @@
 <div class="container" [ngClass]="getContainerClass()">
-    <app-expandable-table [ngClass]="getWebdavOrder()" [conf]="webdavTableConf"></app-expandable-table>
-    <app-expandable-table [ngClass]="getNfsOrder()" [conf]="nfsTableConf"></app-expandable-table>
-    <app-expandable-table [ngClass]="getSmbOrder()" [conf]="smbTableConf"></app-expandable-table>
-    <app-expandable-table [ngClass]="getIscsiOrder()" [conf]="iscsiTableConf"></app-expandable-table>
+    <app-expandable-table [ngClass]="getWebdavOrder()" [expandableTableState]="webdavExpandableState" [disabled]="true" [conf]="webdavTableConf"></app-expandable-table>
+    <app-expandable-table [ngClass]="getNfsOrder()" [expandableTableState]="nfsExpandableState" [disabled]="true" [conf]="nfsTableConf"></app-expandable-table>
+    <app-expandable-table [ngClass]="getSmbOrder()" [expandableTableState]="smbExpandableState" [disabled]="true" [conf]="smbTableConf"></app-expandable-table>
+    <app-expandable-table [ngClass]="getIscsiOrder()" [expandableTableState]="iscsiExpandableState" [disabled]="true" [conf]="iscsiTableConf"></app-expandable-table>
 </div>

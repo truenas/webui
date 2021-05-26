@@ -1,7 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { T } from 'app/translate-marker';
 import { helptext_sharing_webdav } from 'app/helptext/sharing';
-import { InputExpandableTableConf } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
+import { ExpandableTableState, InputExpandableTableConf } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
 import { helptext_sharing_smb } from 'app/helptext/sharing';
 import { helptext_sharing_nfs } from 'app/helptext/sharing';
 import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form';
@@ -55,6 +55,11 @@ export class SharesDashboardComponent {
   iscsiHasItems = 0;
   noOfPopulatedTables = 0;
 
+  webdavExpandableState: ExpandableTableState;
+  nfsExpandableState: ExpandableTableState;
+  smbExpandableState: ExpandableTableState;
+  iscsiExpandableState: ExpandableTableState;
+
   constructor(private userService: UserService, private modalService: ModalService, private ws: WebSocketService,
     private dialog: DialogService, private networkService: NetworkService, private router: Router,
     private loader: AppLoaderService, private sysGeneralService: SystemGeneralService, private aroute: ActivatedRoute,
@@ -62,16 +67,16 @@ export class SharesDashboardComponent {
 
   ngAfterViewInit(): void {
     if (this.webdavHasItems) {
-      this.webdavTableConf.alwaysExpanded = true;
+      this.webdavExpandableState = ExpandableTableState.Expanded;
     }
     if (this.nfsHasItems) {
-      this.nfsTableConf.alwaysExpanded = true;
+      this.nfsExpandableState = ExpandableTableState.Expanded;
     }
     if (this.smbHasItems) {
-      this.smbTableConf.alwaysExpanded = true;
+      this.smbExpandableState = ExpandableTableState.Expanded;
     }
     if (this.iscsiHasItems) {
-      this.iscsiTableConf.alwaysExpanded = true;
+      this.iscsiExpandableState = ExpandableTableState.Expanded;
     }
   }
 
@@ -132,21 +137,13 @@ export class SharesDashboardComponent {
           },
           afterGetData: (data: any) => {
             this.nfsHasItems = 0;
-            this.nfsTableConf.alwaysExpanded = false;
-            if (this.nfsTableConf?.expandableTableComponent) {
-              this.nfsTableConf.expandableTableComponent.updateAlwaysExpanded(false);
-            }
+            this.nfsExpandableState = ExpandableTableState.Collapsed;
             if (data.length > 0) {
               this.nfsHasItems = 1;
-              this.nfsTableConf.alwaysExpanded = true;
-              if (this.nfsTableConf?.expandableTableComponent) {
-                this.nfsTableConf.expandableTableComponent.updateAlwaysExpanded(true);
-              }
+              this.nfsExpandableState = ExpandableTableState.Expanded;
               this.updateNumberOfTables();
             }
           },
-          expandedIfNotEmpty: true,
-          collapsedIfEmpty: true,
           limitRows: 5,
         };
       }
@@ -181,23 +178,15 @@ export class SharesDashboardComponent {
           edit(row: any) {
             this.parent.edit(this.tableComponent, ShareType.ISCSI, row.id);
           },
-          collapsedIfEmpty: true,
           afterGetData: (data: any) => {
             this.iscsiHasItems = 0;
-            this.iscsiTableConf.alwaysExpanded = false;
-            if (this.iscsiTableConf?.expandableTableComponent) {
-              this.iscsiTableConf.expandableTableComponent.updateAlwaysExpanded(false);
-            }
+            this.iscsiExpandableState = ExpandableTableState.Collapsed;
             if (data.length > 0) {
               this.iscsiHasItems = 1;
-              this.iscsiTableConf.alwaysExpanded = true;
-              if (this.iscsiTableConf?.expandableTableComponent) {
-                this.iscsiTableConf.expandableTableComponent.updateAlwaysExpanded(true);
-              }
+              this.iscsiExpandableState = ExpandableTableState.Expanded;
               this.updateNumberOfTables();
             }
           },
-          expandedIfNotEmpty: true,
           limitRows: 5,
         };
       }
@@ -230,21 +219,13 @@ export class SharesDashboardComponent {
           },
           afterGetData: (data: any) => {
             this.webdavHasItems = 0;
-            if (this.webdavTableConf?.expandableTableComponent) {
-              this.webdavTableConf.expandableTableComponent.updateAlwaysExpanded(false);
-            }
-            this.webdavTableConf.alwaysExpanded = false;
+            this.webdavExpandableState = ExpandableTableState.Collapsed;
             if (data.length > 0) {
               this.webdavHasItems = 1;
-              if (this.webdavTableConf?.expandableTableComponent) {
-                this.webdavTableConf.expandableTableComponent.updateAlwaysExpanded(true);
-              }
-              this.webdavTableConf.alwaysExpanded = true;
+              this.webdavExpandableState = ExpandableTableState.Expanded;
               this.updateNumberOfTables();
             }
           },
-          expandedIfNotEmpty: true,
-          collapsedIfEmpty: true,
           detailsHref: '/sharing/webdav',
           limitRows: 5,
         };
@@ -277,21 +258,13 @@ export class SharesDashboardComponent {
           },
           afterGetData: (data: any) => {
             this.smbHasItems = 0;
-            this.smbTableConf.alwaysExpanded = false;
-            if (this.smbTableConf?.expandableTableComponent) {
-              this.smbTableConf.expandableTableComponent.updateAlwaysExpanded(false);
-            }
+            this.smbExpandableState = ExpandableTableState.Collapsed;
             if (data.length > 0) {
               this.smbHasItems = 1;
-              this.smbTableConf.alwaysExpanded = true;
-              if (this.smbTableConf?.expandableTableComponent) {
-                this.smbTableConf.expandableTableComponent.updateAlwaysExpanded(true);
-              }
+              this.smbExpandableState = ExpandableTableState.Expanded;
               this.updateNumberOfTables();
             }
           },
-          expandedIfNotEmpty: true,
-          collapsedIfEmpty: true,
           limitRows: 5,
         };
       }

@@ -4,14 +4,15 @@ import {
 import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 
 export interface InputExpandableTableConf extends InputTableConf {
-  alwaysCollapsed?: boolean;
-  collapsedIfEmpty?: boolean;
-  alwaysExpanded?: boolean;
-  expandedIfNotEmpty?: boolean;
   detailsHref?: string;
   expandableTableComponent?: ExpandableTableComponent;
   limitRows?: number;
   limitRowsByMaxHeight?: boolean;
+}
+
+export enum ExpandableTableState {
+  Expanded,
+  Collapsed,
 }
 
 @Component({
@@ -23,10 +24,11 @@ export class ExpandableTableComponent {
   title = '';
   titleHref: string;
   actions: any[];
-  disabled = false;
   isEmpty = true;
   isExpanded = false;
   _tableConf: InputExpandableTableConf;
+
+  ExpandatbleTableState = ExpandableTableState;
 
   get tableConf(): InputExpandableTableConf {
     return this._tableConf;
@@ -42,11 +44,15 @@ export class ExpandableTableComponent {
     this._tableConf.expandableTableComponent = this;
   }
 
+  @Input('expandableTableState') expandableTableState: ExpandableTableState;
+  @Input('disabled') disabled: boolean;
+
   @ViewChild('appTable', { read: ElementRef })
   appTable: ElementRef;
 
   populateTable(): void {
     this.title = this.tableConf.title || '';
+    this.tableConf.alwaysHideViewMore = true;
     if (this.tableConf.titleHref) {
       this.titleHref = this.tableConf.titleHref;
     }
@@ -59,10 +65,7 @@ export class ExpandableTableComponent {
 
     this.tableConf.afterGetDataExpandable = (data: any) => {
       this.isEmpty = !data.length;
-      this.disabled = (this.isEmpty && this.tableConf.collapsedIfEmpty)
-        || this.tableConf.alwaysCollapsed
-        || this.tableConf.alwaysExpanded
-        || (!this.isEmpty && this.tableConf.expandedIfNotEmpty);
+      this.disabled = true;
       if (this.tableConf.limitRows) {
         return data.splice(0, this.tableConf.limitRows);
       }
@@ -70,16 +73,14 @@ export class ExpandableTableComponent {
     };
   }
 
-  updateAlwaysExpanded(alwaysExpanded: boolean): void {
-    this.tableConf.alwaysExpanded = alwaysExpanded;
-  }
-
   ngAfterViewChecked(): void {
-    if (this._tableConf.limitRows
-      && this.appTable.nativeElement.children[0].children[1].children[0].children[0].children[0].children[0].children[0].children[0] && this.appTable.nativeElement.children[1] && !this.shouldBeCollapsed()) {
-      const tableHeaderHeight = this.appTable.nativeElement.children[0].children[1].children[0].children[0].children[0].children[0].children[0].children[0].children[0].offsetHeight;
-      const expandableHeaderHeight = this.appTable.nativeElement.children[0].children[0].offsetHeight;
-      const detailsFooterHeight = this.appTable.nativeElement.children[1].offsetHeight;
+    if (this.isExpanded) {
+      const tableHeader = this.appTable.nativeElement.querySelector('thead');
+      const detailsRow = this.appTable.nativeElement.querySelector('#actions-row');
+      const expandableHeader = this.appTable.nativeElement.querySelector('mat-expansion-panel-header');
+      const tableHeaderHeight = tableHeader ? tableHeader.offsetHeight : 0;
+      const expandableHeaderHeight = expandableHeader ? expandableHeader.offsetHeight : 0;
+      const detailsFooterHeight = detailsRow ? detailsRow.offsetHeight : 0;
       const totalHeight = this.appTable.nativeElement.offsetHeight;
       const maxRowsHeight = totalHeight - expandableHeaderHeight - tableHeaderHeight - detailsFooterHeight;
       if (this._tableConf.limitRowsByMaxHeight) {
@@ -94,17 +95,5 @@ export class ExpandableTableComponent {
 
   ngOnInit(): void {
     this.populateTable();
-  }
-
-  shouldBeCollapsed(): boolean {
-    return this.tableConf.alwaysCollapsed || (this.isEmpty && this.tableConf.collapsedIfEmpty);
-  }
-
-  shouldBeExpanded(): boolean {
-    return this.tableConf.alwaysExpanded || (!this.isEmpty && this.tableConf.expandedIfNotEmpty);
-  }
-
-  shouldDetailsShow(): boolean {
-    return this.shouldBeExpanded() && (!!this.tableConf.detailsHref);
   }
 }

@@ -1,6 +1,6 @@
 <mat-card #appTable class="expanded-table-container">
-  <mat-expansion-panel class="expanded-table" [ngClass]="{'expanded-height': isExpanded && _tableConf.detailsHref}" hideToggle [disabled]="disabled" [collapsed]="shouldBeCollapsed()"
-    [expanded]="shouldBeExpanded()" (opened)="isExpanded = true" (closed)="isExpanded = false">
+  <mat-expansion-panel class="expanded-table" [ngClass]="{'expanded-height': isExpanded && _tableConf.detailsHref}" hideToggle [disabled]="disabled" [collapsed]="expandableTableState === ExpandatbleTableState.Collapsed"
+    [expanded]="expandableTableState === ExpandatbleTableState.Expanded" (opened)="isExpanded = true" (closed)="isExpanded = false">
     <mat-expansion-panel-header>
       <mat-panel-title>
         <h5 class="title" *ngIf="title">
@@ -20,7 +20,7 @@
     </mat-expansion-panel-header>
     <app-table  [conf]="_tableConf"></app-table>
   </mat-expansion-panel>
-  <div [ngClass]="{'actions-row': isExpanded && _tableConf.detailsHref}" *ngIf="shouldDetailsShow()">
+  <div id="actions-row" [ngClass]="{'actions-row': isExpanded && _tableConf.detailsHref}" *ngIf="isExpanded">
     <a [routerLink]="_tableConf.detailsHref.split('/')">View Details</a>
   </div>
 </mat-card>
