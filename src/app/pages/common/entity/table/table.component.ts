@@ -252,6 +252,10 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
       return 'listview';
     }
 
+    if (column.checkbox) {
+      return 'checkbox';
+    }
+
     if (column.state && column.state.prop && this._tableConf.getInOutInfo) {
       return 'state-info';
     }
