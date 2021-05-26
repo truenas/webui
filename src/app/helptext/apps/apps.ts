@@ -31,7 +31,8 @@ export default {
   catalogMessage: {
     loading: T('Loading...'),
     no_search_result: T('No Search Results.'),
-    no_catalog: T('It was unable to retrieve catalogs data.'),
+    no_catalog: T('Unable to retrieve catalog data'),
+    no_application: T('No application is available'),
   },
 
   installing: T('Installing'),

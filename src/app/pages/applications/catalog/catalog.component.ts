@@ -51,7 +51,7 @@ export class CatalogComponent implements OnInit {
   private refreshForm: Subscription;
   protected utils: CommonUtils;
   imagePlaceholder = appImagePlaceholder;
-
+  private noAvailableCatalog = true;
   isLoading = false;
   emptyPageConf: EmptyConfig = {
     type: EmptyType.loading,
@@ -98,17 +98,18 @@ export class CatalogComponent implements OnInit {
   }
 
   loadCatalogs(): void {
+    this.catalogNames = [];
+    this.catalogApps = [];
     this.isLoading = true;
     this.showLoadStatus(EmptyType.loading);
 
     this.appService.getAllCatalogItems().subscribe((catalogs) => {
-      this.isLoading = false;
-      this.catalogNames = [];
-      this.catalogApps = [];
+      this.noAvailableCatalog = true;
       for (let i = 0; i < catalogs.length; i++) {
         const catalog = catalogs[i];
 
         if (!catalog.error) {
+          this.noAvailableCatalog = false;
           this.catalogNames.push(catalog.label);
           catalog.preferred_trains.forEach((train) => {
             for (const i in catalog.trains[train]) {
@@ -143,6 +144,7 @@ export class CatalogComponent implements OnInit {
 
       this.refreshToolbarMenus();
       this.filterApps();
+      this.isLoading = false;
     });
   }
 
@@ -159,7 +161,11 @@ export class CatalogComponent implements OnInit {
         title = helptext.catalogMessage.loading;
         break;
       case EmptyType.no_page_data:
-        title = helptext.catalogMessage.no_catalog;
+        if (this.noAvailableCatalog) {
+          title = helptext.catalogMessage.no_catalog;
+        } else {
+          title = helptext.catalogMessage.no_application;
+        }
         break;
       case EmptyType.no_search_results:
         title = helptext.catalogMessage.no_search_result;
