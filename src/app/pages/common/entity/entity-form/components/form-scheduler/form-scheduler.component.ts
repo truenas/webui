@@ -1,6 +1,6 @@
 import {
-  Component, OnInit, OnChanges, ViewChild, ElementRef, QueryList, Renderer2, OnDestroy,
-  ChangeDetectorRef, SimpleChanges, HostListener, AfterViewInit, AfterViewChecked,
+  Component, OnInit, ViewChild, ElementRef, QueryList, Renderer2, OnDestroy,
+  ChangeDetectorRef, HostListener, AfterViewInit, AfterViewChecked,
 } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
@@ -277,13 +277,24 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   ngOnInit(): void {
     this.control = this.group.controls[this.config.name];
+
     this.control.valueChanges.subscribe((evt: string) => {
       this.crontab = evt;
+      const isPreset: boolean = this.presets.filter((preset) => evt == preset.value).length != 0;
+      if (!isPreset) {
+        this._preset = { label: T('Custom'), value: this.crontab };
+        this.convertPreset(this.crontab);
+      }
     });
+
+    this.group.valueChanges.subscribe((evt: string) => {
+    });
+
     if (this.control.value) {
       this.control.setValue(new EntityUtils().parseDOW(this.control.value));
       this.crontab = this.control.value;
     }
+
     // 'E' adds the day abbreviation
     this.ngDateFormat = `E ${this.localeService.getAngularFormat()} Z`;
   }
