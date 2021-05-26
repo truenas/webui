@@ -194,7 +194,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   picker = false;
   private _textInput = '';
 
-  _crontab = '';
+  _crontab = '0 0 * * *';
   get crontab(): string {
     return this._crontab;
   }
@@ -212,7 +212,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   selectedOption: CronPreset;
 
-  private _preset: CronPreset;
   presets: CronPreset[] = [
     {
       label: T('Hourly'),
@@ -252,15 +251,17 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     this.group.controls[this.config.name].setValue(val);
   }
 
+  private _preset: CronPreset;
+
   get preset(): CronPreset {
     return this._preset;
   }
 
-  set preset(p) {
-    if (p.value == 'custom') {
+  set preset(p: CronPreset) {
+    if (!p.value) {
       this.crontab = '0 0 * * *';
       this.convertPreset('0 0 * * *');
-      this._preset = { label: T('Custom'), value: this.crontab };
+      this._preset = this.customOption; // { label: T('Custom'), value: this.crontab };
     } else {
       this.crontab = p.value;
       this.convertPreset(p.value);
@@ -315,6 +316,10 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
     // 'E' adds the day abbreviation
     this.ngDateFormat = `E ${this.localeService.getAngularFormat()} Z`;
+
+    if (!this.control.value) {
+      this.selectedOption = this.presets[0];
+    }
   }
 
   ngAfterViewInit(): void {
