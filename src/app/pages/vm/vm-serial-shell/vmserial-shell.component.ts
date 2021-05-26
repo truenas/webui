@@ -4,13 +4,13 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import { Observable } from 'rxjs';
 import helptext from '../../../helptext/vm/vm-cards/vm-cards';
 import { ShellConnectedEvent } from '../../../interfaces/shell.interface';
 import { ShellService, WebSocketService } from '../../../services';
 import { Terminal } from 'xterm';
-import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
 import * as FontFaceObserver from 'fontfaceobserver';
 
@@ -129,7 +129,7 @@ export class VMSerialShellComponent implements OnInit, OnDestroy {
     };
 
     this.xterm = new Terminal(setting);
-    const attachAddon = new AttachAddon(this.ss.socket);
+    const attachAddon = new XtermAttachAddon(this.ss.socket);
     this.xterm.loadAddon(attachAddon);
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
