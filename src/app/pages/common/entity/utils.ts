@@ -1,5 +1,7 @@
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 import { Relation } from './entity-form/models/field-relation.interface';
+import { FieldSet } from './entity-form/models/fieldset.interface';
 
 export const NULL_VALUE = 'null_value';
 
@@ -263,8 +265,8 @@ export class EntityUtils {
     return result;
   }
 
-  parseSchemaFieldConfig(schemaConfig: any, parentName: string = null, parentIsList = false): any[] {
-    let results: any[] = [];
+  parseSchemaFieldConfig(schemaConfig: any): FieldConfig[] {
+    let results: FieldConfig[] = [];
 
     if (schemaConfig.schema.hidden) {
       return results;
@@ -272,7 +274,7 @@ export class EntityUtils {
 
     const name = schemaConfig.variable;
 
-    let fieldConfig: any = {
+    const fieldConfig: any = {
       required: schemaConfig.schema.required,
       value: schemaConfig.schema.default,
       tooltip: schemaConfig.description,
@@ -327,6 +329,9 @@ export class EntityUtils {
       fieldConfig['type'] = 'checkbox';
     } else if (schemaConfig.schema.type == 'ipaddr') {
       fieldConfig['type'] = 'ipwithnetmask';
+      if (!schemaConfig.schema.cidr) {
+        fieldConfig['type'] = 'input';
+      }
     } else if (schemaConfig.schema.type == 'hostpath') {
       fieldConfig['type'] = 'explorer';
       fieldConfig['explorerType'] = 'file';
@@ -341,61 +346,27 @@ export class EntityUtils {
 
       let listFields: any[] = [];
       (schemaConfig.schema.items as any[]).forEach((item) => {
-        const fields = this.parseSchemaFieldConfig(item, null, true);
+        const fields = this.parseSchemaFieldConfig(item);
         listFields = listFields.concat(fields);
       });
 
       fieldConfig['templateListField'] = listFields;
     } else if (schemaConfig.schema.type == 'dict') {
-      if (parentIsList) {
-        fieldConfig = null;
-        if (schemaConfig.schema.attrs.length > 0) {
-          const dictLabel = {
-            label: schemaConfig.label,
-            name,
-            type: 'label',
-          };
+      fieldConfig['type'] = 'dict';
+      fieldConfig['label'] = schemaConfig.label;
+      fieldConfig['width'] = '100%';
 
-          if (relations) {
-            (dictLabel as any)['relation'] = this.createRelations(relations);
-          }
-
-          results = results.concat(dictLabel);
-
-          (schemaConfig.schema.attrs as any[]).forEach((dictConfig) => {
-            const subResults = this.parseSchemaFieldConfig(dictConfig, name, parentIsList);
-
-            if (relations) {
-              subResults.forEach((subResult) => {
-                subResult['relation'] = this.createRelations(relations);
-              });
-            }
-            results = results.concat(subResults);
-          });
+      if (schemaConfig.schema.attrs.length > 0) {
+        if (relations) {
+          fieldConfig['relation'] = this.createRelations(relations);
         }
-      } else {
-        fieldConfig['type'] = 'dict';
-        fieldConfig['label'] = schemaConfig.label;
-        fieldConfig['width'] = '100%';
 
-        if (schemaConfig.schema.attrs.length > 0) {
-          if (relations) {
-            fieldConfig['relation'] = this.createRelations(relations);
-          }
-
-          let subFields: any[] = [];
-          (schemaConfig.schema.attrs as any[]).forEach((dictConfig) => {
-            const fields = this.parseSchemaFieldConfig(dictConfig, null, false);
-            subFields = subFields.concat(fields);
-
-            if (relations) {
-              subFields.forEach((subResult) => {
-                subResult['relation'] = this.createRelations(relations);
-              });
-            }
-          });
-          fieldConfig['subFields'] = subFields;
-        }
+        let subFields: any[] = [];
+        (schemaConfig.schema.attrs as any[]).forEach((dictConfig) => {
+          const fields = this.parseSchemaFieldConfig(dictConfig);
+          subFields = subFields.concat(fields);
+        });
+        fieldConfig['subFields'] = subFields;
       }
     }
 
@@ -409,7 +380,7 @@ export class EntityUtils {
 
         if (schemaConfig.schema.subquestions) {
           (schemaConfig.schema.subquestions as any[]).forEach((subquestion) => {
-            const subResults = this.parseSchemaFieldConfig(subquestion, parentName);
+            const subResults = this.parseSchemaFieldConfig(subquestion);
 
             if (schemaConfig.schema.show_subquestions_if !== undefined) {
               subResults.forEach((subFieldConfig) => {
@@ -433,5 +404,84 @@ export class EntityUtils {
     }
 
     return results;
+  }
+
+  remapAppSubmitData(data: any): any {
+    let result: any;
+    if (data === undefined || data === null || data === '') {
+      result = data;
+    } else if (Array.isArray(data)) {
+      result = data.map((item) => {
+        if (Object.keys(item).length > 1) {
+          return this.remapAppSubmitData(item);
+        }
+        return this.remapAppSubmitData(item[Object.keys(item)[0]]);
+      });
+    } else if (typeof data === 'object') {
+      result = {};
+      Object.keys(data).forEach((key) => {
+        result[key] = this.remapAppSubmitData(data[key]);
+      });
+    } else {
+      result = data;
+    }
+
+    return result;
+  }
+
+  remapAppConfigData(data: any, fieldConfigs: FieldConfig[]): any {
+    let result: any;
+    if (data === undefined || data === null || data === '') {
+      result = data;
+    } else if (typeof data === 'object') {
+      result = {};
+      Object.keys(data).forEach((key) => {
+        const value = data[key];
+        let newValue: any = {};
+        if (Array.isArray(value)) {
+          const name = this.findKeyOfList(fieldConfigs, key);
+          newValue = value.map((item) => {
+            const remapedValue = this.remapAppConfigData(item, fieldConfigs);
+            if (name) {
+              return { [name]: remapedValue };
+            }
+            return remapedValue;
+          });
+        } else {
+          newValue = this.remapAppConfigData(value, fieldConfigs);
+        }
+        result[key] = newValue;
+      });
+    } else {
+      result = data;
+    }
+
+    return result;
+  }
+
+  findKeyOfList(fieldConfigs: FieldConfig[], key: string): string {
+    if (!fieldConfigs) {
+      return null;
+    }
+    for (let i = 0; i < fieldConfigs.length; i++) {
+      const fieldConfig = fieldConfigs[i];
+
+      if (fieldConfig.type == 'list') {
+        if (fieldConfig.name == key) {
+          return fieldConfig.templateListField[0].name;
+        }
+        const result = this.findKeyOfList(fieldConfig.templateListField, key);
+        if (result) {
+          return result;
+        }
+      } else if (fieldConfig.type == 'dict') {
+        const result = this.findKeyOfList(fieldConfig.subFields, key);
+        if (result) {
+          return result;
+        }
+      }
+    }
+
+    return null;
   }
 }

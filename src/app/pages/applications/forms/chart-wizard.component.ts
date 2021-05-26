@@ -139,6 +139,7 @@ export class ChartWizardComponent implements OnDestroy {
     const apiCall = this.addCall;
     delete data.version;
 
+    data = new EntityUtils().remapAppSubmitData(data);
     const payload = [];
     payload.push({
       catalog: this.catalogApp.catalog.id,

@@ -193,6 +193,13 @@ export class FieldRelationService {
         });
       }
     }
+
+    if (config.subFields) {
+      const dictFormGroup = formGroup.get(config.name) as FormGroup;
+      config.subFields.forEach((subFieldConfig) => {
+        this.setRelation(subFieldConfig, dictFormGroup);
+      });
+    }
   }
 
   setDisabled(fieldConfig: FieldConfig, formGroup: FormGroup, disable: boolean, hide?: boolean, status?: string): void {
