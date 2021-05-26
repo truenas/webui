@@ -577,7 +577,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       label: T('Identify Light'),
       onClick: () => {
         this.dialog.select(
-          'IPMI Identify', this.impiFormComponent.options, 'IPMI flash duration', 'ipmi.identify', 'seconds', 'IPMI identify command issued',
+          'IPMI Identify', this.impiFormComponent.options, 'IPMI flash duration', 'ipmi.identify', 'seconds',
         );
         event.stopPropagation();
       },

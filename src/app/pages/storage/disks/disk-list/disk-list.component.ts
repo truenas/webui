@@ -20,6 +20,7 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import helptext from '../../../../helptext/storage/disks/disks';
 import { EntityUtils } from '../../../common/entity/utils';
+import { SmartTestType } from 'app/enums/smart-test-type.enum';
 
 @Component({
   selector: 'disk-list',
@@ -302,23 +303,23 @@ export class DiskListComponent implements InputTableConf {
           placeholder: helptext.manual_test_dialog.type_placeholder,
           options: [
             {
-              label: 'LONG',
-              value: 'LONG',
+              label: T('LONG'),
+              value: SmartTestType.Long,
             },
             {
-              label: 'SHORT',
-              value: 'SHORT',
+              label: T('SHORT'),
+              value: SmartTestType.Short,
             },
             {
-              label: 'CONVEYANCE',
-              value: 'CONVEYANCE',
+              label: T('CONVEYANCE'),
+              value: SmartTestType.Conveyance,
             },
             {
-              label: 'OFFLINE',
-              value: 'OFFLINE',
+              label: T('OFFLINE'),
+              value: SmartTestType.Offline,
             },
           ],
-          value: 'LONG',
+          value: SmartTestType.Long,
         },
       ],
       saveButtonText: helptext.manual_test_dialog.saveButtonText,

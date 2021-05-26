@@ -168,7 +168,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
     protected storageService: StorageService, protected dialogService: DialogService,
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
-  preInit(entityEdit: any): void {
+  preInit(): void {
     this.aroute.params.subscribe((params) => {
       this.pk = params['path'];
     });

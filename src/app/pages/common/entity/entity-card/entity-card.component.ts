@@ -46,9 +46,13 @@ export class EntityCardComponent extends iXObject implements OnInit {
   };
   protected loaderOpen = false;
 
-  constructor(protected rest: RestService, protected ws: WebSocketService, protected router: Router,
-    protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService,
-    translate: TranslateService) {
+  constructor(
+    protected rest: RestService,
+    protected ws: WebSocketService,
+    protected router: Router,
+    private dialog: DialogService,
+    protected loader: AppLoaderService,
+  ) {
     super();
   }
 
@@ -89,7 +93,6 @@ export class EntityCardComponent extends iXObject implements OnInit {
   }
 
   getData(): void {
-    const offset = this.itemsPerPage * (this.page - 1);
     const sort: String[] = [];
     let options: any = {};
 

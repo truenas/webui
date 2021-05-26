@@ -178,7 +178,7 @@ export class FieldRelationService {
         this.setDisabled(config, formGroup, tobeDisabled, tobeHide);
 
         this.getRelatedFormControls(config, formGroup).forEach((control) => {
-          control.valueChanges.subscribe((value) => {
+          control.valueChanges.subscribe(() => {
             this.relationUpdate(config, activations, formGroup);
           });
         });
@@ -202,7 +202,7 @@ export class FieldRelationService {
     }
   }
 
-  setDisabled(fieldConfig: FieldConfig, formGroup: FormGroup, disable: boolean, hide?: boolean, status?: string): void {
+  setDisabled(fieldConfig: FieldConfig, formGroup: FormGroup, disable: boolean, hide?: boolean): void {
     // if field is hidden, disable it too
     if (hide) {
       disable = hide;

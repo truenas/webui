@@ -4,13 +4,13 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
 import { CoreEvent } from 'app/interfaces/events';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import * as _ from 'lodash';
 import { DialogService, ShellService, WebSocketService } from '../../../services';
 import helptext from '../../../helptext/shell/shell';
 import { Terminal } from 'xterm';
-import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
 import * as FontFaceObserver from 'fontfaceobserver';
 import { CoreService } from 'app/core/services/core.service';
@@ -58,7 +58,6 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
   protected route_success: string[] = ['apps'];
 
   choosePod: DialogFormConfiguration;
-  private attachAddon: AttachAddon;
 
   constructor(protected core: CoreService,
     private ws: WebSocketService,
@@ -236,15 +235,11 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   updateTerminal(): void {
-    if (this.attachAddon) {
-      this.attachAddon.dispose();
-    }
-
     if (this.shellConnected) {
       this.xterm.clear();
     }
-    this.attachAddon = new AttachAddon(this.ss.socket);
-    this.xterm.loadAddon(this.attachAddon);
+    const attachAddon = new XtermAttachAddon(this.ss.socket);
+    this.xterm.loadAddon(attachAddon);
   }
 
   getSize(): { rows: number; cols: number } {

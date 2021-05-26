@@ -13,13 +13,6 @@ export interface ProcessTask {
   data: any[];
 }
 
-interface TimeData { // This is in WidgetChartComponent as well. Widgets eventually need to be updated to use this instead
-  start: number;
-  end: number;
-  step: number;
-  legend?: string;
-}
-
 @Injectable()
 export class ChartDataUtilsService {
   private debug = false;
@@ -46,7 +39,7 @@ export class ChartDataUtilsService {
     };
 
     // Create the new thread
-    const thread = new Thread(core);
+    const thread = new Thread();
 
     // Give the thread instructions
     thread.operations = operations;

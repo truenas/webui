@@ -108,7 +108,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
   }
 
   startSubscriptions(): void {
-    this.core.register({ observerClass: this, eventName: 'ThemeListsChanged' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ThemeListsChanged' }).subscribe(() => {
       this.setThemeOptions();
       if (!this.embeddedForm) { return; }
 

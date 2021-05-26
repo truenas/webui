@@ -285,7 +285,7 @@ export class ThemeService {
     this.allThemes = this.freenasThemes;
     this.themesMenu = this.freenasThemes;
 
-    this.core.register({ observerClass: this, eventName: 'ThemeDataRequest' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ThemeDataRequest' }).subscribe(() => {
       this.core.emit({ name: 'ThemeData', data: this.findTheme(this.activeTheme), sender: this });
     });
 

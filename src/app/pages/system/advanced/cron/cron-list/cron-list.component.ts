@@ -3,8 +3,6 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import * as cronParser from 'cron-parser';
-import { Moment } from 'moment';
 import { filter, switchMap } from 'rxjs/operators';
 import { DialogService } from '../../../../../services';
 import { TaskService, WebSocketService } from '../../../../../services';
@@ -129,21 +127,16 @@ export class CronListComponent {
         icon: 'delete',
         label: T('Delete'),
         onClick: (row: any) => {
-          // console.log(row);
           this.entityList.doDelete(row);
         },
       },
     ] as EntityTableAction[];
   }
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: any[]): any[] {
     for (const job of data) {
       job.cron_schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
-
-      /* Weird type assertions are due to a type definition error in the cron-parser library */
-      job.next_run = ((cronParser.parseExpression(job.cron_schedule, { iterator: true }).next() as unknown) as {
-        value: { _date: Moment };
-      }).value._date.fromNow();
+      job.next_run = this.taskService.getTaskNextRun(job.cron_schedule);
     }
     return data;
   }

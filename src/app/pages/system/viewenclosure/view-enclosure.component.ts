@@ -98,7 +98,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
       }
     });
 
-    core.register({ observerClass: this, eventName: 'ThemeChanged' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'ThemeChanged' }).subscribe(() => {
       if (this.system) {
         this.extractVisualizations();
       }
@@ -126,12 +126,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
       this.system.sensorData = evt.data;
     });
 
-    core.register({ observerClass: this, eventName: 'DisksChanged' }).subscribe((evt: CoreEvent) => {
-      if (evt.data.cleared) {
-        // Extra actions if disk is removed
-        const removedDiskFields = this.system.getDiskByID(evt.data.id);
-      }
-
+    core.register({ observerClass: this, eventName: 'DisksChanged' }).subscribe(() => {
       this.fetchData();
     });
 

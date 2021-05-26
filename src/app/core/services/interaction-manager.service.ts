@@ -17,9 +17,6 @@ import {
   transform,
 } from 'popmotion';
 
-const transformMap = transform.transformMap;
-const { clamp } = transform;
-
 interface DisplayObjectRegistration {
   displayObject: DisplayObject;
   layout?: LayoutObject;
@@ -120,7 +117,7 @@ export class InteractionManagerService {
   private releaseAll(): void {
     // Trying to avoid glitches with flakey pointer devices
     // unset the focus property for all DisplayObjects
-    this.displayList.forEach((item, index) => {
+    this.displayList.forEach((item) => {
       item.displayObject.hasFocus = false;
     });
   }
@@ -129,10 +126,6 @@ export class InteractionManagerService {
     const selector = config.id;
     const observable = multicast();
     const el = document.querySelector(selector);
-    const resizeHandleTop = document.querySelector(selector + ' .resize-handle-top');
-    const resizeHandleRight = document.querySelector(selector + ' .resize-handle-right');
-    const resizeHandleBottom = document.querySelector(selector + ' .resize-handle-bottom');
-    const resizeHandleLeft = document.querySelector(selector + ' .resize-handle-left');
 
     let tracker: DisplayObject;
     if (config.moveHandle) {
@@ -186,18 +179,15 @@ export class InteractionManagerService {
   }
 
   private startCollisionDetection(dragTarget: DisplayObject, targets: any[]): void {
-    dragTarget.updateStream.subscribe((position) => {
+    dragTarget.updateStream.subscribe(() => {
       // console.log(position.y);
-      const collisionTarget = targets.forEach((target) => {
+      targets.forEach((target) => {
         const found = this.detectCollision(target, dragTarget);
         if (found) {
           const index = targets.indexOf(target);
           console.log('item index is ' + index);
         }
       });
-      /* if(collisionTarget){
-        console.log(collisionTarget)
-      } */
     });
   }
 

@@ -106,7 +106,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
     this.entityList = entityList;
   }
 
-  isActionVisible(actionId: string, row: any): boolean {
+  isActionVisible(actionId: string): boolean {
     if (actionId == 'edit' || actionId == 'add') {
       return false;
     }

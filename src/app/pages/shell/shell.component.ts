@@ -3,12 +3,13 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
+import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
 import { CoreEvent } from 'app/interfaces/events';
+import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { ShellService, WebSocketService } from '../../services';
 import helptext from '../../helptext/shell/shell';
 import { CopyPasteMessageComponent } from './copy-paste-message.component';
 import { Terminal } from 'xterm';
-import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
 import * as FontFaceObserver from 'fontfaceobserver';
 import { CoreService } from 'app/core/services/core.service';
@@ -42,7 +43,6 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   formEvents: Subject<CoreEvent>;
 
   usage_tooltip = helptext.usage_tooltip;
-  private attachAddon: AttachAddon;
 
   clearLine = '\u001b[2K\r';
   shellConnected = false;
@@ -240,16 +240,12 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
 
     this.refreshToolbarButtons();
 
-    this.shellConnectedSubscription = this.ss.shellConnected.subscribe((res: any) => {
-      this.shellConnected = res.connected;
-      this.connectionId = res.id;
+    this.shellConnectedSubscription = this.ss.shellConnected.subscribe((event: ShellConnectedEvent) => {
+      this.shellConnected = event.connected;
+      this.connectionId = event.id;
 
-      if (this.attachAddon) {
-        this.attachAddon.dispose();
-      }
-
-      this.attachAddon = new AttachAddon(this.ss.socket);
-      this.xterm.loadAddon(this.attachAddon);
+      const attachAddon = new XtermAttachAddon(this.ss.socket);
+      this.xterm.loadAddon(attachAddon);
 
       this.refreshToolbarButtons();
       this.resizeTerm();
@@ -264,6 +260,11 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.connect();
   }
 
-  constructor(protected core: CoreService, private ws: WebSocketService, public ss: ShellService, public translate: TranslateService, private dialog: MatDialog) {
-  }
+  constructor(
+    private core: CoreService,
+    private ws: WebSocketService,
+    private ss: ShellService,
+    private translate: TranslateService,
+    private dialog: MatDialog,
+  ) {}
 }

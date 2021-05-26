@@ -25,7 +25,7 @@ const tableUtils = {
   },
   avgFromReportData: (input: any[]) => {
     const output: any[] = [];
-    input.forEach((item, index) => {
+    input.forEach((item) => {
       const avg = arrayAvg(item);
       output.push([avg]);
     });
@@ -50,7 +50,7 @@ const tableUtils = {
 
     return units;
   },
-  convertKMGT: (input: number, units: string, fixed?: number) => {
+  convertKMGT: (input: number, units: string) => {
     const kilo = 1024;
     const mega = kilo * 1024;
     const giga = mega * 1024;
@@ -88,7 +88,6 @@ const tableUtils = {
   convertByKilo: (input: number) => {
     if (typeof input !== 'number') { return input; }
     let output = input;
-    const prefix = '';
     let suffix = '';
 
     if (input >= 1000000) {
@@ -143,7 +142,7 @@ const tableUtils = {
 
 function processTableCommands(list: any[]): any {
   let output: any;
-  list.forEach((item, index) => {
+  list.forEach((item) => {
     const input = item.input == '--pipe' || item.input == '|' ? output : item.input;
     output = item.options ? (tableUtils as any)[item.command](input, item.options) : (tableUtils as any)[item.command](input);
   });
