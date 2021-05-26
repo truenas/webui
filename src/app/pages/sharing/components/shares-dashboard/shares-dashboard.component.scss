@@ -2,6 +2,39 @@
   height: 90%;
 }
 
+
+.zero-table-container {
+  display: grid;
+  grid-template-areas: 
+    'first'
+    'second'
+    'third'
+    'fourth';
+  grid-template-columns: 100%;
+  grid-template-rows: 58px 58px 58px 58px;
+}
+
+.zero-table-container .first {
+  grid-area: first;
+  margin: 5px 0;
+}
+
+.zero-table-container .second {
+  grid-area: second;
+  margin: 5px 0;
+}
+
+.zero-table-container .third {
+  grid-area: third;
+  margin: 5px 0;
+}
+
+.zero-table-container .fourth {
+  grid-area: fourth;
+  margin: 5px 0;
+}
+
+
 .one-table-container {
   display: grid;
   grid-template-areas: 

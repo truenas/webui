@@ -9,6 +9,7 @@ export interface InputExpandableTableConf extends InputTableConf {
   alwaysExpanded?: boolean;
   expandedIfNotEmpty?: boolean;
   detailsHref?: string;
+  expandableTableComponent?: ExpandableTableComponent;
   limitRows?: number;
   limitRowsByMaxHeight?: boolean;
 }
@@ -38,6 +39,7 @@ export class ExpandableTableComponent {
       this._tableConf = conf;
       this.populateTable();
     }
+    this._tableConf.expandableTableComponent = this;
   }
 
   @ViewChild('appTable', { read: ElementRef })
@@ -68,9 +70,13 @@ export class ExpandableTableComponent {
     };
   }
 
+  updateAlwaysExpanded(alwaysExpanded: boolean): void {
+    this.tableConf.alwaysExpanded = alwaysExpanded;
+  }
+
   ngAfterViewChecked(): void {
     if (this._tableConf.limitRows
-      && this.appTable.nativeElement.children[0].children[1].children[0].children[0].children[0].children[0].children[0].children[0]) {
+      && this.appTable.nativeElement.children[0].children[1].children[0].children[0].children[0].children[0].children[0].children[0] && this.appTable.nativeElement.children[1] && !this.shouldBeCollapsed()) {
       const tableHeaderHeight = this.appTable.nativeElement.children[0].children[1].children[0].children[0].children[0].children[0].children[0].children[0].children[0].offsetHeight;
       const expandableHeaderHeight = this.appTable.nativeElement.children[0].children[0].offsetHeight;
       const detailsFooterHeight = this.appTable.nativeElement.children[1].offsetHeight;

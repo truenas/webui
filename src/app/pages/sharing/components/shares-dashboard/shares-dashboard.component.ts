@@ -49,11 +49,6 @@ export class SharesDashboardComponent {
     },
   };
 
-  webdavChecked = false;
-  nfsChecked = false;
-  smbChecked = false;
-  iscsiChecked = false;
-
   webdavHasItems = 0;
   nfsHasItems = 0;
   smbHasItems = 0;
@@ -84,22 +79,18 @@ export class SharesDashboardComponent {
     switch (shareType) {
       case ShareType.ISCSI: {
         this.iscsiTableConf = this.getTableConfigForShareType(ShareType.ISCSI);
-        this.iscsiChecked = false;
         break;
       }
       case ShareType.NFS: {
         this.nfsTableConf = this.getTableConfigForShareType(ShareType.NFS);
-        this.nfsChecked = false;
         break;
       }
       case ShareType.SMB: {
         this.smbTableConf = this.getTableConfigForShareType(ShareType.SMB);
-        this.smbChecked = false;
         break;
       }
       case ShareType.WebDAV: {
         this.webdavTableConf = this.getTableConfigForShareType(ShareType.WebDAV);
-        this.webdavChecked = false;
         break;
       }
       default: {
@@ -107,10 +98,6 @@ export class SharesDashboardComponent {
         this.nfsTableConf = this.getTableConfigForShareType(ShareType.NFS);
         this.smbTableConf = this.getTableConfigForShareType(ShareType.SMB);
         this.iscsiTableConf = this.getTableConfigForShareType(ShareType.ISCSI);
-        this.webdavChecked = false;
-        this.nfsChecked = false;
-        this.smbChecked = false;
-        this.iscsiChecked = false;
         break;
       }
     }
@@ -144,17 +131,19 @@ export class SharesDashboardComponent {
             this.parent.edit(this.tableComponent, ShareType.NFS, row.id);
           },
           afterGetData: (data: any) => {
-            this.nfsChecked = true;
             this.nfsHasItems = 0;
             this.nfsTableConf.alwaysExpanded = false;
+            if (this.nfsTableConf?.expandableTableComponent) {
+              this.nfsTableConf.expandableTableComponent.updateAlwaysExpanded(false);
+            }
             if (data.length > 0) {
               this.nfsHasItems = 1;
               this.nfsTableConf.alwaysExpanded = true;
+              if (this.nfsTableConf?.expandableTableComponent) {
+                this.nfsTableConf.expandableTableComponent.updateAlwaysExpanded(true);
+              }
               this.updateNumberOfTables();
             }
-          },
-          afterDelete() {
-            this.tableComponent.getData();
           },
           expandedIfNotEmpty: true,
           collapsedIfEmpty: true,
@@ -192,17 +181,19 @@ export class SharesDashboardComponent {
           edit(row: any) {
             this.parent.edit(this.tableComponent, ShareType.ISCSI, row.id);
           },
-          afterDelete() {
-            this.tableComponent.getData();
-          },
           collapsedIfEmpty: true,
           afterGetData: (data: any) => {
-            this.iscsiChecked = true;
             this.iscsiHasItems = 0;
             this.iscsiTableConf.alwaysExpanded = false;
+            if (this.iscsiTableConf?.expandableTableComponent) {
+              this.iscsiTableConf.expandableTableComponent.updateAlwaysExpanded(false);
+            }
             if (data.length > 0) {
               this.iscsiHasItems = 1;
               this.iscsiTableConf.alwaysExpanded = true;
+              if (this.iscsiTableConf?.expandableTableComponent) {
+                this.iscsiTableConf.expandableTableComponent.updateAlwaysExpanded(true);
+              }
               this.updateNumberOfTables();
             }
           },
@@ -237,15 +228,17 @@ export class SharesDashboardComponent {
           edit(row: any) {
             this.parent.edit(this.tableComponent, ShareType.WebDAV, row.id);
           },
-          afterDelete() {
-            this.tableComponent.getData();
-          },
           afterGetData: (data: any) => {
-            this.webdavChecked = true;
             this.webdavHasItems = 0;
+            if (this.webdavTableConf?.expandableTableComponent) {
+              this.webdavTableConf.expandableTableComponent.updateAlwaysExpanded(false);
+            }
             this.webdavTableConf.alwaysExpanded = false;
             if (data.length > 0) {
               this.webdavHasItems = 1;
+              if (this.webdavTableConf?.expandableTableComponent) {
+                this.webdavTableConf.expandableTableComponent.updateAlwaysExpanded(true);
+              }
               this.webdavTableConf.alwaysExpanded = true;
               this.updateNumberOfTables();
             }
@@ -282,16 +275,18 @@ export class SharesDashboardComponent {
           edit(row: any) {
             this.parent.edit(this.tableComponent, ShareType.SMB, row.id);
           },
-          afterDelete() {
-            this.tableComponent.getData();
-          },
           afterGetData: (data: any) => {
-            this.smbChecked = true;
             this.smbHasItems = 0;
             this.smbTableConf.alwaysExpanded = false;
+            if (this.smbTableConf?.expandableTableComponent) {
+              this.smbTableConf.expandableTableComponent.updateAlwaysExpanded(false);
+            }
             if (data.length > 0) {
               this.smbHasItems = 1;
               this.smbTableConf.alwaysExpanded = true;
+              if (this.smbTableConf?.expandableTableComponent) {
+                this.smbTableConf.expandableTableComponent.updateAlwaysExpanded(true);
+              }
               this.updateNumberOfTables();
             }
           },
@@ -305,10 +300,6 @@ export class SharesDashboardComponent {
 
   updateNumberOfTables(): void {
     this.noOfPopulatedTables = this.nfsHasItems + this.smbHasItems + this.iscsiHasItems + this.webdavHasItems;
-  }
-
-  allTablesChecked(): boolean {
-    return this.smbChecked && this.nfsChecked && this.iscsiChecked && this.webdavChecked;
   }
 
   add(tableComponent: TableComponent, share: ShareType, id?: number): void {
@@ -368,6 +359,8 @@ export class SharesDashboardComponent {
   getContainerClass(): string {
     this.noOfPopulatedTables = this.webdavHasItems + this.nfsHasItems + this.smbHasItems + this.iscsiHasItems;
     switch (this.noOfPopulatedTables) {
+      case 0:
+        return 'zero-table-container';
       case 1:
         return 'one-table-container';
       case 2:

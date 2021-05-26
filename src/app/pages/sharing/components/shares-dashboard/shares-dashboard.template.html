@@ -1,9 +1,6 @@
-<div class="container" *ngIf="(allTablesChecked() && noOfPopulatedTables > 0) || !allTablesChecked()" [ngClass]="getContainerClass()">
-    <app-expandable-table #webdavTable [ngClass]="getWebdavOrder()" [conf]="webdavTableConf"></app-expandable-table>
+<div class="container" [ngClass]="getContainerClass()">
+    <app-expandable-table [ngClass]="getWebdavOrder()" [conf]="webdavTableConf"></app-expandable-table>
     <app-expandable-table [ngClass]="getNfsOrder()" [conf]="nfsTableConf"></app-expandable-table>
     <app-expandable-table [ngClass]="getSmbOrder()" [conf]="smbTableConf"></app-expandable-table>
     <app-expandable-table [ngClass]="getIscsiOrder()" [conf]="iscsiTableConf"></app-expandable-table>
-</div>
-<div class="entity-empty-div" *ngIf="allTablesChecked() && noOfPopulatedTables === 0">
-  <entity-empty [conf]="emptyTableConf"></entity-empty>
 </div>

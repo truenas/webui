@@ -83,9 +83,6 @@ export class TableService {
       table.tableConf.deleteMsg.doubleConfirm(item).subscribe((doubleConfirmDialog: any) => {
         if (doubleConfirmDialog) {
           this.doDelete(table, item);
-          if (table.tableConf.afterDelete) {
-            table.tableConf.afterDelete();
-          }
         }
       });
     } else {
@@ -97,9 +94,6 @@ export class TableService {
       ).subscribe((res: boolean) => {
         if (res) {
           this.doDelete(table, item);
-          if (table.tableConf.afterDelete) {
-            table.tableConf.afterDelete();
-          }
         }
       });
     }
