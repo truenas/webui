@@ -46,10 +46,9 @@ export class SnapshotFormComponent implements FormConfiguration, OnDestroy {
           name: 'dataset',
           placeholder: helptext.dataset_placeholder,
           tooltip: helptext.dataset_tooltip,
-          options: [], // ["none"],//[helptext.dataset_placeholder],
+          options: [],
           required: true,
           validation: [Validators.required],
-          // value:"none",
         }, {
           type: 'chip',
           name: 'exclude',
