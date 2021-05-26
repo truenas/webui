@@ -66,7 +66,7 @@ export class DownloadKeyModalDialog {
             this.isDownloaded = true;
           }
         });
-      }, (resError) => {
+      }, () => {
         this.isDownloaded = true;
         this.loader.close();
       });

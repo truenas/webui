@@ -79,7 +79,7 @@ export class ChassisView {
     this.utils = new ThemeUtils();
 
     this.container = new PIXI.Container();
-    this.driveTrays = new PIXI.projection.Container2d();
+    this.driveTrays = new PIXI.Container();
     this.events = new Subject<CoreEvent>();
 
     this.events.subscribe((evt: CoreEvent) => {
@@ -134,7 +134,6 @@ export class ChassisView {
   }
 
   onLoaded(): void {
-    const outlineFilterBlue = new PIXI.filters.OutlineFilter(2, 0x99ff99);
     const bloomFilter = new PIXI.filters.AdvancedBloomFilter({
       threshold: 0.9,
       bloomScale: 1.5,

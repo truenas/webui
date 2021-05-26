@@ -7,4 +7,7 @@ export default {
   fieldset_scrub_tasks: T('Scrub Tasks'),
   fieldset_periodic_snapshot_tasks: T('Periodic Snapshot Tasks'),
   fieldset_rsync_tasks: T('Rsync Tasks'),
+
+  no_snapshot_sent_yet: T('No snapshots sent yet'),
+  task_is_running: T('Task is running'),
 };

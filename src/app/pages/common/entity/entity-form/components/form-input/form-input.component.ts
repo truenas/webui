@@ -35,7 +35,7 @@ export class FormInputComponent implements Field {
     var file: File = inputValue.files[0];
     var fReader: FileReader = new FileReader();
 
-    fReader.onloadend = (e) => {
+    fReader.onloadend = () => {
       this.fileString = fReader.result;
       this.contents(fReader.result);
     };

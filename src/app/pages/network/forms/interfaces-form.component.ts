@@ -243,7 +243,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               placeholder: helptext.alias_address_placeholder,
               tooltip: helptext.alias_address_tooltip,
               type: 'ipwithnetmask',
-              validation: [ipv4or6cidrValidator('address')],
+              validation: [ipv4or6cidrValidator()],
             },
             {
               name: 'failover_address',
@@ -252,7 +252,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               disabled: true,
               isHidden: true,
               type: 'input',
-              validation: [ipv4or6Validator('failover_address')],
+              validation: [ipv4or6Validator()],
             },
             {
               name: 'failover_virtual_address',
@@ -261,7 +261,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               disabled: true,
               isHidden: true,
               type: 'input',
-              validation: [ipv4or6Validator('failover_virtual_address')],
+              validation: [ipv4or6Validator()],
 
             },
           ],

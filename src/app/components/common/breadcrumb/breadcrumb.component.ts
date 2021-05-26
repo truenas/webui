@@ -46,28 +46,28 @@ export class BreadcrumbComponent implements OnInit {
     });
 
     // only execute when routechange
-    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe((routeChange) => {
-      this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
-      // generate url from parts
-      this.routeParts.reverse().map((item, i) => {
-        // prepend / to first part
-        if (i === 0) {
-          item.url = `/${item.url}`;
-          if (!item['toplevel']) {
-            item.disabled = true;
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
+        // generate url from parts
+        this.routeParts.reverse().map((item, i) => {
+          // prepend / to first part
+          if (i === 0) {
+            item.url = `/${item.url}`;
+            if (!item['toplevel']) {
+              item.disabled = true;
+            }
+            return item;
           }
+          // prepend previous part to current part
+          item.url = `${this.routeParts[i - 1].url}/${item.url}`;
           return item;
-        }
-        // prepend previous part to current part
-        item.url = `${this.routeParts[i - 1].url}/${item.url}`;
-        return item;
+        });
       });
-    });
 
     // Pseudo routing events (for reports page)
     this.core.register({ observerClass: this, eventName: 'PseudoRouteChange' }).subscribe((evt: CoreEvent) => {
-      const routeChange = evt.data;
-      // this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
       this.routeParts = evt.data;
       // generate url from parts
       this.routeParts.map((item, i) => {

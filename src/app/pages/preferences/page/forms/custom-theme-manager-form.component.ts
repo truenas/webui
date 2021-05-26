@@ -77,7 +77,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
     }
 
     // Otherwise wait for change events from message bus
-    this.core.register({ observerClass: this, eventName: 'ThemeListsChanged' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ThemeListsChanged' }).subscribe(() => {
       this.initForm();
     });
   }
@@ -102,7 +102,6 @@ export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
       switch (evt.name) {
         case 'FormSubmitted':
           const submission = [];
-          const keys = Object.keys(evt.data);
           for (let i = 0; i < this.themeService.customThemes.length; i++) {
             const theme = this.themeService.customThemes[i];
             if (!evt.data[theme.name]) {
@@ -138,8 +137,6 @@ export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
     if (this.customThemeFields && this.customThemeFields.length > 0) {
       this.customThemeFields.splice(0, this.customThemeFields.length);
     }
-
-    const ctf = [];
 
     for (let i = 0; i < this.themeService.customThemes.length; i++) {
       const theme = this.themeService.customThemes[i];

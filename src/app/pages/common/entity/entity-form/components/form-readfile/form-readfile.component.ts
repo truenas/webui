@@ -28,8 +28,7 @@ export class FormReadFileComponent implements Field {
   readFile(inputValue: any): any {
     const file: File = inputValue.files[0];
     const fReader: FileReader = new FileReader();
-    const fileType = inputValue.parentElement.id;
-    fReader.onloadend = (e) => {
+    fReader.onloadend = () => {
       this.fileString = fReader.result;
       this.contents(fReader.result);
     };

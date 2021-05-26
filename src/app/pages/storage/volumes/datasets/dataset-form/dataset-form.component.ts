@@ -793,8 +793,6 @@ export class DatasetFormComponent implements FormConfiguration {
 
   // TODO: Narrow down `field` type
   convertHumanStringToNum(hstr: any, field: string): number {
-    const IECUnitLetters = this.storageService.IECUnits.map((unit: any) => unit.charAt(0).toUpperCase()).join('');
-
     let num = 0;
     let unit = '';
 
@@ -1245,11 +1243,6 @@ export class DatasetFormComponent implements FormConfiguration {
             this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).subscribe((parent_dataset) => {
               this.parent_dataset = parent_dataset[0];
               const current_dataset = _.find(this.parent_dataset.children, { name: this.pk });
-              const lower_recordsize_map = {
-                512: '512',
-                '1K': '1K',
-                '2K': '2K',
-              };
               if (current_dataset.hasOwnProperty('recordsize') && current_dataset['recordsize'].value) {
                 _.find(_.find(this.fieldConfig, { name: 'recordsize' }).options, { value: current_dataset['recordsize'].value })['hiddenFromDisplay'] = false;
               }

@@ -544,7 +544,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.router.navigate(new Array('/').concat(this.route_success));
   }
 
-  onSubmit(event: Event): void {
+  onSubmit(): void {
     this.error = '';
     this.aroute.params.subscribe((params) => {
       const device = _.cloneDeep(this.formGroup.value);
