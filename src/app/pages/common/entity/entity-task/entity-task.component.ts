@@ -159,7 +159,6 @@ export class EntityTaskComponent implements OnInit {
     });
 
     if (!this.isNew) {
-      const query = this.conf.resource_name + '/' + this.pk;
       // if we want to use this again we will need to convert to websocket
       /* this.rest.get(query, {}).subscribe((res) => {
         if (res.data) {

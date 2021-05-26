@@ -273,7 +273,7 @@ export class EmailComponent implements FormConfiguration, OnDestroy {
         entityEdit.setDisabled('oauth_not_applied', true, true);
       }
     });
-    this.smtpSubscription = this.smtp.valueChanges.subscribe((value) => {
+    this.smtpSubscription = this.smtp.valueChanges.subscribe(() => {
       this.toggleSmtpAuthControls();
     });
   }

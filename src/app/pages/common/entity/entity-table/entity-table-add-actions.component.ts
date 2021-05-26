@@ -54,7 +54,7 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit, On
         debounceTime(150),
         distinctUntilChanged(),
       )
-        .subscribe((evt) => {
+        .subscribe(() => {
           this.entity.filter(this.filter.nativeElement.value);
         });
     }

@@ -339,7 +339,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.asyncView = this.conf.asyncView ? this.conf.asyncView : false;
 
-    this.conf.columns.forEach((column, index) => {
+    this.conf.columns.forEach((column) => {
       this.displayedColumns.push(column.prop);
       if (!column.always_display) {
         this.allColumns.push(column); // Make array of optionally-displayed cols
@@ -942,9 +942,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   delete(id: string): void {
     this.loader.open();
     this.loaderOpen = true;
-    const data = {};
     this.busy = this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id])).subscribe(
-      (resinner) => {
+      () => {
         this.getData();
         this.excuteDeletion = true;
         if (this.conf.afterDelete) {
@@ -1211,7 +1210,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  getCellClass({ row, column, value }: any): any {
+  getCellClass({ value }: any): any {
     if (value) {
       return {
         'entity-table-cell-error': String(value).includes('*ERR*'),

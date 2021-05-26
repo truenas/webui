@@ -28,7 +28,6 @@ export class EntityTreeTableService {
     const flatList: TreeNode[] = [];
 
     // Walk to get the children
-    const rootIndexPath = [0];
     this.walk(data, flatList, null, expandAll);
 
     return flatList;
@@ -88,8 +87,6 @@ export class EntityTreeTableService {
   }
 
   filteredTable(key: any, value: any, data: any, preserveExpansion = false): TreeNode[] {
-    // Fully expanded and flattened list
-    const args = preserveExpansion ? [data] : [data, true];
     // let flattened = this.buildTable(...args); // ES6 way not working?
     const flattened = preserveExpansion ? this.buildTable(data) : this.buildTable(data, true);
 
@@ -99,8 +96,6 @@ export class EntityTreeTableService {
     for (let index = flattened.length - 1; index >= 0; index--) {
       const row = flattened[index];
       if (row.data[key].includes(value)) {
-        const node = this.findNode(row.indexPath, data);
-
         // Log ancestors so we know which ones to keep
         const parents = this.findParents(row.indexPath, data);
         preserve = Object.assign(preserve, parents);
