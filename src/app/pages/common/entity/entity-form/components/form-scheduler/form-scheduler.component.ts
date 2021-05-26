@@ -193,8 +193,26 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   protected endTime: moment.Moment;
   picker = false;
   private _textInput = '';
-  crontab = 'custom';
-  private _preset: CronPreset;// = { label:"Custom", value:"* * * * *"};
+
+  _crontab = '';
+  get crontab(): string {
+    return this._crontab;
+  }
+
+  set crontab(value: string) {
+    this._crontab = value;
+    this.customOption.value = this._crontab;
+  }
+
+  customOption: CronPreset = {
+    label: T('Custom'),
+    value: this.crontab,
+    description: T('Create custom schedule'),
+  };
+
+  selectedOption: CronPreset;
+
+  private _preset: CronPreset;
   presets: CronPreset[] = [
     {
       label: T('Hourly'),
@@ -259,7 +277,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     protected localeService: LocaleService, protected ws: WebSocketService,
     private sysGeneralService: SystemGeneralService) {
     // Set default value
-    this.preset = this.presets[1];
+    this.preset; // = this.presets[1];
     this._months = '*';
 
     this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe((res) => {
@@ -280,14 +298,14 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
     this.control.valueChanges.subscribe((evt: string) => {
       this.crontab = evt;
+
       const isPreset: boolean = this.presets.filter((preset) => evt == preset.value).length != 0;
       if (!isPreset) {
-        this._preset = { label: T('Custom'), value: this.crontab };
-        this.convertPreset(this.crontab);
+        this.customOption.value = evt;
+        this.selectedOption = this.customOption;
       }
-    });
 
-    this.group.valueChanges.subscribe((evt: string) => {
+      this.cd.detectChanges();
     });
 
     if (this.control.value) {
@@ -326,8 +344,13 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   onPopupSave(): void {
     this.togglePopup();
+
     if (this.formControl) {
       this.group.controls[this.config.name].setValue(this.crontab);
+    }
+
+    if (this.control.value) {
+      this.control.setValue(new EntityUtils().parseDOW(this.control.value));
     }
   }
 

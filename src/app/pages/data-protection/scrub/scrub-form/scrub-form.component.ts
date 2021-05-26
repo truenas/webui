@@ -142,10 +142,21 @@ export class ScrubFormComponent implements FormConfiguration {
   }
 
   dataHandler(entity: EntityFormComponent): void {
-    // Setup all fields
+    // Setup cron_schedule
+    const schedule = entity.wsResponse.schedule;
+    if (Number(entity.wsResponse.id) !== Number(this.pk)) console.error({ id: entity.wsResponse.id, pk: this.pk });
+    const formatted = schedule.minute + ' ' + schedule.hour + ' ' + schedule.dom + ' ' + schedule.month + ' ' + schedule.dow;
+    const cronField = entity.formGroup.controls['cron_schedule'];
+    cronField.setValue(formatted);
+    const cronEntity = entity.fieldConfig.filter((field) => field.name == 'cron_schedule')[0];
+    cronEntity.value = formatted;
+
+    // Setup all the other fields
     for (const [key, value] of Object.entries(entity.wsResponse)) {
       const field = entity.formGroup.controls[key];
-      if (field) field.setValue(entity.wsResponse[key]);
+      if (field && key !== 'schedule') {
+        field.setValue(entity.wsResponse[key]);
+      }
     }
   }
 }
