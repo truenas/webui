@@ -2,11 +2,12 @@
 """SCALE UI feature tests."""
 
 import time
-from function (
+from function import(
     wait_on_element,
     is_element_present,
     attribute_value_exist,
     wait_for_attribute_value,
+    wait_on_element_disappear,
 )    
 from pytest_bdd import (
     given,
@@ -22,7 +23,7 @@ def test_change_shell_for_user():
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in():
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
     """the browser is open, the FreeNAS URL and logged in."""
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
@@ -40,7 +41,7 @@ def the_browser_is_open_the_freenas_url_and_logged_in():
 
 
 @when('you should be on the dashboard, click on the Accounts on the side menu, click on Users')
-def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users():
+def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(driver):
     """you should be on the dashboard, click on the Accounts on the side menu, click on Users."""
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     """click on the Credentials on the side menu, click on Local Users."""
@@ -50,39 +51,42 @@ def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Local Users"]').click()
 
 
-@when('the Users page should open, click the Greater-Than-Sign right of the users')
-def the_users_page_should_open_click_the_down_carat_sign_right_of_the_users():
-    """the Users page should open, click the Greater-Than-Sign right of the users."""
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]')
-    driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
+@when('the Users page should open, click the down carat sign right of the users')
+def the_users_page_should_open_click_the_down_carat_sign_right_of_the_users(driver):
+    """the Users page should open, click the down carat sign right of the users."""
+    assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
+    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
 
 
 @when('the User Field should expand down, then click the Edit button')
-def the_user_field_should_expand_down_then_click_the_edit_button():
+def the_user_field_should_expand_down_then_click_the_edit_button(driver):
     """the User Field should expand down, then click the Edit button."""
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
 
 
-@then('the User Edit Page should open, change the user shell and click save')
-def the_user_edit_page_should_open():
-    """the User Edit Page should open,change the user shell and click save."""
+@when('the User Edit Page should open, change the user shell and click save')
+def the_user_edit_page_should_open_change_the_user_shell_and_click_save(driver):
+    """the User Edit Page should open, change the user shell and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+    time.sleep(5)
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Shell"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"zsh")]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Shell_zsh"]').click()
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
 @then('open the user dropdown, and verify the shell value has changed')
-def open_the_user_dropdown_and_verify_the_shell_value_has_changed():
+def open_the_user_dropdown_and_verify_the_shell_value_has_changed(driver):
     """open the user dropdown, and verify the shell value has changed."""
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]')
-    driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
-    assert wait_on_element(driver, 10, '//span[contains(.,"zsh")]')
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
+    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
+    assert wait_on_element(driver, 10, '//p[contains(.,"zsh")]')
 
 
