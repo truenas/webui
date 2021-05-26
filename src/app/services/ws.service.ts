@@ -179,7 +179,7 @@ export class WebSocketService {
 
   unsubscribe(observer: any): void {
     // FIXME: just does not have a good performance :)
-    this.subscriptions.forEach((v, k) => {
+    this.subscriptions.forEach((v) => {
       v.forEach((item) => {
         if (item === observer) {
           v.splice(v.indexOf(item), 1);

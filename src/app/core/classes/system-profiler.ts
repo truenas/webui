@@ -45,7 +45,7 @@ export class SystemProfiler {
     this._diskData = null;
     this._diskData = obj;
     this.parseDiskData(obj);
-    this.parseEnclosures(this._enclosures);
+    this.parseEnclosures();
   }
 
   private _enclosures: Enclosure[];
@@ -81,8 +81,6 @@ export class SystemProfiler {
   }
 
   createProfile(): void {
-    let rearEnclosure: Enclosure;
-
     // with the enclosure info we set up basic data structure
     for (let i = 0; i < this.enclosures.length; i++) {
       // Detect rear drive bays
@@ -128,7 +126,7 @@ export class SystemProfiler {
     this.profile.forEach((enc) => enc.disks = []);
 
     const data = disks; // DEBUG
-    data.forEach((item: EnclosureDisk, index: number) => {
+    data.forEach((item: EnclosureDisk) => {
       if (!item.enclosure) { return; } // Ignore boot disks
 
       const enclosure = this.profile[item.enclosure['number']];
@@ -140,7 +138,7 @@ export class SystemProfiler {
     });
   }
 
-  private parseEnclosures(obj: Enclosure[]): void {
+  private parseEnclosures(): void {
     // Provide a shortcut to the enclosures object
     this.profile.forEach((profileItem: EnclosureMetadata, index: number) => {
       profileItem.enclosureKey = Number(index); // Make sure index 0 is not treated as boolean
@@ -150,7 +148,7 @@ export class SystemProfiler {
   private parseSensorData(obj: any): void {
     const powerStatus = obj.filter((v: any) => v.name.startsWith('PS'));
     if (this.enclosures[this.headIndex] && this.enclosures[this.headIndex].model == 'M Series') {
-      const elements = powerStatus.map((item: any, index: number) => {
+      const elements = powerStatus.map((item: any) => {
         item.descriptor = item.name;
         item.status = item.value == 1 ? 'OK' : 'FAILED';
         item.value = 'NONE';
@@ -220,9 +218,6 @@ export class SystemProfiler {
   }
 
   addVDevToDiskInfo(diskName: string, vdev: VDevMetadata, stats?: any): void {
-    if (diskName == 'da13') console.log(vdev);
-    const keys = Object.keys(vdev.disks);
-
     const enclosureIndex = this.getEnclosureNumber(diskName);
     const enclosure = this.profile[enclosureIndex];
     if (!enclosure) {
@@ -275,7 +270,7 @@ export class SystemProfiler {
     const vdev = { ...disk.vdev };
     vdev.diskEnclosures = {};
     const keys = Object.keys(slots);
-    keys.forEach((d: any, index: number) => {
+    keys.forEach((d: any) => {
       const e = this.getEnclosureNumber(d);
 
       // is the disk on the current enclosure?

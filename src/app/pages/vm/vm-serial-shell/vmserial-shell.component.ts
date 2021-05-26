@@ -22,7 +22,7 @@ import * as FontFaceObserver from 'fontfaceobserver';
   encapsulation: ViewEncapsulation.None,
 })
 
-export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
+export class VMSerialShellComponent implements OnInit, OnDestroy {
   @Input() prompt = '';
   @ViewChild('terminal', { static: true }) container: ElementRef;
   cols: string;
@@ -47,7 +47,6 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit(): void {
-    const self = this;
     this.aroute.params.subscribe((params) => {
       this.pk = params['pk'];
       this.getAuthToken().subscribe((token) => {
@@ -82,13 +81,6 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
   resetDefault(): void {
     this.font_size = 14;
     this.resizeTerm();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    const log: string[] = [];
-    for (const propName in changes) {
-      const changedProp = changes[propName];
-    }
   }
 
   getSize(): { rows: number; cols: number } {
@@ -144,7 +136,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
 
     var font = new FontFaceObserver(this.font_name);
 
-    font.load().then((e) => {
+    font.load().then(() => {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
       this.xterm._initialized = true;
@@ -157,7 +149,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
-    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res) => {
+    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe(() => {
       this.xterm.focus();
     });
     return true;

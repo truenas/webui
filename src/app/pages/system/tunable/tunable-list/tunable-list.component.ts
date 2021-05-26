@@ -76,7 +76,6 @@ export class TunableListComponent {
 
   preInit(entityList: any): void {
     this.entityList = entityList;
-    this.sub = this.aroute.params.subscribe((params) => {});
     this.product_type = window.localStorage.getItem('product_type') as ProductType;
     if (this.product_type === ProductType.Scale || this.product_type === ProductType.ScaleEnterprise) {
       this.route_add = this.route_add_scale;

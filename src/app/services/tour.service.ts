@@ -147,7 +147,6 @@ export class TourService {
   }
 
   startTour(url: string): any {
-    const self = this;
     switch (url) {
       case '/account/users':
         console.log('/account/users');

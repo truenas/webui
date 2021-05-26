@@ -562,7 +562,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 });
               },
             };
-            this.dialogService.dialogForm(this.dialogConf).subscribe((res) => {
+            this.dialogService.dialogForm(this.dialogConf).subscribe(() => {
             });
           },
         });
@@ -580,12 +580,8 @@ export class VolumesListTableConfig implements InputTableConf {
             this.loader.open();
             this.ws.call('pool.attachments', [row1.id]).subscribe((res: any[]) => {
               if (res.length > 0) {
-                let servicesA; let
-                  servicesB;
                 self.translate.get(helptext.exportMessages.servicesA).subscribe((a) => {
                   self.translate.get(helptext.exportMessages.servicesB).subscribe((b) => {
-                    servicesA = a;
-                    servicesB = b;
                     p1 = a + `<i>${row1.name}</i>` + b;
                     res.forEach((item) => {
                       p1 += `<br><b>${item.type}:</b>`;
@@ -1038,14 +1034,14 @@ export class VolumesListTableConfig implements InputTableConf {
                     if (confirmResult === true) {
                       this.loader.open();
                       this.ws.call('pool.upgrade', [rowData.id]).subscribe(
-                        (res) => {
+                        () => {
                           this.translate.get(T('Successfully Upgraded ')).subscribe((success_upgrade) => {
                             this.dialogService
                               .Info(
                                 T('Upgraded'),
                                 success_upgrade + row1.name,
                               )
-                              .subscribe((infoResult) => {
+                              .subscribe(() => {
                                 this.parentVolumesListComponent.repaintMe();
                               });
                           });
@@ -1168,7 +1164,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     if (doubleConfirmDialog) {
                       this.loader.open();
                       this.ws.call('pool.dataset.delete', [rowData.id, { recursive: true }]).subscribe(
-                        (wsResp) => {
+                        () => {
                           this.loader.close();
                           this.parentVolumesListComponent.repaintMe();
                         },
@@ -1181,7 +1177,7 @@ export class VolumesListTableConfig implements InputTableConf {
                                   if (res) {
                                     this.loader.open();
                                     this.ws.call('pool.dataset.delete', [rowData.id, { recursive: true, force: true }]).subscribe(
-                                      (wsres) => {
+                                      () => {
                                         this.loader.close();
                                         this.parentVolumesListComponent.repaintMe();
                                       },
@@ -1226,7 +1222,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 if (confirmed === true) {
                   this.loader.open();
 
-                  this.ws.call('pool.dataset.delete', [rowData.id, { recursive: true }]).subscribe((wsResp) => {
+                  this.ws.call('pool.dataset.delete', [rowData.id, { recursive: true }]).subscribe(() => {
                     this.loader.close();
                     this.parentVolumesListComponent.repaintMe();
                   }, (res) => {
@@ -1321,10 +1317,10 @@ export class VolumesListTableConfig implements InputTableConf {
           onClick: (row1: any) => {
             this.loader.open();
 
-            this.ws.call('pool.dataset.promote', [row1.id]).subscribe((wsResp) => {
+            this.ws.call('pool.dataset.promote', [row1.id]).subscribe(() => {
               this.loader.close();
               // Showing info here because there is no feedback on list parent for this if promoted.
-              this.dialogService.Info(T('Promote Dataset'), T('Successfully Promoted ') + row1.id).subscribe((infoResult) => {
+              this.dialogService.Info(T('Promote Dataset'), T('Successfully Promoted ') + row1.id).subscribe(() => {
                 this.parentVolumesListComponent.repaintMe();
               });
             }, (res) => {
@@ -1486,7 +1482,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     entityDialog.setDisabled(all_encryption_fields[i], true, true);
                   }
                 }
-                const inherit_encryption_subscription = inherit_encryption_fg.valueChanges.subscribe((inherit) => {
+                inherit_encryption_fg.valueChanges.subscribe((inherit) => {
                   if (inherit) {
                     for (let i = 0; i < all_encryption_fields.length; i++) {
                       entityDialog.setDisabled(all_encryption_fields[i], inherit, inherit);
@@ -1510,7 +1506,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   }
                 });
 
-                const encryption_type_subscription = encryption_type_fg.valueChanges.subscribe((enc_type) => {
+                encryption_type_fg.valueChanges.subscribe((enc_type) => {
                   const key = (enc_type === 'key');
                   entityDialog.setDisabled('generate_key', !key, !key);
                   if (key) {
@@ -1524,7 +1520,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   entityDialog.setDisabled('pbkdf2iters', key, key);
                 });
 
-                const generate_key_subscription = generate_key_fg.valueChanges.subscribe((gen_key) => {
+                generate_key_fg.valueChanges.subscribe((gen_key) => {
                   if (!inherit_encryption_fg.value && encryption_type_fg.value === 'key') {
                     entityDialog.setDisabled('key', gen_key, gen_key);
                   }
@@ -1589,7 +1585,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 }
               },
             };
-            this.dialogService.dialogForm(this.dialogConf).subscribe((res) => {
+            this.dialogService.dialogForm(this.dialogConf).subscribe(() => {
             });
           },
         });

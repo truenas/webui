@@ -313,7 +313,6 @@ export class ZvolWizardComponent {
     const zvolEntityForm = (< FormGroup > entityWizard.formArray.get([1]));
     if (!this.parent) return;
 
-    const name = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'name');
     const sparse = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sparse');
     const sync = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sync');
     const compression = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'compression');
