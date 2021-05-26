@@ -1,5 +1,5 @@
 <mat-card class="expanded-table-container">
-  <mat-expansion-panel class="expanded-table" [ngClass]="{'expanded-height': isExpanded && tableConf.detailsHref}" hideToggle [disabled]="disabled" [collapsed]="shouldBeCollapsed()"
+  <mat-expansion-panel class="expanded-table mat-elevation-z0" [ngClass]="{'expanded-height': isExpanded && tableConf.detailsHref}" hideToggle [disabled]="disabled" [collapsed]="shouldBeCollapsed()"
     [expanded]="shouldBeExpanded()" (opened)="isExpanded = true" (closed)="isExpanded = false">
     <mat-expansion-panel-header [class.has-extra-actions]="tableConf?.tableExtraActions">
       <mat-panel-title>
@@ -37,6 +37,6 @@
     <app-table [conf]="tableConf"></app-table>
   </mat-expansion-panel>
   <div [ngClass]="{'actions-row': isExpanded && tableConf.detailsHref}" *ngIf="isExpanded && tableConf.detailsHref">
-    <a [routerLink]="tableConf.detailsHref.split('/')">View Details</a>
+    <a [routerLink]="tableConf.detailsHref.split('/')">{{ 'View Details' | translate }}</a>
   </div>
 </mat-card>

@@ -17,7 +17,7 @@
 
 .actions-row {
   align-items: center;
-  border-top: 1px solid grey;
+  border-top: 1px solid var(--lines);
   display: flex;
   flex-direction: row;
   height: 10%;
@@ -25,7 +25,10 @@
   width: 100%;
 
   a {
+    display: block;
     height: min-content;
+    text-align: center;
+    width: 100%;
   }
 }
 
