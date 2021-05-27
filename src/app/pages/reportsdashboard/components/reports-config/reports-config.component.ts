@@ -119,7 +119,7 @@ export class ReportsConfigComponent implements FormConfiguration {
     this.graphAge = body.graph_age;
     this.graphPoints = body.graph_points;
     this.isCpuCheckboxChecked = body.cpu_in_percentage;
-    return this.ws.call('reporting.update', [body]).subscribe((res) => {
+    return this.ws.call('reporting.update', [body]).subscribe(() => {
       this.entityForm.success = true;
       this.entityForm.formGroup.markAsPristine();
       this.afterModalFormSaved();

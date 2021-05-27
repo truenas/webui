@@ -916,6 +916,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background-color: transparent !important;
     border: 1px solid currentColor !important;
     border-radius: 25px;
+    line-height: 28px;
 
     &.fn-theme-primary {
       @include variable(color, --primary, $primary);

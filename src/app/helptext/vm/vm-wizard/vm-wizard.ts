@@ -1,3 +1,4 @@
+import { VmCpuMode } from 'app/enums/vm.enum';
 import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
@@ -95,9 +96,9 @@ export default {
     placeholder: T('CPU Mode'),
     tooltip: T(''),
     options: [
-      { label: 'Custom', value: 'CUSTOM' },
-      { label: 'Host Model', value: 'HOST-MODEL' },
-      { label: 'Host Passthrough', value: 'HOST-PASSTHROUGH' },
+      { label: 'Custom', value: VmCpuMode.Custom },
+      { label: 'Host Model', value: VmCpuMode.HostModel },
+      { label: 'Host Passthrough', value: VmCpuMode.HostPassthrough },
     ],
   },
 

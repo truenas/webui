@@ -1,4 +1,4 @@
-<mat-card class="app-table" fxLayout="column" #apptable>
+<mat-card class="app-table" fxLayout="column" #apptable [class.mat-elevation-z0]="_tableConf.expandable">
   <mat-toolbar-row *ngIf="!_tableConf.expandable">
     <h3 class="title" *ngIf="title">
       <ng-container *ngIf="titleHref; else plainTitle">

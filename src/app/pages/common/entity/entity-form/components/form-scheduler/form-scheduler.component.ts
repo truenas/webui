@@ -1,6 +1,6 @@
 import {
-  Component, OnInit, OnChanges, ViewChild, ElementRef, QueryList, Renderer2, OnDestroy,
-  ChangeDetectorRef, SimpleChanges, HostListener, AfterViewInit, AfterViewChecked,
+  Component, OnInit, ViewChild, ElementRef, QueryList, Renderer2, OnDestroy,
+  ChangeDetectorRef, HostListener, AfterViewInit, AfterViewChecked,
 } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
@@ -193,8 +193,25 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   protected endTime: moment.Moment;
   picker = false;
   private _textInput = '';
-  crontab = 'custom';
-  private _preset: CronPreset;// = { label:"Custom", value:"* * * * *"};
+
+  _crontab = '0 0 * * *';
+  get crontab(): string {
+    return this._crontab;
+  }
+
+  set crontab(value: string) {
+    this._crontab = value;
+    this.customOption.value = this._crontab;
+  }
+
+  customOption: CronPreset = {
+    label: T('Custom'),
+    value: this.crontab,
+    description: T('Create custom schedule'),
+  };
+
+  selectedOption: CronPreset;
+
   presets: CronPreset[] = [
     {
       label: T('Hourly'),
@@ -234,15 +251,17 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     this.group.controls[this.config.name].setValue(val);
   }
 
+  private _preset: CronPreset;
+
   get preset(): CronPreset {
     return this._preset;
   }
 
-  set preset(p) {
-    if (p.value == 'custom') {
+  set preset(p: CronPreset) {
+    if (!p.value) {
       this.crontab = '0 0 * * *';
       this.convertPreset('0 0 * * *');
-      this._preset = { label: T('Custom'), value: this.crontab };
+      this._preset = this.customOption; // { label: T('Custom'), value: this.crontab };
     } else {
       this.crontab = p.value;
       this.convertPreset(p.value);
@@ -259,7 +278,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     protected localeService: LocaleService, protected ws: WebSocketService,
     private sysGeneralService: SystemGeneralService) {
     // Set default value
-    this.preset = this.presets[1];
     this._months = '*';
 
     this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe((res) => {
@@ -277,15 +295,30 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   ngOnInit(): void {
     this.control = this.group.controls[this.config.name];
+
     this.control.valueChanges.subscribe((evt: string) => {
       this.crontab = evt;
+
+      const isPreset: boolean = this.presets.filter((preset) => evt == preset.value).length != 0;
+      if (!isPreset) {
+        this.customOption.value = evt;
+        this.selectedOption = this.customOption;
+      }
+
+      this.cd.detectChanges();
     });
+
     if (this.control.value) {
       this.control.setValue(new EntityUtils().parseDOW(this.control.value));
       this.crontab = this.control.value;
     }
+
     // 'E' adds the day abbreviation
     this.ngDateFormat = `E ${this.localeService.getAngularFormat()} Z`;
+
+    if (!this.control.value) {
+      this.selectedOption = this.presets[0];
+    }
   }
 
   ngAfterViewInit(): void {
@@ -315,8 +348,13 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   onPopupSave(): void {
     this.togglePopup();
+
     if (this.formControl) {
       this.group.controls[this.config.name].setValue(this.crontab);
+    }
+
+    if (this.control.value) {
+      this.control.setValue(new EntityUtils().parseDOW(this.control.value));
     }
   }
 

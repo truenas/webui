@@ -1,7 +1,7 @@
 <p *ngIf="error" type="danger"><span [innerHTML]="error"></span></p>
 <mat-card>
   <mat-spinner class="plugin-spinner" [diameter]='40' id="plugin-spinner" *ngIf="showSpinner"></mat-spinner>
-  <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup">
+  <form (ngSubmit)="onSubmit()" [formGroup]="formGroup">
     <div class="form-wrap">
       <ng-container *ngFor="let field of fieldConfig;">
         <div [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" fxFlex="100%" fxFlex.gt-xs="calc({{field.width}} - 16px)">

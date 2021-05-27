@@ -87,7 +87,7 @@ export class ModalComponent implements OnInit, OnDestroy {
 
   // close modal
   close(): Promise<boolean> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.modal.classList.remove('open');
       this.background.classList.remove('open');
       document.body.classList.remove('jw-modal-open');

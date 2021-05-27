@@ -24,8 +24,8 @@ export class CustomizerComponent {
   }];
   constructor(private navService: NavigationService) { }
 
-  changeSidenav(event: MatRadioChange): void {
-    this.navService.publishNavigationChange(event.value);
+  changeSidenav(): void {
+    this.navService.publishNavigationChange();
   }
   toggleBreadcrumb(event: MatCheckboxChange): void {
     this.breadcrumb.isEnabled = event.checked;

@@ -165,7 +165,7 @@ export class IPMIFromComponent implements FormConfiguration {
   ) { }
 
   async prerequisite(): Promise<boolean> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
       if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
         await this.ws.call('failover.licensed').toPromise().then((is_ha) => {
           this.is_ha = is_ha;
@@ -257,7 +257,7 @@ export class IPMIFromComponent implements FormConfiguration {
     }
 
     this.loader.open();
-    return call.subscribe((res) => {
+    return call.subscribe(() => {
       this.loader.close();
       this.dialog.Info(T('Settings saved.'), '', '300px', 'info', true);
     }, (res) => {

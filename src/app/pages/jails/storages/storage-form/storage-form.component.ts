@@ -231,7 +231,7 @@ export class StorageFormComponent implements FormConfiguration, OnInit {
 
     this.loader.open();
     this.ws.call('jail.fstab', [this.jailID, mountPoint]).subscribe(
-      (res) => {
+      () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },

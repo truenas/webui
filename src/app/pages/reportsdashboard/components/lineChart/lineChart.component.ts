@@ -160,7 +160,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
       },
       series: () => {
         const s: any = {};
-        this.data.legend.forEach((item, index) => {
+        this.data.legend.forEach((item) => {
           s[item] = { plotter: smoothPlotter };
         });
 
@@ -313,7 +313,6 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   convertByKilo(input: number): Conversion {
     if (typeof input !== 'number') { return input; }
     let output = input;
-    const prefix = '';
     let suffix = '';
 
     if (input >= 1000000) {

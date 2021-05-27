@@ -79,11 +79,7 @@ export class ReportsService implements OnDestroy {
     this.reportsUtils.terminate();
   }
 
-  prepReport(evt: CoreEvent): void {
-    this.reportsUtils.onmessage = ({ data }) => {
-      const evt = data;
-    };
-
+  prepReport(): void {
     const pipeLine: Command[] = [
       {
         command: 'maxDecimals',

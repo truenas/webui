@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DatasetType } from 'app/enums/dataset-type.enum';
+import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -21,29 +23,28 @@ import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard'
 import { CoreService } from 'app/core/services/core.service';
 
 @Component({
-  selector: 'app-device-add2',
+  selector: 'app-device-add',
   templateUrl: './device-add.component.html',
   styleUrls: ['../../../common/entity/entity-form/entity-form.component.scss'],
 })
 export class DeviceAddComponent implements OnInit, OnDestroy {
   protected addCall: 'vm.device.create' = 'vm.device.create';
   protected route_success: string[];
-  vmid: any;
-  vmname: any;
+  vmid: number;
+  vmname: string;
   fieldSets: any;
   isCustActionVisible = false;
-  selectedType = 'CDROM';
-  formGroup: any;
-  activeFormGroup: any;
-  cdromFormGroup: any;
-  diskFormGroup: any;
-  nicFormGroup: any;
-  rawfileFormGroup: any;
-  pciFormGroup: any;
-  displayFormGroup: any;
-  rootpwd: any;
-  vminfo: any;
-  boot: any;
+  selectedType = VmDeviceType.Cdrom;
+  formGroup: FormGroup;
+  activeFormGroup: FormGroup;
+  cdromFormGroup: FormGroup;
+  diskFormGroup: FormGroup;
+  nicFormGroup: FormGroup;
+  rawfileFormGroup: FormGroup;
+  pciFormGroup: FormGroup;
+  displayFormGroup: FormGroup;
+  rootpwd: FieldConfig;
+  boot: FieldConfig;
   custActions: any[];
   error: string;
   private productType = window.localStorage.getItem('product_type') as ProductType;
@@ -58,22 +59,22 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       options: [
         {
           label: T('CD-ROM'),
-          value: 'CDROM',
+          value: VmDeviceType.Cdrom,
         }, {
           label: T('NIC'),
-          value: 'NIC',
+          value: VmDeviceType.Nic,
         }, {
           label: T('Disk'),
-          value: 'DISK',
+          value: VmDeviceType.Disk,
         }, {
           label: T('Raw File'),
-          value: 'RAW',
+          value: VmDeviceType.Raw,
         }, {
           label: T('PCI Passthru Device'),
-          value: 'PCI',
+          value: VmDeviceType.Pci,
         }, {
           label: T('Display'),
-          value: 'DISPLAY',
+          value: VmDeviceType.Display,
         },
       ],
       value: helptext.dtype_value,
@@ -176,9 +177,8 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       inputType: 'number',
     },
   ];
-  protected nic_attach: any;
-  protected nicType: any;
-  protected nicMac: any;
+  protected nic_attach: FieldConfig;
+  protected nicType: FieldConfig;
 
   // rawfile
   rawfileFieldConfig: FieldConfig[] = [
@@ -257,7 +257,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       inputType: 'number',
     },
   ];
-  protected pptdev: any;
+  protected pptdev: FieldConfig;
 
   // Display
   displayFieldConfig: FieldConfig[] = [
@@ -324,22 +324,25 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       inputType: 'number',
     },
   ];
-  protected ipAddress: any = [];
 
-  constructor(protected router: Router,
+  readonly VmDeviceType = VmDeviceType;
+
+  protected ipAddress: FieldConfig;
+
+  constructor(
+    protected router: Router,
     protected core: CoreService,
     protected aroute: ActivatedRoute,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
     public translate: TranslateService,
     protected loader: AppLoaderService,
-    protected systemGeneralService: SystemGeneralService,
     protected dialogService: DialogService,
     protected networkService: NetworkService,
     protected vmService: VmService,
     private modalService: ModalService,
-    private storageService: StorageService) {}
+    private storageService: StorageService,
+  ) {}
 
   preInit(): void {
     // Display
@@ -362,7 +365,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
     this.ws.call('vm.get_display_devices', [this.vmid]).subscribe((devices) => {
       if (devices.length > 1) {
-        this.fieldConfig[0].options.splice(this.fieldConfig[0].options.findIndex((o) => o.value === 'DISPLAY'));
+        this.fieldConfig[0].options.splice(this.fieldConfig[0].options.findIndex((option) => option.value === VmDeviceType.Display));
       }
     }, (err) => {
       new EntityUtils().handleWSError(this, err, this.dialogService);
@@ -405,7 +408,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.aroute.params.subscribe((params) => {
       this.vmid = params['pk'];
       this.vmname = params['name'];
-      this.route_success = ['vm', this.vmid, 'devices', this.vmname];
+      this.route_success = ['vm', String(this.vmid), 'devices', this.vmname];
     });
 
     this.preInit();
@@ -446,26 +449,34 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         this.addZvol();
       }
     });
-    this.formGroup.controls['dtype'].valueChanges.subscribe((res: any) => {
-      this.selectedType = res;
-      if (res === 'CDROM') {
-        this.activeFormGroup = this.cdromFormGroup;
-        this.isCustActionVisible = false;
-      } else if (res === 'NIC') {
-        this.activeFormGroup = this.nicFormGroup;
-        this.isCustActionVisible = true;
-      } else if (res === 'DISK') {
-        this.activeFormGroup = this.diskFormGroup;
-        this.isCustActionVisible = false;
-      } else if (res === 'RAW') {
-        this.activeFormGroup = this.rawfileFormGroup;
-        this.isCustActionVisible = false;
-      } else if (res === 'PCI') {
-        this.activeFormGroup = this.pciFormGroup;
-        this.isCustActionVisible = false;
-      } else if (res === 'DISPLAY') {
-        this.activeFormGroup = this.displayFormGroup;
-        this.isCustActionVisible = false;
+    this.formGroup.controls['dtype'].valueChanges.subscribe((deviceType: VmDeviceType) => {
+      this.selectedType = deviceType;
+      switch (deviceType) {
+        case VmDeviceType.Cdrom:
+          this.activeFormGroup = this.cdromFormGroup;
+          this.isCustActionVisible = false;
+          break;
+        case VmDeviceType.Nic:
+          this.activeFormGroup = this.nicFormGroup;
+          this.isCustActionVisible = true;
+          this.generateRandomMac();
+          break;
+        case VmDeviceType.Disk:
+          this.activeFormGroup = this.diskFormGroup;
+          this.isCustActionVisible = false;
+          break;
+        case VmDeviceType.Raw:
+          this.activeFormGroup = this.rawfileFormGroup;
+          this.isCustActionVisible = false;
+          break;
+        case VmDeviceType.Pci:
+          this.activeFormGroup = this.pciFormGroup;
+          this.isCustActionVisible = false;
+          break;
+        case VmDeviceType.Display:
+          this.activeFormGroup = this.displayFormGroup;
+          this.isCustActionVisible = false;
+          break;
       }
     });
 
@@ -473,7 +484,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       _.find(this.displayFieldConfig, { name: 'wait' }).isHidden = false;
       _.find(this.displayFieldConfig, { name: 'resolution' }).isHidden = false;
     }
-    this.addZvolComponent = new ZvolWizardComponent(this.core, this.router, this.aroute, this.rest, this.ws, this.loader,
+    this.addZvolComponent = new ZvolWizardComponent(this.core, this.router, this.aroute, this.ws, this.loader,
       this.dialogService, this.storageService, this.translate, this.modalService);
 
     this.afterInit();
@@ -493,28 +504,26 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       });
     });
     // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing Display device, hide Display option.
-    await this.ws.call('vm.query', [[['id', '=', parseInt(this.vmid, 10)]]]).subscribe((vm) => {
+    await this.ws.call('vm.query', [[['id', '=', this.vmid]]]).subscribe((vm) => {
       const dtypeField = _.find(this.fieldConfig, { name: 'dtype' });
-      const vmDisplayDevices = _.filter(vm[0].devices, { dtype: 'DISPLAY' });
-      if (vm[0].bootloader === 'GRUB' || vm[0].bootloader === 'UEFI_CSM' || vmDisplayDevices) {
+      const vmDisplayDevices = _.filter(vm[0].devices, { dtype: VmDeviceType.Display });
+      if (vm[0].bootloader === VmBootloader.Grub || vm[0].bootloader === VmBootloader.UefiCsm || vmDisplayDevices) {
         if (vmDisplayDevices.length) {
-          if (vmDisplayDevices.length > 1) {
-            for (const i in dtypeField.options) {
-              if (dtypeField.options[i].label === 'DISPLAY') {
-                _.pull(dtypeField.options, dtypeField.options[i]);
-              }
+          for (const i in dtypeField.options) {
+            if (dtypeField.options[i].label === 'DISPLAY') {
+              _.pull(dtypeField.options, dtypeField.options[i]);
             }
-          } else {
-            const typee = _.find(this.displayFieldConfig, { name: 'type' });
-            _.pull(typee.options, _.find(typee.options, { value: vmDisplayDevices[0].attributes.type }));
-            this.displayFormGroup.controls['type'].setValue(typee.options[0].value);
           }
+        } else {
+          const typeField = _.find(this.displayFieldConfig, { name: 'type' });
+          _.pull(typeField.options, _.find(typeField.options, { value: vmDisplayDevices[0].attributes.type }));
+          this.displayFormGroup.controls['type'].setValue(typeField.options[0].value);
         }
       }
       // if type == 'Container Provider' and rawfile boot device exists, hide rootpwd and boot fields.
-      if (_.find(vm[0].devices, { dtype: 'RAW' }) && vm[0].type === 'Container Provider') {
+      if (_.find(vm[0].devices, { dtype: VmDeviceType.Raw }) && (vm[0] as any).type === 'Container Provider') {
         vm[0].devices.forEach((element: any) => {
-          if (element.dtype === 'RAW') {
+          if (element.dtype === VmDeviceType.Raw) {
             if (element.attributes.boot) {
               this.rootpwd = _.find(this.rawfileFieldConfig, { name: 'rootpwd' });
               this.rootpwd['isHidden'] = false;
@@ -529,12 +538,8 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.custActions = [
       {
         id: 'generate_mac_address',
-        name: 'Generate MAC Address',
-        function: () => {
-          this.ws.call('vm.random_mac').subscribe((random_mac) => {
-            this.nicFormGroup.controls['mac'].setValue(random_mac);
-          });
-        },
+        name: T('Generate MAC Address'),
+        function: () => this.generateRandomMac(),
       },
     ];
     this.displayFormGroup.controls['bind'].setValue('0.0.0.0');
@@ -599,5 +604,11 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
+  }
+
+  private generateRandomMac(): void {
+    this.ws.call('vm.random_mac').subscribe((randomMac) => {
+      this.nicFormGroup.controls['mac'].setValue(randomMac);
+    });
   }
 }

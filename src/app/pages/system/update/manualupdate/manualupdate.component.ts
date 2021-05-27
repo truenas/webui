@@ -97,7 +97,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     this.core.emit({ name: 'SysInfoRequest', sender: this });
   }
 
-  preInit(entityForm: any): void {
+  preInit(): void {
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         if (is_ha) {
@@ -135,7 +135,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
       entityForm.formGroup.controls['rebootAfterManualUpdate'].setValue(ures[0].attributes.preferences['rebootAfterManualUpdate']);
       entityForm.formGroup.controls['rebootAfterManualUpdate'].valueChanges.subscribe((form_res: any) => {
         ures[0].attributes.preferences['rebootAfterManualUpdate'] = form_res;
-        this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res) => {
+        this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe(() => {
         });
       });
     });
@@ -153,7 +153,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     entityForm.submitFunction = this.customSubmit;
   }
 
-  customSubmit(entityForm: any): void {
+  customSubmit(): void {
     this.save_button_enabled = false;
     this.systemService.updateRunningNoticeSent.emit();
     this.ws.call('user.query', [[['id', '=', 1]]]).subscribe((ures) => {

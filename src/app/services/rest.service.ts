@@ -9,6 +9,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { WebSocketService } from './ws.service';
 
+// TODO: The whole file appears to be unused.
+/* eslint-disable unused-imports/no-unused-vars */
 @Injectable()
 export class RestService {
   name: string;

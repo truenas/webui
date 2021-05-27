@@ -431,13 +431,13 @@ export class JailWizardComponent {
       httpsField.isHidden = !(_.indexOf(this.unfetchedRelease, res) > -1);
     });
     // update ipv4
-    (< FormGroup > entityWizard.formArray.get([1])).get('ip4_interface').valueChanges.subscribe((res) => {
+    (< FormGroup > entityWizard.formArray.get([1])).get('ip4_interface').valueChanges.subscribe(() => {
       this.updateIpAddress(entityWizard, 'ipv4');
     });
-    (< FormGroup > entityWizard.formArray.get([1])).get('ip4_netmask').valueChanges.subscribe((res) => {
+    (< FormGroup > entityWizard.formArray.get([1])).get('ip4_netmask').valueChanges.subscribe(() => {
       this.updateIpAddress(entityWizard, 'ipv4');
     });
-    (< FormGroup > entityWizard.formArray.get([1])).get('ip4_addr').valueChanges.subscribe((res) => {
+    (< FormGroup > entityWizard.formArray.get([1])).get('ip4_addr').valueChanges.subscribe(() => {
       this.updateIpAddress(entityWizard, 'ipv4');
     });
 
@@ -460,13 +460,13 @@ export class JailWizardComponent {
     });
 
     // update ipv6
-    (< FormGroup > entityWizard.formArray.get([1])).get('ip6_interface').valueChanges.subscribe((res) => {
+    (< FormGroup > entityWizard.formArray.get([1])).get('ip6_interface').valueChanges.subscribe(() => {
       this.updateIpAddress(entityWizard, 'ipv6');
     });
-    (< FormGroup > entityWizard.formArray.get([1])).get('ip6_prefix').valueChanges.subscribe((res) => {
+    (< FormGroup > entityWizard.formArray.get([1])).get('ip6_prefix').valueChanges.subscribe(() => {
       this.updateIpAddress(entityWizard, 'ipv6');
     });
-    (< FormGroup > entityWizard.formArray.get([1])).get('ip6_addr').valueChanges.subscribe((res) => {
+    (< FormGroup > entityWizard.formArray.get([1])).get('ip6_addr').valueChanges.subscribe(() => {
       this.updateIpAddress(entityWizard, 'ipv6');
     });
 

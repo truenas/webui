@@ -128,7 +128,7 @@ export class PreferencesService {
     });
 
     // Reset the entire preferences object to default
-    this.core.register({ observerClass: this, eventName: 'ResetPreferences' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ResetPreferences' }).subscribe(() => {
       const prefs = Object.assign(this.defaultPreferences, {});
       prefs.customThemes = this.preferences.customThemes;
       prefs.timestamp = new Date();

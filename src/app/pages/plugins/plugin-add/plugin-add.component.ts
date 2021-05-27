@@ -404,7 +404,7 @@ export class PluginAddComponent implements OnInit {
     this.router.navigate(new Array('').concat(this.route_goback));
   }
 
-  onSubmit(event: Event): void {
+  onSubmit(): void {
     this.error = null;
     const property: any = [];
     const value = _.cloneDeep(this.formGroup.value);
