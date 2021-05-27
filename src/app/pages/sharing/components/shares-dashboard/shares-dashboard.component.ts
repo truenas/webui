@@ -1,4 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { TranslateService } from '@ngx-translate/core';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import _ from 'lodash';
+
 import { T } from 'app/translate-marker';
 import { helptext_sharing_webdav } from 'app/helptext/sharing';
 import { helptext_sharing_afp } from 'app/helptext/sharing';
@@ -9,10 +16,12 @@ import {
   AppLoaderService, DialogService, IscsiService, ModalService, NetworkService, SystemGeneralService, UserService, WebSocketService,
 } from 'app/services';
 import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form';
-import { ActivatedRoute, Router } from '@angular/router';
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form';
-import { TranslateService } from '@ngx-translate/core';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
+import { Service } from 'app/interfaces/service.interface';
+import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
+import { AppTableHeaderExtraAction } from 'app/pages/common/entity/table/table.component';
 
 enum ShareType {
   SMB = 'smb',
@@ -27,7 +36,7 @@ enum ShareType {
   styleUrls: ['./shares-dashboard.component.scss'],
   providers: [IscsiService],
 })
-export class SharesDashboardComponent {
+export class SharesDashboardComponent implements OnInit, OnDestroy {
   webdavTableConf: InputExpandableTableConf = {
     title: T('WebDAV'),
     titleHref: '/sharing/webdav',
@@ -179,11 +188,31 @@ export class SharesDashboardComponent {
   nfsHasItems = 0;
   smbHasItems = 0;
   iscsiHasItems = 0;
+  onDestroy$ = new Subject();
+  smbServiceStatus = ServiceStatus.Loading;
+  webdavServiceStatus = ServiceStatus.Loading;
+  nfsServiceStatus = ServiceStatus.Loading;
+  iscsiServiceStatus = ServiceStatus.Loading;
+  readonly ServiceStatus = ServiceStatus;
 
   constructor(private userService: UserService, private modalService: ModalService, private ws: WebSocketService,
     private dialog: DialogService, private networkService: NetworkService, private router: Router,
     private loader: AppLoaderService, private sysGeneralService: SystemGeneralService, private aroute: ActivatedRoute,
-    private iscsiService: IscsiService, private translate: TranslateService) {}
+    private iscsiService: IscsiService, private translate: TranslateService) {
+    this.ws
+      .call('service.query', [])
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((services) => {
+        [
+          _.find(services, { service: ServiceName.Cifs }),
+          _.find(services, { service: ServiceName.Iscsi }),
+          _.find(services, { service: ServiceName.WebDav }),
+          _.find(services, { service: ServiceName.Nfs }),
+        ].forEach((service) => {
+          this.updateTableServiceStatus(service);
+        });
+      });
+  }
 
   ngOnInit(): void {
     if (this.webdavHasItems) {
@@ -292,5 +321,85 @@ export class SharesDashboardComponent {
       case 3:
         return 'fourth';
     }
+  }
+
+  updateTableServiceStatus(service: Service): void {
+    switch (service.service) {
+      case ServiceName.Cifs:
+        this.smbServiceStatus = service.state;
+        this.smbTableConf.tableExtraActions = this.getTableExtraActions(service);
+        break;
+      case ServiceName.Nfs:
+        this.nfsServiceStatus = service.state;
+        this.nfsTableConf.tableExtraActions = this.getTableExtraActions(service);
+        break;
+      case ServiceName.WebDav:
+        this.webdavServiceStatus = service.state;
+        this.webdavTableConf.tableExtraActions = this.getTableExtraActions(service);
+        break;
+      case ServiceName.Iscsi:
+        this.iscsiServiceStatus = service.state;
+        this.iscsiTableConf.tableExtraActions = this.getTableExtraActions(service);
+    }
+  }
+
+  getTableExtraActions(service: Service): AppTableHeaderExtraAction[] {
+    return [
+      {
+        label: service.state === ServiceStatus.Running ? T('Turn Off Service') : T('Turn On Service'),
+        onClick: () => {
+          const rpc = service.state === ServiceStatus.Running ? 'service.stop' : 'service.start';
+          this.updateTableServiceStatus({ ...service, state: ServiceStatus.Loading });
+          this.ws.call(rpc, [service.service]).pipe(takeUntil(this.onDestroy$)).subscribe((hasChanged: boolean) => {
+            if (hasChanged) {
+              if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
+                this.dialog.Info(
+                  this.translate.instant(T('Service failed to stop')),
+                  this.translate.instant('{service} service failed to stop.', { service: serviceNames.get(service.service) || service.service }),
+                );
+              }
+              service.state = ServiceStatus.Running;
+            } else {
+              if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
+                this.dialog.Info(
+                  this.translate.instant(T('Service failed to start')),
+                  this.translate.instant('{service} service failed to start.', { service: serviceNames.get(service.service) || service.service }),
+                );
+              }
+              service.state = ServiceStatus.Stopped;
+            }
+            this.updateTableServiceStatus(service);
+          });
+        },
+      },
+      {
+        label: T('Config Service'),
+        onClick: () => {
+          if (service.service === ServiceName.Iscsi) {
+            this.router.navigate(['/', 'sharing', 'iscsi']);
+          } else if (service.service === ServiceName.Cifs) {
+            this.router.navigate(['/', 'services', 'smb']);
+          } else {
+            this.router.navigate(['/', 'services', service.service]);
+          }
+        },
+      },
+    ];
+  }
+
+  getStatusClass(status: ServiceStatus): string {
+    switch (status) {
+      case ServiceStatus.Running:
+        return 'fn-theme-primary';
+      case ServiceStatus.Stopped:
+        return 'fn-theme-red';
+      default:
+        return 'fn-theme-orange';
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

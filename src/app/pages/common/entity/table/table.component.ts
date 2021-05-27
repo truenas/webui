@@ -1,7 +1,6 @@
 import {
   Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked,
 } from '@angular/core';
-import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatCellDef } from '@angular/material/table/cell';
 
@@ -18,6 +17,13 @@ export interface AppTableAction {
   matTooltip?: string;
   onClick: (element: MatCellDef) => void;
 }
+
+export interface AppTableHeaderAction {
+  label: string;
+  onClick: () => void;
+}
+
+export interface AppTableHeaderExtraAction extends AppTableHeaderAction {}
 
 export interface InputTableConf {
   title?: string;
@@ -39,10 +45,8 @@ export interface InputTableConf {
   tableComponent?: TableComponent;
   emptyEntityLarge?: boolean;
   parent: any;
-  tableActions?: {
-    label: string;
-    onClick: () => void;
-  }[];
+  tableActions?: AppTableHeaderAction[];
+  tableExtraActions?: AppTableHeaderExtraAction[];
 
   add?(): any; // add action function
   afterGetData?(data: any): void;
