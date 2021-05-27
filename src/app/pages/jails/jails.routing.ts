@@ -8,13 +8,13 @@ import { StorageFormComponent } from './storages/storage-form';
 import { JailWizardComponent } from './jail-wizard';
 import { JailShellComponent } from './jail-shell';
 
-import { DeviceEditComponent } from '../vm/devices/device-edit';
+import { DeviceEditComponent } from '../vm/devices/device-edit/device-edit.component';
 import { DeviceListComponent } from '../vm/devices/device-list';
 import { VmFormComponent } from '../vm/vm-form';
 import { VMListComponent } from '../vm/vm-list/vm-list.component';
 import { VMWizardComponent } from '../vm/vm-wizard';
 import { VMSerialShellComponent } from '../vm/vm-serial-shell';
-import { DeviceAddComponent } from '../vm/devices/device-add2';
+import { DeviceAddComponent } from '../vm/devices/device-add/device-add.component';
 
 export const routes: Routes = [
   {

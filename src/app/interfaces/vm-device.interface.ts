@@ -1,3 +1,5 @@
+import { VmDeviceType } from 'app/enums/vm.enum';
+
 interface VmDeviceAttributes {
   path: string;
   type: string;
@@ -16,7 +18,7 @@ interface VmDeviceAttributes {
 
 export interface VmDevice {
   id: number;
-  dtype: string;
+  dtype: VmDeviceType;
   attributes: VmDeviceAttributes;
   order: number;
   vm: number;

@@ -292,7 +292,6 @@ export class SnapshotListComponent {
   }
 
   getMultiDeleteMessage(selected: Snapshot[]): string {
-    const grandTotal: string = selected.length > 1 ? selected.length.toString() : '';
     let message = this.translate.instant(
       '<strong>The following { n, plural, one {snapshot} other {# snapshots} } will be deleted. Are you sure you want to proceed?</strong>',
       { n: selected.length },

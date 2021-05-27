@@ -237,7 +237,7 @@ export class SnapshotFormComponent implements FormConfiguration, OnDestroy {
     cronEntity.value = formatted;
 
     // Setup all the other fields
-    for (const [key, value] of Object.entries(entity.wsResponse)) {
+    for (const [key] of Object.entries(entity.wsResponse)) {
       const field = entity.formGroup.controls[key];
       if (field && key !== 'schedule') {
         field.setValue(entity.wsResponse[key]);
