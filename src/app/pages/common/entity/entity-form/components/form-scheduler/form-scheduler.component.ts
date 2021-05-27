@@ -278,7 +278,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     protected localeService: LocaleService, protected ws: WebSocketService,
     private sysGeneralService: SystemGeneralService) {
     // Set default value
-    this.preset; // = this.presets[1];
     this._months = '*';
 
     this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe((res) => {
