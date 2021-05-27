@@ -1107,7 +1107,6 @@ export class VolumesListTableConfig implements InputTableConf {
                 ]));
               } else {
                 this.ws.call('filesystem.getacl', [rowData.mountpoint]).subscribe((acl) => {
-                  if (rowData.id.includes('test_homes')) console.log(acl);
                   if (acl.acltype === AclType.Posix1e) {
                     this._router.navigate(new Array('/').concat([
                       'storage', 'id', rowData.pool, 'dataset',
