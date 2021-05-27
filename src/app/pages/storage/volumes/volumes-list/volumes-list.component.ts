@@ -1100,13 +1100,14 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T('Edit Permissions'),
           ttposition: 'left',
           onClick: () => {
-            this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe((acl_is_trivial) => {
+            this.ws.call('filesystem.acl_is_trivial', [rowData.mountpoint]).subscribe((acl_is_trivial) => {
               if (acl_is_trivial) {
                 this._router.navigate(new Array('/').concat([
                   'storage', 'permissions', rowData.id,
                 ]));
               } else {
-                this.ws.call('filesystem.getacl', ['/mnt/' + rowData.id]).subscribe((acl) => {
+                this.ws.call('filesystem.getacl', [rowData.mountpoint]).subscribe((acl) => {
+                  if (rowData.id.includes('test_homes')) console.log(acl);
                   if (acl.acltype === AclType.Posix1e) {
                     this._router.navigate(new Array('/').concat([
                       'storage', 'id', rowData.pool, 'dataset',
@@ -1853,6 +1854,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         'encryptionroot',
         'keystatus',
         'keyformat',
+        'mountpoint',
       ],
     },
   }];
