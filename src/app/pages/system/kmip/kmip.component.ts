@@ -203,7 +203,7 @@ export class KmipComponent {
 
   syncKeys(): void {
     this.ws.call('kmip.sync_keys').subscribe(
-      (res) => {
+      () => {
         this.dialogService.Info(helptext_system_kmip.syncInfoDialog.title, helptext_system_kmip.syncInfoDialog.info, '500px', 'info', true);
       },
       (err) => {
@@ -214,7 +214,7 @@ export class KmipComponent {
 
   clearSyncKeys(): void {
     this.ws.call('kmip.clear_sync_pending_keys').subscribe(
-      (res) => {
+      () => {
         this.dialogService.Info(helptext_system_kmip.clearSyncKeyInfoDialog.title, helptext_system_kmip.clearSyncKeyInfoDialog.info, '500px', 'info', true);
       },
       (err) => {

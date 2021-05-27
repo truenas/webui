@@ -60,13 +60,11 @@ export class JobService {
                 (snack_res) => {
                   const url = snack_res[1];
                   const mimetype = 'text/plain';
-                  let failed = false;
                   this.storage.streamDownloadFile(this.http, url, target_job.id + '.log', mimetype).subscribe(
                     (file) => {
                       this.storage.downloadBlob(file, target_job.id + '.log');
                     },
                     (err) => {
-                      failed = true;
                       new EntityUtils().handleWSError(this, err);
                     },
                   );

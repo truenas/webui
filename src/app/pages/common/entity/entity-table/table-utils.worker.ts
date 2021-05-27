@@ -100,19 +100,18 @@ const tableUtils = {
 
     return { value: output, suffix, shortName: '' };
   },
-  formatValue: (value: number, units: string, fixed?: number) => {
+  formatValue: (value: number, units: string) => {
     let output: any = value;
-    if (!fixed) { fixed = -1; }
     if (typeof value !== 'number') { return value; }
 
     let converted;
     switch (units.toLowerCase()) {
       case 'bits':
-        converted = convertKMGT(value, units, fixed);
+        converted = convertKMGT(value, units);
         output = maxDecimals(converted.value).toString() + converted.shortName;
         break;
       case 'bytes':
-        converted = convertKMGT(value, units, fixed);
+        converted = convertKMGT(value, units);
         output = maxDecimals(converted.value).toString() + converted.shortName;
         break;
       case '%':

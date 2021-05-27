@@ -285,7 +285,7 @@ export class JailFormService {
   }
 
   getPluginDefaults(plugin: any, pluginRepository: any, formGroup: any, networkfieldConfig: FieldConfig[]): Promise<boolean> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
       await this.ws.call('plugin.defaults', [{
         plugin,
         plugin_repository: pluginRepository,

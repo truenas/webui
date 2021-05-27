@@ -28,7 +28,7 @@ export class PluginsComponent {
     id: 'config',
     tooltip: jailHelptext.globalConfig.tooltip,
     onClick: () => {
-      this.getActivatedPollInfo().then((res) => {
+      this.getActivatedPollInfo().then(() => {
         if (this.availablePools !== undefined) {
           this.activatePool();
         }
@@ -89,7 +89,7 @@ export class PluginsComponent {
         const selectedJails = this.getSelectedNames(selected);
         this.loader.open();
         this.entityList.busy = this.ws.job('core.bulk', ['jail.start', selectedJails]).subscribe(
-          (res) => {
+          () => {
             this.updateRows(selected).then(
               () => {
                 this.entityList.table.rowDetail.collapseAllRows();
@@ -115,7 +115,7 @@ export class PluginsComponent {
         const selectedJails = this.getSelectedNames(selected);
         this.loader.open();
         this.entityList.busy = this.ws.job('core.bulk', ['jail.stop', selectedJails]).subscribe(
-          (res) => {
+          () => {
             this.updateRows(selected).then(
               () => {
                 this.entityList.table.rowDetail.collapseAllRows();
@@ -198,7 +198,7 @@ export class PluginsComponent {
   }
 
   getActivatedPollInfo(): Promise<boolean> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
       await this.ws.call('pool.query').toPromise().then((res) => {
         if (res.length === 0) {
           resolve(true);
@@ -221,7 +221,7 @@ export class PluginsComponent {
           }
         }, (err) => {
           this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted).subscribe(
-            (res) => {
+            () => {
               resolve(false);
             },
           );
@@ -268,7 +268,7 @@ export class PluginsComponent {
         const value = entityDialog.formValue;
         self.entityList.loader.open();
         self.ws.call('jail.activate', [value['selectedPool']]).subscribe(
-          (res) => {
+          () => {
             self.activatedPool = value['selectedPool'];
             entityDialog.dialogRef.close(true);
             self.entityList.loaderOpen = true;
@@ -382,7 +382,7 @@ export class PluginsComponent {
       onClick: (row: any) => {
         this.loader.open();
         this.ws.job('jail.start', [row.name]).subscribe(
-          (res) => {
+          () => {
             this.updateRows([row]).then(() => {
               this.loader.close();
             });
@@ -402,7 +402,7 @@ export class PluginsComponent {
       onClick: (row: any) => {
         this.loader.open();
         this.ws.job('jail.restart', [row.name]).subscribe(
-          (res) => {
+          () => {
             this.updateRows([row]).then(() => {
               this.loader.close();
             });
@@ -422,7 +422,7 @@ export class PluginsComponent {
       onClick: (row: any) => {
         this.loader.open();
         this.ws.job('jail.stop', [row.name]).subscribe(
-          (res) => {
+          () => {
             this.updateRows([row]).then(() => {
               this.loader.close();
             });
@@ -487,7 +487,7 @@ export class PluginsComponent {
         id: 'register',
         label: T('REGISTER'),
         icon: 'assignment',
-        onClick: (row) => {
+        onClick: () => {
           this.getRegistrationLink();
         },
       });

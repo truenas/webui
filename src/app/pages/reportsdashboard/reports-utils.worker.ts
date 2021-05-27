@@ -26,7 +26,7 @@ function arrayAvg(input: number[]): number {
 
 function avgFromReportData(input: any[]): number[][] {
   const output: number[][] = [];
-  input.forEach((item, index) => {
+  input.forEach((item) => {
     const avg = arrayAvg(item);
     output.push([avg]);
   });
@@ -53,7 +53,7 @@ function inferUnits(label: string): string {
   return units;
 }
 
-function convertKMGT(input: number, units: string, fixed?: number): { value: number; prefix: string; shortName: string } {
+function convertKMGT(input: number, units: string): { value: number; prefix: string; shortName: string } {
   const kilo = 1024;
   const mega = kilo * 1024;
   const giga = mega * 1024;
@@ -98,7 +98,6 @@ function convertKMGT(input: number, units: string, fixed?: number): { value: num
 function convertByKilo(input: number): { value: number; suffix: string; shortName: string } {
   if (typeof input !== 'number') { return input; }
   let output = input;
-  const prefix = '';
   let suffix = '';
 
   if (input >= 1000000) {
@@ -112,19 +111,18 @@ function convertByKilo(input: number): { value: number; suffix: string; shortNam
   return { value: output, suffix, shortName: '' };
 }
 
-function formatValue(value: number, units: string, fixed?: number): string | number {
+function formatValue(value: number, units: string): string | number {
   let output: any = value;
-  if (!fixed) { fixed = -1; }
   if (typeof value !== 'number') { return value; }
 
   let converted;
   switch (units.toLowerCase()) {
     case 'bits':
-      converted = convertKMGT(value, units, fixed);
+      converted = convertKMGT(value, units);
       output = maxDecimals(converted.value).toString() + converted.shortName;
       break;
     case 'bytes':
-      converted = convertKMGT(value, units, fixed);
+      converted = convertKMGT(value, units);
       output = maxDecimals(converted.value).toString() + converted.shortName;
       break;
     case '%':
@@ -204,7 +202,7 @@ function optimizeLegend(input: any): any {
       output.legend = output.legend.map((label) => label.replace(/disk_octets_/, ''));
       break;
     case 'diskgeombusy':
-      output.legend = output.legend.map((label) => 'busy');
+      output.legend = output.legend.map(() => 'busy');
       break;
     case 'diskgeomlatency':
       output.legend = output.legend.map((label) => label.replace(/geom_latency-/, ''));
@@ -260,7 +258,7 @@ function avgCpuTempReport(report: any): any {
 
   // Handle Aggregations
   const keys = Object.keys(output.aggregations);
-  keys.forEach((key, index) => {
+  keys.forEach((key) => {
     output.aggregations[key] = [arrayAvg(output.aggregations[key])];
   });
 
@@ -317,7 +315,7 @@ const commands = {
 
 function processCommands(list: any[]): any {
   let output: any;
-  list.forEach((item, index) => {
+  list.forEach((item) => {
     const input = item.input == '--pipe' || item.input == '|' ? output : item.input;
     output = item.options ? (commands as any)[item.command](input, item.options) : (commands as any)[item.command](input);
   });

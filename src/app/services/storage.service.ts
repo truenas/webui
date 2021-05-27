@@ -55,7 +55,7 @@ export class StorageService {
     document.body.appendChild(dlink);
     dlink.download = filename;
     dlink.href = window.URL.createObjectURL(blob);
-    dlink.onclick = function (e) {
+    dlink.onclick = function () {
       // revokeObjectURL needs a delay to work properly
       var that: any = this;
       setTimeout(() => {
@@ -335,8 +335,6 @@ export class StorageService {
   // is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB. If you don't pass in allowedUnits,
   // all of the above are accepted AND no unit is attached to an unlabeled number, so 256 is considered 256 bytes.
   convertHumanStringToNum(hstr: any, dec = false, allowedUnits?: string): number {
-    const IECUnitLetters = this.IECUnits.map((unit) => unit.charAt(0).toUpperCase()).join('');
-
     let num = 0;
     let unit = '';
 

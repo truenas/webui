@@ -719,8 +719,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   setDisksDisabled(): void {
-    this.enclosure.driveTrayObjects.forEach((dt: any, index: number) => {
-      const selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
+    this.enclosure.driveTrayObjects.forEach((dt: any) => {
       this.enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: dt.id, color: 'none' } });
     });
   }

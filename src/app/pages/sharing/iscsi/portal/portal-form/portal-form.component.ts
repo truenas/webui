@@ -139,7 +139,7 @@ export class PortalFormComponent implements FormConfiguration {
     protected ws: WebSocketService) { }
 
   prerequisite(): Promise<boolean> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
       const listenIpField = _.find(this.fieldSets[2].config, { name: 'listen' }).templateListField[0];
       await this.iscsiService.getIpChoices().toPromise().then((ips) => {
         for (const ip in ips) {
@@ -151,7 +151,7 @@ export class PortalFormComponent implements FormConfiguration {
           ipField.options = listenIpField.options;
         }
         resolve(true);
-      }, (err) => {
+      }, () => {
         resolve(false);
       });
     });
@@ -187,7 +187,7 @@ export class PortalFormComponent implements FormConfiguration {
   customEditCall(value: any): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
-      (res) => {
+      () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },

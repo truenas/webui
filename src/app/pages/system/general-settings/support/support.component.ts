@@ -64,12 +64,6 @@ export class SupportComponent implements OnInit {
         this.hasLicense = true;
         this.licenseInfo = systemInfo.license;
         this.parseLicenseInfo();
-        this.ws.call('support.is_available').subscribe((res) => {
-          if (res) {
-            this.ws.call('support.is_available_and_enabled').subscribe((res) => {
-            });
-          }
-        });
       }
       this.licenseButtonText = this.hasLicense ? helptext.updateTxt : helptext.enterTxt;
     });

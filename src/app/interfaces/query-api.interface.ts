@@ -10,6 +10,7 @@ export type QueryParams<T, ExtraOptions = {}> = [(QueryFilter<T>[] | ['OR', Quer
  * TODO: https://www.reddit.com/r/typescript/comments/iywewf/ts41_is_there_a_way_to_define_this_property_path/
  * TODO: Potentially may be able to type unknown.
  */
+// eslint-disable-next-line unused-imports/no-unused-vars
 export type QueryFilter<T> = [string, QueryOperator, unknown];
 
 export type QueryOptions<T> = {

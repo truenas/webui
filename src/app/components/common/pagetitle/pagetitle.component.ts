@@ -69,7 +69,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
     // only execute when routechange
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
-    ).subscribe((routeChange) => {
+    ).subscribe(() => {
       this.destroyActions();
 
       this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
@@ -93,9 +93,6 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Pseudo routing events (for reports page)
     this.core.register({ observerClass: this, eventName: 'PseudoRouteChange' }).subscribe((evt: CoreEvent) => {
-      // this.destroyActions();
-      const routeChange = evt.data;
-      // this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
       this.routeParts = evt.data;
       // generate url from parts
       this.routeParts.map((item, i) => {

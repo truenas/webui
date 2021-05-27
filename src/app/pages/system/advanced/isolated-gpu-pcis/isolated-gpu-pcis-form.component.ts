@@ -100,7 +100,7 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
     this.loader.open();
     const finalIsolatedPciIds = body.gpus;
     this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids: finalIsolatedPciIds }]).subscribe(
-      (res) => {
+      () => {
         this.loader.close();
         this.entityForm.success = true;
         this.entityForm.formGroup.markAsPristine();
