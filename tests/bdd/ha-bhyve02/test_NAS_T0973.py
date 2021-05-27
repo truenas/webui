@@ -26,19 +26,19 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_url}"."""
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
-        time.sleep(3)
+        time.sleep(1)
 
 
 @when(parsers.parse('If login page appear enter "{user}" and "{password}"'))
 def if_login_appear_enter_user_and_password(driver, user, password):
     """If login page appear enter "user" and "password"."""
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
+        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
+        assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -50,52 +50,52 @@ def if_login_appear_enter_user_and_password(driver, user, password):
 @then('You should see the dashboard and "System Information"')
 def you_should_see_the_dashboard_and_system_information(driver):
     """You should see the dashboard and "System Information"."""
-    assert wait_on_element(driver, 1, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
 
 
 @then('Go to Storage click Pools')
 def go_to_storage_click_pools(driver):
     """Go to Storage click Pools."""
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Storage"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Storage"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Pools"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Pools"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Pools"]').click()
 
 
 @then('The Pools page should open')
 def the_pools_page_should_open(driver):
     """The Pools page should open."""
-    assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Pools")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Pools")]')
 
 
 @then('Click on the tank 3 dots button, select Add Zvol')
 def click_on_the_tank_3_dots_button_select_add_zvol(driver):
     """Click on the tank 3 dots button, select Add Zvol."""
-    assert wait_on_element(driver, 1, 7, '//mat-icon[@id="actions_menu_button__tank"]')
+    assert wait_on_element(driver, 7, '//mat-icon[@id="actions_menu_button__tank"]')
     driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__tank"]').click()
-    assert wait_on_element(driver, 1, 7, '//button[@ix-auto="action__tank_Add Zvol"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="action__tank_Add Zvol"]')
     driver.find_element_by_xpath('//button[@ix-auto="action__tank_Add Zvol"]').click()
 
 
 @then('The Add Zvol page should open')
 def the_add_zvol_page_should_open(driver):
     """The Add Zvol page should open."""
-    assert wait_on_element(driver, 1, 7, '//a[contains(.,"Add Zvol")]')
+    assert wait_on_element(driver, 7, '//a[contains(.,"Add Zvol")]')
 
 
 @then(parsers.parse('Input "{zvol_name}" for Zvol Name and "{zvol_size}" for Zvol Size'))
 def input_ds1_for_zvol_name_and_1_gib_for_zvol_size(driver, zvol_name, zvol_size):
     """Input "ds1" for Zvol Name and "1 GiB" for Zvol Size."""
-    assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__Zvol name"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Zvol name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Zvol name"]').send_keys(zvol_name)
-    assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__Size for this zvol"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Size for this zvol"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Size for this zvol"]').send_keys(zvol_size)
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SUBMIT"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
 
 
 @then(parsers.parse('"{zvol_name}" should be created'))
 def ds1_should_be_created(driver, zvol_name):
     """"ds1" should be created."""
-    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 0.5, 10, f'//span[contains(.,"{zvol_name}")]')
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, f'//span[contains(.,"{zvol_name}")]')
