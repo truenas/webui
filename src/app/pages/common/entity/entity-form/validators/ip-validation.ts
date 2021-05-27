@@ -4,7 +4,7 @@ import * as ipRegex from 'ip-regex';
 import * as isCidr from 'is-cidr';
 
 // Accepts ipv4 or ipv6 addresses with no CIDR (ie, /24)
-export function ipv4or6Validator(control: string): ValidatorFn {
+export function ipv4or6Validator(): ValidatorFn {
   let thisControl: FormControl;
 
   return function ipValidate(control: FormControl) {
@@ -30,7 +30,7 @@ export function ipv4or6Validator(control: string): ValidatorFn {
 }
 
 // Accepts ipv4 or ipv6 addresses with a CIDR (ie, /24)
-export function ipv4or6cidrValidator(control: string): ValidatorFn {
+export function ipv4or6cidrValidator(): ValidatorFn {
   let thisControl: FormControl;
 
   return function ipValidate(control: FormControl) {
@@ -55,7 +55,7 @@ export function ipv4or6cidrValidator(control: string): ValidatorFn {
 }
 
 // Accepts ipv4 or ipv6 addresses with an OPTIONAL CIDR (ie, /24)
-export function ipv4or6OptionalCidrValidator(control: string): ValidatorFn {
+export function ipv4or6OptionalCidrValidator(): ValidatorFn {
   let thisControl: FormControl;
 
   return function ipValidate(control: FormControl) {
@@ -81,7 +81,7 @@ export function ipv4or6OptionalCidrValidator(control: string): ValidatorFn {
 }
 
 // Accepts ipv4 addresses with no CIDR (ie, /24)
-export function ipv4Validator(control: string): ValidatorFn {
+export function ipv4Validator(): ValidatorFn {
   let thisControl: FormControl;
 
   return function ipValidate(control: FormControl) {
@@ -107,7 +107,7 @@ export function ipv4Validator(control: string): ValidatorFn {
 }
 
 // Accepts ipv6 addresses with no CIDR (ie, /24)
-export function ipv6Validator(control: string): ValidatorFn {
+export function ipv6Validator(): ValidatorFn {
   let thisControl: FormControl;
 
   return function ipValidate(control: FormControl) {

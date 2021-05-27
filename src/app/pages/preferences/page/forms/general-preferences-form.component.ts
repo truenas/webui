@@ -42,7 +42,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
   target: Subject<CoreEvent> = new Subject();
   isWaiting = false;
   values: any[] = [];
-  preferences: any;
+  preferences: UserPreferences;
   saveSubmitText = T('Update Preferences');
   multiStateSubmit = true;
   protected isEntity = true; // was true
@@ -108,7 +108,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
   }
 
   startSubscriptions(): void {
-    this.core.register({ observerClass: this, eventName: 'ThemeListsChanged' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ThemeListsChanged' }).subscribe(() => {
       this.setThemeOptions();
       if (!this.embeddedForm) { return; }
 

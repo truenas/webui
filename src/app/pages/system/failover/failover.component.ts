@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../services/dialog.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -56,7 +56,7 @@ export class FailoverComponent implements FormConfiguration, OnDestroy {
             this.load.open();
             this.ws.call(
               ds.componentInstance.method, ds.componentInstance.data,
-            ).subscribe((res) => {
+            ).subscribe(() => {
               this.load.close();
               this.dialog.Info(helptext_system_failover.confirm_dialogs.sync_title,
                 helptext_system_failover.confirm_dialogs.sync_to_message, '', 'info', true);
@@ -77,7 +77,7 @@ export class FailoverComponent implements FormConfiguration, OnDestroy {
           helptext_system_failover.dialog_button_ok).subscribe((confirm: boolean) => {
           if (confirm) {
             this.load.open();
-            this.ws.call('failover.sync_from_peer').subscribe((res) => {
+            this.ws.call('failover.sync_from_peer').subscribe(() => {
               this.load.close();
               this.dialog.Info(helptext_system_failover.confirm_dialogs.sync_title,
                 helptext_system_failover.confirm_dialogs.sync_from_message, '', 'info', true);
@@ -166,7 +166,7 @@ export class FailoverComponent implements FormConfiguration, OnDestroy {
     return this.ws.call('failover.update', [body]).subscribe(() => {
       this.alreadyDisabled = body['disabled'];
       this.load.close();
-      this.dialog.Info(T('Settings saved.'), '', '300px', 'info', true).subscribe((saved) => {
+      this.dialog.Info(T('Settings saved.'), '', '300px', 'info', true).subscribe(() => {
         if (body.disabled && !body.master) {
           this.ws.logout();
         }

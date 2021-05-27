@@ -1,5 +1,6 @@
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { Schedule } from 'app/interfaces/schedule.interface';
+import { DataProtectionTaskState } from 'app/interfaces/data-protection-task-state.interface';
 
 export interface PeriodicSnapshotTask {
   schedule: Schedule;
@@ -12,4 +13,14 @@ export interface PeriodicSnapshotTask {
   lifetime_value: number;
   naming_schema: string;
   recursive: boolean;
+  state: DataProtectionTaskState;
+  vmware_sync: boolean;
+}
+
+export interface PeriodicSnapshotTaskUi extends PeriodicSnapshotTask {
+  keepfor: string;
+  cron_schedule: string;
+  when: string;
+  frequency: string;
+  next_run: string;
 }

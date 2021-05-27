@@ -5,14 +5,20 @@
       <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
     </div>
     <mat-form-field class="full-width" matTooltipPosition="above" [ngClass]="{'overlay-opened': isOpen}">
-    <mat-select [formControlName]="config.name" [required]="config.required" [placeholder]="config.placeholder | translate" (change)="onChangeOption($event)">
-      <mat-option *ngFor="let preset of presets" [value]="preset.value">
-        {{ preset.label }} <em class="crontab">({{preset.value}})</em>
-        <span class="text-small preset-description" *ngIf="preset.description"> {{preset.description}}</span>
-      </mat-option>
-      <mat-option #trigger="cdkOverlayOrigin" cdkOverlayOrigin (click)="togglePopup()" [value]="crontab">
-        Custom <em class="crontab">({{crontab}})</em>
-      </mat-option>
+      <mat-select 
+        [(value)]="selectedOption"
+        [formControlName]="config.name" 
+        [required]="config.required" 
+        [placeholder]="config.placeholder | translate" 
+        (change)="onChangeOption($event)"
+        >
+        <mat-option *ngFor="let preset of presets" [value]="preset.value">
+          {{ preset.label }} <em class="crontab">({{preset.value}})</em>
+          <span class="text-small preset-description" *ngIf="preset.description"> {{preset.description}}</span>
+        </mat-option>
+        <mat-option #trigger="cdkOverlayOrigin" cdkOverlayOrigin (click)="togglePopup()" [value]="customOption.value">
+          Custom <em class="crontab">({{customOption.value}})</em>
+        </mat-option>
       </mat-select>
     </mat-form-field>
     <div class="margin-for-error">

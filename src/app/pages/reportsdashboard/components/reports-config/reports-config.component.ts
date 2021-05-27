@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { helptext } from 'app/helptext/system/reporting';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { DialogService, WebSocketService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -120,7 +119,7 @@ export class ReportsConfigComponent implements FormConfiguration {
     this.graphAge = body.graph_age;
     this.graphPoints = body.graph_points;
     this.isCpuCheckboxChecked = body.cpu_in_percentage;
-    return this.ws.call('reporting.update', [body]).subscribe((res) => {
+    return this.ws.call('reporting.update', [body]).subscribe(() => {
       this.entityForm.success = true;
       this.entityForm.formGroup.markAsPristine();
       this.afterModalFormSaved();

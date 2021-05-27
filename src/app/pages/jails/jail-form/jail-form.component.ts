@@ -180,7 +180,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
               name: 'ip4_addr',
               placeholder: helptext.ip4_addr_placeholder,
               tooltip: helptext.ip4_addr_tooltip,
-              validation: [ipv4Validator('ip4_addr')],
+              validation: [ipv4Validator()],
               class: 'inline',
               width: '50%',
             },
@@ -250,7 +250,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
               name: 'ip6_addr',
               placeholder: helptext.ip6_addr_placeholder,
               tooltip: helptext.ip6_addr_tooltip,
-              validation: [ipv6Validator('ip6_addr')],
+              validation: [ipv6Validator()],
               class: 'inline',
               width: '50%',
             },
@@ -1010,7 +1010,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
             this.disableForm();
             this.formGroup.controls['plugin_name'].setValue(this.plugin);
             this.jailFromService.getPluginDefaults(this.plugin, this.pluginRepository, this.formGroup, this.networkfieldConfig).then(
-              (res) => {
+              () => {
                 this.toEnableForm();
               },
             );
@@ -1259,7 +1259,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
         dialogRef.componentInstance.setDescription(install_notes);
         dialogRef.componentInstance.showCloseButton = true;
 
-        dialogRef.afterClosed().subscribe((result) => {
+        dialogRef.afterClosed().subscribe(() => {
           this.router.navigate(new Array('/').concat(this.plugin_route_success));
         });
       });

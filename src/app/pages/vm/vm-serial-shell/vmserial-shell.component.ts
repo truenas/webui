@@ -4,13 +4,13 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import helptext from '../../../helptext/vm/vm-cards/vm-cards';
 import { ShellConnectedEvent } from '../../../interfaces/shell.interface';
 import { ShellService, WebSocketService } from '../../../services';
 import { Terminal } from 'xterm';
-import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
 import * as FontFaceObserver from 'fontfaceobserver';
 
@@ -22,7 +22,7 @@ import * as FontFaceObserver from 'fontfaceobserver';
   encapsulation: ViewEncapsulation.None,
 })
 
-export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
+export class VMSerialShellComponent implements OnInit, OnDestroy {
   @Input() prompt = '';
   @ViewChild('terminal', { static: true }) container: ElementRef;
   cols: string;
@@ -47,7 +47,6 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit(): void {
-    const self = this;
     this.aroute.params.subscribe((params) => {
       this.pk = params['pk'];
       this.getAuthToken().subscribe((token) => {
@@ -82,13 +81,6 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
   resetDefault(): void {
     this.font_size = 14;
     this.resizeTerm();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    const log: string[] = [];
-    for (const propName in changes) {
-      const changedProp = changes[propName];
-    }
   }
 
   getSize(): { rows: number; cols: number } {
@@ -137,14 +129,14 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     };
 
     this.xterm = new Terminal(setting);
-    const attachAddon = new AttachAddon(this.ss.socket);
+    const attachAddon = new XtermAttachAddon(this.ss.socket);
     this.xterm.loadAddon(attachAddon);
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
 
     var font = new FontFaceObserver(this.font_name);
 
-    font.load().then((e) => {
+    font.load().then(() => {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
       this.xterm._initialized = true;
@@ -157,7 +149,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
-    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res) => {
+    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe(() => {
       this.xterm.focus();
     });
     return true;

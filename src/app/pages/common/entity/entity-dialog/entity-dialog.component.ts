@@ -146,7 +146,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
-  setDisabled(name: string, disable: boolean, hide?: boolean, status?: string): void {
+  setDisabled(name: string, disable: boolean, hide?: boolean): void {
     // if field is hidden, disable it too
     if (hide) {
       disable = hide;

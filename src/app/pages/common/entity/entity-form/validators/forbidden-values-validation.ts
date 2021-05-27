@@ -18,9 +18,6 @@ export function forbiddenValues(arrayOfValues: any[], caseInsensitive?: boolean)
     }
 
     if (caseInsensitive) {
-      arrayOfValues.forEach((item: any) => {
-        item = item.toLowerCase();
-      });
       if (arrayOfValues.includes(thisControl.value.toLowerCase())) {
         return { forbidden: true, value: thisControl.value };
       }

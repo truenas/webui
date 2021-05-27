@@ -17,6 +17,12 @@ import helptext from '../../../../helptext/storage/snapshots/snapshots';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { Snapshot } from 'app/interfaces/storage.interface';
+
+interface DialogData {
+  datasets: string[];
+  snapshots: { [index: string]: string[] };
+}
 
 @Component({
   selector: 'app-snapshot-list',
@@ -217,10 +223,6 @@ export class SnapshotListComponent {
     this.entityList = entityList;
   }
 
-  preInit(entityList: any): void {
-    this.sub = this._route.params.subscribe((params) => { });
-  }
-
   callGetFunction(entityList: any): void {
     this.ws.call('systemdataset.config').toPromise().then((res) => {
       if (res && res.basename && res.basename !== '') {
@@ -229,7 +231,7 @@ export class SnapshotListComponent {
       this.ws.call(this.queryCall, this.queryCallOption).subscribe((res1) => {
         entityList.handleData(res1, true);
       },
-      (err) => {
+      () => {
         new EntityUtils().handleWSError(this, res, entityList.dialogService);
       });
     });
@@ -274,8 +276,58 @@ export class SnapshotListComponent {
     });
   }
 
+  restructureData(selected: Snapshot[]): DialogData {
+    const datasets: string[] = [];
+    const snapshots: { [index: string]: string[] } = {};
+    selected.forEach((item: Snapshot) => {
+      if (!snapshots[item.dataset]) {
+        datasets.push(item.dataset);
+        snapshots[item.dataset] = [];
+      }
+
+      snapshots[item.dataset].push(item.snapshot);
+    });
+
+    return { datasets, snapshots };
+  }
+
+  getMultiDeleteMessage(selected: Snapshot[]): string {
+    let message = this.translate.instant(
+      '<strong>The following { n, plural, one {snapshot} other {# snapshots} } will be deleted. Are you sure you want to proceed?</strong>',
+      { n: selected.length },
+    );
+
+    message += '<br>';
+    const info: DialogData = this.restructureData(selected);
+
+    const datasetStart = "<div class='mat-list-item'>";
+    const datasetEnd = '</div>';
+    const listStart = '<ul>';
+    const listEnd = '</ul>';
+    const breakTag = '<br>';
+
+    info.datasets.forEach((dataset: any) => {
+      const totalSnapshots: number = info.snapshots[dataset].length;
+      const snapshotText = this.translate.instant(
+        '{ n, plural, one {# snapshot} other {# snapshots} }',
+        { n: totalSnapshots },
+      );
+      const header = `<br/> <div><strong>${dataset}</strong> (${snapshotText}) </div>`;
+      const listContent: string[] = [];
+
+      info.snapshots[dataset].forEach((snapshot: any) => {
+        listContent.push('<li>&nbsp;&nbsp;&nbsp;&nbsp;' + snapshot + '</li>');
+      });
+
+      const listContentString: string = listContent.toString();
+      message += datasetStart + header + listStart + listContentString.replace(/\,/g, '') + listEnd + breakTag + datasetEnd;
+    });
+
+    return message;
+  }
+
   doMultiDelete(selected: any): void {
-    const multiDeleteMsg = this.entityList.getMultiDeleteMessage(selected);
+    const multiDeleteMsg = this.getMultiDeleteMessage(selected);
     this.dialogService.confirm('Delete', multiDeleteMsg, false, T('Delete')).subscribe((res: boolean) => {
       if (res) {
         this.startMultiDeleteProgress(selected);

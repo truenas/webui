@@ -187,7 +187,7 @@ export class NFSFormComponent implements FormConfiguration {
           name: 'network',
           placeholder: helptext_sharing_nfs.placeholder_network,
           tooltip: helptext_sharing_nfs.tooltip_network,
-          validation: [ipv4or6cidrValidator('network')],
+          validation: [ipv4or6cidrValidator()],
         }],
         listFields: [],
       }],
@@ -272,7 +272,7 @@ export class NFSFormComponent implements FormConfiguration {
     }
   }
 
-  preInit(entityForm: EntityFormComponent): void {
+  preInit(): void {
     this.modalService.getRow$.pipe(take(1)).subscribe((id: number) => {
       this.pk = id;
     });
@@ -375,7 +375,7 @@ export class NFSFormComponent implements FormConfiguration {
     };
   }
 
-  afterSave(entityForm: EntityFormComponent): void {
+  afterSave(): void {
     this.modalService.close('slide-in-form');
     this.modalService.refreshTable();
     this.ws.call('service.query', [[]]).subscribe((res) => {

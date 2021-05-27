@@ -9,6 +9,8 @@ import { DialogService } from '../../services';
 // import { DataService } from './data.service';
 
 export interface ApiCall {
+  protocol: 'websocket' | 'rest'; // TODO: rest is probably deprecated and can be removed
+  version: string;
   namespace: ApiMethod; // namespace for ws and path for rest
   args?: any;
   operation?: string; // DEPRECATED - Used for REST calls only
@@ -19,14 +21,14 @@ export interface ApiCall {
 interface ApiDefinition {
   apiCall: ApiCall;
   preProcessor?: (def: ApiCall) => ApiCall;
-  postProcessor?: (res: ApiCall, callArgs: any) => ApiCall;
+  postProcessor?: (res: ApiCall, callArgs: any, core: any) => any;
 }
 
 @Injectable()
 export class ApiService {
   debug = false;
 
-  private apiDefinitions = {
+  private apiDefinitions: { [eventName: string]: ApiDefinition } = {
     UserAttributesRequest: {
       apiCall: {
         protocol: 'websocket',
@@ -513,6 +515,7 @@ export class ApiService {
         const dataList = [];
         const oldDataList = redef.args[0];
 
+        // eslint-disable-next-line unused-imports/no-unused-vars
         for (const i in oldDataList) {
           dataList.push({
             source: 'disktemp-' + oldDataList, // disk name
@@ -639,7 +642,7 @@ export class ApiService {
             }
           }
         },
-        (err) => {
+        () => {
           // DEBUG: console.log(err)
         },
       );

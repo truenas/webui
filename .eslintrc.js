@@ -36,7 +36,6 @@ module.exports = {
         "max-len": "off",
         "no-underscore-dangle": "off",
         "@typescript-eslint/naming-convention": "off",
-        "@typescript-eslint/no-unused-vars": "off",
         "class-methods-use-this": "off",
         "no-console": "off",
         "eqeqeq": "off",
@@ -47,7 +46,6 @@ module.exports = {
         "no-restricted-syntax": "off",
         "guard-for-in": "off",
         "no-param-reassign": "off",
-        "import/no-extraneous-dependencies": "off",
         "no-tabs": "off",
         "no-mixed-spaces-and-tabs": "off",
         "@typescript-eslint/no-unused-expressions": "off",
@@ -100,12 +98,18 @@ module.exports = {
         "@typescript-eslint/type-annotation-spacing": "error",
         "@typescript-eslint/ban-ts-comment": "error",
         "@typescript-eslint/explicit-function-return-type": ["error", { allowExpressions: true }],
+        "@typescript-eslint/no-unused-vars": "off",
+        "unused-imports/no-unused-imports": "off",
+        "unused-imports/no-unused-vars": ["error", { vars: "local", args: "after-used" }],
       }
     },
     {
       "files": ["*.html"],
       "parser": "@angular-eslint/template-parser",
-      "plugins": ["@angular-eslint/template"],
+      "plugins": [
+        "@angular-eslint/template",
+        "unused-imports"
+      ],
       "rules": {}
     }
   ]

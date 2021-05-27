@@ -168,7 +168,7 @@ export class TargetFormComponent implements FormConfiguration {
     const portalGroupField = _.find(targetGroupFieldset.config, { name: 'groups' }).templateListField[0];
     const initiatorGroupField = _.find(targetGroupFieldset.config, { name: 'groups' }).templateListField[1];
     const authGroupField = _.find(targetGroupFieldset.config, { name: 'groups' }).templateListField[3];
-    const promise1 = new Promise((resolve, reject) => {
+    const promise1 = new Promise((resolve) => {
       this.iscsiService.listPortals().toPromise().then(
         (portals) => {
           for (let i = 0; i < portals.length; i++) {
@@ -185,7 +185,7 @@ export class TargetFormComponent implements FormConfiguration {
         },
       );
     });
-    const promise2 = new Promise((resolve, reject) => {
+    const promise2 = new Promise((resolve) => {
       this.iscsiService.listInitiators().toPromise().then(
         (initiatorsRes) => {
           initiatorGroupField.options.push({ label: 'None', value: null });
@@ -195,12 +195,12 @@ export class TargetFormComponent implements FormConfiguration {
           }
           resolve(true);
         },
-        (initiatorsErr) => {
+        () => {
           resolve(false);
         },
       );
     });
-    const promise3 = new Promise((resolve, reject) => {
+    const promise3 = new Promise((resolve) => {
       this.iscsiService.getAuth().toPromise().then(
         (accessRecords) => {
           const tags = _.uniq(accessRecords.map((item) => item.tag));
@@ -210,14 +210,14 @@ export class TargetFormComponent implements FormConfiguration {
           }
           resolve(true);
         },
-        (authErr) => {
+        () => {
           resolve(false);
         },
       );
     });
 
     return await Promise.all([promise1, promise2, promise3]).then(
-      (res) => true,
+      () => true,
     );
   }
 
@@ -239,7 +239,7 @@ export class TargetFormComponent implements FormConfiguration {
   customEditCall(value: any): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
-      (res) => {
+      () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },

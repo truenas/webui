@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';
 import { LanguageService } from 'app/services/language.service';
-import { of } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
+import { Observable, of } from 'rxjs';
 import {
   catchError, map, timeout,
 } from 'rxjs/operators';
@@ -21,7 +20,7 @@ export class TranslationsLoadedGuard implements CanActivate {
     private ws: WebSocketService,
   ) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+  canActivate(): Observable<boolean> {
     let waitForTranslations: Observable<boolean>;
 
     if (!this.ws.connected) {

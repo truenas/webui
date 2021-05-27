@@ -267,7 +267,7 @@ export class TwoFactorComponent implements FormConfiguration {
       delete data[extra];
     });
     this.loader.open();
-    this.ws.call('auth.twofactor.update', [data]).subscribe((res) => {
+    this.ws.call('auth.twofactor.update', [data]).subscribe(() => {
       this.loader.close();
       if (openQR) {
         this.openQRDialog();
@@ -280,7 +280,7 @@ export class TwoFactorComponent implements FormConfiguration {
   }
 
   openQRDialog(): void {
-    const dialogRef = this.mdDialog.open(QRDialog, {
+    this.mdDialog.open(QRDialog, {
       width: '300px',
       data: { qrInfo: this.qrInfo },
     });

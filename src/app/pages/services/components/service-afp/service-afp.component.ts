@@ -1,7 +1,7 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import {
   RestService, UserService, WebSocketService, IscsiService,
@@ -174,6 +174,6 @@ export class ServiceAFPComponent implements FormConfiguration {
   }
 
   beforeSubmit(data: any): void {
-    data = this.compareBindIps(data);
+    this.compareBindIps(data);
   }
 }

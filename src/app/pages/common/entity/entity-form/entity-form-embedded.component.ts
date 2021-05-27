@@ -21,7 +21,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CoreEvent } from 'app/interfaces/events';
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { T } from '../../../../translate-marker';
 
 import { RestService, WebSocketService } from '../../../../services';
@@ -244,7 +244,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     });
     const fg = Object.keys(this.formGroup.controls);
     fg.forEach((control) => {
-      this.formGroup.controls[control].valueChanges.subscribe((evt) => {
+      this.formGroup.controls[control].valueChanges.subscribe(() => {
       });
     });
   }
@@ -253,16 +253,16 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     const controls = Object.keys(this.formGroup.controls);
     const configControls = this.controls.map((item) => item.name);
 
-    controls.filter((control) => !configControls.includes(control))
+    controls
+      .filter((control) => !configControls.includes(control))
       .forEach((control) => this.formGroup.removeControl(control));
 
-    configControls.filter((control) => !controls.includes(control))
+    configControls
+      .filter((control) => !controls.includes(control))
       .forEach((name) => {
-	  const config = this.fieldConfig.find((control) => control.name === name);
-	  this.formGroup.addControl(name, this.createControl(config));
+        const config = this.fieldConfig.find((control) => control.name === name);
+        this.formGroup.addControl(name, this.createControl(config));
       });
-
-    const fg = { ...this.formGroup };
   }
 
   goBack(): void {

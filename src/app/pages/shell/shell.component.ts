@@ -3,17 +3,17 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
+import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
 import { CoreEvent } from 'app/interfaces/events';
-import { Observable } from 'rxjs/Observable';
+import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { ShellService, WebSocketService } from '../../services';
 import helptext from '../../helptext/shell/shell';
 import { CopyPasteMessageComponent } from './copy-paste-message.component';
 import { Terminal } from 'xterm';
-import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
 import * as FontFaceObserver from 'fontfaceobserver';
 import { CoreService } from 'app/core/services/core.service';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { T } from 'app/translate-marker';
 
@@ -24,7 +24,7 @@ import { T } from 'app/translate-marker';
   providers: [ShellService],
   encapsulation: ViewEncapsulation.None,
 })
-export class ShellComponent implements OnInit, OnChanges, OnDestroy {
+export class ShellComponent implements OnInit, OnDestroy {
   // sets the shell prompt
   @Input() prompt = '';
   // xter container
@@ -43,7 +43,6 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   formEvents: Subject<CoreEvent>;
 
   usage_tooltip = helptext.usage_tooltip;
-  private attachAddon: AttachAddon;
 
   clearLine = '\u001b[2K\r';
   shellConnected = false;
@@ -147,17 +146,6 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.resizeTerm();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    const log: string[] = [];
-    for (const propName in changes) {
-      const changedProp = changes[propName];
-      // reprint prompt
-      if (propName === 'prompt' && this.xterm != null) {
-        // this.xterm.write(this.clearLine + this.prompt)
-      }
-    }
-  }
-
   onRightClick(): false {
     this.dialog.open(CopyPasteMessageComponent);
     return false;
@@ -184,7 +172,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
 
     var font = new FontFaceObserver(this.font_name);
 
-    font.load().then((e) => {
+    font.load().then(() => {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
       this.xterm._initialized = true;
@@ -229,7 +217,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
-    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res) => {
+    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe(() => {
       this.xterm.focus();
     });
     return true;
@@ -241,16 +229,12 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
 
     this.refreshToolbarButtons();
 
-    this.shellConnectedSubscription = this.ss.shellConnected.subscribe((res: any) => {
-      this.shellConnected = res.connected;
-      this.connectionId = res.id;
+    this.shellConnectedSubscription = this.ss.shellConnected.subscribe((event: ShellConnectedEvent) => {
+      this.shellConnected = event.connected;
+      this.connectionId = event.id;
 
-      if (this.attachAddon) {
-        this.attachAddon.dispose();
-      }
-
-      this.attachAddon = new AttachAddon(this.ss.socket);
-      this.xterm.loadAddon(this.attachAddon);
+      const attachAddon = new XtermAttachAddon(this.ss.socket);
+      this.xterm.loadAddon(attachAddon);
 
       this.refreshToolbarButtons();
       this.resizeTerm();
@@ -265,6 +249,11 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.connect();
   }
 
-  constructor(protected core: CoreService, private ws: WebSocketService, public ss: ShellService, public translate: TranslateService, private dialog: MatDialog) {
-  }
+  constructor(
+    private core: CoreService,
+    private ws: WebSocketService,
+    private ss: ShellService,
+    private translate: TranslateService,
+    private dialog: MatDialog,
+  ) {}
 }

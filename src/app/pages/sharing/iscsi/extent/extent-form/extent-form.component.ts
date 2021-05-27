@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators, FormControl, ValidationErrors } from '@angular/forms';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import * as _ from 'lodash';
 
@@ -367,7 +367,7 @@ export class ExtentFormComponent implements FormConfiguration {
       value['path'] = value['disk'];
     }
     this.ws.call(this.editCall, [parseInt(this.pk, 10), value]).subscribe(
-      (res) => {
+      () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },

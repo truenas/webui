@@ -97,7 +97,7 @@ export class PluginAddComponent implements OnInit {
     name: 'ip4_addr',
     placeholder: helptext.ip4_addr_placeholder,
     tooltip: helptext.ip4_addr_tooltip,
-    validation: [ipv4Validator('ip4_addr')],
+    validation: [ipv4Validator()],
     relation: [{
       action: 'ENABLE',
       connective: 'AND',
@@ -165,7 +165,7 @@ export class PluginAddComponent implements OnInit {
     name: 'ip6_addr',
     placeholder: helptext.ip6_addr_placeholder,
     tooltip: helptext.ip6_addr_tooltip,
-    validation: [ipv6Validator('ip6_addr')],
+    validation: [ipv6Validator()],
     relation: [{
       action: 'ENABLE',
       connective: 'AND',
@@ -404,7 +404,7 @@ export class PluginAddComponent implements OnInit {
     this.router.navigate(new Array('').concat(this.route_goback));
   }
 
-  onSubmit(event: Event): void {
+  onSubmit(): void {
     this.error = null;
     const property: any = [];
     const value = _.cloneDeep(this.formGroup.value);

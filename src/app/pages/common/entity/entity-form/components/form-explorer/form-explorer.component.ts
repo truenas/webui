@@ -110,9 +110,9 @@ export class FormExplorerComponent implements Field, OnInit {
   }
 
   getChildren(node: any): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (this.config.explorerType === 'zvol') {
-        resolve(this.entityFormService.getDatasetsAndZvolsListChildren(node));
+        resolve(this.entityFormService.getDatasetsAndZvolsListChildren());
       } else if (this.config.explorerType === 'directory') {
         resolve(this.entityFormService.getFilesystemListdirChildren(node, this.config.explorerType, this.config.hideDirs));
       } else if (this.config.explorerType === 'file') {
@@ -142,7 +142,7 @@ export class FormExplorerComponent implements Field, OnInit {
 
   onClick(event: any): void {
     const selectedTreeNodes = Object.entries(event.treeModel.selectedLeafNodeIds)
-      .filter(([key, value]) => (value === true)).map((node) => event.treeModel.getNodeById(node[0]));
+      .filter(([, value]) => (value === true)).map((node) => event.treeModel.getNodeById(node[0]));
     // this is to mark selected node, but not update form value
     if (event.eventName === 'select' && this.group.controls[this.config.name].value && this.group.controls[this.config.name].value.indexOf(event.node.data.name) > -1) {
       return;

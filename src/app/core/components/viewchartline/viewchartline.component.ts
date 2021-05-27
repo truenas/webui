@@ -134,29 +134,7 @@ export class ViewChartLineComponent extends ViewChartComponent {
           this.tooltipHeight = String((h*0.8));
           return {top: y, left: left}
         }, */
-        contents: (raw: any) => {
-          // console.log(this.data);
-          // if(!this.tooltipHeight){ return "";}
-          // let tthSplit = this.tooltipHeight.split('px');
-          // let tth = Math.floor(Number(tthSplit[0]));
-          // let h = tth/raw.length;
-          // let time = defaultTitleFormat(raw[0].x);
-          const time = raw[0].x;
-          // DEBUG: console.log(time);
-          // let preList = '<div style="min-height:' + this.tooltipHeight + ';"><table>';
-          /* let preList = '<div><table>';
-          let list = '<tr><td><strong>' + time + '</strong></td></tr>';
-          let postList = '</table></div>';
-          for(let i in raw){
-            let c = color(raw[i]);
-            let d = Math.floor(raw[i].value)
-            let markup = '<tr class="tooltip"><td class="module-triangle-bottom" style="border-left:solid 6px ' + c + ';">  ' + raw[i].name + ':</td><td>' +  d + this.units + '</td></tr>';
-            list += markup;
-          }
-          //let focus = defaultTitleFormat(d);
-          return preList + list + postList; */
-          return '<div style="display:none;">tooltips disabled</div>';
-        },
+        contents: () => '<div style="display:none;">tooltips disabled</div>',
         format: {
           value: (value: any) => {
             if (this.units) {

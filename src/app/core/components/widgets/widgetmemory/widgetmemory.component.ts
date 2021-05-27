@@ -149,7 +149,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   memChartInit(): void {
     this.currentTheme = this.themeService.currentTheme();
     this.colorPattern = this.processThemeColors(this.currentTheme);
-    const startW = this.el.nativeElement.querySelector('#memory-usage-chart');
 
     this.isReady = true;
     this.renderChart();
@@ -223,11 +222,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
       const bgColor = this.colorPattern[index];
       const bgColorType = this.utils.getValueType(bgColor);
 
-      const borderColor = this.currentTheme.bg2;
-      const borderColorType = this.utils.getValueType(borderColor);
-
       const bgRGB = bgColorType == 'hex' ? this.utils.hexToRGB(bgColor).rgb : this.utils.rgbToArray(bgColor);
-      const borderRGB = borderColorType == 'hex' ? this.utils.hexToRGB(borderColor).rgb : this.utils.rgbToArray(borderColor);
 
       (ds.backgroundColor as ChartColor[]).push(this.rgbToString(bgRGB as any, 0.85));
       (ds.borderColor as ChartColor[]).push(this.rgbToString(bgRGB as any));

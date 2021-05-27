@@ -38,6 +38,11 @@ import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interf
 import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
+import { RsyncTask } from 'app/interfaces/rsync-task.interface';
+import { SmartTest } from 'app/interfaces/smart-test.interface';
+import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 
 export type ApiDirectory = {
   // Active Directory
@@ -174,7 +179,7 @@ export type ApiDirectory = {
   'cloudsync.sync': { params: any; response: any };
   'cloudsync.abort': { params: any; response: any };
   'cloudsync.restore': { params: any; response: any };
-  'cloudsync.query': { params: any; response: any };
+  'cloudsync.query': { params: QueryParams<CloudSyncTask>; response: CloudSyncTask[] };
   'cloudsync.delete': { params: any; response: any };
 
   // Container
@@ -207,6 +212,11 @@ export type ApiDirectory = {
   // Directory Services
   'directoryservices.cache_refresh': { params: any; response: any };
   'directoryservices.get_state': { params: any; response: any };
+
+  // Enclosure
+  'enclosure.query': { params: any; response: any };
+  'enclosure.update': { params: any; response: any };
+  'enclosure.set_slot_status': { params: any; response: any };
 
   // Filesystem
   'filesystem.acl_is_trivial': {
@@ -286,6 +296,7 @@ export type ApiDirectory = {
   'interface.has_pending_changes': { params: void; response: boolean };
   'interface.checkin_waiting': { params: any; response: any };
   'interface.checkin': { params: any; response: any };
+  'interface.websocket_interface': { params: any; response: any };
 
   // iSCSI
   'iscsi.portal.listen_ip_choices': { params: void; response: IscsiIpChoices };
@@ -417,7 +428,7 @@ export type ApiDirectory = {
   'pool.dataset.recommended_zvol_blocksize': { params: any; response: any };
   'pool.unlock_services_restart_choices': { params: any; response: any };
   'pool.dataset.get_quota': { params: any; response: any };
-  'pool.snapshottask.query': { params: any; response: any };
+  'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
   'pool.import_disk_autodetect_fs_type': { params: any; response: any };
   'pool.download_encryption_key': { params: any; response: any };
   'pool.snapshottask.create': { params: any; response: any };
@@ -428,6 +439,7 @@ export type ApiDirectory = {
     params: QueryParams<Dataset, ExtraDatasetQueryOptions>;
     response: Dataset[];
   };
+  'pool.get_disks': { params: any; response: any };
   'pool.scrub.delete': { params: any; response: any };
   'pool.scrub.query': { params: QueryParams<PoolScrub>; response: PoolScrub[] };
   'pool.scrub.update': { params: any; response: any };
@@ -459,7 +471,7 @@ export type ApiDirectory = {
   // Replication
   'replication.list_datasets': { params: any; response: any };
   'replication.create': { params: any; response: any };
-  'replication.query': { params: any; response: any };
+  'replication.query': { params: QueryParams<ReplicationTask>; response: ReplicationTask[] };
   'replication.restore': { params: any; response: any };
   'replication.run': { params: any; response: any };
   'replication.delete': { params: any; response: any };
@@ -470,7 +482,7 @@ export type ApiDirectory = {
 
   // Rsync
   'rsynctask.run': { params: any; response: any };
-  'rsynctask.query': { params: any; response: any };
+  'rsynctask.query': { params: QueryParams<RsyncTask>; response: RsyncTask[] };
   'rsynctask.create': { params: any; response: any };
   'rsynctask.update': { params: any; response: any };
   'rsynctask.delete': { params: any; response: any };
@@ -488,6 +500,7 @@ export type ApiDirectory = {
   'reporting.get_data': { params: any; response: any };
   'reporting.update': { params: any; response: any };
   'reporting.config': { params: any; response: any };
+  'reporting.graphs': { params: any; response: any };
 
   // S3
   's3.bindip_choices': { params: any; response: any };
@@ -542,7 +555,7 @@ export type ApiDirectory = {
   'smart.update': { params: any; response: any };
   'smart.config': { params: any; response: any };
   'smart.test.manual_test': { params: any; response: any };
-  'smart.test.query': { params: any; response: any };
+  'smart.test.query': { params: QueryParams<SmartTest>; response: SmartTest[] };
   'smart.test.create': { params: any; response: any };
   'smart.test.update': { params: any; response: any };
 
@@ -562,6 +575,9 @@ export type ApiDirectory = {
   };
   'service.restart': { params: any; response: any };
 
+  // Sensor
+  'sensor.query': { params: any; response: any };
+
   // Sharing
   'sharing.smb.query': { params: QueryParams<SmbShare>; response: SmbShare[] };
   'sharing.smb.create': { params: any; response: any };
@@ -579,6 +595,10 @@ export type ApiDirectory = {
   'sharing.webdav.update': { params: any; response: any };
   'sharing.webdav.create': { params: any; response: any };
   'sharing.webdav.delete': { params: any; response: any };
+
+  // Stats
+  'stats.get_data': { params: any; response: any };
+  'stats.get_sources': { params: any; response: any };
 
   // Tunable
   'tunable.tunable_type_choices': { params: any; response: any };
@@ -631,6 +651,7 @@ export type ApiDirectory = {
   'vm.restart': { params: any; response: any };
   'vm.get_display_devices': { params: any; response: any };
   'vm.start': { params: any; response: any };
+  'vm.get_vmemory_in_use': { params: any; response: any };
 
   // Vmware
   'vmware.dataset_has_vms': { params: any; response: any };

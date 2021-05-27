@@ -10,8 +10,7 @@ import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { AppTableAction } from 'app/pages/common/entity/table/table.component';
 import * as ipRegex from 'ip-regex';
-import { Subject } from 'rxjs';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject, Subscription } from 'rxjs';
 import { ProductType } from '../../enums/product-type.enum';
 import helptext from '../../helptext/network/interfaces/interfaces-list';
 
@@ -384,7 +383,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       ).subscribe((confirm: boolean) => {
         if (confirm) {
           this.loader.open();
-          this.ws.call('interface.commit', [{ checkin_timeout: this.checkin_timeout }]).subscribe((res) => {
+          this.ws.call('interface.commit', [{ checkin_timeout: this.checkin_timeout }]).subscribe(() => {
             this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: false }, sender: this });
             this.interfaceTableConf.tableComponent.getData();
             this.loader.close();
@@ -428,7 +427,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
 
   finishCheckin(): void {
     this.loader.open();
-    this.ws.call('interface.checkin').subscribe((success) => {
+    this.ws.call('interface.checkin').subscribe(() => {
       this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
       this.loader.close();
       this.dialog.Info(
@@ -453,7 +452,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     ).subscribe((confirm: boolean) => {
       if (confirm) {
         this.loader.open();
-        this.ws.call('interface.rollback').subscribe((res) => {
+        this.ws.call('interface.rollback').subscribe(() => {
           this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false }, sender: this });
           this.interfaceTableConf.tableComponent.getData();
           this.hasPendingChanges = false;
@@ -578,7 +577,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       label: T('Identify Light'),
       onClick: () => {
         this.dialog.select(
-          'IPMI Identify', this.impiFormComponent.options, 'IPMI flash duration', 'ipmi.identify', 'seconds', 'IPMI identify command issued',
+          'IPMI Identify', this.impiFormComponent.options, 'IPMI flash duration', 'ipmi.identify', 'seconds',
         );
         event.stopPropagation();
       },

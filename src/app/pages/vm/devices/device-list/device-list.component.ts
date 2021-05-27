@@ -117,11 +117,11 @@ export class DeviceListComponent implements InputTableConf {
             customSubmit(entityDialog: EntityDialogComponent) {
               const value = entityDialog.formValue;
               self.loader.open();
-              self.ws.call('vm.device.update', [row1.id, { order: value.order }]).subscribe((succ) => {
+              self.ws.call('vm.device.update', [row1.id, { order: value.order }]).subscribe(() => {
                 entityDialog.dialogRef.close(true);
                 self.loader.close();
                 this.parent.entityList.getData();
-              }, (err) => {
+              }, () => {
                 self.loader.close();
               }, () => {
                 entityDialog.dialogRef.close(true);
@@ -159,10 +159,9 @@ export class DeviceListComponent implements InputTableConf {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
-          const data = {};
           if (this.wsDelete) {
             this.busy = this.ws.call(this.wsDelete, ['vm.device', row.id]).subscribe(
-              (resinner) => {
+              () => {
                 this.entityList.getData();
                 this.loader.close();
               },

@@ -66,7 +66,7 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
     });
   }
 
-  onSelectChange($event: any): void {
+  onSelectChange(): void {
     this.active_tab = this.config.tabs[this.tabGroup.selectedIndex];
     this.setControlValue();
   }

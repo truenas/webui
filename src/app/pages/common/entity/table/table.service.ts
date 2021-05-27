@@ -127,7 +127,6 @@ export class TableService {
       this.loader.open();
       table.loaderOpen = true;
     }
-    const data = {};
 
     let id;
     if (table.tableConf.deleteMsg && table.tableConf.deleteMsg.id_prop) {

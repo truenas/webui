@@ -49,7 +49,7 @@ export class EncryptionService {
     const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
     dialogRef.componentInstance.volumeId = row;
     dialogRef.componentInstance.fileName = 'pool_' + poolName + '_encryption.key';
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe(() => {
       if (addRecoveryKey) {
         this.makeRecoveryKey(row, poolName, route_success);
       } else {

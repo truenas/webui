@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { RestService, WebSocketService, DialogService } from '../../../../services';
 import { FormGroup, Validators } from '@angular/forms';
@@ -258,7 +258,7 @@ export class VolumeImportWizardComponent {
     });
   }
 
-  preInit(entityWizard: EntityWizardComponent): void {
+  preInit(): void {
     this.productType = window.localStorage.getItem('product_type') as ProductType;
     if (this.productType.includes(ProductType.Scale)) {
       this.wizardConfig.splice(0, 2);

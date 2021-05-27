@@ -19,10 +19,9 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
 
 import { RestService, WebSocketService, SystemGeneralService } from '../../../../services';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { ModalService } from '../../../../services/modal.service';
 import { EntityTemplateDirective } from '../entity-template.directive';
@@ -624,10 +623,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.fb.control({ disabled, value }, validation);
   }
 
-  setDisabled(name: string, disable: boolean, hide?: boolean, status?: string): void {
+  setDisabled(name: string, disable: boolean, hide?: boolean): void {
     const fieldConfig = this.fieldConfig.find((item) => item.name === name);
     if (fieldConfig) {
-      this.fieldRelationService.setDisabled(fieldConfig, this.formGroup, disable, hide, status);
+      this.fieldRelationService.setDisabled(fieldConfig, this.formGroup, disable, hide);
     }
   }
 

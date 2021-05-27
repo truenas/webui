@@ -1,11 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import * as cronParser from 'cron-parser';
-import { Moment } from 'moment';
+import { TranslateService } from '@ngx-translate/core';
 
 import { UserService, WebSocketService, TaskService } from 'app/services';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
@@ -14,6 +12,7 @@ import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 
 @Component({
   selector: 'app-scrub-list',
@@ -25,10 +24,10 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
   queryCall: 'pool.scrub.query' = 'pool.scrub.query';
   wsDelete: 'pool.scrub.delete' = 'pool.scrub.delete';
   route_add: string[] = ['tasks', 'scrub', 'add'];
-  route_add_tooltip = 'Add Scrub Task';
+  route_add_tooltip = this.translate.instant(T('Add Scrub Task'));
   route_edit: string[] = ['tasks', 'scrub', 'edit'];
   entityList: EntityTableComponent;
-  parent: any;
+  parent: ScrubListComponent;
 
   columns: any[] = [
     { name: T('Pool'), prop: 'pool_name', always_display: true },
@@ -36,13 +35,14 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
     { name: T('Description'), prop: 'description' },
     {
       name: T('Schedule'),
-      prop: 'schedule',
+      prop: 'cron_schedule',
       widget: {
         icon: 'calendar-range',
         component: 'TaskScheduleListComponent',
       },
     },
-    { name: T('Next Run'), prop: 'scrub_next_run' },
+    { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
+    { name: T('Next Run'), prop: 'next_run' },
     { name: T('Enabled'), prop: 'enabled' },
   ];
   rowIdentifier = 'id';
@@ -64,6 +64,7 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
     protected aroute: ActivatedRoute,
     protected userService: UserService,
     protected entityFormService: EntityFormService,
+    protected translate: TranslateService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -73,14 +74,11 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  resourceTransformIncomingRestData(data: any[]): any {
+  resourceTransformIncomingRestData(data: ScrubTaskUi[]): ScrubTaskUi[] {
     return data.map((task) => {
-      task.schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
-
-      /* Weird type assertions are due to a type definition error in the cron-parser library */
-      task.scrub_next_run = ((cronParser.parseExpression(task.schedule, { iterator: true }).next() as unknown) as {
-        value: { _date: Moment };
-      }).value._date.fromNow();
+      task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
+      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
+      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
 
       return task;
     });

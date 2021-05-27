@@ -30,6 +30,7 @@ export default {
   smartlist_column_type: T('Type'),
   smartlist_column_description: T('Description'),
   smartlist_column_schedule: T('Schedule'),
+  smartlist_column_frequency: T('Frequency'),
   smartlist_column_next_run: T('Next Run'),
   smartlist_column_delete_title: T('S.M.A.R.T. Test'),
 

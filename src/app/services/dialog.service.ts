@@ -141,7 +141,6 @@ export class DialogService {
     optionPlaceHolder: string,
     method: ApiMethod,
     params?: any,
-    message?: string,
   ): void {
     let data: any;
     const dialogRef = this.dialog.open(SelectDialogComponent, { width: '300px' });
@@ -159,6 +158,8 @@ export class DialogService {
       }
       dialogRef.afterClosed().subscribe((res) => {
         if (res) {
+          // TODO: The whole block seems to be doing nothing.
+          // eslint-disable-next-line unused-imports/no-unused-vars
           this.ws.call(method, [data]).subscribe((out) => {
             // this.snackBar.open(message, 'close', { duration: 5000 });
           });

@@ -118,7 +118,7 @@ export class VMListComponent implements OnDestroy {
     });
 
     this.modalService.onClose$.subscribe(
-      (res) => {
+      () => {
         this.entityList.getData();
       },
     );
@@ -289,7 +289,7 @@ export class VMListComponent implements OnDestroy {
     } else {
       this.loader.open();
       this.ws.call(method, params).subscribe(
-        (res) => {
+        () => {
           if (updateTable) {
             this.entityList.getData();
             this.loader.close();

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Option } from 'app/interfaces/option.interface';
 
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { ProductType } from '../../../enums/product-type.enum';
 import { DialogService, WebSocketService } from '../../../services';
 import { ipv4Validator } from '../../common/entity/entity-form/validators/ip-validation';
@@ -14,6 +14,7 @@ import { EntityUtils } from '../../common/entity/utils';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { T } from '../../../translate-marker';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+
 @Component({
   selector: 'app-ipmi',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -44,7 +45,7 @@ export class IPMIFromComponent implements FormConfiguration {
       name: T('Identify Light'),
       function: () => {
         this.dialog.select(
-          'IPMI Identify', this.options, 'IPMI flash duration', 'ipmi.identify', 'seconds', 'IPMI identify command issued',
+          'IPMI Identify', this.options, 'IPMI flash duration', 'ipmi.identify', 'seconds',
         );
       },
     },
@@ -73,7 +74,7 @@ export class IPMIFromComponent implements FormConfiguration {
           name: 'ipaddress',
           placeholder: helptext.ipaddress_placeholder,
           tooltip: helptext.ipaddress_tooltip,
-          validation: [ipv4Validator('ipaddress')],
+          validation: [ipv4Validator()],
           errors: helptext.ip_error,
           hasErrors: false,
           relation: [
@@ -91,7 +92,7 @@ export class IPMIFromComponent implements FormConfiguration {
           name: 'netmask',
           placeholder: helptext.netmask_placeholder,
           tooltip: helptext.netmask_tooltip,
-          validation: [ipv4Validator('netmask')],
+          validation: [ipv4Validator()],
           errors: helptext.ip_error,
           hasErrors: false,
           relation: [
@@ -109,7 +110,7 @@ export class IPMIFromComponent implements FormConfiguration {
           name: 'gateway',
           placeholder: helptext.gateway_placeholder,
           tooltip: helptext.gateway_tooltip,
-          validation: [ipv4Validator('gateway')],
+          validation: [ipv4Validator()],
           errors: helptext.ip_error,
           hasErrors: false,
           relation: [
@@ -164,7 +165,7 @@ export class IPMIFromComponent implements FormConfiguration {
   ) { }
 
   async prerequisite(): Promise<boolean> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
       if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
         await this.ws.call('failover.licensed').toPromise().then((is_ha) => {
           this.is_ha = is_ha;
@@ -256,7 +257,7 @@ export class IPMIFromComponent implements FormConfiguration {
     }
 
     this.loader.open();
-    return call.subscribe((res) => {
+    return call.subscribe(() => {
       this.loader.close();
       this.dialog.Info(T('Settings saved.'), '', '300px', 'info', true);
     }, (res) => {

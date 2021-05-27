@@ -50,10 +50,8 @@ export class FailoverComponent implements OnInit {
 
     this.dialog.closeAll();
     this.ws.call('failover.force_master', {}).subscribe(
-      (res) => {
-      },
       (res) => { // error on reboot
-        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted).subscribe((closed) => {
+        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted).subscribe(() => {
           this.router.navigate(['/session/signin']);
         });
       },
