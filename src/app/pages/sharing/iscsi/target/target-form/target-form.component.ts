@@ -227,15 +227,6 @@ export class TargetFormComponent implements FormConfiguration {
     );
   }
 
-  preInit(): void {
-    // this.aroute.params.subscribe((params) => {
-    //   if (params['pk']) {
-    //     this.pk = params['pk'];
-    //     this.customFilter[0][0].push(parseInt(params['pk'], 10));
-    //   }
-    // });
-  }
-
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
@@ -256,7 +247,7 @@ export class TargetFormComponent implements FormConfiguration {
     );
   }
 
-  afterSubmit(value: any) {
+  afterSubmit(value: any): void {
     this.modalService.close('slide-in-form');
   }
 }

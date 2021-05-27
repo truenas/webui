@@ -18,6 +18,7 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 import { Validators } from '@angular/forms';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { TableComponent } from 'app/pages/common/entity/table/table.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 
 enum ShareType {
   SMB = 'smb',
@@ -299,7 +300,7 @@ export class SharesDashboardComponent {
         tableComponent.getData();
       }
     }, (err) => {
-      console.log('Error', err);
+      new EntityUtils().handleWSError(this, err, this.dialog);
     });
   }
 
