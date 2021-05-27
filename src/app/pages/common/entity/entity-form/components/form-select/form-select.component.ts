@@ -56,7 +56,10 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   ngAfterViewInit(): void {
     // Change the value of null to 'null_value' string
     this.config.options = this.config.options.map((option) => {
+      if (!option.value) option = { label: option, value: option };
+
       option.value = this.entityUtils.changeNull2String(option.value);
+
       return option;
     });
     this.selectStates = this.config.options.map(() => false);
@@ -112,7 +115,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
 
   ngAfterViewChecked(): void {
     if (!this.formReady && typeof this.config.options !== 'undefined' && this.config.options && this.config.options.length > 0) {
-      const newStates = this.config.options.map((item) => this.selectedValues.indexOf(item.value) !== -1);
+      const newStates = this.config.options.map((item) => item && this.selectedValues.indexOf(item.value) !== -1);
       this.selectStates = newStates;
       this.updateValues();
       this.formReady = true;
