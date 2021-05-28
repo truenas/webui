@@ -32,13 +32,13 @@ module.exports = {
         "no-return-assign": "off",
         "no-empty": ["error", { "allowEmptyCatch": true }],
         "arrow-body-style": "off",
+        "no-console": ["error", { allow: ["warn", "error", "info"] }],
 
         // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically
         "max-len": "off",
         "no-underscore-dangle": "off",
         "@typescript-eslint/naming-convention": "off",
         "class-methods-use-this": "off",
-        "no-console": "off",
         "eqeqeq": "off",
         "import/prefer-default-export": "off",
         "block-scoped-var": "off",

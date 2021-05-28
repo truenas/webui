@@ -360,7 +360,7 @@ export class VolumeImportWizardComponent {
     } else if (res.error && res.exception) {
       this.dialogService.errorReport(T('Error importing pool'), res.error, res.exception);
     } else {
-      console.log(res);
+      console.error(res);
     }
   }
 

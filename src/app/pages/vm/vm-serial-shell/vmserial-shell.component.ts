@@ -141,7 +141,7 @@ export class VMSerialShellComponent implements OnInit, OnDestroy {
       this.fitAddon.fit();
       this.xterm._initialized = true;
     }, (e) => {
-      console.log('Font is not available', e);
+      console.error('Font is not available', e);
     });
   }
 

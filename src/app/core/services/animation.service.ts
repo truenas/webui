@@ -83,12 +83,10 @@ export class AnimationService {
       this.flipHorizontal(animationTarget, finishState);
     } else {
       console.warn('Could not determine orientation of element.');
-      console.log(target);
     }
   }
 
   private flipVertical(animationTarget: DisplayObject, finishState: string): void {
-    console.log('Flip Vertical Method');
     // Setup parent element so perspectives are properly set...
     animationTarget.rawTarget.parentNode.style['perspective'] = (animationTarget.target.get('width') * 10) + 'px';
     // animationTarget.rawTarget.parentNode.style["perspective"] = '1520px'; // Hard coded value from FreeNAS
@@ -114,13 +112,10 @@ export class AnimationService {
   }
 
   private flipHorizontal(animationTarget: DisplayObject, finishState: string): void {
-    console.log('Flip Horizontal Method');
     // Setup parent element so perspectives are properly set...
     animationTarget.rawTarget.parentNode.style['perspective'] = (animationTarget.target.get('height') * 80) + 'px';
     animationTarget.rawTarget.parentNode.style['perspective-origin'] = 'center';
     animationTarget.rawTarget.parentNode.style['transform-style'] = 'preserve-3d';
-
-    console.log('Initial Rotation = ' + animationTarget.target.get('rotateY'));
 
     let start: number;
     let finish: number;
@@ -141,7 +136,6 @@ export class AnimationService {
   }
 
   private fade(animationTarget: DisplayObject, finishState: string): void {
-    console.log('Fade' + finishState);
     let startOpacity; // animationTarget.target.get('opacity');
     let finishOpacity;
     if (finishState == 'In') {
@@ -160,7 +154,6 @@ export class AnimationService {
   }
 
   private scale(animationTarget: DisplayObject, finishState: string): void {
-    console.log('Scale' + finishState);
     let startScale;
     let finishScale;
     if (finishState == 'In') {
@@ -245,7 +238,6 @@ export class AnimationService {
   }
 
   private radiate(animationTarget: DisplayObject, finishState: string): void {
-    console.log('Radiate method');
     const startShadow = animationTarget.element.get('box-shadow'); // Styler
 
     if (finishState == 'Stop') {

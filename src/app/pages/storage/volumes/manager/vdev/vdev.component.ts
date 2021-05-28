@@ -204,7 +204,6 @@ export class VdevComponent implements OnInit {
   onTypeChange(): void {
     this.estimateSize();
     this.manager.getCurrentLayout();
-    // console.log(e, this.group);
   }
 
   getRawSize(): number {
@@ -225,7 +224,6 @@ export class VdevComponent implements OnInit {
   }
 
   toggleExpandRow(row: any): void {
-    // console.log('Toggled Expand Row!', row);
     if (!this.startingHeight) {
       this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
     }

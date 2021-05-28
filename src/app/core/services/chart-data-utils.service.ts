@@ -15,7 +15,6 @@ export interface ProcessTask {
 
 @Injectable()
 export class ChartDataUtilsService {
-  private debug = false;
   protected runAsWebWorker = false;
   protected worker: Worker;
   thread: Worker;
@@ -47,11 +46,6 @@ export class ChartDataUtilsService {
     // Calback for when we receive messages from the thread
     thread.onmessage = (e: MessageEvent) => {
       const evt: CoreEvent = e.data;
-      if (this.debug) {
-        console.log('Parent received message:' + evt.name);
-        console.log(evt);
-      }
-      // console.warn("chart-data-utils")
       this.core.emit(evt);
     };
 

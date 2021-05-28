@@ -132,7 +132,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     return forkJoin([setPoolControl, setNodeIpControl, setV4InterfaceControl]).pipe(
       map(() => true),
       catchError((error) => {
-        console.log(error);
+        console.error(error);
         return of(false);
       }),
     ).toPromise();

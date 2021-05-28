@@ -114,7 +114,7 @@ export class WebSocketService {
 
       this.pendingCalls.delete(data.id);
       if (data.error) {
-        console.log('Error: ', data.error);
+        console.error('Error: ', data.error);
         call.observer.error(data.error);
       }
       if (call && call.observer) {
@@ -133,7 +133,7 @@ export class WebSocketService {
         for (const uuid in this.pendingSubs[nom].observers) {
           const subObserver = this.pendingSubs[nom].observers[uuid];
           if (data.error) {
-            console.log('Error: ', data.error);
+            console.error('Error: ', data.error);
             subObserver.error(data.error);
           }
           if (subObserver && data.fields) {
@@ -154,7 +154,7 @@ export class WebSocketService {
     } else if (data.msg == 'sub') {
       // pass
     } else {
-      // console.log("Unknown message: ", data);
+      console.error('Unknown message: ', data);
     }
   }
 

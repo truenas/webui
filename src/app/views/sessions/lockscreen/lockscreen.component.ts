@@ -15,8 +15,6 @@ export class LockscreenComponent {
   };
 
   unlock(): void {
-    console.log(this.lockscreenData);
-
     this.submitButton.disabled = true;
     this.progressBar.mode = 'indeterminate';
   }

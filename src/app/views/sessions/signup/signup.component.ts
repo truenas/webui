@@ -17,8 +17,6 @@ export class SignupComponent {
   };
 
   signup(): void {
-    console.log(this.signupData);
-
     this.submitButton.disabled = true;
     this.progressBar.mode = 'indeterminate';
   }

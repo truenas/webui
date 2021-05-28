@@ -397,7 +397,7 @@ export class LanguageService {
       [{ language: lang }]).subscribe(
       () => {},
       (err) => {
-        console.log(err);
+        console.error(err);
       },
     );
     this.setLanguage(lang);

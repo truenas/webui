@@ -59,9 +59,7 @@ export class WidgetComponent extends iXObject {
     this.isFlipped = !this.isFlipped;
   }
 
-  setPreferences(form: NgForm): void {
-    console.log('******** FORM SUBMITTED!! ********');
-    console.log(form);
+  setPreferences(): void {
   }
 
   goBack(): void {
