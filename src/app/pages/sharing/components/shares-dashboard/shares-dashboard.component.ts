@@ -370,7 +370,7 @@ export class SharesDashboardComponent implements OnInit, OnDestroy {
       },
     );
   }
-  
+
   updateTableServiceStatus(service: Service): void {
     switch (service.service) {
       case ServiceName.Cifs:
