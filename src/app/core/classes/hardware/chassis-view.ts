@@ -3,7 +3,7 @@ import { Container, Sprite } from 'pixi.js';
 import { Subject } from 'rxjs';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { DriveTray } from './drivetray';
-import '@pixi/filter-advanced-bloom';
+import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
 
 import {
   tween,
@@ -117,7 +117,7 @@ export class ChassisView {
   }
 
   onLoaded(): void {
-    const bloomFilter = new PIXI.filters.AdvancedBloomFilter({
+    const bloomFilter = new AdvancedBloomFilter({
       threshold: 0.9,
       bloomScale: 1.5,
       brightness: 1.5,
