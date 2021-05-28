@@ -91,8 +91,8 @@ export interface InputTableConf {
   wsMultiDelete?(resp: any): any;
   wsMultiDeleteParams?(selected: any): any;
   updateMultiAction?(selected: any): any;
-  doAdd?(id?: any, tableComponent?: EntityTableComponent): void;
-  doEdit?(id?: any, tableComponent?: EntityTableComponent): void;
+  doAdd?(id?: string | number, tableComponent?: EntityTableComponent): void;
+  doEdit?(id?: string | number, tableComponent?: EntityTableComponent): void;
   onCheckboxChange?(row: any): any;
   onSliderChange?(row: any): any;
   callGetFunction?(entity: EntityTableComponent): any;

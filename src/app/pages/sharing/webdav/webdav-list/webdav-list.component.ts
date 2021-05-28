@@ -59,7 +59,12 @@ export class WebdavListComponent implements InputTableConf {
   };
 
   ngOnDestroy(): void {
-    this.addSubscription.unsubscribe();
-    this.editSubscription.unsubscribe();
+    if (this.addSubscription) {
+      this.addSubscription.unsubscribe();
+    }
+
+    if (this.editSubscription) {
+      this.editSubscription.unsubscribe();
+    }
   }
 }

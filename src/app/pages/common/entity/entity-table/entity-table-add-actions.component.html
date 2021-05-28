@@ -108,7 +108,7 @@
           mat-button color="primary"
           (click)="this.entity.doAdd()"
           *ngIf="this.entity.conf.route_add || this.entity.conf.doAdd"
-          matTooltip="{{this.entity.conf.route_addd_tooltip | translate}}"
+          matTooltip="{{this.entity.conf.route_add_tooltip | translate}}"
           id="add_action_button"
           ix-auto
           ix-auto-type="button"
@@ -117,7 +117,7 @@
         <button
           id="add_action_button_{{action?.label}}"
           mat-button color="primary"
-          *ngIf="!this.entity.conf.route_add && this.totalActions== 1"
+          *ngIf="!(this.entity.conf.route_add || this.entity.conf.doAdd) && this.totalActions== 1"
           (click)="this.actions[0].onClick()"
           matTooltip="{{actions[0].label | translate}}"
           ix-auto
