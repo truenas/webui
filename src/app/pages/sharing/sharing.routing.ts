@@ -27,24 +27,11 @@ export const routes: Routes = [
     data: { title: 'Sharing' },
     children: [
       {
-        path: 'afp',
-        data: { title: 'AFP', breadcrumb: 'AFP', icon: 'share' },
-        children: [{
-          path: '',
-          component: AFPListComponent,
-          data: { title: 'AFP', breadcrumb: 'AFP' },
-        },
-        {
-          path: 'add',
-          component: AFPFormComponent,
-          data: { title: 'Add', breadcrumb: 'Add' },
-        },
-        {
-          path: 'edit/:pk',
-          component: AFPFormComponent,
-          data: { title: 'Edit', breadcrumb: 'Edit' },
-        }],
-      }, {
+        path: '',
+        component: SharesDashboardComponent,
+        data: { title: 'Dashboard', breadcrumb: 'Dashboard' },
+      },
+      {
         path: 'nfs',
         data: { title: 'NFS', breadcrumb: 'NFS', icon: 'share' },
         children: [{
@@ -52,7 +39,8 @@ export const routes: Routes = [
           component: NFSListComponent,
           data: { title: 'NFS', breadcrumb: 'NFS' },
         }],
-      }, {
+      },
+      {
         path: 'webdav',
         data: { title: 'WebDAV', breadcrumb: 'WebDAV', icon: 'share' },
         children: [{
@@ -188,11 +176,7 @@ export const routes: Routes = [
               }],
           }],
       },
-      {
-        path: 'dashboard',
-        component: SharesDashboardComponent,
-        data: { title: 'Dashboard', breadcrumb: 'Dashboard' },
-      }],
+    ],
   },
 ];
 
