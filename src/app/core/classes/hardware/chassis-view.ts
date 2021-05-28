@@ -3,6 +3,9 @@ import { Container, Sprite } from 'pixi.js';
 import { Subject } from 'rxjs';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { DriveTray } from './drivetray';
+
+// TODO: See if can be removed.
+// eslint-disable-next-line unused-imports/no-unused-imports
 import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
 
 import {
@@ -117,7 +120,7 @@ export class ChassisView {
   }
 
   onLoaded(): void {
-    const bloomFilter = new AdvancedBloomFilter({
+    const bloomFilter = new PIXI.filters.AdvancedBloomFilter({
       threshold: 0.9,
       bloomScale: 1.5,
       brightness: 1.5,
