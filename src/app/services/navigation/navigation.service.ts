@@ -47,17 +47,10 @@ export class NavigationService {
   },
   {
     name: T('Shares'),
-    type: 'slideOut',
+    type: 'link',
     tooltip: T('Shares'),
     icon: 'folder_shared',
     state: 'sharing',
-    sub: [
-      { name: T('Shares Dashboard'), state: 'dashboard' },
-      { name: T('Block Shares (iSCSI)'), state: 'iscsi' },
-      { name: T('Unix Shares (NFS)'), state: 'nfs' },
-      { name: T('WebDAV Shares'), state: 'webdav' },
-      { name: T('Windows Shares (SMB)'), state: 'smb' },
-    ],
   },
   {
     name: T('Data Protection'),

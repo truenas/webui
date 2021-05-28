@@ -25,6 +25,11 @@ export const routes: Routes = [
     data: { title: 'Sharing' },
     children: [
       {
+        path: '',
+        component: SharesDashboardComponent,
+        data: { title: 'Dashboard', breadcrumb: 'Dashboard' },
+      },
+      {
         path: 'nfs',
         data: { title: 'NFS', breadcrumb: 'NFS', icon: 'share' },
         children: [{
@@ -32,7 +37,8 @@ export const routes: Routes = [
           component: NFSListComponent,
           data: { title: 'NFS', breadcrumb: 'NFS' },
         }],
-      }, {
+      },
+      {
         path: 'webdav',
         data: { title: 'WebDAV', breadcrumb: 'WebDAV', icon: 'share' },
         children: [{
@@ -168,11 +174,7 @@ export const routes: Routes = [
               }],
           }],
       },
-      {
-        path: 'dashboard',
-        component: SharesDashboardComponent,
-        data: { title: 'Dashboard', breadcrumb: 'Dashboard' },
-      }],
+    ],
   },
 ];
 

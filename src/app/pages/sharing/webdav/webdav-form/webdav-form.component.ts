@@ -20,7 +20,6 @@ export class WebdavFormComponent implements FormConfiguration {
   queryKey = 'id';
   addCall: 'sharing.webdav.create' = 'sharing.webdav.create';
   editCall: 'sharing.webdav.update' = 'sharing.webdav.update';
-  route_success: string[] = ['sharing', 'webdav'];
   isEntity = true;
   title = T('Add WebDAV');
   confirmSubmit = true;
@@ -98,11 +97,7 @@ export class WebdavFormComponent implements FormConfiguration {
   afterSave(entityForm: any): void {
     this.ws.call('service.query', [[]]).subscribe((res) => {
       const service = _.find(res, { service: ServiceName.WebDav });
-      if (service.enable) {
-        this.router.navigate(new Array('/').concat(
-          this.route_success,
-        ));
-      } else {
+      if (!service.enable) {
         this.dialog.confirm(shared.dialog_title, shared.dialog_message,
           true, shared.dialog_button).subscribe((dialogRes: boolean) => {
           if (dialogRes) {
@@ -110,30 +105,16 @@ export class WebdavFormComponent implements FormConfiguration {
             this.ws.call('service.update', [service.id, { enable: true }]).subscribe(() => {
               this.ws.call('service.start', [service.service]).subscribe(() => {
                 entityForm.loader.close();
-                this.dialog.Info(T('WebDAV') + shared.dialog_started_title,
-                  T('The WebDAV') + shared.dialog_started_message, '250px').subscribe(() => {
-                  this.router.navigate(new Array('/').concat(
-                    this.route_success,
-                  ));
-                });
+                this.dialog.Info(T('WebDAV') + shared.dialog_started_title, T('The WebDAV') + shared.dialog_started_message, '250px')
+                  .subscribe(() => {});
               }, (err) => {
                 entityForm.loader.close();
                 this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
-                this.router.navigate(new Array('/').concat(
-                  this.route_success,
-                ));
               });
             }, (err) => {
               entityForm.loader.close();
               this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
-              this.router.navigate(new Array('/').concat(
-                this.route_success,
-              ));
             });
-          } else {
-            this.router.navigate(new Array('/').concat(
-              this.route_success,
-            ));
           }
         });
       }

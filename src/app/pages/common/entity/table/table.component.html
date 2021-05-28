@@ -90,7 +90,7 @@
                 </ng-template>
               </ng-container>
             </ng-container>
-            <button mat-icon-button (click)="deleteRow(element)" *ngIf="_tableConf.deleteCall">
+            <button mat-icon-button (click)="$event.stopPropagation(); deleteRow(element)" *ngIf="_tableConf.deleteCall">
               <mat-icon class="table-action-button" [matTooltip]="'Delete' | translate">delete</mat-icon>
             </button>
           </div>
@@ -102,7 +102,7 @@
     </table>
     <entity-empty *ngIf="dataSource && dataSource.length === 0" [conf]="emptyConf" fxFlex fxLayoutAlign="center"></entity-empty>
   </div>
-  <div class="view-more-row" *ngIf="showViewMore" (click)="openViewMore()">View More</div>
-  <div class="view-more-row" *ngIf="showCollapse" (click)="collapse()">Collapse</div>
+  <div class="view-more-row" *ngIf="showViewMore && !_tableConf.alwaysHideViewMore" (click)="openViewMore()">View More</div>
+  <div class="view-more-row" *ngIf="showCollapse && !_tableConf.alwaysHideViewMore" (click)="collapse()">Collapse</div>
 </mat-card-content>
 </mat-card>

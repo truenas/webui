@@ -7,9 +7,10 @@ import { Subject } from 'rxjs';
 import _ from 'lodash';
 
 import { T } from 'app/translate-marker';
-import { helptext_sharing_nfs, helptext_sharing_webdav } from 'app/helptext/sharing';
-import { InputExpandableTableConf } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
+import { helptext_sharing_webdav } from 'app/helptext/sharing';
+import { ExpandableTableState, InputExpandableTableConf } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
 import { helptext_sharing_smb } from 'app/helptext/sharing';
+import { helptext_sharing_nfs } from 'app/helptext/sharing';
 import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form';
 import {
   AppLoaderService, DialogService, IscsiService, ModalService, NetworkService, SystemGeneralService, UserService, WebSocketService,
@@ -17,6 +18,11 @@ import {
 import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form';
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
+import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { Validators } from '@angular/forms';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { TableComponent } from 'app/pages/common/entity/table/table.component';
 import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { Service } from 'app/interfaces/service.interface';
@@ -37,173 +43,33 @@ enum ShareType {
   styleUrls: ['./shares-dashboard.component.scss'],
   providers: [IscsiService],
 })
-export class SharesDashboardComponent implements OnInit, OnDestroy {
-  webdavTableConf: InputExpandableTableConf = {
-    title: T('WebDAV'),
-    titleHref: '/sharing/webdav',
-    queryCall: 'sharing.webdav.query',
-    deleteCall: 'sharing.webdav.delete',
-    deleteMsg: {
-      title: T('Delete'),
-      key_props: ['name'],
-    },
-    emptyEntityLarge: false,
-    parent: this,
-    columns: [
-      { prop: 'name', name: helptext_sharing_webdav.column_name, always_display: true },
-      { prop: 'comment', name: helptext_sharing_webdav.column_comment },
-      { prop: 'path', name: helptext_sharing_webdav.column_path },
-      { prop: 'ro', name: helptext_sharing_webdav.column_ro, hidden: true },
-      { prop: 'perm', name: helptext_sharing_webdav.column_perm, hidden: true },
-      {
-        prop: 'enabled',
-        name: helptext_sharing_webdav.column_enabled,
-        checkbox: true,
-        onChange: (row: any) => this.onCheckboxStateToggle(ShareType.WebDAV, row),
-      },
-    ],
-    add() {
-      this.parent.add(ShareType.WebDAV);
-    },
-    edit(row) {
-      this.parent.edit(ShareType.WebDAV, row.id);
-    },
-    afterGetData: (data: any) => {
-      if (data.length > 0) {
-        this.webdavHasItems = 1;
-        this.webdavTableConf.alwaysExpanded = true;
-      }
-    },
-    expandedIfNotEmpty: true,
-    collapsedIfEmpty: true,
-    detailsHref: '/sharing/webdav',
-    limitRows: 5,
-  };
+export class SharesDashboardComponent {
+  webdavTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.WebDAV);
+  nfsTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.NFS);
+  smbTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.SMB);
+  iscsiTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.ISCSI);
 
-  nfsTableConf: InputExpandableTableConf = {
-    title: T('UNIX (NFS) Shares'),
-    titleHref: '/sharing/nfs',
-    queryCall: 'sharing.nfs.query',
-    deleteCall: 'sharing.nfs.delete',
-    deleteMsg: {
-      title: T('Delete'),
-      key_props: ['name'],
+  emptyTableConf: EmptyConfig = {
+    type: EmptyType.no_page_data,
+    large: true,
+    title: 'No Shares Configured',
+    message: 'You have not configured any shares yet. Click the \'Add Share\' button to add your first share.',
+    button: {
+      label: 'Add Share',
+      action: this.showAddDialog.bind(this),
     },
-    emptyEntityLarge: false,
-    parent: this,
-    columns: [
-      { name: helptext_sharing_nfs.column_name, prop: 'name', always_display: true },
-      { name: helptext_sharing_nfs.column_path, prop: 'path' },
-      { name: helptext_sharing_nfs.column_comment, prop: 'comment' },
-      {
-        name: helptext_sharing_nfs.column_enabled,
-        prop: 'enabled',
-        checkbox: true,
-        onChange: (row: any) => this.onCheckboxStateToggle(ShareType.NFS, row),
-      },
-    ],
-    detailsHref: '/sharing/nfs',
-    add() {
-      this.parent.add(ShareType.NFS);
-    },
-    edit(row) {
-      this.parent.edit(ShareType.NFS, row.id);
-    },
-    afterGetData: (data: any) => {
-      if (data.length > 0) {
-        this.nfsHasItems = 1;
-        this.nfsTableConf.alwaysExpanded = true;
-      }
-    },
-    expandedIfNotEmpty: true,
-    collapsedIfEmpty: true,
-    limitRows: 5,
-  };
-
-  smbTableConf: InputExpandableTableConf = {
-    title: T('Windows (SMB) Shares'),
-    titleHref: '/sharing/smb',
-    queryCall: 'sharing.smb.query',
-    deleteCall: 'sharing.smb.delete',
-    deleteMsg: {
-      title: T('Delete'),
-      key_props: ['name'],
-    },
-    detailsHref: '/sharing/smb',
-    emptyEntityLarge: false,
-    parent: this,
-    columns: [
-      { name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
-      { name: helptext_sharing_smb.column_path, prop: 'path' },
-      { name: helptext_sharing_smb.column_comment, prop: 'comment' },
-      {
-        name: helptext_sharing_smb.column_enabled,
-        prop: 'enabled',
-        checkbox: true,
-        onChange: (row: any) => this.onCheckboxStateToggle(ShareType.SMB, row),
-      },
-    ],
-    add() {
-      this.parent.add(ShareType.SMB);
-    },
-    edit(row) {
-      this.parent.edit(ShareType.SMB, row.id);
-    },
-    afterGetData: (data: any) => {
-      if (data.length > 0) {
-        this.smbHasItems = 1;
-        this.smbTableConf.alwaysExpanded = true;
-      }
-    },
-    expandedIfNotEmpty: true,
-    collapsedIfEmpty: true,
-    limitRows: 5,
-  };
-
-  iscsiTableConf: InputExpandableTableConf = {
-    title: T('Block (ISCSI) Shares Targets'),
-    titleHref: '/sharing/iscsi/target',
-    queryCall: 'iscsi.target.query',
-    deleteCall: 'iscsi.target.delete',
-    detailsHref: '/sharing/iscsi/target',
-    deleteMsg: {
-      title: T('Delete'),
-      key_props: ['name'],
-    },
-    emptyEntityLarge: false,
-    parent: this,
-    columns: [
-      {
-        name: T('Target Name'),
-        prop: 'name',
-        always_display: true,
-      },
-      {
-        name: T('Target Alias'),
-        prop: 'alias',
-      },
-    ],
-    add() {
-      this.parent.add(ShareType.ISCSI);
-    },
-    edit(row) {
-      this.parent.edit(ShareType.ISCSI, row.id);
-    },
-    collapsedIfEmpty: true,
-    afterGetData: (data: any) => {
-      if (data.length > 0) {
-        this.iscsiHasItems = 1;
-        this.iscsiTableConf.alwaysExpanded = true;
-      }
-    },
-    expandedIfNotEmpty: true,
-    limitRows: 5,
   };
 
   webdavHasItems = 0;
   nfsHasItems = 0;
   smbHasItems = 0;
   iscsiHasItems = 0;
+  noOfPopulatedTables = 0;
+
+  webdavExpandableState: ExpandableTableState;
+  nfsExpandableState: ExpandableTableState;
+  smbExpandableState: ExpandableTableState;
+  iscsiExpandableState: ExpandableTableState;
   onDestroy$ = new Subject();
   smbServiceStatus = ServiceStatus.Loading;
   webdavServiceStatus = ServiceStatus.Loading;
@@ -230,22 +96,235 @@ export class SharesDashboardComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     if (this.webdavHasItems) {
-      this.webdavTableConf.alwaysExpanded = true;
+      this.webdavExpandableState = ExpandableTableState.Expanded;
     }
     if (this.nfsHasItems) {
-      this.nfsTableConf.alwaysExpanded = true;
+      this.nfsExpandableState = ExpandableTableState.Expanded;
     }
     if (this.smbHasItems) {
-      this.smbTableConf.alwaysExpanded = true;
+      this.smbExpandableState = ExpandableTableState.Expanded;
     }
     if (this.iscsiHasItems) {
-      this.iscsiTableConf.alwaysExpanded = true;
+      this.iscsiExpandableState = ExpandableTableState.Expanded;
     }
   }
 
-  add(share: ShareType, id?: number): void {
+  refreshDashboard(shareType: ShareType = null): void {
+    switch (shareType) {
+      case ShareType.ISCSI: {
+        this.iscsiTableConf = this.getTableConfigForShareType(ShareType.ISCSI);
+        break;
+      }
+      case ShareType.NFS: {
+        this.nfsTableConf = this.getTableConfigForShareType(ShareType.NFS);
+        break;
+      }
+      case ShareType.SMB: {
+        this.smbTableConf = this.getTableConfigForShareType(ShareType.SMB);
+        break;
+      }
+      case ShareType.WebDAV: {
+        this.webdavTableConf = this.getTableConfigForShareType(ShareType.WebDAV);
+        break;
+      }
+      default: {
+        this.webdavTableConf = this.getTableConfigForShareType(ShareType.WebDAV);
+        this.nfsTableConf = this.getTableConfigForShareType(ShareType.NFS);
+        this.smbTableConf = this.getTableConfigForShareType(ShareType.SMB);
+        this.iscsiTableConf = this.getTableConfigForShareType(ShareType.ISCSI);
+        break;
+      }
+    }
+  }
+
+  getTableConfigForShareType(shareType: ShareType): InputExpandableTableConf {
+    switch (shareType) {
+      case ShareType.NFS: {
+        return {
+          title: T('UNIX (NFS) Shares'),
+          titleHref: '/sharing/nfs',
+          queryCall: 'sharing.nfs.query',
+          deleteCall: 'sharing.nfs.delete',
+          deleteMsg: {
+            title: T('Delete'),
+            key_props: ['name'],
+          },
+          limitRowsByMaxHeight: true,
+          emptyEntityLarge: false,
+          parent: this,
+          columns: [
+            { name: helptext_sharing_nfs.column_path, prop: 'paths', always_display: true },
+            { name: helptext_sharing_nfs.column_comment, prop: 'comment' },
+            {
+              name: helptext_sharing_nfs.column_enabled,
+              prop: 'enabled',
+              checkbox: true,
+              onChange: (row: any) => this.onCheckboxStateToggle(ShareType.NFS, row),
+            },
+          ],
+          detailsHref: '/sharing/nfs',
+          add() {
+            this.parent.add(this.tableComponent, ShareType.NFS);
+          },
+          edit(row: any) {
+            this.parent.edit(this.tableComponent, ShareType.NFS, row.id);
+          },
+          afterGetData: (data: any) => {
+            this.nfsHasItems = 0;
+            this.nfsExpandableState = ExpandableTableState.Collapsed;
+            if (data.length > 0) {
+              this.nfsHasItems = 1;
+              this.nfsExpandableState = ExpandableTableState.Expanded;
+              this.updateNumberOfTables();
+            }
+          },
+          limitRows: 5,
+        };
+      }
+      case ShareType.ISCSI: {
+        return {
+          title: T('Block (ISCSI) Shares Targets'),
+          titleHref: '/sharing/iscsi/target',
+          queryCall: 'iscsi.target.query',
+          deleteCall: 'iscsi.target.delete',
+          detailsHref: '/sharing/iscsi/target',
+          deleteMsg: {
+            title: T('Delete'),
+            key_props: ['name'],
+          },
+          limitRowsByMaxHeight: true,
+          emptyEntityLarge: false,
+          parent: this,
+          columns: [
+            {
+              name: T('Target Name'),
+              prop: 'name',
+              always_display: true,
+            },
+            {
+              name: T('Target Alias'),
+              prop: 'alias',
+            },
+          ],
+          add() {
+            this.parent.add(this.tableComponent, ShareType.ISCSI);
+          },
+          edit(row: any) {
+            this.parent.edit(this.tableComponent, ShareType.ISCSI, row.id);
+          },
+          afterGetData: (data: any) => {
+            this.iscsiHasItems = 0;
+            this.iscsiExpandableState = ExpandableTableState.Collapsed;
+            if (data.length > 0) {
+              this.iscsiHasItems = 1;
+              this.iscsiExpandableState = ExpandableTableState.Expanded;
+              this.updateNumberOfTables();
+            }
+          },
+          limitRows: 5,
+          configure: () => {
+            this.router.navigate(['/', 'sharing', 'iscsi']);
+          },
+        };
+      }
+      case ShareType.WebDAV: {
+        return {
+          title: T('WebDAV'),
+          titleHref: '/sharing/webdav',
+          queryCall: 'sharing.webdav.query',
+          deleteCall: 'sharing.webdav.delete',
+          deleteMsg: {
+            title: T('Delete'),
+            key_props: ['name'],
+          },
+          emptyEntityLarge: false,
+          parent: this,
+          columns: [
+            { prop: 'name', name: helptext_sharing_webdav.column_name, always_display: true },
+            { prop: 'comment', name: helptext_sharing_webdav.column_comment },
+            { prop: 'path', name: helptext_sharing_webdav.column_path },
+            { prop: 'ro', name: helptext_sharing_webdav.column_ro, hidden: true },
+            { prop: 'perm', name: helptext_sharing_webdav.column_perm, hidden: true },
+            {
+              prop: 'enabled',
+              name: helptext_sharing_webdav.column_enabled,
+              checkbox: true,
+              onChange: (row: any) => this.onCheckboxStateToggle(ShareType.WebDAV, row),
+            },
+          ],
+          add() {
+            this.parent.add(this.tableComponent, ShareType.WebDAV);
+          },
+          limitRowsByMaxHeight: true,
+          edit(row: any) {
+            this.parent.edit(this.tableComponent, ShareType.WebDAV, row.id);
+          },
+          afterGetData: (data: any) => {
+            this.webdavHasItems = 0;
+            this.webdavExpandableState = ExpandableTableState.Collapsed;
+            if (data.length > 0) {
+              this.webdavHasItems = 1;
+              this.webdavExpandableState = ExpandableTableState.Expanded;
+              this.updateNumberOfTables();
+            }
+          },
+          detailsHref: '/sharing/webdav',
+          limitRows: 5,
+        };
+      }
+      case ShareType.SMB: {
+        return {
+          title: T('Windows (SMB) Shares'),
+          titleHref: '/sharing/smb',
+          queryCall: 'sharing.smb.query',
+          deleteCall: 'sharing.smb.delete',
+          deleteMsg: {
+            title: T('Delete'),
+            key_props: ['name'],
+          },
+          detailsHref: '/sharing/smb',
+          emptyEntityLarge: false,
+          parent: this,
+          columns: [
+            { name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
+            { name: helptext_sharing_smb.column_path, prop: 'path' },
+            { name: helptext_sharing_smb.column_comment, prop: 'comment' },
+            {
+              name: helptext_sharing_smb.column_enabled,
+              prop: 'enabled',
+              checkbox: true,
+              onChange: (row: any) => this.onCheckboxStateToggle(ShareType.SMB, row),
+            },
+          ],
+          limitRowsByMaxHeight: true,
+          add() {
+            this.parent.add(this.tableComponent, ShareType.SMB);
+          },
+          edit(row: any) {
+            this.parent.edit(this.tableComponent, ShareType.SMB, row.id);
+          },
+          afterGetData: (data: any) => {
+            this.smbHasItems = 0;
+            this.smbExpandableState = ExpandableTableState.Collapsed;
+            if (data.length > 0) {
+              this.smbHasItems = 1;
+              this.smbExpandableState = ExpandableTableState.Expanded;
+              this.updateNumberOfTables();
+            }
+          },
+          limitRows: 5,
+        };
+      }
+    }
+  }
+
+  updateNumberOfTables(): void {
+    this.noOfPopulatedTables = this.nfsHasItems + this.smbHasItems + this.iscsiHasItems + this.webdavHasItems;
+  }
+
+  add(tableComponent: TableComponent, share: ShareType, id?: number): void {
     let formComponent: NFSFormComponent | SMBFormComponent | WebdavFormComponent | TargetFormComponent;
     switch (share) {
       case ShareType.NFS:
@@ -258,14 +337,23 @@ export class SharesDashboardComponent implements OnInit, OnDestroy {
         formComponent = new WebdavFormComponent(this.router, this.ws, this.dialog);
         break;
       case ShareType.ISCSI:
-        formComponent = new TargetFormComponent(this.router, this.aroute, this.iscsiService, this.loader, this.translate, this.ws);
+        formComponent = new TargetFormComponent(this.router, this.aroute, this.iscsiService, this.loader, this.translate, this.ws, this.modalService);
         break;
     }
     this.modalService.open('slide-in-form', formComponent, id);
+    this.modalService.onClose$.subscribe(() => {
+      if (!tableComponent) {
+        this.refreshDashboard();
+      } else {
+        tableComponent.getData();
+      }
+    }, (err) => {
+      new EntityUtils().handleWSError(this, err, this.dialog);
+    });
   }
 
-  edit(share: ShareType, id: number): void {
-    this.add(share, id);
+  edit(tableComponent: TableComponent, share: ShareType, id: number): void {
+    this.add(tableComponent, share, id);
   }
 
   getTablesOrder(): string[] {
@@ -291,8 +379,10 @@ export class SharesDashboardComponent implements OnInit, OnDestroy {
   }
 
   getContainerClass(): string {
-    const noOfPopulatedTables = this.webdavHasItems + this.nfsHasItems + this.smbHasItems + this.iscsiHasItems;
-    switch (noOfPopulatedTables) {
+    this.noOfPopulatedTables = this.webdavHasItems + this.nfsHasItems + this.smbHasItems + this.iscsiHasItems;
+    switch (this.noOfPopulatedTables) {
+      case 0:
+        return 'zero-table-container';
       case 1:
         return 'one-table-container';
       case 2:
@@ -337,6 +427,32 @@ export class SharesDashboardComponent implements OnInit, OnDestroy {
       case 3:
         return 'fourth';
     }
+  }
+
+  showAddDialog(): void {
+    const conf: DialogFormConfiguration = {
+      title: 'Add New Share',
+      message: 'Select the type of Share you want to add',
+      saveButtonText: 'Create',
+      fieldConfig: [{
+        type: 'radio',
+        name: 'share_type',
+        options: [
+          { label: 'SMB', value: ShareType.SMB },
+          { label: 'NFS', value: ShareType.NFS },
+          { label: 'ISCSI Target', value: ShareType.ISCSI },
+          { label: 'WebDAV', value: ShareType.WebDAV },
+        ],
+        validation: [Validators.required],
+      },
+      ],
+      customSubmit: (dialog: EntityDialogComponent) => {
+        dialog.dialogRef.close();
+        dialog.parent.add(null, dialog.formValue.share_type);
+      },
+      parent: this,
+    };
+    this.dialog.dialogForm(conf);
   }
 
   onCheckboxStateToggle(card: ShareType, row: any): void {
