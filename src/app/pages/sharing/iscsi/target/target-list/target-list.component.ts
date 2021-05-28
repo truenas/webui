@@ -65,7 +65,7 @@ export class TargetListComponent implements OnInit {
 
   doAdd(rowId: string = null): void {
     this.modalService.open('slide-in-form', new TargetFormComponent(this.router, this.aroute, this.iscsiService, this.loader, this.translate, this.ws, this.modalService), rowId);
-    this.modalService.onClose$.subscribe((res) => {
+    this.modalService.onClose$.subscribe(() => {
       this.entityList.getData();
     });
   }

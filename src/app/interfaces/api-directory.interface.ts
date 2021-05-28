@@ -50,10 +50,6 @@ export type ApiDirectory = {
   'activedirectory.update': { params: any; response: any };
   'activedirectory.nss_info_choices': { params: any; response: any };
 
-  // AFP
-  'afp.bindip_choices': { params: any; response: any };
-  'afp.config': { params: any; response: any };
-
   // Acme
   'acme.dns.authenticator.query': { params: void; response: DnsAuthenticator[] };
   'acme.dns.authenticator.create': { params: CreateDnsAuthenticator; response: DnsAuthenticator };
@@ -584,9 +580,6 @@ export type ApiDirectory = {
   'sharing.smb.update': { params: any; response: any };
   'sharing.smb.delete': { params: any; response: any };
   'sharing.smb.presets': { params: any; response: any };
-  'sharing.afp.query': { params: any; response: any };
-  'sharing.afp.update': { params: any; response: any };
-  'sharing.afp.create': { params: any; response: any };
   'sharing.nfs.query': { params: any; response: NfsShare[] };
   'sharing.nfs.update': { params: any; response: any };
   'sharing.nfs.create': { params: any; response: any };
