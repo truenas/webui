@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DatasetType } from 'app/enums/dataset-type.enum';
+import { VmDeviceType } from 'app/enums/vm.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -52,7 +53,7 @@ export class DeviceEditComponent implements OnInit {
   fieldSets: any;
   isCustActionVisible = false;
   protected ipAddress: any = [];
-  selectedType = 'CDROM';
+  selectedType = VmDeviceType.Cdrom;
   formGroup: any;
   activeFormGroup: any;
   cdromFormGroup: any;
@@ -78,22 +79,22 @@ export class DeviceEditComponent implements OnInit {
       options: [
         {
           label: 'CD-ROM',
-          value: 'CDROM',
+          value: VmDeviceType.Cdrom,
         }, {
           label: 'NIC',
-          value: 'NIC',
+          value: VmDeviceType.Nic,
         }, {
           label: 'Disk',
-          value: 'DISK',
+          value: VmDeviceType.Disk,
         }, {
           label: 'Raw File',
-          value: 'RAW',
+          value: VmDeviceType.Raw,
         }, {
           label: 'PCI Passthru Device',
-          value: 'PCI',
+          value: VmDeviceType.Pci,
         }, {
           label: 'Display',
-          value: 'DISPLAY',
+          value: VmDeviceType.Display,
         },
       ],
       value: helptext.dtype_value,
@@ -348,18 +349,19 @@ export class DeviceEditComponent implements OnInit {
     },
   ];
 
-  constructor(protected router: Router,
+  readonly VmDeviceType = VmDeviceType;
+
+  constructor(
+    protected router: Router,
     protected aroute: ActivatedRoute,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
-    public translate: TranslateService,
     protected loader: AppLoaderService,
-    protected systemGeneralService: SystemGeneralService,
     protected networkService: NetworkService,
     protected dialogService: DialogService,
     private core: CoreService,
-    protected vmService: VmService) {}
+    protected vmService: VmService,
+  ) {}
 
   preInit(): void {
     // Display
@@ -453,52 +455,60 @@ export class DeviceEditComponent implements OnInit {
     this.displayFormGroup = this.entityFormService.createFormGroup(this.displayFieldConfig);
 
     this.activeFormGroup = this.cdromFormGroup;
-    await this.ws.call('vm.device.query', [[['id', '=', this.deviceid]]]).subscribe((res) => {
-      if (res[0].attributes.physical_sectorsize !== undefined && res[0].attributes.logical_sectorsize !== undefined) {
-        res[0].attributes['sectorsize'] = res[0].attributes.logical_sectorsize === null ? 0 : res[0].attributes.logical_sectorsize;
+    await this.ws.call('vm.device.query', [[['id', '=', this.deviceid]]]).subscribe((device) => {
+      if (device[0].attributes.physical_sectorsize !== undefined && device[0].attributes.logical_sectorsize !== undefined) {
+        device[0].attributes['sectorsize'] = device[0].attributes.logical_sectorsize === null ? 0 : device[0].attributes.logical_sectorsize;
       }
-      const deviceInformation = { ...res[0].attributes, ...{ order: res[0].order } };
-      this.vminfo = res[0];
-      res = res[0].dtype;
-      this.selectedType = res;
-      if (res === 'CDROM') {
-        this.activeFormGroup = this.cdromFormGroup;
-        this.isCustActionVisible = false;
-      } else if (res === 'NIC') {
-        this.activeFormGroup = this.nicFormGroup;
-        this.isCustActionVisible = true;
-      } else if (res === 'DISK') {
-        this.activeFormGroup = this.diskFormGroup;
-        this.isCustActionVisible = false;
-      } else if (res === 'RAW') {
-        this.activeFormGroup = this.rawfileFormGroup;
-        this.isCustActionVisible = false;
-        // special case where RAW file device is used as a BOOT device.
-        if (this.vminfo.attributes.boot && this.vminfo.attributes.rootpwd) {
-          this.rootpwd = _.find(this.rawfileFieldConfig, { name: 'rootpwd' });
-          this.rootpwd['isHidden'] = false;
-          this.boot = _.find(this.rawfileFieldConfig, { name: 'boot' });
-          this.boot['isHidden'] = false;
-        }
-      } else if (res === 'PCI') {
-        this.activeFormGroup = this.pciFormGroup;
-        this.isCustActionVisible = false;
-      } else if (res === 'DISPLAY') {
-        this.activeFormGroup = this.displayFormGroup;
-        this.isCustActionVisible = false;
-        this.ws.call('vm.get_display_devices', [this.vmId]).subscribe((devices: Device[]) => {
-          if (devices.length > 1) {
-            _.find(this.displayFieldConfig, { name: 'type' }).isHidden = true;
+      const deviceInformation = { ...device[0].attributes, ...{ order: device[0].order } };
+      this.vminfo = device[0];
+      const deviceType = device[0].dtype;
+      this.selectedType = deviceType;
+      switch (deviceType) {
+        case VmDeviceType.Cdrom:
+          this.activeFormGroup = this.cdromFormGroup;
+          this.isCustActionVisible = false;
+          break;
+        case VmDeviceType.Nic:
+          this.activeFormGroup = this.nicFormGroup;
+          this.isCustActionVisible = true;
+          break;
+        case VmDeviceType.Disk:
+          this.activeFormGroup = this.diskFormGroup;
+          this.isCustActionVisible = false;
+          break;
+        case VmDeviceType.Raw:
+          this.activeFormGroup = this.rawfileFormGroup;
+          this.isCustActionVisible = false;
+          // special case where RAW file device is used as a BOOT device.
+          if (this.vminfo.attributes.boot && this.vminfo.attributes.rootpwd) {
+            this.rootpwd = _.find(this.rawfileFieldConfig, { name: 'rootpwd' });
+            this.rootpwd['isHidden'] = false;
+            this.boot = _.find(this.rawfileFieldConfig, { name: 'boot' });
+            this.boot['isHidden'] = false;
           }
-        }, (err) => {
-          new EntityUtils().handleWSError(this, err, this.dialogService);
-        });
+          break;
+        case VmDeviceType.Pci:
+          this.activeFormGroup = this.pciFormGroup;
+          this.isCustActionVisible = false;
+          break;
+        case VmDeviceType.Display:
+          this.activeFormGroup = this.displayFormGroup;
+          this.isCustActionVisible = false;
+          this.ws.call('vm.get_display_devices', [this.vmId]).subscribe((devices: Device[]) => {
+            if (devices.length > 1) {
+              _.find(this.displayFieldConfig, { name: 'type' }).isHidden = true;
+            }
+          }, (err) => {
+            new EntityUtils().handleWSError(this, err, this.dialogService);
+          });
+          break;
       }
+
       this.setgetValues(this.activeFormGroup, deviceInformation);
     });
     this.aroute.params.subscribe((params) => {
-      this.ws.call('vm.query', [[['id', '=', parseInt(params['vmid'], 10)]]]).subscribe((res) => {
-        if (res[0].status.state === ServiceStatus.Running) {
+      this.ws.call('vm.query', [[['id', '=', parseInt(params['vmid'], 10)]]]).subscribe((vms) => {
+        if (vms[0].status.state === ServiceStatus.Running) {
           this.activeFormGroup.setErrors({ invalid: true });
         }
       });

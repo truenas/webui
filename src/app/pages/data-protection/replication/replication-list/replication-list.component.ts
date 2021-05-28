@@ -175,7 +175,7 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
             customSubmit(entityDialog: EntityDialogComponent) {
               parent.loader.open();
               parent.ws.call('replication.restore', [row.id, entityDialog.formValue]).subscribe(
-                (res) => {
+                () => {
                   entityDialog.dialogRef.close(true);
                   parent.entityList.getData();
                 },

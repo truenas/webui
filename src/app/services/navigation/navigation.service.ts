@@ -47,18 +47,10 @@ export class NavigationService {
   },
   {
     name: T('Shares'),
-    type: 'slideOut',
+    type: 'link',
     tooltip: T('Shares'),
     icon: 'folder_shared',
     state: 'sharing',
-    sub: [
-      { name: T('Shares Dashboard'), state: 'dashboard' },
-      { name: T('Apple Shares (AFP)'), state: 'afp' },
-      { name: T('Block Shares (iSCSI)'), state: 'iscsi' },
-      { name: T('Unix Shares (NFS)'), state: 'nfs' },
-      { name: T('WebDAV Shares'), state: 'webdav' },
-      { name: T('Windows Shares (SMB)'), state: 'smb' },
-    ],
   },
   {
     name: T('Data Protection'),
@@ -157,7 +149,7 @@ export class NavigationService {
   // navigation component has subscribed this Observable
   menuItems$ = this.menuItems.asObservable();
 
-  publishNavigationChange(menuType: string): void {
+  publishNavigationChange(): void {
     this.menuItems.next(this.defaultMenu);
   }
 }

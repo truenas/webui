@@ -110,7 +110,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
     return invertUMask(data);
   }
 
-  preInit(entityEdit: any): void {
+  preInit(): void {
     this.userService.userQueryDSCache().subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {

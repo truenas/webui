@@ -208,7 +208,7 @@ def ssh_sudo(cmd, host, user, password):
     child.logfile = sys.stdout
     child.expect('ssword:')
     child.sendline(password)
-    child.expect('ssword:')
+    child.expect(f'ssword for {user}:')
     child.sendline(password)
     child.expect(pexpect.EOF)
     return child.before

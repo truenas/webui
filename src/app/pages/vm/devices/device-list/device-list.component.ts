@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -21,10 +21,10 @@ import * as _ from 'lodash';
     <entity-table [title]="title" [conf]="this"></entity-table>
   `,
 })
-export class DeviceListComponent {
-  protected resource_name: string;
-  protected route_add: string[];
-  protected route_edit: string[];
+export class DeviceListComponent implements InputTableConf {
+  resource_name: string;
+  route_add: string[];
+  route_edit: string[];
   protected route_delete: string[];
   protected pk: any;
   vm: string;
@@ -32,7 +32,7 @@ export class DeviceListComponent {
   private entityList: any;
   wsDelete: 'datastore.delete' = 'datastore.delete';
   queryCall: 'vm.device.query' = 'vm.device.query';
-  protected queryCallOption: any[] = [[['vm', '=']]];
+  queryCallOption: any[] = [[['vm', '=']]];
   busy: Subscription;
   protected loaderOpen = false;
   columns: any[] = [
@@ -47,7 +47,7 @@ export class DeviceListComponent {
     sorting: { columns: this.columns },
   };
 
-  protected globalConfig = {
+  globalConfig = {
     id: 'config',
     tooltip: T('Close (return to VM list'),
     icon: 'highlight_off',
@@ -56,10 +56,16 @@ export class DeviceListComponent {
     },
   };
 
-  constructor(protected router: Router, protected aroute: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService,
-    public dialogService: DialogService, private cdRef: ChangeDetectorRef,
-    private translate: TranslateService) {}
+  constructor(
+    protected router: Router,
+    protected aroute: ActivatedRoute,
+    protected rest: RestService,
+    protected ws: WebSocketService,
+    protected loader: AppLoaderService,
+    public dialogService: DialogService,
+    private cdRef: ChangeDetectorRef,
+    private translate: TranslateService,
+  ) {}
 
   isActionVisible(actionId: string, row: any): boolean {
     return !(actionId === 'delete' && row.id === true);

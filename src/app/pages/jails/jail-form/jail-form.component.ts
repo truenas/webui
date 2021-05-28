@@ -1010,7 +1010,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
             this.disableForm();
             this.formGroup.controls['plugin_name'].setValue(this.plugin);
             this.jailFromService.getPluginDefaults(this.plugin, this.pluginRepository, this.formGroup, this.networkfieldConfig).then(
-              (res) => {
+              () => {
                 this.toEnableForm();
               },
             );
@@ -1259,7 +1259,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
         dialogRef.componentInstance.setDescription(install_notes);
         dialogRef.componentInstance.showCloseButton = true;
 
-        dialogRef.afterClosed().subscribe((result) => {
+        dialogRef.afterClosed().subscribe(() => {
           this.router.navigate(new Array('/').concat(this.plugin_route_success));
         });
       });

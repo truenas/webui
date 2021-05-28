@@ -919,19 +919,19 @@ export class ReplicationWizardComponent {
     const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value;
 
     if (fromLocal) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         resolve(this.entityFormService.getPoolDatasets());
       });
     }
     if (sshCredentials === 'NEW') {
       return this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].setErrors({});
     }
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
         (res) => {
           resolve(res);
         },
-        (err) => {
+        () => {
           node.collapse();
         },
       );
@@ -942,19 +942,19 @@ export class ReplicationWizardComponent {
     const fromLocal = this.entityWizard.formArray.controls[0].controls['target_dataset_from'].value === DatasetSource.Local;
     const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].value;
     if (fromLocal) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         resolve(this.entityFormService.getPoolDatasets());
       });
     }
     if (sshCredentials === 'NEW') {
       return this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].setErrors({});
     }
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
         (res) => {
           resolve(res);
         },
-        (err) => {
+        () => {
           node.collapse();
         },
       );
@@ -1192,7 +1192,7 @@ export class ReplicationWizardComponent {
           }
           return this.ws.call((this.createCalls as any)[item], [payload]).toPromise();
         },
-        (err) =>
+        () =>
         // show error ?
           this.ws.call((this.createCalls as any)[item], [payload]).toPromise(),
 
@@ -1241,7 +1241,7 @@ export class ReplicationWizardComponent {
 
     if (value['schedule_method'] === ScheduleMethod.Once && createdItems['replication'] != undefined) {
       await this.ws.call('replication.run', [createdItems['replication']]).toPromise().then(
-        (res) => {
+        () => {
           this.dialogService.Info(T('Task started'), T('Replication <i>') + value['name'] + T('</i> has started.'), '500px', 'info', true);
         },
       );

@@ -26,7 +26,7 @@ import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialo
   encapsulation: ViewEncapsulation.None,
 })
 
-export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
+export class PodShellComponent implements OnInit, OnDestroy {
   // sets the shell prompt
   @Input() prompt = '';
   // xter container
@@ -189,17 +189,6 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     this.resizeTerm();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    const log: string[] = [];
-    for (const propName in changes) {
-      const changedProp = changes[propName];
-      // reprint prompt
-      if (propName === 'prompt' && this.xterm != null) {
-        // this.xterm.write(this.clearLine + this.prompt)
-      }
-    }
-  }
-
   onRightClick(): false {
     this.dialog.open(CopyPasteMessageComponent);
     return false;
@@ -225,7 +214,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
 
     var font = new FontFaceObserver(this.font_name);
 
-    font.load().then((e) => {
+    font.load().then(() => {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
       this.xterm._initialized = true;
@@ -278,7 +267,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
-    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res) => {
+    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe(() => {
       this.xterm.focus();
     });
     return true;

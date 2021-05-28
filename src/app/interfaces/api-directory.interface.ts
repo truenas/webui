@@ -36,6 +36,7 @@ import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { User } from 'app/interfaces/user.interface';
+import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { SmartTest } from 'app/interfaces/smart-test.interface';
@@ -48,10 +49,6 @@ export type ApiDirectory = {
   'activedirectory.config': { params: any; response: any };
   'activedirectory.update': { params: any; response: any };
   'activedirectory.nss_info_choices': { params: any; response: any };
-
-  // AFP
-  'afp.bindip_choices': { params: any; response: any };
-  'afp.config': { params: any; response: any };
 
   // Acme
   'acme.dns.authenticator.query': { params: void; response: DnsAuthenticator[] };
@@ -583,9 +580,6 @@ export type ApiDirectory = {
   'sharing.smb.update': { params: any; response: any };
   'sharing.smb.delete': { params: any; response: any };
   'sharing.smb.presets': { params: any; response: any };
-  'sharing.afp.query': { params: any; response: any };
-  'sharing.afp.update': { params: any; response: any };
-  'sharing.afp.create': { params: any; response: any };
   'sharing.nfs.query': { params: any; response: NfsShare[] };
   'sharing.nfs.update': { params: any; response: any };
   'sharing.nfs.create': { params: any; response: any };
@@ -626,7 +620,7 @@ export type ApiDirectory = {
   'truenas.set_production': { params: any; response: any };
 
   // Vm
-  'vm.query': { params: any; response: any };
+  'vm.query': { params: QueryParams<VirtualMachine, { get: boolean }>; response: VirtualMachine[] };
   'vm.cpu_model_choices': { params: any; response: any };
   'vm.bootloader_options': { params: any; response: any };
   'vm.device.nic_attach_choices': { params: any; response: any };
@@ -637,7 +631,7 @@ export type ApiDirectory = {
   'vm.get_display_web_uri': { params: any; response: any };
   'vm.device.passthrough_device_choices': { params: any; response: any };
   'vm.device.create': { params: any; response: any };
-  'vm.random_mac': { params: any; response: any };
+  'vm.random_mac': { params: void; response: string };
   'vm.device.query': { params: any; response: any };
   'vm.stop': { params: any; response: any };
   'vm.maximum_supported_vcpus': { params: any; response: any };

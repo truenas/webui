@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { Observable, Subject, Subscription } from 'rxjs';
 
 import { EntityUtils } from '../pages/common/entity/utils';
@@ -16,7 +17,7 @@ export class VmService {
     return this.rest.get(this.volume_resource_name, {});
   }
 
-  getVM(vm: string): Observable<any> {
+  getVM(vm: string): Observable<VirtualMachine[]> {
     return this.ws.call('vm.query', [[['name', '=', vm]], { get: true }]);
   }
 

@@ -5,7 +5,9 @@ import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 
-import { IscsiService, WebSocketService, AppLoaderService } from '../../../../../services';
+import {
+  IscsiService, WebSocketService, AppLoaderService, ModalService,
+} from '../../../../../services';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
@@ -22,7 +24,6 @@ export class TargetFormComponent implements FormConfiguration {
   queryCall: 'iscsi.target.query' = 'iscsi.target.query';
   addCall: 'iscsi.target.create' = 'iscsi.target.create';
   editCall: 'iscsi.target.update' = 'iscsi.target.update';
-  route_success: string[] = ['sharing', 'iscsi', 'target'];
   customFilter: any[] = [[['id', '=']]];
   isEntity = true;
 
@@ -152,7 +153,12 @@ export class TargetFormComponent implements FormConfiguration {
     protected iscsiService: IscsiService,
     protected loader: AppLoaderService,
     public translate: TranslateService,
-    protected ws: WebSocketService) {
+    protected ws: WebSocketService,
+    private modalService: ModalService) {
+    this.modalService.getRow$.subscribe((rowId: string) => {
+      this.customFilter = [[['id', '=', rowId]]];
+      this.pk = rowId;
+    });
     const basicFieldset = _.find(this.fieldSets, { class: 'basic' });
     this.ws.call('system.info').subscribe(
       (systemInfo) => {
@@ -221,15 +227,6 @@ export class TargetFormComponent implements FormConfiguration {
     );
   }
 
-  preInit(): void {
-    this.aroute.params.subscribe((params) => {
-      if (params['pk']) {
-        this.pk = params['pk'];
-        this.customFilter[0][0].push(parseInt(params['pk'], 10));
-      }
-    });
-  }
-
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
@@ -241,12 +238,16 @@ export class TargetFormComponent implements FormConfiguration {
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
       () => {
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        this.modalService.close('slide-in-form');
       },
       (res) => {
         this.loader.close();
         new EntityUtils().handleWSError(this.entityForm, res);
       },
     );
+  }
+
+  afterSubmit(): void {
+    this.modalService.close('slide-in-form');
   }
 }

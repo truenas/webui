@@ -54,13 +54,13 @@ export class PortalListComponent {
   constructor(protected router: Router, protected iscsiService: IscsiService) {}
 
   prerequisite(): Promise<boolean> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
       await this.iscsiService.getIpChoices().toPromise().then(
         (ips) => {
           this.ipChoices = ips;
           resolve(true);
         },
-        (err) => {
+        () => {
           resolve(true);
         },
       );

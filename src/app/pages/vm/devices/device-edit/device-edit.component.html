@@ -9,36 +9,38 @@
             <div dynamicField [config]="field" [group]="formGroup"></div>
           </div>
 
-          <div *ngIf="selectedType == 'CDROM'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
-            <div *ngFor="let cdromField of fieldSet.cdromFieldConfig;">
-              <div dynamicField [config]="cdromField" [group]="cdromFormGroup"></div>
+          <ng-container [ngSwitch]="selectedType">
+            <div *ngSwitchCase="VmDeviceType.Cdrom" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
+              <div *ngFor="let cdromField of fieldSet.cdromFieldConfig;">
+                <div dynamicField [config]="cdromField" [group]="cdromFormGroup"></div>
+              </div>
             </div>
-          </div>
-          <div *ngIf="selectedType == 'NIC'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
-            <div *ngFor="let nicField of fieldSet.nicFieldConfig;">
-              <div dynamicField [config]="nicField" [group]="nicFormGroup"></div>
+            <div *ngSwitchCase="VmDeviceType.Nic" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
+              <div *ngFor="let nicField of fieldSet.nicFieldConfig;">
+                <div dynamicField [config]="nicField" [group]="nicFormGroup"></div>
+              </div>
             </div>
-          </div>
-          <div *ngIf="selectedType == 'DISK'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
-            <div *ngFor="let diskField of fieldSet.diskFieldConfig;">
-              <div dynamicField [config]="diskField" [group]="diskFormGroup"></div>
+            <div *ngSwitchCase="VmDeviceType.Disk" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
+              <div *ngFor="let diskField of fieldSet.diskFieldConfig;">
+                <div dynamicField [config]="diskField" [group]="diskFormGroup"></div>
+              </div>
             </div>
-          </div>
-          <div *ngIf="selectedType == 'RAW'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
-            <div *ngFor="let rawfileField of fieldSet.rawfileFieldConfig;">
-              <div dynamicField [config]="rawfileField" [group]="rawfileFormGroup"></div>
+            <div *ngSwitch="VmDeviceType.Raw" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
+              <div *ngFor="let rawfileField of fieldSet.rawfileFieldConfig;">
+                <div dynamicField [config]="rawfileField" [group]="rawfileFormGroup"></div>
+              </div>
             </div>
-          </div>
-          <div *ngIf="selectedType == 'PCI'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
-            <div *ngFor="let pciField of fieldSet.pciFieldConfig;">
-              <div dynamicField [config]="pciField" [group]="pciFormGroup"></div>
+            <div *ngSwitchCase="VmDeviceType.Pci" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
+              <div *ngFor="let pciField of fieldSet.pciFieldConfig;">
+                <div dynamicField [config]="pciField" [group]="pciFormGroup"></div>
+              </div>
             </div>
-          </div>
-          <div *ngIf="selectedType == 'DISPLAY'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
-            <div *ngFor="let displayField of fieldSet.displayFieldConfig;">
-              <div dynamicField [config]="displayField" [group]="displayFormGroup"></div>
+            <div *ngSwitchCase="VmDeviceType.Display" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
+              <div *ngFor="let displayField of fieldSet.displayFieldConfig;">
+                <div dynamicField [config]="displayField" [group]="displayFormGroup"></div>
+              </div>
             </div>
-          </div>
+          </ng-container>
 
         </div>
       </ng-container>

@@ -1,4 +1,4 @@
-<mat-card class="app-table" fxLayout="column" #apptable>
+<mat-card class="app-table" fxLayout="column" #apptable [class.mat-elevation-z0]="_tableConf.expandable">
   <mat-toolbar-row *ngIf="!_tableConf.expandable">
     <h3 class="title" *ngIf="title">
       <ng-container *ngIf="titleHref; else plainTitle">
@@ -45,6 +45,8 @@
 
                 <mat-icon *ngSwitchCase="'state-icon'" class="state-icon" [class]="unifyState(element[column.prop])">{{column.state.icon}}</mat-icon>
 
+                <mat-checkbox *ngSwitchCase="'checkbox'" ix-auto ix-auto-type="checkbox" ix-auto-identifier="{{element[column.prop]}}-checkbox" color="primary" [(ngModel)]="element[column.prop]" (change)="column.onChange(element)" (click)="$event.stopPropagation();" [disabled]="!column.onChange"></mat-checkbox>
+
                 <button *ngSwitchCase="'state-button'" mat-stroked-button [ngClass]="getButtonClass(element[column.prop].state)" ix-auto ix-auto-type="button" ix-auto-identifier="{{element[column.prop]}}-task-state" (click)="$event.stopPropagation(); onButtonClick(element)">{{ element[column.prop].state }}</button>
 
                 <ng-container *ngSwitchDefault>
@@ -88,7 +90,7 @@
                 </ng-template>
               </ng-container>
             </ng-container>
-            <button mat-icon-button (click)="deleteRow(element)" *ngIf="_tableConf.deleteCall">
+            <button mat-icon-button (click)="$event.stopPropagation(); deleteRow(element)" *ngIf="_tableConf.deleteCall">
               <mat-icon class="table-action-button" [matTooltip]="'Delete' | translate">delete</mat-icon>
             </button>
           </div>
@@ -100,7 +102,7 @@
     </table>
     <entity-empty *ngIf="dataSource && dataSource.length === 0" [conf]="emptyConf" fxFlex fxLayoutAlign="center"></entity-empty>
   </div>
-  <div class="view-more-row" *ngIf="showViewMore" (click)="openViewMore()">View More</div>
-  <div class="view-more-row" *ngIf="showCollapse" (click)="collapse()">Collapse</div>
+  <div class="view-more-row" *ngIf="showViewMore && !_tableConf.alwaysHideViewMore" (click)="openViewMore()">View More</div>
+  <div class="view-more-row" *ngIf="showCollapse && !_tableConf.alwaysHideViewMore" (click)="collapse()">Collapse</div>
 </mat-card-content>
 </mat-card>

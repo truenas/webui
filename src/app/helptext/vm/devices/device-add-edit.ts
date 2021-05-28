@@ -1,10 +1,11 @@
+import { VmDeviceType } from 'app/enums/vm.enum';
 import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
 
 export default {
   dtype_placeholder: T('Type'),
-  dtype_value: 'CDROM',
+  dtype_value: VmDeviceType.Cdrom,
   dtype_validation: [Validators.required],
 
   cd_path_placeholder: T('CD-ROM Path'),
