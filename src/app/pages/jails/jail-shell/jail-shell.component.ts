@@ -4,13 +4,13 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { ShellService, WebSocketService } from '../../../services';
 import helptext from '../../../helptext/shell/shell';
 import { Terminal } from 'xterm';
-import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
 import * as FontFaceObserver from 'fontfaceobserver';
 
@@ -98,9 +98,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    const log: string[] = [];
     for (const propName in changes) {
-      const changedProp = changes[propName];
       // reprint prompt
       if (propName === 'prompt' && this.xterm != null) {
         this.xterm.write(this.clearLine + this.prompt);
@@ -154,14 +152,14 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     };
 
     this.xterm = new Terminal(setting);
-    const attachAddon = new AttachAddon(this.ss.socket);
+    const attachAddon = new XtermAttachAddon(this.ss.socket);
     this.xterm.loadAddon(attachAddon);
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
 
     var font = new FontFaceObserver(this.font_name);
 
-    font.load().then((e) => {
+    font.load().then(() => {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
       this.xterm._initialized = true;
@@ -174,7 +172,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
-    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res) => {
+    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe(() => {
       this.xterm.focus();
     });
     return true;

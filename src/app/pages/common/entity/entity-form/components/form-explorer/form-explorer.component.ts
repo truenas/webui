@@ -142,7 +142,7 @@ export class FormExplorerComponent implements Field, OnInit {
 
   onClick(event: any): void {
     const selectedTreeNodes = Object.entries(event.treeModel.selectedLeafNodeIds)
-      .filter(([key, value]) => (value === true)).map((node) => event.treeModel.getNodeById(node[0]));
+      .filter(([, value]) => (value === true)).map((node) => event.treeModel.getNodeById(node[0]));
     // this is to mark selected node, but not update form value
     if (event.eventName === 'select' && this.group.controls[this.config.name].value && this.group.controls[this.config.name].value.indexOf(event.node.data.name) > -1) {
       return;

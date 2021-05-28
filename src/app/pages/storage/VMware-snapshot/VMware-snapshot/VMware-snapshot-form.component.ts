@@ -126,7 +126,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
     protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService,
     protected loader: AppLoaderService) { }
 
-  preInit(entityForm: any): void {
+  preInit(): void {
     const queryPayload: any[] = [];
     this.route.params.subscribe((params) => {
       queryPayload.push('id');
@@ -194,7 +194,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
       });
     } else {
       this.loader.open();
-      this.ws.call(this.addCall, [payload]).subscribe((res) => {
+      this.ws.call(this.addCall, [payload]).subscribe(() => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },
@@ -208,7 +208,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
   customEditCall(body: any): void {
     if (this.entityForm.pk) {
       this.entityForm.loader.open();
-      this.ws.call('vmware.update', [this.entityForm.pk, body]).subscribe((res) => {
+      this.ws.call('vmware.update', [this.entityForm.pk, body]).subscribe(() => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       }, (error) => {
@@ -217,7 +217,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
       });
     } else {
       this.entityForm.loader.open();
-      this.ws.call('vmware.create', [body]).subscribe((res) => {
+      this.ws.call('vmware.create', [body]).subscribe(() => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       }, (error) => {

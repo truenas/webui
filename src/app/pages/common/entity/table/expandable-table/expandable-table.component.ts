@@ -1,6 +1,7 @@
 import {
-  Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild,
+  Component, ElementRef, Input, ViewChild,
 } from '@angular/core';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 
 export interface InputExpandableTableConf extends InputTableConf {
@@ -26,6 +27,7 @@ export class ExpandableTableComponent {
   actions: any[];
   isEmpty = true;
   isExpanded = false;
+  readonly ServiceStatus = ServiceStatus;
 
   ExpandatbleTableState = ExpandableTableState;
 

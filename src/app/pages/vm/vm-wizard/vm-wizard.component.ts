@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DatasetType } from 'app/enums/dataset-type.enum';
+import { VmBootloader, VmDeviceType, VmTime } from 'app/enums/vm.enum';
 import { ProductType } from '../../../enums/product-type.enum';
 import {
   RestService, WebSocketService, NetworkService, StorageService, SystemGeneralService,
@@ -98,8 +99,11 @@ export class VMWizardComponent {
           tooltip: helptext.time_tooltip,
           validation: [Validators.required],
           required: true,
-          value: 'LOCAL',
-          options: [{ label: helptext.time_local_text, value: 'LOCAL' }, { label: 'UTC', value: 'UTC' }],
+          value: VmTime.Local,
+          options: [
+            { label: helptext.time_local_text, value: VmTime.Local },
+            { label: 'UTC', value: VmTime.Utc },
+          ],
         },
         {
           type: 'select',
@@ -433,7 +437,7 @@ export class VMWizardComponent {
           name: 'gpus',
           multiple: true,
           options: [],
-          required: true,
+          required: false,
         },
       ],
     },
@@ -504,8 +508,8 @@ export class VMWizardComponent {
   }
 
   afterInit(entityWizard: EntityWizardComponent): void {
-    this.ws.call('vm.query').subscribe((res: any[]) => {
-      res.forEach((i) => this.namesInUse.push(i.name));
+    this.ws.call('vm.query').subscribe((vms) => {
+      vms.forEach((i) => this.namesInUse.push(i.name));
     });
 
     this.ws.call('vm.device.bind_choices').subscribe((res) => {
@@ -553,7 +557,7 @@ export class VMWizardComponent {
     });
 
     this.getFormControlFromFieldName('bootloader').valueChanges.subscribe((bootloader) => {
-      if (!this.productType.includes(ProductType.Scale) && bootloader !== 'UEFI') {
+      if (!this.productType.includes(ProductType.Scale) && bootloader !== VmBootloader.Uefi) {
         _.find(this.wizardConfig[0].fieldConfig, { name: 'enable_display' })['isHidden'] = true;
         _.find(this.wizardConfig[0].fieldConfig, { name: 'wait' })['isHidden'] = true;
         _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' }).isHidden = true;
@@ -725,7 +729,7 @@ export class VMWizardComponent {
         this.getFormControlFromFieldName('iso_path').setValue(message);
       });
       this.res = res;
-      const grub = this.bootloader.options.find((option: any) => option.value === 'GRUB');
+      const grub = this.bootloader.options.find((option: any) => option.value === VmBootloader.Grub);
       const grubIndex = this.bootloader.options.indexOf(grub);
       if (res === 'Windows') {
         if (grub) {
@@ -868,7 +872,7 @@ export class VMWizardComponent {
   cpuValidator(name: string): ValidatorFn {
     const self = this;
     // TODO: setTimeout breaks typing
-    return function validCPU(control: FormControl): any {
+    return function validCPU(): any {
       const config = self.wizardConfig[1].fieldConfig.find((c) => c.name === name);
       setTimeout(() => {
         const errors = self.vcpus * self.cores * self.threads > self.maxVCPUs
@@ -988,20 +992,20 @@ export class VMWizardComponent {
     vmPayload['autostart'] = value.autostart;
     if (value.iso_path && value.iso_path !== undefined) {
       vmPayload['devices'] = [
-        { dtype: 'NIC', attributes: { type: value.NIC_type, mac: value.NIC_mac, nic_attach: value.nic_attach } },
+        { dtype: VmDeviceType.Nic, attributes: { type: value.NIC_type, mac: value.NIC_mac, nic_attach: value.nic_attach } },
         {
-          dtype: 'DISK',
+          dtype: VmDeviceType.Disk,
           attributes: {
             path: hdd, type: value.hdd_type, physical_sectorsize: null, logical_sectorsize: null,
           },
         },
-        { dtype: 'CDROM', attributes: { path: value.iso_path } },
+        { dtype: VmDeviceType.Cdrom, attributes: { path: value.iso_path } },
       ];
     } else {
       vmPayload['devices'] = [
-        { dtype: 'NIC', attributes: { type: value.NIC_type, mac: value.NIC_mac, nic_attach: value.nic_attach } },
+        { dtype: VmDeviceType.Nic, attributes: { type: value.NIC_type, mac: value.NIC_mac, nic_attach: value.nic_attach } },
         {
-          dtype: 'DISK',
+          dtype: VmDeviceType.Disk,
           attributes: {
             path: hdd, type: value.hdd_type, physical_sectorsize: null, logical_sectorsize: null,
           },
@@ -1013,7 +1017,7 @@ export class VMWizardComponent {
       for (const gpuPciSlot of value.gpus) {
         const gpuIndex = this.gpus.findIndex((gpu: any) => gpu.addr.pci_slot == gpuPciSlot);
         vmPayload['devices'].push(...this.gpus[gpuIndex].devices.map((gpuDevice: any) => ({
-          dtype: 'PCI',
+          dtype: VmDeviceType.Pci,
           attributes: {
             pptdev: gpuDevice.vm_pci_slot,
           },
@@ -1024,7 +1028,7 @@ export class VMWizardComponent {
     if (value.enable_display) {
       if (this.productType.includes(ProductType.Scale)) {
         vmPayload['devices'].push({
-          dtype: 'DISPLAY',
+          dtype: VmDeviceType.Display,
           attributes: {
             port: this.displayPort,
             bind: value.bind,
@@ -1033,9 +1037,9 @@ export class VMWizardComponent {
             type: value.display_type,
           },
         });
-      } else if (value.bootloader === 'UEFI') {
+      } else if (value.bootloader === VmBootloader.Uefi) {
         vmPayload['devices'].push({
-          dtype: 'DISPLAY',
+          dtype: VmDeviceType.Display,
           attributes: {
             wait: value.wait,
             port: this.displayPort,
@@ -1064,7 +1068,7 @@ export class VMWizardComponent {
     }
     if (value.hdd_path) {
       for (const device of vmPayload['devices']) {
-        if (device.dtype === 'DISK') {
+        if (device.dtype === VmDeviceType.Disk) {
           device.attributes.path = '/dev/zvol/' + value.hdd_path;
         }
       }
@@ -1084,14 +1088,14 @@ export class VMWizardComponent {
           ));
         }
         combineLatest(observables).subscribe(
-          (responses_array) => {
+          () => {
             this.loader.close();
             this.modalService.close('slide-in-form');
           },
           (error) => {
             setTimeout(() => {
               this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).subscribe(
-                (res) => {
+                () => {
                   this.loader.close();
                   this.dialogService.errorReport(T('Error creating VM.'), T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted);
                 },
@@ -1110,7 +1114,7 @@ export class VMWizardComponent {
       });
     } else {
       for (const device of vmPayload['devices']) {
-        if (device.dtype === 'DISK') {
+        if (device.dtype === VmDeviceType.Disk) {
           const origHdd = device.attributes.path;
           const createZvol = zvolPayload['create_zvol'];
           const zvolName = zvolPayload['zvol_name'];
@@ -1139,14 +1143,14 @@ export class VMWizardComponent {
           ));
         }
         combineLatest(observables).subscribe(
-          (responses_array) => {
+          () => {
             this.loader.close();
             this.modalService.close('slide-in-form');
           },
           (error) => {
             setTimeout(() => {
               this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).subscribe(
-                (res) => {
+                () => {
                   this.loader.close();
                   this.dialogService.errorReport(T('Error creating VM.'), T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted);
                 },

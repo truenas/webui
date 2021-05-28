@@ -118,6 +118,7 @@ export class ChartWizardComponent implements OnDestroy {
         });
       }
     } catch (error) {
+      console.error(error);
       this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
   }
@@ -139,6 +140,7 @@ export class ChartWizardComponent implements OnDestroy {
     const apiCall = this.addCall;
     delete data.version;
 
+    data = new EntityUtils().remapAppSubmitData(data);
     const payload = [];
     payload.push({
       catalog: this.catalogApp.catalog.id,

@@ -783,7 +783,7 @@ export class IscsiWizardComponent {
       (res) => {
         this.entityWizard.formArray.controls[0].controls['volblocksize'].setValue(res);
       },
-      (err) => {
+      () => {
         datasetField.hasErrors = true;
       },
     );

@@ -67,7 +67,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy {
         this.dataSource.data = res;
         this.dataSource.sort = this.sort;
       },
-      (err) => {
+      () => {
 
       },
     );
@@ -122,11 +122,9 @@ export class TaskManagerComponent implements OnInit, OnDestroy {
             (snack_res) => {
               const url = snack_res[1];
               const mimetype = 'text/plain';
-              let failed = false;
               this.storageService.streamDownloadFile(this.http, url, element.id + '.log', mimetype).subscribe((file) => {
                 this.storageService.downloadBlob(file, element.id + '.log');
               }, (err) => {
-                failed = true;
                 new EntityUtils().handleWSError(this, err);
               });
             },

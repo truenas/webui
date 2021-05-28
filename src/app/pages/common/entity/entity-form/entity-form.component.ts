@@ -161,10 +161,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
     for (const i in this.fieldConfig) {
-      const config = this.fieldConfig[i];
-      if (config.relation.length > 0) {
-        this.fieldRelationService.setRelation(config, this.formGroup);
-      }
+      this.fieldRelationService.setRelation(this.fieldConfig[i], this.formGroup);
     }
   }
 
@@ -190,12 +187,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       fieldConfigs = fieldConfigs.concat(fieldSet.config);
     });
 
-    for (const i in fieldConfigs) {
-      const config = fieldConfigs[i];
-      if (config.relation?.length > 0) {
-        this.fieldRelationService.setRelation(config, this.formGroup);
-      }
-    }
+    fieldConfigs.forEach((fieldConfig) => {
+      this.fieldRelationService.setRelation(fieldConfig, this.formGroup);
+    });
 
     this.fieldConfig = this.fieldConfig.concat(fieldConfigs);
     this.conf.fieldConfig = this.fieldConfig;
@@ -365,10 +359,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                   const current_field = this.fieldConfig.find((control) => control.name === key);
                   if (current_field.type === 'array') {
                     this.setArrayValue(this.wsResponse[key], this.wsfg, key);
-                  } else if (current_field.type === 'list') {
+                  } else if (current_field.type === 'list' || current_field.type === 'dict') {
                     this.setObjectListValue(this.wsResponse[key], this.wsfg, current_field);
-                  } else if (current_field.type === 'dict') {
-                    this.wsfg.patchValue(this.wsResponse[key]);
                   } else if (!(current_field.type === 'select' && current_field.options.length == 0)) {
                     this.wsfg.setValue(this.wsResponse[key]);
                   }
@@ -376,6 +368,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                   this.conf.dataAttributeHandler(this);
                 }
               }
+
+              this.formGroup.patchValue(this.wsResponse);
             }
           }
 
@@ -679,41 +673,55 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     });
   }
 
-  createFieldConfigForList(values: any[], fieldConfig: FieldConfig): void {
-    fieldConfig['listFields'] = [];
-    for (let i = 0; i < values.length; i++) {
-      const value = values[i];
-      const templateListField = _.cloneDeep(fieldConfig.templateListField);
-
-      templateListField.forEach((subFieldConfig) => {
-        if (subFieldConfig.type == 'list') {
-          if (value[subFieldConfig.name]) {
-            const subValues = value[subFieldConfig.name];
-            this.createFieldConfigForList(subValues, subFieldConfig);
+  addExtraFieldConfigs(value: any, fieldConfig: FieldConfig): void {
+    if (value) {
+      if (fieldConfig.type == 'list' && Array.isArray(value)) {
+        fieldConfig.listFields = [];
+        value.forEach((listValue) => {
+          const templateListField = _.cloneDeep(fieldConfig.templateListField);
+          templateListField.forEach((subFieldConfig) => {
+            const subValue = listValue[subFieldConfig.name];
+            if (subFieldConfig.type == 'list' || subFieldConfig.type == 'dict') {
+              this.addExtraFieldConfigs(subValue, subFieldConfig);
+            }
+          });
+          fieldConfig.listFields.push(templateListField);
+        });
+      } else if (fieldConfig.type == 'dict' && fieldConfig.subFields) {
+        fieldConfig.subFields.forEach((subFieldConfig) => {
+          const subValue = value[subFieldConfig.name];
+          if (subFieldConfig.type == 'list' || subFieldConfig.type == 'dict') {
+            this.addExtraFieldConfigs(subValue, subFieldConfig);
           }
-        } else if (value[subFieldConfig.name] !== undefined) {
-          subFieldConfig.value = value[subFieldConfig.name];
-        }
-      });
-      fieldConfig['listFields'].push(templateListField);
+        });
+      }
     }
   }
 
-  setObjectListValue(values: object[], formArray: FormArray, fieldConfig: FieldConfig): void {
-    this.createFieldConfigForList(values, fieldConfig);
-
-    for (let i = 0; i < fieldConfig['listFields'].length; i++) {
-      const formGroup = this.entityFormService.createFormGroup(fieldConfig['listFields'][i]);
-      formArray.push(formGroup);
-    }
-
-    for (let i = 0; i < fieldConfig['listFields'].length; i++) {
-      fieldConfig['listFields'][i].forEach((subFieldConfig) => {
-        this.fieldRelationService.setRelation(subFieldConfig, formArray.at(i) as FormGroup);
+  addExtraFormControls(fieldConfig: FieldConfig, formControl: AbstractControl): void {
+    if (fieldConfig.type == 'list' && fieldConfig.listFields) {
+      for (let i = 0; i < fieldConfig.listFields.length; i++) {
+        const formGroup = this.entityFormService.createFormGroup(fieldConfig.listFields[i]);
+        (formControl as FormArray).push(formGroup);
+      }
+      for (let i = 0; i < fieldConfig.listFields.length; i++) {
+        fieldConfig.listFields[i].forEach((subFieldConfig) => {
+          this.fieldRelationService.setRelation(subFieldConfig, (formControl as FormArray).at(i) as FormGroup);
+        });
+      }
+    } else if (fieldConfig.type == 'dict' && fieldConfig.subFields) {
+      fieldConfig.subFields.forEach((subFieldConfig) => {
+        if (subFieldConfig.type == 'list' || subFieldConfig.type == 'dict') {
+          const subFromControl = this.formGroup.controls[subFieldConfig.name];
+          this.addExtraFormControls(subFieldConfig, subFromControl);
+        }
       });
     }
+  }
 
-    formArray.markAllAsTouched();
+  setObjectListValue(values: any, formControl: AbstractControl, fieldConfig: FieldConfig): void {
+    this.addExtraFieldConfigs(values, fieldConfig);
+    this.addExtraFormControls(fieldConfig, formControl);
   }
 
   ngOnDestroy(): void {

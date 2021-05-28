@@ -189,7 +189,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     return test != -1;
   }
 
-  getBatch(lastSeen: string): number[] {
+  getBatch(): number[] {
     return this.visibleReports;
   }
 

@@ -17,7 +17,7 @@
     <mat-card-content>
       <div class="pb-1">
         <h5 class="m-0 pb-1">Choose a Navigation Style</h5>
-        <mat-radio-group fxLayout="column" [(ngModel)]="selectedMenu" (change)="changeSidenav($event)">
+        <mat-radio-group fxLayout="column" [(ngModel)]="selectedMenu" (change)="changeSidenav()">
           <mat-radio-button *ngFor="let type of sidenavTypes" [value]="type.value">
             {{type.name}}
           </mat-radio-button>

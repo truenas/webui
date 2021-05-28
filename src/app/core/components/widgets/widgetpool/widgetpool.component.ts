@@ -40,18 +40,6 @@ import {
   // clamp
 } from 'popmotion';
 
-interface NetIfInfo {
-  name: string;
-  primary: string;
-  aliases?: string;
-}
-
-interface NetTraffic {
-  'KB/s in': string;
-  'KB/s out': string;
-  name: string;
-}
-
 interface Slide {
   name: string;
   index?: string;
@@ -308,10 +296,6 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       const usedObj = (<any>window).filesize(this.volumeData.used, { output: 'object', exponent: 3 });
       usedValue = usedObj.value;
     }
-    const used: ChartData = {
-      legend: 'Used',
-      data: [usedValue],
-    };
 
     if (usedValue == 'Locked') {
       // When Locked, Bail before we try to get details.
@@ -319,20 +303,10 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       return 0;
     }
 
-    let availableValue;
-    if (isNaN(this.volumeData.avail)) {
-      availableValue = this.volumeData.avail;
-    } else {
-      const availableObj = (<any>window).filesize(this.volumeData.avail, { output: 'object', exponent: 3 });
-      availableValue = availableObj.value;
+    if (!isNaN(this.volumeData.avail)) {
       this.voldataavail = true;
     }
-    const available: ChartData = {
-      legend: 'Available',
-      data: [availableValue],
-    };
 
-    const percentage = this.volumeData.used_pct ? this.volumeData.used_pct.split('%') : '';
     this.core.emit({ name: 'PoolDisksRequest', data: [this.poolState.id] });
 
     this.displayValue = (<any>window).filesize(this.volumeData.avail, { standard: 'iec' });

@@ -2,6 +2,7 @@ import { ApplicationRef, Component, Injector } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { FormControl } from '@angular/forms';
+import { VmDeviceType, VmTime } from 'app/enums/vm.enum';
 import * as _ from 'lodash';
 import { ProductType } from '../../../enums/product-type.enum';
 import {
@@ -71,7 +72,10 @@ export class VmFormComponent implements FormConfiguration {
           placeholder: helptext.time_placeholder,
           tooltip: helptext.time_tooltip,
           type: 'select',
-          options: [{ label: helptext.time_local_text, value: 'LOCAL' }, { label: helptext.time_utc_text, value: 'UTC' }],
+          options: [
+            { label: helptext.time_local_text, value: VmTime.Local },
+            { label: helptext.time_utc_text, value: VmTime.Utc },
+          ],
         },
         {
           type: 'select',
@@ -308,7 +312,7 @@ export class VmFormComponent implements FormConfiguration {
 
   cpuValidator(name: string): any {
     const self = this;
-    return function validCPU(control: FormControl) {
+    return function validCPU() {
       const config = self.fieldConfig.find((c) => c.name === name);
       setTimeout(() => {
         const errors = self.vcpus * self.cores * self.threads > self.maxVCPUs
@@ -335,7 +339,7 @@ export class VmFormComponent implements FormConfiguration {
     vmRes['memory'] = this.storageService.convertBytestoHumanReadable(vmRes['memory'] * 1048576, 0);
     this.ws.call('device.get_info', ['GPU']).subscribe((gpus: GpuDevice[]) => {
       this.gpus = gpus;
-      const vmPciSlots: string[] = vmRes.devices.filter((device: any) => device.dtype === 'PCI').map((pciDevice: any) => pciDevice.attributes.pptdev);
+      const vmPciSlots: string[] = vmRes.devices.filter((device: any) => device.dtype === VmDeviceType.Pci).map((pciDevice: any) => pciDevice.attributes.pptdev);
       const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
       for (const item of gpus) {
         gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
@@ -365,7 +369,7 @@ export class VmFormComponent implements FormConfiguration {
     const pciDevicesToCreate = [];
     const vmPciDeviceIdsToRemove = [];
 
-    const prevVmPciDevices = this.rawVmData.devices.filter((device: any) => device.dtype === 'PCI');
+    const prevVmPciDevices = this.rawVmData.devices.filter((device: any) => device.dtype === VmDeviceType.Pci);
     const prevVmPciSlots: string[] = prevVmPciDevices.map((pciDevice: any) => pciDevice.attributes.pptdev);
     const prevGpus = this.gpus.filter((gpu) => {
       for (const gpuPciDevice of gpu.devices) {
@@ -387,7 +391,7 @@ export class VmFormComponent implements FormConfiguration {
       if (!found) {
         const gpuPciDevices = currentGpu.devices.filter((gpuPciDevice) => !prevVmPciSlots.includes(gpuPciDevice.vm_pci_slot));
         const gpuPciDevicesConverted = gpuPciDevices.map((pptDev) => ({
-          dtype: 'PCI',
+          dtype: VmDeviceType.Pci,
           vm: this.rawVmData.id,
           attributes: {
             pptdev: pptDev.vm_pci_slot,
@@ -436,7 +440,7 @@ export class VmFormComponent implements FormConfiguration {
     observables.push(this.ws.call('vm.update', [this.rawVmData.id, updatedVmData]));
 
     combineLatest(observables).subscribe(
-      (responses_array) => {
+      () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },

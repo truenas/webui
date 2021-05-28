@@ -1,4 +1,11 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { TranslateService } from '@ngx-translate/core';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import _ from 'lodash';
+
 import { T } from 'app/translate-marker';
 import { helptext_sharing_webdav } from 'app/helptext/sharing';
 import { ExpandableTableState, InputExpandableTableConf } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
@@ -9,16 +16,19 @@ import {
   AppLoaderService, DialogService, IscsiService, ModalService, NetworkService, SystemGeneralService, UserService, WebSocketService,
 } from 'app/services';
 import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form';
-import { ActivatedRoute, Router } from '@angular/router';
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form';
-import { TranslateService } from '@ngx-translate/core';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { Validators } from '@angular/forms';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { TableComponent } from 'app/pages/common/entity/table/table.component';
+import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { Service } from 'app/interfaces/service.interface';
+import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
+import { AppTableHeaderExtraAction } from 'app/pages/common/entity/table/table.component';
 
 enum ShareType {
   SMB = 'smb',
@@ -60,11 +70,31 @@ export class SharesDashboardComponent {
   nfsExpandableState: ExpandableTableState;
   smbExpandableState: ExpandableTableState;
   iscsiExpandableState: ExpandableTableState;
+  onDestroy$ = new Subject();
+  smbServiceStatus = ServiceStatus.Loading;
+  webdavServiceStatus = ServiceStatus.Loading;
+  nfsServiceStatus = ServiceStatus.Loading;
+  iscsiServiceStatus = ServiceStatus.Loading;
+  readonly ServiceStatus = ServiceStatus;
 
   constructor(private userService: UserService, private modalService: ModalService, private ws: WebSocketService,
     private dialog: DialogService, private networkService: NetworkService, private router: Router,
     private loader: AppLoaderService, private sysGeneralService: SystemGeneralService, private aroute: ActivatedRoute,
-    private iscsiService: IscsiService, private translate: TranslateService) {}
+    private iscsiService: IscsiService, private translate: TranslateService) {
+    this.ws
+      .call('service.query', [])
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((services) => {
+        [
+          _.find(services, { service: ServiceName.Cifs }),
+          _.find(services, { service: ServiceName.Iscsi }),
+          _.find(services, { service: ServiceName.WebDav }),
+          _.find(services, { service: ServiceName.Nfs }),
+        ].forEach((service) => {
+          this.updateTableServiceStatus(service);
+        });
+      });
+  }
 
   ngAfterViewInit(): void {
     if (this.webdavHasItems) {
@@ -127,7 +157,12 @@ export class SharesDashboardComponent {
           columns: [
             { name: helptext_sharing_nfs.column_path, prop: 'paths', always_display: true },
             { name: helptext_sharing_nfs.column_comment, prop: 'comment' },
-            { name: helptext_sharing_nfs.column_enabled, prop: 'enabled' },
+            {
+              name: helptext_sharing_nfs.column_enabled,
+              prop: 'enabled',
+              checkbox: true,
+              onChange: (row: any) => this.onCheckboxStateToggle(ShareType.NFS, row),
+            },
           ],
           detailsHref: '/sharing/nfs',
           add() {
@@ -207,9 +242,14 @@ export class SharesDashboardComponent {
             { prop: 'name', name: helptext_sharing_webdav.column_name, always_display: true },
             { prop: 'comment', name: helptext_sharing_webdav.column_comment },
             { prop: 'path', name: helptext_sharing_webdav.column_path },
-            { prop: 'enabled', name: helptext_sharing_webdav.column_enabled },
             { prop: 'ro', name: helptext_sharing_webdav.column_ro, hidden: true },
             { prop: 'perm', name: helptext_sharing_webdav.column_perm, hidden: true },
+            {
+              prop: 'enabled',
+              name: helptext_sharing_webdav.column_enabled,
+              checkbox: true,
+              onChange: (row: any) => this.onCheckboxStateToggle(ShareType.WebDAV, row),
+            },
           ],
           add() {
             this.parent.add(this.tableComponent, ShareType.WebDAV);
@@ -248,7 +288,12 @@ export class SharesDashboardComponent {
             { name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
             { name: helptext_sharing_smb.column_path, prop: 'path' },
             { name: helptext_sharing_smb.column_comment, prop: 'comment' },
-            { name: helptext_sharing_smb.column_enabled, prop: 'enabled', checkbox: true },
+            {
+              name: helptext_sharing_smb.column_enabled,
+              prop: 'enabled',
+              checkbox: true,
+              onChange: (row: any) => this.onCheckboxStateToggle(ShareType.SMB, row),
+            },
           ],
           limitRowsByMaxHeight: true,
           add() {
@@ -293,7 +338,7 @@ export class SharesDashboardComponent {
         break;
     }
     this.modalService.open('slide-in-form', formComponent, id);
-    this.modalService.onClose$.subscribe((res) => {
+    this.modalService.onClose$.subscribe(() => {
       if (!tableComponent) {
         this.refreshDashboard();
       } else {
@@ -405,5 +450,116 @@ export class SharesDashboardComponent {
       parent: this,
     };
     this.dialog.dialogForm(conf);
+  }
+
+  onCheckboxStateToggle(card: ShareType, row: any): void {
+    let updateCall: keyof ApiDirectory;
+    switch (card) {
+      case ShareType.SMB:
+        updateCall = 'sharing.smb.update';
+        break;
+      case ShareType.WebDAV:
+        updateCall = 'sharing.webdav.update';
+        break;
+      case ShareType.NFS:
+        updateCall = 'sharing.nfs.update';
+        break;
+      default:
+        return;
+    }
+
+    this.ws.call(updateCall, [row.id, { enabled: row.enabled }]).subscribe(
+      (updatedEntity) => {
+        row.enabled = updatedEntity.enabled;
+
+        if (!updatedEntity) {
+          row.enabled = !row.enabled;
+        }
+      },
+      (err) => {
+        row.enabled = !row.enabled;
+        new EntityUtils().handleWSError(this, err, this.dialog);
+      },
+    );
+  }
+
+  updateTableServiceStatus(service: Service): void {
+    switch (service.service) {
+      case ServiceName.Cifs:
+        this.smbServiceStatus = service.state;
+        this.smbTableConf.tableExtraActions = this.getTableExtraActions(service);
+        break;
+      case ServiceName.Nfs:
+        this.nfsServiceStatus = service.state;
+        this.nfsTableConf.tableExtraActions = this.getTableExtraActions(service);
+        break;
+      case ServiceName.WebDav:
+        this.webdavServiceStatus = service.state;
+        this.webdavTableConf.tableExtraActions = this.getTableExtraActions(service);
+        break;
+      case ServiceName.Iscsi:
+        this.iscsiServiceStatus = service.state;
+        this.iscsiTableConf.tableExtraActions = this.getTableExtraActions(service);
+    }
+  }
+
+  getTableExtraActions(service: Service): AppTableHeaderExtraAction[] {
+    return [
+      {
+        label: service.state === ServiceStatus.Running ? T('Turn Off Service') : T('Turn On Service'),
+        onClick: () => {
+          const rpc = service.state === ServiceStatus.Running ? 'service.stop' : 'service.start';
+          this.updateTableServiceStatus({ ...service, state: ServiceStatus.Loading });
+          this.ws.call(rpc, [service.service]).pipe(takeUntil(this.onDestroy$)).subscribe((hasChanged: boolean) => {
+            if (hasChanged) {
+              if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
+                this.dialog.Info(
+                  this.translate.instant(T('Service failed to stop')),
+                  this.translate.instant('{service} service failed to stop.', { service: serviceNames.get(service.service) || service.service }),
+                );
+              }
+              service.state = ServiceStatus.Running;
+            } else {
+              if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
+                this.dialog.Info(
+                  this.translate.instant(T('Service failed to start')),
+                  this.translate.instant('{service} service failed to start.', { service: serviceNames.get(service.service) || service.service }),
+                );
+              }
+              service.state = ServiceStatus.Stopped;
+            }
+            this.updateTableServiceStatus(service);
+          });
+        },
+      },
+      {
+        label: T('Config Service'),
+        onClick: () => {
+          if (service.service === ServiceName.Iscsi) {
+            this.router.navigate(['/', 'sharing', 'iscsi']);
+          } else if (service.service === ServiceName.Cifs) {
+            this.router.navigate(['/', 'services', 'smb']);
+          } else {
+            this.router.navigate(['/', 'services', service.service]);
+          }
+        },
+      },
+    ];
+  }
+
+  getStatusClass(status: ServiceStatus): string {
+    switch (status) {
+      case ServiceStatus.Running:
+        return 'fn-theme-primary';
+      case ServiceStatus.Stopped:
+        return 'fn-theme-red';
+      default:
+        return 'fn-theme-orange';
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 }

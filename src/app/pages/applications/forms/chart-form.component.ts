@@ -101,6 +101,7 @@ export class ChartFormComponent implements FormConfiguration {
 
       fieldSets = fieldSets.filter((fieldSet) => fieldSet.config.length > 0);
     } catch (error) {
+      console.error(error);
       this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
 
@@ -119,13 +120,21 @@ export class ChartFormComponent implements FormConfiguration {
 
     this.name = data.name;
 
-    data.config['release_name'] = data.name;
-    data.config['extra_fieldsets'] = this.parseSchema(chartSchema);
+    const extraFieldSets = this.parseSchema(chartSchema);
+    let fieldConfigs: FieldConfig[] = [];
+    extraFieldSets.forEach((fieldSet) => {
+      fieldConfigs = fieldConfigs.concat(fieldSet.config);
+    });
+    const configData = new EntityUtils().remapAppConfigData(data.config, fieldConfigs);
 
-    return data.config;
+    configData['release_name'] = data.name;
+    configData['extra_fieldsets'] = this.parseSchema(chartSchema);
+
+    return configData;
   }
 
   customSubmit(data: any): void {
+    data = new EntityUtils().remapAppSubmitData(data);
     const payload = [];
     payload.push({
       catalog: this.catalogApp.catalog.id,

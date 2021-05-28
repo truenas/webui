@@ -175,7 +175,7 @@ export class JailListComponent {
     id: 'config',
     tooltip: helptext.globalConfig.tooltip,
     onClick: () => {
-      this.prerequisite().then((res) => {
+      this.prerequisite().then(() => {
         if (this.availablePools !== undefined) {
           this.activatePool();
         }
@@ -205,7 +205,7 @@ export class JailListComponent {
   }
 
   prerequisite(): Promise<boolean> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
       await this.ws.call('pool.query').toPromise().then((pools) => {
         if (pools.length === 0) {
           resolve(true);
@@ -229,7 +229,7 @@ export class JailListComponent {
           }
         }, (err) => {
           this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted).subscribe(
-            (res) => {
+            () => {
               resolve(false);
             },
           );
@@ -268,7 +268,7 @@ export class JailListComponent {
         const value = entityDialog.formValue;
         self.entityList.loader.open();
         self.ws.call('jail.activate', [value['selectedPool']]).subscribe(
-          (res) => {
+          () => {
             self.addBtnDisabled = false;
             self.activatedPool = value['selectedPool'];
             entityDialog.dialogRef.close(true);

@@ -67,7 +67,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     show: false,
   };
   protected tooltipOptions: TooltipOptions = {
-    contents: (raw, defaultTitleFormat, defaultValueFormat, color) => {
+    contents: (raw) => {
       if (!this.showLegendValues) {
         this.showLegendValues = true;
       }
@@ -218,6 +218,6 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     this.render();
   }
 
-  render(conf?: any): void {
+  render(): void {
   }
 }

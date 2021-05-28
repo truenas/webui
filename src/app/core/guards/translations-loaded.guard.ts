@@ -20,7 +20,7 @@ export class TranslationsLoadedGuard implements CanActivate {
     private ws: WebSocketService,
   ) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+  canActivate(): Observable<boolean> {
     let waitForTranslations: Observable<boolean>;
 
     if (!this.ws.connected) {

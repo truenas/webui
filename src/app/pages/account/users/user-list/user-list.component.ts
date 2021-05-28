@@ -172,7 +172,7 @@ export class UserListComponent implements OnDestroy {
             customSubmit(entityDialog: EntityDialogComponent) {
               entityDialog.dialogRef.close(true);
               self.loader.open();
-              self.ws.call(self.wsDelete, [users_edit.id, entityDialog.formValue]).subscribe((res) => {
+              self.ws.call(self.wsDelete, [users_edit.id, entityDialog.formValue]).subscribe(() => {
                 self.entityList.getData();
                 self.loader.close();
               },

@@ -50,10 +50,10 @@ export class RebootComponent implements OnInit {
 
     this.dialog.closeAll();
     this.ws.call('system.reboot', {}).subscribe(
-      (res) => {
+      () => {
       },
       (res) => { // error on reboot
-        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted).subscribe((closed) => {
+        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted).subscribe(() => {
           this.router.navigate(['/session/signin']);
         });
       },

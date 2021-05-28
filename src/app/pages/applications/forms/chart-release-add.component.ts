@@ -368,7 +368,11 @@ export class ChartReleaseAddComponent implements OnDestroy {
     });
   }
 
-  parseSchema(catalogApp: any): void {
+  setGpuConfiguration(catalogApp: any): void {
+    if (!catalogApp) {
+      return;
+    }
+
     try {
       const gpuConfiguration = catalogApp.schema.questions.find((question: any) => question.variable == 'gpuConfiguration');
 
@@ -382,6 +386,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
         this.wizardConfig.push(gpuWizardConfig);
       }
     } catch (error) {
+      console.error(error);
       this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
   }

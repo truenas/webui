@@ -51,10 +51,20 @@ import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
+import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 
 export interface TaskCard {
   name: string;
   tableConf: InputTableConf;
+}
+
+enum TaskCardId {
+  Scrub = 'scrub',
+  Snapshot = 'snapshot',
+  Replication = 'replication',
+  CloudSync = 'cloudsync',
+  Rsync = 'rsync',
+  Smart = 'smart',
 }
 
 @Component({
@@ -145,7 +155,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
   getCardData(): void {
     this.dataCards = [
       {
-        name: 'scrub',
+        name: TaskCardId.Scrub,
         tableConf: {
           title: helptext.fieldset_scrub_tasks,
           titleHref: '/tasks/scrub',
@@ -158,7 +168,13 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             { name: T('Description'), prop: 'description' },
             { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
             { name: T('Next Run'), prop: 'next_run', width: '80px' },
-            { name: T('Enabled'), prop: 'enabled', width: '50px' },
+            {
+              name: T('Enabled'),
+              prop: 'enabled',
+              width: '50px',
+              checkbox: true,
+              onChange: (row: ScrubTaskUi) => this.onCheckboxStateToggle(TaskCardId.Scrub, row),
+            },
           ],
           deleteMsg: {
             title: T('Scrub Task'),
@@ -182,7 +198,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         },
       },
       {
-        name: 'snapshot',
+        name: TaskCardId.Snapshot,
         tableConf: {
           title: helptext.fieldset_periodic_snapshot_tasks,
           titleHref: '/tasks/snapshot',
@@ -200,8 +216,9 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             {
               name: T('Enabled'),
               prop: 'enabled',
-              checkbox: true,
               width: '50px',
+              checkbox: true,
+              onChange: (row: PeriodicSnapshotTaskUi) => this.onCheckboxStateToggle(TaskCardId.Snapshot, row),
             },
             {
               name: T('State'),
@@ -225,7 +242,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         },
       },
       {
-        name: 'replication',
+        name: TaskCardId.Replication,
         tableConf: {
           title: helptext.fieldset_replication_tasks,
           titleHref: '/tasks/replication',
@@ -244,8 +261,9 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             {
               name: T('Enabled'),
               prop: 'enabled',
-              checkbox: true,
               width: '50px',
+              checkbox: true,
+              onChange: (row: ReplicationTaskUi) => this.onCheckboxStateToggle(TaskCardId.Replication, row),
             },
             {
               name: T('State'),
@@ -267,7 +285,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         },
       },
       {
-        name: 'cloudsync',
+        name: TaskCardId.CloudSync,
         tableConf: {
           title: helptext.fieldset_cloud_sync_tasks,
           titleHref: '/tasks/cloudsync',
@@ -288,7 +306,13 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               prop: 'next_run',
               width: '80px',
             },
-            { name: T('Enabled'), prop: 'enabled', width: '50px' },
+            {
+              name: T('Enabled'),
+              width: '50px',
+              prop: 'enabled',
+              checkbox: true,
+              onChange: (row: CloudSyncTaskUi) => this.onCheckboxStateToggle(TaskCardId.Scrub, row),
+            },
             {
               name: T('State'),
               prop: 'state',
@@ -309,7 +333,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         },
       },
       {
-        name: 'rsync',
+        name: TaskCardId.Rsync,
         tableConf: {
           title: helptext.fieldset_rsync_tasks,
           titleHref: '/tasks/rsync',
@@ -324,7 +348,13 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             { name: T('Remote Host'), prop: 'remotehost' },
             { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
             { name: T('Next Run'), prop: 'next_run' },
-            { name: T('Enabled'), prop: 'enabled', width: '50px' },
+            {
+              name: T('Enabled'),
+              prop: 'enabled',
+              width: '50px',
+              checkbox: true,
+              onChange: (row: RsyncTaskUi) => this.onCheckboxStateToggle(TaskCardId.Rsync, row),
+            },
             {
               name: T('State'),
               prop: 'state',
@@ -348,7 +378,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         },
       },
       {
-        name: 'smart',
+        name: TaskCardId.Smart,
         tableConf: {
           title: helptext.fieldset_smart_tests,
           titleHref: '/tasks/smart',
@@ -503,15 +533,17 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
       if (test.all_disks) {
         test.disks = [this.parent.translate.instant(helptext_smart.smarttest_all_disks_placeholder)];
       } else if (test.disks.length) {
-        test.disks = [test.disks
-          .map((identifier: any) => {
-            const fullDisk = this.parent.disks.find((item: any) => item.identifier === identifier);
-            if (fullDisk) {
-              identifier = fullDisk.devname;
-            }
-            return identifier;
-          })
-          .join(',')];
+        test.disks = [
+          test.disks
+            .map((identifier: any) => {
+              const fullDisk = this.parent.disks.find((item: any) => item.identifier === identifier);
+              if (fullDisk) {
+                identifier = fullDisk.devname;
+              }
+              return identifier;
+            })
+            .join(','),
+        ];
       }
       return test;
     });
@@ -912,6 +944,42 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     } else {
       this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
     }
+  }
+
+  onCheckboxStateToggle(card: TaskCardId, row: ScrubTaskUi | PeriodicSnapshotTaskUi | ReplicationTaskUi | CloudSyncTaskUi | RsyncTaskUi): void {
+    let updateCall: keyof ApiDirectory;
+    switch (card) {
+      case TaskCardId.Scrub:
+        updateCall = 'pool.scrub.update';
+        break;
+      case TaskCardId.Snapshot:
+        updateCall = 'pool.snapshottask.update';
+        break;
+      case TaskCardId.Replication:
+        updateCall = 'replication.update';
+        break;
+      case TaskCardId.CloudSync:
+        updateCall = 'cloudsync.update';
+        break;
+      case TaskCardId.Rsync:
+        updateCall = 'rsynctask.update';
+        break;
+      default:
+        return;
+    }
+
+    this.ws.call(updateCall, [row.id, { enabled: row.enabled }]).subscribe(
+      (updatedEntity) => {
+        row.enabled = updatedEntity.enabled;
+        if (!updatedEntity) {
+          row.enabled = !row.enabled;
+        }
+      },
+      (err) => {
+        row.enabled = !row.enabled;
+        new EntityUtils().handleWSError(this, err, this.dialog);
+      },
+    );
   }
 
   ngOnDestroy(): void {
