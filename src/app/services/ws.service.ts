@@ -154,7 +154,7 @@ export class WebSocketService {
     } else if (data.msg == 'sub') {
       // pass
     } else {
-      console.error('Unknown message: ', data);
+      console.warn('Unknown message: ', data);
     }
   }
 
