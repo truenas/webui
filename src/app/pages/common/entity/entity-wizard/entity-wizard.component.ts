@@ -38,7 +38,7 @@ export class EntityWizardComponent implements OnInit {
 
   saveSubmitText = T('Submit');
   customNextText = T('Next');
-
+  autoSummaryHtml: string;
   get formArray(): AbstractControl | null { return this.formGroup.get('formArray'); }
 
   constructor(protected rest: RestService, protected ws: WebSocketService,
@@ -250,41 +250,107 @@ export class EntityWizardComponent implements OnInit {
   selectionChange(event: StepperSelectionEvent): void {
     if (this.conf.isAutoSummary) {
       if (event.selectedIndex == this.conf.wizardConfig.length) {
-        this.conf.summary = [];
-        for (let step = 0; step < this.conf.wizardConfig.length; step++) {
-          const wizard = this.conf.wizardConfig[step];
-          wizard.fieldConfig.forEach((fieldConfig: any) => {
-            const formControl = (< FormGroup > this.formArray.get([step]).get(fieldConfig.name));
-            if (formControl) {
-              let summaryName = fieldConfig.placeholder;
-              if (!summaryName) {
-                summaryName = fieldConfig.name;
-              }
-              this.conf.summary[summaryName] = this.getSummaryValue(fieldConfig, formControl);
-            }
-          });
-        }
+        this.updateSummary();
       }
     }
   }
 
-  getSummaryValue(fieldConfig: FieldConfig, formControl: AbstractControl): void {
-    let result = formControl.value;
-
-    if (fieldConfig.type === 'select') {
-      const selectedOption = fieldConfig.options.find((option) => option.value == formControl.value);
-      if (selectedOption) {
-        result = selectedOption.label;
-      }
-    } else if (Array.isArray(formControl.value)) {
-      let arrayValueCount = 0;
-      formControl.value.forEach((item) => {
-        const isNotEmptyArray = new EntityUtils().filterArrayFunction(item);
-        if (isNotEmptyArray) {
-          arrayValueCount++;
+  updateSummary(): void {
+    let summary = {};
+    for (let step = 0; step < this.conf.wizardConfig.length; step++) {
+      const wizard = this.conf.wizardConfig[step];
+      wizard.fieldConfig.forEach((fieldConfig: any) => {
+        const formControl = (< FormGroup > this.formArray.get([step]).get(fieldConfig.name));
+        const stepSummary = this.getSummaryValue(fieldConfig, formControl);
+        if (stepSummary) {
+          summary = { ...summary, ...stepSummary };
         }
       });
-      result = arrayValueCount;
+    }
+
+    summary = new EntityUtils().remapAppSubmitData(summary);
+    this.conf.summary = summary;
+    this.autoSummaryHtml = this.generateSummaryHtml(summary);
+  }
+
+  generateSummaryHtml(data: any, isRoot = true): string {
+    const className = isRoot ? '' : 'wizard-ul';
+    let result = `<ul class="${className}">`;
+    Object.keys(data).forEach((key) => {
+      const value = data[key];
+      if (value) {
+        result += '<li>';
+        if (Array.isArray(value)) {
+          result += `<div>${key}: ${value.length}</div>`;
+        } else if (typeof value === 'object') {
+          result += `<label>${key}:</label>`;
+          result += this.generateSummaryHtml(data[key], false);
+        } else {
+          result += `<div>${key}: ${value}</div>`;
+        }
+      }
+      result += '</li>';
+    });
+    result += '</ul>';
+    return result;
+  }
+
+  getSummaryValue(fieldConfig: FieldConfig, formControl: AbstractControl): any {
+    let result: any;
+    let value: any;
+
+    if (!formControl) {
+      return null;
+    }
+    let key = fieldConfig.placeholder;
+    if (!key) {
+      key = fieldConfig.name;
+    }
+
+    if (fieldConfig.type == 'dict') {
+      if (fieldConfig.subFields) {
+        fieldConfig.subFields.forEach((subFieldConfig: FieldConfig) => {
+          const subFormControl = formControl.get(subFieldConfig.name);
+          const subValue = this.getSummaryValue(subFieldConfig, subFormControl);
+          if (!value) {
+            value = subValue;
+          } else {
+            value = { ...value, ...subValue };
+          }
+        });
+      }
+    } else if (fieldConfig.type == 'list') {
+      fieldConfig.listFields.forEach((listFieldConfig: FieldConfig[], index: number) => {
+        const listFormGroup = (formControl as FormArray).at(index);
+        let listValue: any;
+        listFieldConfig.forEach((subListFieldConfig: FieldConfig) => {
+          const subListFormGroup = listFormGroup.get(subListFieldConfig.name);
+          const subValue = this.getSummaryValue(subListFieldConfig, subListFormGroup);
+          if (!listValue) {
+            listValue = subValue;
+          } else {
+            listValue = { ...listValue, ...subValue };
+          }
+        });
+        if (listValue) {
+          if (!value) {
+            value = [];
+          }
+          value.push(listValue);
+        }
+      });
+    } else {
+      value = formControl.value;
+      if (fieldConfig.type === 'select') {
+        const selectedOption = fieldConfig.options.find((option) => option.value == formControl.value);
+        if (selectedOption) {
+          value = selectedOption.label;
+        }
+      }
+    }
+
+    if (value) {
+      result = { [key]: value };
     }
 
     return result;

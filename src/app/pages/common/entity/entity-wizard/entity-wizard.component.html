@@ -50,7 +50,7 @@
         <ng-template matStepLabel>{{"Confirm Options" | translate}}</ng-template>
         <div *ngIf="conf.summary">
           <div> {{ conf.summaryTitle }}</div>
-          <ul >
+          <ul *ngIf="!conf.isAutoSummary">
             <li *ngFor="let item of conf.summary | keyvalue : originalOrder">
               <div *ngIf="item.value | keyvalue; else inobject">
                 <label>{{item.key}}:</label>
@@ -65,6 +65,7 @@
               </ng-template>
             </li>
           </ul>
+          <div [innerHtml]="autoSummaryHtml" *ngIf="conf.isAutoSummary"></div>
         </div>
         {{"Confirm these settings." | translate}}
         <mat-card-actions class="wizard-action">
