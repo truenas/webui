@@ -4,6 +4,10 @@ import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-t
 import { IscsiService } from '../../../../../services/iscsi.service';
 import { T } from 'app/translate-marker';
 import { EntityUtils } from '../../../../common/entity/utils';
+import { AppLoaderService, ModalService, WebSocketService } from 'app/services';
+import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-iscsi-target-list',
@@ -43,7 +47,8 @@ export class TargetListComponent implements OnInit {
   };
 
   protected entityList: any;
-  constructor(private iscsiService: IscsiService) {}
+  constructor(private iscsiService: IscsiService, private modalService: ModalService, private router: Router,
+    private aroute: ActivatedRoute, private loader: AppLoaderService, private translate: TranslateService, private ws: WebSocketService) {}
 
   ngOnInit(): void {
     if (this.fcEnabled) {
@@ -56,6 +61,17 @@ export class TargetListComponent implements OnInit {
 
   afterInit(entityList: any): void {
     this.entityList = entityList;
+  }
+
+  doAdd(rowId: string = null): void {
+    this.modalService.open('slide-in-form', new TargetFormComponent(this.router, this.aroute, this.iscsiService, this.loader, this.translate, this.ws, this.modalService), rowId);
+    this.modalService.onClose$.subscribe((res) => {
+      this.entityList.getData();
+    });
+  }
+
+  doEdit(id: string): void {
+    this.doAdd(id);
   }
 
   getActions(row: any): EntityTableAction[] {
