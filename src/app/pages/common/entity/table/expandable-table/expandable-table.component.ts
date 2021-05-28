@@ -30,7 +30,7 @@ export class ExpandableTableComponent {
   isExpanded = false;
   readonly ServiceStatus = ServiceStatus;
 
-  ExpandatbleTableState = ExpandableTableState;
+  readonly ExpandatbleTableState = ExpandableTableState;
 
   @Input('conf') tableConf: InputExpandableTableConf;
 
@@ -64,22 +64,23 @@ export class ExpandableTableComponent {
   }
 
   ngAfterViewChecked(): void {
-    if (this.isExpanded) {
-      const tableHeader = this.appTable.nativeElement.querySelector('thead');
-      const detailsRow = this.appTable.nativeElement.querySelector('#actions-row');
-      const expandableHeader = this.appTable.nativeElement.querySelector('mat-expansion-panel-header');
-      const tableHeaderHeight = tableHeader ? tableHeader.offsetHeight : 0;
-      const expandableHeaderHeight = expandableHeader ? expandableHeader.offsetHeight : 0;
-      const detailsFooterHeight = detailsRow ? detailsRow.offsetHeight : 0;
-      const totalHeight = this.appTable.nativeElement.clientHeight;
-      const maxRowsHeight = totalHeight - expandableHeaderHeight - tableHeaderHeight - detailsFooterHeight;
-      if (this.tableConf.limitRowsByMaxHeight) {
-        const prevRowsLimit = this.tableConf.limitRows;
-        const TABLE_ROW_SIZE = 48;
-        this.tableConf.limitRows = Math.floor(maxRowsHeight / TABLE_ROW_SIZE);
-        if (prevRowsLimit !== this.tableConf.limitRows) {
-          this.tableConf = { ...this.tableConf };
-        }
+    if (!this.isExpanded) {
+      return;
+    }
+    const tableHeader = this.appTable.nativeElement.querySelector('thead');
+    const detailsRow = this.appTable.nativeElement.querySelector('#actions-row');
+    const expandableHeader = this.appTable.nativeElement.querySelector('mat-expansion-panel-header');
+    const tableHeaderHeight = tableHeader ? tableHeader.offsetHeight : 0;
+    const expandableHeaderHeight = expandableHeader ? expandableHeader.offsetHeight : 0;
+    const detailsFooterHeight = detailsRow ? detailsRow.offsetHeight : 0;
+    const totalHeight = this.appTable.nativeElement.clientHeight;
+    const maxRowsHeight = totalHeight - expandableHeaderHeight - tableHeaderHeight - detailsFooterHeight;
+    if (this.tableConf.limitRowsByMaxHeight) {
+      const prevRowsLimit = this.tableConf.limitRows;
+      const tableRowSize = 48;
+      this.tableConf.limitRows = Math.floor(maxRowsHeight / tableRowSize);
+      if (prevRowsLimit !== this.tableConf.limitRows) {
+        this.tableConf = { ...this.tableConf };
       }
     }
   }
