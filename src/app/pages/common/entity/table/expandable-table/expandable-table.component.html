@@ -41,6 +41,8 @@
     <app-table  [conf]="tableConf"></app-table>
   </mat-expansion-panel>
   <div id="actions-row" [ngClass]="{'actions-row': isExpanded && tableConf.detailsHref}" *ngIf="isExpanded && tableConf.detailsHref">
-    <a [routerLink]="tableConf.detailsHref.split('/')">{{ 'View Details' | translate }}</a>
+    <div>
+      <a [routerLink]="tableConf.detailsHref.split('/')">{{ 'View Details' | translate }}</a>
+    </div>
   </div>
 </mat-card>
