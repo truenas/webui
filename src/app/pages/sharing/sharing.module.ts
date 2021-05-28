@@ -12,8 +12,6 @@ import { EntityFormService } from '../common/entity/entity-form/services/entity-
 import { UserService } from '../../services/user.service';
 
 import { routing } from './sharing.routing';
-import { AFPListComponent } from './afp/afp-list';
-import { AFPFormComponent } from './afp/afp-form';
 import { NFSListComponent } from './nfs/nfs-list';
 import { NFSFormComponent } from './nfs/nfs-form';
 import { WebdavListComponent } from './webdav/webdav-list';
@@ -54,8 +52,6 @@ import { SharesDashboardComponent } from './components/shares-dashboard/shares-d
     CommonDirectivesModule,
   ],
   declarations: [
-    AFPListComponent,
-    AFPFormComponent,
     NFSListComponent,
     NFSFormComponent,
     SharesDashboardComponent,

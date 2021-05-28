@@ -3,8 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { T } from 'app/translate-marker';
 
-import { AFPListComponent } from './afp/afp-list';
-import { AFPFormComponent } from './afp/afp-form';
 import { NFSListComponent } from './nfs/nfs-list';
 import { WebdavListComponent } from './webdav/webdav-list';
 import { WebdavFormComponent } from './webdav/webdav-form';
@@ -27,24 +25,6 @@ export const routes: Routes = [
     data: { title: 'Sharing' },
     children: [
       {
-        path: 'afp',
-        data: { title: 'AFP', breadcrumb: 'AFP', icon: 'share' },
-        children: [{
-          path: '',
-          component: AFPListComponent,
-          data: { title: 'AFP', breadcrumb: 'AFP' },
-        },
-        {
-          path: 'add',
-          component: AFPFormComponent,
-          data: { title: 'Add', breadcrumb: 'Add' },
-        },
-        {
-          path: 'edit/:pk',
-          component: AFPFormComponent,
-          data: { title: 'Edit', breadcrumb: 'Edit' },
-        }],
-      }, {
         path: 'nfs',
         data: { title: 'NFS', breadcrumb: 'NFS', icon: 'share' },
         children: [{

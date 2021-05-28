@@ -7,8 +7,7 @@ import { Subject } from 'rxjs';
 import _ from 'lodash';
 
 import { T } from 'app/translate-marker';
-import { helptext_sharing_webdav } from 'app/helptext/sharing';
-import { helptext_sharing_afp } from 'app/helptext/sharing';
+import { helptext_sharing_nfs, helptext_sharing_webdav } from 'app/helptext/sharing';
 import { InputExpandableTableConf } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
 import { helptext_sharing_smb } from 'app/helptext/sharing';
 import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form';
@@ -93,11 +92,11 @@ export class SharesDashboardComponent implements OnInit, OnDestroy {
     emptyEntityLarge: false,
     parent: this,
     columns: [
-      { name: helptext_sharing_afp.column_name, prop: 'name', always_display: true },
-      { name: helptext_sharing_afp.column_path, prop: 'path' },
-      { name: helptext_sharing_afp.column_comment, prop: 'comment' },
+      { name: helptext_sharing_nfs.column_name, prop: 'name', always_display: true },
+      { name: helptext_sharing_nfs.column_path, prop: 'path' },
+      { name: helptext_sharing_nfs.column_comment, prop: 'comment' },
       {
-        name: helptext_sharing_afp.column_enabled,
+        name: helptext_sharing_nfs.column_enabled,
         prop: 'enabled',
         checkbox: true,
         onChange: (row: any) => this.onCheckboxStateToggle(ShareType.NFS, row),
@@ -370,7 +369,7 @@ export class SharesDashboardComponent implements OnInit, OnDestroy {
       },
     );
   }
-  
+
   updateTableServiceStatus(service: Service): void {
     switch (service.service) {
       case ServiceName.Cifs:
