@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { CoreEvent } from 'app/interfaces/events';
-import * as domHelper from '../../helpers/dom.helper';
 import { RestService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/core/services/core.service';
 import { ThemeUtils } from 'app/core/classes/theme-utils';

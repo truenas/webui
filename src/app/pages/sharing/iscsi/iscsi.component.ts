@@ -1,8 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 
-import * as _ from 'lodash';
 import { WebSocketService, IscsiService } from 'app/services';
 import { T } from 'app/translate-marker';
 

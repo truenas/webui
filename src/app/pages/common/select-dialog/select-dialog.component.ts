@@ -1,4 +1,4 @@
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Output, EventEmitter } from '@angular/core';
 import { Option } from 'app/interfaces/option.interface';

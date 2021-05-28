@@ -1,6 +1,4 @@
 import { T } from '../../../translate-marker';
-import { Validators } from '@angular/forms';
-import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
 
 export default {
   pending_changes_text: T('There are unapplied network interface changes that must be tested before being permanently saved. Test changes now?'),

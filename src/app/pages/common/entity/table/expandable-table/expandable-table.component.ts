@@ -1,8 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { Service } from 'app/interfaces/service.interface';
 import { InputTableConf } from 'app/pages/common/entity/table/table.component';
-import { Observable } from 'rxjs';
 
 export interface InputExpandableTableConf extends InputTableConf {
   alwaysCollapsed?: boolean;

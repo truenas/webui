@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 
-import * as _ from 'lodash';
-
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';

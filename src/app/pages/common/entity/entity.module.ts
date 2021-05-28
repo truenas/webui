@@ -4,7 +4,6 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../appMaterial.module';
 import { ColorPickerModule } from 'ngx-color-picker';
-import { MatSortHeader, MatSort } from '@angular/material/sort';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
@@ -13,7 +12,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DocsService } from '../../../services/docs.service';
-import { RestService, WebSocketService, JobService } from '../../../services/index';
+import { JobService } from '../../../services/index';
 import { TranslateModule } from '@ngx-translate/core';
 import { TreeTableModule } from 'primeng/treetable';
 import { NgxFilesizeModule } from 'ngx-filesize';

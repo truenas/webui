@@ -1,19 +1,13 @@
 import {
-  Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild, Renderer2, ElementRef, TemplateRef, ChangeDetectorRef, OnChanges, SimpleChanges,
+  Component, AfterViewInit, OnDestroy, Input, ViewChild, ElementRef, TemplateRef, ChangeDetectorRef, OnChanges, SimpleChanges,
 } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
-import { MaterialModule } from 'app/appMaterial.module';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 
-import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-import { TextLimiterDirective } from 'app/core/components/directives/text-limiter/text-limiter.directive';
-import { ChartData } from 'app/core/components/viewchart/viewchart.component';
-import { environment } from 'app/../environments/environment';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -22,22 +16,6 @@ import { T } from '../../../../translate-marker';
 import {
   tween,
   styler,
-  listen,
-  pointer,
-  value,
-  decay,
-  spring,
-  physics,
-  easing,
-  everyFrame,
-  keyframes,
-  timeline,
-  // velocity,
-  multicast,
-  action,
-  transform,
-  // transformMap,
-  // clamp
 } from 'popmotion';
 
 interface Slide {

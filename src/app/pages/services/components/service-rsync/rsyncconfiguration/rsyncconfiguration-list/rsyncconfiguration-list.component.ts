@@ -1,5 +1,4 @@
-import { Component, ElementRef } from '@angular/core';
-import * as _ from 'lodash';
+import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { T } from '../../../../../../translate-marker';
 

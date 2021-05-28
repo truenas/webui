@@ -4,7 +4,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { Validators } from '@angular/forms';
 
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';

@@ -1,7 +1,7 @@
 import {
-  Component, ElementRef, ViewChild, Input, OnInit, AfterViewInit,
+  Component, ViewChild, Input, OnInit, AfterViewInit,
 } from '@angular/core';
-import { MatTableModule, MatTable } from '@angular/material/table';
+import { MatTable } from '@angular/material/table';
 import { CoreEvent } from 'app/interfaces/events';
 import { DialogService, WebSocketService } from '../../../../services';
 import { EntityUtils } from '../utils';

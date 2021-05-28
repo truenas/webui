@@ -1,6 +1,6 @@
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import {
-  Disk, Enclosure, EnclosureSlot, VDev, VDevStats,
+  Disk, Enclosure, VDev, VDevStats,
 } from 'app/interfaces/storage.interface';
 
 interface EnclosureDisk extends Disk {

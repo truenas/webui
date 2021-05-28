@@ -1,6 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
-import { MatRadioChange } from '@angular/material/radio/radio';
 import { NavigationService } from '../../../services/navigation/navigation.service';
 
 @Component({

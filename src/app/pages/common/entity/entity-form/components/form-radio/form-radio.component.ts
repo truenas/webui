@@ -6,7 +6,6 @@ import { Subscription } from 'rxjs';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
-import { TooltipComponent } from '../tooltip/tooltip.component';
 
 @Component({
   selector: 'form-radio',

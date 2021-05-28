@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Subscription } from 'rxjs';
-import * as _ from 'lodash';
 
 import {
   WebSocketService, DialogService, TaskService, JobService, UserService,
