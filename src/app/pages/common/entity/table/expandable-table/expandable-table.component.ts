@@ -8,6 +8,7 @@ export interface InputExpandableTableConf extends InputTableConf {
   detailsHref?: string;
   expandableTableComponent?: ExpandableTableComponent;
   limitRows?: number;
+  configure?(): any;
   limitRowsByMaxHeight?: boolean;
 }
 
@@ -70,7 +71,7 @@ export class ExpandableTableComponent {
       const tableHeaderHeight = tableHeader ? tableHeader.offsetHeight : 0;
       const expandableHeaderHeight = expandableHeader ? expandableHeader.offsetHeight : 0;
       const detailsFooterHeight = detailsRow ? detailsRow.offsetHeight : 0;
-      const totalHeight = this.appTable.nativeElement.offsetHeight;
+      const totalHeight = this.appTable.nativeElement.clientHeight;
       const maxRowsHeight = totalHeight - expandableHeaderHeight - tableHeaderHeight - detailsFooterHeight;
       if (this.tableConf.limitRowsByMaxHeight) {
         const prevRowsLimit = this.tableConf.limitRows;

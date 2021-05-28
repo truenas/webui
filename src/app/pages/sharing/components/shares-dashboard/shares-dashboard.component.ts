@@ -224,6 +224,9 @@ export class SharesDashboardComponent {
             }
           },
           limitRows: 5,
+          configure: () => {
+            this.router.navigate(['/', 'sharing', 'iscsi']);
+          },
         };
       }
       case ShareType.WebDAV: {
