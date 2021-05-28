@@ -418,6 +418,7 @@ export class ChartReleaseEditComponent implements FormConfiguration {
         };
       }
     } catch (error) {
+      console.error(error);
       return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
 

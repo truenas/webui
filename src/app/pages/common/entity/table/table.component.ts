@@ -44,12 +44,14 @@ export interface InputTableConf {
   }; //
   tableComponent?: TableComponent;
   emptyEntityLarge?: boolean;
+  alwaysHideViewMore?: boolean;
   parent: any;
   tableActions?: AppTableHeaderAction[];
   tableExtraActions?: AppTableHeaderExtraAction[];
 
   add?(): any; // add action function
   afterGetData?(data: any): void;
+  afterDelete?(tableComponent: any): void;
   edit?(any: any): any; // edit row
   delete?(item: any, table: any): any; // customize delete row method
   dataSourceHelper?(any: any): any; // customise handle/modify dataSource
@@ -123,6 +125,9 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.limitRows = Math.max(this.limitRows, this.TABLE_MIN_ROWS);
 
       if (this.dataSource) {
+        if (this.tableConf.alwaysHideViewMore) {
+          this.limitRows = this.dataSource.length;
+        }
         this.displayedDataSource = this.dataSource.slice(0, this.limitRows);
         this.showViewMore = this.dataSource.length !== this.displayedDataSource.length;
         if (this.showCollapse) {

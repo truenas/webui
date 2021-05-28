@@ -1,7 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { ServiceAFPComponent } from './components/service-afp';
 import { ServiceDDNSComponent } from './components/service-dynamicdns';
 import { ServiceFTPComponent } from './components/service-ftp';
 import { ServiceLLDPComponent } from './components/service-lldp';
@@ -30,11 +29,6 @@ export const routes: Routes = [
     data: { title: 'SSH', breadcrumb: 'SSH' },
     path: 'ssh',
     component: ServiceSSHComponent,
-  },
-  {
-    data: { title: 'AFP', breadcrumb: 'AFP' },
-    path: 'afp',
-    component: ServiceAFPComponent,
   },
   {
     data: { title: 'FTP', breadcrumb: 'FTP' },

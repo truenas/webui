@@ -3,6 +3,7 @@ import { Validators } from '@angular/forms';
 
 export const helptext_sharing_nfs = {
   // NFSListComponent
+  column_name: T('Name'),
   column_path: T('Path'),
   column_comment: T('Description'),
   column_enabled: T('Enabled'),

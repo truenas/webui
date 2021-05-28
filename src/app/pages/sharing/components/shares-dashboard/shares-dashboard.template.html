@@ -1,23 +1,23 @@
 <div class="container" [ngClass]="getContainerClass()">
-  <app-expandable-table [ngClass]="getWebdavOrder()" [conf]="webdavTableConf">
+  <app-expandable-table [ngClass]="getWebdavOrder()" [expandableTableState]="webdavExpandableState" [disabled]="true" [conf]="webdavTableConf">
     <ng-container
       headerCustomContent
       *ngTemplateOutlet="webdavServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { $implicit: webdavServiceStatus }"
     ></ng-container>
   </app-expandable-table>
-  <app-expandable-table [ngClass]="getNfsOrder()" [conf]="nfsTableConf">
+  <app-expandable-table [ngClass]="getNfsOrder()" [expandableTableState]="nfsExpandableState" [disabled]="true" [conf]="nfsTableConf">
     <ng-container
       headerCustomContent
       *ngTemplateOutlet="nfsServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { $implicit: nfsServiceStatus }"
     ></ng-container>
   </app-expandable-table>
-  <app-expandable-table [ngClass]="getSmbOrder()" [conf]="smbTableConf">
+  <app-expandable-table [ngClass]="getSmbOrder()" [expandableTableState]="smbExpandableState" [disabled]="true" [conf]="smbTableConf">
     <ng-container
       headerCustomContent
       *ngTemplateOutlet="smbServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { $implicit: smbServiceStatus }"
     ></ng-container>
   </app-expandable-table>
-  <app-expandable-table [ngClass]="getIscsiOrder()" [conf]="iscsiTableConf">
+  <app-expandable-table [ngClass]="getIscsiOrder()" [expandableTableState]="iscsiExpandableState" [disabled]="true" [conf]="iscsiTableConf">
     <ng-container
       headerCustomContent
       *ngTemplateOutlet="iscsiServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { $implicit: iscsiServiceStatus }"
