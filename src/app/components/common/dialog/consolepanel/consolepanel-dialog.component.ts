@@ -3,6 +3,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
   Component, AfterViewChecked, ViewChild, ElementRef, EventEmitter, OnInit,
 } from '@angular/core';
+import { Interval } from 'app/interfaces/timeout.interface';
 import { WebSocketService } from '../../../../services';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -13,7 +14,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class ConsolePanelModalDialog implements OnInit {
   refreshMsg: String = 'Check to stop refresh';
-  intervalPing: any;
+  intervalPing: Interval;
   consoleMsg: String = 'Loading...';
   @ViewChild('footerBarScroll', { static: true }) private footerBarScroll: ElementRef;
   onEventEmitter = new EventEmitter();

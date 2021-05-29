@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { forkJoin } from 'rxjs';
 
 import { IscsiService } from '../../../../../services';
@@ -15,15 +15,15 @@ import { EntityUtils } from '../../../../common/entity/utils';
   `,
   providers: [IscsiService],
 })
-export class AssociatedTargetListComponent {
+export class AssociatedTargetListComponent implements EntityTableConfig {
   tableTitle = 'Associated Targets';
-  protected queryCall = 'iscsi.targetextent.query';
-  protected wsDelete = 'iscsi.targetextent.delete';
-  protected route_add: string[] = ['sharing', 'iscsi', 'associatedtarget', 'add'];
+  queryCall: 'iscsi.targetextent.query' = 'iscsi.targetextent.query';
+  wsDelete: 'iscsi.targetextent.delete' = 'iscsi.targetextent.delete';
+  route_add: string[] = ['sharing', 'iscsi', 'associatedtarget', 'add'];
   protected route_add_tooltip = 'Add Target/Extent';
-  protected route_edit: string[] = ['sharing', 'iscsi', 'associatedtarget', 'edit'];
+  route_edit: string[] = ['sharing', 'iscsi', 'associatedtarget', 'edit'];
 
-  columns: any[] = [
+  columns = [
     {
       name: T('Target'),
       prop: 'target',

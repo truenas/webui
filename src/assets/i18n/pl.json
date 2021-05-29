@@ -4324,7 +4324,6 @@
   "ip_hostname": "ip_nazwahosta",
   "list": "lista",
   "name": "nazwa",
-  "no": "nie",
   "openfiles": "otwórz pliki",
   "overview": "przegląd",
   "owner": "właściciel",
@@ -4337,6 +4336,5 @@
   "users": "użytkownicy",
   "warn": "ostrzeżenie",
   "was successfully attached.": "został pomyślanie powiązany.",
-  "while pool is encrypted": "pula jest szyfrowana",
-  "yes": "tak"
+  "while pool is encrypted": "pula jest szyfrowana"
 }

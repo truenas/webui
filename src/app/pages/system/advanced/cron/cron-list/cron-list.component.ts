@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { filter, switchMap } from 'rxjs/operators';
 import { DialogService } from '../../../../../services';
@@ -17,16 +17,16 @@ import { UserService } from '../../../../../services/user.service';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, UserService],
 })
-export class CronListComponent {
+export class CronListComponent implements EntityTableConfig {
   title = 'Cron Jobs';
-  protected wsDelete = 'cronjob.delete';
-  queryCall = 'cronjob.query';
-  protected route_add: string[] = ['tasks', 'cron', 'add'];
+  wsDelete: 'cronjob.delete' = 'cronjob.delete';
+  queryCall: 'cronjob.query' = 'cronjob.query';
+  route_add: string[] = ['tasks', 'cron', 'add'];
   protected route_add_tooltip = 'Add Cron Job';
-  protected route_edit: string[] = ['tasks', 'cron', 'edit'];
+  route_edit: string[] = ['tasks', 'cron', 'edit'];
   entityList: any;
 
-  columns: any[] = [
+  columns = [
     { name: T('Users'), prop: 'user', always_display: true },
     { name: T('Command'), prop: 'command' },
     { name: T('Description'), prop: 'description' },

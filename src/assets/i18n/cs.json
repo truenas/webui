@@ -4327,7 +4327,6 @@
   "is already in use.": "se již používá.",
   "list": "seznam",
   "name": "název",
-  "no": "ne",
   "overview": "přehled",
   "owner": "vlastník",
   "password": "heslo",
@@ -4337,6 +4336,5 @@
   "template": "šablona",
   "wallclock": "nástěnné hodiny",
   "was successfully attached.": "byl úspěšně připojen.",
-  "while pool is encrypted": "zatímco je pool zašifrován",
-  "yes": "ano"
+  "while pool is encrypted": "zatímco je pool zašifrován"
 }

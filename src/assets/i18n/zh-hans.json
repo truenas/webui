@@ -4307,7 +4307,6 @@
   "mount_procfs": "挂载_procfs",
   "mountd(8) bind port": "mountd(8) 绑定端口",
   "name": "名称",
-  "no": "否",
   "nshm": "NSHM",
   "on Sundays at 00:00 (12:00 AM)": "在星期日的00:00（12:00 AM）",
   "on the first day of the month at 00:00 (12:00 AM)": "在每月的第一天00:00（12:00 AM）",
@@ -4337,6 +4336,5 @@
   "vnet_interfaces": "vnet_接口",
   "warn": "警告",
   "was successfully attached.": "已成功附加。",
-  "while pool is encrypted": "当池被加密时",
-  "yes": "是"
+  "while pool is encrypted": "当池被加密时"
 }

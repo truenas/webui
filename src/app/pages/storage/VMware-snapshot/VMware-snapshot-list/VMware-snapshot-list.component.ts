@@ -1,6 +1,6 @@
 import { Component, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { T } from '../../../../translate-marker';
 
@@ -8,15 +8,15 @@ import { T } from '../../../../translate-marker';
   selector: 'vmware-snapshot-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class VMwareSnapshotListComponent {
+export class VMwareSnapshotListComponent implements EntityTableConfig {
   title = 'VMware Snapshots';
-  protected queryCall = 'vmware.query';
-  protected route_add: string[] = ['storage', 'vmware-snapshots', 'add'];
+  queryCall: 'vmware.query' = 'vmware.query';
+  route_add: string[] = ['storage', 'vmware-snapshots', 'add'];
   protected route_add_tooltip = 'Add VMware Snapshot';
   protected entityList: any;
-  protected wsDelete = 'vmware.delete';
+  wsDelete: 'vmware.delete' = 'vmware.delete';
 
-  columns: any[] = [
+  columns = [
     { name: 'Hostname', prop: 'hostname', always_display: true }, { name: 'Username', prop: 'username' },
     { name: 'filesystem', prop: 'filesystem' }, { name: 'datastore', prop: 'datastore' },
   ];

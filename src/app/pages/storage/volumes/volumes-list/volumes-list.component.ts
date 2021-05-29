@@ -18,7 +18,7 @@ import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interf
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableService } from 'app/pages/common/entity/entity-table/entity-table.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -87,11 +87,11 @@ interface ZfsData {
   source: string;
 }
 
-export class VolumesListTableConfig implements InputTableConf {
+export class VolumesListTableConfig {
   hideTopActions = true;
   flattenedVolData: any;
   tableData: TreeNode[] = [];
-  columns: any[] = [
+  columns = [
     { name: T('Name'), prop: 'name', always_display: true },
     { name: T('Type'), prop: 'type', hidden: false },
     {
@@ -1787,7 +1787,7 @@ export class VolumesListTableConfig implements InputTableConf {
 export class VolumesListComponent extends EntityTableComponent implements OnInit, OnDestroy {
   title = T('Pools');
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, '', [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http, this.validationService);
+  conf = new VolumesListTableConfig(this, this.router, '', [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http, this.validationService);
 
   actionComponent = {
     getActions: (row: Pool) => {
@@ -1865,7 +1865,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService,
     protected messageService: MessageService, protected http: HttpClient, modalService: ModalService, public tableService: EntityTableService, protected validationService: ValidationService) {
-    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog, modalService, tableService);
+    super(core, rest, router, ws, dialogService, loader, translate, sorter, job, pref, mdDialog, modalService);
 
     this.actionsConfig = { actionType: VolumesListControlsComponent, actionConfig: this };
     this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { WebSocketService, DialogService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -8,16 +9,16 @@ import { EntityUtils } from '../../../common/entity/utils';
   selector: 'app-alertservice-list',
   template: '<entity-table [title]="title"  [conf]="this"></entity-table>',
 })
-export class AlertServiceListComponent {
+export class AlertServiceListComponent implements EntityTableConfig {
   title = 'Alert Services';
   protected route_add_tooltip = 'Add Alert Service';
-  protected queryCall = 'alertservice.query';
-  protected wsDelete = 'alertservice.delete';
+  queryCall: 'alertservice.query' = 'alertservice.query';
+  wsDelete: 'alertservice.delete' = 'alertservice.delete';
   protected route_success: string[] = ['system', 'alertservice'];
-  protected route_add: string[] = ['system', 'alertservice', 'add'];
-  protected route_edit: string[] = ['system', 'alertservice', 'edit'];
+  route_add: string[] = ['system', 'alertservice', 'add'];
+  route_edit: string[] = ['system', 'alertservice', 'edit'];
 
-  columns: any[] = [
+  columns = [
     { name: 'Service Name', prop: 'name', always_display: true },
     { name: 'Type', prop: 'type' },
     { name: 'Level', prop: 'level' },

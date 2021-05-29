@@ -3838,7 +3838,6 @@
   "msgqqueued": "",
   "msgqsize": "",
   "nmsgq": "",
-  "no": "",
   "nsemop": "",
   "nshm": "",
   "nthr": "",
@@ -4337,6 +4336,5 @@
   "password": "contraseña",
   "safe": "seguro",
   "swapuse": "uso de swap",
-  "template": "plantilla",
-  "yes": "sí"
+  "template": "plantilla"
 }

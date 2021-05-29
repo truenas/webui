@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { IscsiIpChoices, IscsiPortal } from 'app/interfaces/iscsi.interface';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { T } from 'app/translate-marker';
 import { IscsiService } from '../../../../../services';
 
@@ -10,15 +11,15 @@ import { IscsiService } from '../../../../../services';
     <entity-table [conf]="this" [title]="tableTitle"></entity-table>
   `,
 })
-export class PortalListComponent {
+export class PortalListComponent implements EntityTableConfig {
   tableTitle = 'Portals';
-  protected queryCall: 'iscsi.portal.query' = 'iscsi.portal.query';
-  protected wsDelete: 'iscsi.portal.delete' = 'iscsi.portal.delete';
-  protected route_add: string[] = ['sharing', 'iscsi', 'portals', 'add'];
+  queryCall: 'iscsi.portal.query' = 'iscsi.portal.query';
+  wsDelete: 'iscsi.portal.delete' = 'iscsi.portal.delete';
+  route_add: string[] = ['sharing', 'iscsi', 'portals', 'add'];
   protected route_add_tooltip = 'Add Portal';
-  protected route_edit: string[] = ['sharing', 'iscsi', 'portals', 'edit'];
+  route_edit: string[] = ['sharing', 'iscsi', 'portals', 'edit'];
 
-  columns: any[] = [
+  columns = [
     {
       name: T('Portal Group ID'),
       prop: 'tag',

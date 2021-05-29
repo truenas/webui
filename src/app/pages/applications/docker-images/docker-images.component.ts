@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { latestVersion } from 'app/constants/catalog.constants';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { ApplicationsService } from '../applications.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService, StorageService, ValidationService } from 'app/services';
@@ -20,18 +20,18 @@ import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialo
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 
-export class DockerImagesComponent implements OnInit, OnDestroy {
+export class DockerImagesComponent implements EntityTableConfig, OnInit, OnDestroy {
   title = 'Docker Images';
 
   protected entityList: any;
   protected loaderOpen = false;
-  protected queryCall: 'container.image.query' = 'container.image.query';
-  protected wsDelete = 'container.image.delete';
-  protected disableActionsConfig = true;
+  queryCall: 'container.image.query' = 'container.image.query';
+  wsDelete: 'container.image.delete' = 'container.image.delete';
+  disableActionsConfig = true;
   private refreshTableSubscription: any;
-  protected addComponent: PullImageFormComponent;
+  addComponent: PullImageFormComponent;
 
-  columns: any[] = [
+  columns = [
     { name: helptext.dockerImages.columns.id, prop: 'id', always_display: true },
     { name: helptext.dockerImages.columns.tags, prop: 'repo_tags', always_display: true },
     { name: helptext.dockerImages.columns.state, prop: 'state', always_display: true },

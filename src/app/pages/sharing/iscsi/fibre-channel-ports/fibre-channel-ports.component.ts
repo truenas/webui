@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { FibreChannelPortComponent } from './fibre-channel-port/fibre-channel-port.component';
 
@@ -6,12 +7,12 @@ import { FibreChannelPortComponent } from './fibre-channel-port/fibre-channel-po
   selector: 'app-iscsi-fibre-channel-ports',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class FibreChannelPortsComponent {
+export class FibreChannelPortsComponent implements EntityTableConfig {
   title = 'Fibre Channel';
-  protected queryCall = 'fcport.query';
+  queryCall: 'fcport.query' = 'fcport.query';
   protected entityList: any;
 
-  columns: any[] = [
+  columns = [
     { name: 'Name', prop: 'name', always_display: true },
     { name: 'WWPN', prop: 'wwpn' },
     { name: 'State', prop: 'state' },
@@ -21,8 +22,8 @@ export class FibreChannelPortsComponent {
     sorting: { columns: this.columns },
   };
 
-  protected showActions = false;
-  protected hasDetails = true;
-  protected rowDetailComponent = FibreChannelPortComponent;
-  protected detailRowHeight = 350;
+  showActions = false;
+  hasDetails = true;
+  rowDetailComponent = FibreChannelPortComponent;
+  detailRowHeight = 350;
 }

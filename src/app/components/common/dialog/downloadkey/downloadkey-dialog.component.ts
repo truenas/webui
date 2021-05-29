@@ -20,7 +20,7 @@ export class DownloadKeyModalDialog {
   new = false;
   volumeId: any;
   volumeName: any;
-  fileName: any;
+  fileName: string;
   isDownloaded: Boolean = false;
   help = helptext;
 

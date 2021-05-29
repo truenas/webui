@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CoreEvent } from 'app/interfaces/events';
 import { QueryOptions } from 'app/interfaces/query-api.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { Interval } from 'app/interfaces/timeout.interface';
 import { BaseService } from './base.service';
 
 export interface Temperature {
@@ -16,7 +17,7 @@ export interface Temperature {
 })
 export class DiskTemperatureService extends BaseService {
   protected disks: Disk[] = [];
-  protected broadcast: any;
+  protected broadcast: Interval;
   protected subscribers = 0;
 
   constructor() {
