@@ -1097,11 +1097,19 @@ export class VMWizardComponent {
               this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).subscribe(
                 () => {
                   this.loader.close();
-                  this.dialogService.errorReport(T('Error creating VM.'), T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted);
+                  this.dialogService.errorReport(
+                    T('Error creating VM.'),
+                    T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason,
+                    error.trace.formatted,
+                  );
                 },
                 (err) => {
                   this.loader.close();
-                  this.dialogService.errorReport(T('Error creating VM.'), T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted);
+                  this.dialogService.errorReport(
+                    T('Error creating VM.'),
+                    T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason,
+                    error.trace.formatted,
+                  );
                   new EntityUtils().handleWSError(this, err, this.dialogService);
                 },
               );
@@ -1152,11 +1160,17 @@ export class VMWizardComponent {
               this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).subscribe(
                 () => {
                   this.loader.close();
-                  this.dialogService.errorReport(T('Error creating VM.'), T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted);
+                  this.dialogService.errorReport(
+                    T('Error creating VM.'),
+                    T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted,
+                  );
                 },
                 (err) => {
                   this.loader.close();
-                  this.dialogService.errorReport(T('Error creating VM.'), T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted);
+                  this.dialogService.errorReport(
+                    T('Error creating VM.'),
+                    T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted,
+                  );
                   new EntityUtils().handleWSError(this, err, this.dialogService);
                 },
               );

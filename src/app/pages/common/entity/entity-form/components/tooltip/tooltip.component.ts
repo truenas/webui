@@ -92,11 +92,11 @@ export class TooltipComponent {
       card = formParent;
     } else if (formParent.offsetParent && formParent.offsetParent.tagName.toLowerCase() == 'mat-card') {
       card = formParent.offsetParent;
-    } else if (formParent.offsetParent.offsetParent && formParent.offsetParent.offsetParent.tagName.toLowerCase() == 'mat-card') {
+    } else if (formParent.offsetParent.offsetParent?.tagName.toLowerCase() == 'mat-card') {
       card = formParent.offsetParent.offsetParent;
-    } else if (formParent.offsetParent.offsetParent.offsetParent && formParent.offsetParent.offsetParent.offsetParent.tagName.toLowerCase() == 'mat-card') {
+    } else if (formParent.offsetParent.offsetParent.offsetParent?.tagName.toLowerCase() == 'mat-card') {
       card = formParent.offsetParent.offsetParent.offsetParent;
-    } else if (formParent.offsetParent.offsetParent.offsetParent.offsetParent && formParent.offsetParent.offsetParent.offsetParent.offsetParent.tagName.toLowerCase() == 'mat-card') {
+    } else if (formParent.offsetParent.offsetParent.offsetParent.offsetParent?.tagName.toLowerCase() == 'mat-card') {
       card = formParent.offsetParent.offsetParent.offsetParent.offsetParent;
     }
     this.isSlideInForm = card.parentNode.classList.value.includes('slidein-entity-form');
