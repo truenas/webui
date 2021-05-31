@@ -1,5 +1,4 @@
 import { T } from '../../../translate-marker';
-import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
 
 export default {
   protocol_placeholder: T('Protocol'),

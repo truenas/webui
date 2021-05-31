@@ -1,7 +1,5 @@
-import { Container, Texture, Sprite } from 'pixi.js';
-import { DriveTray } from './drivetray';
 import { Chassis } from './chassis';
-import { ChassisView, Position } from './chassis-view';
+import { ChassisView } from './chassis-view';
 
 export class ES60 extends Chassis {
   constructor() {

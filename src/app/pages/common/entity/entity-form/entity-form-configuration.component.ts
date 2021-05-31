@@ -1,17 +1,14 @@
 import { Component, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 import { CoreEvent } from 'app/interfaces/events';
-import * as _ from 'lodash';
 
 import { Subject } from 'rxjs';
 
-import { TooltipsService, WebSocketService } from 'app/services';
+import { TooltipsService } from 'app/services';
 import { EntityFormEmbeddedComponent } from './entity-form-embedded.component';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from './entity-form.component';
 import { FieldConfig } from './models/field-config.interface';
 import { FieldSets } from './classes/field-sets';
-import { ipv4Validator, ipv6Validator } from './validators/ip-validation';
 
 @Component({
   selector: 'entity-form-configuration',

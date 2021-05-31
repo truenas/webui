@@ -12,7 +12,6 @@ import {
   FieldRelation,
   RelationGroup,
 } from '../models/field-relation.interface';
-import * as _ from 'lodash';
 
 @Injectable()
 export class FieldRelationService {

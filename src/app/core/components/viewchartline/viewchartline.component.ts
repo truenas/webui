@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/viewchart/viewchart.component';
-import * as d3 from 'd3';
 
 interface TimeData {
   start: number;
@@ -138,7 +137,6 @@ export class ViewChartLineComponent extends ViewChartComponent {
         format: {
           value: (value: any) => {
             if (this.units) {
-              console.log('Units = ' + this.units);
               return value + this.units;
             }
             return value;

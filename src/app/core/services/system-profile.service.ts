@@ -4,7 +4,6 @@ import { CoreEvent } from 'app/interfaces/events';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { BaseService } from './base.service';
-import helptext from '../../helptext/topbar';
 
 interface InfoObject {
   version: string; // "TrueNAS-12.0-MASTER-202003160424"

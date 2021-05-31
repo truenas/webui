@@ -1,8 +1,6 @@
-// import { SubComponent } from '../../decorators/subcomponent';
-import { Observer } from 'rxjs';
 import { Subject } from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
-import { ViewController, ViewControllerOptions } from './viewcontroller';
+import { ViewController } from './viewcontroller';
 
 export interface PageOptions {
   events: Subject<CoreEvent>;
@@ -16,8 +14,6 @@ export abstract class Page extends ViewController {
 
   constructor(options?: PageOptions) {
     super();
-    // url ??
-    console.log(this.name + ' Class Constructor');
     if (options) {
       this.setControlEvents(options.events);
     }

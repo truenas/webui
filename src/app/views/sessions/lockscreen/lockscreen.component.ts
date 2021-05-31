@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatButton } from '@angular/material/button';
 
@@ -15,8 +15,6 @@ export class LockscreenComponent {
   };
 
   unlock(): void {
-    console.log(this.lockscreenData);
-
     this.submitButton.disabled = true;
     this.progressBar.mode = 'indeterminate';
   }

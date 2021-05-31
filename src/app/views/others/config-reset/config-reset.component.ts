@@ -7,7 +7,6 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from '../../../services/dialog.service';
 import { MatDialog } from '@angular/material/dialog';
-import globalHelptext from '../../../helptext/global-helptext';
 import { EntityJobComponent } from '../../../pages/common/entity/entity-job/entity-job.component';
 import { T } from '../../../translate-marker';
 import { LocaleService } from 'app/services/locale.service';

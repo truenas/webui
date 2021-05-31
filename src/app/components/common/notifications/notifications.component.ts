@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, Input, OnDestroy, Output, EventEmitter,
+  Component, OnInit, Input, OnDestroy,
 } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { NotificationsService, NotificationAlert } from 'app/services/notifications.service';

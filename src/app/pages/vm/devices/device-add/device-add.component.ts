@@ -12,7 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
 
 import {
-  RestService, WebSocketService, SystemGeneralService, NetworkService, VmService, StorageService,
+  WebSocketService, NetworkService, VmService, StorageService,
 } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -573,10 +573,10 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },
-      (e_res) => {
+      (error) => {
         this.loader.close();
-        console.log(e_res);
-        new EntityUtils().handleWSError(this, e_res, this.dialogService);
+        console.error(error);
+        new EntityUtils().handleWSError(this, error, this.dialogService);
       });
     });
   }

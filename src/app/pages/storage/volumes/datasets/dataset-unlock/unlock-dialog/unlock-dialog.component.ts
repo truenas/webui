@@ -1,10 +1,9 @@
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import {
-  Component, Output, EventEmitter, OnInit,
+  Component, Output, EventEmitter,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from '../../../../../../helptext/storage/volumes/datasets/dataset-unlock';
-import { T } from '../../../../../../translate-marker';
 
 @Component({
   selector: 'app-unlock-dialog',

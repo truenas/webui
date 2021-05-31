@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { CoreEvent } from 'app/interfaces/events';
-import * as domHelper from '../../helpers/dom.helper';
 import { RestService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/core/services/core.service';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
@@ -389,7 +388,9 @@ export class ThemeService {
     const keys = Object.keys(theme) as (keyof Theme)[];
 
     // Filter out deprecated properties and meta properties
-    const palette = keys.filter((v) => v != 'label' && v != 'logoPath' && v != 'logoTextPath' && v != 'favorite' && v != 'labelSwatch' && v != 'description' && v != 'name');
+    const palette = keys.filter((v) => {
+      return !['label', 'logoPath', 'logoTextPath', 'favorite', 'labelSwatch', 'description', 'name'].includes(v);
+    });
 
     palette.forEach((color) => {
       const swatch = theme[color] as any;

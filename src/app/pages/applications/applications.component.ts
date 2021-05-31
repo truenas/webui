@@ -13,7 +13,7 @@ import { ChartReleasesComponent } from './chart-releases/chart-releases.componen
 import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
 import { Subject, Subscription } from 'rxjs';
 import helptext from '../../helptext/apps/apps';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { DockerImagesComponent } from './docker-images/docker-images.component';

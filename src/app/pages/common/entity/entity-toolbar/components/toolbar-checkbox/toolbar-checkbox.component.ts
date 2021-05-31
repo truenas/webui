@@ -1,13 +1,10 @@
 import {
-  Component, Input, ViewChild, ElementRef,
+  Component, Input,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { TranslateService } from '@ngx-translate/core';
 import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
 
-import { Control } from '../../models/control.interface';
-import { ControlConfig } from '../../models/control-config.interface';
 import { Subject } from 'rxjs';
 
 @Component({

@@ -23,11 +23,11 @@ import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
 import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
 import add_edit_helptext from '../../../helptext/vm/devices/device-add-edit';
-import { catchError, filter, map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import globalHelptext from '../../../helptext/global-helptext';
-import { combineLatest, forkJoin, Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { MatStepper } from '@angular/material/stepper';
@@ -1097,11 +1097,19 @@ export class VMWizardComponent {
               this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).subscribe(
                 () => {
                   this.loader.close();
-                  this.dialogService.errorReport(T('Error creating VM.'), T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted);
+                  this.dialogService.errorReport(
+                    T('Error creating VM.'),
+                    T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason,
+                    error.trace.formatted,
+                  );
                 },
                 (err) => {
                   this.loader.close();
-                  this.dialogService.errorReport(T('Error creating VM.'), T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted);
+                  this.dialogService.errorReport(
+                    T('Error creating VM.'),
+                    T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason,
+                    error.trace.formatted,
+                  );
                   new EntityUtils().handleWSError(this, err, this.dialogService);
                 },
               );
@@ -1152,11 +1160,17 @@ export class VMWizardComponent {
               this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).subscribe(
                 () => {
                   this.loader.close();
-                  this.dialogService.errorReport(T('Error creating VM.'), T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted);
+                  this.dialogService.errorReport(
+                    T('Error creating VM.'),
+                    T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted,
+                  );
                 },
                 (err) => {
                   this.loader.close();
-                  this.dialogService.errorReport(T('Error creating VM.'), T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted);
+                  this.dialogService.errorReport(
+                    T('Error creating VM.'),
+                    T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted,
+                  );
                   new EntityUtils().handleWSError(this, err, this.dialogService);
                 },
               );

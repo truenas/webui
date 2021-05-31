@@ -156,10 +156,6 @@ function tableUtilsEmit(evt: any): void {
 addEventListener('message', ({ data }) => {
   const evt = data;
   let output;
-  if (tableUtils.debug) {
-    // console.warn("RCVD");
-    // console.warn(evt);
-  }
 
   switch (evt.name) {
     case 'SayHello':

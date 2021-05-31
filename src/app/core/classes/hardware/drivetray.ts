@@ -1,4 +1,4 @@
-import { Container, Texture, Sprite } from 'pixi.js';
+import { Container, Sprite } from 'pixi.js';
 
 export class DriveTray {
   container: Container; // Alias for background sprite

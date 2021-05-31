@@ -1,11 +1,10 @@
 import {
-  Component, OnInit, Input, Output, EventEmitter, ElementRef, TemplateRef,
+  Component, OnInit, Input, Output, EventEmitter, TemplateRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 import { Subscription } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
 
 import { iXObject } from 'app/core/classes/ix-object';
 import { ServiceStatus } from 'app/enums/service-status.enum';

@@ -1,12 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
-import { RestService } from '../../../../services/rest.service';
-
 import { EntityCardComponent } from './entity-card.component';
-import * as _ from 'lodash';
 
 @Component({
   selector: 'app-entity-card-actions',

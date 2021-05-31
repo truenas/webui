@@ -1,11 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
 import { DialogService } from '../../../services/index';
 import { ApplicationsService } from '../applications.service';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from '../../../services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { CommonUtils } from 'app/core/classes/common-utils';

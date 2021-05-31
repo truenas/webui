@@ -1,13 +1,10 @@
 import {
-  ApplicationRef, Component, Injector, AfterContentInit, OnChanges, SimpleChanges, OnDestroy, ViewChild, ElementRef,
+  Component, AfterContentInit, OnDestroy, ViewChild, ElementRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { CoreEvent } from 'app/interfaces/events';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
-import { RestService, WebSocketService } from 'app/services/';
-import { MaterialModule } from 'app/appMaterial.module';
-import { EnclosureDisksComponent } from './enclosure-disks/enclosure-disks.component';
 
 import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';

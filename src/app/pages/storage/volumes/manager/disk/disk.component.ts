@@ -1,5 +1,5 @@
 import {
-  Component, ElementRef, Input, OnInit, Type,
+  Component, ElementRef, Input, OnInit,
 } from '@angular/core';
 
 @Component({
@@ -24,7 +24,6 @@ export class DiskComponent implements OnInit {
   constructor(public elementRef: ElementRef) {}
 
   ngOnInit(): void {
-    console.log();
     this.capacity = (<any>window).filesize(this.data.capacity, { standard: 'iec' });
   }
 }

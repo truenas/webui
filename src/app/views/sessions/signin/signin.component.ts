@@ -17,7 +17,7 @@ import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from '../../../helptext/global-helptext';
 import productText from '../../../helptext/product';
 import helptext from '../../../helptext/topbar';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { T } from '../../../translate-marker';
 import { WebSocketService } from '../../../services/ws.service';
@@ -263,7 +263,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
           this.ws.call('failover.get_ips').subscribe((ips) => {
             this.failover_ips = ips;
           }, (err) => {
-            console.log(err);
+            console.error(err);
           });
           this.ws.call('failover.disabled_reasons').subscribe((reasons) => {
             this.checking_status = false;
@@ -291,7 +291,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           }, (err) => {
             this.checking_status = false;
-            console.log(err);
+            console.error(err);
           },
           () => {
             this.checking_status = false;
@@ -302,7 +302,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }, (err) => {
         this.checking_status = false;
-        console.log(err);
+        console.error(err);
       });
     }
   }
