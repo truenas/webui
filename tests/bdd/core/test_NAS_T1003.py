@@ -145,10 +145,6 @@ def active_directory_should_successfully_save_and_start_without_an_error(driver)
     """Active Directory should successfully save and start without an error."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     # This 10 seconds of sleep is to let the system ketchup.
     time.sleep(10)
 
