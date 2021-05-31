@@ -85,6 +85,7 @@ def the_user_field_should_expand_down_then_click_the_edit_button(driver):
 def the_user_edit_page_should_open(driver):
     """the User Edit Page should open."""
     assert wait_on_element(driver, 7, '//h4[contains(.,"Identification")]')
+    time.sleep(0.5)
 
 
 @then(parsers.parse('change the user email for "{email}" and click save'))
@@ -92,7 +93,7 @@ def change_the_users_email_for_user_email_and_click_save(driver, email):
     """change the user email for "email" and click save."""
     global user_email
     user_email = email
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]', 'clickable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys(email)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
