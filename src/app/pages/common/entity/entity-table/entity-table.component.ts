@@ -3,9 +3,8 @@ import {
 } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
 
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import {
-  AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild,
+  AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
@@ -30,7 +29,6 @@ import {
 } from 'rxjs/operators';
 import { DialogService, JobService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { ErdService } from '../../../../services/erd.service';
 import { ModalService } from '../../../../services/modal.service';
 import { RestService } from '../../../../services/rest.service';
 import { StorageService } from '../../../../services/storage.service';
@@ -40,8 +38,6 @@ import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
 import { EntityUtils } from '../utils';
 import { EntityTableAddActionsComponent } from './entity-table-add-actions.component';
-import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
-import { EntityTableService } from './entity-table.service';
 
 export interface SortingConfig {
   columns: any[];

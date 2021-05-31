@@ -10,7 +10,6 @@ import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/s
 import { ModalService } from 'app/services/modal.service';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { TaskService, WebSocketService } from 'app/services';
-import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { TranslateService } from '@ngx-translate/core';
 import { SmartTestUi } from 'app/interfaces/smart-test.interface';
