@@ -102,9 +102,9 @@ def my_ldap_dataset_should_be_created(driver, dataset_name):
 @then(parsers.parse('click on the {dataset_name} three dots button, select Edit Permissions'))
 def click_on_the_my_ldap_dataset_three_dots_button_select_edit_permissions(driver, dataset_name):
     """click on the my_ldap_dataset three dots button, select Edit Permissions."""
-    assert wait_on_element(driver, 7, f'//mat-icon[@ix-auto="options__{dataset_name}"]')
+    assert wait_on_element(driver, 7, f'//mat-icon[@ix-auto="options__{dataset_name}"]', 'clickable')
     driver.find_element_by_xpath(f'//mat-icon[@id="actions_menu_button__{dataset_name}"]').click()
-    assert wait_on_element(driver, 7, f'//button[@ix-auto="action__{dataset_name}_Edit Permissions"]')
+    assert wait_on_element(driver, 7, f'//button[@ix-auto="action__{dataset_name}_Edit Permissions"]', 'clickable')
     driver.find_element_by_xpath(f'//button[@ix-auto="action__{dataset_name}_Edit Permissions"]').click()
 
 
@@ -112,12 +112,13 @@ def click_on_the_my_ldap_dataset_three_dots_button_select_edit_permissions(drive
 def the_edit_permissions_page_should_open(driver):
     """the Edit Permissions page should open."""
     assert wait_on_element(driver, 7, '//h4[contains(.,"Dataset Path")]')
+    time.sleep(0.5)
 
 
 @then(parsers.parse('select {ldap_user} for User, click on the Apply User checkbox'))
 def select_ldap_user_for_user_click_on_the_apply_user_checkbox(driver, ldap_user):
     """select ldap_user for User, click on the Apply User checkbox."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="User"]')
+    assert wait_on_element(driver, 7, '//input[@placeholder="User"]', 'clickable')
     driver.find_element_by_xpath('//input[@placeholder="User"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="User"]').send_keys(ldap_user)
     assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__{ldap_user}"]')
@@ -129,7 +130,7 @@ def select_ldap_user_for_user_click_on_the_apply_user_checkbox(driver, ldap_user
 @then(parsers.parse('select {ldap_user} for Group name, click on the Apply Group checkbox'))
 def select_ldap_user_for_group_name_click_on_the_apply_group_checkbox(driver, ldap_user):
     """select ldap_user for Group name, click on the Apply Group checkbox."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="Group"]')
+    assert wait_on_element(driver, 7, '//input[@placeholder="Group"]', 'clickable')
     driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys(ldap_user)
     assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__{ldap_user}"]')
@@ -150,6 +151,7 @@ def click_the_save_button_should_be_returned_to_the_pool_page(driver):
 @then(parsers.parse('verify that user and group name is {ldap_user}'))
 def verify_that_user_and_group_name_is_ldap_user(driver, ldap_user):
     """verify that user and group name is ldap_user."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="User"]')
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Dataset Path")]')
+    assert wait_on_element(driver, 7, '//input[@placeholder="User"]' 'clickable')
     assert attribute_value_exist(driver, '//input[@placeholder="User"]', 'value', ldap_user)
     assert attribute_value_exist(driver, '//input[@placeholder="Group"]', 'value', ldap_user)
