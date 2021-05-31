@@ -799,7 +799,11 @@ export class ReplicationWizardComponent {
       (res: ReplicationTask[]) => {
         for (const task of res) {
           if (task.transport !== TransportMode.Legacy) {
-            const lable = task.name + ' (' + ((task.state && task.state.datetime) ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy') : 'never ran') + ')';
+            // TODO: Change to icu message format.
+            const lable = task.name + ' (' + ((task.state && task.state.datetime)
+              ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy')
+              : 'never ran')
+            + ')';
             exist_replicationField.options.push({ label: lable, value: task });
             if (this.pk === task.id) {
               this.loadOrClearReplicationTask(task);
@@ -909,8 +913,13 @@ export class ReplicationWizardComponent {
   step1Init(): void {
     this.entityWizard.formArray.controls[1].controls['retention_policy'].valueChanges.subscribe((value: any) => {
       const disable = value === RetentionPolicy.Source;
-      disable ? this.entityWizard.formArray.controls[1].controls['lifetime_value'].disable() : this.entityWizard.formArray.controls[1].controls['lifetime_value'].enable();
-      disable ? this.entityWizard.formArray.controls[1].controls['lifetime_unit'].disable() : this.entityWizard.formArray.controls[1].controls['lifetime_unit'].enable();
+      if (disable) {
+        this.entityWizard.formArray.controls[1].controls['lifetime_value'].disable();
+        this.entityWizard.formArray.controls[1].controls['lifetime_unit'].disable();
+      } else {
+        this.entityWizard.formArray.controls[1].controls['lifetime_value'].enable();
+        this.entityWizard.formArray.controls[1].controls['lifetime_unit'].enable();
+      }
     });
   }
 
@@ -985,7 +994,16 @@ export class ReplicationWizardComponent {
       task['ssh_credentials_source'] = task.ssh_credentials.id;
     }
 
-    for (const i of ['source_datasets_from', 'target_dataset_from', 'ssh_credentials_source', 'ssh_credentials_target', 'transport', 'source_datasets', 'target_dataset']) {
+    const controls = [
+      'source_datasets_from',
+      'target_dataset_from',
+      'ssh_credentials_source',
+      'ssh_credentials_target',
+      'transport',
+      'source_datasets',
+      'target_dataset',
+    ];
+    for (const i of controls) {
       const ctrl = this.entityWizard.formArray.controls[0].controls[i];
       if (ctrl && !ctrl.disabled) {
         ctrl.setValue(task[i]);
@@ -1131,7 +1149,11 @@ export class ReplicationWizardComponent {
       };
       if (payload.encryption) {
         payload['encryption_key_format'] = data['encryption_key_format'];
-        payload['encryption_key'] = data['encryption_key_format'] === EncryptionKeyFormat.Passphrase ? data['encryption_key_passphrase'] : (data['encryption_key_generate'] ? this.replicationService.generateEncryptionHexKey(64) : data['encryption_key_hex']);
+        payload['encryption_key'] = data['encryption_key_format'] === EncryptionKeyFormat.Passphrase
+          ? data['encryption_key_passphrase']
+          : (data['encryption_key_generate']
+            ? this.replicationService.generateEncryptionHexKey(64)
+            : data['encryption_key_hex']);
         payload['encryption_key_location'] = data['encryption_key_location_truenasdb'] ? '$TrueNAS' : data['encryption_key_location'];
       }
 
@@ -1366,14 +1388,18 @@ export class ReplicationWizardComponent {
   }
 
   getSnapshots(): void {
-    let transport = this.entityWizard.formArray.controls[0].controls['transport'].enabled ? this.entityWizard.formArray.controls[0].controls['transport'].value : TransportMode.Local;
+    let transport = this.entityWizard.formArray.controls[0].controls['transport'].enabled
+      ? this.entityWizard.formArray.controls[0].controls['transport'].value
+      : TransportMode.Local;
     // count local snapshots if transport is SSH/SSH-NETCAT, and direction is PUSH
     if (this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].value) {
       transport = TransportMode.Local;
     }
     const payload = [
       this.entityWizard.formArray.controls[0].controls['source_datasets'].value || [],
-      (this.entityWizard.formArray.controls[0].controls['naming_schema'].enabled && this.entityWizard.formArray.controls[0].controls['naming_schema'].value) ? this.entityWizard.formArray.controls[0].controls['naming_schema'].value.split(' ') : [this.defaultNamingSchema],
+      (this.entityWizard.formArray.controls[0].controls['naming_schema'].enabled && this.entityWizard.formArray.controls[0].controls['naming_schema'].value)
+        ? this.entityWizard.formArray.controls[0].controls['naming_schema'].value.split(' ')
+        : [this.defaultNamingSchema],
       transport,
       transport === TransportMode.Local ? null : this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value,
     ];

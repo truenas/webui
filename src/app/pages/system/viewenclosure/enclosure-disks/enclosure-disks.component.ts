@@ -289,8 +289,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.selectedEnclosure) {
       // Enabled subenclosure functionality
-      this.subenclosure = changes.selectedEnclosure.currentValue.enclosureKey == this.system.headIndex && this.system.rearIndex ? changes.selectedEnclosure.currentValue : undefined;
-      this.loadEnclosure(changes.selectedEnclosure.currentValue, EnclosureLocation.Front);
+      this.subenclosure = this.selectedEnclosure.enclosureKey == this.system.headIndex && this.system.rearIndex
+        ? this.selectedEnclosure
+        : undefined;
+      this.loadEnclosure(this.selectedEnclosure, EnclosureLocation.Front);
     }
   }
 
@@ -773,7 +775,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
 
     // Also check slot status
-    const elements: any[] = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex ? this.system.enclosures[disk.enclosure.number].elements : this.system.enclosures[disk.enclosure.number].elements[0].elements;
+    const elements: any[] = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex
+      ? this.system.enclosures[disk.enclosure.number].elements
+      : this.system.enclosures[disk.enclosure.number].elements[0].elements;
     const slot = elements.filter((s: any) => s.slot == disk.enclosure.slot)[0];
 
     if (!failed && slot.fault) {
@@ -812,7 +816,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
 
       // Also check slot status
-      const elements = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex ? this.system.enclosures[disk.enclosure.number].elements : this.system.enclosures[disk.enclosure.number].elements[0].elements;
+      const elements = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex
+        ? this.system.enclosures[disk.enclosure.number].elements
+        : this.system.enclosures[disk.enclosure.number].elements[0].elements;
       const slot = elements.filter((s: any) => s.slot == disk.enclosure.slot);
 
       if (!failed && slot.fault) {

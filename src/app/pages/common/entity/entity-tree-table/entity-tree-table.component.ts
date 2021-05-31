@@ -197,7 +197,8 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   isTableOverflow(): boolean {
     let hasHorizontalScrollbar = false;
     if (this.table) {
-      hasHorizontalScrollbar = this.table._elementRef.nativeElement.parentNode.parentNode.scrollWidth > this.table._elementRef.nativeElement.parentNode.parentNode.clientWidth;
+      const parentNode = this.table._elementRef.nativeElement.parentNode;
+      hasHorizontalScrollbar = parentNode.parentNode.scrollWidth > parentNode.parentNode.clientWidth;
     }
     return hasHorizontalScrollbar;
   }

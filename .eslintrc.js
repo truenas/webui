@@ -32,9 +32,15 @@ module.exports = {
         "no-return-assign": "off",
         "no-empty": ["error", { "allowEmptyCatch": true }],
         "arrow-body-style": "off",
+        "max-len": ["error", 170, 2, {
+          "ignoreUrls": true,
+          "ignoreComments": false,
+          "ignoreRegExpLiterals": true,
+          "ignoreStrings": true,
+          "ignoreTemplateLiterals": true
+        }],
 
         // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically
-        "max-len": "off",
         "no-underscore-dangle": "off",
         "@typescript-eslint/naming-convention": "off",
         "class-methods-use-this": "off",

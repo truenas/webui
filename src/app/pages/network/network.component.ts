@@ -171,7 +171,9 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     afterGetData() {
       const state = this.parent.navigation.extras.state as { configureOpenVPN: string };
       if (state && state.configureOpenVPN) {
-        state.configureOpenVPN === 'client' ? this.parent.modalService.open('slide-in-form', this.parent.openvpnClientComponent) : this.parent.modalService.open('slide-in-form', this.parent.openvpnServerComponent);
+        state.configureOpenVPN === 'client'
+          ? this.parent.modalService.open('slide-in-form', this.parent.openvpnClientComponent)
+          : this.parent.modalService.open('slide-in-form', this.parent.openvpnServerComponent);
       }
     },
   };

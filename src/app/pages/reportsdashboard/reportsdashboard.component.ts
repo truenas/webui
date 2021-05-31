@@ -399,7 +399,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
             name: 'metrics',
             width: 'calc(50% - 16px)',
             placeholder: T('Choose a metric'),
-            options: this.diskMetrics ? this.diskMetrics : [{ label: 'None available', value: 'negative' }], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+
+            // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+            options: this.diskMetrics ? this.diskMetrics : [{ label: 'None available', value: 'negative' }],
             required: true,
             multiple: true,
             tooltip: T('Choose a metric to display.'),
