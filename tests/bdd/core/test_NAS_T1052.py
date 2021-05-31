@@ -80,6 +80,7 @@ def on_the_edit_page_click_advanced_mode(driver):
 @then('make sure Authorized Network is empty')
 def make_sure_authorized_network_is_empty(driver):
     """make sure Authorized Network is empty."""
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Hosts")]')
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Authorized Networks"]', 'clickable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Authorized Networks"]').clear()
 
