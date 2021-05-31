@@ -1,27 +1,15 @@
 import {
-  Component, AfterViewInit, Input, ViewChild, OnChanges, SimpleChanges, OnDestroy, Output, EventEmitter,
+  Component, Input, Output, EventEmitter,
 } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { MaterialModule } from 'app/appMaterial.module';
-import { NgForm } from '@angular/forms';
-import { ChartData } from 'app/core/components/viewchart/viewchart.component';
-import { CoreEvent } from 'app/interfaces/events';
-import { Subject } from 'rxjs';
-import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
+import { MediaObserver } from '@angular/flex-layout';
 
 import { Router } from '@angular/router';
-import { UUID } from 'angular2-uuid';
-import * as d3 from 'd3';
 
-import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 
-import { ViewChartGaugeComponent } from 'app/core/components/viewchartgauge/viewchartgauge.component';
-import { ViewChartBarComponent } from 'app/core/components/viewchartbar/viewchartbar.component';
 import { TranslateService } from '@ngx-translate/core';
 
-import { EmptyType, EmptyConfig, EntityEmptyComponent } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 
 import { T } from '../../../../translate-marker';

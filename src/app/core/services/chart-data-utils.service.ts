@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { CoreEvent } from 'app/interfaces/events';
-import { Observable } from 'rxjs';
-import { Observer } from 'rxjs';
-import { Subject } from 'rxjs';
 import { CoreService } from './core.service';
 import { Thread } from 'app/core/classes/thread';
 

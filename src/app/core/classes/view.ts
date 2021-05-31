@@ -1,4 +1,3 @@
-// import { Component } from '@angular/core';
 import { CoreEvent } from 'app/interfaces/events';
 import { Subject } from 'rxjs';
 

@@ -1,5 +1,4 @@
 import { Component, OnDestroy } from '@angular/core';
-import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../services/dialog.service';

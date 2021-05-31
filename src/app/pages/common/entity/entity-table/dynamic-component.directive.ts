@@ -1,11 +1,10 @@
 import {
-  ComponentFactoryResolver, ComponentRef,
+  ComponentFactoryResolver,
   Directive,
   Input,
   OnInit,
   ViewContainerRef,
 } from '@angular/core';
-import { config } from 'rxjs';
 
 @Directive({ selector: '[dynamicComponent]' })
 export class DynamicComponentDirective implements OnInit {

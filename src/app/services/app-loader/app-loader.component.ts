@@ -1,10 +1,8 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ConsolePanelModalDialog } from 'app/components/common/dialog/consolepanel/consolepanel-dialog.component';
-import { Observable, Subscription } from 'rxjs';
-import {
-  filter, map, switchMap, take,
-} from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { WebSocketService } from '../ws.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 

@@ -1,30 +1,8 @@
 import {
   Component, AfterViewInit, Input, ViewChild, ElementRef, OnChanges, SimpleChanges,
 } from '@angular/core';
-import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/viewchart/viewchart.component';
 import { UUID } from 'angular2-uuid';
-import * as d3 from 'd3';
-import { transition, Transition } from 'd3-transition';
-import {
-  tween,
-  styler,
-  listen,
-  pointer,
-  value,
-  decay,
-  spring,
-  physics,
-  easing,
-  everyFrame,
-  keyframes,
-  timeline,
-  // velocity,
-  multicast,
-  action,
-  transform,
-  // transformMap,
-  // clamp
-} from 'popmotion';
+import { styler } from 'popmotion';
 import { Styler } from 'stylefire/lib/styler/types';
 
 export interface BarChartConfig {

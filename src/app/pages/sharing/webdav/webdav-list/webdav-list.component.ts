@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
-import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
 import { helptext_sharing_webdav } from 'app/helptext/sharing';

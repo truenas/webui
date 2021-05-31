@@ -7,7 +7,7 @@ import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
 import { FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { takeUntil, debounceTime } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
@@ -17,7 +17,6 @@ import { DialogService } from '../../../services/index';
 import { ApplicationsService } from '../applications.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import helptext from '../../../helptext/apps/apps';
-import { FormListComponent } from '../../common/entity/entity-form/components/form-list/form-list.component';
 import { EntityUtils } from '../../common/entity/utils';
 
 @Component({

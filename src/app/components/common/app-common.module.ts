@@ -19,8 +19,6 @@ import { CustomizerComponent } from './customizer/customizer.component';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { PageTitleComponent } from './pagetitle/pagetitle.component';
 import { ModalComponent } from './modal/modal.component';
-// import { LineChartComponent } from './lineChart';
-// import { LineChartService } from './lineChart/lineChart.service';
 import { LanguageService } from '../../services/language.service';
 import { HttpClientModule } from '@angular/common/http';
 import { LocaleService } from '../../services/locale.service';

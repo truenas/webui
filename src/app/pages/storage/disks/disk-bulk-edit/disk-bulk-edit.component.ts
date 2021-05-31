@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import * as _ from 'lodash';
 
 import { WebSocketService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';

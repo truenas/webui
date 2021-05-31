@@ -106,7 +106,7 @@ module.exports = {
         "@typescript-eslint/ban-ts-comment": "error",
         "@typescript-eslint/explicit-function-return-type": ["error", { allowExpressions: true }],
         "@typescript-eslint/no-unused-vars": "off",
-        "unused-imports/no-unused-imports": "off",
+        "unused-imports/no-unused-imports": "error",
         "unused-imports/no-unused-vars": ["error", { vars: "local", args: "after-used" }],
       }
     },

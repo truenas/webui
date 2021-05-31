@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { ProductType } from '../../../enums/product-type.enum';

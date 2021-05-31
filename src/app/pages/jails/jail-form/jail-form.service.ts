@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { Observable } from 'rxjs';
 
 import { WebSocketService } from '../../../services';

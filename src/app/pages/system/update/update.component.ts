@@ -1,9 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { CoreEvent } from 'app/interfaces/events';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { Subscription } from 'rxjs';
 import { ProductType } from '../../../enums/product-type.enum';
 import { WebSocketService, SystemGeneralService, StorageService } from '../../../services';

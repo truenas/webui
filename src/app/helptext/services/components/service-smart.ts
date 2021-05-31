@@ -1,5 +1,4 @@
 import { T } from '../../../translate-marker';
-import { Validators } from '@angular/forms';
 
 export default {
   smart_fieldset_general: T('General Options'),

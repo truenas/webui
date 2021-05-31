@@ -1,6 +1,5 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
