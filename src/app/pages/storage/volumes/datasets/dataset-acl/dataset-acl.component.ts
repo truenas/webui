@@ -11,7 +11,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AclItemTag } from 'app/enums/acl-type.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 

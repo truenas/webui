@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import helptext from '../../../../helptext/account/user-form';
 import {

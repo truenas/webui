@@ -1,7 +1,6 @@
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 import { Relation } from './entity-form/models/field-relation.interface';
-import { FieldSet } from './entity-form/models/fieldset.interface';
 
 export const NULL_VALUE = 'null_value';
 
@@ -23,7 +22,7 @@ export class EntityUtils {
       }
     } else {
       entity.error = 'Fatal error! Check logs.';
-      console.log('Unknown error code', res.code);
+      console.error('Unknown error code', res.code);
     }
   }
 
@@ -130,7 +129,7 @@ export class EntityUtils {
       dialog.errorReport(res.state, res.error, res.exception);
     } else {
       // if it can't print the error at least put it on the console.
-      console.log(res);
+      console.error(res);
     }
   }
 

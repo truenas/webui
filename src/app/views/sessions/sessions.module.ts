@@ -13,7 +13,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { LockscreenComponent } from './lockscreen/lockscreen.component';
 import { SigninComponent } from './signin/signin.component';

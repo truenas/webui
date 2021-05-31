@@ -1,10 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Observer } from 'rxjs';
-import { Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core.service';
 import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
-import * as moment from 'moment';
 
 export interface ProcessTask {
   responseEvent: string;
@@ -14,7 +9,6 @@ export interface ProcessTask {
 
 @Injectable()
 export class Thread extends iXAbstractObject {
-  private debug = false;
   thread: Worker;
   protected ready: boolean;
   protected maxThreads: number;
@@ -45,11 +39,6 @@ export class Thread extends iXAbstractObject {
       if(evt.sender == this){ return;  }
       this.thread.postMessage(evt);
     }); */
-
-    if (this.debug) {
-      console.log('Thread Constructor');
-      console.log('Client machine has ' + (this.maxThreads / 2) + ' cores (' + this.maxThreads + ' threads)');
-    }
   }
 
   testMessages(): void {
@@ -62,7 +51,6 @@ export class Thread extends iXAbstractObject {
     // Some example code to show how messages can be exchanged with main thread
     const context: Worker = self as any; // Needed for TypeScript not to complain. DO NOT REMOVE!
     context.postMessage('ThreadInitialized'); // This inits the worker. DO NOT REMOVE!
-    console.log(context);
 
     /* context.onmessage = (msg: MessageEvent) => {
       let evt:CoreEvent = msg.data;
@@ -71,7 +59,7 @@ export class Thread extends iXAbstractObject {
     }; */
 
     context.onerror = (err) => {
-      console.log(err);
+      console.error(err);
     };
   };
 

@@ -1,32 +1,8 @@
 import {
   Component, AfterViewInit, Input, OnChanges, SimpleChanges,
 } from '@angular/core';
-import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/viewchart/viewchart.component';
 import { UUID } from 'angular2-uuid';
-// import { DisplayObject } from 'app/core/classes/display-object';
-// import * as c3 from 'c3';
 import * as d3 from 'd3';
-import { transition } from 'd3-transition';
-import {
-  tween,
-  styler,
-  listen,
-  pointer,
-  value,
-  decay,
-  spring,
-  physics,
-  easing,
-  everyFrame,
-  keyframes,
-  timeline,
-  // velocity,
-  multicast,
-  action,
-  transform,
-  // transformMap,
-  // clamp
-} from 'popmotion';
 
 export interface GaugeConfig {
   label: boolean; // to turn off the min/max labels.

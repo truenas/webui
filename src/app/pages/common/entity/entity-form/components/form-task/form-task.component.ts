@@ -1,5 +1,5 @@
 import {
-  Component, ViewContainerRef, AfterViewInit, OnInit, ViewChild,
+  Component, AfterViewInit, OnInit, ViewChild,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatTabGroup } from '@angular/material/tabs';
@@ -7,9 +7,6 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
-import { TooltipComponent } from '../tooltip/tooltip.component';
-import { FormSliderComponent } from '../form-slider/form-slider.component';
-import { FormToggleButtonComponent } from '../form-toggle-button/form-toggle-button.component';
 import { EntityFormService } from '../../services/entity-form.service';
 import * as _ from 'lodash';
 

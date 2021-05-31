@@ -1,5 +1,5 @@
 import {
-  ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, TemplateRef,
+  ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, TemplateRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';

@@ -1,5 +1,4 @@
 import { Component, OnDestroy } from '@angular/core';
-import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../services/dialog.service';
@@ -145,7 +144,13 @@ export class FailoverComponent implements FormConfiguration, OnDestroy {
     this.master_fg = this.entityForm.formGroup.controls['master'];
     this.masterSubscription = this.master_fg.valueChanges.subscribe((res: any) => {
       if (!res && !this.warned) {
-        this.dialog.confirm(helptext_system_failover.master_dialog_title, helptext_system_failover.master_dialog_warning, false, T('Continue'), false, '', null, {}, null, false, T('Cancel'), true).subscribe((confirm: boolean) => {
+        this.dialog.confirm({
+          title: helptext_system_failover.master_dialog_title,
+          message: helptext_system_failover.master_dialog_warning,
+          buttonMsg: T('Continue'),
+          cancelMsg: T('Cancel'),
+          disableClose: true,
+        }).subscribe((confirm) => {
           if (!confirm) {
             this.master_fg.setValue(true);
           } else {

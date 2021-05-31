@@ -1,7 +1,6 @@
 import {
-  Component, AfterViewInit, OnInit, OnChanges, Input, HostListener, SimpleChanges,
+  Component, AfterViewInit, Input, SimpleChanges,
 } from '@angular/core';
-import { LayoutChild } from 'app/core/classes/layouts';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import { UUID } from 'angular2-uuid';
 import { LegendOptions, TooltipOptions } from './viewchart.component.types';
@@ -99,7 +98,6 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.data) { // This only works with @Input() properties
-      console.log(changes.data);
       if (this.chartConfig) {
         this.chart.load({
           columns: [changes.data],

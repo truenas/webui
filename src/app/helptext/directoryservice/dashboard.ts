@@ -1,5 +1,4 @@
 import { T } from '../../translate-marker';
-import { Validators } from '@angular/forms';
 
 export default {
   activeDirectory: {

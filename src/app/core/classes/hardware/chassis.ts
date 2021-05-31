@@ -1,5 +1,3 @@
-import { Container, Texture, Sprite } from 'pixi.js';
-import { DriveTray } from './drivetray';
 import { ChassisView } from './chassis-view';
 
 export class Chassis {

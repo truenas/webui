@@ -1,9 +1,6 @@
 import {
-  Directive, ElementRef, Input, Output, HostBinding, HostListener, EventEmitter, OnInit,
+  Directive, ElementRef, HostListener, OnInit,
 } from '@angular/core';
-import {
-  Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot,
-} from '@angular/router';
 import * as domHelper from '../../helpers/dom.helper';
 
 @Directive({ selector: '[appAccordion]' })

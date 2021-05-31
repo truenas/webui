@@ -14,7 +14,6 @@ import {
   ContentChild,
   HostBinding,
   HostListener,
-  CUSTOM_ELEMENTS_SCHEMA,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 

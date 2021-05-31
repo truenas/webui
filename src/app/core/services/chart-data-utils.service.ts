@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { CoreEvent } from 'app/interfaces/events';
-import { Observable } from 'rxjs';
-import { Observer } from 'rxjs';
-import { Subject } from 'rxjs';
 import { CoreService } from './core.service';
 import { Thread } from 'app/core/classes/thread';
 
@@ -15,7 +11,6 @@ export interface ProcessTask {
 
 @Injectable()
 export class ChartDataUtilsService {
-  private debug = false;
   protected runAsWebWorker = false;
   protected worker: Worker;
   thread: Worker;
@@ -47,11 +42,6 @@ export class ChartDataUtilsService {
     // Calback for when we receive messages from the thread
     thread.onmessage = (e: MessageEvent) => {
       const evt: CoreEvent = e.data;
-      if (this.debug) {
-        console.log('Parent received message:' + evt.name);
-        console.log(evt);
-      }
-      // console.warn("chart-data-utils")
       this.core.emit(evt);
     };
 

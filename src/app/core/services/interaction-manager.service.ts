@@ -4,17 +4,7 @@ import { DisplayObject } from '../classes/display-object';
 import { LayoutObject } from '../classes/layout-object';
 import { CoreService } from './core.service';
 import {
-  tween,
-  styler,
-  listen,
-  pointer,
-  value,
-  decay,
-  spring,
-  physics,
   multicast,
-  action,
-  transform,
 } from 'popmotion';
 
 interface DisplayObjectRegistration {
@@ -53,7 +43,6 @@ export class InteractionManagerService {
     });
 
     messageBus.register({ observerClass: this, eventName: 'RegisterAsDisplayObject' }).subscribe((evt: CoreEvent) => {
-      console.log(evt);
       const config: DisplayObjectConfig = evt.data;
       this.registerElement(config); // Expects CSS id selector for element
     });
@@ -64,7 +53,6 @@ export class InteractionManagerService {
     });
 
     messageBus.register({ observerClass: this, eventName: 'InsertIntoLayout' }).subscribe((evt: CoreEvent) => {
-      console.log('Inserting into layout...');
       const layout = this.getLayoutById(evt.data.layout);
       let element;
       const elementIsRegistered = this.displayList.some((reg) => reg.displayObject == evt.sender);
@@ -73,8 +61,6 @@ export class InteractionManagerService {
       } else {
         element = this.getChildById(evt.data.element);
       }
-      // console.log(element)
-      // console.log(layout)
       if (!layout) {
         console.warn('Cannot add element to layout. No layout with that id found. Make sure your layout exists and is registered.');
       } else {
@@ -97,11 +83,8 @@ export class InteractionManagerService {
     });
 
     messageBus.register({ observerClass: this, eventName: 'DisplayObjectReleased' }).subscribe((evt: CoreEvent) => {
-      console.log('DisplayObjectReleased');
       const layout = this.getLayoutParent(evt.sender);
       if (layout) {
-        // console.log("This belongs to a layout");
-        // console.log(this.displayList);
         layout.endInteractiveMovement(evt.sender);
       }
       if (this.displayObjectWithFocus && this.displayObjectWithFocus == evt.sender) {
@@ -172,7 +155,6 @@ export class InteractionManagerService {
 
   getLayoutById(id: string): LayoutObject {
     const registration = this.displayList.find((item) => {
-      console.log(item.layout);
       return item.layout.id == id;
     });
     return registration.layout;
@@ -180,12 +162,11 @@ export class InteractionManagerService {
 
   private startCollisionDetection(dragTarget: DisplayObject, targets: any[]): void {
     dragTarget.updateStream.subscribe(() => {
-      // console.log(position.y);
       targets.forEach((target) => {
         const found = this.detectCollision(target, dragTarget);
         if (found) {
           const index = targets.indexOf(target);
-          console.log('item index is ' + index);
+          console.info('item index is ' + index);
         }
       });
     });

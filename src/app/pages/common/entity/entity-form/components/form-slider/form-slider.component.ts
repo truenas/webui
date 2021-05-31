@@ -1,11 +1,10 @@
-import { Component, ViewContainerRef, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatSliderChange } from '@angular/material/slider/slider';
 import { TranslateService } from '@ngx-translate/core';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
-import { TooltipComponent } from '../tooltip/tooltip.component';
 
 @Component({
   selector: 'form-slider',

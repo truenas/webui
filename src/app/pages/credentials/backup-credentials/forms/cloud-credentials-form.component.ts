@@ -1522,7 +1522,9 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         field_name += '-' + provider;
       }
       if (entityForm.formGroup.controls[field_name]) {
-        entityForm.formGroup.controls[field_name].setValue(field_name == 'auth_version-OPENSTACK_SWIFT' ? entityForm.wsResponseIdx[i].toString() : entityForm.wsResponseIdx[i]);
+        entityForm.formGroup.controls[field_name].setValue(field_name == 'auth_version-OPENSTACK_SWIFT'
+          ? entityForm.wsResponseIdx[i].toString()
+          : entityForm.wsResponseIdx[i]);
       }
     }
   }

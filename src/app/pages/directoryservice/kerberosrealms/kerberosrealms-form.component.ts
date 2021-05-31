@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import * as _ from 'lodash';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';

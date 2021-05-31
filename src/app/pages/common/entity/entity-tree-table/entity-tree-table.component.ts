@@ -1,7 +1,7 @@
 import {
-  Component, ElementRef, ViewChild, Input, OnInit, AfterViewInit,
+  Component, ViewChild, Input, OnInit, AfterViewInit,
 } from '@angular/core';
-import { MatTableModule, MatTable } from '@angular/material/table';
+import { MatTable } from '@angular/material/table';
 import { CoreEvent } from 'app/interfaces/events';
 import { DialogService, WebSocketService } from '../../../../services';
 import { EntityUtils } from '../utils';
@@ -197,7 +197,8 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   isTableOverflow(): boolean {
     let hasHorizontalScrollbar = false;
     if (this.table) {
-      hasHorizontalScrollbar = this.table._elementRef.nativeElement.parentNode.parentNode.scrollWidth > this.table._elementRef.nativeElement.parentNode.parentNode.clientWidth;
+      const parentNode = this.table._elementRef.nativeElement.parentNode;
+      hasHorizontalScrollbar = parentNode.parentNode.scrollWidth > parentNode.parentNode.clientWidth;
     }
     return hasHorizontalScrollbar;
   }

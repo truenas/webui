@@ -1,7 +1,5 @@
 import { T } from '../../translate-marker';
 import { Validators } from '@angular/forms';
-import { matchOtherValidator } from '../../pages/common/entity/entity-form/validators/password-validation';
-import { UserService } from 'app/services';
 
 export default {
   title_add: T('Add User'),

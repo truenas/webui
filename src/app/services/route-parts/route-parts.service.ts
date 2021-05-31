@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  Router, ActivatedRoute, NavigationEnd, ActivatedRouteSnapshot, Params, PRIMARY_OUTLET,
-} from '@angular/router';
+import { ActivatedRouteSnapshot, Params } from '@angular/router';
 
 interface RoutePart {
   title: string;

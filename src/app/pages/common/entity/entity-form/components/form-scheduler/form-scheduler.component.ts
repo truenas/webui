@@ -1,18 +1,17 @@
 import {
-  Component, OnInit, ViewChild, ElementRef, QueryList, Renderer2, OnDestroy,
-  ChangeDetectorRef, HostListener, AfterViewInit, AfterViewChecked,
+  Component, OnInit, ViewChild, ElementRef, Renderer2,
+  ChangeDetectorRef, AfterViewInit, AfterViewChecked,
 } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
-import { TooltipComponent } from '../tooltip/tooltip.component';
 import { T } from 'app/translate-marker';
 import { LocaleService } from 'app/services/locale.service';
 
-import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
+import { Overlay } from '@angular/cdk/overlay';
 import { MatMonthView } from '@angular/material/datepicker';
 import * as moment from 'moment-timezone';
 import * as parser from 'cron-parser';
@@ -494,7 +493,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
           const obj: any = intervalDays.next();
           daySchedule.push(obj.value);
         } catch (e) {
-          // console.warn(e);
+          console.error(e);
           break;
         }
       }

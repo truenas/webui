@@ -3,8 +3,6 @@ import {
   Component,
   ContentChildren,
   Input,
-  Output,
-  EventEmitter,
   OnDestroy,
   OnInit,
   QueryList,
@@ -15,7 +13,7 @@ import {
   AfterViewInit, SimpleChanges,
 } from '@angular/core';
 import {
-  FormBuilder, FormControl, FormGroup, FormArray, Validators, Form,
+  FormBuilder, FormControl, FormGroup,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CoreEvent } from 'app/interfaces/events';
@@ -27,7 +25,6 @@ import { T } from '../../../../translate-marker';
 import { RestService, WebSocketService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityTemplateDirective } from '../entity-template.directive';
-import { EntityUtils } from '../utils';
 
 import { FieldConfig } from './models/field-config.interface';
 import { FieldSet } from './models/fieldset.interface';

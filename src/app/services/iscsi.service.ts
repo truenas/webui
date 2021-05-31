@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import {
   IscsiAuthAccess, IscsiExtent,
   IscsiInitiatorGroup,
@@ -7,9 +6,8 @@ import {
   IscsiPortal,
   IscsiTarget,
 } from 'app/interfaces/iscsi.interface';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 
-import { EntityUtils } from '../pages/common/entity/utils';
 import { RestService } from './rest.service';
 import { WebSocketService } from './ws.service';
 
