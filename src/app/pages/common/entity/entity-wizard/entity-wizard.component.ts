@@ -4,7 +4,7 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService, WebSocketService } from '../../../../services';
 import {
-  AbstractControl, FormBuilder, FormGroup,
+  AbstractControl, FormBuilder, FormGroup, FormArray,
 } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
@@ -266,7 +266,7 @@ export class EntityWizardComponent implements OnInit {
         }
       });
     }
-
+    summary = new EntityUtils().changeNullString2Null(summary);
     summary = new EntityUtils().remapAppSubmitData(summary);
     this.conf.summary = summary;
     this.autoSummaryHtml = this.generateSummaryHtml(summary);

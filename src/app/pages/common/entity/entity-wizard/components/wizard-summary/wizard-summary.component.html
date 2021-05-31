@@ -1,0 +1,16 @@
+<ul [ngClass]="{'wizard-ul':!isRoot}">
+  <li *ngFor="let item of data | keyvalue : originalOrder">
+    <div *ngIf="isArray(item.value)==true; else notArray">
+      <div>{{item.key | translate}}: {{item.value.length}}</div>
+    </div>
+    <ng-template #notArray>
+      <div *ngIf="item.value | keyvalue; else notObject">
+        <label>{{item.key}}: </label>
+        <wizard-summary [data]="item.value" [isRoot]="false"></wizard-summary>
+      </div>
+      <ng-template #notObject>
+        <div *ngIf="item.value">{{item.key | translate}}: {{item.value}}</div>
+      </ng-template>
+    </ng-template>
+  </li>
+</ul>

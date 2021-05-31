@@ -94,6 +94,7 @@ import { EntityEmptyComponent } from './entity-empty/entity-empty.component';
 
 import { TableComponent } from './table/table.component';
 import { ExpandableTableComponent } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
+import { WizardSummaryComponent } from 'app/pages/common/entity/entity-wizard/components/wizard-summary/wizard-summary.component';
 
 @NgModule({
   imports: [
@@ -169,6 +170,7 @@ import { ExpandableTableComponent } from 'app/pages/common/entity/table/expandab
     EntityDashboardComponent,
     EntityEmptyComponent,
     FormDictComponent,
+    WizardSummaryComponent,
   ],
   exports: [
     EntityTemplateDirective,
@@ -206,6 +208,7 @@ import { ExpandableTableComponent } from 'app/pages/common/entity/table/expandab
     ExpandableTableComponent,
     CdkTreeModule,
     EntityEmptyComponent,
+    WizardSummaryComponent,
   ],
   entryComponents: [
     FormButtonComponent,
