@@ -82,9 +82,7 @@ export class NotificationsService {
 
     notifications.forEach((notification) => {
       notificationMap.set(notification.id, notification);
-      this.ws.call('alert.dismiss', [notification.id]).subscribe(() => {
-        console.log('alert dismissed id:' + notification.id);
-      });
+      this.ws.call('alert.dismiss', [notification.id]).subscribe(() => {});
     });
 
     this.notifications.forEach((notification) => {
@@ -101,9 +99,7 @@ export class NotificationsService {
 
     notifications.forEach((notification) => {
       notificationMap.set(notification.id, notification);
-      this.ws.call('alert.restore', [notification.id]).subscribe(() => {
-        console.log('alert restore id:' + notification.id);
-      });
+      this.ws.call('alert.restore', [notification.id]).subscribe(() => {});
     });
 
     this.notifications.forEach((notification) => {

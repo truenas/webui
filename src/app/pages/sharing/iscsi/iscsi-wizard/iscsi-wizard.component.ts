@@ -924,7 +924,7 @@ export class IscsiWizardComponent {
       if (items[item] != null) {
         this.ws.call((this.deleteCalls as any)[item], [items[item]]).subscribe(
           (res) => {
-            console.log('rollback ' + item, res);
+            console.info('rollback ' + item, res);
           },
         );
       }

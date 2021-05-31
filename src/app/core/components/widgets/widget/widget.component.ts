@@ -52,9 +52,8 @@ export class WidgetComponent extends iXObject {
     this.isFlipped = !this.isFlipped;
   }
 
+  // eslint-disable-next-line unused-imports/no-unused-vars
   setPreferences(form: NgForm): void {
-    console.log('******** FORM SUBMITTED!! ********');
-    console.log(form);
   }
 
   goBack(): void {

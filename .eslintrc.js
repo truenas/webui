@@ -39,12 +39,12 @@ module.exports = {
           "ignoreStrings": true,
           "ignoreTemplateLiterals": true
         }],
+        "no-console": ["error", { allow: ["warn", "error", "info"] }],
 
         // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically
         "no-underscore-dangle": "off",
         "@typescript-eslint/naming-convention": "off",
         "class-methods-use-this": "off",
-        "no-console": "off",
         "eqeqeq": "off",
         "import/prefer-default-export": "off",
         "block-scoped-var": "off",

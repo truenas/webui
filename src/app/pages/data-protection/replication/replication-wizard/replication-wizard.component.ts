@@ -1280,9 +1280,7 @@ export class ReplicationWizardComponent {
     for (let i = 0; i < keys.length; i++) {
       if (items[keys[i]] != null) {
         await this.ws.call((this.deleteCalls as any)[keys[i]], [items[keys[i]]]).toPromise().then(
-          (res) => {
-            console.log('rollback ' + keys[i], res);
-          },
+          () => {},
         );
       }
     }

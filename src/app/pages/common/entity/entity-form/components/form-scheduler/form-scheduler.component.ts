@@ -493,7 +493,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
           const obj: any = intervalDays.next();
           daySchedule.push(obj.value);
         } catch (e) {
-          // console.warn(e);
+          console.error(e);
           break;
         }
       }

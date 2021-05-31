@@ -14,8 +14,6 @@ export abstract class Page extends ViewController {
 
   constructor(options?: PageOptions) {
     super();
-    // url ??
-    console.log(this.name + ' Class Constructor');
     if (options) {
       this.setControlEvents(options.events);
     }

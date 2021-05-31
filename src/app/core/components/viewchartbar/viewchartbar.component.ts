@@ -69,7 +69,6 @@ export class ViewChartBarComponent implements AfterViewInit, OnChanges {
     this.margin = 32;
 
     if (!this.el) { return; }
-    console.log(this.el.nativeElement);
     this.wrapperNode = styler(this.el.nativeElement, {});
 
     this.chartConfig = this.makeConfig();

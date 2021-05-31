@@ -24,8 +24,6 @@ export class FormColorpickerComponent implements Field, OnInit {
 
   set textInput(val: string) {
     this._textInput = val;
-    console.log('TEXT INPUT CHANGED!!');
-    console.log(val);
   }
 
   get colorProxy(): string {
@@ -45,7 +43,6 @@ export class FormColorpickerComponent implements Field, OnInit {
   }
 
   inputListener(evt: string, data: any): void {
-    console.log(evt);
     this.group.value[this.config.name] = data;
   }
 

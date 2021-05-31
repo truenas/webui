@@ -573,10 +573,10 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },
-      (e_res) => {
+      (error) => {
         this.loader.close();
-        console.log(e_res);
-        new EntityUtils().handleWSError(this, e_res, this.dialogService);
+        console.error(error);
+        new EntityUtils().handleWSError(this, error, this.dialogService);
       });
     });
   }

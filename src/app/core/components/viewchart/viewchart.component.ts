@@ -98,7 +98,6 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.data) { // This only works with @Input() properties
-      console.log(changes.data);
       if (this.chartConfig) {
         this.chart.load({
           columns: [changes.data],
