@@ -1,24 +1,14 @@
-import { ValueReaction } from 'popmotion/lib/reactions/value';
 import { ColdSubscription } from 'popmotion/src/action/types';
 import { Styler } from 'stylefire/lib/styler/types';
 import { CoreService } from '../services/core.service';
 import { Subject } from 'rxjs';
-import { UUID } from 'angular2-uuid';
 import {
   tween,
   styler,
   listen,
   pointer,
   value,
-  decay,
-  spring,
-  physics,
-  // velocity,
-  multicast,
-  action,
   transform,
-  // transformMap,
-  // clamp
 } from 'popmotion';
 
 const transformMap = transform.transformMap;

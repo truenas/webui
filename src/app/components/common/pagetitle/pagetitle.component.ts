@@ -2,21 +2,15 @@ import {
   Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild,
 } from '@angular/core';
 import {
-  Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot,
+  Router, NavigationEnd, ActivatedRoute,
 } from '@angular/router';
 import { CoreEvent } from 'app/interfaces/events';
 import { filter } from 'rxjs/operators';
 import { ProductType } from '../../../enums/product-type.enum';
 import { RoutePartsService } from '../../../services/route-parts/route-parts.service';
 import { CoreService } from 'app/core/services/core.service';
-import { Display } from 'app/core/components/display/display.component';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { ViewButtonComponent } from 'app/core/components/viewbutton/viewbutton.component';
-import globalHelptext from '../../../helptext/global-helptext';
-import { EntityTableAddActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-add-actions.component';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list-controls.component';
-import { ReportsGlobalControlsComponent } from 'app/pages/reportsdashboard/components/reports-global-controls/reports-global-controls.component';
 import { LocaleService } from 'app/services/locale.service';
 
 export interface GlobalAction {

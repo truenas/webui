@@ -311,7 +311,9 @@ export class SshConnectionsFormComponent implements FormConfiguration {
   }
 
   isManualAuthFormValid(): boolean {
-    return this.entityForm.formGroup.controls['host'].valid && this.entityForm.formGroup.controls['private_key'].valid && this.entityForm.formGroup.controls['username'].valid;
+    return this.entityForm.formGroup.controls['host'].valid
+      && this.entityForm.formGroup.controls['private_key'].valid
+      && this.entityForm.formGroup.controls['username'].valid;
   }
 
   setDisabled(fieldConfig: any, fieldName: string, disable: boolean, hide = false): void {

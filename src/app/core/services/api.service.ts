@@ -1,12 +1,10 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { Subject } from 'rxjs';
 import { WebSocketService } from '../../services/ws.service';
 import { RestService } from '../../services/rest.service';
 import { CoreService } from './core.service';
 import { DialogService } from '../../services';
-// import { DataService } from './data.service';
 
 export interface ApiCall {
   protocol: 'websocket' | 'rest'; // TODO: rest is probably deprecated and can be removed

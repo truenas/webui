@@ -12,7 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
 
 import {
-  RestService, WebSocketService, SystemGeneralService, NetworkService, VmService, StorageService,
+  WebSocketService, NetworkService, VmService, StorageService,
 } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';

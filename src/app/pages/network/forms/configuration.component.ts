@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { ProductType } from '../../../enums/product-type.enum';
 
@@ -143,9 +142,23 @@ export class ConfigurationComponent implements FormConfiguration {
           name: 'outbound_network_activity',
           placeholder: '',
           options: [
-            { label: helptext.outbound_network_activity.allow.placeholder, value: 'DENY', tooltip: helptext.outbound_network_activity.allow.tooltip }, // deny type + empty list
-            { label: helptext.outbound_network_activity.deny.placeholder, value: 'ALLOW', tooltip: helptext.outbound_network_activity.deny.tooltip }, // allow type + empty list
-            { label: helptext.outbound_network_activity.specific.placeholder, value: 'SPECIFIC', tooltip: helptext.outbound_network_activity.specific.tooltip },
+            // deny type + empty list
+            {
+              label: helptext.outbound_network_activity.allow.placeholder,
+              value: 'DENY',
+              tooltip: helptext.outbound_network_activity.allow.tooltip,
+            },
+            // allow type + empty list
+            {
+              label: helptext.outbound_network_activity.deny.placeholder,
+              value: 'ALLOW',
+              tooltip: helptext.outbound_network_activity.deny.tooltip,
+            },
+            {
+              label: helptext.outbound_network_activity.specific.placeholder,
+              value: 'SPECIFIC',
+              tooltip: helptext.outbound_network_activity.specific.tooltip,
+            },
           ],
           value: 'DENY',
         },

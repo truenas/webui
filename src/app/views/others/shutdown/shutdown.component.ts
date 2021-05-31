@@ -6,7 +6,6 @@ import { WebSocketService, SystemGeneralService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from '../../../services/dialog.service';
-import globalHelptext from '../../../helptext/global-helptext';
 import { LocaleService } from 'app/services/locale.service';
 
 @Component({

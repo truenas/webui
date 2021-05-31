@@ -1,22 +1,7 @@
 import { DisplayObject } from './display-object';
 import { CoreService } from '../services/core.service';
 import { debounceTime } from 'rxjs/operators';
-import {
-  tween,
-  styler,
-  listen,
-  pointer,
-  value,
-  decay,
-  spring,
-  physics,
-  // velocity,
-  multicast,
-  action,
-  transform,
-  // transformMap,
-  // clamp
-} from 'popmotion';
+import { tween } from 'popmotion';
 
 /*
    * Layout Object: A base class for

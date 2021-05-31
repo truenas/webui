@@ -1,5 +1,5 @@
 import {
-  Directive, Component, Input, OnInit, AfterViewInit, ElementRef, HostListener, ComponentRef,
+  Directive, Component, Input, AfterViewInit, ElementRef, HostListener, ComponentRef,
 } from '@angular/core';
 import { Overlay, OverlayRef, OverlayPositionBuilder } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';

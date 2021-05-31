@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/viewchart/viewchart.component';
-// import * as c3 from 'c3';
+import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
 
 @Component({
   selector: 'viewchartdonut',

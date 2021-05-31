@@ -1,18 +1,11 @@
 import {
-  Component, AfterViewInit, Input, ViewChild, Output, EventEmitter,
+  Component, Input, Output, EventEmitter,
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService } from 'app/core/services/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { MaterialModule } from 'app/appMaterial.module';
 import { iXObject } from 'app/core/classes/ix-object';
-import { ChartData } from 'app/core/components/viewchart/viewchart.component';
-import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
-import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
-import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
-
-import filesize from 'filesize';
 
 import { TranslateService } from '@ngx-translate/core';
 

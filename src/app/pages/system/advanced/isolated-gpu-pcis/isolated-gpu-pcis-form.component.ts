@@ -1,12 +1,10 @@
-import { Component, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component } from '@angular/core';
 import { SystemGeneralService, WebSocketService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { ModalService } from '../../../../services/modal.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { T } from 'app/translate-marker';
-import _ from 'lodash';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

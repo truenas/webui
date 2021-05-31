@@ -4,17 +4,7 @@ import { DisplayObject } from '../classes/display-object';
 import { LayoutObject } from '../classes/layout-object';
 import { CoreService } from './core.service';
 import {
-  tween,
-  styler,
-  listen,
-  pointer,
-  value,
-  decay,
-  spring,
-  physics,
   multicast,
-  action,
-  transform,
 } from 'popmotion';
 
 interface DisplayObjectRegistration {

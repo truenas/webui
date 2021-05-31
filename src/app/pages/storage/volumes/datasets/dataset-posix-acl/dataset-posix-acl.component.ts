@@ -10,7 +10,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AclItemTag, AclType } from 'app/enums/acl-type.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
@@ -508,7 +507,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
     body.uid = body.apply_user ? body.uid : null;
     body.gid = body.apply_group ? body.gid : null;
 
-    const doesNotWantToEditDataset = this.storageService.isDatasetTopLevel(body.path.replace('mnt/', ''))
+    const doesNotWantToEditDataset = this.storageService.isDatasetTopLevel(this.path.replace('mnt/', ''))
       && !(await this.dialogService
         .confirm(helptext.dataset_acl_dialog_warning, helptext.dataset_acl_toplevel_dialog_message)
         .toPromise());
@@ -559,7 +558,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
 
     this.dialogRef.componentInstance.setCall(this.updateCall,
       [{
-        path: body.path,
+        path: this.path,
         dacl,
         uid: body.uid,
         gid: body.gid,

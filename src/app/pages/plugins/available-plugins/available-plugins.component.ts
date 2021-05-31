@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 
 import { WebSocketService, JailService, DialogService } from '../../../services';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import * as _ from 'lodash';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
 

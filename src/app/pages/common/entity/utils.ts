@@ -1,7 +1,6 @@
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 import { Relation } from './entity-form/models/field-relation.interface';
-import { FieldSet } from './entity-form/models/fieldset.interface';
 
 export const NULL_VALUE = 'null_value';
 

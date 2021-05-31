@@ -1,9 +1,7 @@
 import { CoreEvent } from 'app/interfaces/events';
 import { Theme } from 'app/services/theme/theme.service';
-import { Container, Texture, Sprite } from 'pixi.js';
-import { Subject, Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 import { ChassisView } from './chassis-view';
-import { DriveTray } from './drivetray';
 import * as d3 from 'd3';
 
 export class VDevLabelsSVG {

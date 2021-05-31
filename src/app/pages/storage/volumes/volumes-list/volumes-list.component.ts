@@ -1100,7 +1100,7 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T('Edit Permissions'),
           ttposition: 'left',
           onClick: () => {
-            this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe((acl_is_trivial) => {
+            this.ws.call('filesystem.acl_is_trivial', [rowData.mountpoint]).subscribe((acl_is_trivial) => {
               if (acl_is_trivial) {
                 this._router.navigate(new Array('/').concat([
                   'storage', 'permissions', rowData.id,
@@ -1559,7 +1559,10 @@ export class VolumesListTableConfig implements InputTableConf {
                     body['pbkdf2iters'] = formValue.pbkdf2iters;
                   }
                   payload.push(body);
-                  const dialogRef = self.mdDialog.open(EntityJobComponent, { data: { title: helptext.encryption_options_dialog.save_encryption_options }, disableClose: true });
+                  const dialogRef = self.mdDialog.open(EntityJobComponent, {
+                    data: { title: helptext.encryption_options_dialog.save_encryption_options },
+                    disableClose: true,
+                  });
                   dialogRef.componentInstance.setDescription(helptext.encryption_options_dialog.saving_encryption_options);
                   dialogRef.componentInstance.setCall(method, payload);
                   dialogRef.componentInstance.submit();
@@ -1787,7 +1790,22 @@ export class VolumesListTableConfig implements InputTableConf {
 export class VolumesListComponent extends EntityTableComponent implements OnInit, OnDestroy {
   title = T('Pools');
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, '', [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http, this.validationService);
+  conf: InputTableConf = new VolumesListTableConfig(
+    this,
+    this.router,
+    '',
+    [],
+    this.mdDialog,
+    this.ws,
+    this.dialogService,
+    this.loader,
+    this.translate,
+    this.storage,
+    {},
+    this.messageService,
+    this.http,
+    this.validationService,
+  );
 
   actionComponent = {
     getActions: (row: Pool) => {
@@ -1810,7 +1828,22 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
       return actions;
     },
-    conf: new VolumesListTableConfig(this, this.router, '', [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http, this.validationService),
+    conf: new VolumesListTableConfig(
+      this,
+      this.router,
+      '',
+      [],
+      this.mdDialog,
+      this.ws,
+      this.dialogService,
+      this.loader,
+      this.translate,
+      this.storage,
+      {},
+      this.messageService,
+      this.http,
+      this.validationService,
+    ),
   };
 
   expanded = false;
@@ -1853,17 +1886,34 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         'encryptionroot',
         'keystatus',
         'keyformat',
+        'mountpoint',
       ],
     },
   }];
 
   readonly PoolStatus = PoolStatus;
 
-  constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
-    protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
-    protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
-    public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService,
-    protected messageService: MessageService, protected http: HttpClient, modalService: ModalService, public tableService: EntityTableService, protected validationService: ValidationService) {
+  constructor(
+    protected core: CoreService,
+    protected rest: RestService,
+    protected router: Router,
+    protected ws: WebSocketService,
+    protected _eRef: ElementRef,
+    protected dialogService: DialogService,
+    protected loader: AppLoaderService,
+    protected mdDialog: MatDialog,
+    protected erdService: ErdService,
+    protected translate: TranslateService,
+    public sorter: StorageService,
+    protected job: JobService,
+    protected storage: StorageService,
+    protected pref: PreferencesService,
+    protected messageService: MessageService,
+    protected http: HttpClient,
+    modalService: ModalService,
+    public tableService: EntityTableService,
+    protected validationService: ValidationService,
+  ) {
     super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog, modalService, tableService);
 
     this.actionsConfig = { actionType: VolumesListControlsComponent, actionConfig: this };
@@ -1927,7 +1977,22 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           }
           pool.children = pChild ? [pChild] : [];
 
-          pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService, this.http, this.validationService);
+          pool.volumesListTableConfig = new VolumesListTableConfig(
+            this,
+            this.router,
+            pool.id,
+            datasets,
+            this.mdDialog,
+            this.ws,
+            this.dialogService,
+            this.loader,
+            this.translate,
+            this.storage,
+            pool,
+            this.messageService,
+            this.http,
+            this.validationService,
+          );
           pool.type = 'zpool';
 
           if (pool.children && pool.children[0]) {

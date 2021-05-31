@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 import { WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';

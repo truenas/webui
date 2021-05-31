@@ -60,7 +60,7 @@ export class Services implements OnInit {
   ) {}
 
   resourceTransformIncomingRestData(services: Service[]): ServiceRow[] {
-    const hidden = [ServiceName.Gluster];
+    const hidden = [ServiceName.Gluster, ServiceName.Afp];
 
     return services
       .filter((service) => !hidden.includes(service.service))

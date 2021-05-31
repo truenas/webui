@@ -1,8 +1,6 @@
 import { FailoverDisabledReason } from '../enums/failover-disabled-reason.enum';
 import { T } from '../translate-marker';
 import globalHelptext from './global-helptext';
-import { Validators } from '@angular/forms';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
 
 export default {
   ha_status: T('HA Status'),

@@ -9,7 +9,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { EntityUtils } from '../../../../pages/common/entity/utils';
 import helptext from '../../../../helptext/storage/volumes/download-key';
-import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'downloadkey-dialog',

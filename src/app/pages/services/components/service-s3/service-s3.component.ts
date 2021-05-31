@@ -8,7 +8,6 @@ import { Observable } from 'rxjs';
 import { DialogService } from '../../../../services';
 import { RestService, SystemGeneralService, WebSocketService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/services/components/service-s3';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { map } from 'rxjs/operators';

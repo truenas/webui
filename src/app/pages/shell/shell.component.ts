@@ -1,5 +1,5 @@
 import {
-  Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, SimpleChanges, ViewChild, ViewEncapsulation,
+  Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,7 +15,6 @@ import * as FontFaceObserver from 'fontfaceobserver';
 import { CoreService } from 'app/core/services/core.service';
 import { Subject, Observable } from 'rxjs';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-shell',

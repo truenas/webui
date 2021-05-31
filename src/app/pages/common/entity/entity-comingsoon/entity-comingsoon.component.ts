@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import * as _ from 'lodash';
 import urls from '../../../../helptext/urls';
 
 @Component({

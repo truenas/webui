@@ -1,8 +1,7 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { Option } from 'app/interfaces/option.interface';
 import { Subscription } from 'rxjs';
-import helptext from 'app/helptext/storage/snapshots/snapshots';
 import {
   EntityAction,
   EntityRowDetails,

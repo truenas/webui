@@ -1,16 +1,11 @@
 import {
-  Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild, Renderer2, ElementRef, OnChanges, SimpleChanges,
+  Component, AfterViewInit, OnDestroy, Input, ViewChild, ElementRef, OnChanges, SimpleChanges,
 } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { NavigationExtras, Router } from '@angular/router';
-import { MaterialModule } from 'app/appMaterial.module';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
 
-import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-import { TextLimiterDirective } from 'app/core/components/directives/text-limiter/text-limiter.directive';
-import { environment } from 'app/../environments/environment';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -19,22 +14,6 @@ import { T } from '../../../../translate-marker';
 import {
   tween,
   styler,
-  listen,
-  pointer,
-  value,
-  decay,
-  spring,
-  physics,
-  easing,
-  everyFrame,
-  keyframes,
-  timeline,
-  // velocity,
-  multicast,
-  action,
-  transform,
-  // transformMap,
-  // clamp
 } from 'popmotion';
 
 interface NetTraffic {

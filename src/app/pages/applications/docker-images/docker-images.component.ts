@@ -3,9 +3,8 @@ import { latestVersion } from 'app/constants/catalog.constants';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { ApplicationsService } from '../applications.service';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogService, StorageService, ValidationService } from 'app/services';
+import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../services/ws.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
@@ -13,13 +12,12 @@ import { ModalService } from '../../../services/modal.service';
 import helptext from '../../../helptext/apps/apps';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { PullImageFormComponent } from '../forms/pull-image-form.component';
-import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+
 @Component({
   selector: 'app-docker-images',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-
 export class DockerImagesComponent implements OnInit, OnDestroy {
   title = 'Docker Images';
 

@@ -1,7 +1,6 @@
 // Angular 2
 // rc2 workaround
-import { ApplicationRef, enableProdMode, ErrorHandler } from '@angular/core';
-import { disableDebugTools, enableDebugTools } from '@angular/platform-browser';
+import { enableProdMode } from '@angular/core';
 
 // Environment Providers
 let PROVIDERS: any[] = [

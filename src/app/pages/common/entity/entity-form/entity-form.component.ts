@@ -14,7 +14,7 @@ import {
   AfterViewChecked,
 } from '@angular/core';
 import {
-  FormBuilder, FormControl, FormGroup, FormArray, Validators, AbstractControl,
+  FormBuilder, FormControl, FormGroup, FormArray, AbstractControl,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
