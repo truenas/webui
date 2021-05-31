@@ -557,10 +557,10 @@ export class CertificateAuthorityAddComponent {
     'KeyUsage-enabled',
   ];
 
-  private country: any;
-  private signedby: any;
+  private country: FieldConfig;
+  private signedby: FieldConfig;
   identifier: any;
-  usageField: any;
+  usageField: FieldConfig;
   private currenProfile: any;
   private entityForm: any;
 

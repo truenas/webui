@@ -26,15 +26,12 @@ export class CardComponent extends ViewControllerComponent {
    * addHeaderTitle(title: string);
    */
 
-  // @ViewChild('display', { static: true}) display; // Already created in base class by default
-  primaryAction?: any; /* ViewFabButton */
   header = false;
   headerTitle?: string;
   // public headerOptions?: any; /*ViewControl*/
   @ViewChild('headerOptions', { static: true }) headerOptions: any;
 
   footer = true;
-  @ViewChild('footerControls', { static: true }) footerControls: any;
 
   constructor() {
     super();

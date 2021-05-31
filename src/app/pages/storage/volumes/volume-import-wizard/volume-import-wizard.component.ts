@@ -31,12 +31,11 @@ export class VolumeImportWizardComponent {
   isLinear = true;
   firstFormGroup: FormGroup;
   protected dialogRef: any;
-  objectKeys = Object.keys;
   summaryTitle = 'Pool Import Summary';
   subs: any;
   saveSubmitText = T('Import');
   entityWizard: any;
-  protected productType: any;
+  protected productType: ProductType;
   protected importIndex = 2;
   title: string;
 

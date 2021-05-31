@@ -1,3 +1,4 @@
+import { Option } from 'app/interfaces/option.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 import { Relation } from './entity-form/models/field-relation.interface';
@@ -163,7 +164,7 @@ export class EntityUtils {
       : !!v;
   }
 
-  array1DToLabelValuePair(arr: any[]): { label: string; value: any }[] {
+  array1DToLabelValuePair(arr: (string | number)[]): Option[] {
     return arr.map((value) => ({ label: value.toString(), value }));
   }
 

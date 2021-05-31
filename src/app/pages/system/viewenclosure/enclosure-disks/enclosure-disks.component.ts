@@ -688,7 +688,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   optimizeChassisOpacity(extractedEnclosure?: ChassisView): void {
-    const css = (<any>document).documentElement.style.getPropertyValue('--contrast-darkest');
+    const css = document.documentElement.style.getPropertyValue('--contrast-darkest');
     const hsl = this.themeUtils.hslToArray(css);
 
     let opacity;

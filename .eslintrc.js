@@ -97,7 +97,6 @@ module.exports = {
         "@typescript-eslint/lines-between-class-members": "off",
 
         // Extra rules
-        "@typescript-eslint/no-explicit-any": "error",
         "@typescript-eslint/array-type": "error",
         "@typescript-eslint/explicit-member-accessibility": ["error", { accessibility: "no-public" }],
         "@typescript-eslint/no-inferrable-types": "error",

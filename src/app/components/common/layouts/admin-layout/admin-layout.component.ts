@@ -34,7 +34,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isSidenotOpen = false;
   consoleMsg = '';
   hostname: string;
-  consoleMSgList: any[] = [];
+  consoleMSgList: string[] = [];
   product_type = window.localStorage['product_type'] as ProductType;
   logoPath = 'assets/images/light-logo.svg';
   logoTextPath = 'assets/images/light-logo-text.svg';
