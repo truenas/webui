@@ -1,10 +1,9 @@
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import {
-  Component, AfterViewChecked, ViewChild, ElementRef, EventEmitter, OnInit,
+  Component, ViewChild, ElementRef, EventEmitter, OnInit,
 } from '@angular/core';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { WebSocketService } from '../../../../services';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({

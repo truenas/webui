@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
@@ -27,7 +27,6 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { EntityToolbarComponent } from '../../../common/entity/entity-toolbar/entity-toolbar.component';
-import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { ModalService } from 'app/services/modal.service';
 import { DiskFormComponent } from '../../disks/disk-form';

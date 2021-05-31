@@ -1,27 +1,16 @@
-import { Injectable, ElementRef } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { CoreEvent } from 'app/interfaces/events';
 import { CoreService } from './core.service';
-import { Subject } from 'rxjs';
 import { DisplayObject } from '../classes/display-object';
 import {
   tween,
-  styler,
-  listen,
-  pointer,
   value,
-  decay,
   spring,
   physics,
   easing,
-  everyFrame,
   keyframes,
   timeline,
-  // velocity,
-  multicast,
-  action,
-  transform, ColdSubscription,
-  // transformMap,
-  // clamp
+  ColdSubscription,
 } from 'popmotion';
 
 export interface AnimationConfig {

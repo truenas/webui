@@ -12,7 +12,6 @@ import {
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { T } from '../../../../translate-marker';
-import * as _ from 'lodash';
 import { StorageService, DialogService, WebSocketService } from '../../../../services';
 import { CoreService } from 'app/core/services/core.service';
 import { LocaleService } from 'app/services/locale.service';

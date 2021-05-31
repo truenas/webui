@@ -1,8 +1,6 @@
 import {
-  Component, OnInit, AfterViewInit, Input, ElementRef, NgZone, OnDestroy,
+  Component, Input, ElementRef,
 } from '@angular/core';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { MaterialModule } from 'app/appMaterial.module';
 
 @Component({
   selector: 'disk-ui',

@@ -18,7 +18,7 @@ import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from '../../../helptext/global-helptext';
 import productText from '../../../helptext/product';
 import helptext from '../../../helptext/topbar';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { T } from '../../../translate-marker';
 import { WebSocketService } from '../../../services/ws.service';

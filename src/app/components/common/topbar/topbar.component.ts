@@ -1,5 +1,5 @@
 import {
-  Component, EventEmitter, Input, OnDestroy, OnInit, Output,
+  Component, Input, OnDestroy, OnInit,
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
@@ -10,7 +10,6 @@ import { LayoutService } from 'app/core/services/layout.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { TranslatedMessages } from 'app/interfaces/translated-messages.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { Subscription, Subject } from 'rxjs';
 import { FailoverDisabledReason } from '../../../enums/failover-disabled-reason.enum';
@@ -22,7 +21,6 @@ import { EntityUtils } from '../../../pages/common/entity/utils';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../services/dialog.service';
 import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
-import { RestService } from '../../../services/rest.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { SystemGeneralService } from '../../../services/system-general.service';
 import { Theme, ThemeService } from '../../../services/theme/theme.service';
@@ -32,7 +30,7 @@ import { T } from '../../../translate-marker';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
-import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
+import { MediaObserver } from '@angular/flex-layout';
 import { DialogFormConfiguration } from '../../../pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { TruecommandComponent } from '../dialog/truecommand/truecommand.component';
 import { ResilverProgressDialogComponent } from '../dialog/resilver-progress/resilver-progress.component';

@@ -1,6 +1,6 @@
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import {
-  Component, Output, EventEmitter, OnInit, OnDestroy,
+  Component, OnInit, OnDestroy,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';

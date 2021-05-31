@@ -4,7 +4,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { Subscription } from 'rxjs';
-import * as _ from 'lodash';
 
 import {
   WebSocketService, DialogService, TaskService, JobService, UserService,

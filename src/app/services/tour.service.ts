@@ -1,15 +1,11 @@
 import { Injectable } from '@angular/core';
 import {
-  Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot,
+  Router, ActivatedRoute,
 } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { Observable, Subject, Subscription } from 'rxjs';
 
-import { EntityUtils } from '../pages/common/entity/utils';
 import { WebSocketService } from './ws.service';
 import { T } from '../translate-marker';
 import { RestService } from './rest.service';
-import * as hopscotch from 'hopscotch';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable()

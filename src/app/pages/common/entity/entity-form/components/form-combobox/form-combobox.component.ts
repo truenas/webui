@@ -6,9 +6,7 @@ import { Option } from 'app/interfaces/option.interface';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
-import { TooltipComponent } from '../tooltip/tooltip.component';
 
-import * as _ from 'lodash';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { fromEvent } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';

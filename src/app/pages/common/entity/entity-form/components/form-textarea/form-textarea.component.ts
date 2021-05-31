@@ -1,12 +1,11 @@
 import {
-  Component, ViewContainerRef, ViewChild, ElementRef,
+  Component, ViewChild, ElementRef,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
-import { TooltipComponent } from '../tooltip/tooltip.component';
 import globalHelptext from '../../../../../../helptext/global-helptext';
 
 @Component({

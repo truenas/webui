@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import * as _ from 'lodash';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { WebSocketService, AppLoaderService, DialogService } from '../../../../services';

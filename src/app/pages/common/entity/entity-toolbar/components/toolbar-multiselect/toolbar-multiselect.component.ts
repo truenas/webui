@@ -1,7 +1,6 @@
 import {
-  Component, ViewChild, Input, OnInit, OnChanges, SimpleChanges,
+  Component, ViewChild, Input, OnInit,
 } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
 import { MatSelect } from '@angular/material/select';
 import { TranslateService } from '@ngx-translate/core';
 import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';

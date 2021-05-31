@@ -1,9 +1,8 @@
 import {
-  ApplicationRef, Component, Injector, OnInit,
+  ApplicationRef, Component, Injector,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { WebSocketService } from '../../../../services';

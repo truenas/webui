@@ -7,7 +7,6 @@ import { filter, switchMap } from 'rxjs/operators';
 import { DialogService } from '../../../../../services';
 import { TaskService, WebSocketService } from '../../../../../services';
 import { T } from '../../../../../translate-marker';
-import { TaskScheduleListComponent } from '../../../../data-protection/components/task-schedule-list/task-schedule-list.component';
 import { ModalService } from 'app/services/modal.service';
 import { CronFormComponent } from '../cron-form/cron-form.component';
 import { UserService } from '../../../../../services/user.service';

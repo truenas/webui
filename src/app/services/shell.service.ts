@@ -1,10 +1,9 @@
 import {
-  Injectable, EventEmitter, Output, Input,
+  Injectable, EventEmitter, Output,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { UUID } from 'angular2-uuid';
 import { LocalStorage } from 'ngx-webstorage';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ShellConnectedEvent } from '../interfaces/shell.interface';
 

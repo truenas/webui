@@ -6,8 +6,6 @@ import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interf
 import { ModalService } from 'app/services/modal.service';
 import helptext from '../../../helptext/apps/apps';
 import { ApplicationsService } from '../applications.service';
-import { MatDialog } from '@angular/material/dialog';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { DialogService } from '../../../services/index';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../services';

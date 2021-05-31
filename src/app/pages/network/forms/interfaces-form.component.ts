@@ -12,7 +12,7 @@ import helptext from '../../../helptext/network/interfaces/interfaces-form';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import globalHelptext from '../../../helptext/global-helptext';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import isCidr, * as ipCidr from 'is-cidr';
+import isCidr from 'is-cidr';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({

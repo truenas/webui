@@ -1,5 +1,5 @@
 import {
-  Directive, OnInit, Input, ElementRef, Renderer2, HostListener,
+  Directive, Input,
 } from '@angular/core';
 
 /*

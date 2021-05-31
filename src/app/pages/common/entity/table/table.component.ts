@@ -4,8 +4,6 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatCellDef } from '@angular/material/table/cell';
 
-import * as _ from 'lodash';
-
 import { WebSocketService } from 'app/services';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';

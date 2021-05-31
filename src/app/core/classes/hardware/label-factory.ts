@@ -1,28 +1,6 @@
 import { CoreEvent } from 'app/interfaces/events';
-import { Container, Texture, Sprite } from 'pixi.js';
-import { Subject, Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 import { Chassis } from './chassis';
-import { DriveTray } from './drivetray';
-import {
-  tween,
-  styler,
-  listen,
-  pointer,
-  value,
-  decay,
-  spring,
-  physics,
-  easing,
-  everyFrame,
-  keyframes,
-  timeline,
-  // velocity,
-  multicast,
-  action,
-  transform,
-  // transformMap,
-  // clamp
-} from 'popmotion';
 
 export class LabelFactory {
   /*

@@ -1,7 +1,6 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { FormControl } from '@angular/forms';
 import { VmDeviceType, VmTime } from 'app/enums/vm.enum';
 import * as _ from 'lodash';
 import { ProductType } from '../../../enums/product-type.enum';
@@ -13,14 +12,13 @@ import { T } from '../../../translate-marker';
 import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
 import globalHelptext from '../../../helptext/global-helptext';
 import {
-  WebSocketService, StorageService, VmService, ValidationService, AppLoaderService, DialogService, SystemGeneralService,
+  WebSocketService, StorageService, VmService, AppLoaderService, DialogService, SystemGeneralService,
 } from '../../../services';
 import { Validators } from '@angular/forms';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import { GpuDevice } from 'app/interfaces/gpu-device.interface';
 import { combineLatest, Observable } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 

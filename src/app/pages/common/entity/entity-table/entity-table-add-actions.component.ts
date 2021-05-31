@@ -1,5 +1,5 @@
 import {
-  Component, ElementRef, Input, ViewChild, OnInit, AfterViewInit, OnDestroy, OnChanges, SimpleChanges,
+  Component, ElementRef, Input, ViewChild, OnInit, AfterViewInit, OnChanges, SimpleChanges,
 } from '@angular/core';
 import { fromEvent as observableFromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';

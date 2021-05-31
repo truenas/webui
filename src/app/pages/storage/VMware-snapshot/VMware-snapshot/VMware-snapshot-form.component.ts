@@ -3,7 +3,7 @@ import {
   Component,
   Injector,
 } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import * as _ from 'lodash';
@@ -15,7 +15,6 @@ import { T } from '../../../../translate-marker';
 import { DialogService } from 'app/services/dialog.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import helptext from '../../../../helptext/storage/VMware-snapshot/VMware-snapshot';
-import { first } from 'rxjs/operators';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 

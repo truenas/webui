@@ -7,8 +7,7 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
-import * as moment from 'moment';
-import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { RestService } from '../../../../services/rest.service';

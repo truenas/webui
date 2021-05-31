@@ -1,14 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CoreEvent } from 'app/interfaces/events';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { DialogService, StorageService, ValidationService } from 'app/services';
+import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../services/ws.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { ModalService } from '../../../services/modal.service';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import * as _ from 'lodash';
 import helptext from '../../../helptext/apps/apps';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { ManageCatalogSummaryDialog } from '../dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';

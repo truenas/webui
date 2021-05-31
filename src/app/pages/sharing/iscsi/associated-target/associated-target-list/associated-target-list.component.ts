@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { forkJoin } from 'rxjs';
 
 import { IscsiService } from '../../../../../services';

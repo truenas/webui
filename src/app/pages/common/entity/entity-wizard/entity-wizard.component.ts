@@ -4,12 +4,11 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService, WebSocketService } from '../../../../services';
 import {
-  AbstractControl, FormControl, FormBuilder, FormGroup, FormArray, Validators,
+  AbstractControl, FormBuilder, FormGroup,
 } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
-import { FieldSet } from '../entity-form/models/fieldset.interface';
 import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FieldRelationService } from '../entity-form/services/field-relation.service';

@@ -1,5 +1,5 @@
 import {
-  Component, Output, ViewChild, EventEmitter, OnInit, OnDestroy,
+  Component, OnInit, OnDestroy,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select/select';
@@ -7,7 +7,6 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
-import { TooltipComponent } from '../tooltip/tooltip.component';
 import { NetworkService } from '../../../../../../services';
 
 @Component({

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { CoreEvent } from 'app/interfaces/events';
 import { QueryOptions } from 'app/interfaces/query-api.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
