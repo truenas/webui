@@ -69,10 +69,10 @@ def the_network_global_configuration_page_should_open(driver):
 @then(parsers.parse('change the first nameserver to "{ad_nameserver}" and Domain to "{ad_domain}"'))
 def change_the_first_nameserver_and_domain(driver, ad_nameserver, ad_domain):
     """change the first nameserver to "ad_nameserver" and Domain to "ad_domain"."""
-    assert wait_on_element(driver, 5, '//input[@placeholder="Nameserver 1"]')
+    assert wait_on_element(driver, 5, '//input[@placeholder="Nameserver 1"]', 'clickable')
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 1"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 1"]').send_keys(ad_nameserver)
-    assert wait_on_element(driver, 5, '//input[@placeholder="Domain"]')
+    assert wait_on_element(driver, 5, '//input[@placeholder="Domain"]', 'clickable')
     driver.find_element_by_xpath('//input[@placeholder="Domain"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Domain"]').send_keys(ad_domain)
 
@@ -96,7 +96,7 @@ def click_directory_services_on_the_side_menu_and_click_active_directory(driver)
     """click Directory Services on the side menu and click Active Directory."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Directory Services"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Active Directory"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Active Directory"]', 'clickcable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Active Directory"]').click()
 
 
@@ -104,12 +104,15 @@ def click_directory_services_on_the_side_menu_and_click_active_directory(driver)
 def the_domain_credentials_page_should_open(driver):
     """the Domain Credentials page should open."""
     assert wait_on_element(driver, 7, '//h4[contains(.,"Domain Credentials")]')
+    time.sleep(0.5)
 
 
 @then(parsers.parse('input Domain name "{ad_domain}", Account name "{ad_user}", Password "{ad_password}"'))
 def input_domain_name_account_name_password(driver, ad_domain, ad_user, ad_password):
     """input Domain name "ad_domain", Account name "ad_user", Password "ad_password"."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Domain Name"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Domain Name"]', 'clickable')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Domain Account Name"]', 'clickable')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Domain Account Password"]', 'clickable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Name"]').send_keys(ad_domain)
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Account Name"]').clear()
@@ -123,6 +126,7 @@ def click_advanced_and_input_truenas_servers_to_computer_account_ou(driver, ca_o
     """click Advanced, and input "TRUENAS_SERVERS" to Computer Account OU."""
     if is_element_present(driver, '//button[@ix-auto="button__ADVANCED OPTIONS"]'):
         driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Computer Account OU"]', 'clickable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Computer Account OU"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Computer Account OU"]').send_keys(ca_ou)
 
@@ -130,6 +134,7 @@ def click_advanced_and_input_truenas_servers_to_computer_account_ou(driver, ca_o
 @then('click the Enable checkbox and click SAVE')
 def click_the_enable_checkbox_and_click_save(driver):
     """click the Enable checkbox and click SAVE."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
