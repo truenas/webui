@@ -1,26 +1,19 @@
 import {
-  Component, ElementRef, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output, ViewChild,
+  Component, ElementRef, OnInit, OnDestroy, AfterViewInit, ViewChild,
 } from '@angular/core';
-import { MatOption } from '@angular/material/core';
-import { MatListOption } from '@angular/material/list';
 import {
-  Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot,
+  Router, ActivatedRoute,
 } from '@angular/router';
-import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import * as _ from 'lodash';
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 import { CoreService } from 'app/core/services/core.service';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
-import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { ReportComponent, Report } from './components/report/report.component';
+import { Report } from './components/report/report.component';
 import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
-import { ReportsService } from './reports.service';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 
 import { ErdService } from 'app/services/erd.service';
@@ -399,7 +392,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
             name: 'metrics',
             width: 'calc(50% - 16px)',
             placeholder: T('Choose a metric'),
-            options: this.diskMetrics ? this.diskMetrics : [{ label: 'None available', value: 'negative' }], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+
+            // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+            options: this.diskMetrics ? this.diskMetrics : [{ label: 'None available', value: 'negative' }],
             required: true,
             multiple: true,
             tooltip: T('Choose a metric to display.'),

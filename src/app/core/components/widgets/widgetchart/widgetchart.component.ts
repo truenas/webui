@@ -1,18 +1,13 @@
 import {
-  Component, AfterViewInit, Input, ViewChild, OnDestroy,
+  Component, OnDestroy,
 } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
-import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
-import { CoreEvent } from 'app/interfaces/events';
-import * as d3 from 'd3';
 
-import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { TranslateService } from '@ngx-translate/core';
 

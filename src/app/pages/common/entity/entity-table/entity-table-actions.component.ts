@@ -1,15 +1,9 @@
 import {
   Component, Input, OnInit, OnChanges,
 } from '@angular/core';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
-import { RestService } from '../../../../services/rest.service';
-
 import { EntityTableComponent } from './entity-table.component';
-import { interval } from 'rxjs';
-import * as _ from 'lodash';
 
 @Component({
   selector: 'app-entity-table-actions',

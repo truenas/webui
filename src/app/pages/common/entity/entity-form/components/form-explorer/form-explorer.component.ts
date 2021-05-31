@@ -1,8 +1,8 @@
-import { Component, ViewContainerRef, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { EntityFormService } from '../../services/entity-form.service';
 import {
-  TREE_ACTIONS, KEYS, IActionMapping, TreeModel,
+  TREE_ACTIONS, KEYS, IActionMapping,
 } from 'angular-tree-component';
 import { TranslateService } from '@ngx-translate/core';
 

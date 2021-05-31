@@ -16,9 +16,7 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import * as _ from 'lodash';
-import {
-  fromEvent as observableFromEvent, Observable, of, Subscription,
-} from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';

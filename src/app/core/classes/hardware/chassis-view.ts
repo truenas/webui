@@ -1,30 +1,16 @@
 import { CoreEvent } from 'app/interfaces/events';
-import { Container, Texture, Sprite } from 'pixi.js';
-import { OutlineFilter } from '@pixi/filter-outline';
-import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
-import { Subject, Observable } from 'rxjs';
+import { Container, Sprite } from 'pixi.js';
+import { Subject } from 'rxjs';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { DriveTray } from './drivetray';
 
+// TODO: See if can be removed.
+// eslint-disable-next-line unused-imports/no-unused-imports
+import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
+
 import {
   tween,
-  styler,
-  listen,
-  pointer,
-  value,
-  decay,
-  spring,
-  physics,
   easing,
-  everyFrame,
-  keyframes,
-  timeline,
-  // velocity,
-  multicast,
-  action,
-  transform,
-  // transformMap,
-  // clamp
 } from 'popmotion';
 
 export interface Range {

@@ -1,9 +1,6 @@
 import {
-  Component, ViewChild, OnInit, AfterViewInit, Input, Renderer2, ViewContainerRef, ComponentRef, ComponentFactory, ComponentFactoryResolver,
+  Component, ViewChild, Renderer2, ViewContainerRef, ComponentFactoryResolver,
 } from '@angular/core';
-import { LayoutContainer, LayoutChild } from 'app/core/classes/layouts';
-import { ViewConfig } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { Subject } from 'rxjs';
 
 @Component({
   selector: 'display',

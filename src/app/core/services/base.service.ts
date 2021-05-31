@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { CoreEvent } from 'app/interfaces/events';
 import { CoreService } from './core.service';
 import { WebSocketService } from 'app/services/ws.service';
 

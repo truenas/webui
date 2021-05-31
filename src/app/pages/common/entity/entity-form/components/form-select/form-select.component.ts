@@ -1,5 +1,5 @@
 import {
-  Component, ViewChild, Output, EventEmitter, AfterViewInit, AfterViewChecked, ChangeDetectorRef,
+  Component, ViewChild, AfterViewInit, AfterViewChecked, ChangeDetectorRef,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatFormField } from '@angular/material/form-field';
@@ -8,8 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
-import { TooltipComponent } from '../tooltip/tooltip.component';
-import { MatOptionSelectionChange } from '@angular/material/core';
 import * as _ from 'lodash';
 import { DialogService } from 'app/services';
 import { DialogFormConfiguration } from '../../../entity-dialog/dialog-form-configuration.interface';

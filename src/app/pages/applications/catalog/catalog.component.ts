@@ -14,16 +14,14 @@ import { Subject, Subscription } from 'rxjs';
 import { CoreService } from 'app/core/services/core.service';
 
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { DialogService, WebSocketService, SystemGeneralService } from '../../../services/index';
+import { DialogService, WebSocketService } from '../../../services/index';
 import { ModalService } from '../../../services/modal.service';
 import { ApplicationsService } from '../applications.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
 import { ChartReleaseAddComponent } from '../forms/chart-release-add.component';
-import { ChartFormComponent } from '../forms/chart-form.component';
 import { ChartWizardComponent } from '../forms/chart-wizard.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from '../../../helptext/apps/apps';

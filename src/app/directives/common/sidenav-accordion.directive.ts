@@ -1,7 +1,6 @@
 import {
-  Directive, ElementRef, Input, Output, HostBinding, HostListener, EventEmitter, OnInit,
+  Directive, ElementRef, HostListener, OnInit,
 } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
 import { LayoutService } from 'app/core/services/layout.service';
 import * as domHelper from '../../helpers/dom.helper';
 

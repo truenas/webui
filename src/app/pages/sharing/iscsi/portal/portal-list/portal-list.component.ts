@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { IscsiIpChoices, IscsiPortal } from 'app/interfaces/iscsi.interface';
+import { IscsiIpChoices } from 'app/interfaces/iscsi.interface';
 import { T } from 'app/translate-marker';
 import { IscsiService } from '../../../../../services';
 

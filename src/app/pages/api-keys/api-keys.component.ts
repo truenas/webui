@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';

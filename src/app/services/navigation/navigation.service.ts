@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { T } from '../../translate-marker';
 
-import * as _ from 'lodash';
-
 interface IMenuItem {
   type: string; // Possible values: link/slideOut/icon/separator/extLink
   name?: string; // Used as display text for item and title for separator type

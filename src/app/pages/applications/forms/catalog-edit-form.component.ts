@@ -1,15 +1,10 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import * as _ from 'lodash';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { ModalService } from '../../../services/modal.service';
 import { DialogService } from '../../../services/index';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { ApplicationsService } from '../applications.service';
 import helptext from '../../../helptext/apps/apps';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FormListComponent } from '../../common/entity/entity-form/components/form-list/form-list.component';
-import { EntityUtils } from '../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({

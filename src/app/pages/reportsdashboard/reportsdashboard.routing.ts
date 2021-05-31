@@ -1,7 +1,5 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { T } from 'app/translate-marker';
-import { ReportsConfigComponent } from './components/reports-config/reports-config.component';
 
 import { ReportsDashboardComponent } from './reportsdashboard.component';
 

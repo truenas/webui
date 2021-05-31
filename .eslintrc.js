@@ -32,13 +32,19 @@ module.exports = {
         "no-return-assign": "off",
         "no-empty": ["error", { "allowEmptyCatch": true }],
         "arrow-body-style": "off",
+        "max-len": ["error", 170, 2, {
+          "ignoreUrls": true,
+          "ignoreComments": false,
+          "ignoreRegExpLiterals": true,
+          "ignoreStrings": true,
+          "ignoreTemplateLiterals": true
+        }],
+        "no-console": ["error", { allow: ["warn", "error", "info"] }],
 
         // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically
-        "max-len": "off",
         "no-underscore-dangle": "off",
         "@typescript-eslint/naming-convention": "off",
         "class-methods-use-this": "off",
-        "no-console": "off",
         "eqeqeq": "off",
         "import/prefer-default-export": "off",
         "block-scoped-var": "off",
@@ -101,7 +107,7 @@ module.exports = {
         "@typescript-eslint/ban-ts-comment": "error",
         "@typescript-eslint/explicit-function-return-type": ["error", { allowExpressions: true }],
         "@typescript-eslint/no-unused-vars": "off",
-        "unused-imports/no-unused-imports": "off",
+        "unused-imports/no-unused-imports": "error",
         "unused-imports/no-unused-vars": ["error", { vars: "local", args: "after-used" }],
       }
     },

@@ -1,5 +1,5 @@
 import {
-  Component, ComponentRef, AfterViewInit, ViewChild, OnDestroy,
+  Component, ViewChild, OnDestroy,
 } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Display } from 'app/core/components/display/display.component';

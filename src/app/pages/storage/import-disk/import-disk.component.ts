@@ -2,7 +2,6 @@ import {
   ApplicationRef, Component, Injector, OnDestroy,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { CoreEvent } from 'app/interfaces/events';
 import * as _ from 'lodash';
 import helptext from '../../../helptext/storage/import-disk/import-disk';
 

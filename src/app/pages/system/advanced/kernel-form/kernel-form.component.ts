@@ -1,11 +1,8 @@
 import { Component, OnDestroy } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import {
   DialogService, LanguageService, StorageService,

@@ -6,8 +6,6 @@ import { ServiceFTPComponent } from './components/service-ftp';
 import { ServiceLLDPComponent } from './components/service-lldp';
 import { ServiceNFSComponent } from './components/service-nfs';
 import { ServiceRSYNCComponent } from './components/service-rsync';
-import { CconfigureRYSNCComponent } from './components/service-rsync/rsyncconfiguration/configure_rsync';
-import { RSYNCconfigurationListComponent } from './components/service-rsync/rsyncconfiguration/rsyncconfiguration-list';
 import { RYSNCConfigurationFormComponent } from './components/service-rsync/rsyncconfiguration/rsyncmodule';
 import { ServiceS3Component } from './components/service-s3';
 import { ServiceSMARTComponent } from './components/service-smart';

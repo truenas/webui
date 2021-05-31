@@ -1,15 +1,12 @@
 import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
-  Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot,
+  Router, NavigationEnd, NavigationCancel, ActivatedRoute,
 } from '@angular/router';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { CoreEvent } from 'app/interfaces/events';
 
 import { ThemeService } from 'app/services/theme/theme.service';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import * as hopscotch from 'hopscotch';
 import { RestService } from './services/rest.service';
 import { ApiService } from 'app/core/services/api.service';
 import { AnimationService } from 'app/core/services/animation.service';

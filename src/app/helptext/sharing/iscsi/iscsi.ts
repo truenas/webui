@@ -1,6 +1,5 @@
 import { T } from 'app/translate-marker';
 import { Validators } from '@angular/forms';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
 import globalHelptext from '../../global-helptext';
 
 export const helptext_sharing_iscsi = {

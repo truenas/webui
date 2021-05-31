@@ -7,8 +7,6 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/services/components/service-ssh';
 import { NetworkService, RestService, WebSocketService } from '../../../../services';
-import { TranslateService } from '@ngx-translate/core';
-import { T } from '../../../../translate-marker';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({

@@ -39,7 +39,6 @@ export interface UserPreferences {
 
 @Injectable()
 export class PreferencesService {
-  private debug = false;
   private startupComplete = false;
   defaultPreferences: UserPreferences = {
     platform: 'freenas', // Detect platform
@@ -85,7 +84,7 @@ export class PreferencesService {
 
       if (!evt.data) {
         this.core.emit({ name: 'UserDataRequest', data: [[['id', '=', 1]]] });
-      } else if (this.debug) { console.warn('Multiple users not supported by middleware'); }
+      }
     });
 
     this.core.register({ observerClass: this, eventName: 'UserData', sender: this.api }).subscribe((evt: CoreEvent) => {
@@ -93,7 +92,6 @@ export class PreferencesService {
         const data = evt.data[0].attributes.preferences;
         if (!data) {
           // If preferences do not exist return after saving Preferences so that UI can retry.
-          if (this.debug)console.log('Preferences not returned');
           this.savePreferences();
           console.warn('No Preferences Found in Middleware');
           return;
@@ -159,11 +157,10 @@ export class PreferencesService {
 
   // Update local cache
   updatePreferences(data: UserPreferences): void {
-    if (data && !this.startupComplete && this.debug) {
+    if (data && !this.startupComplete) {
       console.warn('Startup is not complete!');
       console.warn(data);
-      const report = this.sanityCheck(data);
-      console.log(report);
+      this.sanityCheck(data);
     }
 
     const clone: any = {};
@@ -190,7 +187,6 @@ export class PreferencesService {
       data = this.preferences;
     }
     this.core.emit({ name: 'UserDataUpdate', data });
-    if (this.debug) { console.log({ SavingPreferences: this.preferences }); }
   }
 
   replaceCustomTheme(oldTheme: Theme, newTheme: Theme): boolean {
@@ -219,11 +215,9 @@ export class PreferencesService {
 
     // Find Deprecated
     oldKeys = savedKeys.filter((key) => currentKeys.indexOf(key) == -1);
-    if (this.debug && oldKeys.length > 0)console.log(oldKeys.length + ' Deprecated Preferences Found!');
 
     // Find New
     newKeys = currentKeys.filter((key) => savedKeys.indexOf(key) == -1);
-    if (this.debug && newKeys.length > 0)console.log(newKeys.length + ' New Preferences Found!');
 
     const report: PropertyReport = {
       middlewareProperties: savedKeys, // Inbound from Middleware

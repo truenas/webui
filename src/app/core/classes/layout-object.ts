@@ -1,22 +1,7 @@
 import { DisplayObject } from './display-object';
 import { CoreService } from '../services/core.service';
 import { debounceTime } from 'rxjs/operators';
-import {
-  tween,
-  styler,
-  listen,
-  pointer,
-  value,
-  decay,
-  spring,
-  physics,
-  // velocity,
-  multicast,
-  action,
-  transform,
-  // transformMap,
-  // clamp
-} from 'popmotion';
+import { tween } from 'popmotion';
 
 /*
    * Layout Object: A base class for
@@ -159,7 +144,6 @@ export class LayoutObject {
   }
 
   insert(item: DisplayObject): void { // Add new item to collection and regenerate screenPositions
-    console.log('Inserting DisplayObject into layout');
     console.warn(this.reorderedCollection);
     // update collection
     /* if(this.reorderedCollection && this.reorderedCollection.length > 0){
@@ -213,18 +197,15 @@ export class LayoutObject {
     }
   }
 
-  moveToScreenPosition(dragTarget: DisplayObject, index: number, debug?: boolean): void { // Move an existing DisplayObject to a new position.
+  moveToScreenPosition(dragTarget: DisplayObject, index: number): void { // Move an existing DisplayObject to a new position.
     const startX = dragTarget.x;
     const startY = dragTarget.y;
     const newX = this.screenPositions[index].left;
     const newY = this.screenPositions[index].top;
-    // console.log(dragTarget.id);
 
     if (startX == newX && startY == newY) {
-      // console.log(index)
       return;
     }
-    if (debug) console.log('pretween');
     tween({
       from: { x: startX, y: startY },
       to: { x: newX, y: newY },
@@ -232,17 +213,14 @@ export class LayoutObject {
       flip: 0,
     }).start({
       update: (v: any) => {
-        if (debug)console.log(v);
         dragTarget.target.set(v);
       },
       complete: () => {
         dragTarget.x = newX;
         dragTarget.y = newY;
-        if (debug)console.log('done');
       },
     });
 
-    if (debug) console.log('posttween');
     // Make sure dragTarget's internal anchorXY gets updated
     /* setTimeout(() => {
          dragTarget.x = newX;
@@ -318,7 +296,6 @@ export class LayoutObject {
   }
 
   endInteractiveMovement(dragTarget: DisplayObject): void { // Complete and cleanup after item has been dropped to new location
-    console.log('Ending Interactive Movement in layout');
     const index = this.reorderedCollection.indexOf(dragTarget.id);
     this.moveToScreenPosition(dragTarget, index);
     this.orderedCollection = this.reorderedCollection;
@@ -371,7 +348,6 @@ export class LayoutObject {
   }
 
   private createScreenPositions(columns: number, total: number, margin: number, dynamic?: boolean): void {
-    // console.log("Creating Rows...")
     if (this.screenPositions.length > 0) {
       this.screenPositions = [];
     }
@@ -387,7 +363,6 @@ export class LayoutObject {
         el.width = this.itemSize.width;
         el.height = this.itemSize.height;
       }
-      // console.log(el.width + margin);
 
       // el.x = (i % columns) * (el.width + margin * 2);
       // el.y = Math.floor(i / columns) * (el.height + margin * 2);

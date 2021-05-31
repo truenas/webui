@@ -1,11 +1,10 @@
 import {
-  Component, AfterViewInit, OnInit, OnChanges,
+  Component, OnInit,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
-import { TooltipComponent } from '../tooltip/tooltip.component';
 
 @Component({
   selector: 'form-colorpicker',
@@ -25,8 +24,6 @@ export class FormColorpickerComponent implements Field, OnInit {
 
   set textInput(val: string) {
     this._textInput = val;
-    console.log('TEXT INPUT CHANGED!!');
-    console.log(val);
   }
 
   get colorProxy(): string {
@@ -46,7 +43,6 @@ export class FormColorpickerComponent implements Field, OnInit {
   }
 
   inputListener(evt: string, data: any): void {
-    console.log(evt);
     this.group.value[this.config.name] = data;
   }
 

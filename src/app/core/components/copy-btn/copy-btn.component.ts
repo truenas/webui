@@ -1,7 +1,6 @@
 import {
-  Component, OnInit, Input, ViewChild, ElementRef,
+  Component, Input, ViewChild, ElementRef,
 } from '@angular/core';
-import { MaterialModule } from '../../../appMaterial.module';
 
 @Component({
   selector: 'copy-btn',

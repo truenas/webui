@@ -1,7 +1,6 @@
 import {
-  Component, Input, OnInit, OnChanges, SimpleChanges,
+  Component, Input, OnInit,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
 

@@ -7,7 +7,6 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { MaterialModule } from '../../appMaterial.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 
 import { ScrollingModule } from '@angular/cdk/scrolling';

@@ -3,22 +3,17 @@ import {
   Component,
   Injector,
   OnInit,
-  AfterViewInit,
-  OnChanges,
   OnDestroy,
   ViewChild,
-  SimpleChanges,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { CoreEvent } from 'app/interfaces/events';
-import * as _ from 'lodash';
 import { EntityFormEmbeddedComponent } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RestService, WebSocketService } from 'app/services/';
 import { ThemeService, Theme, DefaultTheme } from 'app/services/theme/theme.service';
 import { CoreService } from 'app/core/services/core.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import { Subject } from 'rxjs';
 import { T } from '../../../../translate-marker';
 
