@@ -54,7 +54,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   ngAfterViewInit(): void {
     // Change the value of null to 'null_value' string
     this.config.options = this.config.options.map((option) => {
-      if (!option.value) option = { label: option, value: option };
+      if (option.value === undefined) option = { label: option, value: option };
 
       option.value = this.entityUtils.changeNull2String(option.value);
 

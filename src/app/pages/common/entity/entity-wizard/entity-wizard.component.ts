@@ -4,7 +4,7 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService, WebSocketService } from '../../../../services';
 import {
-  AbstractControl, FormBuilder, FormGroup, FormArray,
+  AbstractControl, FormBuilder, FormGroup,
 } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
@@ -34,6 +34,9 @@ export class EntityWizardComponent implements OnInit {
   formGroup: FormGroup;
   showSpinner = false;
   busy: Subscription;
+
+  summaryValue: any;
+  summaryFieldConfigs: FieldConfig[] = [];
 
   saveSubmitText = T('Submit');
   customNextText = T('Next');
@@ -106,6 +109,7 @@ export class EntityWizardComponent implements OnInit {
     });
 
     for (const i in this.conf.wizardConfig) {
+      this.summaryFieldConfigs = this.summaryFieldConfigs.concat(this.conf.wizardConfig[i].fieldConfig);
       for (const j in this.conf.wizardConfig[i].fieldConfig) {
         const config = this.conf.wizardConfig[i].fieldConfig[j];
         if (config.relation.length > 0) {
@@ -221,8 +225,6 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  originalOrder = function (): void {};
-
   isFieldsetAvailabel(fieldset: any): boolean {
     if (fieldset.config) {
       for (let i = 0; i < fieldset.config.length; i++) {
@@ -248,87 +250,13 @@ export class EntityWizardComponent implements OnInit {
   selectionChange(event: StepperSelectionEvent): void {
     if (this.conf.isAutoSummary) {
       if (event.selectedIndex == this.conf.wizardConfig.length) {
-        this.updateSummary();
+        let value = {};
+        for (const i in this.formGroup.value.formArray) {
+          value = _.merge(value, _.cloneDeep(this.formGroup.value.formArray[i]));
+        }
+        this.summaryValue = value;
       }
     }
-  }
-
-  updateSummary(): void {
-    let summary = {};
-    for (let step = 0; step < this.conf.wizardConfig.length; step++) {
-      const wizard = this.conf.wizardConfig[step];
-      wizard.fieldConfig.forEach((fieldConfig: any) => {
-        const formControl = (< FormGroup > this.formArray.get([step]).get(fieldConfig.name));
-        const stepSummary = this.getSummaryValue(fieldConfig, formControl);
-        if (stepSummary) {
-          summary = { ...summary, ...stepSummary };
-        }
-      });
-    }
-    summary = new EntityUtils().changeNullString2Null(summary);
-    summary = new EntityUtils().remapAppSubmitData(summary);
-    this.conf.summary = summary;
-  }
-
-  getSummaryValue(fieldConfig: FieldConfig, formControl: AbstractControl): any {
-    let result: any;
-    let value: any;
-
-    if (!formControl) {
-      return null;
-    }
-    let key = fieldConfig.placeholder;
-    if (!key) {
-      key = fieldConfig.name;
-    }
-
-    if (fieldConfig.type == 'dict') {
-      if (fieldConfig.subFields) {
-        fieldConfig.subFields.forEach((subFieldConfig: FieldConfig) => {
-          const subFormControl = formControl.get(subFieldConfig.name);
-          const subValue = this.getSummaryValue(subFieldConfig, subFormControl);
-          if (!value) {
-            value = subValue;
-          } else {
-            value = { ...value, ...subValue };
-          }
-        });
-      }
-    } else if (fieldConfig.type == 'list') {
-      fieldConfig.listFields.forEach((listFieldConfig: FieldConfig[], index: number) => {
-        const listFormGroup = (formControl as FormArray).at(index);
-        let listValue: any;
-        listFieldConfig.forEach((subListFieldConfig: FieldConfig) => {
-          const subListFormGroup = listFormGroup.get(subListFieldConfig.name);
-          const subValue = this.getSummaryValue(subListFieldConfig, subListFormGroup);
-          if (!listValue) {
-            listValue = subValue;
-          } else {
-            listValue = { ...listValue, ...subValue };
-          }
-        });
-        if (listValue) {
-          if (!value) {
-            value = [];
-          }
-          value.push(listValue);
-        }
-      });
-    } else {
-      value = formControl.value;
-      if (fieldConfig.type === 'select') {
-        const selectedOption = fieldConfig.options.find((option) => option.value == formControl.value);
-        if (selectedOption) {
-          value = selectedOption.label;
-        }
-      }
-    }
-
-    if (value) {
-      result = { [key]: value };
-    }
-
-    return result;
   }
 
   clearErrors(): void {
