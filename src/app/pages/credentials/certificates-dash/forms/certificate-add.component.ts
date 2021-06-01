@@ -36,7 +36,6 @@ export class CertificateAddComponent {
   private getType = new Subscription();
   private type: any;
   hideCancel = true;
-  private isLinear = true;
   private summary: any = {};
 
   entityWizard: any;
@@ -631,11 +630,11 @@ export class CertificateAddComponent {
     'KeyUsage',
   ];
 
-  private country: any;
-  private signedby: any;
-  private csrlist: any;
+  private country: FieldConfig;
+  private signedby: FieldConfig;
+  private csrlist: FieldConfig;
   identifier: any;
-  usageField: any;
+  usageField: FieldConfig;
   private currentProfile: any;
 
   constructor(protected ws: WebSocketService, protected dialog: MatDialog,

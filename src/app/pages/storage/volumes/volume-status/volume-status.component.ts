@@ -50,7 +50,12 @@ interface PoolDiskInfo {
 export class VolumeStatusComponent implements OnInit {
   actionEvents: Subject<CoreEvent>;
   poolScan: PoolScan;
-  timeRemaining: any = {};
+  timeRemaining = {
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  } ;
   treeTableConfig: EntityTreeTable = {
     tableData: [],
     columns: [
@@ -65,9 +70,6 @@ export class VolumeStatusComponent implements OnInit {
 
   protected pk: number;
   expandRows: number[] = [1];
-
-  protected editDiskRoute: any = ['storage', 'disks', 'pool'];
-  protected replaceDiskRoute: any = ['storage', 'disks', 'pool'];
 
   protected replaceDiskFormFields: FieldConfig[] = [{
     type: 'input',

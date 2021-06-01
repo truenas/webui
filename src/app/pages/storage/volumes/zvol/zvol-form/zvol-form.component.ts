@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DatasetType } from 'app/enums/dataset-type.enum';
+import { Option } from 'app/interfaces/option.interface';
 import { Subscription, combineLatest, Observable } from 'rxjs';
 import * as _ from 'lodash';
 
@@ -54,14 +55,13 @@ export class ZvolFormComponent implements FormConfiguration {
   parent_data: any;
   volid: string;
   customFilter: any[] = [];
-  pk_dataset: any[] = [];
   edit_data: any;
   protected entityForm: any;
   minimum_recommended_zvol_volblocksize: string;
   namesInUse: string[] = [];
   title: string;
 
-  protected origVolSize: any;
+  protected origVolSize: number;
   protected origHuman: any;
 
   protected non_encrypted_warned = false;
@@ -73,15 +73,15 @@ export class ZvolFormComponent implements FormConfiguration {
   protected generate_key = true;
   protected encryption_algorithm: string;
 
-  private sync_inherit: any;
-  private compression_inherit: any;
-  private deduplication_inherit: any;
-  private volblocksize_inherit: any;
+  private sync_inherit: Option[];
+  private compression_inherit: Option[];
+  private deduplication_inherit: Option[];
+  private volblocksize_inherit: Option[];
   private sparseHidden: boolean;
   private volblocksizeHidden: boolean;
-  private sync_collection: any;
-  private compression_collection: any;
-  private deduplication_collection: any;
+  private sync_collection: Option[];
+  private compression_collection: Option[];
+  private deduplication_collection: Option[];
 
   private inherit_encryption_subscription: Subscription;
   private encryption_subscription: Subscription;

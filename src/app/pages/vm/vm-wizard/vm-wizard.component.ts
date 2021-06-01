@@ -45,7 +45,6 @@ export class VMWizardComponent {
   isLinear = true;
   firstFormGroup: FormGroup;
   protected dialogRef: any;
-  objectKeys = Object.keys;
   summaryTitle = T('VM Summary');
   namesInUse: string[] = [];
   statSize: any;
@@ -444,11 +443,9 @@ export class VMWizardComponent {
     },
   ];
 
-  protected releaseField: any;
-  protected currentServerVersion: any;
-  private nicAttach: any;
-  private nicType: any;
-  private bootloader: any;
+  private nicAttach: FieldConfig;
+  private nicType: FieldConfig;
+  private bootloader: FieldConfig;
 
   constructor(protected rest: RestService, protected ws: WebSocketService,
     public vmService: VmService, public networkService: NetworkService,

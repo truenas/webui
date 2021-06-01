@@ -69,7 +69,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   legendIndex: number;
 
   labels: string[] = [];
-  protected currentTheme: any;
+  protected currentTheme: Theme;
   private utils: ThemeUtils;
 
   constructor(
@@ -360,7 +360,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         color = this.stripVar(this.currentTheme[cssVar]);
       }
 
-      const bgRGB = this.utils.convertToRGB(this.currentTheme[color]).rgb;
+      const bgRGB = this.utils.convertToRGB((this.currentTheme as any)[color]).rgb;
 
       ds.backgroundColor = this.rgbToString(bgRGB as any, 0.85);
       ds.borderColor = this.rgbToString(bgRGB as any);

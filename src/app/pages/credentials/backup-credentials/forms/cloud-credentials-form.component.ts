@@ -38,7 +38,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
   protected selectedProvider = 'S3';
   protected credentialsOauth = false;
-  protected oauthURL: any;
+  protected oauthURL: string;
   hideSaveBtn = true;
 
   fieldSets: FieldSet[] = [
