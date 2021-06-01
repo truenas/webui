@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, FormArray } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 import { FieldConfig } from '../models/field-config.interface';
 import {
@@ -13,6 +14,7 @@ import {
   RelationGroup,
 } from '../models/field-relation.interface';
 
+@UntilDestroy()
 @Injectable()
 export class FieldRelationService {
   findActivationRelation(relGroups: RelationGroup[]): RelationGroup {
@@ -177,7 +179,7 @@ export class FieldRelationService {
         this.setDisabled(config, formGroup, tobeDisabled, tobeHide);
 
         this.getRelatedFormControls(config, formGroup).forEach((control) => {
-          control.valueChanges.subscribe(() => {
+          control.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
             this.relationUpdate(config, activations, formGroup);
           });
         });

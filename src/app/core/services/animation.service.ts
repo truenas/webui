@@ -12,6 +12,7 @@ import {
   timeline,
   ColdSubscription,
 } from 'popmotion';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 export interface AnimationConfig {
   animationTarget: DisplayObject; // Support DisplayObject
@@ -28,6 +29,7 @@ export interface GroupAnimationConfig {
   staggered?: boolean;
 }
 
+@UntilDestroy()
 @Injectable()
 export class AnimationService {
   private doc: any; // Document Object
@@ -35,11 +37,11 @@ export class AnimationService {
   private activeAnimations: any = {};
 
   constructor(private core: CoreService) {
-    this.core.register({ observerClass: this, eventName: 'ScrollTo' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ScrollTo' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.scrollTo(evt.data);
     });
 
-    core.register({ observerClass: this, eventName: 'Animate' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'Animate' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const config: AnimationConfig = evt.data;
       switch (config.animation) {
         case 'Flip':

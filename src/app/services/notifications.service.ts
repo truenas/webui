@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { WebSocketService, SystemGeneralService } from 'app/services';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 export interface NotificationAlert {
   id: string;
@@ -21,6 +22,7 @@ export interface NotificationAlert {
   dismissed: boolean;
 }
 
+@UntilDestroy()
 @Injectable()
 export class NotificationsService {
   private subject = new Subject<any>();
@@ -37,17 +39,17 @@ export class NotificationsService {
   }
 
   initMe(): void {
-    this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe((res) => {
+    this.getGenConfig = this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.timezone !== 'WET' && res.timezone !== 'posixrules') {
         this.timeZone = res.timezone;
       }
 
-      this.ws.call('alert.list').subscribe((alerts) => {
+      this.ws.call('alert.list').pipe(untilDestroyed(this)).subscribe((alerts) => {
         this.notifications = this.alertsArrivedHandler(alerts);
         this.subject.next(this.notifications);
       });
 
-      this.ws.sub<Alert>('alert.list').subscribe((alert) => {
+      this.ws.sub<Alert>('alert.list').pipe(untilDestroyed(this)).subscribe((alert) => {
         // check for updates to alerts
         const notification = this.alertsArrivedHandler([alert])[0];
         if (!_.find(this.notifications, { id: notification.id })) {
@@ -56,7 +58,7 @@ export class NotificationsService {
         this.subject.next(this.notifications);
       });
 
-      this.ws.subscribe('alert.list').subscribe((res) => {
+      this.ws.pipe(untilDestroyed(this)).subscribe('alert.list').pipe(untilDestroyed(this)).subscribe((res) => {
         // check for changed alerts
         if (res && res.msg === 'changed' && res.cleared) {
           const index = _.findIndex(this.notifications, { id: res.id });
@@ -82,7 +84,7 @@ export class NotificationsService {
 
     notifications.forEach((notification) => {
       notificationMap.set(notification.id, notification);
-      this.ws.call('alert.dismiss', [notification.id]).subscribe(() => {});
+      this.ws.call('alert.dismiss', [notification.id]).pipe(untilDestroyed(this)).subscribe(() => {});
     });
 
     this.notifications.forEach((notification) => {
@@ -99,7 +101,7 @@ export class NotificationsService {
 
     notifications.forEach((notification) => {
       notificationMap.set(notification.id, notification);
-      this.ws.call('alert.restore', [notification.id]).subscribe(() => {});
+      this.ws.call('alert.restore', [notification.id]).pipe(untilDestroyed(this)).subscribe(() => {});
     });
 
     this.notifications.forEach((notification) => {
