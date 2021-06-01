@@ -334,7 +334,7 @@ export class SharesDashboardComponent {
         formComponent = new SMBFormComponent(this.router, this.ws, this.dialog, this.loader, this.sysGeneralService, this.modalService);
         break;
       case ShareType.WebDAV:
-        formComponent = new WebdavFormComponent(this.router, this.ws, this.dialog);
+        formComponent = new WebdavFormComponent(this.router, this.ws, this.dialog, this.loader);
         break;
       case ShareType.ISCSI:
         formComponent = new TargetFormComponent(this.router, this.aroute, this.iscsiService, this.loader, this.translate, this.ws, this.modalService);

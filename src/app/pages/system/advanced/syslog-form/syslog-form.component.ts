@@ -119,7 +119,7 @@ export class SyslogFormComponent implements FormConfiguration, OnDestroy {
   }
 
   reconnect(href: string): void {
-    if (this.entityForm.ws.connected) {
+    if (this.ws.connected) {
       this.loader.close();
       // ws is connected
       window.location.replace(href);

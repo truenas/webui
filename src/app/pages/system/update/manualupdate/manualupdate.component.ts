@@ -151,7 +151,8 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     this.messageService.messageSourceHasNewMessage$.subscribe((message) => {
       entityForm.formGroup.controls['filename'].setValue(message);
     });
-    entityForm.submitFunction = this.customSubmit;
+    // TODO: customSubmit need to return an Observable
+    entityForm.submitFunction = this.customSubmit as any;
   }
 
   customSubmit(): void {
