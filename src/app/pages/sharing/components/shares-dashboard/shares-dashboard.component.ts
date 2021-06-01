@@ -187,7 +187,7 @@ export class SharesDashboardComponent {
       }
       case ShareType.ISCSI: {
         return {
-          title: T('Block (ISCSI) Shares Targets'),
+          title: T('Block (iSCSI) Shares Targets'),
           titleHref: '/sharing/iscsi/target',
           queryCall: 'iscsi.target.query',
           deleteCall: 'iscsi.target.delete',
@@ -442,7 +442,7 @@ export class SharesDashboardComponent {
         options: [
           { label: 'SMB', value: ShareType.SMB },
           { label: 'NFS', value: ShareType.NFS },
-          { label: 'ISCSI Target', value: ShareType.ISCSI },
+          { label: 'iSCSI Target', value: ShareType.ISCSI },
           { label: 'WebDAV', value: ShareType.WebDAV },
         ],
         validation: [Validators.required],
