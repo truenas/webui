@@ -73,7 +73,7 @@ export class DatasetFormComponent implements FormConfiguration {
   isEntity = true;
   isNew = false;
   parent_dataset: Dataset;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   minimum_recommended_dataset_recordsize = '128K';
   protected recordsize_field: any;
   protected recordsize_fg: any;

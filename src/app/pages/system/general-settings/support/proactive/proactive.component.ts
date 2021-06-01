@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from '../../../../../services/modal.service';
@@ -14,7 +15,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ProactiveComponent implements FormConfiguration {
-  entityEdit: any;
+  entityEdit: EntityFormComponent;
   queryCall: 'support.config' = 'support.config';
   contacts: any;
   controls: any;
@@ -175,7 +176,7 @@ export class ProactiveComponent implements FormConfiguration {
     protected dialogService: DialogService, private translate: TranslateService,
     private modalService: ModalService) { }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     const proactiveFields: any[] = [
       'enabled',

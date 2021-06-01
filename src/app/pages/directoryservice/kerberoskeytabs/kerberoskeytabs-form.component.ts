@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -56,7 +57,7 @@ export class KerberosKeytabsFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.title = entityEdit.isNew ? helptext.title_add : helptext.title_edit;
   }
 

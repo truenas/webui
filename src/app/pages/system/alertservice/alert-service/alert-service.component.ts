@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import * as _ from 'lodash';
 
@@ -28,7 +29,7 @@ export class AlertServiceComponent implements FormConfiguration {
   route_success: string[] = ['system', 'alertservice'];
 
   isEntity = true;
-  entityForm: any;
+  entityForm: EntityFormComponent;
 
   fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
@@ -687,7 +688,7 @@ export class AlertServiceComponent implements FormConfiguration {
           },
           (err) => {
             this.loader.close();
-            new EntityUtils().handleWSError(this, err, this.entityForm.dialog);
+            new EntityUtils().handleWSError(this, err, this.dialogService);
           },
         );
       },
@@ -711,7 +712,7 @@ export class AlertServiceComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
   }
@@ -778,7 +779,7 @@ export class AlertServiceComponent implements FormConfiguration {
         },
         (err) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, err, this.entityForm.dialog);
+          new EntityUtils().handleWSError(this, err, this.dialogService);
         },
       );
     } else {
@@ -789,7 +790,7 @@ export class AlertServiceComponent implements FormConfiguration {
         },
         (err) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, err, this.entityForm.dialog);
+          new EntityUtils().handleWSError(this, err, this.dialogService);
         },
       );
     }

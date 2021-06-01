@@ -57,7 +57,6 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
   data: Object = {};
   error: string;
   busy: Subscription;
-  protected fs: any = (<any>window).filesize;
   protected dialogRef: any;
   route_success: string[] = ['storage'];
   save_button_enabled = true;

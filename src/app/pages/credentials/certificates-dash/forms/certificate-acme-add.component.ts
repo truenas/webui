@@ -118,7 +118,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     },
   ];
 
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   protected dialogRef: any;
   queryCallOption: any[];
   initialCount = 1;
@@ -155,7 +155,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     this.fieldConfig = entityEdit.fieldConfig;
 
@@ -172,7 +172,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
           for (let i = 0; i < domains.length; i++) {
             if (this.domainList.controls[i] === undefined) {
               const templateListField = _.cloneDeep(this.domainList_fc.templateListField);
-              const newfg = entityEdit.entityFormService.createFormGroup(templateListField);
+              const newfg = this.entityFormService.createFormGroup(templateListField);
               newfg.setParent(this.domainList);
               this.domainList.controls.push(newfg);
               this.domainList_fc.listFields.push(templateListField);

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { ProductType } from '../../../enums/product-type.enum';
@@ -31,7 +32,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
   protected kerberos_principal: any;
   protected nss_info: any;
   adStatus = false;
-  entityEdit: any;
+  entityEdit: EntityFormComponent;
   protected dialogRef: MatDialogRef<EntityJobComponent, void>;
   custActions: any[] = [
     {
@@ -311,7 +312,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     return data;
   }
 
-  preInit(entityForm: any): void {
+  preInit(entityForm: EntityFormComponent): void {
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         if (is_ha) {
@@ -328,7 +329,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     this.ws.call('kerberos.realm.query').subscribe((res) => {
       this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });

@@ -1,4 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../services/dialog.service';
@@ -21,7 +22,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 export class FailoverComponent implements FormConfiguration, OnDestroy {
   queryCall: 'failover.config' = 'failover.config';
   updateCall = 'failover.update';
-  entityForm: any;
+  entityForm: EntityFormComponent;
   protected failoverDisableSubscription: any;
   alreadyDisabled = false;
   confirmSubmit = false;
@@ -134,7 +135,7 @@ export class FailoverComponent implements FormConfiguration, OnDestroy {
     private router: Router,
   ) {}
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     this.failoverDisableSubscription = this.entityForm.formGroup.controls['disabled'].valueChanges.subscribe((res: boolean) => {
       if (!this.alreadyDisabled) {

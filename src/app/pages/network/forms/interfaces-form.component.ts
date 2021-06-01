@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import * as _ from 'lodash';
 import { ProductType } from '../../../enums/product-type.enum';
@@ -292,7 +293,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   private type: any;
   private type_fg: any;
   private type_subscription: any;
-  private entityForm: any;
+  private entityForm: EntityFormComponent;
   //
   protected ipListControl: any;
   protected failover_group: any;
@@ -336,7 +337,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.bridge_fieldset.label = is_bridge;
   }
 
-  preInit(entityForm: any): void {
+  preInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.vlan_fieldset = _.find(this.fieldSets, { class: 'vlan_settings' });
     this.lag_fieldset = _.find(this.fieldSets, { class: 'lag_settings' });

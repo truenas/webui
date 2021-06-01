@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { StorageService } from '../../../../../services/storage.service';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import helptext from '../../../../../helptext/storage/volumes/manager/vdev';
+import * as filesize from 'filesize';
 
 @Component({
   selector: 'app-vdev',
@@ -26,7 +27,7 @@ export class VdevComponent implements OnInit {
   disks: any[] = [];
   selected: any[] = [];
   id: number;
-  size: number;
+  size: string;
   rawSize = 0;
   firstdisksize: number;
   error: any;
@@ -173,7 +174,7 @@ export class VdevComponent implements OnInit {
     }
 
     this.rawSize = estimate;
-    this.size = (<any>window).filesize(estimate, { standard: 'iec' });
+    this.size = filesize(estimate, { standard: 'iec' });
   }
 
   onSelect({ selected }: any): void {

@@ -10,6 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AclItemTag, AclType } from 'app/enums/acl-type.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
@@ -50,13 +51,12 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
   private aces: any;
   private aces_fc: any;
   private aces_subscription: any;
-  private entityForm: any;
+  private entityForm: EntityFormComponent;
   sub: Subscription;
   formGroup: FormGroup;
   data: Object = {};
   error: string;
   busy: Subscription;
-  protected fs: any = (<any>window).filesize;
   protected dialogRef: any;
   route_success: string[] = ['storage'];
   save_button_enabled = true;
@@ -296,7 +296,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value: any) => {

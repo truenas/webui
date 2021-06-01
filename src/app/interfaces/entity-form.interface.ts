@@ -72,6 +72,8 @@ export interface FormConfiguration {
   errorReport?: (res: any) => void;
   resourceTransformIncomingRestData?: (data: any) => any;
   preInit?: (entityForm: EntityFormComponent) => void;
+
+  // TODO: Here
   afterInit?: (entityForm: EntityFormComponent) => void;
   initial?: (entityForm: EntityFormComponent) => void;
   dataHandler?: (entityForm: EntityFormComponent) => void;
