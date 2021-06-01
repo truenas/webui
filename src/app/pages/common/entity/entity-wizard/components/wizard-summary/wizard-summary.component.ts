@@ -15,7 +15,7 @@ export class WizardSummaryComponent {
     return Array.isArray(value);
   }
 
-  originalOrder(): void {
-
+  originalOrder(): number {
+    return 0;
   }
 }
