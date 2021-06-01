@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Validators } from '@angular/forms';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 
 import * as _ from 'lodash';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
@@ -17,6 +18,7 @@ import { ipv4Validator, ipv6Validator } from '../../common/entity/entity-form/va
 import { EntityJobComponent } from '../../common/entity/entity-job';
 import { MatDialog } from '@angular/material/dialog';
 import helptext from '../../../helptext/plugins/plugins';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 
 @Component({
   selector: 'app-plugin-add',
@@ -51,7 +53,7 @@ export class PluginAddComponent implements OnInit {
     tooltip: helptext.dhcp_tooltip,
     value: false,
     relation: [{
-      action: 'DISABLE',
+      action: RelationAction.Disable,
       when: [{
         name: 'nat',
         value: true,
@@ -78,8 +80,8 @@ export class PluginAddComponent implements OnInit {
     ],
     value: '',
     relation: [{
-      action: 'ENABLE',
-      connective: 'AND',
+      action: RelationAction.Enable,
+      connective: RelationConnection.And,
       when: [{
         name: 'dhcp',
         value: false,
@@ -98,8 +100,8 @@ export class PluginAddComponent implements OnInit {
     tooltip: helptext.ip4_addr_tooltip,
     validation: [ipv4Validator()],
     relation: [{
-      action: 'ENABLE',
-      connective: 'AND',
+      action: RelationAction.Enable,
+      connective: RelationConnection.And,
       when: [{
         name: 'dhcp',
         value: false,
@@ -120,8 +122,8 @@ export class PluginAddComponent implements OnInit {
     options: this.networkService.getV4Netmasks(),
     value: '',
     relation: [{
-      action: 'ENABLE',
-      connective: 'AND',
+      action: RelationAction.Enable,
+      connective: RelationConnection.And,
       when: [{
         name: 'dhcp',
         value: false,
@@ -148,8 +150,8 @@ export class PluginAddComponent implements OnInit {
     class: 'inline',
     width: '30%',
     relation: [{
-      action: 'ENABLE',
-      connective: 'AND',
+      action: RelationAction.Enable,
+      connective: RelationConnection.And,
       when: [{
         name: 'dhcp',
         value: false,
@@ -166,8 +168,8 @@ export class PluginAddComponent implements OnInit {
     tooltip: helptext.ip6_addr_tooltip,
     validation: [ipv6Validator()],
     relation: [{
-      action: 'ENABLE',
-      connective: 'AND',
+      action: RelationAction.Enable,
+      connective: RelationConnection.And,
       when: [{
         name: 'dhcp',
         value: false,
@@ -190,8 +192,8 @@ export class PluginAddComponent implements OnInit {
     class: 'inline',
     width: '20%',
     relation: [{
-      action: 'ENABLE',
-      connective: 'AND',
+      action: RelationAction.Enable,
+      connective: RelationConnection.And,
       when: [{
         name: 'dhcp',
         value: false,

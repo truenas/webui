@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { DialogService, WebSocketService, AppLoaderService } from '../../../../services';
 import { Subscription } from 'rxjs';
 import { ModalService } from 'app/services/modal.service';
@@ -81,7 +82,7 @@ export class AcmednsFormComponent implements FormConfiguration {
             parent: this,
             relation: [
               {
-                action: 'SHOW',
+                action: RelationAction.Show,
                 when: [{
                   name: 'authenticator',
                   value: schema.key,

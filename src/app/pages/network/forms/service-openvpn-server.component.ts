@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import {
   ServicesService, DialogService, AppLoaderService, WebSocketService, StorageService,
 } from 'app/services';
@@ -107,7 +108,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
           options: helptext.server.topology.enum,
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'device_type',
                 value: 'TAP',
