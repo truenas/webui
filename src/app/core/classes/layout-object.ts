@@ -50,7 +50,7 @@ export class LayoutObject {
     return this._containerSelector;
   }
   set containerSelector(value: string) {
-    this.container = (<any>document).querySelector(value);
+    this.container = document.querySelector(value);
     this._containerSelector = value;
   }
 

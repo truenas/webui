@@ -179,7 +179,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   title: string = this.path.length > 0 && this.poolState && this.currentSlide !== '0' ? this.poolState.name : 'Pool';
   voldataavail = false;
   displayValue: any;
-  diskSize: any;
+  diskSize: string;
   diskSizeLabel: string;
   poolHealth: PoolDiagnosis = {
     isHealthy: true,

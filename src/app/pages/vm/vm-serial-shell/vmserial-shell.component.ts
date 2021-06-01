@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import helptext from '../../../helptext/vm/vm-cards/vm-cards';
 import { ShellConnectedEvent } from '../../../interfaces/shell.interface';
 import { ShellService, WebSocketService } from '../../../services';
@@ -31,10 +31,10 @@ export class VMSerialShellComponent implements OnInit, OnDestroy {
   font_name = 'Inconsolata';
   connectionId: string;
   token: any;
-  xterm: any;
-  private shellSubscription: any;
+  xterm: Terminal;
+  private shellSubscription: Subscription;
   shell_tooltip = helptext.serial_shell_tooltip;
-  private fitAddon: any;
+  private fitAddon: FitAddon;
 
   clearLine = '\u001b[2K\r';
   protected pk: string;
@@ -139,7 +139,7 @@ export class VMSerialShellComponent implements OnInit, OnDestroy {
     font.load().then(() => {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
-      this.xterm._initialized = true;
+      (this.xterm as any)._initialized = true;
     }, (e) => {
       console.error('Font is not available', e);
     });

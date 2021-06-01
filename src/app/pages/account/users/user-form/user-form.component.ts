@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { AbstractControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Observable } from 'rxjs';
 import helptext from '../../../../helptext/account/user-form';
 import {
@@ -169,7 +172,7 @@ export class UserFormComponent implements FormConfiguration {
           options: [],
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'group_create',
                 value: true,
@@ -294,11 +297,11 @@ export class UserFormComponent implements FormConfiguration {
     },
   ];
 
-  private shells: any;
-  private shell: any;
-  private group: any;
-  private groups: any;
-  private password_disabled: any;
+  private shells: Option[];
+  private shell: FieldConfig;
+  private group: FieldConfig;
+  private groups: FieldConfig;
+  private password_disabled: AbstractControl;
 
   constructor(protected router: Router,
     protected ws: WebSocketService,

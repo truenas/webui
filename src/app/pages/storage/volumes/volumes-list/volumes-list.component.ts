@@ -18,6 +18,7 @@ import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interf
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableService } from 'app/pages/common/entity/entity-table/entity-table.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -28,7 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { TreeNode } from 'primeng/api';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, Observable, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ProductType } from '../../../../enums/product-type.enum';
 import dataset_helptext from '../../../../helptext/storage/volumes/datasets/dataset-form';
@@ -125,7 +126,7 @@ export class VolumesListTableConfig implements InputTableConf {
   dialogConf: DialogFormConfiguration;
   restartServices = false;
   subs: any;
-  message_subscription: any;
+  message_subscription: Subscription;
   productType = window.localStorage.getItem('product_type') as ProductType;
 
   constructor(
@@ -725,7 +726,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     validation: [Validators.pattern(row1.name)],
                     relation: [
                       {
-                        action: 'HIDE',
+                        action: RelationAction.Hide,
                         when: [{
                           name: 'destroy',
                           value: false,
@@ -1849,8 +1850,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   expanded = false;
   paintMe = true;
   systemdatasetPool: any;
-  has_encrypted_root: any = {};
-  has_key_dataset: any = {};
+  has_encrypted_root: { [pool: string]: boolean } = {};
+  has_key_dataset: { [pool: string]: boolean } = {};
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.first_use,
     large: true,
@@ -1865,7 +1866,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   protected addDatasetFormComponent: DatasetFormComponent;
   protected editDatasetFormComponent: DatasetFormComponent;
   protected aroute: ActivatedRoute;
-  private refreshTableSubscription: any;
+  private refreshTableSubscription: Subscription;
   private datasetQuery: 'pool.dataset.query' = 'pool.dataset.query';
   /*
    * Please note that extra options are special in that they are passed directly to ZFS.

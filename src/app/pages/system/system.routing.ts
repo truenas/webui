@@ -12,7 +12,7 @@ import { TunableFormComponent } from './tunable/tunable-form';
 import { TunableListComponent } from './tunable/tunable-list';
 import { UpdateComponent } from './update';
 import { ManualUpdateComponent } from './update/manualupdate';
-import { AlertServiceListComponent } from './alertservice/alertservice-list';
+import { AlertServiceListComponent } from './alertservice/alertservice-list/alertservice-list.component';
 import { SupportComponent } from './general-settings/support/support.component';
 import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';

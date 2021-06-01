@@ -3,6 +3,8 @@ import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import * as _ from 'lodash';
@@ -109,7 +111,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
           placeholder: helptext.dhcp_placeholder,
           tooltip: helptext.dhcp_tooltip,
           relation: [{
-            action: 'DISABLE',
+            action: RelationAction.Disable,
             when: [{
               name: 'nat',
               value: true,
@@ -135,7 +137,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
           placeholder: helptext.bpf_placeholder,
           tooltip: helptext.bpf_tooltip,
           relation: [{
-            action: 'DISABLE',
+            action: RelationAction.Disable,
             when: [{
               name: 'nat',
               value: true,
@@ -154,8 +156,8 @@ export class JailFormComponent implements OnInit, AfterViewInit {
           name: 'ip4_addr',
           placeholder: 'IPv4 Addresses',
           relation: [{
-            action: 'ENABLE',
-            connective: 'AND',
+            action: RelationAction.Enable,
+            connective: RelationConnection.And,
             when: [{
               name: 'dhcp',
               value: false,
@@ -203,8 +205,8 @@ export class JailFormComponent implements OnInit, AfterViewInit {
           placeholder: helptext.defaultrouter_placeholder,
           tooltip: helptext.defaultrouter_tooltip,
           relation: [{
-            action: 'DISABLE',
-            connective: 'OR',
+            action: RelationAction.Disable,
+            connective: RelationConnection.Or,
             when: [{
               name: 'dhcp',
               value: true,
@@ -228,7 +230,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
           name: 'ip6_addr',
           placeholder: 'IPv6 Addresses',
           relation: [{
-            action: 'DISABLE',
+            action: RelationAction.Disable,
             when: [{
               name: 'auto_configure_ip6',
               value: true,
@@ -656,7 +658,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
           placeholder: helptext.nat_interface_placeholder,
           tooltip: helptext.nat_interface_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'nat',
               value: true,
@@ -671,7 +673,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
           placeholder: helptext.nat_forwards_placeholder,
           tooltip: helptext.nat_forwards_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'nat',
               value: true,
@@ -683,8 +685,8 @@ export class JailFormComponent implements OnInit, AfterViewInit {
           name: 'nat_forwards',
           placeholder: 'nat_forwards',
           relation: [{
-            action: 'SHOW',
-            connective: 'AND',
+            action: RelationAction.Show,
+            connective: RelationConnection.And,
             when: [{
               name: 'nat',
               value: true,

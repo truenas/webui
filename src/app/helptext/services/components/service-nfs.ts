@@ -1,3 +1,5 @@
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 
@@ -34,7 +36,7 @@ export default {
  the client and the server to sync users and groups.'),
   nfs_srv_v4_v3owner_relation: [
     {
-      action: 'DISABLE',
+      action: RelationAction.Disable,
       when: [{
         name: 'v4',
         value: false,
@@ -65,8 +67,8 @@ export default {
  This assumes group membership is configured correctly\
  on the NFS server.'),
   nfs_srv_16_relation: [{
-    action: 'DISABLE',
-    connective: 'AND',
+    action: RelationAction.Disable,
+    connective: RelationConnection.And,
     when: [{
       name: 'v4',
       value: true,

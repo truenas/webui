@@ -27,7 +27,7 @@ export class ConfirmDialog {
   // TODO: Typo
   customSumbit: any;
 
-  @Output() switchSelectionEmitter = new EventEmitter<any>();
+  @Output() switchSelectionEmitter = new EventEmitter<boolean>();
 
   constructor(public dialogRef: MatDialogRef < ConfirmDialog >, protected translate: TranslateService) {
   }
