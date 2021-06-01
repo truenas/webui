@@ -5,6 +5,8 @@ import helptext from '../../../helptext/directoryservice/kerberoskeytabs-form-li
 import { T } from '../../../translate-marker';
 import { Subscription } from 'rxjs';
 import { KerberosKeytabsFormComponent } from './kerberoskeytabs-form.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
 @UntilDestroy()
 @Component({
   selector: 'app-kerberos-keytabs-list',

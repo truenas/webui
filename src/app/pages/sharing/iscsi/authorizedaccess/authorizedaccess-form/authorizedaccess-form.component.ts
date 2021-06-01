@@ -10,6 +10,7 @@ import { EntityUtils } from '../../../../common/entity/utils';
 import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

@@ -37,6 +37,7 @@ import { EntityJobComponent } from '../entity-job/entity-job.component';
 
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 export interface InputTableConf {
   prerequisite?: any;

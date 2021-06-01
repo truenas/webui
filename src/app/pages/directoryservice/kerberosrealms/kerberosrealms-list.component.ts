@@ -6,6 +6,8 @@ import helptext from '../../../helptext/directoryservice/kerberosrealms-form-lis
 import { KerberosRealmsFormComponent } from './kerberosrealms-form.component';
 import { ModalService } from '../../../services/modal.service';
 import { Subscription } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
 @UntilDestroy()
 @Component({
   selector: 'app-user-list',

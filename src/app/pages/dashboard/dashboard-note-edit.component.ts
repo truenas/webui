@@ -12,6 +12,7 @@ import { RestService, WebSocketService } from '../../services';
 import { AppLoaderService } from '../../services/app-loader/app-loader.service';
 import { Subscription } from 'rxjs';
 import { EntityUtils } from '../common/entity/utils';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

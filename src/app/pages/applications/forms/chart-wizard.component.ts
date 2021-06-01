@@ -12,13 +12,13 @@ import { EntityUtils } from '../../common/entity/utils';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import { Subject } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
   selector: 'chart-add-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
 })
-
 export class ChartWizardComponent implements OnDestroy {
   protected queryCall = 'chart.release.query';
   protected queryCallOption: any[];

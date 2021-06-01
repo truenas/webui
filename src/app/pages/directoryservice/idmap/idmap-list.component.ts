@@ -13,6 +13,8 @@ import { ModalService } from '../../../services/modal.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ActiveDirectoryComponent } from '../activedirectory/activedirectory.component';
 import { Subscription } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
 @UntilDestroy()
 @Component({
   selector: 'app-idmap-list',

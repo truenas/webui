@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { WebSocketService } from '../../../../services/ws.service';
 import { TranslateService } from '@ngx-translate/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

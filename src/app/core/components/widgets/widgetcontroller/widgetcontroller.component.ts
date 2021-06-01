@@ -13,6 +13,7 @@ import { EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.c
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 
 import { T } from '../../../../translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 export interface DashConfigItem {
   name: string; // Shown in UI fields

@@ -26,6 +26,7 @@ import { IdmapFormComponent } from './idmap/idmap-form.component';
 import { KerberosSettingsComponent } from './kerberossettings/kerberossettings.component';
 import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form.component';
 import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

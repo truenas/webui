@@ -9,6 +9,7 @@ import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
 import { EntityFormService } from '../../services/entity-form.service';
 import * as _ from 'lodash';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

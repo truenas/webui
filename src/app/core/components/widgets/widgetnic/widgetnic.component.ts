@@ -15,6 +15,7 @@ import {
   tween,
   styler,
 } from 'popmotion';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface NetTraffic {
   sent: string;

@@ -13,6 +13,7 @@ import {
   FieldConfig,
 } from '../../common/entity/entity-form/models/field-config.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

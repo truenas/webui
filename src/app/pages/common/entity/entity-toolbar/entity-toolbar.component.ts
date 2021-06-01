@@ -13,6 +13,7 @@ import { Subject } from 'rxjs';
 import { Control } from './models/control.interface';
 import { ToolbarConfig } from './models/control-config.interface';
 import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

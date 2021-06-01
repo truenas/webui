@@ -8,6 +8,7 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { TaskService } from 'app/services';
 import helptext from 'app/helptext/storage/resilver/resilver';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

@@ -13,6 +13,7 @@ import { DialogService } from 'app/services';
 import { DialogFormConfiguration } from '../../../entity-dialog/dialog-form-configuration.interface';
 import { T } from 'app/translate-marker';
 import { EntityUtils, NULL_VALUE } from '../../../utils';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

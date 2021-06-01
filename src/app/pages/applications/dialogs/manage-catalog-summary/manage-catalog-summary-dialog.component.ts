@@ -6,6 +6,7 @@ import { ApplicationsService } from '../../applications.service';
 import helptext from '../../../../helptext/apps/apps';
 import { LocaleService } from 'app/services/locale.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
@@ -14,7 +15,6 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
   templateUrl: './manage-catalog-summary-dialog.component.html',
   encapsulation: ViewEncapsulation.None,
 })
-
 export class ManageCatalogSummaryDialog implements OnInit {
   catalog: any;
   statusOptions: string[] = ['All', 'Healthy', 'Unhealthy'];

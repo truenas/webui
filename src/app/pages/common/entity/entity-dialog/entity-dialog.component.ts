@@ -15,6 +15,7 @@ import * as _ from 'lodash';
 import { DialogFormConfiguration } from './dialog-form-configuration.interface';
 import { DatePipe } from '@angular/common';
 import { T } from '../../../../translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

@@ -14,6 +14,7 @@ import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { T } from 'app/translate-marker';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

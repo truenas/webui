@@ -35,6 +35,7 @@ import { DialogService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

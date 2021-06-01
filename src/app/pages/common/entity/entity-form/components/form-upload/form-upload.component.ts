@@ -10,6 +10,7 @@ import { WebSocketService } from '../../../../../../services';
 import { AppLoaderService } from '../../../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../../../services';
 import { T } from '../../../../../../translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

@@ -6,6 +6,7 @@ import { DialogFormConfiguration } from '../../../../common/entity/entity-dialog
 import { EntityUtils } from '../../../../common/entity/utils';
 
 import { T } from 'app/translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

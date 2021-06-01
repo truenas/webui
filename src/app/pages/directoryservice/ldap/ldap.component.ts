@@ -17,6 +17,8 @@ import global_helptext from '../../../helptext/global-helptext';
 import { T } from 'app/translate-marker';
 import { ModalService } from '../../../services/modal.service';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
 @UntilDestroy()
 @Component({
   selector: 'app-ldap',
