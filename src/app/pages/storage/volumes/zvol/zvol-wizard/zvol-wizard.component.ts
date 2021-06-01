@@ -19,6 +19,7 @@ import { Subscription, Observable } from 'rxjs';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { CoreService } from 'app/core/services/core.service';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 
 interface ZvolFormData {
   name: string;
@@ -38,15 +39,15 @@ interface ZvolFormData {
   selector: 'app-zvol-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
 })
-export class ZvolWizardComponent {
-  protected addWsCall = 'pool.dataset.create';
+export class ZvolWizardComponent implements WizardConfiguration {
+  addWsCall: 'pool.dataset.create' = 'pool.dataset.create';
   protected pk: any;
   protected path: string;
   sub: Subscription;
   queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   protected compression: any;
-  protected advanced_field: any[] = ['volblocksize'];
-  protected isBasicMode = true;
+  advanced_field: any[] = ['volblocksize'];
+  isBasicMode = true;
   protected isNew = true;
   protected isEntity = true;
   parent: string;
@@ -56,7 +57,7 @@ export class ZvolWizardComponent {
   customFilter: any[] = [];
   pk_dataset: any[] = [];
   edit_data: any;
-  protected entityWizard: any;
+  protected entityWizard: EntityWizardComponent;
   minimum_recommended_zvol_volblocksize: keyof ZvolWizardComponent['reverseZvolBlockSizeMap'];
   namesInUse: string[] = [];
   title: string;
@@ -102,7 +103,7 @@ export class ZvolWizardComponent {
     '1M': '1048576',
   };
 
-  protected wizardConfig: Wizard[] = [
+  wizardConfig: Wizard[] = [
     {
       label: T('Select Path'),
       fieldConfig: [

@@ -12,6 +12,7 @@ import { T } from '../../../../translate-marker';
 
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 
 @Component({
   selector: 'system-ca-add',
@@ -19,16 +20,14 @@ import { EntityWizardComponent } from '../../../common/entity/entity-wizard/enti
   providers: [SystemGeneralService],
 })
 
-export class CertificateAuthorityAddComponent {
-  protected addWsCall: 'certificateauthority.create' = 'certificateauthority.create';
-  protected isEntity = true;
+export class CertificateAuthorityAddComponent implements WizardConfiguration {
+  addWsCall: 'certificateauthority.create' = 'certificateauthority.create';
   private title: string;
   hideCancel = true;
 
-  private isLinear = true;
-  private summary: any = {};
-
-  entityWizard: any;
+  isLinear = true;
+  summary: any = {};
+  entityWizard: EntityWizardComponent;
   private currentStep = 0;
 
   wizardConfig: Wizard[] = [

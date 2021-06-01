@@ -19,13 +19,14 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { DialogService } from '../../../../services';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
 import globalHelptext from 'app/helptext/global-helptext';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 
 @Component({
   selector: 'app-iscsi-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [IscsiService, CloudCredentialService, NetworkService, StorageService],
 })
-export class IscsiWizardComponent {
+export class IscsiWizardComponent implements WizardConfiguration {
   route_success: string[] = ['sharing', 'iscsi'];
   isLinear = true;
   summaryTitle = 'iSCSI Summary';
@@ -53,7 +54,7 @@ export class IscsiWizardComponent {
   summary: any;
   protected namesInUse: string[] = [];
 
-  protected wizardConfig: Wizard[] = [
+  wizardConfig: Wizard[] = [
     {
       label: helptext_sharing_iscsi.step1_label,
       fieldConfig: [

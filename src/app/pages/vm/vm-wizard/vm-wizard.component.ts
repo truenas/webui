@@ -32,14 +32,15 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { MatStepper } from '@angular/material/stepper';
 import { GpuDevice } from 'app/interfaces/gpu-device.interface';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 
 @Component({
   selector: 'app-vm-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [VmService],
 })
-export class VMWizardComponent {
-  protected addWsCall = 'vm.create';
+export class VMWizardComponent implements WizardConfiguration {
+  addWsCall: 'vm.create' = 'vm.create';
   summary: any = {};
   isLinear = true;
   firstFormGroup: FormGroup;
@@ -65,7 +66,7 @@ export class VMWizardComponent {
   res: any;
   private productType = window.localStorage.getItem('product_type') as ProductType;
 
-  protected wizardConfig: Wizard[] = [
+  wizardConfig: Wizard[] = [
     {
       label: helptext.os_label,
       fieldConfig: [

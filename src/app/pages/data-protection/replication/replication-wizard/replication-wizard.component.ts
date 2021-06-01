@@ -39,13 +39,14 @@ import {
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 
 @Component({
   selector: 'app-replication-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [KeychainCredentialService, ReplicationService, TaskService, DatePipe, EntityFormService],
 })
-export class ReplicationWizardComponent {
+export class ReplicationWizardComponent implements WizardConfiguration {
   title = T('Replication Task Wizard');
   isLinear = true;
   summaryTitle = T('Replication Summary');
@@ -54,7 +55,7 @@ export class ReplicationWizardComponent {
   saveSubmitText = T('START REPLICATION');
 
   protected entityWizard: any;
-  protected custActions: any[] = [{
+  custActions: any[] = [{
     id: 'advanced_add',
     name: T('Advanced Replication Creation'),
     function: () => {
@@ -65,7 +66,7 @@ export class ReplicationWizardComponent {
   }];
   protected namesInUse: string[] = [];
   protected defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
-  protected wizardConfig: Wizard[] = [
+  wizardConfig: Wizard[] = [
     {
       label: helptext.step1_label,
       fieldSets: [

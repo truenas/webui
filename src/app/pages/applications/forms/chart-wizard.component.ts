@@ -12,28 +12,25 @@ import { EntityUtils } from '../../common/entity/utils';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import { Subject } from 'rxjs';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 
 @Component({
   selector: 'chart-add-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
 })
 
-export class ChartWizardComponent implements OnDestroy {
-  protected queryCall = 'chart.release.query';
-  protected queryCallOption: any[];
-  protected customFilter: any[];
+export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
   protected addCall = 'chart.release.create';
-  protected isEntity = true;
   protected utils: CommonUtils;
   summary = {};
   isAutoSummary = true;
   hideCancel = true;
   private title: string;
   private dialogRef: any;
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   wizardConfig: Wizard[] = [];
   private catalogApp: any;
-  private entityWizard: any;
+  private entityWizard: EntityWizardComponent;
   private destroy$ = new Subject();
   private selectedVersionKey: string;
 
