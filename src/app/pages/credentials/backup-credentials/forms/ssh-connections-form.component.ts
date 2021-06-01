@@ -220,7 +220,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     'cipher',
     'connect_timeout',
   ];
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
 
   constructor(
     private aroute: ActivatedRoute,

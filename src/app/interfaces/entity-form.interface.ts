@@ -72,8 +72,6 @@ export interface FormConfiguration {
   errorReport?: (res: any) => void;
   resourceTransformIncomingRestData?: (data: any) => any;
   preInit?: (entityForm: EntityFormComponent) => void;
-
-  // TODO: Here
   afterInit?: (entityForm: EntityFormComponent) => void;
   initial?: (entityForm: EntityFormComponent) => void;
   dataHandler?: (entityForm: EntityFormComponent) => void;
@@ -81,7 +79,7 @@ export interface FormConfiguration {
   afterSave?: (entityForm: EntityFormComponent) => void;
   blurEvent?: (entityForm: EntityFormComponent) => void;
   afterSubmit?: (value: any) => void;
-  beforeSubmit?: (entityForm: EntityFormComponent) => void;
+  beforeSubmit?: (value: any) => void;
   customSubmit?: (value: any) => void;
   closeModalForm?(): Promise<boolean>;
   afterModalFormClosed?(): void; // function will called once the modal form closed

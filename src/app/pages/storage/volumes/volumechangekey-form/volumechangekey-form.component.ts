@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 
 import { RestService, WebSocketService } from '../../../../services';
@@ -133,7 +134,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     entityForm.formGroup.controls['remove_passphrase'].valueChanges.subscribe((res: any) => {
       if (res) {
         entityForm.setDisabled('passphrase', true);

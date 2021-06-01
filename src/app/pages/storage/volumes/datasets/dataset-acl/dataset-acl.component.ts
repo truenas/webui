@@ -11,6 +11,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AclItemTag } from 'app/enums/acl-type.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
@@ -305,12 +307,19 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     },
   ];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
     protected aroute: ActivatedRoute,
-    protected ws: WebSocketService, protected userService: UserService,
-    protected storageService: StorageService, protected dialogService: DialogService,
-    protected loader: AppLoaderService, protected dialog: MatDialog,
-    private translate: TranslateService) {}
+    protected ws: WebSocketService,
+    protected userService: UserService,
+    protected storageService: StorageService,
+    protected dialogService: DialogService,
+    protected loader: AppLoaderService,
+    protected dialog: MatDialog,
+    private translate: TranslateService,
+    private entityFormService: EntityFormService,
+  ) {}
 
   isCustActionVisible(actionId: string): boolean {
     if (actionId === 'show_defaults') {
@@ -509,9 +518,9 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
       });
   }
 
-  async dataHandler(entityForm: any, defaults?: any): Promise<void> {
+  async dataHandler(entityForm: EntityFormComponent, defaults?: any): Promise<void> {
     entityForm.formGroup.controls['aces'].reset();
-    entityForm.formGroup.controls['aces'].controls = [];
+    (entityForm.formGroup.controls['aces'] as FormGroup).controls = {};
     this.aces_fc.listFields = [];
     this.gid_fc = _.find(this.fieldConfig, { name: 'gid' });
     this.uid_fc = _.find(this.fieldConfig, { name: 'uid' });
@@ -589,11 +598,11 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
         }
       }
       const propName = 'aces';
-      const aces_fg = entityForm.formGroup.controls[propName];
+      const aces_fg = entityForm.formGroup.controls[propName] as FormGroup;
       if (aces_fg.controls[i] === undefined) {
         // add controls;
         const templateListField = _.cloneDeep(_.find(this.fieldConfig, { name: propName }).templateListField);
-        aces_fg.push(entityForm.entityFormService.createFormGroup(templateListField));
+        (aces_fg as any).push(this.entityFormService.createFormGroup(templateListField));
         this.aces_fc.listFields.push(templateListField);
       }
 
@@ -614,7 +623,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
             delete (acl['group_not_found']);
             _.find(this.aces_fc.listFields[i], { name: prop })['warnings'] = helptext.group_not_found;
           }
-          aces_fg.controls[i].controls[prop].setValue(acl[prop]);
+          (aces_fg.controls[i] as FormGroup).controls[prop].setValue(acl[prop]);
         }
       }
     }

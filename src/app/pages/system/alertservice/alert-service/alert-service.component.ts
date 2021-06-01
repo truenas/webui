@@ -717,7 +717,7 @@ export class AlertServiceComponent implements FormConfiguration {
     this.fieldConfig = entityForm.fieldConfig;
   }
 
-  dataAttributeHandler(entityForm: any): void {
+  dataAttributeHandler(entityForm: EntityFormComponent): void {
     const type = entityForm.formGroup.controls['type'].value;
     for (const i in entityForm.wsResponseIdx) {
       const field_name = type + '-' + i;

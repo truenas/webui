@@ -23,7 +23,7 @@ export class SshKeypairsFormComponent implements FormConfiguration {
   addCall: 'keychaincredential.create' = 'keychaincredential.create';
   editCall: 'keychaincredential.update' = 'keychaincredential.update';
   isEntity = true;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   protected isOneColumnForm = true;
   private rowNum: any;
   title = helptext.formTitle;
