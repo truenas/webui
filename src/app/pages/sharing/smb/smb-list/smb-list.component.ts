@@ -17,7 +17,9 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ModalService } from 'app/services/modal.service';
 import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-smb-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -81,7 +83,7 @@ export class SMBListComponent implements InputTableConf, OnDestroy {
   afterInit(entityList: any): void {
     this.entityList = entityList;
 
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+    this.refreshTable = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -113,14 +115,14 @@ export class SMBListComponent implements InputTableConf, OnDestroy {
         name: 'share_acl',
         label: helptext_sharing_smb.action_share_acl,
         onClick: (row: any) => {
-          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).subscribe(
+          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
             (res) => {
               if (res) {
                 this.lockedPathDialog(row.path);
               } else {
                 // A home share has a name (homes) set; row.name works for other shares
                 const searchName = row.home ? 'homes' : row.name;
-                this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).subscribe(
+                this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
                   (res: any) => {
                     this.router.navigate(
                       ['/'].concat(['sharing', 'smb', 'acl', res[0].id]),
@@ -141,7 +143,7 @@ export class SMBListComponent implements InputTableConf, OnDestroy {
         label: helptext_sharing_smb.action_edit_acl,
         onClick: (row: any) => {
           const datasetId = rowName;
-          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).subscribe(
+          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
             (res) => {
               if (res) {
                 this.lockedPathDialog(row.path);
@@ -184,7 +186,7 @@ export class SMBListComponent implements InputTableConf, OnDestroy {
   }
 
   onCheckboxChange(row: SmbShare): void {
-    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).subscribe(
+    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         row.enabled = res.enabled;
         if (!res) {

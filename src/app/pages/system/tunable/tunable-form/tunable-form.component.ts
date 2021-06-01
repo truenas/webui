@@ -8,7 +8,9 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import * as _ from 'lodash';
 import { T } from 'app/translate-marker';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-system-tunable-edit',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -83,7 +85,7 @@ export class TunableFormComponent implements FormConfiguration {
 
   preInit(): void {
     this.type_fc = _.find(this.fieldSets[0].config, { name: 'type' });
-    this.ws.call('tunable.tunable_type_choices').subscribe((tunables) => {
+    this.ws.call('tunable.tunable_type_choices').pipe(untilDestroyed(this)).subscribe((tunables) => {
       for (const key in tunables) {
         this.type_fc.options.push({ label: tunables[key], value: key });
       }

@@ -7,7 +7,9 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from '../../../services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'system-shutdown',
   templateUrl: './shutdown.component.html',
@@ -24,18 +26,18 @@ export class ShutdownComponent implements OnInit {
     protected loader: AppLoaderService, public translate: TranslateService,
     protected dialogService: DialogService, private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
     this.ws = ws;
-    this.getProdType = this.sysGeneralService.getProductType.subscribe((res) => {
+    this.getProdType = this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
       this.product_type = res as ProductType;
       this.getProdType.unsubscribe();
     });
   }
 
   ngOnInit(): void {
-    this.ws.call('system.shutdown', {}).subscribe(
+    this.ws.call('system.shutdown', {}).pipe(untilDestroyed(this)).subscribe(
       () => {
       },
       (res) => { // error on shutdown
-        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted).subscribe(() => {
+        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted).pipe(untilDestroyed(this)).subscribe(() => {
           this.router.navigate(['/session/signin']);
         });
       },

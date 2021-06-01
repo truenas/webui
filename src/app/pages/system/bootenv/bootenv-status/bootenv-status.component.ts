@@ -10,6 +10,7 @@ import { DialogService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface PoolDiskInfo {
   name: any;
@@ -20,6 +21,8 @@ interface PoolDiskInfo {
   actions?: any;
   path?: any;
 }
+
+@UntilDestroy()
 @Component({
   selector: 'app-bootstatus-list',
   templateUrl: './bootenv-status.component.html',
@@ -51,7 +54,7 @@ export class BootStatusListComponent implements OnInit {
   }
 
   getData(): void {
-    this.ws.call('boot.get_state').subscribe(
+    this.ws.call('boot.get_state').pipe(untilDestroyed(this)).subscribe(
       (res) => {
         if (res.groups.data[0].type === 'disk') {
           this.oneDisk = true;
@@ -68,7 +71,7 @@ export class BootStatusListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = parseInt(params['pk'], 10);
       this.getData();
     });
@@ -77,7 +80,7 @@ export class BootStatusListComponent implements OnInit {
   detach(disk: any): void {
     disk = disk.substring(5, disk.length);
     this.loader.open();
-    this.busy = this.ws.call('boot.detach', [disk]).subscribe(
+    this.busy = this.ws.call('boot.detach', [disk]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this._router.navigate(

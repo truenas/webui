@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
 
+@UntilDestroy()
 @Component({
   selector: 'form-slider',
   templateUrl: './form-slider.component.html',
@@ -21,7 +22,7 @@ export class FormSliderComponent implements Field, OnInit {
 
   ngOnInit(): void {
     this.value = this.config.min;
-    this.group.controls[this.config.name].valueChanges.subscribe((res) => {
+    this.group.controls[this.config.name].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.value = res;
     });
   }

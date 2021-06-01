@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 import { Router } from '@angular/router';
 
+@UntilDestroy()
 @Component({
   selector: 'app-notifications',
   templateUrl: './notifications.component.html',
@@ -26,7 +27,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initData();
-    this.notificationsService.getNotifications().subscribe((notifications) => {
+    this.notificationsService.getNotifications().pipe(untilDestroyed(this)).subscribe((notifications) => {
       this.notifications = [];
       this.dismissedNotifications = [];
 
@@ -43,7 +44,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         });
       }, -1);
     });
-    this.dateFormatSubscription = this.localeService.dateTimeFormatChange$.subscribe(() => {
+    this.dateFormatSubscription = this.localeService.dateTimeFormatChange$.pipe(untilDestroyed(this)).subscribe(() => {
       this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
     });
   }

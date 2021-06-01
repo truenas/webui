@@ -10,6 +10,7 @@ import { Field } from '../../models/field.interface';
 import { EntityFormService } from '../../services/entity-form.service';
 import * as _ from 'lodash';
 
+@UntilDestroy()
 @Component({
   selector: 'form-task',
   templateUrl: './form-task.component.html',
@@ -41,12 +42,12 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
     this.tabFormGroup = this.entityFormService.createFormGroup(this.config.tabs);
     this.control = this.group.controls[this.config.name];
     for (const item in this.tabFormGroup.controls) {
-      this.tabFormGroup.controls[item].valueChanges.subscribe(() => {
+      this.tabFormGroup.controls[item].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
         this.setControlValue();
       });
     }
 
-    this.group.controls[this.config.name].valueChanges.subscribe((res) => {
+    this.group.controls[this.config.name].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (this.init && res) {
         this.init = false;
         if (_.startsWith(this.control.value, '*/')) {

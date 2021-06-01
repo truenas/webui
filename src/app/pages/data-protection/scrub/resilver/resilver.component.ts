@@ -9,6 +9,7 @@ import { TaskService } from 'app/services';
 import helptext from 'app/helptext/storage/resilver/resilver';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
+@UntilDestroy()
 @Component({
   selector: 'resilver-priority',
   template: '<entity-form [conf]="this"></entity-form>',

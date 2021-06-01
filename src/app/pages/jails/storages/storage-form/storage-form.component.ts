@@ -22,6 +22,7 @@ interface MountPoint {
   pass: string;
   index?: string;
 }
+@UntilDestroy()
 @Component({
   selector: 'app-storage-add',
   template: '<entity-form *ngIf="isReady" [conf]="this"></entity-form>',
@@ -104,12 +105,12 @@ export class StorageFormComponent implements FormConfiguration, OnInit {
     private dialog: DialogService) {}
 
   ngOnInit(): void {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.ws.call('jail.query', [
         [
           ['host_hostuuid', '=', params['jail']],
         ],
-      ]).subscribe((res) => {
+      ]).pipe(untilDestroyed(this)).subscribe((res) => {
         if (res[0] && res[0].state == 'up') {
           this.save_button_enabled = false;
           this.error = T('Mount points used in jail ' + params['jail'] + ' cannot be edited while the jail is running.');
@@ -122,9 +123,9 @@ export class StorageFormComponent implements FormConfiguration, OnInit {
         }
       });
     });
-    this.ws.call('jail.get_activated_pool').subscribe((res) => {
+    this.ws.call('jail.get_activated_pool').pipe(untilDestroyed(this)).subscribe((res) => {
       if (res != null) {
-        this.ws.call('zfs.dataset.query', [[['name', '=', res + '/iocage']]]).subscribe(
+        this.ws.call('zfs.dataset.query', [[['name', '=', res + '/iocage']]]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             this.mountpoint = res[0].mountpoint;
             this.isReady = true;
@@ -137,7 +138,7 @@ export class StorageFormComponent implements FormConfiguration, OnInit {
   preInit(): void {
     const destination_field = _.find(this.fieldConfig, { name: 'destination' });
     this.jail = _.find(this.fieldConfig, { name: 'jail' });
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.route_success.push(params['jail']);
       this.mountpointId = params['pk'];
       this.jailID = params['jail'];
@@ -162,7 +163,7 @@ export class StorageFormComponent implements FormConfiguration, OnInit {
     entityForm.mountPointAdd = this.mountPointAdd;
     entityForm.mountpointId = this.mountpointId;
 
-    this.jailService.listJails().subscribe((res: any[]) => {
+    this.jailService.listJails().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       res.forEach((item) => {
         this.jail.options.push({ label: item.host_hostuuid, value: item.host_hostuuid });
       });
@@ -230,7 +231,7 @@ export class StorageFormComponent implements FormConfiguration, OnInit {
     }
 
     this.loader.open();
-    this.ws.call('jail.fstab', [this.jailID, mountPoint]).subscribe(
+    this.ws.call('jail.fstab', [this.jailID, mountPoint]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));

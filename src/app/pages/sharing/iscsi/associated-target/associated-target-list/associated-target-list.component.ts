@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import { T } from 'app/translate-marker';
 import { EntityUtils } from '../../../../common/entity/utils';
 
+@UntilDestroy()
 @Component({
   selector: 'app-iscsi-associated-target-list',
   template: `
@@ -58,7 +59,7 @@ export class AssociatedTargetListComponent {
     forkJoin([
       this.iscsiService.getTargets(),
       this.iscsiService.getExtents(),
-    ]).subscribe(([targets, extents]) => {
+    ]).pipe(untilDestroyed(this)).subscribe(([targets, extents]) => {
       for (let i = 0; i < entityList.rows.length; i++) {
         entityList.rows[i].target = _.find(targets, { id: entityList.rows[i].target })['name'];
         entityList.rows[i].extent = _.find(extents, { id: entityList.rows[i].extent })['name'];
@@ -80,7 +81,7 @@ export class AssociatedTargetListComponent {
       label: T('Delete'),
       onClick: (rowinner: any) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
-        this.iscsiService.getGlobalSessions().subscribe(
+        this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
           (res) => {
             let warningMsg = '';
             for (let i = 0; i < res.length; i++) {
@@ -90,11 +91,11 @@ export class AssociatedTargetListComponent {
             }
             deleteMsg = warningMsg + deleteMsg;
 
-            this.entityList.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).subscribe((dialres: boolean) => {
+            this.entityList.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).pipe(untilDestroyed(this)).subscribe((dialres: boolean) => {
               if (dialres) {
                 this.entityList.loader.open();
                 this.entityList.loaderOpen = true;
-                this.entityList.ws.call(this.wsDelete, [rowinner.id, true]).subscribe(
+                this.entityList.ws.call(this.wsDelete, [rowinner.id, true]).pipe(untilDestroyed(this)).subscribe(
                   () => { this.entityList.getData(); },
                   (resinner: any) => {
                     new EntityUtils().handleError(this, resinner);

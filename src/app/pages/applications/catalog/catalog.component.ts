@@ -26,7 +26,9 @@ import { ChartWizardComponent } from '../forms/chart-wizard.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from '../../../helptext/apps/apps';
 import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-catalog',
   templateUrl: './catalog.component.html',
@@ -82,13 +84,13 @@ export class CatalogComponent implements OnInit {
     this.loadCatalogs();
     this.checkForConfiguredPool();
     this.refreshForms();
-    this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
+    this.refreshForm = this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshForms();
     });
   }
 
   loadCatalogs(): void {
-    this.appService.getAllCatalogItems().subscribe((catalogs) => {
+    this.appService.getAllCatalogItems().pipe(untilDestroyed(this)).subscribe((catalogs) => {
       this.catalogNames = [];
       this.catalogApps = [];
       catalogs.forEach((catalog) => {
@@ -163,7 +165,7 @@ export class CatalogComponent implements OnInit {
   }
 
   checkForConfiguredPool(): void {
-    this.appService.getKubernetesConfig().subscribe((config) => {
+    this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
       if (!config.pool) {
         this.selectPool();
       } else {
@@ -174,14 +176,14 @@ export class CatalogComponent implements OnInit {
   }
 
   selectPool(): void {
-    this.appService.getPoolList().subscribe((pools) => {
+    this.appService.getPoolList().pipe(untilDestroyed(this)).subscribe((pools) => {
       if (pools.length === 0) {
         this.dialogService.confirm({
           title: helptext.noPool.title,
           message: helptext.noPool.message,
           hideCheckBox: true,
           buttonMsg: helptext.noPool.action,
-        }).subscribe((confirmed) => {
+        }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
           if (!confirmed) {
             return;
           }
@@ -209,7 +211,7 @@ export class CatalogComponent implements OnInit {
       message: helptext.choosePool.unsetPool.confirm.message,
       hideCheckBox: true,
       buttonMsg: helptext.choosePool.unsetPool.confirm.button,
-    }).subscribe((confirmed) => {
+    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
       if (!confirmed) {
         return;
       }
@@ -222,17 +224,17 @@ export class CatalogComponent implements OnInit {
       });
       dialogRef.componentInstance.setCall('kubernetes.update', [{ pool: null }]);
       dialogRef.componentInstance.submit();
-      dialogRef.componentInstance.success.subscribe(() => {
+      dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.dialogService.closeAllDialogs();
         this.selectedPool = null;
         this.refreshToolbarMenus();
-        this.translate.get(helptext.choosePool.unsetPool.label).subscribe((msg) => {
+        this.translate.get(helptext.choosePool.unsetPool.label).pipe(untilDestroyed(this)).subscribe((msg) => {
           this.dialogService.Info(helptext.choosePool.success, msg,
             '500px', 'info', true);
         });
       });
 
-      dialogRef.componentInstance.failure.subscribe((err: any) => {
+      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
         new EntityUtils().handleWSError(self, err, this.dialogService);
       });
     });
@@ -250,16 +252,16 @@ export class CatalogComponent implements OnInit {
     });
     dialogRef.componentInstance.setCall('kubernetes.update', [{ pool }]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
       self.selectedPool = pool;
       self.refreshToolbarMenus();
       self.dialogService.closeAllDialogs();
-      self.translate.get(helptext.choosePool.message).subscribe((msg: string) => {
+      self.translate.get(helptext.choosePool.message).pipe(untilDestroyed(this)).subscribe((msg: string) => {
         self.dialogService.Info(helptext.choosePool.success, msg + res.result.pool,
           '500px', 'info', true);
       });
     });
-    dialogRef.componentInstance.failure.subscribe((err: string) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: string) => {
       new EntityUtils().handleWSError(self, err, self.dialogService);
     });
   }
@@ -313,7 +315,7 @@ export class CatalogComponent implements OnInit {
     });
     dialogRef.componentInstance.setCall('catalog.sync_all');
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe(() => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.loadCatalogs();
     });

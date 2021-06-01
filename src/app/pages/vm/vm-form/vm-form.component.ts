@@ -21,7 +21,9 @@ import { GpuDevice } from 'app/interfaces/gpu-device.interface';
 import { combineLatest, Observable } from 'rxjs';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-vm',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -206,26 +208,26 @@ export class VmFormComponent implements FormConfiguration {
 
   preInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['pk']) {
         const opt = params.pk ? ['id', '=', parseInt(params.pk, 10)] : [];
         this.queryCallOption = [opt];
       }
     });
-    this.ws.call('vm.maximum_supported_vcpus').subscribe((max) => {
+    this.ws.call('vm.maximum_supported_vcpus').pipe(untilDestroyed(this)).subscribe((max) => {
       this.maxVCPUs = max;
     });
   }
 
   afterInit(entityForm: EntityFormComponent): void {
     this.bootloader = _.find(this.fieldConfig, { name: 'bootloader' });
-    this.vmService.getBootloaderOptions().subscribe((options) => {
+    this.vmService.getBootloaderOptions().pipe(untilDestroyed(this)).subscribe((options) => {
       for (const option in options) {
         this.bootloader.options.push({ label: options[option], value: option });
       }
     });
 
-    entityForm.formGroup.controls['memory'].valueChanges.subscribe((value: any) => {
+    entityForm.formGroup.controls['memory'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       const mem = _.find(this.fieldConfig, { name: 'memory' });
       if (typeof (value) === 'number') {
         value = value.toString();
@@ -239,13 +241,13 @@ export class VmFormComponent implements FormConfiguration {
       }
     });
 
-    entityForm.formGroup.controls['vcpus'].valueChanges.subscribe((value: number) => {
+    entityForm.formGroup.controls['vcpus'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
       this.vcpus = value;
     });
-    entityForm.formGroup.controls['cores'].valueChanges.subscribe((value: number) => {
+    entityForm.formGroup.controls['cores'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
       this.cores = value;
     });
-    entityForm.formGroup.controls['threads'].valueChanges.subscribe((value: number) => {
+    entityForm.formGroup.controls['threads'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
       this.threads = value;
     });
 
@@ -254,7 +256,7 @@ export class VmFormComponent implements FormConfiguration {
       const cpuModel = _.find(this.fieldConfig, { name: 'cpu_model' });
       cpuModel.isHidden = false;
 
-      this.vmService.getCPUModels().subscribe((models) => {
+      this.vmService.getCPUModels().pipe(untilDestroyed(this)).subscribe((models) => {
         for (const model in models) {
           cpuModel.options.push(
             {
@@ -265,12 +267,12 @@ export class VmFormComponent implements FormConfiguration {
       });
     }
 
-    this.systemGeneralService.getAdvancedConfig.subscribe((res) => {
+    this.systemGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       this.isolatedGpuPciIds = res.isolated_gpu_pci_ids;
     });
 
     const gpusFormControl = this.entityForm.formGroup.controls['gpus'];
-    gpusFormControl.valueChanges.subscribe((gpusValue: string[]) => {
+    gpusFormControl.valueChanges.pipe(untilDestroyed(this)).subscribe((gpusValue: string[]) => {
       const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
       for (const gpuValue of gpusValue) {
         if (finalIsolatedPciIds.findIndex((pciId) => pciId === gpuValue) === -1) {
@@ -320,7 +322,7 @@ export class VmFormComponent implements FormConfiguration {
         if (errors) {
           config.hasErrors = true;
           config.hasErrors = true;
-          self.translate.get(helptext.vcpus_warning).subscribe((warning) => {
+          self.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(this)).subscribe((warning) => {
             config.warnings = warning + ` ${self.maxVCPUs}.`;
           });
         } else {
@@ -335,7 +337,7 @@ export class VmFormComponent implements FormConfiguration {
   resourceTransformIncomingRestData(vmRes: any): any {
     this.rawVmData = vmRes;
     vmRes['memory'] = this.storageService.convertBytestoHumanReadable(vmRes['memory'] * 1048576, 0);
-    this.ws.call('device.get_info', ['GPU']).subscribe((gpus: GpuDevice[]) => {
+    this.ws.call('device.get_info', ['GPU']).pipe(untilDestroyed(this)).subscribe((gpus: GpuDevice[]) => {
       this.gpus = gpus;
       const vmPciSlots: string[] = vmRes.devices.filter((device: any) => device.dtype === VmDeviceType.Pci).map((pciDevice: any) => pciDevice.attributes.pptdev);
       const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
@@ -437,7 +439,7 @@ export class VmFormComponent implements FormConfiguration {
     this.loader.open();
     observables.push(this.ws.call('vm.update', [this.rawVmData.id, updatedVmData]));
 
-    combineLatest(observables).subscribe(
+    combineLatest(observables).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));

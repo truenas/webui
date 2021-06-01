@@ -21,7 +21,9 @@ import { AppLoaderService, DialogService, WebSocketService } from 'app/services'
 import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-volumes-list-controls',
   templateUrl: './volumes-list-controls.component.html',
@@ -73,7 +75,7 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
       'keyup',
     )
       .pipe(debounceTime(250), distinctUntilChanged())
-      .subscribe(() => {
+      .pipe(untilDestroyed(this)).subscribe(() => {
         this.filterValue = this.filter.nativeElement.value || '';
         this.filterDatasets(this.filterValue);
       });

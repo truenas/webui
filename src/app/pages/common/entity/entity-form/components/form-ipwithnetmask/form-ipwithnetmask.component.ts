@@ -9,6 +9,7 @@ import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
 import { NetworkService } from '../../../../../../services';
 
+@UntilDestroy()
 @Component({
   selector: 'form-ipwithnetmask',
   templateUrl: './form-ipwithnetmask.component.html',
@@ -35,7 +36,7 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.control = this.group.controls[this.config.name];
-    this.valueSubscription = this.control.valueChanges.subscribe((res: string) => {
+    this.valueSubscription = this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.setAddressAndNetmask(res);
     });
     if (this.control.value) {

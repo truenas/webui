@@ -10,6 +10,7 @@ import helptext from '../../../helptext/directoryservice/idmap';
 import { ModalService } from '../../../services/modal.service';
 import { Subscription } from 'rxjs';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+@UntilDestroy()
 @Component({
   selector: 'app-idmap-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -282,7 +283,7 @@ export class IdmapFormComponent implements FormConfiguration {
   constructor(protected idmapService: IdmapService, protected validationService: ValidationService,
     private modalService: ModalService,
     protected dialogService: DialogService, protected dialog: MatDialog) {
-    this.getRow = this.modalService.getRow$.subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
       this.pk = rowId;
       this.getRow.unsubscribe();
     });
@@ -306,7 +307,7 @@ export class IdmapFormComponent implements FormConfiguration {
       this.hideField(option, true, entityEdit);
     });
 
-    this.idmapService.getCerts().subscribe((certificates) => {
+    this.idmapService.getCerts().pipe(untilDestroyed(this)).subscribe((certificates) => {
       const config = this.fieldConfig.find((c) => c.name === 'certificate');
       config.options.push({ label: '---', value: null });
       certificates.forEach((certificate) => {
@@ -314,7 +315,7 @@ export class IdmapFormComponent implements FormConfiguration {
       });
     });
 
-    entityEdit.formGroup.controls['idmap_backend'].valueChanges.subscribe((value: any) => {
+    entityEdit.formGroup.controls['idmap_backend'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.optionsFields.forEach((option) => {
         this.hideField(option, true, entityEdit);
       });
@@ -336,7 +337,7 @@ export class IdmapFormComponent implements FormConfiguration {
       }
     });
 
-    entityEdit.formGroup.controls['name'].valueChanges.subscribe((value: any) => {
+    entityEdit.formGroup.controls['name'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value === 'DS_TYPE_DEFAULT_DOMAIN') {
         entityEdit.formGroup.controls['idmap_backend'].setValue('TDB');
         this.hideField('idmap_backend', true, entityEdit);
@@ -345,7 +346,7 @@ export class IdmapFormComponent implements FormConfiguration {
       }
     });
 
-    this.idmapService.getBackendChoices().subscribe((res) => {
+    this.idmapService.getBackendChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       this.backendChoices = res;
       const config = this.fieldConfig.find((c) => c.name === 'idmap_backend');
       for (const item in res) {
@@ -391,19 +392,19 @@ export class IdmapFormComponent implements FormConfiguration {
     this.modalService.refreshTable();
     this.dialogService.confirm(helptext.idmap.clear_cache_dialog.title, helptext.idmap.clear_cache_dialog.message,
       true)
-      .subscribe((res: boolean) => {
+      .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
         if (res) {
           this.dialogRef = this.dialog.open(EntityJobComponent, {
             data: { title: (helptext.idmap.clear_cache_dialog.job_title) }, disableClose: true,
           });
           this.dialogRef.componentInstance.setCall('idmap.clear_idmap_cache');
           this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.subscribe(() => {
+          this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.dialog.closeAll();
             this.dialogService.Info(helptext.idmap.clear_cache_dialog.success_title,
               helptext.idmap.clear_cache_dialog.success_msg, '250px', '', true);
           });
-          this.dialogRef.componentInstance.failure.subscribe((res: any) => {
+          this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
             this.dialog.closeAll();
             new EntityUtils().handleWSError(this.entityForm, res);
           });

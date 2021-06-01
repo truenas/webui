@@ -6,6 +6,7 @@ import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
 import * as _ from 'lodash';
 
+@UntilDestroy()
 @Component({
   selector: 'form-toggle-button',
   templateUrl: './form-toggle-button.component.html',
@@ -25,7 +26,7 @@ export class FormToggleButtonComponent implements Field, OnInit {
     this.init = true;
     this.control = this.group.controls[this.config.name];
 
-    this.control.valueChanges.subscribe((res: any) => {
+    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (this.init && this.config.options && res) {
         this.init = false;
         let all_selected = false;

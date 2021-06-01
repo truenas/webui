@@ -7,6 +7,7 @@ import { EntityUtils } from '../../../../common/entity/utils';
 
 import { T } from 'app/translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'app-iscsi-extent-list',
   template: `
@@ -103,7 +104,7 @@ export class ExtentListComponent {
         const value = entityDialog.formValue;
         entityTable.loader.open();
         entityTable.loaderOpen = true;
-        entityTable.ws.call(self.wsDelete, [id, value.remove, value.force]).subscribe(
+        entityTable.ws.call(self.wsDelete, [id, value.remove, value.force]).pipe(untilDestroyed(this)).subscribe(
           () => {
             entityDialog.dialogRef.close(true);
             entityTable.getData();

@@ -6,7 +6,9 @@ import { DialogService } from '../../../services/index';
 import helptext from '../../../helptext/apps/apps';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-catalog-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -46,7 +48,7 @@ export class CatalogEditFormComponent implements FormConfiguration {
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService) {
-    this.modalService.getRow$.subscribe((label: string) => {
+    this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((label: string) => {
       this.customFilter = [[['id', '=', label]], { extra: { item_details: true } }];
     });
   }

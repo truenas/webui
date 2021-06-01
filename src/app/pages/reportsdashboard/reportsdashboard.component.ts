@@ -27,12 +27,14 @@ import {
 } from '../../services';
 
 import { ReportsConfigComponent } from './components/reports-config/reports-config.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface Tab {
   label: string;
   value: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'reportsdashboard',
   styleUrls: ['./reportsdashboard.scss'],
@@ -99,27 +101,27 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.scrollContainer = document.querySelector('.rightside-content-hold ');// this.container.nativeElement;
     this.scrollContainer.style.overflow = 'hidden';
 
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res) => {
+    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.isFooterConsoleOpen = res.consolemsg;
       }
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.retroLogo = evt.data.retroLogo ? '1' : '0';
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.retroLogo = evt.data.retroLogo ? '1' : '0';
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.retroLogo = evt.data.retroLogo ? '1' : '0';
     });
 
     this.core.emit({ name: 'UserPreferencesRequest' });
 
-    this.core.register({ observerClass: this, eventName: 'ReportingGraphs' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ReportingGraphs' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data) {
         const allReports: any[] = evt.data.map((report: any) => {
           const list = [];
@@ -148,14 +150,14 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   }
 
   diskQueries(): void {
-    this.ws.call('multipath.query').subscribe((multipath_res: any[]) => {
+    this.ws.call('multipath.query').pipe(untilDestroyed(this)).subscribe((multipath_res: any[]) => {
       let multipathDisks: any[] = [];
       multipath_res.forEach((m) => {
         const children = m.children.map((child: any) => ({ disk: m.name.replace('multipath/', ''), name: child.name, status: child.status }));
         multipathDisks = multipathDisks.concat(children);
       });
 
-      this.ws.call('disk.query').subscribe((res) => {
+      this.ws.call('disk.query').pipe(untilDestroyed(this)).subscribe((res) => {
         this.parseDisks(res, multipathDisks);
         this.core.emit({ name: 'ReportingGraphsRequest', sender: this });
       });
@@ -431,7 +433,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   }
 
   setupSubscriptions(): void {
-    this.target.subscribe((evt: CoreEvent) => {
+    this.target.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       switch (evt.name) {
         case 'FormSubmitted':
           this.buildDiskReport(evt.data.devices, evt.data.metrics);

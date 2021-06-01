@@ -13,7 +13,9 @@ import { ShellService, WebSocketService } from '../../../services';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import * as FontFaceObserver from 'fontfaceobserver';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-vmserial-shell',
   templateUrl: './vmserial-shell.component.html',
@@ -47,11 +49,11 @@ export class VMSerialShellComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
-      this.getAuthToken().subscribe((token) => {
+      this.getAuthToken().pipe(untilDestroyed(this)).subscribe((token) => {
         this.initializeWebShell(token);
-        this.shellSubscription = this.ss.shellOutput.subscribe((value: any) => {
+        this.shellSubscription = this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe((value: any) => {
           if (value !== undefined) {
             // this.xterm.write(value);
           }
@@ -149,7 +151,7 @@ export class VMSerialShellComponent implements OnInit, OnDestroy {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
-    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe(() => {
+    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
       this.xterm.focus();
     });
     return true;
@@ -160,7 +162,7 @@ export class VMSerialShellComponent implements OnInit, OnDestroy {
     this.ss.token = token;
     this.ss.connect();
 
-    this.ss.shellConnected.subscribe((res: ShellConnectedEvent) => {
+    this.ss.shellConnected.pipe(untilDestroyed(this)).subscribe((res: ShellConnectedEvent) => {
       this.connectionId = res.id;
       this.resizeTerm();
     });

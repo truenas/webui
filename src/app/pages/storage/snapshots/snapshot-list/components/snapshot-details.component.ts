@@ -11,7 +11,9 @@ import { WebSocketService, StorageService, SystemGeneralService } from 'app/serv
 import { map } from 'rxjs/operators';
 import { SnapshotListComponent } from '../snapshot-list.component';
 import { LocaleService } from 'app/services/locale.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-snapshot-details',
   template: `
@@ -34,7 +36,7 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
     protected storageService: StorageService, private sysGeneralService: SystemGeneralService) {}
 
   ngOnInit(): void {
-    this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe((res) => {
+    this.getGenConfig = this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       this.timezone = res.timezone;
       this._ws
         .call('zfs.snapshot.query', [[['id', '=', this.config.name]]])
@@ -45,7 +47,7 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
             creation: this.localeService.formatDateTime(response[0].properties.creation.parsed.$date, this.timezone),
           })),
         )
-        .subscribe((snapshot) => {
+        .pipe(untilDestroyed(this)).subscribe((snapshot) => {
           this.details = [
             {
               label: 'Date created',

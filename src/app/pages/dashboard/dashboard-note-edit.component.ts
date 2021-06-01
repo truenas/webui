@@ -13,6 +13,7 @@ import { AppLoaderService } from '../../services/app-loader/app-loader.service';
 import { Subscription } from 'rxjs';
 import { EntityUtils } from '../common/entity/utils';
 
+@UntilDestroy()
 @Component({
   selector: 'dashboard-note-edit',
   templateUrl: './dashboard-note-edit.component.html',
@@ -124,7 +125,7 @@ export class DashboardNoteEditComponent implements OnInit {
     }
     this.loader.open();
     this.busy = this.ws.call('user.set_attribute', [1, attribute_key, value['content']])
-      .subscribe(
+      .pipe(untilDestroyed(this)).subscribe(
         () => {
           this.loader.close();
           this.success = true;

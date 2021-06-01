@@ -4,6 +4,7 @@ import {
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { TaskService } from 'app/services';
 
+@UntilDestroy()
 @Component({
   selector: 'app-task-schedule-list',
   template: `

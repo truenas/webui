@@ -29,6 +29,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Temperature } from 'app/core/services/disk-temperature.service';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from '../../../../translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 export enum EnclosureLocation {
   Front = 'front',
@@ -44,6 +45,7 @@ export interface DiskFailure {
   reasons?: string[];
 }
 
+@UntilDestroy()
 @Component({
   selector: 'enclosure-disks',
   templateUrl: './enclosure-disks.component.html',
@@ -155,7 +157,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   ) {
     this.themeUtils = new ThemeUtils();
 
-    core.register({ observerClass: this, eventName: 'DiskTemperatures' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'DiskTemperatures' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const chassisView = this.view == 'rear' ? this.chassis.rear : this.chassis.front;
       if (!this.chassis || !chassisView || !chassisView.driveTrayObjects) { return; }
 
@@ -175,7 +177,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
     core.emit({ name: 'DiskTemperaturesSubscribe', sender: this });
 
-    core.register({ observerClass: this, eventName: 'MediaChange' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'MediaChange' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.mqAlias = evt.data.mqAlias;
 
       if (evt.data.mqAlias == 'xs' || evt.data.mqAlias == 'sm' || evt.data.mqAlias == 'md') {
@@ -188,11 +190,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       this.resizeView();
     });
 
-    core.register({ observerClass: this, eventName: 'ThemeData' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'ThemeData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.theme = evt.data;
     });
 
-    core.register({ observerClass: this, eventName: 'ThemeChanged' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (this.theme == evt.data) { return; }
       this.theme = evt.data;
       this.setCurrentView(this.currentView);
@@ -210,7 +212,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   ngAfterContentInit(): void {
-    this.controllerEvents.subscribe((evt: CoreEvent) => {
+    this.controllerEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       switch (evt.name) {
         case 'CanvasExtract':
           this.createExtractedEnclosure(evt.data);
@@ -407,7 +409,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   setupEnclosureEvents(): void {
-    this.enclosure.events.subscribe((evt) => {
+    this.enclosure.events.pipe(untilDestroyed(this)).subscribe((evt) => {
       switch (evt.name) {
         case 'Ready':
           this.container.addChild(this.enclosure.container);
@@ -494,7 +496,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     const enclosure: ChassisView = chassis.front;
 
-    enclosure.events.subscribe((evt) => {
+    enclosure.events.pipe(untilDestroyed(this)).subscribe((evt) => {
       switch (evt.name) {
         case 'Ready':
           this.container.addChild(enclosure.container);

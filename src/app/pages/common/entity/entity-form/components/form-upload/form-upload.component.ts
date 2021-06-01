@@ -11,6 +11,7 @@ import { AppLoaderService } from '../../../../../../services/app-loader/app-load
 import { DialogService } from '../../../../../../services';
 import { T } from '../../../../../../translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'app-form-upload',
   templateUrl: './form-upload.component.html',
@@ -62,7 +63,7 @@ export class FormUploadComponent {
       const req = new HttpRequest('POST', this.apiEndPoint, formData, {
         reportProgress: true,
       });
-      this.http.request(req).subscribe((event) => {
+      this.http.request(req).pipe(untilDestroyed(this)).subscribe((event) => {
         if (event.type === HttpEventType.UploadProgress) {
           const percentDone = Math.round(100 * event.loaded / event.total);
           const upload_msg = `${percentDone}% Uploaded`;

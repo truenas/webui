@@ -13,6 +13,9 @@ import { RestService, WebSocketService } from '../../../../services';
 
 import helptext from '../../../../helptext/storage/snapshots/snapshots';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+@UntilDestroy()
 @Component({
   selector: 'snapshot-clone',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -55,7 +58,7 @@ export class SnapshotCloneComponent implements FormConfiguration {
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
   preInit(): void {
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
     });
   }

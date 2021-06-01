@@ -10,7 +10,9 @@ import { T } from '../../../../../translate-marker';
 import { ModalService } from 'app/services/modal.service';
 import { CronFormComponent } from '../cron-form/cron-form.component';
 import { UserService } from '../../../../../services/user.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-cron-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -68,7 +70,7 @@ export class CronListComponent {
   afterInit(entityList: any): void {
     this.entityList = entityList;
 
-    this.modalService.onClose$.subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.loaderOpen = true;
       this.entityList.needRefreshTable = true;
       this.entityList.getData();
@@ -97,7 +99,7 @@ export class CronListComponent {
               filter((run) => !!run),
               switchMap(() => this.ws.call('cronjob.run', [row.id])),
             )
-            .subscribe(
+            .pipe(untilDestroyed(this)).subscribe(
               () => {
                 const message = row.enabled == true
                   ? T('This job is scheduled to run again ' + row.next_run + '.')

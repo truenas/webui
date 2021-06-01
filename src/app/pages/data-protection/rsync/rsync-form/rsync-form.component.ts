@@ -16,7 +16,9 @@ import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-rsync-task-add',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -259,7 +261,7 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
     this.title = entityForm.isNew ? helptext.rsync_task_add : helptext.rsync_task_edit;
 
     this.user_field = this.fieldSets.config('user');
-    this.userService.userQueryDSCache().subscribe((items) => {
+    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
       for (let i = 0; i < items.length; i++) {
         this.user_field.options.push({
           label: items[i].username,
@@ -269,7 +271,7 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
     });
 
     this.hideFields(entityForm.formGroup.controls['mode'].value);
-    this.mode_subscription = entityForm.formGroup.controls['mode'].valueChanges.subscribe((res) => {
+    this.mode_subscription = entityForm.formGroup.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.hideFields(res);
     });
   }
@@ -292,7 +294,7 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
   }
 
   updateUserSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
+    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });

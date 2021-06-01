@@ -12,7 +12,9 @@ import helptext from '../../../../helptext/services/components/service-s3';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { map } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 's3-edit',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -121,9 +123,9 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
 
   afterInit(entityForm: any): void {
     this.storage_path = entityForm.formGroup.controls['storage_path'];
-    this.storage_path_subscription = this.storage_path.valueChanges.subscribe((res: any) => {
+    this.storage_path_subscription = this.storage_path.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res && res != this.initial_path && !this.warned) {
-        this.dialog.confirm(helptext.path_warning_title, helptext.path_warning_msg).subscribe((confirm: boolean) => {
+        this.dialog.confirm(helptext.path_warning_title, helptext.path_warning_msg).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
           if (!confirm) {
             this.storage_path.setValue(this.initial_path);
           } else {
@@ -132,7 +134,7 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
         });
       }
     });
-    this.systemGeneralService.getCertificates().subscribe((res: any[]) => {
+    this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       this.certificate = _.find(this.fieldConfig, { name: 'certificate' });
       if (res.length > 0) {
         res.forEach((item) => {
@@ -149,7 +151,7 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
             value: key,
           }))),
       )
-      .subscribe((choices) => {
+      .pipe(untilDestroyed(this)).subscribe((choices) => {
         choices.forEach((ip) => {
           this.validBindIps.push(ip.value);
         });

@@ -8,6 +8,7 @@ import { TaskService, UserService, RestService } from '../../../../services';
 import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
+@UntilDestroy()
 @Component({
   selector: 'entity-task',
   templateUrl: './entity-task.component.html',
@@ -58,7 +59,7 @@ export class EntityTaskComponent implements OnInit {
     this.hour_field = _.find(this.conf.fieldConfig, { name: this.preTaskName + '_hour' });
     this.mintue_field = _.find(this.conf.fieldConfig, { name: this.preTaskName + '_minute' });
 
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (this.conf.resource_name && !this.conf.resource_name.endsWith('/')) {
         this.conf.resource_name = this.conf.resource_name + '/';
       }
@@ -71,7 +72,7 @@ export class EntityTaskComponent implements OnInit {
         }
       }
       this.formGroup = this.entityFormService.createFormGroup(this.conf.fieldConfig);
-      this.formGroup.controls[this.preTaskName + '_repeat'].valueChanges.subscribe((res: any) => {
+      this.formGroup.controls[this.preTaskName + '_repeat'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
         if (res == 'none') {
           this.month_field['isHidden'] = false;
           this.day_field['isHidden'] = false;
@@ -155,7 +156,7 @@ export class EntityTaskComponent implements OnInit {
 
     if (!this.isNew) {
       // if we want to use this again we will need to convert to websocket
-      /* this.rest.get(query, {}).subscribe((res) => {
+      /* this.rest.get(query, {}).pipe(untilDestroyed(this)).subscribe((res) => {
         if (res.data) {
           this.data = res.data;
           for (let i in this.data) {
@@ -181,7 +182,7 @@ export class EntityTaskComponent implements OnInit {
                 }
               } else {
                 if (current_field.name == "scrub_volume") {
-                  this.taskService.getVolumeList().subscribe((res) => {
+                  this.taskService.getVolumeList().pipe(untilDestroyed(this)).subscribe((res) => {
                     let volume = _.find(res.data, { 'vol_name': this.data[i] });
                     fg.setValue(volume['id']);
                   });
@@ -266,7 +267,7 @@ export class EntityTaskComponent implements OnInit {
     /* if (this.isNew) {
       this.rest.post(this.conf.resource_name + '/', {
         body: JSON.stringify(value)
-      }).subscribe(
+      }).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.conf.route_success));
@@ -278,7 +279,7 @@ export class EntityTaskComponent implements OnInit {
     } else {
       this.rest.put(this.conf.resource_name + '/' + this.pk, {
         body: JSON.stringify(value)
-      }).subscribe(
+      }).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.conf.route_success));

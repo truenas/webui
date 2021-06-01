@@ -35,6 +35,7 @@ type DashboardNetworkInterface = NetworkInterface & {
   };
 };
 
+@UntilDestroy()
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.html',
@@ -109,7 +110,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(protected core: CoreService, protected ws: WebSocketService,
     public mediaObserver: MediaObserver, private el: ElementRef, public modalService: ModalService) {
-    core.register({ observerClass: this, eventName: 'SidenavStatus' }).subscribe(() => {
+    core.register({ observerClass: this, eventName: 'SidenavStatus' }).pipe(untilDestroyed(this)).subscribe(() => {
       setTimeout(() => {
         this.checkScreenSize();
       }, 100);
@@ -216,7 +217,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.init();
 
-    this.ws.call('failover.licensed').subscribe((hasFailover) => {
+    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
       if (hasFailover) {
         this.isHA = true;
       }
@@ -236,7 +237,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   init(): void {
     this.startListeners();
 
-    this.core.register({ observerClass: this, eventName: 'NicInfo' }).subscribe((evt: NicInfoEvent) => {
+    this.core.register({ observerClass: this, eventName: 'NicInfo' }).pipe(untilDestroyed(this)).subscribe((evt: NicInfoEvent) => {
       const clone = [...evt.data] as DashboardNetworkInterface[];
       const removeNics: { [nic: string]: number | string } = {};
 
@@ -306,14 +307,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startListeners(): void {
-    this.core.register({ observerClass: this, eventName: 'UserAttributes' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserAttributes' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.dashState) {
         this.applyState(evt.data.dashState);
       }
       this.dashStateReady = true;
     });
 
-    this.statsEvents = this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').subscribe((update) => {
+    this.statsEvents = this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((update) => {
       if (update.cpu) {
         this.statsDataEvents.next({ name: 'CpuStats', data: update.cpu });
       }
@@ -373,11 +374,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getDisksData(): void {
-    this.core.register({ observerClass: this, eventName: 'PoolData' }).subscribe((evt: PoolDataEvent) => {
+    this.core.register({ observerClass: this, eventName: 'PoolData' }).pipe(untilDestroyed(this)).subscribe((evt: PoolDataEvent) => {
       this.pools = evt.data;
 
       if (this.pools.length > 0) {
-        this.ws.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]).subscribe((datasets) => {
+        this.ws.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]).pipe(untilDestroyed(this)).subscribe((datasets) => {
           this.setVolumeData({
             name: 'RootDatasets',
             data: datasets,
@@ -392,7 +393,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    this.core.register({ observerClass: this, eventName: 'SysInfo' }).subscribe((evt: SysInfoEvent) => {
+    this.core.register({ observerClass: this, eventName: 'SysInfo' }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
       if (typeof this.systemInformation == 'undefined') {
         this.systemInformation = evt.data;
         if (!this.pools || this.pools.length == 0) {
@@ -414,7 +415,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       this.formEvents = new Subject();
-      this.formEvents.subscribe((evt: CoreEvent) => {
+      this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
         switch (evt.name) {
           case 'FormSubmit':
             this.formHandler(evt);
@@ -630,7 +631,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }); */
 
     // Save
-    this.ws.call('user.set_attribute', [1, 'dashState', clone]).subscribe((res) => {
+    this.ws.call('user.set_attribute', [1, 'dashState', clone]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (!res) {
         throw 'Unable to save Dashboard State';
       }

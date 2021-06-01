@@ -9,6 +9,7 @@ import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form'
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
+@UntilDestroy()
 @Component({
   selector: 'app-iscsi-target-list',
   template: `
@@ -69,7 +70,7 @@ export class TargetListComponent implements OnInit {
       new TargetFormComponent(this.router, this.aroute, this.iscsiService, this.loader, this.translate, this.ws, this.modalService),
       rowId,
     );
-    this.modalService.onClose$.subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -92,7 +93,7 @@ export class TargetListComponent implements OnInit {
       label: T('Delete'),
       onClick: (rowinner: any) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
-        this.iscsiService.getGlobalSessions().subscribe(
+        this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
           (res) => {
             const payload = [rowinner.id];
             let warningMsg = '';
@@ -105,11 +106,11 @@ export class TargetListComponent implements OnInit {
             }
             deleteMsg = warningMsg + deleteMsg;
 
-            this.entityList.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).subscribe((dialres: boolean) => {
+            this.entityList.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).pipe(untilDestroyed(this)).subscribe((dialres: boolean) => {
               if (dialres) {
                 this.entityList.loader.open();
                 this.entityList.loaderOpen = true;
-                this.entityList.ws.call(this.wsDelete, payload).subscribe(
+                this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe(
                   () => { this.entityList.getData(); },
                   (resinner: any) => {
                     new EntityUtils().handleWSError(this, resinner, this.entityList.dialogService);

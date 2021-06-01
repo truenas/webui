@@ -7,7 +7,9 @@ import helptext from '../../../../../helptext/system/initshutdown';
 import { ModalService } from 'app/services/modal.service';
 import { take } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-cron-initshutdown-add',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -119,7 +121,7 @@ export class InitshutdownFormComponent implements FormConfiguration {
   ];
 
   constructor(protected modalService: ModalService) {
-    this.modalService.getRow$.pipe(take(1)).subscribe((id: string) => {
+    this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((id: string) => {
       this.customFilter = [[['id', '=', id]]];
     });
   }
@@ -129,7 +131,7 @@ export class InitshutdownFormComponent implements FormConfiguration {
     this.pk = entityForm.pk;
     this.title = entityForm.isNew ? helptext.ini_add : helptext.ini_edit;
     this.type_control = entityForm.formGroup.controls['type'];
-    this.type_control.valueChanges.subscribe((value: any) => {
+    this.type_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.formUpdate(value);
     });
 

@@ -13,6 +13,7 @@ import { Wizard } from '../../common/entity/entity-form/models/wizard.interface'
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import { Subject } from 'rxjs';
 
+@UntilDestroy()
 @Component({
   selector: 'chart-add-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
@@ -110,7 +111,7 @@ export class ChartWizardComponent implements OnDestroy {
       this.wizardConfig = this.wizardConfig.filter((wizard) => wizard.fieldConfig.length > 0);
       if (this.entityWizard) {
         this.entityWizard.resetFields();
-        this.entityWizard.formArray.get([0]).get('version').valueChanges.subscribe((value: any) => {
+        this.entityWizard.formArray.get([0]).get('version').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
           this.selectedVersionKey = value;
           this.parseSchema();
         });
@@ -128,7 +129,7 @@ export class ChartWizardComponent implements OnDestroy {
       repositoryConfig.readonly = true;
     }
 
-    entityWizard.formArray.get([0]).get('version').valueChanges.subscribe((value) => {
+    entityWizard.formArray.get([0]).get('version').valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       this.selectedVersionKey = value;
       this.parseSchema();
     });
@@ -158,12 +159,12 @@ export class ChartWizardComponent implements OnDestroy {
     });
     this.dialogRef.componentInstance.setCall(apiCall, payload);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
-    this.dialogRef.componentInstance.failure.subscribe((res: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res.exc_info && res.exc_info.extra) {
         new EntityUtils().handleWSError(this, res);
       } else {

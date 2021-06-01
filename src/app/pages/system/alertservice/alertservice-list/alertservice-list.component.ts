@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 import { WebSocketService, DialogService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 
+@UntilDestroy()
 @Component({
   selector: 'app-alertservice-list',
   template: '<entity-table [title]="title"  [conf]="this"></entity-table>',
@@ -51,7 +53,7 @@ export class AlertServiceListComponent {
   onCheckboxChange(row: any): void {
     row.enabled = !row.enabled;
     this.ws.call('alertservice.update', [row.id, { enabled: row.enabled }])
-      .subscribe(
+      .pipe(untilDestroyed(this)).subscribe(
         (res) => {
           if (!res) {
             row.enabled = !row.enabled;

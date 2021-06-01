@@ -13,6 +13,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import { DialogService } from 'app/services/dialog.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
+@UntilDestroy()
 @Component({
   selector: 'entity-card',
   templateUrl: './entity-card.component.html',
@@ -82,7 +83,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
       rpc = this.conf.toggleStop;
     }
 
-    this.busy = this.ws.call(rpc as ApiMethod, [row.id]).subscribe((res) => {
+    this.busy = this.ws.call(rpc as ApiMethod, [row.id]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         row[this.conf.toggleProp] = ServiceStatus.Running;
       } else {
@@ -112,7 +113,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
 
     /* if we want to use this we will need to convert to websocket
     this.busy =
-      this.rest.get(this.conf.resource_name, options).subscribe((res) => {
+      this.rest.get(this.conf.resource_name, options).pipe(untilDestroyed(this)).subscribe((res) => {
         if (this.loaderOpen) {
           this.loader.close();
           this.loaderOpen = false;
@@ -195,13 +196,13 @@ export class EntityCardComponent extends iXObject implements OnInit {
   }
 
   doDelete(): void {
-    this.dialog.confirm('Delete', 'Delete this item?').subscribe((res: boolean) => {
+    this.dialog.confirm('Delete', 'Delete this item?').pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         /*
         this.loader.open();
         this.loaderOpen = true;
         let data = {};
-        this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
+        this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             this.getData();
           },

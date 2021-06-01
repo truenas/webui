@@ -6,6 +6,7 @@ import helptext from '../../../helptext/directoryservice/kerberosrealms-form-lis
 import { KerberosRealmsFormComponent } from './kerberosrealms-form.component';
 import { ModalService } from '../../../services/modal.service';
 import { Subscription } from 'rxjs';
+@UntilDestroy()
 @Component({
   selector: 'app-user-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -49,7 +50,7 @@ export class KerberosRealmsListComponent implements OnDestroy {
 
   afterInit(entityList: any): void {
     this.entityList = entityList;
-    this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
+    this.refreshTableSubscription = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }

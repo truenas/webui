@@ -39,7 +39,9 @@ import {
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-replication-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
@@ -765,12 +767,12 @@ export class ReplicationWizardComponent {
     private ws: WebSocketService, private replicationService: ReplicationService,
     private datePipe: DatePipe, private entityFormService: EntityFormService,
     private modalService: ModalService) {
-    this.ws.call('replication.query').subscribe(
+    this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe(
       (res: any[]) => {
         this.namesInUse.push(...res.map((replication) => replication.name));
       },
     );
-    this.getRow = this.modalService.getRow$.pipe(take(1)).subscribe((rowId: number) => {
+    this.getRow = this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.pk = rowId;
     });
   }
@@ -795,7 +797,7 @@ export class ReplicationWizardComponent {
 
   step0Init(): void {
     const exist_replicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' });
-    this.replicationService.getReplicationTasks().subscribe(
+    this.replicationService.getReplicationTasks().pipe(untilDestroyed(this)).subscribe(
       (res: ReplicationTask[]) => {
         for (const task of res) {
           if (task.transport !== TransportMode.Legacy) {
@@ -814,7 +816,7 @@ export class ReplicationWizardComponent {
     );
 
     const privateKeyField = _.find(this.dialogFieldConfig, { name: 'private_key' });
-    this.keychainCredentialService.getSSHKeys().subscribe(
+    this.keychainCredentialService.getSSHKeys().pipe(untilDestroyed(this)).subscribe(
       (res) => {
         for (const i in res) {
           privateKeyField.options.push({ label: res[i].name, value: res[i].id });
@@ -824,7 +826,7 @@ export class ReplicationWizardComponent {
 
     const ssh_credentials_source_field = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' });
     const ssh_credentials_target_field = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' });
-    this.keychainCredentialService.getSSHConnections().subscribe((res) => {
+    this.keychainCredentialService.getSSHConnections().pipe(untilDestroyed(this)).subscribe((res) => {
       for (const i in res) {
         ssh_credentials_source_field.options.push({ label: res[i].name, value: res[i].id });
         ssh_credentials_target_field.options.push({ label: res[i].name, value: res[i].id });
@@ -833,16 +835,16 @@ export class ReplicationWizardComponent {
       ssh_credentials_target_field.options.push({ label: T('Create New'), value: 'NEW' });
     });
 
-    this.entityWizard.formArray.controls[0].controls['exist_replication'].valueChanges.subscribe((value: any) => {
+    this.entityWizard.formArray.controls[0].controls['exist_replication'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value !== null) {
         this.loadOrClearReplicationTask(value);
       }
     });
-    this.entityWizard.formArray.controls[0].controls['source_datasets'].valueChanges.subscribe(() => {
+    this.entityWizard.formArray.controls[0].controls['source_datasets'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.genTaskName();
       this.getSnapshots();
     });
-    this.entityWizard.formArray.controls[0].controls['target_dataset'].valueChanges.subscribe(() => {
+    this.entityWizard.formArray.controls[0].controls['target_dataset'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.genTaskName();
     });
 
@@ -850,7 +852,7 @@ export class ReplicationWizardComponent {
       const credentialName = 'ssh_credentials_' + i;
       const datasetName = i === 'source' ? 'source_datasets' : 'target_dataset';
       const datasetFrom = datasetName + '_from';
-      this.entityWizard.formArray.controls[0].controls[datasetFrom].valueChanges.subscribe((value: any) => {
+      this.entityWizard.formArray.controls[0].controls[datasetFrom].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
         if (value === DatasetSource.Remote) {
           if (datasetFrom === 'source_datasets_from') {
             this.entityWizard.formArray.controls[0].controls['target_dataset_from'].setValue(DatasetSource.Local);
@@ -866,7 +868,7 @@ export class ReplicationWizardComponent {
         }
       });
 
-      this.entityWizard.formArray.controls[0].controls[credentialName].valueChanges.subscribe((value: any) => {
+      this.entityWizard.formArray.controls[0].controls[credentialName].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
         if (value === 'NEW' && this.entityWizard.formArray.controls[0].controls[datasetFrom].value === DatasetSource.Remote) {
           this.createSSHConnection(credentialName);
           this.setDisable(datasetName, false, false, 0);
@@ -886,14 +888,14 @@ export class ReplicationWizardComponent {
       });
     }
 
-    this.entityWizard.formArray.controls[0].controls['recursive'].valueChanges.subscribe((value: any) => {
+    this.entityWizard.formArray.controls[0].controls['recursive'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       const explorerComponent = _.find(this.source_fieldSet.config, { name: 'source_datasets' }).customTemplateStringOptions;
       if (explorerComponent) {
         explorerComponent.useTriState = value;
       }
     });
 
-    this.entityWizard.formArray.controls[0].controls['custom_snapshots'].valueChanges.subscribe((value: any) => {
+    this.entityWizard.formArray.controls[0].controls['custom_snapshots'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.setDisable('naming_schema', !value, !value, 0);
       if (!value) {
         this.getSnapshots();
@@ -911,7 +913,7 @@ export class ReplicationWizardComponent {
   }
 
   step1Init(): void {
-    this.entityWizard.formArray.controls[1].controls['retention_policy'].valueChanges.subscribe((value: any) => {
+    this.entityWizard.formArray.controls[1].controls['retention_policy'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       const disable = value === RetentionPolicy.Source;
       if (disable) {
         this.entityWizard.formArray.controls[1].controls['lifetime_value'].disable();
@@ -1403,7 +1405,7 @@ export class ReplicationWizardComponent {
     ];
 
     if (payload[0].length > 0) {
-      this.ws.call('replication.count_eligible_manual_snapshots', payload).subscribe(
+      this.ws.call('replication.count_eligible_manual_snapshots', payload).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.eligibleSnapshots = res.eligible;
           const isPush = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === DatasetSource.Local;

@@ -25,7 +25,9 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { ModalService } from 'app/services/modal.service';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-smb-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -297,7 +299,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
   ) {
     combineLatest([this.ws.call('sharing.smb.query', []), this.modalService.getRow$])
       .pipe(map(([shares, pk]) => shares.filter((share) => share.id !== pk).map((share) => share.name)))
-      .subscribe((shareNames) => {
+      .pipe(untilDestroyed(this)).subscribe((shareNames) => {
         ['global', ...shareNames].forEach((name) => this.namesInUse.push(name));
       });
   }
@@ -329,7 +331,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
   }
 
   preInit(entityForm: EntityFormComponent): void {
-    this.modalService.getRow$.pipe(take(1)).subscribe((pk: number) => {
+    this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((pk: number) => {
       if (pk) {
         this.pk = entityForm.pk = pk;
       }
@@ -368,10 +370,10 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
       buttonMsg: helptext_sharing_smb.restart_smb_dialog.title,
       cancelMsg: helptext_sharing_smb.restart_smb_dialog.cancel_btn,
     };
-    this.dialog.confirm(confirmOptions).subscribe((res: boolean) => {
+    this.dialog.confirm(confirmOptions).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         this.loader.open();
-        this.ws.call('service.restart', ['cifs']).subscribe(
+        this.ws.call('service.restart', ['cifs']).pipe(untilDestroyed(this)).subscribe(
           () => {
             this.loader.close();
             this.dialog
@@ -380,7 +382,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
                 helptext_sharing_smb.restarted_smb_dialog.message,
                 '250px',
               )
-              .subscribe(() => {
+              .pipe(untilDestroyed(this)).subscribe(() => {
                 this.checkACLactions(entityForm);
               });
           },
@@ -408,7 +410,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     }
     // If this call returns true OR an [ENOENT] err comes back, just return to table
     // because the pool or ds is encrypted. Otherwise, do the next checks
-    this.ws.call('pool.dataset.path_in_locked_datasets', [sharePath]).subscribe(
+    this.ws.call('pool.dataset.path_in_locked_datasets', [sharePath]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         if (res) {
           this.dialog.closeAllDialogs();
@@ -488,7 +490,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
                   );
               }),
             )
-            .subscribe(
+            .pipe(untilDestroyed(this)).subscribe(
               () => {},
               (error) => new EntityUtils().handleWSError(this, error, this.dialog),
             );
@@ -508,7 +510,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
   afterInit(entityForm: EntityFormComponent): void {
     const generalFieldsets = _.find(this.fieldSets, { class: 'basic' });
     const purposeField = _.find(generalFieldsets.config, { name: 'purpose' });
-    this.ws.call('sharing.smb.presets').subscribe(
+    this.ws.call('sharing.smb.presets').pipe(untilDestroyed(this)).subscribe(
       (presets) => {
         this.presets = presets;
         for (const item in presets) {
@@ -529,7 +531,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
       entityForm.formGroup.controls['browsable'].setValue(true);
     } else {
       setTimeout(() => {
-        entityForm.formGroup.controls['aapl_name_mangling'].valueChanges.subscribe((value) => {
+        entityForm.formGroup.controls['aapl_name_mangling'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
           if (value !== this.mangle && !this.mangleWarningSent) {
             this.mangleWarningSent = true;
             this.dialog.confirm({
@@ -545,7 +547,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     }
 
     /*  If name is empty, auto-populate after path selection */
-    entityForm.formGroup.controls['path'].valueChanges.subscribe((path) => {
+    entityForm.formGroup.controls['path'].valueChanges.pipe(untilDestroyed(this)).subscribe((path) => {
       const nameControl = entityForm.formGroup.controls['name'];
       if (path && !nameControl.value) {
         const v = path.split('/').pop();
@@ -553,7 +555,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
       }
 
       if (!this.stripACLWarningSent) {
-        this.ws.call('filesystem.acl_is_trivial', [path]).subscribe((res) => {
+        this.ws.call('filesystem.acl_is_trivial', [path]).pipe(untilDestroyed(this)).subscribe((res) => {
           if (res === false && !entityForm.formGroup.controls['acl'].value) {
             this.stripACLWarningSent = true;
             this.showStripACLWarning();
@@ -563,9 +565,9 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     });
 
     const path_fc = entityForm.formGroup.controls['path'];
-    entityForm.formGroup.controls['acl'].valueChanges.pipe(debounceTime(100)).subscribe((res) => {
+    entityForm.formGroup.controls['acl'].valueChanges.pipe(debounceTime(100)).pipe(untilDestroyed(this)).subscribe((res) => {
       if (!res && path_fc.value && !this.stripACLWarningSent) {
-        this.ws.call('filesystem.acl_is_trivial', [path_fc.value]).subscribe((res) => {
+        this.ws.call('filesystem.acl_is_trivial', [path_fc.value]).pipe(untilDestroyed(this)).subscribe((res) => {
           if (!res) {
             this.stripACLWarningSent = true;
             this.showStripACLWarning();
@@ -580,12 +582,12 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
       }
     }, 700);
 
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((config) => {
+    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((config) => {
       this.isBasicMode = !config.advancedmode;
       this.updateForm();
     });
 
-    entityForm.formGroup.controls['purpose'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['purpose'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.clearPresets();
       for (const item in this.presets[res].params) {
         this.presetFields.push(item);

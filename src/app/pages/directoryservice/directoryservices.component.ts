@@ -27,6 +27,7 @@ import { KerberosSettingsComponent } from './kerberossettings/kerberossettings.c
 import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form.component';
 import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form.component';
 
+@UntilDestroy()
 @Component({
   selector: 'directoryservices',
   templateUrl: './directoryservices.component.html',
@@ -164,7 +165,7 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     ];
 
     this.getDataCardData();
-    this.refreshOnClose = this.modalService.onClose$.subscribe(() => {
+    this.refreshOnClose = this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
     });
 
@@ -289,12 +290,12 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     }
 
     if (name == 'idmap' && !id) {
-      this.idmapService.getADStatus().subscribe((res) => {
+      this.idmapService.getADStatus().pipe(untilDestroyed(this)).subscribe((res) => {
         if (res.enable) {
           this.modalService.open('slide-in-form', addComponent, id);
         } else {
           this.dialog.confirm(idmapHelptext.idmap.enable_ad_dialog.title, idmapHelptext.idmap.enable_ad_dialog.message,
-            true, idmapHelptext.idmap.enable_ad_dialog.button).subscribe((res: boolean) => {
+            true, idmapHelptext.idmap.enable_ad_dialog.button).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
             if (res) {
               addComponent = this.activeDirectoryFormComponent;
               this.modalService.open('slide-in-form', addComponent, id);

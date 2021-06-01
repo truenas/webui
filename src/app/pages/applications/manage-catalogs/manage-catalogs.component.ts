@@ -13,7 +13,9 @@ import { ManageCatalogSummaryDialog } from '../dialogs/manage-catalog-summary/ma
 import { CatalogAddFormComponent } from '../forms/catalog-add-form.component';
 import { CatalogEditFormComponent } from '../forms/catalog-edit-form.component';
 import { EntityUtils } from '../../common/entity/utils';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-manage-catalogs',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -70,7 +72,7 @@ export class ManageCatalogsComponent implements InputTableConf, OnInit {
   ngOnInit(): void {
     this.refreshUserForm();
 
-    this.modalService.refreshForm$.subscribe(() => {
+    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshUserForm();
     });
   }
@@ -176,7 +178,7 @@ export class ManageCatalogsComponent implements InputTableConf, OnInit {
     });
     this.dialogRef.componentInstance.setCall('catalog.sync_all');
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.refresh();
     });
@@ -185,7 +187,7 @@ export class ManageCatalogsComponent implements InputTableConf, OnInit {
   syncRow(row: any): void {
     const payload = [row.label];
     this.loader.open();
-    this.ws.call('catalog.sync', payload).subscribe(
+    this.ws.call('catalog.sync', payload).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.refresh();

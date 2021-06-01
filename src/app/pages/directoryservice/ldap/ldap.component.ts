@@ -17,6 +17,7 @@ import global_helptext from '../../../helptext/global-helptext';
 import { T } from 'app/translate-marker';
 import { ModalService } from '../../../services/modal.service';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+@UntilDestroy()
 @Component({
   selector: 'app-ldap',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -67,7 +68,7 @@ export class LdapComponent implements FormConfiguration {
       id: helptext.ldap_custactions_clearcache_id,
       name: helptext.ldap_custactions_clearcache_name,
       function: async () => {
-        this.systemGeneralService.refreshDirServicesCache().subscribe(() => {
+        this.systemGeneralService.refreshDirServicesCache().pipe(untilDestroyed(this)).subscribe(() => {
           this.dialogservice.Info(helptext.ldap_custactions_clearcache_dialog_title,
             helptext.ldap_custactions_clearcache_dialog_message);
         });
@@ -240,7 +241,7 @@ export class LdapComponent implements FormConfiguration {
   afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
 
-    this.ws.call('kerberos.realm.query').subscribe((res: any[]) => {
+    this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       this.ldap_kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
       res.forEach((item) => {
         this.ldap_kerberos_realm.options.push(
@@ -249,7 +250,7 @@ export class LdapComponent implements FormConfiguration {
       });
     });
 
-    this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res: any[]) => {
+    this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       this.ldap_kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' });
       res.forEach((item) => {
         this.ldap_kerberos_principal.options.push(
@@ -258,7 +259,7 @@ export class LdapComponent implements FormConfiguration {
       });
     });
 
-    this.ws.call('ldap.ssl_choices').subscribe((res: any[]) => {
+    this.ws.call('ldap.ssl_choices').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       this.ldap_ssl = _.find(this.fieldConfig, { name: 'ssl' });
       res.forEach((item) => {
         this.ldap_ssl.options.push(
@@ -267,7 +268,7 @@ export class LdapComponent implements FormConfiguration {
       });
     });
 
-    this.systemGeneralService.getCertificates().subscribe((res: any[]) => {
+    this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       this.ldapCertificate = _.find(this.fieldConfig, { name: 'certificate' });
       res.forEach((item) => {
         this.ldapCertificate.options.push(
@@ -281,7 +282,7 @@ export class LdapComponent implements FormConfiguration {
       }
     });
 
-    this.ws.call('ldap.schema_choices').subscribe((res: any[]) => {
+    this.ws.call('ldap.schema_choices').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       this.ldap_schema = _.find(this.fieldConfig, { name: 'schema' });
       res.forEach(((item) => {
         this.ldap_schema.options.push(
@@ -293,7 +294,7 @@ export class LdapComponent implements FormConfiguration {
     const enabled = entityEdit.formGroup.controls['enable'].value;
     this.entityForm.setDisabled('hostname', !enabled, !enabled);
     this.entityForm.setDisabled('hostname_noreq', enabled, enabled);
-    entityEdit.formGroup.controls['enable'].valueChanges.subscribe((res: any) => {
+    entityEdit.formGroup.controls['enable'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.entityForm.setDisabled('hostname', !res, !res);
       this.entityForm.setDisabled('hostname_noreq', res, res);
       if (!res) {

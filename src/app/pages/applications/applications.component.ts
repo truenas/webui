@@ -17,7 +17,9 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { DockerImagesComponent } from './docker-images/docker-images.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-applications',
   templateUrl: './applications.component.html',
@@ -53,14 +55,14 @@ export class ApplicationsComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.setupToolbar();
 
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+    this.refreshTable = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTab(true);
     });
   }
 
   ngAfterViewInit(): void {
     // If the route parameter "tabIndex" is 1, switch tab to "Installed applications".
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['tabIndex'] == 1) {
         this.selectedIndex = 1;
         this.refreshTab();
@@ -76,7 +78,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   setupToolbar(): void {
     this.settingsEvent = new Subject();
-    this.settingsEvent.subscribe((evt: CoreEvent) => {
+    this.settingsEvent.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'filter') {
         this.filterString = evt.data.filter;
       }

@@ -13,7 +13,9 @@ import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapsh
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-snapshot-task-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -68,7 +70,7 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+    this.onModalClose = this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -97,7 +99,7 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
 
   onCheckboxChange(row: any): void {
     row.enabled = !row.enabled;
-    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).subscribe(
+    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         if (!res) {
           row.enabled = !row.enabled;

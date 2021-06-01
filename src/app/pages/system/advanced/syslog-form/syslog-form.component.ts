@@ -17,7 +17,9 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { EntityUtils } from '../../../common/entity/utils';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-syslog-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -110,7 +112,7 @@ export class SyslogFormComponent implements FormConfiguration, OnDestroy {
     private sysGeneralService: SystemGeneralService,
     private modalService: ModalService,
   ) {
-    this.getDataFromDash = this.sysGeneralService.sendConfigData$.subscribe(
+    this.getDataFromDash = this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.configData = res;
       },
@@ -131,7 +133,7 @@ export class SyslogFormComponent implements FormConfiguration, OnDestroy {
 
   afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
-    this.getDatasetConfig = this.ws.call('systemdataset.config').subscribe((res) => {
+    this.getDatasetConfig = this.ws.call('systemdataset.config').pipe(untilDestroyed(this)).subscribe((res) => {
       entityEdit.formGroup.controls.syslog.setValue(res.syslog);
     });
   }
@@ -141,8 +143,8 @@ export class SyslogFormComponent implements FormConfiguration, OnDestroy {
     const syslog_value = body.syslog;
     delete body.syslog;
 
-    return this.ws.call('system.advanced.update', [body]).subscribe(() => {
-      this.ws.job('systemdataset.update', [{ syslog: syslog_value }]).subscribe((res) => {
+    return this.ws.call('system.advanced.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.ws.job('systemdataset.update', [{ syslog: syslog_value }]).pipe(untilDestroyed(this)).subscribe((res) => {
         if (res.error) {
           this.loader.close();
           if (res.exc_info && res.exc_info.extra) {

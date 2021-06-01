@@ -17,6 +17,7 @@ import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialo
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
 
+@UntilDestroy()
 @Component({
   selector: 'app-jail-list',
   template: '<entity-table [title]="title" [conf]="this" ></entity-table>',
@@ -68,7 +69,7 @@ export class JailListComponent {
     onClick: (selected: any) => {
       const selectedJails = this.getSelectedNames(selected);
       this.loader.open();
-      this.entityList.busy = this.ws.job('core.bulk', ['jail.start', selectedJails]).subscribe(
+      this.entityList.busy = this.ws.job('core.bulk', ['jail.start', selectedJails]).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           for (const i in selected) {
             selected[i].state = 'up';
@@ -105,11 +106,11 @@ export class JailListComponent {
     onClick: (selected: any) => {
       const dialog: any = {};
       this.dialogService.confirm('Stop', 'Stop the selected jails?',
-        dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : true, T('Stop')).subscribe((res: boolean) => {
+        dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : true, T('Stop')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
         if (res) {
           const selectedJails = this.getSelectedNames(selected);
           this.loader.open();
-          this.entityList.busy = this.ws.job('core.bulk', ['jail.stop', selectedJails]).subscribe(
+          this.entityList.busy = this.ws.job('core.bulk', ['jail.stop', selectedJails]).pipe(untilDestroyed(this)).subscribe(
             () => {
               for (const i in selected) {
                 selected[i].state = 'down';
@@ -136,7 +137,7 @@ export class JailListComponent {
     onClick: (selected: any) => {
       const selectedJails = this.getSelectedNames(selected);
       this.dialogService.Info(T('Jail Update'), T('Updating selected plugins.'));
-      this.entityList.busy = this.ws.job('core.bulk', ['jail.update_to_latest_patch', selectedJails]).subscribe(
+      this.entityList.busy = this.ws.job('core.bulk', ['jail.update_to_latest_patch', selectedJails]).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           let message = '';
           for (let i = 0; i < res.result.length; i++) {
@@ -197,7 +198,7 @@ export class JailListComponent {
       helptext.noPoolDialog.buttonMsg,
     );
 
-    dialogRef.subscribe((res: boolean) => {
+    dialogRef.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         this.router.navigate(new Array('/').concat(['storage', 'pools', 'manager']));
       }
@@ -228,7 +229,7 @@ export class JailListComponent {
             this.activatePool();
           }
         }, (err) => {
-          this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted).subscribe(
+          this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted).pipe(untilDestroyed(this)).subscribe(
             () => {
               resolve(false);
             },
@@ -267,7 +268,7 @@ export class JailListComponent {
       customSubmit(entityDialog: EntityDialogComponent) {
         const value = entityDialog.formValue;
         self.entityList.loader.open();
-        self.ws.call('jail.activate', [value['selectedPool']]).subscribe(
+        self.ws.call('jail.activate', [value['selectedPool']]).pipe(untilDestroyed(this)).subscribe(
           () => {
             self.addBtnDisabled = false;
             self.activatedPool = value['selectedPool'];
@@ -324,7 +325,7 @@ export class JailListComponent {
         const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Starting Jail') }, disableClose: true });
         dialogRef.componentInstance.setCall('jail.start', [row.host_hostuuid]);
         dialogRef.componentInstance.submit();
-        dialogRef.componentInstance.success.subscribe(() => {
+        dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close(true);
           this.updateRow(row);
           this.updateMultiAction([row]);
@@ -340,7 +341,7 @@ export class JailListComponent {
         const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Restarting Jail') }, disableClose: true });
         dialogRef.componentInstance.setCall('jail.restart', [row.host_hostuuid]);
         dialogRef.componentInstance.submit();
-        dialogRef.componentInstance.success.subscribe(() => {
+        dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close(true);
           this.updateRow(row);
           this.updateMultiAction([row]);
@@ -355,12 +356,12 @@ export class JailListComponent {
       onClick: (row: any) => {
         const dialog: any = {};
         this.dialogService.confirm('Stop', 'Stop the selected jail?',
-          dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : true, T('Stop')).subscribe((dialog_res: boolean) => {
+          dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : true, T('Stop')).pipe(untilDestroyed(this)).subscribe((dialog_res: boolean) => {
           if (dialog_res) {
             const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Stopping Jail') }, disableClose: true });
             dialogRef.componentInstance.setCall('jail.stop', [row.host_hostuuid]);
             dialogRef.componentInstance.submit();
-            dialogRef.componentInstance.success.subscribe(() => {
+            dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
               dialogRef.close(true);
               this.updateRow(row);
               this.updateMultiAction([row]);
@@ -378,12 +379,12 @@ export class JailListComponent {
         this.dialogService.confirm(
           helptext.updateConfirmDialog.title,
           helptext.updateConfirmDialog.message, true,
-        ).subscribe((dialog_res: boolean) => {
+        ).pipe(untilDestroyed(this)).subscribe((dialog_res: boolean) => {
           if (dialog_res) {
             const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Updating Jail') }, disableClose: true });
             dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row.host_hostuuid]);
             dialogRef.componentInstance.submit();
-            dialogRef.componentInstance.success.subscribe(() => {
+            dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
               dialogRef.close(true);
               this.updateRow(row);
               this.dialogService.Info(T('Jail Updated'), T('Jail <i>') + row.host_hostuuid + T('</i> updated.'), '500px', 'info', true);
@@ -438,7 +439,7 @@ export class JailListComponent {
   }
 
   updateRow(row: any): void {
-    this.ws.call(this.queryCall, [[['host_hostuuid', '=', row.host_hostuuid]]]).subscribe(
+    this.ws.call(this.queryCall, [[['host_hostuuid', '=', row.host_hostuuid]]]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         if (res[0]) {
           const prefix = (res[0].state === 'up' && res[0].dhcp === 'on') ? 'DHCP: ' : '';

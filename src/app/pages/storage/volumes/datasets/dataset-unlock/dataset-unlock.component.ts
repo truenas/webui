@@ -19,7 +19,9 @@ import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-
 import { EntityUtils } from '../../../../common/entity/utils';
 import { UnlockDialogComponent } from './unlock-dialog/unlock-dialog.component';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-dataset-unlock',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -168,7 +170,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
   preInit(): void {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['path'];
     });
   }
@@ -183,7 +185,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
     dialogRef.componentInstance.setDescription(helptext.fetching_encryption_summary_message + this.pk);
     dialogRef.componentInstance.setCall(this.queryCall, [this.pk]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res) {
         dialogRef.close();
         if (res.result && res.result.length > 0) {
@@ -217,7 +219,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
         }
       }
     });
-    dialogRef.componentInstance.failure.subscribe((err: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
       if (err) {
         dialogRef.close();
         new EntityUtils().handleWSError(entityEdit, err, this.dialogService);
@@ -227,7 +229,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
     this.key_file_fg = entityEdit.formGroup.controls['key_file'];
     this.unlock_children_fg = entityEdit.formGroup.controls['unlock_children'];
 
-    this.key_file_subscription = this.key_file_fg.valueChanges.subscribe((hide_key_datasets: any) => {
+    this.key_file_subscription = this.key_file_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((hide_key_datasets: any) => {
       for (let i = 0; i < this.datasets.controls.length; i++) {
         const dataset_controls = this.datasets.controls[i].controls;
         const controls = listFields[i];
@@ -247,7 +249,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
         }
       }
     });
-    this.unlock_children_subscription = this.unlock_children_fg.valueChanges.subscribe((unlock_children: any) => {
+    this.unlock_children_subscription = this.unlock_children_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((unlock_children: any) => {
       for (let i = 0; i < this.datasets.controls.length; i++) {
         const controls = listFields[i];
         const dataset_controls = this.datasets.controls[i].controls;
@@ -328,7 +330,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
       dialogRef.componentInstance.setCall(this.queryCall, [this.pk, payload]);
       dialogRef.componentInstance.submit();
     }
-    dialogRef.componentInstance.success.subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
       dialogRef.close();
       // show summary dialog;
       const errors = [];
@@ -352,7 +354,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
         unlockDialogRef.componentInstance.data = payload;
       }
     });
-    dialogRef.componentInstance.failure.subscribe((err: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
       dialogRef.close();
       new EntityUtils().handleWSError(this.entityForm, err, this.dialogService);
     });
@@ -373,7 +375,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
       dialogRef.componentInstance.setCall(this.updateCall, [this.pk, payload]);
       dialogRef.componentInstance.submit();
     }
-    dialogRef.componentInstance.success.subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
       dialogRef.close();
       const errors = [];
       const skipped = [];
@@ -408,7 +410,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
         }
       }
     });
-    dialogRef.componentInstance.failure.subscribe((err: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
       dialogRef.close();
       new EntityUtils().handleWSError(this.entityForm, err, this.dialogService);
     });

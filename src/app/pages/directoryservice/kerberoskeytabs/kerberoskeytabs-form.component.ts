@@ -6,6 +6,7 @@ import helptext from '../../../helptext/directoryservice/kerberoskeytabs-form-li
 import { Subscription } from 'rxjs';
 import { ModalService } from '../../../services/modal.service';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+@UntilDestroy()
 @Component({
   selector: 'app-kerberos-keytbas-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -50,7 +51,7 @@ export class KerberosKeytabsFormComponent implements FormConfiguration {
   ];
 
   constructor(private modalService: ModalService) {
-    this.getRow = this.modalService.getRow$.subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
       this.pk = rowId;
       this.getRow.unsubscribe();
     });

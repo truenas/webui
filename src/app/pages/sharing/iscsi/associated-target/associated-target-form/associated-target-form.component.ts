@@ -12,6 +12,7 @@ import { EntityUtils } from '../../../../common/entity/utils';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
+@UntilDestroy()
 @Component({
   selector: 'app-iscsi-associated-target-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -76,7 +77,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
     protected loader: AppLoaderService, protected ws: WebSocketService) {}
 
   preInit(): void {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
         this.customFilter[0][0].push(parseInt(params['pk'], 10));
@@ -90,7 +91,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
 
     this.target_control = _.find(this.fieldConfig, { name: 'target' });
     this.target_control.options.push({ label: '----------', value: '' });
-    this.iscsiService.getTargets().subscribe((targets) => {
+    this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
       for (let i = 0; i < targets.length; i++) {
         this.target_control.options.push({ label: targets[i].name, value: targets[i].id });
       }
@@ -98,7 +99,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
 
     this.extent_control = _.find(this.fieldConfig, { name: 'extent' });
     this.extent_control.options.push({ label: '----------', value: '' });
-    this.iscsiService.getExtents().subscribe((extents) => {
+    this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
       for (let i = 0; i < extents.length; i++) {
         this.extent_control.options.push({ label: extents[i].name, value: extents[i].id });
       }
@@ -113,7 +114,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
 
   customEditCall(value: any): void {
     this.loader.open();
-    this.ws.call(this.editCall, [this.pk, value]).subscribe(
+    this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));

@@ -20,7 +20,9 @@ import {
 import { T } from 'app/translate-marker';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'task-manager',
   templateUrl: './task-manager.component.html',
@@ -59,10 +61,10 @@ export class TaskManagerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.sysGeneralService.getSysInfo().subscribe((systemInfo) => {
+    this.sysGeneralService.getSysInfo().pipe(untilDestroyed(this)).subscribe((systemInfo) => {
       this.timeZone = systemInfo.timezone;
     });
-    this.ws.call('core.get_jobs', [[], { order_by: ['-id'], limit: 50 }]).subscribe(
+    this.ws.call('core.get_jobs', [[], { order_by: ['-id'], limit: 50 }]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.dataSource.data = res;
         this.dataSource.sort = this.sort;
@@ -72,7 +74,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy {
       },
     );
 
-    this.getData().subscribe(
+    this.getData().pipe(untilDestroyed(this)).subscribe(
       (res) => {
         // only update exist jobs or add latest jobs
         if (res.id >= this.dataSource.data[49].id) {
@@ -96,7 +98,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy {
 
   getData(): Observable<any> {
     const source = Observable.create((observer: any) => {
-      this.subscrition = this.ws.subscribe('core.get_jobs').subscribe((res) => {
+      this.subscrition = this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((res) => {
         observer.next(res.fields);
       });
     });
@@ -115,14 +117,14 @@ export class TaskManagerComponent implements OnInit, OnDestroy {
 
   showLogs(element: any): void {
     this.dialogService.confirm(T('Logs'), `<pre>${element.logs_excerpt}</pre>`, true, T('Download Logs'),
-      false, '', '', '', '', false, T('Close'), true).subscribe(
+      false, '', '', '', '', false, T('Close'), true).pipe(untilDestroyed(this)).subscribe(
       (dialog_res: boolean) => {
         if (dialog_res) {
-          this.ws.call('core.download', ['filesystem.get', [element.logs_path], element.id + '.log']).subscribe(
+          this.ws.call('core.download', ['filesystem.get', [element.logs_path], element.id + '.log']).pipe(untilDestroyed(this)).subscribe(
             (snack_res) => {
               const url = snack_res[1];
               const mimetype = 'text/plain';
-              this.storageService.streamDownloadFile(this.http, url, element.id + '.log', mimetype).subscribe((file) => {
+              this.storageService.streamDownloadFile(this.http, url, element.id + '.log', mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
                 this.storageService.downloadBlob(file, element.id + '.log');
               }, (err) => {
                 new EntityUtils().handleWSError(this, err);
@@ -139,10 +141,10 @@ export class TaskManagerComponent implements OnInit, OnDestroy {
 
   abort(element: any): void {
     this.dialogService.confirm(T('Abort the task'), `<pre>${element.method}</pre>`, true, T('Abort'),
-      false, '', '', '', '', false, T('Close'), true).subscribe(
+      false, '', '', '', '', false, T('Close'), true).pipe(untilDestroyed(this)).subscribe(
       (dialog_res: boolean) => {
         if (dialog_res) {
-          this.ws.call('core.job_abort', [element.id]).subscribe();
+          this.ws.call('core.job_abort', [element.id]).pipe(untilDestroyed(this)).subscribe();
         }
       },
     );

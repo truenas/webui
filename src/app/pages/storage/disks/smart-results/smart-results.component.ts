@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'app-smart-test-results-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -32,9 +34,9 @@ export class SmartResultsComponent {
   constructor(private aroute: ActivatedRoute, protected translate: TranslateService) { }
 
   preInit(): void {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.disk = params['pk'];
-      this.translate.get(T('S.M.A.R.T Test Results of ')).subscribe(
+      this.translate.get(T('S.M.A.R.T Test Results of ')).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.title = res + this.disk;
         },

@@ -6,7 +6,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { T } from '../../../../translate-marker';
 import { WebSocketService } from '../../../../services/ws.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-resilver-progress-dialog',
   templateUrl: './resilver-progress.component.html',
@@ -31,7 +33,7 @@ export class ResilverProgressDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.subscription = this.ws.subscribe('zfs.pool.scan').subscribe((res) => {
+    this.subscription = this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((res) => {
       if (res && res.fields.scan.function.indexOf('RESILVER') > -1) {
         this.resilveringDetails = res.fields;
         this.diskName = this.resilveringDetails.name;

@@ -18,7 +18,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-import-wizard';
 import { ModalService } from 'app/services/modal.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-volumeimport-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
@@ -226,12 +228,12 @@ export class VolumeImportWizardComponent {
 
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: helptext.decrypt_disks_title }, disableClose: true });
     dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
-    dialogRef.componentInstance.success.subscribe(() => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close(false);
       this.getImportableDisks();
       stepper.next();
     });
-    dialogRef.componentInstance.failure.subscribe((res: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
       dialogRef.close(false);
       this.dialogService.errorReport(T('Error decrypting disks'), res.error, res.exception);
     });
@@ -242,7 +244,7 @@ export class VolumeImportWizardComponent {
     dialogRef.componentInstance.setDescription(helptext.find_pools_msg);
     dialogRef.componentInstance.setCall('pool.import_find', []);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res && res.result) {
         this.guid.options = [];
         const result = res.result;
@@ -252,7 +254,7 @@ export class VolumeImportWizardComponent {
       }
       dialogRef.close(false);
     });
-    dialogRef.componentInstance.failure.subscribe((res: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
       new EntityUtils().handleWSError(this.entityWizard, res, this.dialogService);
       dialogRef.close(false);
     });
@@ -285,7 +287,7 @@ export class VolumeImportWizardComponent {
       this.passphrase = _.find(this.wizardConfig[1].fieldConfig, { name: 'passphrase' });
       this.passphrase_fg = (< FormGroup > entityWizard.formArray.get([1]).get('passphrase'));
 
-      this.ws.call('disk.get_encrypted', [{ unused: true }]).subscribe((res) => {
+      this.ws.call('disk.get_encrypted', [{ unused: true }]).pipe(untilDestroyed(this)).subscribe((res) => {
         for (let i = 0; i < res.length; i++) {
           this.devices.options.push({ label: res[i].name, value: res[i].dev });
         }
@@ -294,7 +296,7 @@ export class VolumeImportWizardComponent {
 
     this.guid = _.find(this.wizardConfig[this.importIndex].fieldConfig, { name: 'guid' });
     this.guid_subscription = (< FormGroup > entityWizard.formArray.get([this.importIndex]).get('guid'))
-      .valueChanges.subscribe((res) => {
+      .valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
         const pool = _.find(this.guid.options, { value: res });
         this.summary[T('Pool to import')] = pool['label'];
         const pool_label = pool.label.split(' ');
@@ -304,7 +306,7 @@ export class VolumeImportWizardComponent {
       });
 
     if (!this.productType.includes(ProductType.Scale)) {
-      this.message_subscription = this.messageService.messageSourceHasNewMessage$.subscribe((message) => {
+      this.message_subscription = this.messageService.messageSourceHasNewMessage$.pipe(untilDestroyed(this)).subscribe((message) => {
         this.key_fg.setValue(message);
       });
     }
@@ -324,12 +326,12 @@ export class VolumeImportWizardComponent {
       formData.append('file', this.subs.file);
       const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Importing Pool' }, disableClose: true });
       dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
-      dialogRef.componentInstance.success.subscribe(() => {
+      dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         dialogRef.close(false);
         this.modalService.close('slide-in-form');
         this.modalService.refreshTable();
       });
-      dialogRef.componentInstance.failure.subscribe((res: any) => {
+      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
         dialogRef.close(false);
         this.errorReport(res);
       });
@@ -338,7 +340,7 @@ export class VolumeImportWizardComponent {
       dialogRef.componentInstance.setDescription(T('Importing Pool...'));
       dialogRef.componentInstance.setCall('pool.import_pool', [{ guid: value.guid }]);
       dialogRef.componentInstance.submit();
-      dialogRef.componentInstance.success.subscribe(() => {
+      dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         dialogRef.close(false);
         if (this.pool) {
           this.modalService.close('slide-in-form');
@@ -347,7 +349,7 @@ export class VolumeImportWizardComponent {
           console.error('Something went wrong. No pool found!');
         }
       });
-      dialogRef.componentInstance.failure.subscribe((res: any) => {
+      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
         dialogRef.close(false);
         this.errorReport(res);
       });

@@ -11,7 +11,9 @@ import { SshKeypairsFormComponent } from './forms/ssh-keypairs-form.component';
 import { CloudCredentialsFormComponent } from './forms/cloud-credentials-form.component';
 import { Subscription } from 'rxjs';
 import { T } from '../../../translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-backup-credentials',
   templateUrl: './backup-credentials.component.html',
@@ -36,15 +38,15 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     private modalService: ModalService) {}
 
   ngOnInit(): void {
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+    this.refreshTable = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getCards();
     });
     this.refreshForms();
-    this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
+    this.refreshForm = this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshForms();
     });
 
-    this.getProviders = this.cloudCredentialsService.getProviders().subscribe(
+    this.getProviders = this.cloudCredentialsService.getProviders().pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.providers = res;
         this.getCards();

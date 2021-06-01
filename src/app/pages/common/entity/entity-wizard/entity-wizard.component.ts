@@ -20,6 +20,7 @@ import { MatStepper } from '@angular/material/stepper';
 import { DialogService } from '../../../../services';
 import { EntityUtils } from '../utils';
 
+@UntilDestroy()
 @Component({
   selector: 'entity-wizard',
   templateUrl: './entity-wizard.component.html',
@@ -145,7 +146,7 @@ export class EntityWizardComponent implements OnInit {
 
       this.fieldRelationService.getRelatedFormControls(config, < FormGroup > this.formArray.get(stepIndex))
         .forEach((control) => {
-          control.valueChanges.subscribe(
+          control.valueChanges.pipe(untilDestroyed(this)).subscribe(
             () => { this.relationUpdate(config, activations, stepIndex); },
           );
         });
@@ -203,7 +204,7 @@ export class EntityWizardComponent implements OnInit {
     } else {
       this.loader.open();
 
-      this.ws.job(this.conf.addWsCall, [value]).subscribe(
+      this.ws.job(this.conf.addWsCall, [value]).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.loader.close();
           if (res.error) {

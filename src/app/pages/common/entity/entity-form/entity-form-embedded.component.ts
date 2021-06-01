@@ -83,6 +83,7 @@ export interface FormConfig {
   multiStateSubmit?: boolean;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'entity-form-embedded',
   templateUrl: './entity-form-embedded.component.html',
@@ -160,7 +161,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     }
 
     if (this.target) {
-      this.target.subscribe((evt: CoreEvent) => {
+      this.target.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
         switch (evt.name) {
           case 'SetHiddenFieldsets':
             this.setHiddenFieldSets(evt.data);
@@ -236,12 +237,12 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   setControlChangeDetection(): void {
-    this.formGroup.valueChanges.subscribe((evt) => {
+    this.formGroup.valueChanges.pipe(untilDestroyed(this)).subscribe((evt) => {
       this.target.next({ name: 'FormGroupValueChanged', data: evt, sender: this.formGroup });
     });
     const fg = Object.keys(this.formGroup.controls);
     fg.forEach((control) => {
-      this.formGroup.controls[control].valueChanges.subscribe(() => {
+      this.formGroup.controls[control].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       });
     });
   }
@@ -391,7 +392,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 
       this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
         .forEach((control) => {
-	  control.valueChanges.subscribe(
+	  control.valueChanges.pipe(untilDestroyed(this)).subscribe(
 	    () => { this.relationUpdate(config, activations); },
           );
         });

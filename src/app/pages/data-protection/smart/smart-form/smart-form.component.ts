@@ -12,7 +12,9 @@ import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { T } from 'app/translate-marker';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-smart-test-add',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -104,14 +106,14 @@ export class SmartFormComponent implements FormConfiguration {
 
   constructor(protected ws: WebSocketService, protected modalService: ModalService) {
     this.disk_field = this.fieldSets.config('disks');
-    this.ws.call('smart.test.disk_choices').subscribe(
+    this.ws.call('smart.test.disk_choices').pipe(untilDestroyed(this)).subscribe(
       (res) => {
         for (const key in res) {
           this.disk_field.options.push({ label: res[key], value: key });
         }
       }, (err) => new EntityUtils().handleWSError(this, err),
     );
-    this.modalService.getRow$.pipe(take(1)).subscribe((id: string) => {
+    this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((id: string) => {
       this.customFilter = [[['id', '=', id]]];
     });
   }

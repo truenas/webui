@@ -8,7 +8,9 @@ import {
 } from 'app/services';
 import { Subscription } from 'rxjs';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-nfs-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -50,7 +52,7 @@ export class NFSListComponent implements InputTableConf {
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
 
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+    this.refreshTable = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }

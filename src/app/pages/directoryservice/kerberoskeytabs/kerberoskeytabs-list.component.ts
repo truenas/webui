@@ -5,6 +5,7 @@ import helptext from '../../../helptext/directoryservice/kerberoskeytabs-form-li
 import { T } from '../../../translate-marker';
 import { Subscription } from 'rxjs';
 import { KerberosKeytabsFormComponent } from './kerberoskeytabs-form.component';
+@UntilDestroy()
 @Component({
   selector: 'app-kerberos-keytabs-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -33,7 +34,7 @@ export class KerberosKeytabsListComponent {
 
   afterInit(entityList: any): void {
     this.entityList = entityList;
-    this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
+    this.refreshTableSubscription = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }

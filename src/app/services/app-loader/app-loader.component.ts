@@ -5,7 +5,9 @@ import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { WebSocketService } from '../ws.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-app-loader',
   templateUrl: './app-loader.component.html',
@@ -30,7 +32,7 @@ export class AppLoaderComponent implements OnDestroy {
     private _ws: WebSocketService, private sysGeneralService: SystemGeneralService,
   ) {
     this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig
-      .subscribe((res) => {
+      .pipe(untilDestroyed(this)).subscribe((res) => {
         if (res.consolemsg) {
           this.isShowConsole = true;
           this.dialogRef.updateSize('200px', '248px');
@@ -43,11 +45,11 @@ export class AppLoaderComponent implements OnDestroy {
 
     this._consoleSubscription = this.consoleDialog.componentInstance.onEventEmitter
       .pipe(switchMap(() => this._ws.consoleMessages))
-      .subscribe((consoleMsg) => {
+      .pipe(untilDestroyed(this)).subscribe((consoleMsg) => {
         this.consoleDialog.componentInstance.consoleMsg = consoleMsg;
       });
 
-    this.consoleDialog.afterClosed().subscribe(() => {
+    this.consoleDialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
       clearInterval(this.consoleDialog.componentInstance.intervalPing);
       this._consoleSubscription.unsubscribe();
     });

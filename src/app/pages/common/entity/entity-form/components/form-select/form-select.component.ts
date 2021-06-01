@@ -14,6 +14,7 @@ import { DialogFormConfiguration } from '../../../entity-dialog/dialog-form-conf
 import { T } from 'app/translate-marker';
 import { EntityUtils, NULL_VALUE } from '../../../utils';
 
+@UntilDestroy()
 @Component({
   selector: 'form-select',
   styleUrls: ['form-select.component.scss', '../dynamic-field/dynamic-field.scss'],
@@ -81,7 +82,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
         }
       }
     }
-    this.control.valueChanges.subscribe((evt: any) => {
+    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((evt: any) => {
       // When set the value to null, Change it to 'null_value' string
       if (this.control.value === null) {
         this.control.value = NULL_VALUE;

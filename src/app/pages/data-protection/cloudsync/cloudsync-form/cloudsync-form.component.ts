@@ -21,7 +21,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { Schedule } from 'app/interfaces/schedule.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-cloudsync-add',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -395,12 +397,12 @@ export class CloudsyncFormComponent implements FormConfiguration {
         dialogRef.componentInstance.showRealtimeLogs = true;
         dialogRef.componentInstance.hideProgressValue = true;
         dialogRef.componentInstance.submit();
-        dialogRef.componentInstance.success.subscribe(() => {
+        dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.componentInstance.showCloseButton = true;
           // this.matDialog.closeAll();
           // this.job.showLogs(res);
         });
-        dialogRef.componentInstance.failure.subscribe((err: any) => {
+        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
           this.matDialog.closeAll();
           new EntityUtils().handleWSError(this.entityForm, err);
         });
@@ -417,10 +419,10 @@ export class CloudsyncFormComponent implements FormConfiguration {
     protected cloudcredentialService: CloudCredentialService,
     protected job: JobService,
     protected modalService: ModalService) {
-    this.cloudcredentialService.getProviders().subscribe((res) => {
+    this.cloudcredentialService.getProviders().pipe(untilDestroyed(this)).subscribe((res) => {
       this.providers = res;
     });
-    this.modalService.getRow$.pipe(take(1)).subscribe((id: string) => {
+    this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((id: string) => {
       this.customFilter = [[['id', '=', id]]];
     });
   }
@@ -570,7 +572,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     );
 
     this.folder_field = this.fieldSets.config('folder');
-    this.formGroup.controls['credentials'].valueChanges.subscribe((res: any) => {
+    this.formGroup.controls['credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.setDisabled('bucket', true, true);
       this.setDisabled('bucket_input', true, true);
       // reset folder tree view
@@ -604,7 +606,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
                 this.bucket_input_field.tooltip = T('Input the pre-defined S3 bucket to use.');
               }
 
-              this.getBuckets(item).subscribe(
+              this.getBuckets(item).pipe(untilDestroyed(this)).subscribe(
                 (res: any[]) => {
                   if (entityForm.loaderOpen === false) {
                     this.loader.close();
@@ -632,7 +634,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
                   }
                   this.setDisabled('bucket', true, true);
                   this.setDisabled('bucket_input', false, false);
-                  this.dialog.confirm(err.extra ? err.extra.excerpt : (T('Error: ') + err.error), err.reason, true, T('Fix Credential')).subscribe(
+                  this.dialog.confirm(err.extra ? err.extra.excerpt : (T('Error: ') + err.error), err.reason, true, T('Fix Credential')).pipe(untilDestroyed(this)).subscribe(
                     (dialog_res: boolean) => {
                       if (dialog_res) {
                         this.router.navigate(new Array('/').concat(['system', 'cloudcredentials', 'edit', item.id]));
@@ -661,21 +663,21 @@ export class CloudsyncFormComponent implements FormConfiguration {
       }
     });
 
-    this.formGroup.controls['bucket_input'].valueChanges.subscribe(() => {
+    this.formGroup.controls['bucket_input'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.setBucketError(null);
       if (this.folder_field.customTemplateStringOptions.explorer) {
         this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
       }
     });
 
-    this.formGroup.controls['bucket'].valueChanges.subscribe(() => {
+    this.formGroup.controls['bucket'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.setBucketError(null);
       if (this.folder_field.customTemplateStringOptions.explorer) {
         this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
       }
     });
 
-    this.formGroup.controls['bwlimit'].valueChanges.subscribe(() => {
+    this.formGroup.controls['bwlimit'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       _.find(entityForm.fieldConfig, { name: 'bwlimit' }).hasErrors = false;
       _.find(entityForm.fieldConfig, { name: 'bwlimit' }).errors = null;
       this.formGroup.controls['bwlimit'].errors = null;
@@ -685,13 +687,13 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.formGroup
       .get('direction')
       .valueChanges.pipe(filter(() => this.formGroup.get('transfer_mode').value !== TransferMode.Copy))
-      .subscribe(() => {
+      .pipe(untilDestroyed(this)).subscribe(() => {
         this.dialog.Info(helptext.resetTransferModeDialog.title, helptext.resetTransferModeDialog.content, '500px', 'info', true);
         this.formGroup.get('transfer_mode').setValue(TransferMode.Copy);
       });
 
     // Update transfer_mode paragraphs when the mode is changed
-    this.formGroup.get('transfer_mode').valueChanges.subscribe((mode: TransferMode) => {
+    this.formGroup.get('transfer_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode: TransferMode) => {
       const paragraph = entityForm.fieldConfig.find((config: any) => config.name === 'transfer_mode_warning');
       switch (mode) {
         case TransferMode.Sync:
@@ -830,7 +832,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     value = this.submitDataHandler(value);
     if (!this.pk) {
       this.loader.open();
-      this.ws.call(this.addCall, [value]).subscribe(() => {
+      this.ws.call(this.addCall, [value]).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
         this.modalService.close('slide-in-form');
       }, (err) => {
@@ -839,7 +841,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       });
     } else {
       this.loader.open();
-      this.ws.call(this.editCall, [parseInt(this.pk, 10), value]).subscribe(
+      this.ws.call(this.editCall, [parseInt(this.pk, 10), value]).pipe(untilDestroyed(this)).subscribe(
         () => {
           this.loader.close();
           this.modalService.close('slide-in-form');

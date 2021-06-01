@@ -13,7 +13,9 @@ import { LocaleService } from 'app/services/locale.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-localization-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -88,7 +90,7 @@ export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
     public localeService: LocaleService,
     private modalService: ModalService,
   ) {
-    this.getDataFromDash = this.sysGeneralService.sendConfigData$.subscribe((res) => {
+    this.getDataFromDash = this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.configData = res;
     });
   }
@@ -98,14 +100,14 @@ export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
     this.setTimeOptions(this.configData.timezone);
     this.makeLanguageList();
 
-    this.sysGeneralService.kbdMapChoices().subscribe((mapChoices) => {
+    this.sysGeneralService.kbdMapChoices().pipe(untilDestroyed(this)).subscribe((mapChoices) => {
       this.fieldSets
         .find((set) => set.name === helptext.stg_fieldset_loc)
         .config.find((config) => config.name === 'kbdmap').options = mapChoices;
       this.entityForm.formGroup.controls['kbdmap'].setValue(this.configData.kbdmap);
     });
 
-    this.sysGeneralService.timezoneChoices().subscribe((tzChoices) => {
+    this.sysGeneralService.timezoneChoices().pipe(untilDestroyed(this)).subscribe((tzChoices) => {
       tzChoices = _.sortBy(tzChoices, [function (o) { return o.label.toLowerCase(); }]);
       this.fieldSets
         .find((set) => set.name === helptext.stg_fieldset_loc)
@@ -114,11 +116,11 @@ export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
     });
 
     this.getDateTimeFormats();
-    this.dateTimeChangeSubscription = this.localeService.dateTimeFormatChange$.subscribe(() => {
+    this.dateTimeChangeSubscription = this.localeService.dateTimeFormatChange$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getDateTimeFormats();
     });
 
-    entityEdit.formGroup.controls['language'].valueChanges.subscribe((res: any) => {
+    entityEdit.formGroup.controls['language'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.languageKey = this.getKeyByValue(this.languageList, res);
       if (this.languageList[res]) {
         entityEdit.formGroup.controls['language'].setValue(`${this.languageList[res]}`);
@@ -146,7 +148,7 @@ export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
   }
 
   makeLanguageList(): void {
-    this.sysGeneralService.languageChoices().subscribe((res) => {
+    this.sysGeneralService.languageChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       this.languageList = res;
       const options: Option[] = Object.keys(this.languageList || {}).map((key) => ({
         label: this.sortLanguagesByName
@@ -178,7 +180,7 @@ export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
     delete body.date_format;
     delete body.time_format;
     this.loader.open();
-    return this.ws.call('system.general.update', [body]).subscribe(() => {
+    return this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.sysGeneralService.refreshSysGeneral();
       this.loader.close();
       this.entityForm.success = true;

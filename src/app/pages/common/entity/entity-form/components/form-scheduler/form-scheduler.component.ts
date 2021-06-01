@@ -26,6 +26,7 @@ interface CronPreset {
   description?: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'form-scheduler',
   templateUrl: './form-scheduler.component.html',
@@ -279,7 +280,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     // Set default value
     this._months = '*';
 
-    this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe((res) => {
+    this.getGenConfig = this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       this.timezone = res.timezone;
       moment.tz.setDefault(res.timezone);
 
@@ -295,7 +296,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   ngOnInit(): void {
     this.control = this.group.controls[this.config.name];
 
-    this.control.valueChanges.subscribe((evt: string) => {
+    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((evt: string) => {
       this.crontab = evt;
 
       const isPreset: boolean = this.presets.filter((preset) => evt == preset.value).length != 0;

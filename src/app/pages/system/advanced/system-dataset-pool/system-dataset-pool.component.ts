@@ -13,9 +13,11 @@ import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-set
 import _ from 'lodash';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { filter, switchMap } from 'rxjs/operators';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 const poolFieldName = 'pool';
 
+@UntilDestroy()
 @Component({
   selector: 'app-system-dataset-pool',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -69,7 +71,7 @@ export class SystemDatasetPoolComponent implements FormConfiguration, OnDestroy 
   private loadChoices(): void {
     this.poolChoicesSubscription = this.ws
       .call('systemdataset.pool_choices')
-      .subscribe((poolChoices) => {
+      .pipe(untilDestroyed(this)).subscribe((poolChoices) => {
         const poolField = this.fieldSets.config(poolFieldName);
         poolField.options = Object.entries(poolChoices)
           .map(([label, value]) => ({ label, value }));
@@ -77,7 +79,7 @@ export class SystemDatasetPoolComponent implements FormConfiguration, OnDestroy 
   }
 
   private loadCurrentDatasetPool(): void {
-    this.systemDatasetConfigSubscription = this.ws.call('systemdataset.config').subscribe((config) => {
+    this.systemDatasetConfigSubscription = this.ws.call('systemdataset.config').pipe(untilDestroyed(this)).subscribe((config) => {
       if (!config) {
         return;
       }
@@ -94,7 +96,7 @@ export class SystemDatasetPoolComponent implements FormConfiguration, OnDestroy 
       switchMap(() => this.confirmSmbRestartIfNeeded()),
       filter(Boolean),
       switchMap(() => this.ws.job('systemdataset.update', [formValues])),
-    ).subscribe({
+    ).pipe(untilDestroyed(this)).subscribe({
       complete: () => {
         this.loader.close();
         this.entityForm.success = true;

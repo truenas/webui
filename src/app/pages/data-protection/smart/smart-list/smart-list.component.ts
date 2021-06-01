@@ -13,7 +13,9 @@ import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { TranslateService } from '@ngx-translate/core';
 import { SmartTestUi } from 'app/interfaces/smart-test.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-smart-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -70,14 +72,14 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
     protected entityFormService: EntityFormService,
     protected translate: TranslateService,
   ) {
-    this.disksSubscription = this.storageService.listDisks().subscribe((listDisks) => {
+    this.disksSubscription = this.storageService.listDisks().pipe(untilDestroyed(this)).subscribe((listDisks) => {
       this.listDisks = listDisks;
     });
   }
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+    this.onModalClose = this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }

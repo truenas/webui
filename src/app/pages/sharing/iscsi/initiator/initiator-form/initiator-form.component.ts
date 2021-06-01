@@ -12,6 +12,7 @@ import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import * as _ from 'lodash';
 import { ipv4or6OptionalCidrValidator } from '../../../../common/entity/entity-form/validators/ip-validation';
 
+@UntilDestroy()
 @Component({
   selector: 'app-iscsi-initiator-form',
   templateUrl: './initiator-form.component.html',
@@ -98,7 +99,7 @@ export class InitiatorFormComponent implements OnInit {
   ) { }
 
   getConnectedInitiators(): void {
-    this.ws.call('iscsi.global.sessions').subscribe(
+    this.ws.call('iscsi.global.sessions').pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.connectedInitiators = _.unionBy(res, (item) => item['initiator'] && item['initiator_addr']);
       },
@@ -111,7 +112,7 @@ export class InitiatorFormComponent implements OnInit {
   ngOnInit(): void {
     this.getConnectedInitiators();
 
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
         this.customFilter[0][0].push(parseInt(params['pk'], 10));
@@ -126,12 +127,12 @@ export class InitiatorFormComponent implements OnInit {
       }
     }
 
-    this.formGroup.controls['initiators'].statusChanges.subscribe((res) => {
+    this.formGroup.controls['initiators'].statusChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.connectedInitiatorsDisabled = res === 'DISABLED';
     });
 
     if (this.pk) {
-      this.ws.call(this.queryCall, this.customFilter).subscribe(
+      this.ws.call(this.queryCall, this.customFilter).pipe(untilDestroyed(this)).subscribe(
         (res: any[]) => {
           for (const i in res[0]) {
             const ctrl = this.formGroup.controls[i];
@@ -172,7 +173,7 @@ export class InitiatorFormComponent implements OnInit {
     }
 
     this.loader.open();
-    submitFunction.subscribe(
+    submitFunction.pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
@@ -201,7 +202,7 @@ export class InitiatorFormComponent implements OnInit {
 
       this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
         .forEach((control) => {
-          control.valueChanges.subscribe(
+          control.valueChanges.pipe(untilDestroyed(this)).subscribe(
             () => { this.relationUpdate(config, activations); },
           );
         });

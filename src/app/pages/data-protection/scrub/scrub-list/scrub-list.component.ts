@@ -12,7 +12,9 @@ import { T } from 'app/translate-marker';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-scrub-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -68,7 +70,7 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+    this.onModalClose = this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }

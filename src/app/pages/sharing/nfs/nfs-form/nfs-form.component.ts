@@ -17,7 +17,9 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import globalHelptext from 'app/helptext/global-helptext';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { take } from 'rxjs/operators';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-nfs-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -273,11 +275,11 @@ export class NFSFormComponent implements FormConfiguration {
   }
 
   preInit(): void {
-    this.modalService.getRow$.pipe(take(1)).subscribe((id: number) => {
+    this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((id: number) => {
       this.pk = id;
     });
 
-    this.ws.call('nfs.config', []).subscribe((nfsConfig) => {
+    this.ws.call('nfs.config', []).pipe(untilDestroyed(this)).subscribe((nfsConfig) => {
       this.fieldSets.config('security').isHidden = !nfsConfig.v4;
     });
   }
@@ -287,7 +289,7 @@ export class NFSFormComponent implements FormConfiguration {
 
     this.title = entityForm.isNew ? helptext_sharing_nfs.title : helptext_sharing_nfs.editTitle;
 
-    this.userService.userQueryDSCache().subscribe((items) => {
+    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
       const users = [{
         label: '---------',
         value: '',
@@ -301,7 +303,7 @@ export class NFSFormComponent implements FormConfiguration {
       this.maproot_user.options = users;
     });
 
-    this.userService.groupQueryDSCache().subscribe((groups) => {
+    this.userService.groupQueryDSCache().pipe(untilDestroyed(this)).subscribe((groups) => {
       const groupOptions: Option[] = [{
         label: '---------',
         value: '',
@@ -321,7 +323,7 @@ export class NFSFormComponent implements FormConfiguration {
       });
     }
 
-    entityForm.formGroup.controls['paths'].valueChanges.subscribe((res: any[]) => {
+    entityForm.formGroup.controls['paths'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       const aliases = res.filter((p) => !!p.alias);
 
       if (aliases.length > 0 && aliases.length !== res.length) {
@@ -378,16 +380,16 @@ export class NFSFormComponent implements FormConfiguration {
   afterSave(): void {
     this.modalService.close('slide-in-form');
     this.modalService.refreshTable();
-    this.ws.call('service.query', [[]]).subscribe((res) => {
+    this.ws.call('service.query', [[]]).pipe(untilDestroyed(this)).subscribe((res) => {
       const service = _.find(res, { service: ServiceName.Nfs });
       if (!service.enable) {
         this.dialog.confirm(shared.dialog_title, shared.dialog_message,
-          true, shared.dialog_button).subscribe((dialogRes: boolean) => {
+          true, shared.dialog_button).pipe(untilDestroyed(this)).subscribe((dialogRes: boolean) => {
           if (dialogRes) {
-            this.ws.call('service.update', [service.id, { enable: true }]).subscribe(() => {
-              this.ws.call('service.start', [service.service]).subscribe(() => {
+            this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
+              this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
                 this.dialog.Info(T('NFS') + shared.dialog_started_title,
-                  T('The NFS') + shared.dialog_started_message, '250px').subscribe(() => {
+                  T('The NFS') + shared.dialog_started_message, '250px').pipe(untilDestroyed(this)).subscribe(() => {
                   this.dialog.closeAllDialogs();
                 });
               }, (err) => {
@@ -411,7 +413,7 @@ export class NFSFormComponent implements FormConfiguration {
   }
 
   updateGroupSearchOptions(value = '', parent: NFSFormComponent, field: string): void {
-    (parent.userService as UserService).groupQueryDSCache(value).subscribe((groups) => {
+    (parent.userService as UserService).groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
       const groupOptions: Option[] = [];
       for (let i = 0; i < groups.length; i++) {
         groupOptions.push({ label: groups[i].group, value: groups[i].group });
@@ -429,7 +431,7 @@ export class NFSFormComponent implements FormConfiguration {
   }
 
   updateUserSearchOptions(value = '', parent: NFSFormComponent, field: string): void {
-    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
+    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });

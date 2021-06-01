@@ -8,6 +8,9 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import helptext from '../../../../helptext/services/components/service-lldp';
 import { RestService, WebSocketService, ServicesService } from '../../../../services';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+@UntilDestroy()
 @Component({
   selector: 'lldp-edit',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -56,7 +59,7 @@ export class ServiceLLDPComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     entityEdit.submitFunction = (body) => this.ws.call('lldp.update', [body]);
 
-    this.services.getLLDPCountries().subscribe((res) => {
+    this.services.getLLDPCountries().pipe(untilDestroyed(this)).subscribe((res) => {
       const countries = this.fieldSets
         .find((set) => set.name === 'General Options')
         .config.find((config) => config.name === 'country');
