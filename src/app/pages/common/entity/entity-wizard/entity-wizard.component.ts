@@ -37,7 +37,6 @@ export class EntityWizardComponent implements OnInit {
 
   saveSubmitText = T('Submit');
   customNextText = T('Next');
-  autoSummaryHtml: string;
   get formArray(): AbstractControl | null { return this.formGroup.get('formArray'); }
 
   constructor(protected rest: RestService, protected ws: WebSocketService,
@@ -269,29 +268,6 @@ export class EntityWizardComponent implements OnInit {
     summary = new EntityUtils().changeNullString2Null(summary);
     summary = new EntityUtils().remapAppSubmitData(summary);
     this.conf.summary = summary;
-    this.autoSummaryHtml = this.generateSummaryHtml(summary);
-  }
-
-  generateSummaryHtml(data: any, isRoot = true): string {
-    const className = isRoot ? '' : 'wizard-ul';
-    let result = `<ul class="${className}">`;
-    Object.keys(data).forEach((key) => {
-      const value = data[key];
-      if (value) {
-        result += '<li>';
-        if (Array.isArray(value)) {
-          result += `<div>${key}: ${value.length}</div>`;
-        } else if (typeof value === 'object') {
-          result += `<label>${key}:</label>`;
-          result += this.generateSummaryHtml(data[key], false);
-        } else {
-          result += `<div>${key}: ${value}</div>`;
-        }
-      }
-      result += '</li>';
-    });
-    result += '</ul>';
-    return result;
   }
 
   getSummaryValue(fieldConfig: FieldConfig, formControl: AbstractControl): any {
