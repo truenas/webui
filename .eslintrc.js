@@ -22,6 +22,7 @@ module.exports = {
         "airbnb-typescript/base",
       ],
       "plugins": [
+        "rxjs",
         "rxjs-angular",
       ],
       "rules": {
@@ -116,6 +117,7 @@ module.exports = {
         "unused-imports/no-unused-vars": ["error", { vars: "local", args: "after-used" }],
 
         // RxJS rules
+        "rxjs/no-unsafe-takeuntil": "error",
         "rxjs-angular/prefer-takeuntil": ["error", {
           "alias": ["untilDestroyed"],
           "checkComplete": false,

@@ -77,6 +77,7 @@
     "date-fns": "2.10.0",
     "dygraphs": "2.1.0",
     "element-resize-detector": "1.2.1",
+    "eslint-plugin-rxjs": "^3.3.3",
     "eslint-plugin-rxjs-angular": "^1.0.6",
     "filesize": "6.1.0",
     "fontfaceobserver": "^2.1.0",
