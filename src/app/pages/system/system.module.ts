@@ -27,7 +27,7 @@ import { UpdateComponent } from './update';
 import { ManualUpdateComponent } from './update/manualupdate';
 import { NTPServerFormComponent } from './general-settings/ntpservers/ntpserver-form';
 import { SupportComponent } from './general-settings/support/support.component';
-import { AlertServiceListComponent } from './alertservice/alertservice-list';
+import { AlertServiceListComponent } from './alertservice/alertservice-list/alertservice-list.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';

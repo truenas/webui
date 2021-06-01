@@ -18,6 +18,7 @@ import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interf
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableService } from 'app/pages/common/entity/entity-table/entity-table.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -725,7 +726,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     validation: [Validators.pattern(row1.name)],
                     relation: [
                       {
-                        action: 'HIDE',
+                        action: RelationAction.Hide,
                         when: [{
                           name: 'destroy',
                           value: false,

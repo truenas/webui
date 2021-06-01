@@ -1,10 +1,5 @@
-export const ACTION_DISABLE = 'DISABLE';
-export const ACTION_ENABLE = 'ENABLE';
-export const ACTION_SHOW = 'SHOW';
-export const ACTION_HIDE = 'HIDE';
-
-export const CONNECTION_AND = 'AND';
-export const CONNECTION_OR = 'OR';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 
 export interface Relation {
   fieldName: string;
@@ -20,7 +15,7 @@ export interface FieldRelation {
 }
 
 export interface RelationGroup {
-  action: string;
-  connective?: string;
+  action: RelationAction;
+  connective?: RelationConnection;
   when: FieldRelation[];
 }

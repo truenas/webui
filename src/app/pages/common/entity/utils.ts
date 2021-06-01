@@ -1,5 +1,6 @@
 import { Option } from 'app/interfaces/option.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import * as _ from 'lodash';
 import { Relation } from './entity-form/models/field-relation.interface';
 
@@ -253,7 +254,7 @@ export class EntityUtils {
       const relationFieldName = relation.fieldName;
 
       return {
-        action: 'SHOW',
+        action: RelationAction.Show,
         when: [{
           name: relationFieldName,
           operator: relation.operatorName,
@@ -386,7 +387,7 @@ export class EntityUtils {
               subResults.forEach((subFieldConfig) => {
                 subFieldConfig['isHidden'] = true;
                 subFieldConfig['relation'] = [{
-                  action: 'SHOW',
+                  action: RelationAction.Show,
                   when: [{
                     name,
                     value: schemaConfig.schema.show_subquestions_if,

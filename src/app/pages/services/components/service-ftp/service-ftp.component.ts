@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Observable } from 'rxjs';
 import helptext from '../../../../helptext/services/components/service-ftp';
 import global_helptext from '../../../../helptext/global-helptext';
@@ -125,7 +126,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
           required: true,
           relation: [
             {
-              action: 'HIDE',
+              action: RelationAction.Hide,
               when: [
                 {
                   name: 'onlyanonymous',

@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
@@ -108,7 +110,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: Direction.Push,
           relation: [
             {
-              action: 'HIDE',
+              action: RelationAction.Hide,
               when: [
                 {
                   name: 'transport',
@@ -205,7 +207,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: '',
           relation: [
             {
-              action: 'HIDE',
+              action: RelationAction.Hide,
               when: [
                 {
                   name: 'transport',
@@ -235,7 +237,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: NetcatMode.Local,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'transport',
@@ -252,7 +254,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.netcat_active_side_listen_address_tooltip,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'transport',
@@ -270,7 +272,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           width: '50%',
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'transport',
@@ -288,7 +290,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           width: '50%',
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'transport',
@@ -305,7 +307,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.netcat_passive_side_connect_address_tooltip,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'transport',
@@ -341,7 +343,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: CompressionType.Disabled,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'transport',
@@ -359,7 +361,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           hasErrors: false,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'transport',
@@ -409,7 +411,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'direction',
@@ -443,7 +445,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'direction',
@@ -461,7 +463,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: false,
           relation: [
             {
-              action: 'HIDE',
+              action: RelationAction.Hide,
               when: [
                 {
                   name: 'replicate',
@@ -478,8 +480,8 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.exclude_tooltip,
           relation: [
             {
-              action: 'HIDE',
-              connective: 'OR',
+              action: RelationAction.Hide,
+              connective: RelationConnection.Or,
               when: [
                 {
                   name: 'recursive',
@@ -501,7 +503,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: true,
           relation: [
             {
-              action: 'HIDE',
+              action: RelationAction.Hide,
               when: [
                 {
                   name: 'replicate',
@@ -525,8 +527,8 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.properties_override_tooltip,
           relation: [
             {
-              action: 'HIDE',
-              connective: 'AND',
+              action: RelationAction.Hide,
+              connective: RelationConnection.And,
               when: [
                 {
                   name: 'replicate',
@@ -547,8 +549,8 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.properties_exclude_tooltip,
           relation: [
             {
-              action: 'HIDE',
-              connective: 'AND',
+              action: RelationAction.Hide,
+              connective: RelationConnection.And,
               when: [
                 {
                   name: 'replicate',
@@ -571,7 +573,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           options: [],
           relation: [
             {
-              action: 'HIDE',
+              action: RelationAction.Hide,
               when: [
                 {
                   name: 'direction',
@@ -595,7 +597,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: '0 0 * * *',
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'restrict_schedule',
@@ -613,7 +615,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           options: [],
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'restrict_schedule',
@@ -632,7 +634,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           options: [],
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'restrict_schedule',
@@ -650,7 +652,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.naming_schema_tooltip,
           relation: [
             {
-              action: 'HIDE',
+              action: RelationAction.Hide,
               when: [
                 {
                   name: 'direction',
@@ -667,7 +669,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.also_include_naming_schema_tooltip,
           relation: [
             {
-              action: 'HIDE',
+              action: RelationAction.Hide,
               when: [
                 {
                   name: 'direction',
@@ -715,7 +717,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'direction',
@@ -738,7 +740,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'direction',
@@ -792,7 +794,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           ],
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'encryption',
@@ -810,8 +812,8 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: true,
           relation: [
             {
-              action: 'SHOW',
-              connective: 'AND',
+              action: RelationAction.Show,
+              connective: RelationConnection.And,
               when: [
                 {
                   name: 'encryption',
@@ -832,8 +834,8 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: repwizardhelptext.encryption_key_hex_tooltip,
           relation: [
             {
-              action: 'SHOW',
-              connective: 'AND',
+              action: RelationAction.Show,
+              connective: RelationConnection.And,
               when: [
                 {
                   name: 'encryption',
@@ -860,8 +862,8 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: repwizardhelptext.encryption_key_passphrase_tooltip,
           relation: [
             {
-              action: 'SHOW',
-              connective: 'AND',
+              action: RelationAction.Show,
+              connective: RelationConnection.And,
               when: [
                 {
                   name: 'encryption',
@@ -883,7 +885,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'encryption',
@@ -900,8 +902,8 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: repwizardhelptext.encryption_key_location_tooltip,
           relation: [
             {
-              action: 'SHOW',
-              connective: 'AND',
+              action: RelationAction.Show,
+              connective: RelationConnection.And,
               when: [
                 {
                   name: 'encryption',
@@ -937,7 +939,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.lifetime_value_tooltip,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'retention_policy',
@@ -978,7 +980,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: LifetimeUnit.Week,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'retention_policy',
@@ -1019,7 +1021,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: '0 0 * * *',
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'schedule',
@@ -1037,7 +1039,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           options: [],
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'schedule',
@@ -1056,7 +1058,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           options: [],
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'schedule',
@@ -1075,7 +1077,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'schedule',

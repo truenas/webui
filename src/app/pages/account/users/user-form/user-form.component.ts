@@ -5,6 +5,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Observable } from 'rxjs';
 import helptext from '../../../../helptext/account/user-form';
@@ -171,7 +172,7 @@ export class UserFormComponent implements FormConfiguration {
           options: [],
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'group_create',
                 value: true,
