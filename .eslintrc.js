@@ -116,7 +116,12 @@ module.exports = {
         "unused-imports/no-unused-vars": ["error", { vars: "local", args: "after-used" }],
 
         // RxJS rules
-        "rxjs-angular/prefer-takeuntil": "error"
+        "rxjs-angular/prefer-takeuntil": ["error", {
+          "alias": ["untilDestroyed"],
+          "checkComplete": false,
+          "checkDecorators": ["UntilDestroy"],
+          "checkDestroy": false
+        }]
       }
     },
     {
