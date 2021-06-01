@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import * as _ from 'lodash';
 
 import { WebSocketService, StorageService, DialogService } from '../../../../../services';
@@ -80,7 +81,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
           hideButton: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'key_file',
                 value: true,

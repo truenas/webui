@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { VmBootloader, VmDeviceType, VmTime } from 'app/enums/vm.enum';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { ProductType } from '../../../enums/product-type.enum';
 import {
   RestService, WebSocketService, NetworkService, StorageService, SystemGeneralService,
@@ -333,7 +334,7 @@ export class VMWizardComponent {
           ],
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'datastore',
                 value: undefined,
