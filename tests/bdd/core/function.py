@@ -93,7 +93,7 @@ def ssh_cmd(command, username, password, host):
         command
     ]
     try:
-        process = run(cmd, stdout=PIPE, universal_newlines=True, timeout=5)
+        process = run(cmd, stdout=PIPE, universal_newlines=True, timeout=10)
         output = process.stdout
         if process.returncode != 0:
             return {'result': False, 'output': output}

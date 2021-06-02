@@ -138,7 +138,7 @@ def if_the_smb_service_is_not_started_start_the_service(driver):
     value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__SMB_Running"]', 'class', 'mat-checked')
     if not value_exist:
         driver.find_element_by_xpath('//div[@ix-auto="overlay__SMB_Running"]').click()
-    time.sleep(2)
+    time.sleep(5)
 
 
 @then(parsers.parse('send a file to the share with ip/{smbname} and {ldap_user}%{ldap_password}'))
@@ -146,9 +146,8 @@ def send_a_file_to_the_share_with_ip_ldapsmbshare_and_ldap_user_ldap_password(dr
     """send a file to the share with ip/ldapsmbshare and ldap_user%ldap_password."""
     run_cmd('touch testfile.txt')
     results = run_cmd(f'smbclient //{nas_ip}/{smbname} -W AD01 -U {ldap_user}%{ldap_password} -c "put testfile.txt testfile.txt"')
-    time.sleep(1)
-    run_cmd('rm testfile.txt')
     assert results['result'], results['output']
+    run_cmd('rm testfile.txt')
 
 
 @then('verify that the file is on the NAS dataset')
