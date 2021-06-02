@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { Subscription } from 'rxjs';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import * as _ from 'lodash';
@@ -192,7 +193,7 @@ export class CertificateEditComponent implements FormConfiguration {
   ];
 
   private rowNum: any;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   protected dialogRef: any;
   private getRow = new Subscription();
   private incomingData: any;
@@ -237,7 +238,7 @@ export class CertificateEditComponent implements FormConfiguration {
     return true;
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
   }
 

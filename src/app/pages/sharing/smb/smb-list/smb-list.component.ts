@@ -78,7 +78,7 @@ export class SMBListComponent implements InputTableConf, OnDestroy {
     private sysGeneralService: SystemGeneralService,
   ) {}
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
 
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {

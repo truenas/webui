@@ -18,6 +18,7 @@ import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/di
 import { MatDialog } from '@angular/material/dialog';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { Snapshot } from 'app/interfaces/storage.interface';
+import * as filesize from 'filesize';
 
 interface DialogData {
   datasets: string[];
@@ -184,9 +185,9 @@ export class SnapshotListComponent {
   rowValue(row: any, attr: any): any {
     switch (attr) {
       case 'used':
-        return (<any>window).filesize(row[attr], { standard: 'iec' });
+        return filesize(row[attr], { standard: 'iec' });
       case 'refer':
-        return (<any>window).filesize(row[attr], { standard: 'iec' });
+        return filesize(row[attr], { standard: 'iec' });
       default:
         return row[attr];
     }

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { helptext } from 'app/helptext/system/reporting';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { Subscription } from 'rxjs';
 import { DialogService, WebSocketService } from '../../../../services';
@@ -15,7 +16,7 @@ export class ReportsConfigComponent implements FormConfiguration {
   queryCall: 'reporting.config' = 'reporting.config';
   title: string;
   isOneColumnForm: boolean;
-  entityForm: any;
+  entityForm: EntityFormComponent;
   isCpuCheckboxChecked: boolean;
   graphPoints: any;
   graphAge: any;
@@ -96,7 +97,7 @@ export class ReportsConfigComponent implements FormConfiguration {
     return data;
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
   }
 

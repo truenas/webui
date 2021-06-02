@@ -30,7 +30,7 @@ export class UserFormComponent implements FormConfiguration {
   queryKey = 'id';
   isEntity = true;
   isNew: boolean;
-  entityForm: any;
+  entityForm: EntityFormComponent;
   protected namesInUse: string[] = [];
   private homeSharePath: string;
   columnsOnForm = 2;

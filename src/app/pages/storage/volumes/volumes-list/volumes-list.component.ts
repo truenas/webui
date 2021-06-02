@@ -45,6 +45,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { DatasetFormComponent } from '../datasets/dataset-form';
 import { ZvolFormComponent } from '../zvol/zvol-form';
 import { VolumesListControlsComponent } from './volumes-list-controls.component';
+import * as filesize from 'filesize';
 
 export interface ZfsPoolData {
   pool: string;
@@ -2004,7 +2005,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
               }
               pool.children[0].available_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].available.parsed || 0);
               pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].used.parsed || 0);
-              pool.availStr = (<any>window).filesize(pool.children[0].available.parsed, { standard: 'iec' });
+              pool.availStr = filesize(pool.children[0].available.parsed, { standard: 'iec' });
               pool.children[0].has_encrypted_children = false;
               for (let i = 0; i < datasets.length; i++) {
                 const ds = datasets[i];
@@ -2021,7 +2022,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
             try {
               const used_pct = pool.children[0].used.parsed / (pool.children[0].used.parsed + pool.children[0].available.parsed);
-              pool.usedStr = '' + (<any>window).filesize(pool.children[0].used.parsed, { standard: 'iec' }) + ' (' + Math.round(used_pct * 100) + '%)';
+              pool.usedStr = '' + filesize(pool.children[0].used.parsed, { standard: 'iec' }) + ' (' + Math.round(used_pct * 100) + '%)';
             } catch (error) {
               pool.usedStr = '' + pool.children[0].used.parsed;
             }

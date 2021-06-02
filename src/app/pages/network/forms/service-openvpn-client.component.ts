@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { ServicesService } from '../../../services';
 import * as _ from 'lodash';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -122,7 +123,7 @@ export class OpenvpnClientComponent implements FormConfiguration {
 
   constructor(protected services: ServicesService) { }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     entityEdit.submitFunction = (body: any) => this.services.updateOpenVPN('openvpn.client.update', body);
 
     this.services.getOpenVPNClientAuthAlgorithmChoices().subscribe((res) => {
