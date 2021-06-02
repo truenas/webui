@@ -5,7 +5,7 @@ import { Disk } from 'app/interfaces/storage.interface';
 import { WebSocketService } from './ws.service';
 import { RestService } from './rest.service';
 
-import * as moment from 'moment';
+import { format } from 'date-fns-tz';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
@@ -183,7 +183,7 @@ export class StorageService {
 
       sorter = [];
       for (const elem of timeArr) {
-        sorter.push(moment(elem).format('YYYY-MM-DD HH:mm:ss')); // formate should matched locale service
+        sorter.push(format(elem, 'yyyy-MM-dd HH:mm:ss')); // formate should matched locale service
       }
     } else {
       sorter = tempArr.sort(myCollator.compare);
