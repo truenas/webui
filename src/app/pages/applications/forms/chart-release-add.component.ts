@@ -5,14 +5,12 @@ import {
 } from 'app/constants/catalog.constants';
 import { Option } from 'app/interfaces/option.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import * as _ from 'lodash';
 import { FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { ModalService } from 'app/services/modal.service';
 import { DialogService } from '../../../services/index';
 import { ApplicationsService } from '../applications.service';
@@ -36,11 +34,9 @@ export class ChartReleaseAddComponent implements OnDestroy, WizardConfiguration 
   summaryTitle = 'Chart Release Summary';
   private entityWizard: EntityWizardComponent;
   private destroy$ = new Subject();
-  // private isLinear = true;
   private interfaceList: Option[] = [];
   private entityUtils = new EntityUtils();
 
-  fieldConfig: FieldConfig[];
   wizardConfig: Wizard[] = [
     {
       label: helptext.wizardLabels.image,
@@ -397,12 +393,6 @@ export class ChartReleaseAddComponent implements OnDestroy, WizardConfiguration 
       .subscribe((res) => {
         this.summary[(label)] = res;
       });
-  }
-
-  hideField(fieldName: any, show: boolean, entity: any): void {
-    const target = _.find(this.fieldConfig, { name: fieldName });
-    target['isHidden'] = show;
-    entity.setDisabled(fieldName, show, show);
   }
 
   customSubmit(data: any): void {

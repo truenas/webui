@@ -562,7 +562,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
   identifier: any;
   usageField: FieldConfig;
   private currenProfile: any;
-  private entityForm: any;
+  private entityForm: EntityWizardComponent;
 
   constructor(protected ws: WebSocketService, private modalService: ModalService,
     protected loader: AppLoaderService, private dialogService: DialogService,
@@ -653,7 +653,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     });
   }
 
-  afterInit(entity: any): void {
+  afterInit(entity: EntityWizardComponent): void {
     this.entityForm = entity;
     this.title = helptext_system_ca.add.title;
 
