@@ -57,7 +57,7 @@ export class ChassisView {
   disabledOpacity = 0.25;
   chassisOpacity = 0.25;
   initialized = false;
-  loader: any;
+  loader: PIXI.loaders.Loader;
   autoPosition = true;
   protected utils: ThemeUtils;
 

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Subscription } from 'rxjs';
 import {
   DialogService,
@@ -72,7 +73,7 @@ export class SyslogFormComponent implements FormConfiguration, OnDestroy {
           options: [],
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [
                 {
                   name: 'syslog_transport',

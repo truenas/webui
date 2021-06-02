@@ -12,10 +12,9 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Injectable()
 export class WebSocketService {
-  private debug = true;
   private _authStatus: Subject<boolean>;
-  onCloseSubject: Subject<any>;
-  onOpenSubject: Subject<any>;
+  onCloseSubject: Subject<boolean>;
+  onOpenSubject: Subject<boolean>;
   pendingCalls: any;
   pendingSubs: any = {};
   pendingMessages: any[] = [];
@@ -26,8 +25,8 @@ export class WebSocketService {
   redirectUrl = '';
   shuttingdown = false;
 
-  protocol: any;
-  remote: any;
+  protocol: string;
+  remote: string;
   private consoleSub: Observable<string>;
 
   subscriptions: Map<string, any[]> = new Map<string, any[]>();

@@ -28,10 +28,9 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   private csrOrg: any;
   formArray: FormArray;
   commonName: string;
-  protected arrayControl: any;
   private getRow = new Subscription();
   private rowNum: any;
-  private dns_map: any;
+  private dns_map: FieldConfig;
   title = helptext_system_certificates.list.action_create_acme_certificate;
   protected isOneColumnForm = true;
   fieldConfig: FieldConfig[];
@@ -123,7 +122,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   queryCallOption: any[];
   initialCount = 1;
   private domainList: any;
-  private domainList_fc: any;
+  private domainList_fc: FieldConfig;
 
   constructor(
     protected ws: WebSocketService,

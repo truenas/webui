@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Option } from 'app/interfaces/option.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import * as _ from 'lodash';
@@ -80,7 +81,7 @@ export class IPMIFromComponent implements FormConfiguration {
           hasErrors: false,
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'dhcp',
                 value: true,
@@ -98,7 +99,7 @@ export class IPMIFromComponent implements FormConfiguration {
           hasErrors: false,
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'dhcp',
                 value: true,
@@ -116,7 +117,7 @@ export class IPMIFromComponent implements FormConfiguration {
           hasErrors: false,
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'dhcp',
                 value: true,

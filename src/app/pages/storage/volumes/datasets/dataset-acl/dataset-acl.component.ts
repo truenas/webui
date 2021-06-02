@@ -13,6 +13,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
@@ -266,7 +267,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
           isHidden: true,
           disabled: true,
           relation: [{
-            action: 'HIDE',
+            action: RelationAction.Hide,
             when: [{
               name: 'recursive',
               value: false,
@@ -672,7 +673,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
           options: this.defaults,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'useDefault',
                 value: true,

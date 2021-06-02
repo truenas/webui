@@ -1,5 +1,6 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -20,7 +21,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
   addCall: 'boot.attach' = 'boot.attach';
   pk: any;
   isNew = true;
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
 
   protected entityForm: EntityFormComponent;
 
@@ -40,7 +41,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
     },
 
   ];
-  protected diskChoice: any;
+  protected diskChoice: FieldConfig;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,

@@ -193,9 +193,6 @@ export class CertificateEditComponent implements FormConfiguration {
   ];
 
   private rowNum: any;
-  protected certificateField: any;
-  protected privatekeyField: any;
-  protected CSRField: any;
   protected entityForm: EntityFormComponent;
   protected dialogRef: any;
   private getRow = new Subscription();

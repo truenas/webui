@@ -77,7 +77,7 @@ export class SnapshotFormComponent implements FormConfiguration, OnDestroy {
           value: '2 WEEKS',
           required: true,
           inputUnit: {
-            type: UnitType.duration,
+            type: UnitType.Duration,
             decimal: false,
             default: 'HOUR',
             allowUnits: ['HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR'],

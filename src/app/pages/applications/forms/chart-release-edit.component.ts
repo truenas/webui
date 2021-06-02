@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { latestVersion } from 'app/constants/catalog.constants';
 import { Option } from 'app/interfaces/option.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Subscription } from 'rxjs';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
@@ -195,7 +196,7 @@ export class ChartReleaseEditComponent implements FormConfiguration {
               listFields: [],
               relation: [
                 {
-                  action: 'SHOW',
+                  action: RelationAction.Show,
                   when: [{
                     name: 'ipam',
                     value: 'static',
@@ -223,7 +224,7 @@ export class ChartReleaseEditComponent implements FormConfiguration {
               listFields: [],
               relation: [
                 {
-                  action: 'SHOW',
+                  action: RelationAction.Show,
                   when: [{
                     name: 'ipam',
                     value: 'static',
