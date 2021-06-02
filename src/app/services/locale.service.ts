@@ -7,6 +7,7 @@ import { SystemGeneralService } from '.';
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core.service';
 import { T } from 'app/translate-marker';
+import { format, utcToZonedTime } from 'date-fns-tz';
 
 @Injectable()
 export class LocaleService {
@@ -48,29 +49,32 @@ export class LocaleService {
   }
 
   getDateFormatOptions(tz?: string): Option[] {
+    let date = new Date();
     if (tz) {
-      moment.tz.setDefault(tz);
+      date = utcToZonedTime(new Date(), tz);
     }
+
     return [
-      { label: moment().format('YYYY-MM-DD'), value: 'YYYY-MM-DD' },
-      { label: moment().format('MMMM D, YYYY'), value: 'MMMM D, YYYY' },
-      { label: moment().format('D MMMM, YYYY'), value: 'D MMMM, YYYY' },
-      { label: moment().format('MMM D, YYYY'), value: 'MMM D, YYYY' },
-      { label: moment().format('D MMM YYYY'), value: 'D MMM YYYY' },
-      { label: moment().format('MM/DD/YYYY'), value: 'MM/DD/YYYY' },
-      { label: moment().format('DD/MM/YYYY'), value: 'DD/MM/YYYY' },
-      { label: moment().format('DD.MM.YYYY'), value: 'DD.MM.YYYY' },
+      { label: format(date, 'yyyy-MM-dd'), value: 'YYYY-MM-DD' },
+      { label: format(date, 'MMMM d, yyyy'), value: 'MMMM D, YYYY' },
+      { label: format(date, 'd MMMM, yyyy'), value: 'D MMMM, YYYY' },
+      { label: format(date, 'MMM d, yyyy'), value: 'MMM D, YYYY' },
+      { label: format(date, 'd MMM yyyy'), value: 'D MMM YYYY' },
+      { label: format(date, 'MM/dd/yyyy'), value: 'MM/DD/YYYY' },
+      { label: format(date, 'dd/MM/yyyy'), value: 'DD/MM/YYYY' },
+      { label: format(date, 'dd.MM.yyyy'), value: 'DD.MM.YYYY' },
     ];
   }
 
   getTimeFormatOptions(tz?: string): Option[] {
+    let date = new Date();
     if (tz) {
-      moment.tz.setDefault(tz);
+      date = utcToZonedTime(new Date(), tz);
     }
     return [
-      { label: `${moment().format('HH:mm:ss')} ${this.t24}`, value: 'HH:mm:ss' },
-      { label: moment().format('hh:mm:ss a'), value: 'hh:mm:ss a' },
-      { label: moment().format('hh:mm:ss A'), value: 'hh:mm:ss A' },
+      { label: `${format(date, 'HH:mm:ss')} ${this.t24}`, value: 'HH:mm:ss' },
+      { label: format(date, "hh:mm:ss aaaaa'm'"), value: 'hh:mm:ss a' },
+      { label: format(date, 'hh:mm:ss aa'), value: 'hh:mm:ss A' },
     ];
   }
 
