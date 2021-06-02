@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, OnDestroy, Type,
+  Component, OnInit, OnDestroy,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';

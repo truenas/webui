@@ -1,5 +1,5 @@
 import {
-  Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, SimpleChanges, ViewChild, ViewEncapsulation,
+  Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -164,7 +164,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
       this.fitAddon.fit();
       this.xterm._initialized = true;
     }, (e) => {
-      console.log('Font is not available', e);
+      console.error('Font is not available', e);
     });
   }
 

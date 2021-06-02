@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { VmBootloader, VmDeviceType, VmTime } from 'app/enums/vm.enum';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { ProductType } from '../../../enums/product-type.enum';
 import {
   RestService, WebSocketService, NetworkService, StorageService, SystemGeneralService,
@@ -23,11 +24,11 @@ import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
 import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
 import add_edit_helptext from '../../../helptext/vm/devices/device-add-edit';
-import { catchError, filter, map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import globalHelptext from '../../../helptext/global-helptext';
-import { combineLatest, forkJoin, Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { MatStepper } from '@angular/material/stepper';
@@ -44,7 +45,6 @@ export class VMWizardComponent {
   isLinear = true;
   firstFormGroup: FormGroup;
   protected dialogRef: any;
-  objectKeys = Object.keys;
   summaryTitle = T('VM Summary');
   namesInUse: string[] = [];
   statSize: any;
@@ -333,7 +333,7 @@ export class VMWizardComponent {
           ],
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'datastore',
                 value: undefined,
@@ -443,11 +443,9 @@ export class VMWizardComponent {
     },
   ];
 
-  protected releaseField: any;
-  protected currentServerVersion: any;
-  private nicAttach: any;
-  private nicType: any;
-  private bootloader: any;
+  private nicAttach: FieldConfig;
+  private nicType: FieldConfig;
+  private bootloader: FieldConfig;
 
   constructor(protected rest: RestService, protected ws: WebSocketService,
     public vmService: VmService, public networkService: NetworkService,
@@ -1097,11 +1095,19 @@ export class VMWizardComponent {
               this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).subscribe(
                 () => {
                   this.loader.close();
-                  this.dialogService.errorReport(T('Error creating VM.'), T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted);
+                  this.dialogService.errorReport(
+                    T('Error creating VM.'),
+                    T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason,
+                    error.trace.formatted,
+                  );
                 },
                 (err) => {
                   this.loader.close();
-                  this.dialogService.errorReport(T('Error creating VM.'), T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted);
+                  this.dialogService.errorReport(
+                    T('Error creating VM.'),
+                    T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason,
+                    error.trace.formatted,
+                  );
                   new EntityUtils().handleWSError(this, err, this.dialogService);
                 },
               );
@@ -1152,11 +1158,17 @@ export class VMWizardComponent {
               this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).subscribe(
                 () => {
                   this.loader.close();
-                  this.dialogService.errorReport(T('Error creating VM.'), T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted);
+                  this.dialogService.errorReport(
+                    T('Error creating VM.'),
+                    T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted,
+                  );
                 },
                 (err) => {
                   this.loader.close();
-                  this.dialogService.errorReport(T('Error creating VM.'), T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted);
+                  this.dialogService.errorReport(
+                    T('Error creating VM.'),
+                    T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted,
+                  );
                   new EntityUtils().handleWSError(this, err, this.dialogService);
                 },
               );

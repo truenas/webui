@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Observable } from 'rxjs';
 import helptext from '../../../../helptext/services/components/service-ftp';
 import global_helptext from '../../../../helptext/global-helptext';
@@ -125,7 +126,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
           required: true,
           relation: [
             {
-              action: 'HIDE',
+              action: RelationAction.Hide,
               when: [
                 {
                   name: 'onlyanonymous',
@@ -421,7 +422,13 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     this.rootlogin_fg = entityEdit.formGroup.controls['rootlogin'];
     this.rootloginSubscription = this.rootlogin_fg.valueChanges.subscribe((res: any) => {
       if (res && !this.warned && !this.rootlogin) {
-        this.dialog.confirm(helptext.rootlogin_dialog_title, helptext.rootlogin_dialog_message, false, T('Continue'), false, '', null, {}, null, false, T('Cancel'), true).subscribe((confirm: any) => {
+        this.dialog.confirm({
+          title: helptext.rootlogin_dialog_title,
+          message: helptext.rootlogin_dialog_message,
+          buttonMsg: T('Continue'),
+          cancelMsg: T('Cancel'),
+          disableClose: true,
+        }).subscribe((confirm) => {
           if (!confirm) {
             this.rootlogin_fg.setValue(false);
           } else {

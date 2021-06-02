@@ -122,7 +122,7 @@ def run_testing():
         os.environ["nas_password"] = configs['NAS_CONFIG']['password']
         os.environ["nas_version"] = configs['NAS_CONFIG']['version']
         os.environ['test_suite'] = test_suite
-    if 'ip' in globals() and 'password' in globals() and test_suite == 'scale-validation':
+    elif 'ip' in globals() and 'password' in globals() and test_suite == 'scale-validation':
         os.environ["nas_ip"] = ip
         os.environ["nas_password"] = password
         os.environ["nas_version"] = version

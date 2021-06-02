@@ -2,11 +2,8 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { latestVersion } from 'app/constants/catalog.constants';
 import { Option } from 'app/interfaces/option.interface';
-import * as _ from 'lodash';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Subscription } from 'rxjs';
-import {
-  FormBuilder, FormControl, FormGroup, FormArray, Validators,
-} from '@angular/forms';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from '../../../services/modal.service';
@@ -15,7 +12,6 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { ApplicationsService } from '../applications.service';
 import helptext from '../../../helptext/apps/apps';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FormListComponent } from '../../common/entity/entity-form/components/form-list/form-list.component';
 import { EntityUtils } from '../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
@@ -200,7 +196,7 @@ export class ChartReleaseEditComponent implements FormConfiguration {
               listFields: [],
               relation: [
                 {
-                  action: 'SHOW',
+                  action: RelationAction.Show,
                   when: [{
                     name: 'ipam',
                     value: 'static',
@@ -228,7 +224,7 @@ export class ChartReleaseEditComponent implements FormConfiguration {
               listFields: [],
               relation: [
                 {
-                  action: 'SHOW',
+                  action: RelationAction.Show,
                   when: [{
                     name: 'ipam',
                     value: 'static',

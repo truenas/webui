@@ -196,7 +196,10 @@ export class TargetFormComponent implements FormConfiguration {
         (initiatorsRes) => {
           initiatorGroupField.options.push({ label: 'None', value: null });
           for (let i = 0; i < initiatorsRes.length; i++) {
-            const optionLabel = initiatorsRes[i].id + ' (' + (initiatorsRes[i].initiators.length === 0 ? 'ALL Initiators Allowed' : initiatorsRes[i].initiators.toString()) + ')';
+            const optionLabel = initiatorsRes[i].id
+              + ' ('
+              + (initiatorsRes[i].initiators.length === 0 ? 'ALL Initiators Allowed' : initiatorsRes[i].initiators.toString())
+              + ')';
             initiatorGroupField.options.push({ label: optionLabel, value: initiatorsRes[i].id });
           }
           resolve(true);

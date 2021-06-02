@@ -1,26 +1,22 @@
 import { Injectable } from '@angular/core';
-import { FormControl, FormGroup, FormArray } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 
 import { FieldConfig } from '../models/field-config.interface';
-import {
-  ACTION_DISABLE,
-  ACTION_ENABLE,
-  ACTION_SHOW,
-  ACTION_HIDE,
-  CONNECTION_AND,
-  CONNECTION_OR,
-  FieldRelation,
-  RelationGroup,
-} from '../models/field-relation.interface';
-import * as _ from 'lodash';
+import { FieldRelation, RelationGroup } from '../models/field-relation.interface';
 
 @Injectable()
 export class FieldRelationService {
   findActivationRelation(relGroups: RelationGroup[]): RelationGroup {
-    return relGroups.find((rel) => rel.action === ACTION_DISABLE
-                                 || rel.action === ACTION_ENABLE
-                                 || rel.action === ACTION_SHOW
-                                 || rel.action === ACTION_HIDE);
+    return relGroups.find((rel) => {
+      return [
+        RelationAction.Disable,
+        RelationAction.Enable,
+        RelationAction.Show,
+        RelationAction.Hide,
+      ].includes(rel.action);
+    });
   }
 
   getRelatedFormControls(model: FieldConfig,
@@ -72,32 +68,28 @@ export class FieldRelationService {
           controlValue = control.value;
         }
 
-        let disable_action = ACTION_DISABLE;
-        let enable_action = ACTION_ENABLE;
+        let disable_action = RelationAction.Disable;
+        let enable_action = RelationAction.Enable;
         if (!isDisable) {
-          disable_action = ACTION_HIDE;
-          enable_action = ACTION_SHOW;
+          disable_action = RelationAction.Hide;
+          enable_action = RelationAction.Show;
         }
 
         if (hasControlValue && relGroup.action === disable_action) {
-          if (index > 0 && relGroup.connective === CONNECTION_AND
-                && !toBeDisabled) {
+          if (index > 0 && relGroup.connective === RelationConnection.And && !toBeDisabled) {
             return false;
           }
-          if (index > 0 && relGroup.connective === CONNECTION_OR
-                && toBeDisabled) {
+          if (index > 0 && relGroup.connective === RelationConnection.Or && toBeDisabled) {
             return true;
           }
           return this.checkValueConditionIsTrue(rel.value, controlValue, rel.operator) || this.checkStatusConditionIsTrue(rel, control);
         }
 
         if (hasControlValue && relGroup.action === enable_action) {
-          if (index > 0 && relGroup.connective === CONNECTION_AND
-                && toBeDisabled) {
+          if (index > 0 && relGroup.connective === RelationConnection.And && toBeDisabled) {
             return true;
           }
-          if (index > 0 && relGroup.connective === CONNECTION_OR
-                && !toBeDisabled) {
+          if (index > 0 && relGroup.connective === RelationConnection.Or && !toBeDisabled) {
             return false;
           }
           return !(this.checkValueConditionIsTrue(rel.value, controlValue, rel.operator) || this.checkStatusConditionIsTrue(rel, control));

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { CoreEvent } from 'app/interfaces/events';
-import * as domHelper from '../../helpers/dom.helper';
 import { RestService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/core/services/core.service';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
@@ -330,15 +329,15 @@ export class ThemeService {
     this.core.emit({ name: 'ThemeChanged', data: this.findTheme(this.activeTheme), sender: this });
 
     if (evt.data.allowPwToggle) {
-      (<any>document).documentElement.style.setProperty('--toggle_pw_display_prop', 'inline');
+      document.documentElement.style.setProperty('--toggle_pw_display_prop', 'inline');
     } else if (!evt.data.allowPwToggle) {
-      (<any>document).documentElement.style.setProperty('--toggle_pw_display_prop', 'none');
+      document.documentElement.style.setProperty('--toggle_pw_display_prop', 'none');
     }
 
     if (evt.data.enableWarning) {
-      (<any>document).documentElement.style.setProperty('--enableWarning', 'inline');
+      document.documentElement.style.setProperty('--enableWarning', 'inline');
     } else if (!evt.data.allowPwToggle) {
-      (<any>document).documentElement.style.setProperty('--enableWarning', 'none');
+      document.documentElement.style.setProperty('--enableWarning', 'none');
     }
   }
 
@@ -389,7 +388,9 @@ export class ThemeService {
     const keys = Object.keys(theme) as (keyof Theme)[];
 
     // Filter out deprecated properties and meta properties
-    const palette = keys.filter((v) => v != 'label' && v != 'logoPath' && v != 'logoTextPath' && v != 'favorite' && v != 'labelSwatch' && v != 'description' && v != 'name');
+    const palette = keys.filter((v) => {
+      return !['label', 'logoPath', 'logoTextPath', 'favorite', 'labelSwatch', 'description', 'name'].includes(v);
+    });
 
     palette.forEach((color) => {
       const swatch = theme[color] as any;
@@ -397,20 +398,20 @@ export class ThemeService {
       // Generate aux. text styles
       if (this.freenasThemes[0].accentColors.indexOf(color) !== -1) {
         const txtColor = this.utils.textContrast(swatch, theme['bg2']);
-        (<any>document).documentElement.style.setProperty('--' + color + '-txt', txtColor);
+        document.documentElement.style.setProperty('--' + color + '-txt', txtColor);
       }
 
-      (<any>document).documentElement.style.setProperty('--' + color, swatch);
+      document.documentElement.style.setProperty('--' + color, swatch);
     });
 
     // Add Black White and Grey Variables
-    (<any>document).documentElement.style.setProperty('--black', '#000000');
-    (<any>document).documentElement.style.setProperty('--white', '#ffffff');
-    (<any>document).documentElement.style.setProperty('--grey', '#989898');
+    document.documentElement.style.setProperty('--black', '#000000');
+    document.documentElement.style.setProperty('--white', '#ffffff');
+    document.documentElement.style.setProperty('--grey', '#989898');
 
     // Set Material palette colors
-    (<any>document).documentElement.style.setProperty('--primary', theme['primary']);
-    (<any>document).documentElement.style.setProperty('--accent', theme['accent']);
+    document.documentElement.style.setProperty('--primary', theme['primary']);
+    document.documentElement.style.setProperty('--accent', theme['accent']);
 
     // Set Material aux. text styles
     const primaryColor = this.utils.colorFromMeta(theme['primary']); // eg. blue
@@ -418,14 +419,14 @@ export class ThemeService {
     const primaryTextColor = this.utils.textContrast((theme as any)[primaryColor], theme['bg2']);
     const accentTextColor = this.utils.textContrast((theme as any)[accentColor], theme['bg2']);
 
-    (<any>document).documentElement.style.setProperty('--primary-txt', primaryTextColor);
-    (<any>document).documentElement.style.setProperty('--accent-txt', accentTextColor);
-    (<any>document).documentElement.style.setProperty('--highlight', accentTextColor);
+    document.documentElement.style.setProperty('--primary-txt', primaryTextColor);
+    document.documentElement.style.setProperty('--accent-txt', accentTextColor);
+    document.documentElement.style.setProperty('--highlight', accentTextColor);
 
     // Set line colors
     const isDark: boolean = this.darkTest(theme.bg2);
     const lineColor = isDark ? 'var(--dark-theme-lines)' : 'var(--light-theme-lines)';
-    (<any>document).documentElement.style.setProperty('--lines', lineColor);
+    document.documentElement.style.setProperty('--lines', lineColor);
 
     // Set multiple background color contrast options
     const contrastSrc = theme['bg2'];
@@ -434,18 +435,18 @@ export class ThemeService {
     const contrastLighter = this.utils.lighten(contrastSrc, 5);
     const contrastLightest = this.utils.lighten(contrastSrc, 10);
 
-    (<any>document).documentElement.style.setProperty('--contrast-darker', contrastDarker);
-    (<any>document).documentElement.style.setProperty('--contrast-darkest', contrastDarkest);
-    (<any>document).documentElement.style.setProperty('--contrast-lighter', contrastLighter);
-    (<any>document).documentElement.style.setProperty('--contrast-lightest', contrastLightest);
+    document.documentElement.style.setProperty('--contrast-darker', contrastDarker);
+    document.documentElement.style.setProperty('--contrast-darkest', contrastDarkest);
+    document.documentElement.style.setProperty('--contrast-lighter', contrastLighter);
+    document.documentElement.style.setProperty('--contrast-lightest', contrastLightest);
 
     let topbarTextColor;
     if (!theme['topbar-txt'] && theme.topbar) {
       topbarTextColor = this.utils.textContrast(theme.topbar, theme['bg2']);
-      (<any>document).documentElement.style.setProperty('--topbar-txt', topbarTextColor);
+      document.documentElement.style.setProperty('--topbar-txt', topbarTextColor);
     } else if (!theme['topbar-txt'] && !theme.topbar) {
       topbarTextColor = this.utils.textContrast((theme as any)[primaryColor], theme['bg2']);
-      (<any>document).documentElement.style.setProperty('--topbar-txt', topbarTextColor);
+      document.documentElement.style.setProperty('--topbar-txt', topbarTextColor);
     }
 
     // Logo light/dark

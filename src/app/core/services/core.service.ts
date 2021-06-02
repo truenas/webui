@@ -47,7 +47,7 @@ export class CoreService {
     this.debug_filter_eventName = '';
     /// //////////////////////////
     if (this.debug) {
-      console.log('*** New Instance of Core Service ***');
+      console.info('*** New Instance of Core Service ***');
     }
     this.coreEvents = new Subject();
   }
@@ -62,8 +62,8 @@ export class CoreService {
 
   unregister(reg: Registration): void {
     if (this.debug) {
-      console.log('CoreService: Unregistering the following ObserverClass...');
-      console.log(reg.observerClass);
+      console.info('CoreService: Unregistering the following ObserverClass...');
+      console.info(reg.observerClass);
     }
     const clone = [];// New Dispatch Table
     if (!reg.eventName) {
@@ -87,31 +87,31 @@ export class CoreService {
     }
     this.dispatchTable = clone;
     if (this.debug && this.debug_show_dispatch_table) {
-      console.log('UNREGISTER: DISPATCH = ');
+      console.info('UNREGISTER: DISPATCH = ');
       const tbl = this.debug_filter_eventName ? this.dispatchTable.filter((r) => r.eventName == this.debug_filter_eventName) : this.dispatchTable;
-      console.log(tbl);
-      console.log(this.dispatchTable.length + ' Observers in table.');
+      console.info(tbl);
+      console.info(this.dispatchTable.length + ' Observers in table.');
     }
   }
 
   emit(evt: CoreEvent): this {
     // DEBUG MESSAGES
     if (this.debug && this.debug_filter_eventName.length > 0 && this.debug_filter_eventName == evt.name) {
-      console.log('*******************************************************');
-      console.log('CORESERVICE: Emitting ' + evt.name);
-      console.log(this.dispatchTable.filter((r) => r.eventName == evt.name));
+      console.info('*******************************************************');
+      console.info('CORESERVICE: Emitting ' + evt.name);
+      console.info(this.dispatchTable.filter((r) => r.eventName == evt.name));
     } else if (this.debug && this.debug_filter_eventName.length == 0) {
-      console.log('*******************************************************');
-      console.log('CORESERVICE: Emitting ' + evt.name);
-      console.log(evt);
+      console.info('*******************************************************');
+      console.info('CORESERVICE: Emitting ' + evt.name);
+      console.info(evt);
     }
 
     if (this.debug && this.debug_show_emit_logs) {
       if (this.debug_show_dispatch_table) {
-        console.log('CORESERVICE: dispatchTable...');
-        console.log(this.dispatchTable.length + ' Observers in table.');
+        console.info('CORESERVICE: dispatchTable...');
+        console.info(this.dispatchTable.length + ' Observers in table.');
         const tbl = this.debug_filter_eventName ? this.dispatchTable.filter((r) => r.eventName == this.debug_filter_eventName) : this.dispatchTable;
-        console.log(tbl);
+        console.info(tbl);
       }
     }
 
@@ -136,34 +136,34 @@ export class CoreService {
       }
 
       if (this.debug && this.debug_show_subscription_type) {
-        console.log(i + ':CoreService: Subscription type = ' + subscriptionType);
+        console.info(i + ':CoreService: Subscription type = ' + subscriptionType);
       }
 
       if (reg.eventName == evt.name && reg.sender == evt.sender && subscriptionType == 'NameSender') {
         if (this.debug && this.debug_show_emit_logs) {
-          console.log('>>>>>>>>');
-          console.log('Matched name and sender');
-          console.log(reg.observerClass);
-          console.log(evt);
-          console.log('<<<<<<<<');
+          console.info('>>>>>>>>');
+          console.info('Matched name and sender');
+          console.info(reg.observerClass);
+          console.info(evt);
+          console.info('<<<<<<<<');
         }
         reg.observable.next(evt);
       } else if (evt.name && reg.eventName == evt.name && subscriptionType == 'Name') {
         if (this.debug && this.debug_show_emit_logs) {
-          console.log('>>>>>>>>');
-          console.log('Matched name only');
-          console.log(reg.observerClass);
-          console.log(evt);
-          console.log('<<<<<<<<');
+          console.info('>>>>>>>>');
+          console.info('Matched name only');
+          console.info(reg.observerClass);
+          console.info(evt);
+          console.info('<<<<<<<<');
         }
         reg.observable.next(evt);
       } else if (evt.sender && reg.sender == evt.sender && subscriptionType == 'Sender') {
         if (this.debug && this.debug_show_emit_logs) {
-          console.log('>>>>>>>>');
-          console.log('Matched sender only');
-          console.log(reg.observerClass);
-          console.log(evt);
-          console.log('<<<<<<<<');
+          console.info('>>>>>>>>');
+          console.info('Matched sender only');
+          console.info(reg.observerClass);
+          console.info(evt);
+          console.info('<<<<<<<<');
         }
         reg.observable.next(evt);
       } else {
@@ -171,7 +171,7 @@ export class CoreService {
       }
     }
     if (this.debug && this.debug_show_emit_logs) {
-      console.log('*******************************************************');
+      console.info('*******************************************************');
     }
     return this;
   }

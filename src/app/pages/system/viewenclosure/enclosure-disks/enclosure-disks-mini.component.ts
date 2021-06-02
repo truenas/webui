@@ -1,29 +1,14 @@
 import {
-  Component, Input, OnInit, AfterContentInit, OnChanges, SimpleChanges, ViewChild, ElementRef, NgZone, OnDestroy, ChangeDetectorRef,
+  Component, ViewChild, ElementRef, ChangeDetectorRef,
 } from '@angular/core';
-import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
-import { MaterialModule } from 'app/appMaterial.module';
+import { MediaObserver } from '@angular/flex-layout';
 import { CoreService } from 'app/core/services/core.service';
-import {
-  Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils, Point,
-} from 'pixi.js';
-import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
-import { DriveTray } from 'app/core/classes/hardware/drivetray';
+import { Point } from 'pixi.js';
 import { MINI } from 'app/core/classes/hardware/mini';
 import { MINIX } from 'app/core/classes/hardware/mini-x';
-import { MINIXL } from 'app/core/classes/hardware/mini-xl';
 import { MINIXLPLUS } from 'app/core/classes/hardware/mini-xl-plus';
-import { DiskComponent } from './components/disk.component';
-import { TabContentComponent } from './components/tab-content/tab-content.component';
-import { SystemProfiler } from 'app/core/classes/system-profiler';
-import {
-  tween, easing, styler, value, keyframes,
-} from 'popmotion';
-import { Subject } from 'rxjs';
-import { ExampleData } from './example-data';
 import { DomSanitizer } from '@angular/platform-browser';
-import { EnclosureDisksComponent, DiskFailure } from './enclosure-disks.component';
-import { Temperature } from 'app/core/services/disk-temperature.service';
+import { EnclosureDisksComponent } from './enclosure-disks.component';
 import { DialogService } from 'app/services/dialog.service';
 
 @Component({

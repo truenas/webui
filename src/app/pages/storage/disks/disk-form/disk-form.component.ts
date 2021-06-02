@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
-import * as _ from 'lodash';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 
 import { RestService, WebSocketService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -107,7 +107,7 @@ export class DiskFormComponent implements FormConfiguration {
           tooltip: helptext.force_hdd_standby.tooltip,
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [
                 {
                   name: 'hddstandby',
@@ -154,7 +154,7 @@ export class DiskFormComponent implements FormConfiguration {
           togglePw: true,
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [
                 {
                   name: 'clear_pw',

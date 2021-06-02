@@ -29,21 +29,21 @@ export class VdevComponent implements OnInit {
   size: number;
   rawSize = 0;
   firstdisksize: number;
-  error: any;
+  error: string;
   diskSizeErrorMsg = helptext.vdev_diskSizeErrorMsg;
   vdev_type_tooltip = helptext.vdev_type_tooltip;
   vdev_size_error = helptext.vdev_size_error;
   vdev_size_error_2 = helptext.vdev_size_error_2;
-  vdev_disks_error: any;
-  vdev_disks_size_error: any;
+  vdev_disks_error: boolean;
+  vdev_disks_size_error: boolean;
   vdev_type_disabled = false;
   private ten_mib = 10 * 1024 * 1024;
   protected mindisks: any = {
     stripe: 1, mirror: 2, raidz: 3, raidz2: 4, raidz3: 5,
   };
 
-  startingHeight: any;
-  expandedRows: any;
+  startingHeight: number;
+  expandedRows: number;
 
   constructor(public elementRef: ElementRef,
     public translate: TranslateService,
@@ -204,7 +204,6 @@ export class VdevComponent implements OnInit {
   onTypeChange(): void {
     this.estimateSize();
     this.manager.getCurrentLayout();
-    // console.log(e, this.group);
   }
 
   getRawSize(): number {
@@ -225,13 +224,12 @@ export class VdevComponent implements OnInit {
   }
 
   toggleExpandRow(row: any): void {
-    // console.log('Toggled Expand Row!', row);
     if (!this.startingHeight) {
       this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
     }
     this.table.rowDetail.toggleExpandRow(row);
     setTimeout(() => {
-      this.expandedRows = (document.querySelectorAll('.datatable-row-detail').length);
+      this.expandedRows = document.querySelectorAll('.datatable-row-detail').length;
       const newHeight = (this.expandedRows * 100) + this.startingHeight;
       const heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);

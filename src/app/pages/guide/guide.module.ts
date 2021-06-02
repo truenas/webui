@@ -1,7 +1,5 @@
 // Common Modules
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../appMaterial.module';
 // Component Modules
 import { GuideComponent } from './guide.component';

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormArray, FormBuilder } from '@angular/forms';
-import * as _ from 'lodash';
+import { FormGroup } from '@angular/forms';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';

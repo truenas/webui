@@ -1,16 +1,10 @@
 import {
-  ApplicationRef, Input, Output, EventEmitter, Component, Injector, ViewContainerRef, OnChanges, OnDestroy,
+  ApplicationRef, Component, Injector, OnDestroy,
 } from '@angular/core';
-import { NgModel } from '@angular/forms';
 import { Router } from '@angular/router';
-import * as _ from 'lodash';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { RestService, WebSocketService } from '../../../services';
-import { ThemeService, Theme } from 'app/services/theme/theme.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { CoreService } from 'app/core/services/core.service';
-import { Subject } from 'rxjs';
 
 @Component({
   selector: 'ui-preferences',

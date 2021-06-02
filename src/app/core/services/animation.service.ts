@@ -1,48 +1,33 @@
-import { Injectable, ElementRef } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { CoreEvent } from 'app/interfaces/events';
 import { CoreService } from './core.service';
-import { Subject } from 'rxjs';
 import { DisplayObject } from '../classes/display-object';
 import {
   tween,
-  styler,
-  listen,
-  pointer,
   value,
-  decay,
   spring,
   physics,
   easing,
-  everyFrame,
   keyframes,
   timeline,
-  // velocity,
-  multicast,
-  action,
-  transform, ColdSubscription,
-  // transformMap,
-  // clamp
+  ColdSubscription,
 } from 'popmotion';
 
 export interface AnimationConfig {
   animationTarget: DisplayObject; // Support DisplayObject
   animation: string; // eg. fadeIn, slideOut etc
   finishState: string; // In || Out || Start || Stop
-  finishPosition?: any; // XY?  Haven't decided how this one will work yet
 }
 
 export interface GroupAnimationConfig {
   animationTargets: DisplayObject[]; // Supports DisplayObjects only
   animation: string; // eg. fadeIn, slideOut etc
   finishState: string; // In || Out || Start || Stop
-  finishPosition?: any; // XY?  Haven't decided how this one will work yet
   staggered?: boolean;
 }
 
 @Injectable()
 export class AnimationService {
-  private doc: any; // Document Object
-  private colorLoopActive: any;
   private activeAnimations: any = {};
 
   constructor(private core: CoreService) {
@@ -83,12 +68,10 @@ export class AnimationService {
       this.flipHorizontal(animationTarget, finishState);
     } else {
       console.warn('Could not determine orientation of element.');
-      console.log(target);
     }
   }
 
   private flipVertical(animationTarget: DisplayObject, finishState: string): void {
-    console.log('Flip Vertical Method');
     // Setup parent element so perspectives are properly set...
     animationTarget.rawTarget.parentNode.style['perspective'] = (animationTarget.target.get('width') * 10) + 'px';
     // animationTarget.rawTarget.parentNode.style["perspective"] = '1520px'; // Hard coded value from FreeNAS
@@ -114,13 +97,10 @@ export class AnimationService {
   }
 
   private flipHorizontal(animationTarget: DisplayObject, finishState: string): void {
-    console.log('Flip Horizontal Method');
     // Setup parent element so perspectives are properly set...
     animationTarget.rawTarget.parentNode.style['perspective'] = (animationTarget.target.get('height') * 80) + 'px';
     animationTarget.rawTarget.parentNode.style['perspective-origin'] = 'center';
     animationTarget.rawTarget.parentNode.style['transform-style'] = 'preserve-3d';
-
-    console.log('Initial Rotation = ' + animationTarget.target.get('rotateY'));
 
     let start: number;
     let finish: number;
@@ -141,7 +121,6 @@ export class AnimationService {
   }
 
   private fade(animationTarget: DisplayObject, finishState: string): void {
-    console.log('Fade' + finishState);
     let startOpacity; // animationTarget.target.get('opacity');
     let finishOpacity;
     if (finishState == 'In') {
@@ -160,7 +139,6 @@ export class AnimationService {
   }
 
   private scale(animationTarget: DisplayObject, finishState: string): void {
-    console.log('Scale' + finishState);
     let startScale;
     let finishScale;
     if (finishState == 'In') {
@@ -245,7 +223,6 @@ export class AnimationService {
   }
 
   private radiate(animationTarget: DisplayObject, finishState: string): void {
-    console.log('Radiate method');
     const startShadow = animationTarget.element.get('box-shadow'); // Styler
 
     if (finishState == 'Stop') {
@@ -284,7 +261,7 @@ export class AnimationService {
   }
 
   private scrollTo(destination: string): void {
-    const rawScrollTarget = (<any>document).querySelector(destination);
+    const rawScrollTarget = document.querySelector(destination);
 
     rawScrollTarget.scrollIntoView(); // native method works but without a smooth transition
   }

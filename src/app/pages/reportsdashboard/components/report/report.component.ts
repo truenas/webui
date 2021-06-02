@@ -1,31 +1,25 @@
 import {
   Component,
   AfterViewInit,
-  AfterContentInit,
   Input,
   ViewChild,
   OnDestroy,
   OnChanges,
-  ElementRef,
   SimpleChanges,
 } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreEvent } from 'app/interfaces/events';
 import { WebSocketService, SystemGeneralService } from 'app/services/';
 import { Theme } from 'app/services/theme/theme.service';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { ReportsService } from '../../reports.service';
-import { MaterialModule } from 'app/appMaterial.module';
 import { Subject, Subscription } from 'rxjs';
 import { NgForm } from '@angular/forms';
-import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { LineChartComponent } from '../lineChart/lineChart.component';
 
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
 
 import * as moment from 'moment';
-import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { TranslateService } from '@ngx-translate/core';
 import { LocaleService } from 'app/services/locale.service';

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { Observable } from 'rxjs';
 
 import { WebSocketService } from '../../../services';
@@ -246,7 +245,15 @@ export class JailFormService {
         for (let i = 0; i < value[propName].length; i++) {
           const subAddr = value[propName][i];
           if (subAddr[propName] != '' && subAddr[propName] != undefined) {
-            multi_ipaddr.push(this.getFullIP(ipType, subAddr[ipType + '_interface'], subAddr[propName], subAddr[ipType + (ipType == 'ip4' ? '_netmask' : '_prefix')], ip4_interfaceField, ip6_interfaceField));
+            const ip = this.getFullIP(
+              ipType,
+              subAddr[ipType + '_interface'],
+              subAddr[propName],
+              subAddr[ipType + (ipType == 'ip4' ? '_netmask' : '_prefix')],
+              ip4_interfaceField,
+              ip6_interfaceField,
+            );
+            multi_ipaddr.push(ip);
           }
         }
         value[propName] = multi_ipaddr.join(',');

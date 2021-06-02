@@ -3,7 +3,6 @@ import { Validators } from '@angular/forms';
 import {
   regexValidator,
 } from '../../pages/common/entity/entity-form/validators/regex-validation';
-import { UserService } from 'app/services';
 
 export default {
 

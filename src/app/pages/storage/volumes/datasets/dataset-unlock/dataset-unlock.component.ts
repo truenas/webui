@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import * as _ from 'lodash';
 
 import { WebSocketService, StorageService, DialogService } from '../../../../../services';
@@ -13,7 +14,6 @@ import {
 } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { T } from '../../../../../translate-marker';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-unlock';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
@@ -81,7 +81,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
           hideButton: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'key_file',
                 value: true,

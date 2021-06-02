@@ -1,25 +1,21 @@
 import {
   Component, AfterViewInit, Input, ViewChild, OnDestroy, ElementRef,
 } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
-import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
-import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { CoreEvent } from 'app/interfaces/events';
 import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/services/theme/theme.service';
 import { Subject } from 'rxjs';
-import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
+import { MediaObserver } from '@angular/flex-layout';
 import { Chart, ChartDataSets, InteractionMode } from 'chart.js';
 
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
 import * as d3 from 'd3';
 
-import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 
 import { ViewChartGaugeComponent } from 'app/core/components/viewchartgauge/viewchartgauge.component';
@@ -73,7 +69,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   legendIndex: number;
 
   labels: string[] = [];
-  protected currentTheme: any;
+  protected currentTheme: Theme;
   private utils: ThemeUtils;
 
   constructor(
@@ -364,7 +360,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         color = this.stripVar(this.currentTheme[cssVar]);
       }
 
-      const bgRGB = this.utils.convertToRGB(this.currentTheme[color]).rgb;
+      const bgRGB = this.utils.convertToRGB((this.currentTheme as any)[color]).rgb;
 
       ds.backgroundColor = this.rgbToString(bgRGB as any, 0.85);
       ds.borderColor = this.rgbToString(bgRGB as any);

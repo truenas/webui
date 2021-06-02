@@ -11,13 +11,11 @@ import { CoreEvent } from 'app/interfaces/events';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { Subscription } from 'rxjs';
 import { ProductType } from '../../../../enums/product-type.enum';
-import * as domHelper from '../../../../helpers/dom.helper';
 import { RestService, WebSocketService, SystemGeneralService } from '../../../../services';
 import { LanguageService } from '../../../../services/language.service';
 import { Theme, ThemeService } from '../../../../services/theme/theme.service';
 import { ModalService } from '../../../../services/modal.service';
 import { ConsolePanelModalDialog } from '../../dialog/consolepanel/consolepanel-dialog.component';
-import globalHelptext from '../../../../helptext/global-helptext';
 import { LocaleService } from 'app/services/locale.service';
 
 @Component({
@@ -36,7 +34,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isSidenotOpen = false;
   consoleMsg = '';
   hostname: string;
-  consoleMSgList: any[] = [];
+  consoleMSgList: string[] = [];
   product_type = window.localStorage['product_type'] as ProductType;
   logoPath = 'assets/images/light-logo.svg';
   logoTextPath = 'assets/images/light-logo-text.svg';

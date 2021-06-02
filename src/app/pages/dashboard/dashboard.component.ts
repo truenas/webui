@@ -2,7 +2,6 @@ import {
   Component, OnInit, AfterViewInit, OnDestroy, ElementRef,
 } from '@angular/core';
 import { CoreService } from 'app/core/services/core.service';
-import { SystemProfiler } from 'app/core/classes/system-profiler';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
@@ -10,28 +9,22 @@ import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import {
   NetworkInterface,
-  NetworkInterfaceAlias,
   NetworkInterfaceState,
 } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingRealtimeUpdate, VirtualMemoryUpdate } from 'app/interfaces/reporting.interface';
 
 import { Subject } from 'rxjs';
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component'; // POC
-import { WidgetControllerComponent } from 'app/core/components/widgets/widgetcontroller/widgetcontroller.component'; // POC
-import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
-import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
+import { MediaObserver } from '@angular/flex-layout';
 
-import { RestService, WebSocketService } from '../../services';
+import { WebSocketService } from '../../services';
 import { ModalService } from 'app/services/modal.service';
 import { DashConfigItem } from 'app/core/components/widgets/widgetcontroller/widgetcontroller.component';
 import { tween, styler } from 'popmotion';
 import { EntityFormConfigurationComponent } from 'app/pages/common/entity/entity-form/entity-form-configuration.component';
-import { EntityFormEmbeddedComponent } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { EntityEmptyComponent, EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { UUID } from 'angular2-uuid';
 import { T } from 'app/translate-marker';
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
@@ -146,13 +139,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.screenType = st;
 
     // Eliminate top level scrolling
-    const wrapper = (<any>document).querySelector('.fn-maincontent');
+    const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
     wrapper.style.overflow = this.screenType == 'Mobile' ? 'hidden' : 'auto';
     this.optimizeWidgetContainer();
   }
 
   optimizeWidgetContainer(): void {
-    const wrapper = (<any>document).querySelector('.rightside-content-hold');
+    const wrapper = document.querySelector<HTMLElement>('.rightside-content-hold');
 
     const withMargin = this.widgetWidth + 8;
     const max = Math.floor(wrapper.offsetWidth / withMargin);
@@ -236,7 +229,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.core.unregister({ observerClass: this });
 
     // Restore top level scrolling
-    const wrapper = (<any>document).querySelector('.fn-maincontent');
+    const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
     wrapper.style.overflow = 'auto';
   }
 

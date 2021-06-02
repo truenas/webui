@@ -1,10 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
-import * as _ from 'lodash';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../services/dialog.service';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { EntityUtils } from '../../common/entity/utils';
 import { WebSocketService } from '../../../services';
 import { T } from '../../../translate-marker';
@@ -12,6 +11,7 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_failover } from 'app/helptext/system/failover';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+
 @Component({
   selector: 'app-system-failover',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -111,7 +111,7 @@ export class FailoverComponent implements FormConfiguration, OnDestroy {
           value: true,
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'disabled',
                 value: false,
@@ -132,7 +132,6 @@ export class FailoverComponent implements FormConfiguration, OnDestroy {
     private dialog: DialogService,
     private ws: WebSocketService,
     protected matDialog: MatDialog,
-    private router: Router,
   ) {}
 
   afterInit(entityEdit: any): void {
@@ -145,7 +144,13 @@ export class FailoverComponent implements FormConfiguration, OnDestroy {
     this.master_fg = this.entityForm.formGroup.controls['master'];
     this.masterSubscription = this.master_fg.valueChanges.subscribe((res: any) => {
       if (!res && !this.warned) {
-        this.dialog.confirm(helptext_system_failover.master_dialog_title, helptext_system_failover.master_dialog_warning, false, T('Continue'), false, '', null, {}, null, false, T('Cancel'), true).subscribe((confirm: boolean) => {
+        this.dialog.confirm({
+          title: helptext_system_failover.master_dialog_title,
+          message: helptext_system_failover.master_dialog_warning,
+          buttonMsg: T('Continue'),
+          cancelMsg: T('Cancel'),
+          disableClose: true,
+        }).subscribe((confirm) => {
           if (!confirm) {
             this.master_fg.setValue(true);
           } else {

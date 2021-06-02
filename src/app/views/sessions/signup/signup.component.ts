@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatButton } from '@angular/material/button';
 
@@ -17,8 +17,6 @@ export class SignupComponent {
   };
 
   signup(): void {
-    console.log(this.signupData);
-
     this.submitButton.disabled = true;
     this.progressBar.mode = 'indeterminate';
   }

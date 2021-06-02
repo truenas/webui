@@ -1,28 +1,17 @@
-import { Location } from '@angular/common';
 import {
   Component,
-  ContentChildren,
   Input,
-  Output,
-  EventEmitter,
-  OnDestroy,
-  QueryList,
-  TemplateRef,
-  ViewChildren,
   OnChanges, SimpleChanges,
 } from '@angular/core';
 import { CoreEvent } from 'app/interfaces/events';
 
-import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { EntityTemplateDirective } from '../entity-template.directive';
-import { EntityUtils } from '../utils';
 
 import { Subject } from 'rxjs';
 import { Control } from './models/control.interface';
-import { ToolbarConfig, ControlConfig } from './models/control-config.interface';
+import { ToolbarConfig } from './models/control-config.interface';
 import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
 
 @Component({

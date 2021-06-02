@@ -1,13 +1,13 @@
 import {
-  Component, Input, OnInit, AfterContentInit, OnChanges, SimpleChanges, ViewChild, ElementRef, NgZone, OnDestroy, ChangeDetectorRef,
+  Component, Input, AfterContentInit, OnChanges, SimpleChanges, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef,
 } from '@angular/core';
-import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
-import { MaterialModule } from 'app/appMaterial.module';
+import { MediaObserver } from '@angular/flex-layout';
 import { CoreService } from 'app/core/services/core.service';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { CoreEvent } from 'app/interfaces/events';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import {
-  Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils,
+  Application, Container,
 } from 'pixi.js';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
@@ -21,19 +21,14 @@ import { E24 } from 'app/core/classes/hardware/e24';
 import { ES24 } from 'app/core/classes/hardware/es24';
 import { E60 } from 'app/core/classes/hardware/e60';
 import { ES60 } from 'app/core/classes/hardware/es60';
-import { DiskComponent } from './components/disk.component';
-import { TabContentComponent } from './components/tab-content/tab-content.component';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
-import { ErrorMessage } from 'app/core/classes/ix-interfaces';
 import {
-  tween, easing, styler, value, keyframes,
+  tween, styler, value, keyframes,
 } from 'popmotion';
 import { Subject } from 'rxjs';
-import { ExampleData } from './example-data';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Temperature } from 'app/core/services/disk-temperature.service';
 import { DialogService } from 'app/services/dialog.service';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { T } from '../../../../translate-marker';
 
 export enum EnclosureLocation {
@@ -289,8 +284,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.selectedEnclosure) {
       // Enabled subenclosure functionality
-      this.subenclosure = changes.selectedEnclosure.currentValue.enclosureKey == this.system.headIndex && this.system.rearIndex ? changes.selectedEnclosure.currentValue : undefined;
-      this.loadEnclosure(changes.selectedEnclosure.currentValue, EnclosureLocation.Front);
+      this.subenclosure = this.selectedEnclosure.enclosureKey == this.system.headIndex && this.system.rearIndex
+        ? this.selectedEnclosure
+        : undefined;
+      this.loadEnclosure(this.selectedEnclosure, EnclosureLocation.Front);
     }
   }
 
@@ -692,7 +689,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   optimizeChassisOpacity(extractedEnclosure?: ChassisView): void {
-    const css = (<any>document).documentElement.style.getPropertyValue('--contrast-darkest');
+    const css = document.documentElement.style.getPropertyValue('--contrast-darkest');
     const hsl = this.themeUtils.hslToArray(css);
 
     let opacity;
@@ -773,7 +770,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
 
     // Also check slot status
-    const elements: any[] = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex ? this.system.enclosures[disk.enclosure.number].elements : this.system.enclosures[disk.enclosure.number].elements[0].elements;
+    const elements: any[] = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex
+      ? this.system.enclosures[disk.enclosure.number].elements
+      : this.system.enclosures[disk.enclosure.number].elements[0].elements;
     const slot = elements.filter((s: any) => s.slot == disk.enclosure.slot)[0];
 
     if (!failed && slot.fault) {
@@ -812,7 +811,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
 
       // Also check slot status
-      const elements = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex ? this.system.enclosures[disk.enclosure.number].elements : this.system.enclosures[disk.enclosure.number].elements[0].elements;
+      const elements = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex
+        ? this.system.enclosures[disk.enclosure.number].elements
+        : this.system.enclosures[disk.enclosure.number].elements[0].elements;
       const slot = elements.filter((s: any) => s.slot == disk.enclosure.slot);
 
       if (!failed && slot.fault) {
@@ -1045,7 +1046,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           placeholder: 'Enclosure Label',
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'reset',
                 value: true,

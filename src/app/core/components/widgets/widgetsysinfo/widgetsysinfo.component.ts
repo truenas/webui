@@ -1,22 +1,14 @@
 import {
-  Component, OnInit, OnDestroy, AfterViewInit, Input, ViewChild, Renderer2, ElementRef,
+  Component, OnDestroy, AfterViewInit, Input,
 } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
-import { MaterialModule } from 'app/appMaterial.module';
-import { ChartData } from 'app/core/components/viewchart/viewchart.component';
-import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
-import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
-import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
 import { CoreEvent } from 'app/interfaces/events';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { WebSocketService, SystemGeneralService } from '../../../../services';
 import { LocaleService } from 'app/services/locale.service';
-import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
-import { TextLimiterDirective } from 'app/core/components/directives/text-limiter/text-limiter.directive';
+import { MediaObserver } from '@angular/flex-layout';
 
-import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { environment } from 'app/../environments/environment';
 
@@ -56,7 +48,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   buildDate: string;
   loader = false;
   product_type = window.localStorage['product_type'] as ProductType;
-  systemLogo: any;
   isFN = false;
   isUpdateRunning = false;
   is_ha: boolean;

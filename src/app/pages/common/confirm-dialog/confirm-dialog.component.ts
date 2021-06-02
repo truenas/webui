@@ -1,5 +1,5 @@
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Component, Output, EventEmitter } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../translate-marker';
@@ -27,7 +27,7 @@ export class ConfirmDialog {
   // TODO: Typo
   customSumbit: any;
 
-  @Output() switchSelectionEmitter = new EventEmitter<any>();
+  @Output() switchSelectionEmitter = new EventEmitter<boolean>();
 
   constructor(public dialogRef: MatDialogRef < ConfirmDialog >, protected translate: TranslateService) {
   }

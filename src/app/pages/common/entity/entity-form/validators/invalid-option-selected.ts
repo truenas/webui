@@ -1,6 +1,5 @@
 import { AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/forms';
 import { Option } from 'app/interfaces/option.interface';
-import { Observable } from 'rxjs';
 import * as _ from 'lodash';
 
 export function selectedOptionValidator(validOptions: Promise<Option[]>): AsyncValidatorFn {

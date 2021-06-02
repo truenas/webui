@@ -2,7 +2,6 @@ import {
   ApplicationRef,
   Component,
   Injector,
-  ViewChildren,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -12,7 +11,6 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 
 import { RestService, WebSocketService } from '../../../../services';
 
-import * as _ from 'lodash';
 import helptext from '../../../../helptext/storage/snapshots/snapshots';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({

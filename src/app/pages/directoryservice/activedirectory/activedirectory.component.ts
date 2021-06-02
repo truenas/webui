@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { ProductType } from '../../../enums/product-type.enum';
@@ -27,10 +26,9 @@ export class ActiveDirectoryComponent implements FormConfiguration {
   updateCall: 'activedirectory.update' = 'activedirectory.update';
   isEntity = false;
   isBasicMode = true;
-  protected idmapBacked: any = null;
-  protected kerberos_realm: any;
-  protected kerberos_principal: any;
-  protected nss_info: any;
+  protected kerberos_realm: FieldConfig;
+  protected kerberos_principal: FieldConfig;
+  protected nss_info: FieldConfig;
   adStatus = false;
   entityEdit: any;
   protected dialogRef: MatDialogRef<EntityJobComponent, void>;
@@ -282,7 +280,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     },
   ];
 
-  advanced_field: any[] = helptext.activedirectory_advanced_fields;
+  advanced_field = helptext.activedirectory_advanced_fields;
 
   isCustActionVisible(actionname: string): boolean {
     if (actionname === 'advanced_mode' && this.isBasicMode === false) {

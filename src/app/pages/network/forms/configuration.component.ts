@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import * as _ from 'lodash';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { Observable } from 'rxjs';
 import { ProductType } from '../../../enums/product-type.enum';
 
@@ -143,9 +144,23 @@ export class ConfigurationComponent implements FormConfiguration {
           name: 'outbound_network_activity',
           placeholder: '',
           options: [
-            { label: helptext.outbound_network_activity.allow.placeholder, value: 'DENY', tooltip: helptext.outbound_network_activity.allow.tooltip }, // deny type + empty list
-            { label: helptext.outbound_network_activity.deny.placeholder, value: 'ALLOW', tooltip: helptext.outbound_network_activity.deny.tooltip }, // allow type + empty list
-            { label: helptext.outbound_network_activity.specific.placeholder, value: 'SPECIFIC', tooltip: helptext.outbound_network_activity.specific.tooltip },
+            // deny type + empty list
+            {
+              label: helptext.outbound_network_activity.allow.placeholder,
+              value: 'DENY',
+              tooltip: helptext.outbound_network_activity.allow.tooltip,
+            },
+            // allow type + empty list
+            {
+              label: helptext.outbound_network_activity.deny.placeholder,
+              value: 'ALLOW',
+              tooltip: helptext.outbound_network_activity.deny.tooltip,
+            },
+            {
+              label: helptext.outbound_network_activity.specific.placeholder,
+              value: 'SPECIFIC',
+              tooltip: helptext.outbound_network_activity.specific.tooltip,
+            },
           ],
           value: 'DENY',
         },
@@ -157,8 +172,8 @@ export class ConfigurationComponent implements FormConfiguration {
           tooltip: helptext.outbound_network_value.tooltip,
           options: [],
           relation: [{
-            action: 'HIDE',
-            connective: 'OR',
+            action: RelationAction.Hide,
+            connective: RelationConnection.Or,
             when: [{
               name: 'outbound_network_activity',
               value: 'ALLOW',
@@ -193,7 +208,7 @@ export class ConfigurationComponent implements FormConfiguration {
           tooltip: helptext.netwait_ip_tooltip,
           relation: [
             {
-              action: 'HIDE',
+              action: RelationAction.Hide,
               when: [{
                 name: 'netwait_enabled',
                 value: false,

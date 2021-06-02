@@ -1,8 +1,6 @@
 import { ModalService } from 'app/services/modal.service';
 import { Component } from '@angular/core';
 
-import * as _ from 'lodash';
-
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { TaskService } from 'app/services';

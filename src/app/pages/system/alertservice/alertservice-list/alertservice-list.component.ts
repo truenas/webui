@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 
 import { WebSocketService, DialogService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -11,7 +12,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 export class AlertServiceListComponent {
   title = 'Alert Services';
   protected route_add_tooltip = 'Add Alert Service';
-  protected queryCall = 'alertservice.query';
+  protected queryCall: 'alertservice.query' = 'alertservice.query';
   protected wsDelete = 'alertservice.delete';
   protected route_success: string[] = ['system', 'alertservice'];
   protected route_add: string[] = ['system', 'alertservice', 'add'];
@@ -32,7 +33,18 @@ export class AlertServiceListComponent {
     },
   };
 
-  private providerList = ['AWSSNS', 'Mail', 'InfluxDB', 'Mattermost', 'OpsGenie', 'PagerDuty', 'Slack', 'SNMPTrap', 'Telegram', 'VictorOps'];
+  private providerList = [
+    AlertServiceType.AwsSns,
+    AlertServiceType.Mail,
+    AlertServiceType.InfluxDb,
+    AlertServiceType.Mattermost,
+    AlertServiceType.OpsGenie,
+    AlertServiceType.PagerDuty,
+    AlertServiceType.Slack,
+    AlertServiceType.SnmpTrap,
+    AlertServiceType.Telegram,
+    AlertServiceType.VictorOps,
+  ];
 
   constructor(
     protected router: Router,

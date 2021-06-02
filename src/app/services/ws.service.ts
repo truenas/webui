@@ -12,10 +12,9 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Injectable()
 export class WebSocketService {
-  private debug = true;
   private _authStatus: Subject<boolean>;
-  onCloseSubject: Subject<any>;
-  onOpenSubject: Subject<any>;
+  onCloseSubject: Subject<boolean>;
+  onOpenSubject: Subject<boolean>;
   pendingCalls: any;
   pendingSubs: any = {};
   pendingMessages: any[] = [];
@@ -26,8 +25,8 @@ export class WebSocketService {
   redirectUrl = '';
   shuttingdown = false;
 
-  protocol: any;
-  remote: any;
+  protocol: string;
+  remote: string;
   private consoleSub: Observable<string>;
 
   subscriptions: Map<string, any[]> = new Map<string, any[]>();
@@ -114,7 +113,7 @@ export class WebSocketService {
 
       this.pendingCalls.delete(data.id);
       if (data.error) {
-        console.log('Error: ', data.error);
+        console.error('Error: ', data.error);
         call.observer.error(data.error);
       }
       if (call && call.observer) {
@@ -133,7 +132,7 @@ export class WebSocketService {
         for (const uuid in this.pendingSubs[nom].observers) {
           const subObserver = this.pendingSubs[nom].observers[uuid];
           if (data.error) {
-            console.log('Error: ', data.error);
+            console.error('Error: ', data.error);
             subObserver.error(data.error);
           }
           if (subObserver && data.fields) {
@@ -154,7 +153,7 @@ export class WebSocketService {
     } else if (data.msg == 'sub') {
       // pass
     } else {
-      // console.log("Unknown message: ", data);
+      console.warn('Unknown message: ', data);
     }
   }
 
@@ -311,7 +310,7 @@ export class WebSocketService {
       this.clearCredentials();
       this.socket.close();
       this._router.navigate(['/sessions/signin']);
-      (<any>window).location.reload();
+      window.location.reload();
     });
   }
 }
