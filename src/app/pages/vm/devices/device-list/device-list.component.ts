@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import {
+  EntityTableAction,
+  EntityTableComponent,
+  EntityTableConfig,
+} from 'app/pages/common/entity/entity-table/entity-table.component';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -176,7 +180,7 @@ export class DeviceListComponent implements EntityTableConfig {
     });
   }
 
-  preInit(entityList: any): void {
+  preInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
     this.sub = this.aroute.params.subscribe((params) => {
       this.pk = params['pk'];

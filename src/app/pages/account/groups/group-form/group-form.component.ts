@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/account/groups';
@@ -101,7 +102,7 @@ export class GroupFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.bsdgrp_gid = _.find(this.fieldSets[0].config, { name: 'gid' });
 
     if (!entityForm.isNew) {

@@ -2,6 +2,7 @@ import {
   ApplicationRef, Component, Injector, OnDestroy,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 
@@ -119,7 +120,7 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
     this.storage_path_subscription.unsubscribe();
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.storage_path = entityForm.formGroup.controls['storage_path'];
     this.storage_path_subscription = this.storage_path.valueChanges.subscribe((res: any) => {
       if (res && res != this.initial_path && !this.warned) {

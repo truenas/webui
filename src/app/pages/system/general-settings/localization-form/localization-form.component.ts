@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -76,7 +77,7 @@ export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
     },
   ];
 
-  private entityForm: any;
+  private entityForm: EntityFormComponent;
   private configData: any;
 
   constructor(
@@ -93,7 +94,7 @@ export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     this.setTimeOptions(this.configData.timezone);
     this.makeLanguageList();

@@ -4,6 +4,7 @@ import {
   Injector,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
   FieldConfig,
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -60,7 +61,7 @@ export class SnapshotCloneComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     entityForm.formGroup.controls['dataset_dst'].setValue(this.setName(this.pk));
     entityForm.formGroup.controls['snapshot'].setValue(this.pk);
   }

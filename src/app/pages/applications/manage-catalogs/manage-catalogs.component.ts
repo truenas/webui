@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CoreEvent } from 'app/interfaces/events';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import {
+  EntityTableAction,
+  EntityTableComponent,
+  EntityTableConfig,
+} from 'app/pages/common/entity/entity-table/entity-table.component';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../services/ws.service';
@@ -55,7 +59,7 @@ export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
   filterString = '';
 
   private dialogRef: any;
-  protected entityList: any;
+  protected entityList: EntityTableComponent;
   protected loaderOpen = false;
 
   constructor(
@@ -85,7 +89,7 @@ export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
     this.entityList.filter(this.filterString);
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
   }
 

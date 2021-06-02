@@ -1,4 +1,5 @@
 import { Component, Inject } from '@angular/core';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -13,7 +14,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 export class TwoFactorComponent implements FormConfiguration {
   queryCall: 'auth.twofactor.config' = 'auth.twofactor.config';
-  private entityEdit: any;
+  private entityEdit: EntityFormComponent;
   private TwoFactorEnabled: boolean;
   qrInfo: string;
   private secret: string;
@@ -213,7 +214,7 @@ export class TwoFactorComponent implements FormConfiguration {
     }
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     this.getURI();
     const intervalValue = _.find(this.fieldConfig, { name: 'interval' });

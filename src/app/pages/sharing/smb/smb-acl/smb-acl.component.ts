@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
@@ -124,7 +124,7 @@ export class SMBAclComponent implements FormConfiguration {
   ];
 
   protected shareACLField: any;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
 
   constructor(private aroute: ActivatedRoute) { }
 
@@ -164,7 +164,7 @@ export class SMBAclComponent implements FormConfiguration {
   }
 
   updateRequiredValidator(fieldName: string, index: number, required: boolean): void {
-    const fieldCtrl = this.entityForm.formGroup.controls['share_acl'].controls[index].controls[fieldName];
+    const fieldCtrl = ((this.entityForm.formGroup.controls['share_acl'] as FormGroup).controls[index] as FormGroup).controls[fieldName];
     const fieldConfig = _.find(this.shareACLField['listFields'][index], { name: fieldName });
     if (fieldConfig.required !== required) {
       fieldConfig.required = required;

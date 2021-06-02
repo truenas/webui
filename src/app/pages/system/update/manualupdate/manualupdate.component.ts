@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CoreEvent } from 'app/interfaces/events';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { T } from '../../../../translate-marker';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
@@ -127,7 +128,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.ws.call('user.query', [[['id', '=', 1]]]).subscribe((ures) => {
       if (ures[0].attributes.preferences['rebootAfterManualUpdate'] === undefined) {
         ures[0].attributes.preferences['rebootAfterManualUpdate'] = false;
@@ -150,7 +151,8 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     this.messageService.messageSourceHasNewMessage$.subscribe((message) => {
       entityForm.formGroup.controls['filename'].setValue(message);
     });
-    entityForm.submitFunction = this.customSubmit;
+    // TODO: customSubmit need to return an Observable
+    entityForm.submitFunction = this.customSubmit as any;
   }
 
   customSubmit(): void {

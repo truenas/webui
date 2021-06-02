@@ -2,6 +2,7 @@ import {
   ApplicationRef, Component, Injector, OnInit,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Observable } from 'rxjs';
@@ -25,7 +26,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
   route_success: string[] = ['services'];
 
   isBasicMode = true;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
 
   protected rootlogin_fg: any;
   protected rootloginSubscription: any;
@@ -416,7 +417,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     entityEdit.submitFunction = this.submitFunction;
     this.rootlogin_fg = entityEdit.formGroup.controls['rootlogin'];

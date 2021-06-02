@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { T } from 'app/translate-marker';
 import * as _ from 'lodash';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
@@ -15,7 +16,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class SupportFormUnlicensedComponent implements FormConfiguration {
-  entityEdit: any;
+  entityEdit: EntityFormComponent;
   password: any;
   username: any;
   category: any;
@@ -138,7 +139,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
   constructor(protected ws: WebSocketService, protected dialog: MatDialog,
     private modalService: ModalService) { }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
   }
 

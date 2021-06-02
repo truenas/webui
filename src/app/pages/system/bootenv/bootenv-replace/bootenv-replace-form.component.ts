@@ -1,6 +1,7 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { RestService, WebSocketService } from '../../../../services';
@@ -11,7 +12,6 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   selector: 'bootenv-replace-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-
 export class BootEnvReplaceFormComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot', 'status'];
   isEntity = true;
@@ -19,7 +19,7 @@ export class BootEnvReplaceFormComponent implements FormConfiguration {
   pk: any;
   isNew = true;
 
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
 
   fieldConfig: FieldConfig[] = [
     {
@@ -36,14 +36,14 @@ export class BootEnvReplaceFormComponent implements FormConfiguration {
     protected rest: RestService, protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
-  preInit(entityForm: any): void {
+  preInit(entityForm: EntityFormComponent): void {
     this.route.params.subscribe((params) => {
       this.pk = params['pk'];
     });
     this.entityForm = entityForm;
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.diskChoice = _.find(this.fieldConfig, { name: 'dev' });
     this.ws.call('disk.get_unused').subscribe((res: any[]) => {

@@ -56,7 +56,7 @@ export class ZvolFormComponent implements FormConfiguration {
   volid: string;
   customFilter: any[] = [];
   edit_data: any;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   minimum_recommended_zvol_volblocksize: string;
   namesInUse: string[] = [];
   title: string;

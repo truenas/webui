@@ -20,6 +20,7 @@ import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/di
 import helptext from '../../../../helptext/storage/disks/disks';
 import { EntityUtils } from '../../../common/entity/utils';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
+import * as filesize from 'filesize';
 
 @Component({
   selector: 'disk-list',
@@ -261,17 +262,17 @@ export class DiskListComponent implements EntityTableConfig {
 
   diskUpdate(entityList: EntityTableComponent): void {
     for (const disk of entityList.rows) {
-      disk.readable_size = (<any>window).filesize(disk.size, { standard: 'iec' });
+      disk.readable_size = filesize(disk.size, { standard: 'iec' });
     }
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.core.register({
       observerClass: this,
       eventName: 'DisksChanged',
     }).subscribe((evt: CoreEvent) => {
       if (evt) {
-        entityList.needTableResize = false;
+        (entityList as any).needTableResize = false;
         entityList.getData();
       }
     });

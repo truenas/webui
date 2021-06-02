@@ -195,6 +195,7 @@ export type ApiDirectory = {
   // DynDNS
   'dyndns.provider_choices': { params: any; response: any };
   'dyndns.update': { params: any; response: any };
+  'dyndns.config': { params: any; response: any };
 
   // Datastore
   'datastore.delete': { params: any; response: any };
@@ -551,6 +552,8 @@ export type ApiDirectory = {
   'system.general.ui_address_choices': { params: any; response: any };
   'system.license_update': { params: any; response: any };
   'system.general.ui_v6address_choices': { params: any; response: any };
+  'system.general.ui_certificate_choices': { params: any; response: any };
+  'system.general.ui_httpsprotocols_choices': { params: any; response: any };
   'system.build_time': { params: void; response: ApiTimestamp };
   'system.product_type': { params: void; response: ProductType };
 
