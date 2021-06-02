@@ -110,8 +110,8 @@ def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver
     if not value_exist:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__enable__SSH"]').click()
     value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__state__SSH"]', 'class', 'mat-checked')
-    if not value_exist:
-        driver.find_element_by_xpath('//div[@ix-auto="overlay__stateSSH"]').click()
+    if not value_exist:
+        driver.find_element_by_xpath('//div[@ix-auto="overlay__stateSSH"]').click()
     time.sleep(1)
 
 
