@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 
 import { Observable } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
@@ -21,6 +23,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { Schedule } from 'app/interfaces/schedule.interface';
+import * as filesize from 'filesize';
 
 @Component({
   selector: 'app-cloudsync-add',
@@ -156,7 +159,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           disabled: true,
           relation: [
             {
-              action: 'HIDE',
+              action: RelationAction.Hide,
               when: [{
                 name: 'credentials',
                 value: null,
@@ -201,8 +204,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
           disabled: false,
           relation: [
             {
-              action: 'HIDE',
-              connective: 'OR',
+              action: RelationAction.Hide,
+              connective: RelationConnection.Or,
               when: [{
                 name: 'direction',
                 value: Direction.Pull,
@@ -304,7 +307,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'encryption',
                 value: true,
@@ -320,7 +323,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'encryption',
                 value: true,
@@ -336,7 +339,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'encryption',
                 value: true,
@@ -721,8 +724,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
       for (let i = 0; i < data.bwlimit.length; i++) {
         let sub_bwlimit = data.bwlimit[i].time + ',off';
         if (data.bwlimit[i].bandwidth != null) {
-          const bw = (<any>window).filesize(data.bwlimit[i].bandwidth, { output: 'object' });
-          sub_bwlimit = data.bwlimit[i].time + ',' + bw.value + bw.symbol;
+          const bandwidth = filesize(data.bwlimit[i].bandwidth);
+          sub_bwlimit = `${data.bwlimit[i].time}, ${bandwidth}`;
         }
         bwlimit.push(sub_bwlimit);
       }

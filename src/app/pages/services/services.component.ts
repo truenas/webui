@@ -4,7 +4,7 @@ import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Service } from 'app/interfaces/service.interface';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { IscsiService, SystemGeneralService, WebSocketService } from 'app/services/';
 
 import { DialogService } from 'app/services/dialog.service';
@@ -23,16 +23,16 @@ interface ServiceRow extends Service {
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [IscsiService],
 })
-export class Services implements OnInit {
+export class Services implements EntityTableConfig, OnInit {
   title = 'Services';
   isFooterConsoleOpen: boolean;
   private getAdvancedConfig: Subscription;
-  protected queryCall = 'service.query';
-  protected queryCallOption: QueryParams<Service> = [[], { order_by: ['service'] }];
-  protected rowIdentifier = 'name';
+  queryCall: 'service.query' = 'service.query';
+  queryCallOption: QueryParams<Service> = [[], { order_by: ['service'] }];
+  rowIdentifier = 'name';
   protected inlineActions = true;
 
-  columns: any[] = [
+  columns = [
     { name: 'Name', prop: 'name', always_display: true },
     {
       name: 'Running', prop: 'state', toggle: true, always_display: true,

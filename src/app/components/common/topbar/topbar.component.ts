@@ -9,6 +9,7 @@ import { ViewControllerComponent } from 'app/core/components/viewcontroller/view
 import { LayoutService } from 'app/core/services/layout.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
+import { Interval } from 'app/interfaces/timeout.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { Subscription, Subject } from 'rxjs';
 import { FailoverDisabledReason } from '../../../enums/failover-disabled-reason.enum';
@@ -47,7 +48,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   notifications: NotificationAlert[] = [];
 
-  interval: any;
+  interval: Interval;
   updateIsDone: Subscription;
   getProductType: Subscription;
   getAdvancedConfig: Subscription;
@@ -74,8 +75,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   sysName = 'TrueNAS CORE';
   hostname: string;
   showWelcome: boolean;
-  checkin_remaining: any;
-  checkin_interval: any;
+  checkin_remaining: number;
+  checkin_interval: Interval;
   updateIsRunning = false;
   systemWillRestart = false;
   updateNotificationSent = false;

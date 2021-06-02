@@ -1,5 +1,6 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { Observable } from 'rxjs';
 
 import {
@@ -148,7 +149,7 @@ export class ServiceSNMPComponent implements FormConfiguration {
     protected iscsiService: IscsiService,
     protected idmapService: IdmapService) {}
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     entityForm.submitFunction = this.submitFunction;
   }
 

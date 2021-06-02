@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { Subscription } from 'rxjs';
 import {
@@ -52,7 +53,7 @@ export class KernelFormComponent implements FormConfiguration, OnDestroy {
     },
   ];
 
-  private entityForm: any;
+  private entityForm: EntityFormComponent;
   private configData: any;
   title = helptext_system_advanced.fieldset_kernel;
 
@@ -73,7 +74,7 @@ export class KernelFormComponent implements FormConfiguration, OnDestroy {
   }
 
   reconnect(href: string): void {
-    if (this.entityForm.ws.connected) {
+    if (this.ws.connected) {
       this.loader.close();
       // ws is connected
       window.location.replace(href);
@@ -84,7 +85,7 @@ export class KernelFormComponent implements FormConfiguration, OnDestroy {
     }
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
   }
 

@@ -67,10 +67,10 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
 
   fieldConfig: FieldConfig[];
 
-  protected target_control: any;
-  protected extent_control: any;
+  protected target_control: FieldConfig;
+  protected extent_control: FieldConfig;
   pk: any;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
 
   constructor(protected router: Router, protected iscsiService: IscsiService, protected aroute: ActivatedRoute,
     protected loader: AppLoaderService, protected ws: WebSocketService) {}

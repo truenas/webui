@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Subscription } from 'rxjs';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
@@ -23,7 +24,7 @@ export class SshKeypairsFormComponent implements FormConfiguration {
   addCall: 'keychaincredential.create' = 'keychaincredential.create';
   editCall: 'keychaincredential.update' = 'keychaincredential.update';
   isEntity = true;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   protected isOneColumnForm = true;
   private rowNum: any;
   title = helptext.formTitle;
@@ -66,7 +67,7 @@ export class SshKeypairsFormComponent implements FormConfiguration {
             this.generateKeypair();
           },
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'setup_method',
               value: 'manual',

@@ -476,7 +476,7 @@
   "Bind Password": "",
   "Bind to": "",
   "Bind to Port": "",
-  "Block (ISCSI) Shares Targets": "",
+  "Block (iSCSI) Shares Targets": "",
   "Block Size": "",
   "Block size": "",
   "Boot": "",
@@ -4141,7 +4141,6 @@
   "msgqqueued": "",
   "msgqsize": "",
   "nmsgq": "",
-  "no": "",
   "nsemop": "",
   "nshm": "",
   "nthr": "",
@@ -4320,6 +4319,5 @@
   "wallclock": "orologio da parete",
   "warn": "avvisare",
   "was successfully attached.": "è stata collegata correttamente.",
-  "while pool is encrypted": "mentre la pool è crittografata",
-  "yes": "si"
+  "while pool is encrypted": "mentre la pool è crittografata"
 }

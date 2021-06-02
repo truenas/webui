@@ -6,10 +6,10 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import {
-  EntityTableAction,
   EntityTableComponent,
-  InputTableConf,
+
 } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { T } from '../../../../translate-marker';
 import { StorageService, DialogService, WebSocketService } from '../../../../services';
@@ -20,18 +20,19 @@ import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/di
 import helptext from '../../../../helptext/storage/disks/disks';
 import { EntityUtils } from '../../../common/entity/utils';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
+import * as filesize from 'filesize';
 
 @Component({
   selector: 'disk-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class DiskListComponent implements InputTableConf {
+export class DiskListComponent implements EntityTableConfig {
   title = T('Disks');
   queryCall: 'disk.query' = 'disk.query';
   queryCallOption: QueryParams<Disk, { extra: { pools: true } }> = [[], { extra: { pools: true } }];
   noAdd = true;
 
-  columns: any[] = [
+  columns = [
     { name: T('Name'), prop: 'name', always_display: true },
     { name: T('Serial'), prop: 'serial' },
     { name: T('Disk Size'), prop: 'readable_size' },
@@ -261,17 +262,17 @@ export class DiskListComponent implements InputTableConf {
 
   diskUpdate(entityList: EntityTableComponent): void {
     for (const disk of entityList.rows) {
-      disk.readable_size = (<any>window).filesize(disk.size, { standard: 'iec' });
+      disk.readable_size = filesize(disk.size, { standard: 'iec' });
     }
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.core.register({
       observerClass: this,
       eventName: 'DisksChanged',
     }).subscribe((evt: CoreEvent) => {
       if (evt) {
-        entityList.needTableResize = false;
+        (entityList as any).needTableResize = false;
         entityList.getData();
       }
     });

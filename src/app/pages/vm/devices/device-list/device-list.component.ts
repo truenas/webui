@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import {
+  EntityTableComponent,
+} from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -21,7 +24,7 @@ import * as _ from 'lodash';
     <entity-table [title]="title" [conf]="this"></entity-table>
   `,
 })
-export class DeviceListComponent implements InputTableConf {
+export class DeviceListComponent implements EntityTableConfig {
   resource_name: string;
   route_add: string[];
   route_edit: string[];
@@ -35,7 +38,7 @@ export class DeviceListComponent implements InputTableConf {
   queryCallOption: any[] = [[['vm', '=']]];
   busy: Subscription;
   protected loaderOpen = false;
-  columns: any[] = [
+  columns = [
     { name: T('Device ID'), prop: 'id', always_display: true },
     { name: T('Device'), prop: 'dtype' },
     { name: T('Order'), prop: 'order' },
@@ -176,7 +179,7 @@ export class DeviceListComponent implements InputTableConf {
     });
   }
 
-  preInit(entityList: any): void {
+  preInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
     this.sub = this.aroute.params.subscribe((params) => {
       this.pk = params['pk'];

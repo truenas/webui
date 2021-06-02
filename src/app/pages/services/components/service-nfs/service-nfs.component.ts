@@ -259,9 +259,9 @@ export class ServiceNFSComponent implements FormConfiguration {
     data = this.compareBindIps(data);
   }
 
-  afterSave(data: any): void {
+  afterSave(entityForm: EntityFormComponent): void {
     this.router.navigate(this.route_success);
-    if (data.formGroup.value.v4_krb && !this.v4krbValue) {
+    if (entityForm.formGroup.value.v4_krb && !this.v4krbValue) {
       this.addSPN();
     }
   }

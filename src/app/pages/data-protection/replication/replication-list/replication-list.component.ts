@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
@@ -28,7 +29,6 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { Subscription } from 'rxjs';
-import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 @Component({
   selector: 'app-replication-list',
@@ -43,7 +43,7 @@ import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-tabl
     DatePipe,
   ],
 })
-export class ReplicationListComponent implements InputTableConf, OnDestroy {
+export class ReplicationListComponent implements EntityTableConfig, OnDestroy {
   title = T('Replication Tasks');
   queryCall: 'replication.query' = 'replication.query';
   wsDelete: 'replication.delete' = 'replication.delete';
@@ -53,7 +53,7 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
   entityList: EntityTableComponent;
   asyncView = true;
 
-  columns: any[] = [
+  columns = [
     { name: T('Name'), prop: 'name', always_display: true },
     { name: T('Direction'), prop: 'direction' },
     { name: T('Transport'), prop: 'transport', hidden: true },

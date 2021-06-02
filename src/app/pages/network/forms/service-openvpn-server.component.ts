@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import {
   ServicesService, DialogService, AppLoaderService, WebSocketService, StorageService,
 } from 'app/services';
@@ -18,7 +20,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
   queryCall: 'openvpn.server.config' = 'openvpn.server.config';
   protected certID: number;
   protected serverAddress: string;
-  protected entityEdit: any;
+  protected entityEdit: EntityFormComponent;
   dialogConf: DialogFormConfiguration;
   protected certOptions: any;
   title = helptext.server.formTitle;
@@ -107,7 +109,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
           options: helptext.server.topology.enum,
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'device_type',
                 value: 'TAP',
@@ -213,7 +215,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
     return data;
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     entityEdit.submitFunction = (body: any) => this.services.updateOpenVPN('openvpn.server.update', body);
 

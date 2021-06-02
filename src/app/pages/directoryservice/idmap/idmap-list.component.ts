@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { T } from '../../../translate-marker';
 import {
   IdmapService, ValidationService, SystemGeneralService, WebSocketService,
@@ -17,10 +17,10 @@ import { Subscription } from 'rxjs';
   selector: 'app-idmap-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class IdmapListComponent implements OnDestroy {
+export class IdmapListComponent implements EntityTableConfig, OnDestroy {
   title = 'Idmap';
-  protected queryCall = 'idmap.query';
-  protected wsDelete = 'idmap.delete';
+  queryCall: 'idmap.query' = 'idmap.query';
+  wsDelete: 'idmap.delete' = 'idmap.delete';
   protected entityList: any;
   protected idmapFormComponent: IdmapFormComponent;
   protected requiredDomains = [
@@ -29,7 +29,7 @@ export class IdmapListComponent implements OnDestroy {
     'DS_TYPE_LDAP',
   ];
 
-  columns: any[] = [
+  columns = [
     {
       name: T('Name'), prop: 'name', always_display: true, minWidth: 250,
     },

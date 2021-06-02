@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Subscription } from 'rxjs';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
@@ -85,7 +86,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
           required: true,
           validation: [Validators.required],
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'setup_method',
               value: 'manual',
@@ -99,7 +100,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
           tooltip: helptext.port_tooltip,
           value: 22,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'setup_method',
               value: 'manual',
@@ -113,7 +114,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
           required: true,
           validation: [Validators.required],
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'setup_method',
               value: 'semiautomatic',
@@ -137,7 +138,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
           required: true,
           validation: [Validators.required],
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'setup_method',
               value: 'semiautomatic',
@@ -159,7 +160,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
           tooltip: helptext.remote_host_key_tooltip,
           value: '',
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'setup_method',
               value: 'manual',
@@ -220,7 +221,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     'cipher',
     'connect_timeout',
   ];
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
 
   constructor(
     private aroute: ActivatedRoute,

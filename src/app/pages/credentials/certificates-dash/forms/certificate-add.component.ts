@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { Subscription } from 'rxjs';
 
 import * as _ from 'lodash';
@@ -74,8 +76,8 @@ export class CertificateAddComponent implements WizardConfiguration {
           }],
           relation: [
             {
-              action: 'HIDE',
-              connective: 'OR',
+              action: RelationAction.Hide,
+              connective: RelationConnection.Or,
               when: [{
                 name: 'create_type',
                 value: 'CERTIFICATE_CREATE_IMPORTED',
@@ -113,7 +115,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           validation: helptext_system_certificates.add.signedby.validation,
           relation: [
             {
-              action: 'ENABLE',
+              action: RelationAction.Enable,
               when: [{
                 name: 'csronsys',
                 value: true,
@@ -160,7 +162,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           disabled: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'key_type',
                 value: 'EC',
@@ -184,7 +186,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           isHidden: false,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'key_type',
                 value: 'RSA',
@@ -316,7 +318,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           tooltip: helptext_system_certificates.add.basic_constraints.path_length.tooltip,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'BasicConstraints-enabled',
                 value: true,
@@ -344,7 +346,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           ],
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'BasicConstraints-enabled',
                 value: true,
@@ -378,7 +380,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           ],
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'AuthorityKeyIdentifier-enabled',
                 value: true,
@@ -402,7 +404,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           required: false,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'ExtendedKeyUsage-enabled',
                 value: true,
@@ -417,7 +419,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           tooltip: helptext_system_certificates.add.extended_key_usage.extension_critical.tooltip,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'ExtendedKeyUsage-enabled',
                 value: true,
@@ -491,7 +493,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           ],
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'KeyUsage-enabled',
                 value: true,
@@ -526,7 +528,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'csronsys',
                 value: true,
@@ -545,7 +547,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           togglePw: true,
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'csronsys',
                 value: true,
@@ -561,7 +563,7 @@ export class CertificateAddComponent implements WizardConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'csronsys',
                 value: true,
@@ -630,11 +632,11 @@ export class CertificateAddComponent implements WizardConfiguration {
     'KeyUsage',
   ];
 
-  private country: any;
-  private signedby: any;
-  private csrlist: any;
+  private country: FieldConfig;
+  private signedby: FieldConfig;
+  private csrlist: FieldConfig;
   identifier: any;
-  usageField: any;
+  usageField: FieldConfig;
   private currentProfile: any;
 
   constructor(protected ws: WebSocketService, protected dialog: MatDialog,

@@ -28,10 +28,9 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   private csrOrg: any;
   formArray: FormArray;
   commonName: string;
-  protected arrayControl: any;
   private getRow = new Subscription();
   private rowNum: any;
-  private dns_map: any;
+  private dns_map: FieldConfig;
   title = helptext_system_certificates.list.action_create_acme_certificate;
   protected isOneColumnForm = true;
   fieldConfig: FieldConfig[];
@@ -118,12 +117,12 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     },
   ];
 
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   protected dialogRef: any;
   queryCallOption: any[];
   initialCount = 1;
   private domainList: any;
-  private domainList_fc: any;
+  private domainList_fc: FieldConfig;
 
   constructor(
     protected ws: WebSocketService,
@@ -155,7 +154,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     this.fieldConfig = entityEdit.fieldConfig;
 
@@ -172,7 +171,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
           for (let i = 0; i < domains.length; i++) {
             if (this.domainList.controls[i] === undefined) {
               const templateListField = _.cloneDeep(this.domainList_fc.templateListField);
-              const newfg = entityEdit.entityFormService.createFormGroup(templateListField);
+              const newfg = this.entityFormService.createFormGroup(templateListField);
               newfg.setParent(this.domainList);
               this.domainList.controls.push(newfg);
               this.domainList_fc.listFields.push(templateListField);

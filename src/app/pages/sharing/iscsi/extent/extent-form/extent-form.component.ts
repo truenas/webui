@@ -284,7 +284,7 @@ export class ExtentFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
     const extent_disk_field = _.find(this.fieldConfig, { name: 'disk' });

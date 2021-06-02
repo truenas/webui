@@ -18,7 +18,8 @@ import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interf
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableService } from 'app/pages/common/entity/entity-table/entity-table.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -28,7 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { TreeNode } from 'primeng/api';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, Observable, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ProductType } from '../../../../enums/product-type.enum';
 import dataset_helptext from '../../../../helptext/storage/volumes/datasets/dataset-form';
@@ -44,6 +45,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { DatasetFormComponent } from '../datasets/dataset-form';
 import { ZvolFormComponent } from '../zvol/zvol-form';
 import { VolumesListControlsComponent } from './volumes-list-controls.component';
+import * as filesize from 'filesize';
 
 export interface ZfsPoolData {
   pool: string;
@@ -87,11 +89,11 @@ interface ZfsData {
   source: string;
 }
 
-export class VolumesListTableConfig implements InputTableConf {
+export class VolumesListTableConfig {
   hideTopActions = true;
   flattenedVolData: any;
   tableData: TreeNode[] = [];
-  columns: any[] = [
+  columns = [
     { name: T('Name'), prop: 'name', always_display: true },
     { name: T('Type'), prop: 'type', hidden: false },
     {
@@ -125,7 +127,7 @@ export class VolumesListTableConfig implements InputTableConf {
   dialogConf: DialogFormConfiguration;
   restartServices = false;
   subs: any;
-  message_subscription: any;
+  message_subscription: Subscription;
   productType = window.localStorage.getItem('product_type') as ProductType;
 
   constructor(
@@ -725,7 +727,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     validation: [Validators.pattern(row1.name)],
                     relation: [
                       {
-                        action: 'HIDE',
+                        action: RelationAction.Hide,
                         when: [{
                           name: 'destroy',
                           value: false,
@@ -1790,7 +1792,7 @@ export class VolumesListTableConfig implements InputTableConf {
 export class VolumesListComponent extends EntityTableComponent implements OnInit, OnDestroy {
   title = T('Pools');
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(
+  conf = new VolumesListTableConfig(
     this,
     this.router,
     '',
@@ -1849,8 +1851,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   expanded = false;
   paintMe = true;
   systemdatasetPool: any;
-  has_encrypted_root: any = {};
-  has_key_dataset: any = {};
+  has_encrypted_root: { [pool: string]: boolean } = {};
+  has_key_dataset: { [pool: string]: boolean } = {};
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.first_use,
     large: true,
@@ -1865,7 +1867,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   protected addDatasetFormComponent: DatasetFormComponent;
   protected editDatasetFormComponent: DatasetFormComponent;
   protected aroute: ActivatedRoute;
-  private refreshTableSubscription: any;
+  private refreshTableSubscription: Subscription;
   private datasetQuery: 'pool.dataset.query' = 'pool.dataset.query';
   /*
    * Please note that extra options are special in that they are passed directly to ZFS.
@@ -1914,7 +1916,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     public tableService: EntityTableService,
     protected validationService: ValidationService,
   ) {
-    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog, modalService, tableService);
+    super(core, rest, router, ws, dialogService, loader, translate, sorter, job, pref, mdDialog, modalService);
 
     this.actionsConfig = { actionType: VolumesListControlsComponent, actionConfig: this };
     this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
@@ -2003,7 +2005,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
               }
               pool.children[0].available_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].available.parsed || 0);
               pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].used.parsed || 0);
-              pool.availStr = (<any>window).filesize(pool.children[0].available.parsed, { standard: 'iec' });
+              pool.availStr = filesize(pool.children[0].available.parsed, { standard: 'iec' });
               pool.children[0].has_encrypted_children = false;
               for (let i = 0; i < datasets.length; i++) {
                 const ds = datasets[i];
@@ -2020,7 +2022,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
             try {
               const used_pct = pool.children[0].used.parsed / (pool.children[0].used.parsed + pool.children[0].available.parsed);
-              pool.usedStr = '' + (<any>window).filesize(pool.children[0].used.parsed, { standard: 'iec' }) + ' (' + Math.round(used_pct * 100) + '%)';
+              pool.usedStr = '' + filesize(pool.children[0].used.parsed, { standard: 'iec' }) + ' (' + Math.round(used_pct * 100) + '%)';
             } catch (error) {
               pool.usedStr = '' + pool.children[0].used.parsed;
             }

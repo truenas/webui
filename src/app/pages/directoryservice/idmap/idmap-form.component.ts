@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import * as _ from 'lodash';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
@@ -33,7 +35,7 @@ export class IdmapFormComponent implements FormConfiguration {
     this.validationService.rangeValidator(1000, 2147483647),
     this.validationService.greaterThan('range_low', [helptext.idmap.range_low.placeholder]),
   ];
-  private entityForm: any;
+  private entityForm: EntityFormComponent;
   protected backendChoices: any;
   protected dialogRef: any;
   protected requiredDomains = [
@@ -76,7 +78,7 @@ export class IdmapFormComponent implements FormConfiguration {
           required: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'name',
                 value: 'custom',
@@ -299,7 +301,7 @@ export class IdmapFormComponent implements FormConfiguration {
     return data;
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.title = entityEdit.isNew ? helptext.title_add : helptext.title_edit;
     this.entityForm = entityEdit;
     this.optionsFields.forEach((option) => {

@@ -185,7 +185,7 @@ export class SharesDashboardComponent {
       }
       case ShareType.ISCSI: {
         return {
-          title: T('Block (ISCSI) Shares Targets'),
+          title: T('Block (iSCSI) Shares Targets'),
           titleHref: '/sharing/iscsi/target',
           queryCall: 'iscsi.target.query',
           deleteCall: 'iscsi.target.delete',
@@ -334,7 +334,7 @@ export class SharesDashboardComponent {
         formComponent = new SMBFormComponent(this.router, this.ws, this.dialog, this.loader, this.sysGeneralService, this.modalService);
         break;
       case ShareType.WebDAV:
-        formComponent = new WebdavFormComponent(this.router, this.ws, this.dialog);
+        formComponent = new WebdavFormComponent(this.router, this.ws, this.dialog, this.loader);
         break;
       case ShareType.ISCSI:
         formComponent = new TargetFormComponent(this.router, this.aroute, this.iscsiService, this.loader, this.translate, this.ws, this.modalService);
@@ -440,7 +440,7 @@ export class SharesDashboardComponent {
         options: [
           { label: 'SMB', value: ShareType.SMB },
           { label: 'NFS', value: ShareType.NFS },
-          { label: 'ISCSI Target', value: ShareType.ISCSI },
+          { label: 'iSCSI Target', value: ShareType.ISCSI },
           { label: 'WebDAV', value: ShareType.WebDAV },
         ],
         validation: [Validators.required],

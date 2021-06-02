@@ -430,7 +430,7 @@
   "Bind Password": "",
   "Bind to": "",
   "Bind to Port": "",
-  "Block (ISCSI) Shares Targets": "",
+  "Block (iSCSI) Shares Targets": "",
   "Block Size": "",
   "Block size": "",
   "Boot": "",
@@ -3826,7 +3826,6 @@
   "msgqqueued": "",
   "msgqsize": "",
   "nmsgq": "",
-  "no": "",
   "nsemop": "",
   "nshm": "",
   "nthr": "",
@@ -4320,6 +4319,5 @@
   "password": "contraseña",
   "safe": "seguro",
   "swapuse": "uso de swap",
-  "template": "plantilla",
-  "yes": "sí"
+  "template": "plantilla"
 }

@@ -6,6 +6,8 @@ import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -117,7 +119,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.ssh_credentials_source_tooltip,
               options: [],
               relation: [{
-                action: 'SHOW',
+                action: RelationAction.Show,
                 when: [{
                   name: 'source_datasets_from',
                   value: DatasetSource.Remote,
@@ -149,8 +151,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               required: true,
               validation: [Validators.required],
               relation: [{
-                action: 'SHOW',
-                connective: 'OR',
+                action: RelationAction.Show,
+                connective: RelationConnection.Or,
                 when: [{
                   name: 'source_datasets_from',
                   value: DatasetSource.Remote,
@@ -167,8 +169,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.recursive_tooltip,
               value: false,
               relation: [{
-                action: 'SHOW',
-                connective: 'OR',
+                action: RelationAction.Show,
+                connective: RelationConnection.Or,
                 when: [{
                   name: 'source_datasets_from',
                   value: DatasetSource.Remote,
@@ -183,8 +185,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               name: 'snapshots_count',
               paraText: '',
               relation: [{
-                action: 'SHOW',
-                connective: 'OR',
+                action: RelationAction.Show,
+                connective: RelationConnection.Or,
                 when: [{
                   name: 'source_datasets_from',
                   value: DatasetSource.Remote,
@@ -201,7 +203,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.custom_snapshots_tooltip,
               value: false,
               relation: [{
-                action: 'SHOW',
+                action: RelationAction.Show,
                 when: [{
                   name: 'source_datasets_from',
                   value: DatasetSource.Local,
@@ -215,8 +217,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.naming_schema_tooltip,
               value: this.defaultNamingSchema,
               relation: [{
-                action: 'SHOW',
-                connective: 'OR',
+                action: RelationAction.Show,
+                connective: RelationConnection.Or,
                 when: [{
                   name: 'custom_snapshots',
                   value: true,
@@ -261,7 +263,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.ssh_credentials_target_tooltip,
               options: [],
               relation: [{
-                action: 'SHOW',
+                action: RelationAction.Show,
                 when: [{
                   name: 'target_dataset_from',
                   value: DatasetSource.Remote,
@@ -290,8 +292,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               required: true,
               validation: [Validators.required],
               relation: [{
-                action: 'SHOW',
-                connective: 'OR',
+                action: RelationAction.Show,
+                connective: RelationConnection.Or,
                 when: [{
                   name: 'target_dataset_from',
                   value: DatasetSource.Remote,
@@ -308,8 +310,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.encryption_tooltip,
               value: false,
               relation: [{
-                action: 'SHOW',
-                connective: 'OR',
+                action: RelationAction.Show,
+                connective: RelationConnection.Or,
                 when: [{
                   name: 'target_dataset_from',
                   value: DatasetSource.Remote,
@@ -332,7 +334,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                 value: EncryptionKeyFormat.Passphrase,
               }],
               relation: [{
-                action: 'SHOW',
+                action: RelationAction.Show,
                 when: [{
                   name: 'encryption',
                   value: true,
@@ -346,8 +348,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.encryption_key_generate_tooltip,
               value: true,
               relation: [{
-                action: 'SHOW',
-                connective: 'AND',
+                action: RelationAction.Show,
+                connective: RelationConnection.And,
                 when: [{
                   name: 'encryption',
                   value: true,
@@ -363,8 +365,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               placeholder: helptext.encryption_key_hex_placeholder,
               tooltip: helptext.encryption_key_hex_tooltip,
               relation: [{
-                action: 'SHOW',
-                connective: 'AND',
+                action: RelationAction.Show,
+                connective: RelationConnection.And,
                 when: [{
                   name: 'encryption',
                   value: true,
@@ -385,8 +387,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               placeholder: helptext.encryption_key_passphrase_placeholder,
               tooltip: helptext.encryption_key_passphrase_tooltip,
               relation: [{
-                action: 'SHOW',
-                connective: 'AND',
+                action: RelationAction.Show,
+                connective: RelationConnection.And,
                 when: [{
                   name: 'encryption',
                   value: true,
@@ -403,7 +405,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.encryption_key_location_truenasdb_tooltip,
               value: true,
               relation: [{
-                action: 'SHOW',
+                action: RelationAction.Show,
                 when: [{
                   name: 'encryption',
                   value: true,
@@ -416,8 +418,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               placeholder: helptext.encryption_key_location_placeholder,
               tooltip: helptext.encryption_key_location_tooltip,
               relation: [{
-                action: 'SHOW',
-                connective: 'AND',
+                action: RelationAction.Show,
+                connective: RelationConnection.And,
                 when: [{
                   name: 'encryption',
                   value: true,
@@ -452,8 +454,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               ],
               value: TransportMode.SSH,
               relation: [{
-                action: 'SHOW',
-                connective: 'OR',
+                action: RelationAction.Show,
+                connective: RelationConnection.Or,
                 when: [{
                   name: 'source_datasets_from',
                   value: DatasetSource.Remote,
@@ -504,7 +506,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           class: 'inline',
           width: '50%',
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'schedule_method',
               value: ScheduleMethod.Cron,
@@ -519,7 +521,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           placeholder: helptext.readonly_placeholder,
           tooltip: helptext.readonly_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'schedule_method',
               value: ScheduleMethod.Once,
@@ -557,8 +559,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           class: 'inline',
           width: '25%',
           relation: [{
-            action: 'SHOW',
-            connective: 'OR',
+            action: RelationAction.Show,
+            connective: RelationConnection.Or,
             when: [{
               name: 'retention_policy',
               value: RetentionPolicy.Custom,
@@ -589,8 +591,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           class: 'inline',
           width: '25%',
           relation: [{
-            action: 'SHOW',
-            connective: 'OR',
+            action: RelationAction.Show,
+            connective: RelationConnection.Or,
             when: [{
               name: 'retention_policy',
               value: RetentionPolicy.Custom,
@@ -637,7 +639,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       required: true,
       validation: [Validators.required],
       relation: [{
-        action: 'SHOW',
+        action: RelationAction.Show,
         when: [{
           name: 'setup_method',
           value: 'manual',
@@ -651,7 +653,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       tooltip: sshConnectionsHelptex.port_tooltip,
       value: 22,
       relation: [{
-        action: 'SHOW',
+        action: RelationAction.Show,
         when: [{
           name: 'setup_method',
           value: 'manual',
@@ -665,7 +667,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       required: true,
       validation: [Validators.required],
       relation: [{
-        action: 'SHOW',
+        action: RelationAction.Show,
         when: [{
           name: 'setup_method',
           value: 'semiautomatic',
@@ -689,7 +691,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       required: true,
       validation: [Validators.required],
       relation: [{
-        action: 'SHOW',
+        action: RelationAction.Show,
         when: [{
           name: 'setup_method',
           value: 'semiautomatic',

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Subscription } from 'rxjs';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { RestService, WebSocketService, DialogService } from '../../../../services';
@@ -30,12 +31,11 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   isLinear = true;
   firstFormGroup: FormGroup;
   protected dialogRef: any;
-  objectKeys = Object.keys;
   summaryTitle = 'Pool Import Summary';
   subs: any;
   saveSubmitText = T('Import');
   entityWizard: EntityWizardComponent;
-  protected productType: any;
+  protected productType: ProductType;
   protected importIndex = 2;
   title: string;
 
@@ -97,7 +97,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
         disabled: true,
         options: [],
         relation: [{
-          action: 'HIDE',
+          action: RelationAction.Hide,
           when: [{
             name: 'encrypted',
             value: false,
@@ -117,7 +117,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
         disabled: true,
         hideButton: true,
         relation: [{
-          action: 'HIDE',
+          action: RelationAction.Hide,
           when: [{
             name: 'encrypted',
             value: false,
@@ -134,7 +134,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
         isHidden: true,
         disabled: true,
         relation: [{
-          action: 'HIDE',
+          action: RelationAction.Hide,
           when: [{
             name: 'encrypted',
             value: false,

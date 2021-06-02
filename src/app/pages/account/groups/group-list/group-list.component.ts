@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
@@ -19,26 +19,26 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
   selector: 'app-group-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class GroupListComponent implements OnDestroy {
+export class GroupListComponent implements EntityTableConfig, OnDestroy {
   title = 'Groups';
-  protected queryCall: 'group.query' = 'group.query';
-  protected wsDelete: 'group.delete' = 'group.delete';
-  protected route_add: string[] = ['account', 'groups', 'add'];
+  queryCall: 'group.query' = 'group.query';
+  wsDelete: 'group.delete' = 'group.delete';
+  route_add = ['account', 'groups', 'add'];
   protected route_add_tooltip = T('Add Group');
-  protected route_edit: string[] = ['account', 'groups', 'edit'];
+  route_edit: string[] = ['account', 'groups', 'edit'];
   protected entityList: any;
   refreshTableSubscription: any;
   protected loaderOpen = false;
-  protected globalConfig = {
+  globalConfig = {
     id: 'config',
     tooltip: helptext.globalConfigTooltip,
     onClick: () => {
       this.toggleBuiltins();
     },
   };
-  protected addComponent: GroupFormComponent;
+  addComponent: GroupFormComponent;
 
-  columns: any[] = [
+  columns = [
     { name: 'Group', prop: 'group', always_display: true },
     { name: 'GID', prop: 'gid' },
     { name: 'Builtin', prop: 'builtin' },

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { shared, helptext_sharing_nfs } from 'app/helptext/sharing';
-import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { T } from 'app/translate-marker';
 import { NFSFormComponent } from '../nfs-form';
 import {
@@ -13,7 +13,7 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
   selector: 'app-nfs-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class NFSListComponent implements InputTableConf {
+export class NFSListComponent implements EntityTableConfig {
   title = 'NFS';
   queryCall: 'sharing.nfs.query' = 'sharing.nfs.query';
   wsDelete: 'sharing.nfs.delete' = 'sharing.nfs.delete';
@@ -24,7 +24,7 @@ export class NFSListComponent implements InputTableConf {
   private refreshTable: Subscription;
   entityList: EntityTableComponent;
 
-  columns: any[] = [
+  columns = [
     { name: helptext_sharing_nfs.column_path, prop: 'paths', always_display: true },
     { name: helptext_sharing_nfs.column_comment, prop: 'comment' },
     { name: helptext_sharing_nfs.column_enabled, prop: 'enabled' },

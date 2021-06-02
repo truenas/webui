@@ -195,8 +195,7 @@ export class VmFormComponent implements FormConfiguration {
       ],
     },
   ];
-  private bootloader: any;
-  bootloader_type: any[];
+  private bootloader: FieldConfig;
 
   constructor(protected router: Router, private loader: AppLoaderService,
     protected ws: WebSocketService, protected storageService: StorageService,

@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ValidationErrors, FormControl } from '@angular/forms';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import {
   WebSocketService, StorageService, DialogService, AppLoaderService,
 } from 'app/services';
@@ -15,7 +15,7 @@ import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
   selector: 'app-dataset-quotas-grouplist',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class DatasetQuotasGrouplistComponent implements OnDestroy {
+export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDestroy {
   pk: string;
   title = helptext.groups.table_title;
   protected entityList: any;
@@ -24,7 +24,7 @@ export class DatasetQuotasGrouplistComponent implements OnDestroy {
   protected emptyFilter: string[] = [];
   protected useFullFilter = true;
 
-  columns: any[] = [
+  columns = [
     {
       name: T('Name'), prop: 'name', always_display: true, minWidth: 150,
     },

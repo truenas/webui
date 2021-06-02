@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
@@ -23,7 +24,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
   isEditJob = true;
   private newEnableContainerImageUpdate = true;
   title = helptext.kubForm.title;
-  private entityEdit: any;
+  private entityEdit: EntityFormComponent;
   fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
@@ -136,7 +137,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     ).toPromise();
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     this.appService.getContainerConfig().subscribe((res) => {
       if (res) {

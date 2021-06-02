@@ -112,7 +112,7 @@ export class InteractionManagerService {
 
     let tracker: DisplayObject;
     if (config.moveHandle) {
-      const moveHandle = (<any>document).querySelector(config.moveHandle);
+      const moveHandle = document.querySelector(config.moveHandle);
       tracker = new DisplayObject(el, observable, this.messageBus, moveHandle);
     } else {
       tracker = new DisplayObject(el, observable, this.messageBus);

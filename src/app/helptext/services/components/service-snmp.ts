@@ -1,3 +1,4 @@
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 
@@ -29,7 +30,7 @@ export default {
   v3_username_placeholder: T('Username'),
   v3_username_tooltip: T('Enter a username to register with this service.'),
   v3_username_relation: [{
-    action: 'HIDE',
+    action: RelationAction.Hide,
     when: [{ name: 'v3', value: false }],
   }],
 
@@ -40,7 +41,7 @@ export default {
     { label: 'SHA', value: 'SHA' },
   ],
   v3_authtype_relation: [{
-    action: 'HIDE',
+    action: RelationAction.Hide,
     when: [{ name: 'v3', value: false }],
   }],
 
@@ -48,14 +49,14 @@ export default {
   v3_password_tooltip: T('Enter a password of at least eight characters.'),
   v3_password_validation: [Validators.minLength(8), Validators.required],
   v3_password_relation: [{
-    action: 'HIDE',
+    action: RelationAction.Hide,
     when: [{ name: 'v3', value: false }],
   }],
 
   v3_password2_placeholder: T('Confirm Password'),
   v3_password2_validation: [],
   v3_password2_relation: [{
-    action: 'HIDE',
+    action: RelationAction.Hide,
     when: [{ name: 'v3', value: false }],
   }],
 
@@ -67,7 +68,7 @@ export default {
     { label: 'DES', value: 'DES' },
   ],
   v3_privproto_relation: [{
-    action: 'HIDE',
+    action: RelationAction.Hide,
     when: [{ name: 'v3', value: false }],
   }],
 
@@ -76,13 +77,13 @@ export default {
  is used when this is left empty.'),
   v3_privpassphrase_validation: [Validators.minLength(8)],
   v3_privpassphrase_relation: [{
-    action: 'HIDE',
+    action: RelationAction.Hide,
     when: [{ name: 'v3', value: false }],
   }],
 
   v3_privpassphrase2_placeholder: T('Confirm Privacy Passphrase'),
   v3_privpassphrase2_relation: [{
-    action: 'HIDE',
+    action: RelationAction.Hide,
     when: [{ name: 'v3', value: false }],
   }],
 

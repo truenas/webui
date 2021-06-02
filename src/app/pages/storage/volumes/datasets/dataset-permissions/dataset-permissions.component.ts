@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AclType } from 'app/enums/acl-type.enum';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
@@ -174,7 +175,7 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
     protected router: Router,
   ) { }
 
-  preInit(entityEdit: any): void {
+  preInit(entityEdit: EntityFormComponent): void {
     entityEdit.isNew = true; // remove me when we find a way to get the permissions
     this.aroute.params.subscribe((params) => {
       this.datasetId = params['pk'];

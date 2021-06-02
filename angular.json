@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "freenas-material-ui": {
+    "truenas-scale-ui": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -70,7 +70,6 @@
               "node_modules/hammerjs/hammer.js",
               "src/vendor/Chart.min.js",
               "node_modules/element-resize-detector/dist/element-resize-detector.min.js",
-              "node_modules/filesize/lib/filesize.js",
               "node_modules/pixi.js/dist/pixi.min.js",
               "node_modules/pixi-filters/dist/pixi-filters.js"
             ],
@@ -99,18 +98,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "freenas-material-ui:build"
+            "browserTarget": "truenas-scale-ui:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "freenas-material-ui:build:production"
+              "browserTarget": "truenas-scale-ui:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "freenas-material-ui:build"
+            "browserTarget": "truenas-scale-ui:build"
           }
         },
         "test": {
@@ -161,7 +160,7 @@
       }
     }
   },
-  "defaultProject": "freenas-material-ui",
+  "defaultProject": "truenas-scale-ui",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",

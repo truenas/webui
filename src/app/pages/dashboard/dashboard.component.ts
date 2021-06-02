@@ -139,13 +139,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.screenType = st;
 
     // Eliminate top level scrolling
-    const wrapper = (<any>document).querySelector('.fn-maincontent');
+    const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
     wrapper.style.overflow = this.screenType == 'Mobile' ? 'hidden' : 'auto';
     this.optimizeWidgetContainer();
   }
 
   optimizeWidgetContainer(): void {
-    const wrapper = (<any>document).querySelector('.rightside-content-hold');
+    const wrapper = document.querySelector<HTMLElement>('.rightside-content-hold');
 
     const withMargin = this.widgetWidth + 8;
     const max = Math.floor(wrapper.offsetWidth / withMargin);
@@ -229,7 +229,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.core.unregister({ observerClass: this });
 
     // Restore top level scrolling
-    const wrapper = (<any>document).querySelector('.fn-maincontent');
+    const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
     wrapper.style.overflow = 'auto';
   }
 

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { T } from '../../../../translate-marker';
 
@@ -8,12 +9,12 @@ import { T } from '../../../../translate-marker';
   selector: 'app-smart-test-results-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class SmartResultsComponent {
+export class SmartResultsComponent implements EntityTableConfig {
   title: string;
-  protected queryCall = 'smart.test.results';
-  protected queryCallOption: any = [];
+  queryCall: 'smart.test.results' = 'smart.test.results';
+  queryCallOption: any = [];
 
-  columns: any[] = [
+  columns = [
     { name: T('ID'), prop: 'num', always_display: true },
     { name: T('Description'), prop: 'description' },
     { name: T('Status'), prop: 'status' },
@@ -25,7 +26,7 @@ export class SmartResultsComponent {
     paging: true,
     sorting: { columns: this.columns },
   };
-  protected noActions = true;
+  noActions = true;
 
   protected disk: string;
 

@@ -435,7 +435,7 @@
   "Bind Password": "",
   "Bind to": "",
   "Bind to Port": "",
-  "Block (ISCSI) Shares Targets": "",
+  "Block (iSCSI) Shares Targets": "",
   "Block Size": "",
   "Block size": "",
   "Boot": "",
@@ -4310,7 +4310,6 @@
   "ip6": "IPv6",
   "is already in use.": "se již používá.",
   "name": "název",
-  "no": "ne",
   "overview": "přehled",
   "owner": "vlastník",
   "password": "heslo",
@@ -4320,6 +4319,5 @@
   "template": "šablona",
   "wallclock": "nástěnné hodiny",
   "was successfully attached.": "byl úspěšně připojen.",
-  "while pool is encrypted": "zatímco je pool zašifrován",
-  "yes": "ano"
+  "while pool is encrypted": "zatímco je pool zašifrován"
 }

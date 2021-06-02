@@ -55,8 +55,6 @@ export class ZvolWizardComponent implements WizardConfiguration {
   parent_data: any;
   volid: string;
   customFilter: any[] = [];
-  pk_dataset: any[] = [];
-  edit_data: any;
   protected entityWizard: EntityWizardComponent;
   minimum_recommended_zvol_volblocksize: keyof ZvolWizardComponent['reverseZvolBlockSizeMap'];
   namesInUse: string[] = [];

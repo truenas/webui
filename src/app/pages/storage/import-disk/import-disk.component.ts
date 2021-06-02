@@ -2,6 +2,7 @@ import {
   ApplicationRef, Component, Injector, OnDestroy,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import helptext from '../../../helptext/storage/import-disk/import-disk';
 
@@ -90,7 +91,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
   private fs_type_subscription: any;
   private fs_type_list: any;
   msdosfs_locale: any;
-  private entityForm: any;
+  private entityForm: EntityFormComponent;
   protected dialogRef: any;
   custActions: any[];
 
@@ -99,7 +100,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService,
     protected job: JobService, protected core: CoreService) {}
 
-  preInit(entityForm: any): void {
+  preInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     entityForm.isNew = true; // disable attempting to load data that doesn't exist
   }
