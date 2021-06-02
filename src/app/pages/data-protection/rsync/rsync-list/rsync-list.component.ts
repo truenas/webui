@@ -1,8 +1,6 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-
-import { Subscription } from 'rxjs';
 
 import {
   WebSocketService, DialogService, TaskService, JobService, UserService,
@@ -26,7 +24,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, JobService, UserService, EntityFormService],
 })
-export class RsyncListComponent implements InputTableConf, OnDestroy {
+export class RsyncListComponent implements InputTableConf {
   title = T('Rsync Tasks');
   queryCall: 'rsynctask.query' = 'rsynctask.query';
   wsDelete: 'rsynctask.delete' = 'rsynctask.delete';
@@ -71,7 +69,6 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
       key_props: ['remotehost', 'remotemodule'],
     },
   };
-  private onModalClose: Subscription;
 
   constructor(
     protected router: Router,
@@ -88,7 +85,7 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.onModalClose = this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -197,9 +194,5 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
 
   doEdit(id: number): void {
     this.doAdd(id);
-  }
-
-  ngOnDestroy(): void {
-    this.onModalClose?.unsubscribe();
   }
 }

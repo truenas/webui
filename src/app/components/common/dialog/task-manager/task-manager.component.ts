@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ViewChild, OnDestroy,
+  Component, OnInit, ViewChild,
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
@@ -10,7 +10,7 @@ import {
 import { HttpClient } from '@angular/common/http';
 
 import * as _ from 'lodash';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { LocaleService } from 'app/services/locale.service';
@@ -36,14 +36,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
     ]),
   ],
 })
-export class TaskManagerComponent implements OnInit, OnDestroy {
+export class TaskManagerComponent implements OnInit {
   @ViewChild('taskTable', { static: true }) taskTable: MatTable<any>;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   dataSource: MatTableDataSource<any>;
   displayedColumns = ['state', 'method', 'percent'];
   expandedElement: any | null;
   timeZone: string;
-  private subscrition: Subscription;
   readonly EntityJobState = EntityJobState;
 
   constructor(
@@ -92,13 +91,9 @@ export class TaskManagerComponent implements OnInit, OnDestroy {
     );
   }
 
-  ngOnDestroy(): void {
-    this.subscrition.unsubscribe();
-  }
-
   getData(): Observable<any> {
     const source = Observable.create((observer: any) => {
-      this.subscrition = this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((res) => {
+      this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((res) => {
         observer.next(res.fields);
       });
     });

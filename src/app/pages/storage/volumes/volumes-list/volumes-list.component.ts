@@ -127,7 +127,6 @@ export class VolumesListTableConfig implements InputTableConf {
   dialogConf: DialogFormConfiguration;
   restartServices = false;
   subs: any;
-  message_subscription: Subscription;
   productType = window.localStorage.getItem('product_type') as ProductType;
 
   constructor(
@@ -427,7 +426,7 @@ export class VolumesListTableConfig implements InputTableConf {
           },
         ],
         afterInit(entityDialog: EntityDialogComponent) {
-          self.message_subscription = self.messageService.messageSourceHasNewMessage$.pipe(untilDestroyed(this)).subscribe((message) => {
+          self.messageService.messageSourceHasNewMessage$.pipe(untilDestroyed(this)).subscribe((message) => {
             entityDialog.formGroup.controls['key'].setValue(message);
           });
           // these disabled booleans are here to prevent recursion errors, disabling only needs to happen once

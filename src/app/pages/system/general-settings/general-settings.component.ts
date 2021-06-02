@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CoreEvent } from 'app/interfaces/events';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import {
@@ -16,7 +16,7 @@ import { LocalizationFormComponent } from './localization-form/localization-form
 import { GuiFormComponent } from './gui-form/gui-form.component';
 import { NTPServerFormComponent } from './ntpservers/ntpserver-form/ntpserver-form.component';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { Subscription, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
@@ -30,17 +30,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   selector: 'app-general-settings',
   templateUrl: './general-settings.component.html',
 })
-export class GeneralSettingsComponent implements OnInit, OnDestroy {
+export class GeneralSettingsComponent implements OnInit {
   dataCards: any[] = [];
   supportTitle = helptext.supportTitle;
   ntpTitle = helptext.ntpTitle;
   localeData: any;
   configData: any;
-  refreshCardData: Subscription;
   displayedColumns: any;
   dataSource: any;
-  refreshTable: Subscription;
-  getGenConfig: Subscription;
   formEvents: Subject<CoreEvent>;
 
   // Components included in this dashboard
@@ -121,11 +118,11 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getDataCardData();
-    this.refreshCardData = this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getDataCardData();
     });
     this.getNTPData();
-    this.refreshTable = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getNTPData();
     });
 
@@ -170,7 +167,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   }
 
   getDataCardData(): void {
-    this.getGenConfig = this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       this.configData = res;
       this.dataCards = [
         {
@@ -334,11 +331,5 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   resetConfigSubmit(entityDialog: EntityDialogComponent): void {
     const parent = entityDialog.parent;
     parent.router.navigate(new Array('').concat(['others', 'config-reset']));
-  }
-
-  ngOnDestroy(): void {
-    this.refreshCardData.unsubscribe();
-    this.refreshTable.unsubscribe();
-    this.getGenConfig.unsubscribe();
   }
 }

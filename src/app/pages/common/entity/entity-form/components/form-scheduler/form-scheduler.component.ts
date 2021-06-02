@@ -4,7 +4,6 @@ import {
 } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
@@ -43,7 +42,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   helptext = globalHelptext;
   timezone: string;
   offset: string;
-  private getGenConfig: Subscription;
 
   @ViewChild('calendar', { static: false, read: ElementRef }) calendar: ElementRef;
   @ViewChild('calendar', { static: false }) calendarComp: MatMonthView<any>;
@@ -281,7 +279,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     // Set default value
     this._months = '*';
 
-    this.getGenConfig = this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       this.timezone = res.timezone;
       moment.tz.setDefault(res.timezone);
 
@@ -758,9 +756,5 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
 
     return tempOffset;
-  }
-
-  ngOnDestroy(): void {
-    this.getGenConfig.unsubscribe();
   }
 }

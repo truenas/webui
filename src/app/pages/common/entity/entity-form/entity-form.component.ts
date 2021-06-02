@@ -21,7 +21,7 @@ import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 
 import { RestService, WebSocketService, SystemGeneralService } from '../../../../services';
-import { Subscription, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { ModalService } from '../../../../services/modal.service';
 import { EntityTemplateDirective } from '../entity-template.directive';
@@ -64,7 +64,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   saveSubmitText = T('Save');
   showPassword = false;
   successMessage = T('Settings saved.');
-  private getAdvancedConfig: Subscription;
 
   protected loaderOpen = false;
   protected keepLoaderOpen = false;
@@ -199,7 +198,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   async ngOnInit(): Promise<void> {
     // get system general setting
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         if (this.conf.isBasicMode) {
           if (res.advancedmode) {
@@ -730,6 +729,5 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (typeof (this.sub) !== 'undefined' && typeof (this.sub.unsubscribe) !== 'undefined') {
       this.sub.unsubscribe();
     }
-    this.getAdvancedConfig.unsubscribe();
   }
 }

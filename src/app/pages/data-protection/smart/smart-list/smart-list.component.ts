@@ -1,6 +1,5 @@
 import { Router, ActivatedRoute } from '@angular/router';
-import { Component, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component } from '@angular/core';
 
 import { StorageService } from 'app/services/storage.service';
 import helptext from 'app/helptext/data-protection/smart/smart';
@@ -21,7 +20,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, EntityFormService],
 })
-export class SmartListComponent implements InputTableConf, OnDestroy {
+export class SmartListComponent implements InputTableConf {
   title = T('S.M.A.R.T. Tests');
   queryCall = 'smart.test.query';
   route_add: string[] = ['tasks', 'smart', 'add'];
@@ -59,8 +58,6 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
     },
   };
   listDisks: any[] = [];
-  private disksSubscription: Subscription;
-  private onModalClose: Subscription;
 
   constructor(
     protected ws: WebSocketService,
@@ -72,14 +69,14 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
     protected entityFormService: EntityFormService,
     protected translate: TranslateService,
   ) {
-    this.disksSubscription = this.storageService.listDisks().pipe(untilDestroyed(this)).subscribe((listDisks) => {
+    this.storageService.listDisks().pipe(untilDestroyed(this)).subscribe((listDisks) => {
       this.listDisks = listDisks;
     });
   }
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.onModalClose = this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -106,10 +103,5 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
 
   doEdit(id: number): void {
     this.doAdd(id);
-  }
-
-  ngOnDestroy(): void {
-    this.disksSubscription?.unsubscribe();
-    this.onModalClose?.unsubscribe();
   }
 }

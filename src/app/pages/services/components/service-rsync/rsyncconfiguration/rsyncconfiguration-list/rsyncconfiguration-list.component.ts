@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Subscription } from 'rxjs';
 import { T } from '../../../../../../translate-marker';
 
 @Component({
@@ -11,7 +10,6 @@ export class RSYNCconfigurationListComponent {
   protected queryCall = 'rsyncmod.query';
   protected hasDetails = true;
   protected entityList: any;
-  busy: Subscription;
   wsDelete = 'rsyncmod.delete';
   protected route_add: string[] = ['services', 'rsync', 'rsync-module', 'add'];
   protected route_edit: string[] = ['services', 'rsync', 'rsync-module', 'edit'];

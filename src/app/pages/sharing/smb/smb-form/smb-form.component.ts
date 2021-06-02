@@ -1,10 +1,10 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 
 import * as _ from 'lodash';
 import {
-  combineLatest, of, Subscription, Observable,
+  combineLatest, of, Observable,
 } from 'rxjs';
 import {
   catchError, map, switchMap, take, tap, debounceTime,
@@ -32,7 +32,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   selector: 'app-smb-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class SMBFormComponent implements FormConfiguration, OnDestroy {
+export class SMBFormComponent implements FormConfiguration {
   queryCall: 'sharing.smb.query' = 'sharing.smb.query';
   addCall: 'sharing.smb.create' = 'sharing.smb.create';
   editCall: 'sharing.smb.update' = 'sharing.smb.update';
@@ -50,7 +50,6 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
   private stripACLWarningSent = false;
   private mangleWarningSent = false;
   private mangle: boolean;
-  private getAdvancedConfig: Subscription;
 
   fieldSets: FieldSet[] = [
     {
@@ -582,7 +581,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
       }
     }, 700);
 
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((config) => {
+    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((config) => {
       this.isBasicMode = !config.advancedmode;
       this.updateForm();
     });
@@ -624,9 +623,5 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
     if (pathControl.value && !nameControl.value) {
       nameControl.setValue(pathControl.value.split('/').pop());
     }
-  }
-
-  ngOnDestroy(): void {
-    this.getAdvancedConfig?.unsubscribe();
   }
 }

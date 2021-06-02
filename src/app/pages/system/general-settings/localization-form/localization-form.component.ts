@@ -1,9 +1,8 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
 import {
   DialogService, LanguageService, SystemGeneralService, WebSocketService,
 } from '../../../../services';
@@ -21,13 +20,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
+export class LocalizationFormComponent implements FormConfiguration {
   protected updateCall = 'system.general.update';
   sortLanguagesByName = true;
   languageList: any = [];
   languageKey: string;
-  private dateTimeChangeSubscription: Subscription;
-  private getDataFromDash: Subscription;
   title = helptext.localeTitle;
   protected isOneColumnForm = true;
   fieldConfig: FieldConfig[] = [];
@@ -90,7 +87,7 @@ export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
     public localeService: LocaleService,
     private modalService: ModalService,
   ) {
-    this.getDataFromDash = this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.configData = res;
     });
   }
@@ -116,7 +113,7 @@ export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
     });
 
     this.getDateTimeFormats();
-    this.dateTimeChangeSubscription = this.localeService.dateTimeFormatChange$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.localeService.dateTimeFormatChange$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getDateTimeFormats();
     });
 
@@ -196,10 +193,5 @@ export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
 
   getKeyByValue(object: any, value: any): any {
     return Object.keys(object).find((key) => object[key] === value);
-  }
-
-  ngOnDestroy(): void {
-    this.dateTimeChangeSubscription.unsubscribe();
-    this.getDataFromDash.unsubscribe();
   }
 }

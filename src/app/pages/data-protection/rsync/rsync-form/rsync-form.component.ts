@@ -1,7 +1,5 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-
-import { Subscription } from 'rxjs';
 
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -24,7 +22,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [TaskService, UserService],
 })
-export class RsyncFormComponent implements FormConfiguration, OnDestroy {
+export class RsyncFormComponent implements FormConfiguration {
   addCall: 'rsynctask.create' = 'rsynctask.create';
   editCall: 'rsynctask.update' = 'rsynctask.update';
   queryCall: 'rsynctask.query' = 'rsynctask.query';
@@ -245,7 +243,6 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
   protected rsync_module_field: string[] = ['remotemodule'];
   protected rsync_ssh_field: string[] = ['remoteport', 'remotepath', 'validate_rpath'];
   protected user_field: FieldConfig;
-  protected mode_subscription: Subscription;
 
   constructor(
     protected router: Router,
@@ -271,7 +268,7 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
     });
 
     this.hideFields(entityForm.formGroup.controls['mode'].value);
-    this.mode_subscription = entityForm.formGroup.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
+    entityForm.formGroup.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.hideFields(res);
     });
   }
@@ -319,9 +316,5 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
     for (let i = 0; i < show_fields.length; i++) {
       this.entityForm.setDisabled(show_fields[i], false, false);
     }
-  }
-
-  ngOnDestroy(): void {
-    this.mode_subscription?.unsubscribe();
   }
 }

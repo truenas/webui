@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
@@ -26,12 +26,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class SyslogFormComponent implements FormConfiguration, OnDestroy {
+export class SyslogFormComponent implements FormConfiguration {
   queryCall: 'system.advanced.config' = 'system.advanced.config';
   updateCall = 'system.advanced.update';
   protected isOneColumnForm = true;
-  private getDataFromDash: Subscription;
-  private getDatasetConfig: Subscription;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
     {
@@ -113,7 +111,7 @@ export class SyslogFormComponent implements FormConfiguration, OnDestroy {
     private sysGeneralService: SystemGeneralService,
     private modalService: ModalService,
   ) {
-    this.getDataFromDash = this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe(
+    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.configData = res;
       },
@@ -134,7 +132,7 @@ export class SyslogFormComponent implements FormConfiguration, OnDestroy {
 
   afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
-    this.getDatasetConfig = this.ws.call('systemdataset.config').pipe(untilDestroyed(this)).subscribe((res) => {
+    this.ws.call('systemdataset.config').pipe(untilDestroyed(this)).subscribe((res) => {
       entityEdit.formGroup.controls.syslog.setValue(res.syslog);
     });
   }
@@ -170,10 +168,5 @@ export class SyslogFormComponent implements FormConfiguration, OnDestroy {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
-  }
-
-  ngOnDestroy(): void {
-    this.getDatasetConfig.unsubscribe();
-    this.getDataFromDash.unsubscribe();
   }
 }

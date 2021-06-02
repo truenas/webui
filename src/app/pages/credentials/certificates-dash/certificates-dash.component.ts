@@ -1,9 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Option } from 'app/interfaces/option.interface';
 import { AppTableAction } from 'app/pages/common/entity/table/table.component';
-import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -33,11 +32,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   templateUrl: './certificates-dash.component.html',
   providers: [EntityFormService],
 })
-export class CertificatesDashComponent implements OnInit, OnDestroy {
+export class CertificatesDashComponent implements OnInit {
   cards: any;
-  refreshTable: Subscription;
-  refreshForm: Subscription;
-  message: Subscription;
 
   protected certificateAddComponent: CertificateAddComponent;
   protected certificateEditComponent: CertificateEditComponent;
@@ -56,14 +52,14 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getCards();
-    this.refreshTable = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getCards();
     });
     this.refreshForms();
-    this.refreshForm = this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshForms();
     });
-    this.message = this.modalService.message$.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res['action'] === 'open' && res['component'] === 'acmeComponent') {
         this.openForm(this.acmeAddComponent, res['row']);
       }
@@ -358,11 +354,5 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
       entityDialog.loader.close();
       self.dialogService.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
     });
-  }
-
-  ngOnDestroy(): void {
-    this.message.unsubscribe();
-    this.refreshTable.unsubscribe();
-    this.refreshForm.unsubscribe();
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, ValidatorFn } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -25,12 +25,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class GuiFormComponent implements FormConfiguration, OnDestroy {
+export class GuiFormComponent implements FormConfiguration {
   updateCall = 'system.general.update';
   sortLanguagesByName = true;
   languageList: Option[] = [];
   languageKey: string;
-  private getDataFromDash: Subscription;
   fieldConfig: FieldConfig[] = [];
 
   fieldSets: FieldSet[] = [
@@ -149,7 +148,7 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
     private modalService: ModalService,
     private adminLayout: AdminLayoutComponent,
   ) {
-    this.getDataFromDash = this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.configData = res;
     });
   }
@@ -324,9 +323,5 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
-  }
-
-  ngOnDestroy(): void {
-    this.getDataFromDash.unsubscribe();
   }
 }

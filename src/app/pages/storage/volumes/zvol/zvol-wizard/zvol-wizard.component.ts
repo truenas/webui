@@ -15,7 +15,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 
-import { Subscription, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { CoreService } from 'app/core/services/core.service';
@@ -44,7 +44,6 @@ export class ZvolWizardComponent {
   protected addWsCall = 'pool.dataset.create';
   protected pk: any;
   protected path: string;
-  sub: Subscription;
   queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   protected compression: any;
   protected advanced_field: any[] = ['volblocksize'];

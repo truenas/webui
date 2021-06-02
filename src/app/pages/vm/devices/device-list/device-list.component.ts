@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { RestService, WebSocketService } from '../../../../services';
@@ -30,12 +29,10 @@ export class DeviceListComponent implements InputTableConf {
   protected route_delete: string[];
   protected pk: any;
   vm: string;
-  sub: Subscription;
   private entityList: any;
   wsDelete: 'datastore.delete' = 'datastore.delete';
   queryCall: 'vm.device.query' = 'vm.device.query';
   queryCallOption: any[] = [[['vm', '=']]];
-  busy: Subscription;
   protected loaderOpen = false;
   columns: any[] = [
     { name: T('Device ID'), prop: 'id', always_display: true },
@@ -162,7 +159,7 @@ export class DeviceListComponent implements InputTableConf {
           this.loader.open();
           this.loaderOpen = true;
           if (this.wsDelete) {
-            this.busy = this.ws.call(this.wsDelete, ['vm.device', row.id]).pipe(untilDestroyed(this)).subscribe(
+            this.ws.call(this.wsDelete, ['vm.device', row.id]).pipe(untilDestroyed(this)).subscribe(
               () => {
                 this.entityList.getData();
                 this.loader.close();
@@ -180,7 +177,7 @@ export class DeviceListComponent implements InputTableConf {
 
   preInit(entityList: any): void {
     this.entityList = entityList;
-    this.sub = this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
       this.vm = params['name'];
       this.route_add = ['vm', this.pk, 'devices', this.vm, 'add'];

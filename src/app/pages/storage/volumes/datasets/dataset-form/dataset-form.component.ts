@@ -68,7 +68,6 @@ interface DatasetFormData {
 export class DatasetFormComponent implements FormConfiguration {
   title: string;
   volid: string;
-  sub: Subscription;
   isBasicMode = true;
   pk: any;
   customFilter: any[] = [];
@@ -99,11 +98,6 @@ export class DatasetFormComponent implements FormConfiguration {
   humanReadable = {
     quota: '', refquota: '', reservation: '', refreservation: '', special_small_block_size: '',
   };
-
-  private inherit_encryption_subscription: Subscription;
-  private encryption_subscription: Subscription;
-  private encryption_type_subscription: Subscription;
-  private generate_key_subscription: Subscription;
 
   private minquota = 1024 * 1024 * 1024; // 1G minimum
   private minrefquota = 1024 * 1024 * 1024;
@@ -1118,7 +1112,7 @@ export class DatasetFormComponent implements FormConfiguration {
               for (let i = 0; i < this.encryption_fields.length; i++) {
                 this.entityForm.setDisabled(this.encryption_fields[i], true, true);
               }
-              this.inherit_encryption_subscription = inherit_encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((inherit: any) => {
+              inherit_encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((inherit: any) => {
                 this.inherit_encryption = inherit;
                 if (inherit) {
                   for (let i = 0; i < all_encryption_fields.length; i++) {
@@ -1144,7 +1138,7 @@ export class DatasetFormComponent implements FormConfiguration {
                   }
                 }
               });
-              this.encryption_subscription = encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption: any) => {
+              encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption: any) => {
                 // if on an encrypted parent we should warn the user, otherwise just disable the fields
                 if (this.encrypted_parent && !encryption && !this.non_encrypted_warned) {
                   this.dialogService.confirm(helptext.dataset_form_encryption.non_encrypted_warning_title,
@@ -1181,7 +1175,7 @@ export class DatasetFormComponent implements FormConfiguration {
                   }
                 }
               });
-              this.encryption_type_subscription = encryption_type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((type: any) => {
+              encryption_type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((type: any) => {
                 this.encryption_type = type;
                 const key = (type === 'key');
                 this.entityForm.setDisabled('passphrase', key, key);
@@ -1194,7 +1188,7 @@ export class DatasetFormComponent implements FormConfiguration {
                   this.entityForm.setDisabled('key', true, true);
                 }
               });
-              this.generate_key_subscription = this.entityForm.formGroup.controls['generate_key'].valueChanges.pipe(untilDestroyed(this)).subscribe((generate_key: boolean) => {
+              this.entityForm.formGroup.controls['generate_key'].valueChanges.pipe(untilDestroyed(this)).subscribe((generate_key: boolean) => {
                 this.generate_key = generate_key;
                 this.entityForm.setDisabled('key', generate_key, generate_key);
               });

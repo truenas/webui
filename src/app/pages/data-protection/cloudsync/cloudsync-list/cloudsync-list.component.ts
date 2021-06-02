@@ -1,8 +1,7 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
-import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -38,7 +37,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [JobService, TaskService, CloudCredentialService],
 })
-export class CloudsyncListComponent implements InputTableConf, OnDestroy {
+export class CloudsyncListComponent implements InputTableConf {
   title = T('Cloud Sync Tasks');
   queryCall: 'cloudsync.query' = 'cloudsync.query';
   route_add: string[] = ['tasks', 'cloudsync', 'add'];
@@ -82,7 +81,6 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
       key_props: ['description'],
     },
   };
-  private onModalClose: Subscription;
 
   constructor(
     protected router: Router,
@@ -100,7 +98,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.onModalClose = this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -382,9 +380,5 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
 
   doEdit(id: number): void {
     this.doAdd(id);
-  }
-
-  ngOnDestroy(): void {
-    this.onModalClose?.unsubscribe();
   }
 }

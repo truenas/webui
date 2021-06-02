@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { ProductType } from '../../../enums/product-type.enum';
 import { WebSocketService, SystemGeneralService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -18,7 +17,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 export class ShutdownComponent implements OnInit {
   product_type: ProductType;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
-  getProdType: Subscription;
 
   readonly ProductType = ProductType;
 
@@ -26,9 +24,8 @@ export class ShutdownComponent implements OnInit {
     protected loader: AppLoaderService, public translate: TranslateService,
     protected dialogService: DialogService, private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
     this.ws = ws;
-    this.getProdType = this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
       this.product_type = res as ProductType;
-      this.getProdType.unsubscribe();
     });
   }
 

@@ -7,7 +7,6 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { WebSocketService, StorageService, DialogService } from 'app/services';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { Subscription } from 'rxjs';
 import { LocaleService } from 'app/services/locale.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -39,8 +38,6 @@ export class SnapshotListComponent {
   protected loaderOpen = false;
   protected entityList: any;
   protected rollback: any;
-  busy: Subscription;
-  sub: Subscription;
   protected globalConfig = {
     id: 'config',
     onClick: () => {

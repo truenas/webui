@@ -12,7 +12,7 @@ import { WebSocketService, SystemGeneralService } from 'app/services/';
 import { Theme } from 'app/services/theme/theme.service';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { ReportsService } from '../../reports.service';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { LineChartComponent } from '../lineChart/lineChart.component';
 
@@ -110,7 +110,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   altSubtitle = '';
   widgetColorCssVar = 'var(--primary)';
   isActive = true;
-  private getGenConfig: Subscription;
 
   currentStartDate: number;// as seconds from Unix Epoch
   currentEndDate: number;// as seconds from Unix Epoch
@@ -195,12 +194,13 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
     this.core.emit({ name: 'ThemeDataRequest', sender: this });
 
-    this.getGenConfig = this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => this.timezone = res.timezone);
+    this.sysGeneralService.getGeneralConfig.pipe(
+      untilDestroyed(this),
+    ).subscribe((res) => this.timezone = res.timezone);
   }
 
   ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
-    this.getGenConfig.unsubscribe();
   }
 
   ngAfterViewInit(): void {

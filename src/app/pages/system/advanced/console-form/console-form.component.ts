@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
@@ -22,12 +22,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class ConsoleFormComponent implements FormConfiguration, OnDestroy {
+export class ConsoleFormComponent implements FormConfiguration {
   queryCall: 'system.advanced.config' = 'system.advanced.config';
   updateCall = 'system.advanced.update';
   protected isOneColumnForm = true;
-  private getDataFromDash: Subscription;
-  private serialPortChoicesSubscription: Subscription;
   fieldConfig: FieldConfig[] = [];
 
   fieldSets = new FieldSets([
@@ -111,7 +109,7 @@ export class ConsoleFormComponent implements FormConfiguration, OnDestroy {
     private sysGeneralService: SystemGeneralService,
     private modalService: ModalService,
   ) {
-    this.getDataFromDash = this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.configData = res;
     });
   }
@@ -131,7 +129,7 @@ export class ConsoleFormComponent implements FormConfiguration, OnDestroy {
   afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
 
-    this.serialPortChoicesSubscription = this.ws.call('system.advanced.serial_port_choices').pipe(untilDestroyed(this)).subscribe((serial_port_choices) => {
+    this.ws.call('system.advanced.serial_port_choices').pipe(untilDestroyed(this)).subscribe((serial_port_choices) => {
       const serialport = this.fieldSets.config('serialport');
       serialport.options = [];
 
@@ -155,10 +153,5 @@ export class ConsoleFormComponent implements FormConfiguration, OnDestroy {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
-  }
-
-  ngOnDestroy(): void {
-    this.getDataFromDash.unsubscribe();
-    this.serialPortChoicesSubscription.unsubscribe();
   }
 }

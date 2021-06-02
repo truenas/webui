@@ -10,7 +10,6 @@ import { RelationAction } from 'app/pages/common/entity/entity-form/models/relat
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { CipherType } from 'app/enums/cipher-type.enum';
@@ -54,7 +53,6 @@ export class ReplicationWizardComponent {
   isLinear = true;
   summaryTitle = T('Replication Summary');
   pk: number;
-  getRow: Subscription;
   saveSubmitText = T('START REPLICATION');
 
   protected entityWizard: any;
@@ -774,7 +772,10 @@ export class ReplicationWizardComponent {
         this.namesInUse.push(...res.map((replication) => replication.name));
       },
     );
-    this.getRow = this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((rowId: number) => {
+    this.modalService.getRow$.pipe(
+      take(1),
+      untilDestroyed(this),
+    ).subscribe((rowId: number) => {
       this.pk = rowId;
     });
   }

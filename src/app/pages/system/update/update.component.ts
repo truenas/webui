@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
-import { Subscription } from 'rxjs';
 import { ProductType } from '../../../enums/product-type.enum';
 import { WebSocketService, SystemGeneralService, StorageService } from '../../../services';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
@@ -26,7 +25,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   styleUrls: ['update.component.scss'],
   templateUrl: './update.component.html',
 })
-export class UpdateComponent implements OnInit, OnDestroy {
+export class UpdateComponent implements OnInit {
   packages: any[] = [];
   status: string;
   releaseNotes: any = '';
@@ -55,9 +54,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
   product_type: ProductType;
   ds: any;
   failover_upgrade_pending = false;
-  busy: Subscription;
-  busy2: Subscription;
-  private checkChangesSubscription: Subscription;
   showSpinner = false;
   singleDescription: string;
   updateType: string;
@@ -143,10 +139,10 @@ export class UpdateComponent implements OnInit, OnDestroy {
     });
     this.core.emit({ name: 'SysInfoRequest', sender: this });
 
-    this.busy = this.ws.call('update.get_auto_download').pipe(untilDestroyed(this)).subscribe((isAutoDownloadOn) => {
+    this.ws.call('update.get_auto_download').pipe(untilDestroyed(this)).subscribe((isAutoDownloadOn) => {
       this.autoCheck = isAutoDownloadOn;
 
-      this.busy2 = this.ws.call('update.get_trains').pipe(untilDestroyed(this)).subscribe((res) => {
+      this.ws.call('update.get_trains').pipe(untilDestroyed(this)).subscribe((res) => {
         this.fullTrainList = res.trains;
 
         // On page load, make sure we are working with train of the current OS
@@ -646,12 +642,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
         break;
       case 'standard':
         this.confirmAndUpdate();
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.checkChangesSubscription) {
-      this.checkChangesSubscription.unsubscribe();
     }
   }
 }

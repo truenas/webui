@@ -1,11 +1,10 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 import { T } from '../../../translate-marker';
 import helptext from '../../../helptext/directoryservice/kerberosrealms-form-list';
 import { KerberosRealmsFormComponent } from './kerberosrealms-form.component';
 import { ModalService } from '../../../services/modal.service';
-import { Subscription } from 'rxjs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
@@ -13,13 +12,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   selector: 'app-user-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class KerberosRealmsListComponent implements OnDestroy {
+export class KerberosRealmsListComponent {
   title = 'Kerberos Realms';
   protected queryCall = 'kerberos.realm.query';
   protected wsDelete = 'kerberos.realm.delete';
   keyList = ['admin_server', 'kdc', 'kpasswd_server'];
   protected entityList: any;
-  private refreshTableSubscription: Subscription;
 
   columns: any[] = [
     { name: T('Realm'), prop: 'realm', always_display: true },
@@ -52,15 +50,9 @@ export class KerberosRealmsListComponent implements OnDestroy {
 
   afterInit(entityList: any): void {
     this.entityList = entityList;
-    this.refreshTableSubscription = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
-  }
-
-  ngOnDestroy(): void {
-    if (this.refreshTableSubscription) {
-      this.refreshTableSubscription.unsubscribe();
-    }
   }
 
   getAddActions(): EntityTableAction[] {

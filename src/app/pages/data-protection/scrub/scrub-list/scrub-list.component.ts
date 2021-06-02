@@ -1,7 +1,6 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { UserService, WebSocketService, TaskService } from 'app/services';
@@ -20,7 +19,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, UserService, EntityFormService],
 })
-export class ScrubListComponent implements InputTableConf, OnDestroy {
+export class ScrubListComponent implements InputTableConf {
   title = T('Scrub Tasks');
   queryCall: 'pool.scrub.query' = 'pool.scrub.query';
   wsDelete: 'pool.scrub.delete' = 'pool.scrub.delete';
@@ -55,7 +54,6 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
       key_props: ['pool_name'],
     },
   };
-  private onModalClose: Subscription;
 
   constructor(
     protected router: Router,
@@ -70,7 +68,7 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.onModalClose = this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -91,9 +89,5 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
 
   doEdit(id: number): void {
     this.doAdd(id);
-  }
-
-  ngOnDestroy(): void {
-    this.onModalClose?.unsubscribe();
   }
 }

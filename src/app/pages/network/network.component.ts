@@ -11,7 +11,7 @@ import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { AppTableAction } from 'app/pages/common/entity/table/table.component';
 import * as ipRegex from 'ip-regex';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { ProductType } from '../../enums/product-type.enum';
 import helptext from '../../helptext/network/interfaces/interfaces-list';
 
@@ -43,8 +43,6 @@ import { StaticRouteFormComponent } from './forms/staticroute-form.component';
 export class NetworkComponent extends ViewControllerComponent implements OnInit, OnDestroy {
   protected summayCall: 'network.general.summary' = 'network.general.summary';
   protected configCall: 'network.configuration.config' = 'network.configuration.config';
-
-  protected reportEvent: Subscription;
   formEvents: Subject<CoreEvent>;
 
   ha_enabled = false;
@@ -495,10 +493,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   ngOnDestroy(): void {
-    if (this.reportEvent) {
-      this.reportEvent.unsubscribe();
-    }
-
     if (this.formEvents) {
       this.formEvents.complete();
     }
@@ -506,7 +500,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   getInterfaceInOutInfo(tableSource: any[]): void {
-    this.reportEvent = this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((evt) => {
+    this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((evt) => {
       if (evt.interfaces) {
         tableSource.map((row) => {
           row.received = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].received_bytes);

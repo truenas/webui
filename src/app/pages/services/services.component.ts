@@ -10,7 +10,6 @@ import { IscsiService, SystemGeneralService, WebSocketService } from 'app/servic
 
 import { DialogService } from 'app/services/dialog.service';
 import { T } from 'app/translate-marker';
-import { Subscription } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 
 interface ServiceRow extends Service {
@@ -28,7 +27,6 @@ interface ServiceRow extends Service {
 export class Services implements OnInit {
   title = 'Services';
   isFooterConsoleOpen: boolean;
-  private getAdvancedConfig: Subscription;
   protected queryCall = 'service.query';
   protected queryCallOption: QueryParams<Service> = [[], { order_by: ['service'] }];
   protected rowIdentifier = 'name';
@@ -49,7 +47,6 @@ export class Services implements OnInit {
     sorting: { columns: this.columns },
   };
   services: any[];
-  busy: Subscription;
 
   showSpinner = true;
 
@@ -74,10 +71,9 @@ export class Services implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.isFooterConsoleOpen = res.consolemsg;
-        this.getAdvancedConfig.unsubscribe();
       }
     });
   }
@@ -151,7 +147,7 @@ export class Services implements OnInit {
   updateService(rpc: 'service.start' | 'service.stop', service: ServiceRow): void {
     service.onChanging = true;
     const serviceName = this.getServiceName(service);
-    this.busy = this.ws.call(rpc, [service.service]).pipe(untilDestroyed(this)).subscribe((res) => {
+    this.ws.call(rpc, [service.service]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
           this.dialog.Info(
@@ -182,7 +178,7 @@ export class Services implements OnInit {
   }
 
   enableToggle(service: ServiceRow): void {
-    this.busy = this.ws
+    this.ws
       .call('service.update', [service.id, { enable: service.enable }])
       .pipe(untilDestroyed(this)).subscribe((res) => {
         if (!res) {

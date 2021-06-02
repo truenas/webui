@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, Component, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren,
+  AfterViewInit, Component, OnInit, QueryList, ViewChild, ViewChildren,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { VDev } from 'app/interfaces/storage.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
 import * as _ from 'lodash';
-import { of, Subscription } from 'rxjs';
+import { of } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import helptext from '../../../../helptext/storage/volumes/manager/manager';
@@ -30,7 +30,7 @@ import { VdevComponent } from './vdev';
   styleUrls: ['manager.component.scss'],
   providers: [DialogService],
 })
-export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ManagerComponent implements OnInit, AfterViewInit {
   disks: any[] = [];
   suggestable_disks: any[] = [];
   can_suggest = false;
@@ -112,9 +112,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   private duplicable_disks: any[] = [];
 
   canDuplicate = false;
-
-  busy: Subscription;
-  getAdvancedConfig: Subscription;
 
   name_tooltip = helptext.manager_name_tooltip;
 
@@ -304,7 +301,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     });
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       this.swapondrive = res.swapondrive;
     });
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
@@ -375,11 +372,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       this.loader.close();
       new EntityUtils().handleWSError(this, err, this.dialog);
     });
-  }
-
-  ngOnDestroy(): void {
-    // this.dragulaService.destroy("pool-vdev");
-    this.getAdvancedConfig.unsubscribe();
   }
 
   addVdev(group: any, initial_values = {}): void {

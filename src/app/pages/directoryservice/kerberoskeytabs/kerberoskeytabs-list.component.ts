@@ -3,7 +3,6 @@ import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-t
 import { ModalService } from '../../../services/modal.service';
 import helptext from '../../../helptext/directoryservice/kerberoskeytabs-form-list';
 import { T } from '../../../translate-marker';
-import { Subscription } from 'rxjs';
 import { KerberosKeytabsFormComponent } from './kerberoskeytabs-form.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
@@ -17,7 +16,6 @@ export class KerberosKeytabsListComponent {
   protected queryCall = 'kerberos.keytab.query';
   protected wsDelete = 'kerberos.keytab.delete';
   protected entityList: any;
-  private refreshTableSubscription: Subscription;
 
   columns: any[] = [
     { name: 'Name', prop: 'name', always_display: true },
@@ -36,15 +34,9 @@ export class KerberosKeytabsListComponent {
 
   afterInit(entityList: any): void {
     this.entityList = entityList;
-    this.refreshTableSubscription = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
-  }
-
-  ngOnDestroy(): void {
-    if (this.refreshTableSubscription) {
-      this.refreshTableSubscription.unsubscribe();
-    }
   }
 
   getAddActions(): EntityTableAction[] {

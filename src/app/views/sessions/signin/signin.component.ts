@@ -84,7 +84,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   ha_status = false;
   tc_ip: string;
   protected tc_url: string;
-  private getProdType: Subscription;
 
   readonly ProductType = ProductType;
 
@@ -113,7 +112,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   checkSystemType(): void {
     if (!this.logo_ready) {
-      this.getProdType = this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
+      this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
         this.logo_ready = true;
         this.product_type = res as ProductType;
         if (this.interval) {
@@ -190,7 +189,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.tokenObservable) {
       this.tokenObservable.unsubscribe();
     }
-    this.getProdType.unsubscribe();
   }
 
   loginToken(): void {

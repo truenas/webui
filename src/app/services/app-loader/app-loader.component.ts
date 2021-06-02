@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ConsolePanelModalDialog } from 'app/components/common/dialog/consolepanel/consolepanel-dialog.component';
 import { Subscription } from 'rxjs';
@@ -13,7 +13,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   templateUrl: './app-loader.component.html',
   styleUrls: ['./app-loader.component.scss'],
 })
-export class AppLoaderComponent implements OnDestroy {
+export class AppLoaderComponent {
   title: string;
   message: string;
 
@@ -24,15 +24,15 @@ export class AppLoaderComponent implements OnDestroy {
 
   consoleDialog: MatDialogRef<ConsolePanelModalDialog>;
   private _consoleSubscription: Subscription;
-  private getAdvancedConfig: Subscription;
 
   constructor(
     public dialogRef: MatDialogRef<AppLoaderComponent>,
     private _dialog: MatDialog,
     private _ws: WebSocketService, private sysGeneralService: SystemGeneralService,
   ) {
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig
-      .pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getAdvancedConfig
+      .pipe(untilDestroyed(this))
+      .subscribe((res) => {
         if (res.consolemsg) {
           this.isShowConsole = true;
           this.dialogRef.updateSize('200px', '248px');
@@ -53,9 +53,5 @@ export class AppLoaderComponent implements OnDestroy {
       clearInterval(this.consoleDialog.componentInstance.intervalPing);
       this._consoleSubscription.unsubscribe();
     });
-  }
-
-  ngOnDestroy(): void {
-    this.getAdvancedConfig.unsubscribe();
   }
 }

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { ProductType } from '../../../enums/product-type.enum';
 import { WebSocketService, SystemGeneralService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -23,7 +22,6 @@ export class ConfigResetComponent implements OnInit {
   product_type: ProductType;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   dialogRef: any;
-  private getProdType: Subscription;
 
   readonly ProductType = ProductType;
 
@@ -32,9 +30,8 @@ export class ConfigResetComponent implements OnInit {
     protected dialogService: DialogService, protected dialog: MatDialog,
     private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
     this.ws = ws;
-    this.getProdType = this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
       this.product_type = res as ProductType;
-      this.getProdType.unsubscribe();
     });
   }
 

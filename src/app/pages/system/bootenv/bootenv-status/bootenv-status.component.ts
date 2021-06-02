@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { TreeNode } from 'primeng/api';
 import { EntityTreeTable } from '../../../common/entity/entity-tree-table/entity-tree-table.model';
 
@@ -31,7 +30,6 @@ export class BootStatusListComponent implements OnInit {
   title = 'Boot Pool Status';
   protected queryCall = 'boot.get_state';
   protected entityList: any;
-  busy: Subscription;
   protected pk: number;
   poolScan: any;
   oneDisk = false;
@@ -79,7 +77,7 @@ export class BootStatusListComponent implements OnInit {
   detach(disk: any): void {
     disk = disk.substring(5, disk.length);
     this.loader.open();
-    this.busy = this.ws.call('boot.detach', [disk]).pipe(untilDestroyed(this)).subscribe(
+    this.ws.call('boot.detach', [disk]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this._router.navigate(

@@ -10,7 +10,7 @@ import {
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core.service';
 
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
@@ -47,7 +47,6 @@ export class CatalogComponent implements OnInit {
   settingsEvent: Subject<CoreEvent>;
   private kubernetesForm: KubernetesSettingsComponent;
   private chartReleaseForm: ChartReleaseAddComponent;
-  private refreshForm: Subscription;
   protected utils: CommonUtils;
   imagePlaceholder = appImagePlaceholder;
 
@@ -84,7 +83,7 @@ export class CatalogComponent implements OnInit {
     this.loadCatalogs();
     this.checkForConfiguredPool();
     this.refreshForms();
-    this.refreshForm = this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshForms();
     });
   }

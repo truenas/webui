@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Alert } from 'app/interfaces/alert.interface';
 
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import * as _ from 'lodash';
 
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -29,7 +29,6 @@ export class NotificationsService {
   private notifications: NotificationAlert[] = [];
   private locale = 'en-US';
   private timeZone = 'UTC';
-  private getGenConfig: Subscription;
 
   constructor(
     private ws: WebSocketService,
@@ -39,7 +38,7 @@ export class NotificationsService {
   }
 
   initMe(): void {
-    this.getGenConfig = this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.timezone !== 'WET' && res.timezone !== 'posixrules') {
         this.timeZone = res.timezone;
       }
@@ -166,9 +165,5 @@ export class NotificationsService {
     };
 
     return newNotification;
-  }
-
-  ngOnDestroy(): void {
-    this.getGenConfig.unsubscribe();
   }
 }

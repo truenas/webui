@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
@@ -24,7 +24,6 @@ import wizardHelptext from '../../../helptext/vm/vm-wizard/vm-wizard';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
 import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
 import { Validators } from '@angular/forms';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -46,14 +45,13 @@ interface DisplayWebUri {
   styleUrls: ['./vm-list.component.scss'],
   providers: [VmService, MessageService],
 })
-export class VMListComponent implements OnDestroy {
+export class VMListComponent {
   title = 'Virtual Machines';
   protected queryCall: 'vm.query' = 'vm.query';
   protected wsDelete: 'vm.delete' = 'vm.delete';
   protected route_add: string[] = ['vm', 'wizard'];
   protected route_edit: string[] = ['vm', 'edit'];
   protected dialogRef: any;
-  private eventSubscription: Subscription;
   private productType = window.localStorage.getItem('product_type') as ProductType;
   protected addComponent: VMWizardComponent;
 
@@ -135,7 +133,7 @@ export class VMListComponent implements OnDestroy {
   afterInit(entityList: any): void {
     this.checkMemory();
     this.entityList = entityList;
-    this.eventSubscription = this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
       const changedRow = (this.entityList.rows as any[]).find((o) => o.id === event.id);
       if (event.fields.state === ServiceStatus.Running) {
         changedRow.state = ServiceStatus.Running;
@@ -651,10 +649,6 @@ export class VMListComponent implements OnDestroy {
     this.ws.call(this.wsMethods.getAvailableMemory).pipe(untilDestroyed(this)).subscribe((res) => {
       this.availMem = this.storageService.convertBytestoHumanReadable(res);
     });
-  }
-
-  ngOnDestroy(): void {
-    this.eventSubscription.unsubscribe();
   }
 
   doAdd(): void {

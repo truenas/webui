@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy, AfterViewInit,
+  Component, OnInit, ViewChild, ViewEncapsulation, AfterViewInit,
 } from '@angular/core';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
@@ -11,7 +11,7 @@ import { CoreService } from 'app/core/services/core.service';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
 import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import helptext from '../../helptext/apps/apps';
 import { ActivatedRoute } from '@angular/router';
 import { CommonUtils } from 'app/core/classes/common-utils';
@@ -26,7 +26,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   styleUrls: ['./applications.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class ApplicationsComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ApplicationsComponent implements OnInit, AfterViewInit {
   @ViewChild(CatalogComponent, { static: false }) private catalogTab: CatalogComponent;
   @ViewChild(ChartReleasesComponent, { static: false }) private chartTab: ChartReleasesComponent;
   @ViewChild(ManageCatalogsComponent, { static: false }) private manageCatalogTab: ManageCatalogsComponent;
@@ -41,7 +41,6 @@ export class ApplicationsComponent implements OnInit, AfterViewInit, OnDestroy {
   catalogOptions: Option[] = [];
   selectedCatalogOptions: Option[] = [];
   protected utils: CommonUtils;
-  private refreshTable: Subscription;
 
   constructor(
     private appService: ApplicationsService,
@@ -55,7 +54,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.setupToolbar();
 
-    this.refreshTable = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTab(true);
     });
   }
@@ -68,12 +67,6 @@ export class ApplicationsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.refreshTab();
       }
     });
-  }
-
-  ngOnDestroy(): void {
-    if (this.refreshTable) {
-      this.refreshTable.unsubscribe();
-    }
   }
 
   setupToolbar(): void {

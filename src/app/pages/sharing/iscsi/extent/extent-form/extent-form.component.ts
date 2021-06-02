@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators, FormControl, ValidationErrors } from '@angular/forms';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { Subscription } from 'rxjs';
 
 import * as _ from 'lodash';
 
@@ -34,7 +33,6 @@ export class ExtentFormComponent implements FormConfiguration {
   isEntity = true;
   protected entityForm: EntityFormComponent;
   isNew = false;
-  sub: Subscription;
   protected originalFilesize: number;
 
   fieldSets: FieldSet[] = [
@@ -272,7 +270,7 @@ export class ExtentFormComponent implements FormConfiguration {
     protected storageService: StorageService) {}
 
   preInit(): void {
-    this.sub = this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       // removed serial field in edit mode
       if (!params['pk']) {
         this.isNew = true;

@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import helptext from '../../../helptext/vm/vm-cards/vm-cards';
 import { ShellConnectedEvent } from '../../../interfaces/shell.interface';
 import { ShellService, WebSocketService } from '../../../services';
@@ -34,7 +34,6 @@ export class VMSerialShellComponent implements OnInit, OnDestroy {
   connectionId: string;
   token: any;
   xterm: Terminal;
-  private shellSubscription: Subscription;
   shell_tooltip = helptext.serial_shell_tooltip;
   private fitAddon: FitAddon;
 
@@ -53,20 +52,13 @@ export class VMSerialShellComponent implements OnInit, OnDestroy {
       this.pk = params['pk'];
       this.getAuthToken().pipe(untilDestroyed(this)).subscribe((token) => {
         this.initializeWebShell(token);
-        this.shellSubscription = this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe((value: any) => {
-          if (value !== undefined) {
-            // this.xterm.write(value);
-          }
-        });
+        this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe();
         this.initializeTerminal();
       });
     });
   }
 
   ngOnDestroy(): void {
-    if (this.shellSubscription) {
-      this.shellSubscription.unsubscribe();
-    }
     if (this.ss.connected) {
       this.ss.socket.close();
     }

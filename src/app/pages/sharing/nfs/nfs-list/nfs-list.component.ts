@@ -6,7 +6,6 @@ import { NFSFormComponent } from '../nfs-form';
 import {
   DialogService, NetworkService, WebSocketService, UserService, ModalService,
 } from 'app/services';
-import { Subscription } from 'rxjs';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
@@ -23,7 +22,6 @@ export class NFSListComponent implements InputTableConf {
   protected route_add_tooltip = 'Add Unix (NFS) Share';
   route_edit: string[] = ['sharing', 'nfs', 'edit'];
   protected route_delete: string[] = ['sharing', 'nfs', 'delete'];
-  private refreshTable: Subscription;
   entityList: EntityTableComponent;
 
   columns: any[] = [
@@ -52,7 +50,7 @@ export class NFSListComponent implements InputTableConf {
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
 
-    this.refreshTable = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -71,11 +69,5 @@ export class NFSListComponent implements InputTableConf {
 
   doEdit(id: number): void {
     this.doAdd(id);
-  }
-
-  ngOnDestroy(): void {
-    if (this.refreshTable) {
-      this.refreshTable.unsubscribe();
-    }
   }
 }

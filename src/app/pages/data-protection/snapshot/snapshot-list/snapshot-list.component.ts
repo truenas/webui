@@ -1,7 +1,6 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
 
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -21,7 +20,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, StorageService],
 })
-export class SnapshotListComponent implements InputTableConf, OnDestroy {
+export class SnapshotListComponent implements InputTableConf {
   title = T('Periodic Snapshot Tasks');
   queryCall: 'pool.snapshottask.query' = 'pool.snapshottask.query';
   updateCall: 'pool.snapshottask.update' = 'pool.snapshottask.update';
@@ -56,7 +55,6 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
       key_props: ['dataset', 'naming_schema', 'keepfor'],
     },
   };
-  private onModalClose: Subscription;
 
   constructor(
     private dialogService: DialogService,
@@ -70,7 +68,7 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.onModalClose = this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -122,9 +120,5 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
 
   doEdit(id: number): void {
     this.doAdd(id);
-  }
-
-  ngOnDestroy(): void {
-    this.onModalClose?.unsubscribe();
   }
 }

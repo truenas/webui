@@ -44,10 +44,8 @@ export class ChartReleasesComponent implements OnInit {
   private dialogRef: any;
   ixIcon = 'assets/images/ix-original.png';
   private rollbackChartName: string;
-  private refreshTable: Subscription;
 
   protected utils: CommonUtils;
-  private refreshForm: Subscription;
   settingsEvent: Subject<CoreEvent>;
   private chartReleaseChangedListener: Subscription;
 

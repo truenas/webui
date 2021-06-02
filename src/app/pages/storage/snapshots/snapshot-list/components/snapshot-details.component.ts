@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { Option } from 'app/interfaces/option.interface';
-import { Subscription } from 'rxjs';
 import {
   EntityAction,
   EntityRowDetails,
@@ -24,7 +23,6 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
   readonly entityName: 'snapshot';
   // public locale: string;
   timezone: string;
-  getGenConfig: Subscription;
 
   @Input() config: { name: string };
   @Input() parent: EntityTableComponent & { conf: SnapshotListComponent };
@@ -36,7 +34,7 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
     protected storageService: StorageService, private sysGeneralService: SystemGeneralService) {}
 
   ngOnInit(): void {
-    this.getGenConfig = this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       this.timezone = res.timezone;
       this._ws
         .call('zfs.snapshot.query', [[['id', '=', this.config.name]]])
@@ -66,9 +64,5 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
     });
 
     this.actions = this.parent.conf.getActions() as EntityAction[];
-  }
-
-  ngOnDestroy(): void {
-    this.getGenConfig.unsubscribe();
   }
 }

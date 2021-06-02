@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { T } from '../../../translate-marker';
@@ -12,7 +12,6 @@ import helptext from '../../../helptext/directoryservice/idmap';
 import { ModalService } from '../../../services/modal.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ActiveDirectoryComponent } from '../activedirectory/activedirectory.component';
-import { Subscription } from 'rxjs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
@@ -20,7 +19,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   selector: 'app-idmap-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class IdmapListComponent implements OnDestroy {
+export class IdmapListComponent {
   title = 'Idmap';
   protected queryCall = 'idmap.query';
   protected wsDelete = 'idmap.delete';
@@ -53,8 +52,6 @@ export class IdmapListComponent implements OnDestroy {
     },
   };
 
-  private refreshTableSubscription: Subscription;
-
   constructor(
     protected idmapService: IdmapService,
     protected validationService: ValidationService,
@@ -84,15 +81,9 @@ export class IdmapListComponent implements OnDestroy {
 
   afterInit(entityList: any): void {
     this.entityList = entityList;
-    this.refreshTableSubscription = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
-  }
-
-  ngOnDestroy(): void {
-    if (this.refreshTableSubscription) {
-      this.refreshTableSubscription.unsubscribe();
-    }
   }
 
   getAddActions(): EntityTableAction[] {

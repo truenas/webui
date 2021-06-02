@@ -38,8 +38,6 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
   actions: any[];
 
   private filterSubscription: Subscription;
-  private poolChoicesSubscription: Subscription;
-  private poolConfigSubscription: Subscription;
 
   get totalActions(): number {
     const addAction = this.entity.conf.route_add ? 1 : 0;
@@ -61,8 +59,6 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
 
   ngOnDestroy(): void {
     this.filterSubscription?.unsubscribe();
-    this.poolChoicesSubscription?.unsubscribe();
-    this.poolConfigSubscription?.unsubscribe();
   }
 
   ngAfterViewInit(): void {

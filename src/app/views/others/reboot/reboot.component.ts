@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductType } from '../../../enums/product-type.enum';
 import { WebSocketService, SystemGeneralService } from '../../../services';
-import { Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from '../../../services/dialog.service';
@@ -19,7 +18,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 export class RebootComponent implements OnInit {
   product_type: ProductType;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
-  private getProdType: Subscription;
 
   readonly ProductType = ProductType;
 
@@ -28,9 +26,8 @@ export class RebootComponent implements OnInit {
     protected dialogService: DialogService, protected dialog: MatDialog,
     private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
     this.ws = ws;
-    this.getProdType = this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
       this.product_type = res as ProductType;
-      this.getProdType.unsubscribe();
     });
   }
 

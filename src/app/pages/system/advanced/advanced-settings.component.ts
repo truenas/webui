@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, OnDestroy,
+  Component, OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -8,7 +8,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CoreEvent } from 'app/interfaces/events';
 import { TranslateService } from '@ngx-translate/core';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
@@ -62,15 +62,9 @@ enum CardId {
   templateUrl: './advanced-settings.component.html',
   providers: [DatePipe, UserService],
 })
-export class AdvancedSettingsComponent implements OnInit, OnDestroy {
+export class AdvancedSettingsComponent implements OnInit {
   dataCards: any[] = [];
   configData: AdvancedConfig;
-  refreshCardData: Subscription;
-  refreshTable: Subscription;
-  refreshForm: Subscription;
-  refreshOnClose: Subscription;
-  getAdvancedConfig: Subscription;
-  getDatasetConfig: Subscription;
   syslog: boolean;
   systemDatasetPool: string;
   entityForm: EntityFormComponent;
@@ -199,21 +193,21 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getDatasetData();
     this.getDataCardData();
-    this.refreshCardData = this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getDatasetData();
       this.getDataCardData();
     });
 
-    this.refreshTable = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
     });
 
-    this.refreshOnClose = this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
     });
 
     this.refreshForms();
-    this.refreshForm = this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshForms();
     });
 
@@ -259,7 +253,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   }
 
   getDatasetData(): void {
-    this.getDatasetConfig = this.ws.call('systemdataset.config').pipe(untilDestroyed(this)).subscribe((config) => {
+    this.ws.call('systemdataset.config').pipe(untilDestroyed(this)).subscribe((config) => {
       if (!config) {
         return;
       }
@@ -272,7 +266,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   }
 
   getDataCardData(): void {
-    this.getAdvancedConfig = this.ws.call('system.advanced.config').pipe(untilDestroyed(this)).subscribe((advancedConfig) => {
+    this.ws.call('system.advanced.config').pipe(untilDestroyed(this)).subscribe((advancedConfig) => {
       this.configData = advancedConfig;
 
       this.dataCards = [
@@ -591,14 +585,5 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
 
       return job;
     });
-  }
-
-  ngOnDestroy(): void {
-    this.refreshCardData.unsubscribe();
-    this.refreshTable.unsubscribe();
-    this.refreshForm.unsubscribe();
-    this.refreshOnClose.unsubscribe();
-    this.getDatasetConfig.unsubscribe();
-    this.getAdvancedConfig.unsubscribe();
   }
 }

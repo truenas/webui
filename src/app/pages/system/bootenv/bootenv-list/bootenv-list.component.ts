@@ -1,5 +1,5 @@
 import {
-  Component, ElementRef, ViewChild, OnDestroy,
+  Component, ElementRef, ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
@@ -7,7 +7,6 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { DialogService } from 'app/services';
-import { Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { RestService } from '../../../../services/rest.service';
@@ -24,7 +23,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   selector: 'app-bootenv-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class BootEnvironmentListComponent implements OnDestroy {
+export class BootEnvironmentListComponent {
   @ViewChild('scrubIntervalEvent', { static: true }) scrubIntervalEvent: ElementRef;
 
   title = T('Boot Environments');
@@ -38,7 +37,6 @@ export class BootEnvironmentListComponent implements OnDestroy {
   protected wsActivate: 'bootenv.activate' = 'bootenv.activate';
   protected wsKeep: 'bootenv.set_attribute' = 'bootenv.set_attribute';
   protected loaderOpen = false;
-  busy: Subscription;
   size_consumed: string;
   condition: string;
   size_boot: string;
@@ -46,8 +44,6 @@ export class BootEnvironmentListComponent implements OnDestroy {
   header: string;
   scrub_msg: string;
   scrub_interval: number;
-  private getAdvancedConfig: Subscription;
-  private getConfigForActions: Subscription;
 
   constructor(private _rest: RestService, private _router: Router, public ws: WebSocketService,
     public dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService,
@@ -71,7 +67,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
   };
 
   preInit(): void {
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       this.scrub_interval = res.boot_scrub;
       this.updateBootState();
     });
@@ -228,7 +224,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
-        this.busy = this.ws.call(this.wsActivate, [id]).pipe(untilDestroyed(this)).subscribe(
+        this.ws.call(this.wsActivate, [id]).pipe(untilDestroyed(this)).subscribe(
           () => {
             this.entityList.getData();
             this.loader.close();
@@ -266,7 +262,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
-          this.busy = this.ws.call(this.wsKeep, [id, { keep: true }]).pipe(untilDestroyed(this)).subscribe(
+          this.ws.call(this.wsKeep, [id, { keep: true }]).pipe(untilDestroyed(this)).subscribe(
             () => {
               this.entityList.getData();
               this.loader.close();
@@ -284,7 +280,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
-          this.busy = this.ws.call(this.wsKeep, [id, { keep: false }]).pipe(untilDestroyed(this)).subscribe(
+          this.ws.call(this.wsKeep, [id, { keep: false }]).pipe(untilDestroyed(this)).subscribe(
             () => {
               this.entityList.getData();
               this.loader.close();
@@ -304,7 +300,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
     return [{
       label: T('Stats/Settings'),
       onClick: () => {
-        this.getConfigForActions = this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+        this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
           this.scrub_interval = res.boot_scrub;
           const localWS = this.ws;
           const localDialog = this.dialog;
@@ -386,7 +382,7 @@ export class BootEnvironmentListComponent implements OnDestroy {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
-        this.busy = this.ws.call('boot.scrub').pipe(untilDestroyed(this)).subscribe(() => {
+        this.ws.call('boot.scrub').pipe(untilDestroyed(this)).subscribe(() => {
           this.loader.close();
           this.dialog.Info(T('Scrub Started'), T(''), '300px', 'info', true);
         },
@@ -396,15 +392,5 @@ export class BootEnvironmentListComponent implements OnDestroy {
         });
       }
     });
-  }
-
-  ngOnDestroy(): void {
-    if (this.getAdvancedConfig) {
-      this.getAdvancedConfig.unsubscribe();
-    }
-
-    if (this.getConfigForActions) {
-      this.getConfigForActions.unsubscribe();
-    }
   }
 }

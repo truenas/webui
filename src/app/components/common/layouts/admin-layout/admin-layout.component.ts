@@ -9,7 +9,6 @@ import { CoreService } from 'app/core/services/core.service';
 import { LayoutService } from 'app/core/services/layout.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
-import { Subscription } from 'rxjs';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { RestService, WebSocketService, SystemGeneralService } from '../../../../services';
 import { LanguageService } from '../../../../services/language.service';
@@ -27,8 +26,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 })
 export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   private isMobile: boolean;
-  screenSizeWatcher: Subscription;
-  getAdvancedConfig: Subscription;
   isSidenavOpen = true;
   isSidenavCollapsed = false;
   sidenavMode = 'over';
@@ -81,7 +78,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       }
     });
     // Watches screen size and open/close sidenav
-    this.screenSizeWatcher = media.media$.pipe(untilDestroyed(this)).subscribe((change: MediaChange) => {
+    media.media$.pipe(untilDestroyed(this)).subscribe((change: MediaChange) => {
       this.isMobile = this.layoutService.isMobile;
       this.updateSidenav();
       core.emit({ name: 'MediaChange', data: change, sender: this });
@@ -183,8 +180,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   checkIfConsoleMsgShows(): void {
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig
-      .pipe(untilDestroyed(this)).subscribe((res) => this.onShowConsoleFooterBar(res.consolemsg));
+    this.sysGeneralService.getAdvancedConfig.pipe(
+      untilDestroyed(this),
+    ).subscribe((res) => this.onShowConsoleFooterBar(res.consolemsg));
   }
 
   getLogConsoleMsg(): void {

@@ -7,7 +7,7 @@ import {
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { Subject, BehaviorSubject, Subscription } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { CoreService } from 'app/core/services/core.service';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -81,7 +81,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[];
   diskReportConfigReady = false;
-  private getAdvancedConfig: Subscription;
   actionsConfig: any;
   formComponent: ReportsConfigComponent;
 
@@ -101,7 +100,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.scrollContainer = document.querySelector('.rightside-content-hold ');// this.container.nativeElement;
     this.scrollContainer.style.overflow = 'hidden';
 
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.isFooterConsoleOpen = res.consolemsg;
       }
@@ -167,7 +166,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   ngOnDestroy(): void {
     this.scrollContainer.style.overflow = 'auto';
     this.core.unregister({ observerClass: this });
-    this.getAdvancedConfig.unsubscribe();
   }
 
   ngAfterViewInit(): void {

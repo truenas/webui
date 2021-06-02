@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { Subscription } from 'rxjs';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { RestService, WebSocketService, DialogService } from '../../../../services';
 import { FormGroup, Validators } from '@angular/forms';
@@ -173,7 +172,6 @@ export class VolumeImportWizardComponent {
   protected stepper: string;
 
   protected isNew = true;
-  protected is_new_subscription: Subscription;
   protected encrypted: FormGroup;
   protected devices: FieldConfig;
   protected devices_fg: FormGroup;
@@ -183,8 +181,6 @@ export class VolumeImportWizardComponent {
   protected passphrase_fg: FormGroup;
   protected guid: FieldConfig;
   protected pool: any;
-  protected guid_subscription: Subscription;
-  protected message_subscription: Subscription;
   protected hideCancel = true;
 
   constructor(protected rest: RestService, protected ws: WebSocketService,
@@ -295,7 +291,7 @@ export class VolumeImportWizardComponent {
     }
 
     this.guid = _.find(this.wizardConfig[this.importIndex].fieldConfig, { name: 'guid' });
-    this.guid_subscription = (< FormGroup > entityWizard.formArray.get([this.importIndex]).get('guid'))
+    (< FormGroup > entityWizard.formArray.get([this.importIndex]).get('guid'))
       .valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
         const pool = _.find(this.guid.options, { value: res });
         this.summary[T('Pool to import')] = pool['label'];
@@ -306,7 +302,7 @@ export class VolumeImportWizardComponent {
       });
 
     if (!this.productType.includes(ProductType.Scale)) {
-      this.message_subscription = this.messageService.messageSourceHasNewMessage$.pipe(untilDestroyed(this)).subscribe((message) => {
+      this.messageService.messageSourceHasNewMessage$.pipe(untilDestroyed(this)).subscribe((message) => {
         this.key_fg.setValue(message);
       });
     }
@@ -363,16 +359,6 @@ export class VolumeImportWizardComponent {
       this.dialogService.errorReport(T('Error importing pool'), res.error, res.exception);
     } else {
       console.error(res);
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.guid_subscription.unsubscribe();
-    if (this.message_subscription) {
-      this.message_subscription.unsubscribe();
-    }
-    if (this.is_new_subscription) {
-      this.is_new_subscription.unsubscribe();
     }
   }
 }

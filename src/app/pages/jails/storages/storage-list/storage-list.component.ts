@@ -5,7 +5,6 @@ import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-t
 
 import { DialogService, WebSocketService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { Subscription } from 'rxjs';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/jails/storage';
@@ -26,7 +25,6 @@ export class StorageListComponent {
   protected route_edit: string[] = ['jails', 'storage'];
 
   protected jailId: string;
-  busy: Subscription;
   protected loaderOpen = false;
 
   columns: any[] = [
@@ -107,7 +105,7 @@ export class StorageListComponent {
           if (res) {
             this.entityList.loader.open();
             this.entityList.loaderOpen = true;
-            this.busy = this.ws.call('jail.fstab', [this.jailId, { action: 'REMOVE', index: item.id }]).pipe(untilDestroyed(this)).subscribe(
+            this.ws.call('jail.fstab', [this.jailId, { action: 'REMOVE', index: item.id }]).pipe(untilDestroyed(this)).subscribe(
               () => { this.entityList.getData(); },
               (res: any) => {
                 new EntityUtils().handleWSError(this, res, this.dialog);

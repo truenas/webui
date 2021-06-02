@@ -51,9 +51,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   interval: any;
   updateIsDone: Subscription;
-  getProductType: Subscription;
-  getAdvancedConfig: Subscription;
-  webSocketOnClose: Subscription;
 
   showResilvering = false;
   pendingNetworkChanges = false;
@@ -238,7 +235,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.hostname = evt.data.hostname;
     });
 
-    this.getProductType = this.sysGenService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGenService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
       this.systemType = res;
     });
 
@@ -252,7 +249,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
 
-    this.webSocketOnClose = this.ws.onCloseSubject.pipe(untilDestroyed(this)).subscribe(() => {
+    this.ws.onCloseSubject.pipe(untilDestroyed(this)).subscribe(() => {
       this.modalService.close('slide-in-form');
     });
   }
@@ -269,7 +266,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   checkLegacyUISetting(): void {
-    this.getAdvancedConfig = this.sysGenService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGenService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.legacy_ui) {
         this.exposeLegacyUI = res.legacy_ui;
         window.localStorage.setItem('exposeLegacyUI', res.legacy_ui);
@@ -285,13 +282,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.ws.unsubscribe('failover.disabled_reasons');
 
     this.core.unregister({ observerClass: this });
-
-    this.getProductType.unsubscribe();
-
-    if (this.getAdvancedConfig) {
-      this.getAdvancedConfig.unsubscribe();
-    }
-    this.webSocketOnClose.unsubscribe();
   }
 
   toggleNotificationPanel(): void {

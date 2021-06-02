@@ -1,7 +1,6 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
@@ -24,7 +23,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   selector: 'app-smb-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class SMBListComponent implements InputTableConf, OnDestroy {
+export class SMBListComponent implements InputTableConf {
   title = 'Samba';
   queryCall: 'sharing.smb.query' = 'sharing.smb.query';
   updateCall: 'sharing.smb.update' = 'sharing.smb.update';
@@ -33,7 +32,6 @@ export class SMBListComponent implements InputTableConf, OnDestroy {
   protected route_add_tooltip = 'Add Windows (SMB) Share';
   protected route_delete: string[] = ['sharing', 'smb', 'delete'];
   private entityList: EntityTableComponent;
-  private refreshTable: Subscription;
   productType = window.localStorage.getItem('product_type') as ProductType;
   emptyTableConfigMessages = {
     first_use: {
@@ -83,7 +81,7 @@ export class SMBListComponent implements InputTableConf, OnDestroy {
   afterInit(entityList: any): void {
     this.entityList = entityList;
 
-    this.refreshTable = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -198,9 +196,5 @@ export class SMBListComponent implements InputTableConf, OnDestroy {
         new EntityUtils().handleWSError(this, err, this.dialog);
       },
     );
-  }
-
-  ngOnDestroy(): void {
-    this.refreshTable?.unsubscribe();
   }
 }

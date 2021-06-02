@@ -2,7 +2,6 @@ import {
   ApplicationRef, Component, Injector,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
@@ -30,8 +29,6 @@ export class TunableListComponent {
 
   protected product_type: ProductType;
 
-  busy: Subscription;
-  sub: Subscription;
   protected entityList: any;
 
   wsMultiDelete = 'core.bulk';

@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
@@ -27,7 +27,6 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { Subscription } from 'rxjs';
 import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
@@ -45,7 +44,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
     DatePipe,
   ],
 })
-export class ReplicationListComponent implements InputTableConf, OnDestroy {
+export class ReplicationListComponent implements InputTableConf {
   title = T('Replication Tasks');
   queryCall: 'replication.query' = 'replication.query';
   wsDelete: 'replication.delete' = 'replication.delete';
@@ -79,7 +78,6 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
       key_props: ['name'],
     },
   };
-  private onModalClose: Subscription;
 
   constructor(
     private ws: WebSocketService,
@@ -98,7 +96,7 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.onModalClose = this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -274,9 +272,5 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
       ),
       id,
     );
-  }
-
-  ngOnDestroy(): void {
-    this.onModalClose?.unsubscribe();
   }
 }

@@ -10,7 +10,6 @@ import { EntityFormService } from '../common/entity/entity-form/services/entity-
 
 import { RestService, WebSocketService } from '../../services';
 import { AppLoaderService } from '../../services/app-loader/app-loader.service';
-import { Subscription } from 'rxjs';
 import { EntityUtils } from '../common/entity/utils';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
@@ -51,7 +50,6 @@ export class DashboardNoteEditComponent implements OnInit {
   error: any;
   success: any;
   protected formGroup: FormGroup;
-  busy: Subscription;
 
   notes: any[] ;
   protected targetNoteIndex: number;
@@ -125,7 +123,7 @@ export class DashboardNoteEditComponent implements OnInit {
       attribute_key = this.cardNote['id'];
     }
     this.loader.open();
-    this.busy = this.ws.call('user.set_attribute', [1, attribute_key, value['content']])
+    this.ws.call('user.set_attribute', [1, attribute_key, value['content']])
       .pipe(untilDestroyed(this)).subscribe(
         () => {
           this.loader.close();
