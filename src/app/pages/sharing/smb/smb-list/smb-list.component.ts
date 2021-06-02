@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -7,7 +8,6 @@ import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
 import vol_helptext from 'app/helptext/storage/volumes/volume-list';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
-import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import {
   AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
@@ -23,7 +23,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   selector: 'app-smb-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class SMBListComponent implements InputTableConf {
+export class SMBListComponent implements EntityTableConfig {
   title = 'Samba';
   queryCall: 'sharing.smb.query' = 'sharing.smb.query';
   updateCall: 'sharing.smb.update' = 'sharing.smb.update';
@@ -45,7 +45,7 @@ export class SMBListComponent implements InputTableConf {
     buttonText: T('Add SMB Share'),
   };
 
-  columns: any[] = [
+  columns = [
     { name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
     { name: helptext_sharing_smb.column_path, prop: 'path' },
     { name: helptext_sharing_smb.column_comment, prop: 'comment' },
@@ -78,7 +78,7 @@ export class SMBListComponent implements InputTableConf {
     private sysGeneralService: SystemGeneralService,
   ) {}
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
 
     this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {

@@ -2233,7 +2233,6 @@
   "msgqqueued": "",
   "msgqsize": "",
   "nmsgq": "",
-  "no": "",
   "nsemop": "",
   "nshm": "",
   "nthr": "",
@@ -4320,6 +4319,5 @@
   "wallclock": "Wanduhr",
   "warn": "Warnung",
   "was successfully attached.": "wurde erfolgreich hinzugefügt.",
-  "while pool is encrypted": "während der Pool verschlüsselt ist",
-  "yes": "Ja"
+  "while pool is encrypted": "während der Pool verschlüsselt ist"
 }

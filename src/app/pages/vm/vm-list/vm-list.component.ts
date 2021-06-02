@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { ProductType } from '../../../enums/product-type.enum';
 
 import {
@@ -45,18 +45,18 @@ interface DisplayWebUri {
   styleUrls: ['./vm-list.component.scss'],
   providers: [VmService, MessageService],
 })
-export class VMListComponent {
+export class VMListComponent implements EntityTableConfig {
   title = 'Virtual Machines';
-  protected queryCall: 'vm.query' = 'vm.query';
-  protected wsDelete: 'vm.delete' = 'vm.delete';
-  protected route_add: string[] = ['vm', 'wizard'];
-  protected route_edit: string[] = ['vm', 'edit'];
+  queryCall: 'vm.query' = 'vm.query';
+  wsDelete: 'vm.delete' = 'vm.delete';
+  route_add: string[] = ['vm', 'wizard'];
+  route_edit: string[] = ['vm', 'edit'];
   protected dialogRef: any;
   private productType = window.localStorage.getItem('product_type') as ProductType;
-  protected addComponent: VMWizardComponent;
+  addComponent: VMWizardComponent;
 
   entityList: any;
-  columns: any[] = [
+  columns = [
     { name: T('Name'), prop: 'name', always_display: true },
     {
       name: T('State'), prop: 'state', always_display: true, toggle: true,

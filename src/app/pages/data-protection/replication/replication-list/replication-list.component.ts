@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
@@ -27,7 +28,6 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
@@ -44,7 +44,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
     DatePipe,
   ],
 })
-export class ReplicationListComponent implements InputTableConf {
+export class ReplicationListComponent implements EntityTableConfig {
   title = T('Replication Tasks');
   queryCall: 'replication.query' = 'replication.query';
   wsDelete: 'replication.delete' = 'replication.delete';
@@ -54,7 +54,7 @@ export class ReplicationListComponent implements InputTableConf {
   entityList: EntityTableComponent;
   asyncView = true;
 
-  columns: any[] = [
+  columns = [
     { name: T('Name'), prop: 'name', always_display: true },
     { name: T('Direction'), prop: 'direction' },
     { name: T('Transport'), prop: 'transport', hidden: true },

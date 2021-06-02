@@ -24,6 +24,7 @@ import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as filesize from 'filesize';
 
 @UntilDestroy()
 @Component({
@@ -725,8 +726,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
       for (let i = 0; i < data.bwlimit.length; i++) {
         let sub_bwlimit = data.bwlimit[i].time + ',off';
         if (data.bwlimit[i].bandwidth != null) {
-          const bw = (<any>window).filesize(data.bwlimit[i].bandwidth, { output: 'object' });
-          sub_bwlimit = data.bwlimit[i].time + ',' + bw.value + bw.symbol;
+          const bandwidth = filesize(data.bwlimit[i].bandwidth);
+          sub_bwlimit = `${data.bwlimit[i].time}, ${bandwidth}`;
         }
         bwlimit.push(sub_bwlimit);
       }

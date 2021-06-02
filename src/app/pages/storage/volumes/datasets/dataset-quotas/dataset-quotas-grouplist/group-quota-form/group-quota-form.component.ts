@@ -1,6 +1,7 @@
 import { Component, IterableDiffers } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -18,7 +19,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 })
 export class GroupQuotaFormComponent implements FormConfiguration {
   isEntity = true;
-  entityForm: any;
+  entityForm: EntityFormComponent;
   pk: string;
   route_success: string[];
   searchedEntries: any[] = [];
@@ -138,7 +139,7 @@ export class GroupQuotaFormComponent implements FormConfiguration {
     }
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     this.route_success = ['storage', 'pools', 'group-quotas', this.pk];
     this.selectedEntriesField = _.find(this.fieldConfig, { name: 'system_entries' });

@@ -10,6 +10,7 @@ import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 
 import { TranslateService } from '@ngx-translate/core';
+import * as filesize from 'filesize';
 
 import { T } from '../../../../translate-marker';
 
@@ -273,8 +274,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     if (isNaN(this.volumeData.used)) {
       usedValue = this.volumeData.used;
     } else {
-      const usedObj = (<any>window).filesize(this.volumeData.used, { output: 'object', exponent: 3 });
-      usedValue = usedObj.value;
+      usedValue = filesize(this.volumeData.used, { exponent: 3 });
     }
 
     if (usedValue == 'Locked') {
@@ -289,7 +289,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
     this.core.emit({ name: 'PoolDisksRequest', data: [this.poolState.id] });
 
-    this.displayValue = (<any>window).filesize(this.volumeData.avail, { standard: 'iec' });
+    this.displayValue = filesize(this.volumeData.avail, { standard: 'iec' });
     if (this.displayValue.slice(-2) === ' B') {
       this.diskSizeLabel = this.displayValue.slice(-1);
       this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -2)));

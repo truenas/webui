@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 
@@ -38,7 +39,7 @@ export class LdapComponent implements FormConfiguration {
   protected ldapCertificate: any;
   protected ldap_schema: any;
   protected ldap_hostname: any;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   custActions: any[] = [
     {
       id: helptext.ldap_custactions_basic_id,
@@ -240,7 +241,7 @@ export class LdapComponent implements FormConfiguration {
     return data;
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
 
     this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((res: any[]) => {

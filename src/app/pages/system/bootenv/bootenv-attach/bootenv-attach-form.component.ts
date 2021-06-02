@@ -3,19 +3,20 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import { RestService, WebSocketService, DialogService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as filesize from 'filesize';
 
 @UntilDestroy()
 @Component({
   selector: 'bootenv-attach-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-
 export class BootEnvAttachFormComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot', 'status'];
   isEntity = true;
@@ -24,7 +25,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
   isNew = true;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
 
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
 
   fieldConfig: FieldConfig[] = [
     {
@@ -49,21 +50,20 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected dialog: MatDialog, protected dialogService: DialogService) {}
 
-  preInit(entityForm: any): void {
+  preInit(entityForm: EntityFormComponent): void {
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
     });
     this.entityForm = entityForm;
   }
 
-  afterInit(entityForm: any): void {
-    let disksize = 0;
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.diskChoice = _.find(this.fieldConfig, { name: 'dev' });
     this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       res.forEach((item) => {
         const disk_name = item.name;
-        disksize = (<any>window).filesize(item['size'], { standard: 'iec' });
+        const disksize = filesize(item['size'], { standard: 'iec' });
         item.name = `${item.name} (${disksize})`;
         this.diskChoice.options.push({ label: item.name, value: disk_name });
       });

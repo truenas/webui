@@ -4,6 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { helptext_system_email } from 'app/helptext/system/email';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import { ProductType } from '../../../enums/product-type.enum';
 import {
@@ -35,7 +36,7 @@ interface OAuthData {
 export class EmailComponent implements FormConfiguration {
   queryCall: 'mail.config' = 'mail.config';
   updateCall: 'mail.update' = 'mail.update';
-  entityEdit: any;
+  entityEdit: EntityFormComponent;
   rootEmail: string;
   private oauthCreds: BehaviorSubject<OAuthData> = new BehaviorSubject({});
   customSubmit = this.saveConfigSubmit;
@@ -248,14 +249,14 @@ export class EmailComponent implements FormConfiguration {
     return data;
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     this.ws.call('user.query', [[['username', '=', 'root']]]).pipe(untilDestroyed(this)).subscribe((res) => {
       this.rootEmail = res[0].email;
     });
     this.pass = this.fieldSets.config('pass');
-    this.smtp = entityEdit.formGroup.controls['smtp'];
-    this.sendMailMethod = entityEdit.formGroup.controls['send_mail_method'];
+    this.smtp = entityEdit.formGroup.controls['smtp'] as FormControl;
+    this.sendMailMethod = entityEdit.formGroup.controls['send_mail_method'] as FormControl;
 
     this.oauthCreds.pipe(untilDestroyed(this)).subscribe((value) => {
       this.sendMailMethod.setValue(!value.client_id);

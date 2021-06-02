@@ -79,7 +79,7 @@
     "element-resize-detector": "1.2.1",
     "eslint-plugin-rxjs": "^3.3.3",
     "eslint-plugin-rxjs-angular": "^1.0.6",
-    "filesize": "6.1.0",
+    "filesize": "6.3.0",
     "fontfaceobserver": "^2.1.0",
     "hammerjs": "2.0.8",
     "hopscotch": "0.3.1",

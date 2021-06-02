@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { T } from '../../../translate-marker';
 import helptext from '../../../helptext/directoryservice/kerberosrealms-form-list';
@@ -12,14 +12,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   selector: 'app-user-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class KerberosRealmsListComponent {
+export class KerberosRealmsListComponent implements EntityTableConfig {
   title = 'Kerberos Realms';
-  protected queryCall = 'kerberos.realm.query';
-  protected wsDelete = 'kerberos.realm.delete';
+  queryCall: 'kerberos.realm.query' = 'kerberos.realm.query';
+  wsDelete: 'kerberos.realm.delete' = 'kerberos.realm.delete';
   keyList = ['admin_server', 'kdc', 'kpasswd_server'];
   protected entityList: any;
 
-  columns: any[] = [
+  columns = [
     { name: T('Realm'), prop: 'realm', always_display: true },
     { name: T('KDC'), prop: 'kdc' },
     { name: T('Admin Server'), prop: 'admin_server' },

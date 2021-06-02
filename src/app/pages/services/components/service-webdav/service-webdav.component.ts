@@ -2,6 +2,7 @@ import {
   ApplicationRef, Component, Injector, OnDestroy,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 
@@ -95,7 +96,7 @@ export class ServiceWebdavComponent implements FormConfiguration, OnDestroy {
   private webdav_htauth_subscription: any;
   private webdav_password: any;
   private webdav_password2: any;
-  private entityForm: any;
+  private entityForm: EntityFormComponent;
 
   constructor(
     protected router: Router,
@@ -117,7 +118,7 @@ export class ServiceWebdavComponent implements FormConfiguration, OnDestroy {
     return data;
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.entityForm.submitFunction = this.submitFunction;
     this.webdav_tcpport = _.find(this.fieldConfig, { name: 'tcpport' });

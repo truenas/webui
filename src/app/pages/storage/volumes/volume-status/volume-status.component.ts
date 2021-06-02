@@ -31,6 +31,7 @@ import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/con
 import { ModalService } from 'app/services/modal.service';
 import { DiskFormComponent } from '../../disks/disk-form';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as filesize from 'filesize';
 
 interface PoolDiskInfo {
   name: any;
@@ -216,7 +217,7 @@ export class VolumeStatusComponent implements OnInit {
           value: res[i].identifier,
         });
         availableDisksForExtend.push({
-          label: res[i].devname + ' (' + (<any>window).filesize(res[i].size, { standard: 'iec' }) + ')',
+          label: res[i].devname + ' (' + filesize(res[i].size, { standard: 'iec' }) + ')',
           value: res[i].name,
         });
       }

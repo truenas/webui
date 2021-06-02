@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import * as _ from 'lodash';
 
 import * as myIP from 'what-is-my-ip-address';
@@ -24,9 +24,9 @@ import { AvailablePluginsComponent } from './available-plugins/available-plugins
   selector: 'app-plugins-ui',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class PluginsComponent {
+export class PluginsComponent implements EntityTableConfig {
   title = 'Plugins';
-  protected globalConfig = {
+  globalConfig = {
     id: 'config',
     tooltip: jailHelptext.globalConfig.tooltip,
     onClick: () => {
@@ -37,15 +37,15 @@ export class PluginsComponent {
       });
     },
   };
-  protected queryCall = 'plugin.query';
-  protected wsDelete = 'jail.delete';
-  protected wsMultiDelete = 'core.bulk';
+  queryCall: 'plugin.query' = 'plugin.query';
+  wsDelete: 'jail.delete' = 'jail.delete';
+  wsMultiDelete: 'core.bulk' = 'core.bulk';
   protected entityList: any;
 
   availablePools: Pool[];
   activatedPool: any;
 
-  columns: any[] = [
+  columns = [
     {
       name: T('Jail'), prop: 'name', always_display: true, icon: 'icon',
     },
@@ -76,7 +76,7 @@ export class PluginsComponent {
     },
   };
 
-  protected cardHeaderComponent = AvailablePluginsComponent;
+  cardHeaderComponent = AvailablePluginsComponent;
   protected availablePlugins: any[];
   protected allPlugins: any[];
 

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import * as _ from 'lodash';
 import { WebSocketService, AppLoaderService, DialogService } from '../../../../services';
@@ -99,7 +100,7 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     entityForm.formGroup.controls['encryptionkey_passphrase'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       entityForm.setDisabled('set_recoverykey', res === '');
     });

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Option } from 'app/interfaces/option.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -26,7 +27,7 @@ export class IPMIFromComponent implements FormConfiguration {
   title = 'IMPI';
   queryCall: 'ipmi.query' = 'ipmi.query';
 
-  protected entityEdit: any;
+  protected entityEdit: EntityFormComponent;
   is_ha = false;
   controllerName = globalHelptext.Ctrlr;
   currentControllerLabel: string;
@@ -215,7 +216,7 @@ export class IPMIFromComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.channelValue = entityEdit.pk;
     this.entityEdit = entityEdit;
 

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 
 import {
@@ -94,7 +95,7 @@ export class StorageFormComponent implements FormConfiguration, OnInit {
   ];
 
   private jail: any;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   protected formGroup: any;
   protected error: any;
   protected jailID: any;
@@ -155,15 +156,10 @@ export class StorageFormComponent implements FormConfiguration, OnInit {
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     entityForm.onSubmit = this.onSubmit;
     entityForm.error = this.error;
-    entityForm.route_success = this.route_success;
-    entityForm.jailID = this.jailID;
-    entityForm.mountPointEdit = this.mountPointEdit;
-    entityForm.mountPointAdd = this.mountPointAdd;
-    entityForm.mountpointId = this.mountpointId;
 
     this.jailService.listJails().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       res.forEach((item) => {

@@ -18,7 +18,7 @@ export class ServiceUPSComponent implements FormConfiguration {
   private ups_drivers_list: any[] = [];
   private ups_driver_key: any;
   protected ups_port: any;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
 
   queryCall: 'ups.config' = 'ups.config';
   route_success: string[] = ['services'];

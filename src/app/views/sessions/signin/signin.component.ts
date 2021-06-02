@@ -10,6 +10,7 @@ import {
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CoreEvent } from 'app/interfaces/events';
+import { Interval } from 'app/interfaces/timeout.interface';
 import { FailoverDisabledReason } from '../../../enums/failover-disabled-reason.enum';
 import { ProductType } from '../../../enums/product-type.enum';
 import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
@@ -53,10 +54,10 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     return window.localStorage && window.localStorage.buildtime ? this.localeService.getCopyrightYearFromBuildTime() : '';
   }
 
-  private interval: any;
+  private interval: Interval;
   exposeLegacyUI = false;
   tokenObservable: Subscription;
-  HAInterval: any;
+  HAInterval: Interval;
   isTwoFactor = false;
   private didSetFocus = false;
 

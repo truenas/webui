@@ -1,5 +1,6 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { Observable } from 'rxjs';
 
 import { RestService, WebSocketService, ValidationService } from '../../../../services';
@@ -127,8 +128,8 @@ export class ServiceDDNSComponent implements FormConfiguration {
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected validationService: ValidationService) {}
 
-  afterInit(entityForm: any): void {
-    entityForm.ws.call('dyndns.config').pipe(untilDestroyed(this)).subscribe((res: any) => {
+  afterInit(entityForm: EntityFormComponent): void {
+    this.ws.call('dyndns.config').pipe(untilDestroyed(this)).subscribe((res: any) => {
       entityForm.formGroup.controls['provider'].setValue(res.provider);
       entityForm.formGroup.controls['checkip_ssl'].setValue(res.checkip_ssl);
       entityForm.formGroup.controls['checkip_server'].setValue(res.checkip_server);

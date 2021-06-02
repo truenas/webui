@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import * as _ from 'lodash';
 
@@ -33,7 +34,7 @@ export class AlertServiceComponent implements FormConfiguration {
   route_success: string[] = ['system', 'alertservice'];
 
   isEntity = true;
-  entityForm: any;
+  entityForm: EntityFormComponent;
 
   fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
@@ -692,7 +693,7 @@ export class AlertServiceComponent implements FormConfiguration {
           },
           (err) => {
             this.loader.close();
-            new EntityUtils().handleWSError(this, err, this.entityForm.dialog);
+            new EntityUtils().handleWSError(this, err, this.dialogService);
           },
         );
       },
@@ -716,12 +717,12 @@ export class AlertServiceComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
   }
 
-  dataAttributeHandler(entityForm: any): void {
+  dataAttributeHandler(entityForm: EntityFormComponent): void {
     const type = entityForm.formGroup.controls['type'].value;
     for (const i in entityForm.wsResponseIdx) {
       const field_name = type + '-' + i;
@@ -783,7 +784,7 @@ export class AlertServiceComponent implements FormConfiguration {
         },
         (err) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, err, this.entityForm.dialog);
+          new EntityUtils().handleWSError(this, err, this.dialogService);
         },
       );
     } else {
@@ -794,7 +795,7 @@ export class AlertServiceComponent implements FormConfiguration {
         },
         (err) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, err, this.entityForm.dialog);
+          new EntityUtils().handleWSError(this, err, this.dialogService);
         },
       );
     }

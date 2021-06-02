@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import * as _ from 'lodash';
 
@@ -33,7 +34,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
   pk: any;
   formGroup: FormGroup;
 
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   private datastore: any;
   private datastoreList: any[];
   private dataListComplete: any[];
@@ -137,7 +138,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.datastoreList = [];
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
@@ -208,7 +209,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
 
   customEditCall(body: any): void {
     if (this.entityForm.pk) {
-      this.entityForm.loader.open();
+      this.loader.open();
       this.ws.call('vmware.update', [this.entityForm.pk, body]).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
@@ -217,7 +218,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
         this.dialogService.errorReport(error.error, error.reason, error.trace.formatted);
       });
     } else {
-      this.entityForm.loader.open();
+      this.loader.open();
       this.ws.call('vmware.create', [body]).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));

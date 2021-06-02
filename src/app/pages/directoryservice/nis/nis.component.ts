@@ -1,5 +1,6 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { DialogService } from '../../../services';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../helptext/directoryservice/nis';
@@ -85,7 +86,7 @@ export class NISComponent implements FormConfiguration {
     protected systemGeneralService: SystemGeneralService,
     private dialogservice: DialogService) {}
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     entityForm.submitFunction = (body: any) => this.ws.call(this.addCall, [body]);
   }
 }

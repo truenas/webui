@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { DialogService, WebSocketService } from '../../services';
@@ -17,7 +17,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [Clipboard],
 })
-export class ApiKeysComponent {
+export class ApiKeysComponent implements EntityTableConfig {
   title = helptext.title;
   queryCall: 'api_key.query' = 'api_key.query';
   wsDelete: 'api_key.delete' = 'api_key.delete';
@@ -28,7 +28,7 @@ export class ApiKeysComponent {
   currItem: any;
   entityList: any;
 
-  columns: any[] = [
+  columns = [
     { name: helptext.col_name, prop: 'name', always_display: true },
     { name: helptext.col_created_at, prop: 'created_time' },
   ];
@@ -72,7 +72,7 @@ export class ApiKeysComponent {
 
   timeZone: string;
 
-  protected custActions = [
+  custActions = [
     {
       id: 'add',
       name: helptext.action_add,

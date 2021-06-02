@@ -250,7 +250,7 @@ export class ConfigurationComponent implements FormConfiguration {
     );
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     if ([ProductType.Enterprise, ProductType.ScaleEnterprise].includes(window.localStorage.getItem('product_type') as ProductType)) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => { // fixme, stupid race condition makes me need to call this again

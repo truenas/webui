@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 import * as _ from 'lodash';
@@ -131,7 +132,7 @@ export class PortalFormComponent implements FormConfiguration {
   fieldConfig: FieldConfig[];
   pk: any;
   protected authgroup_field: any;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   protected ip: any;
 
   constructor(protected router: Router,
@@ -177,7 +178,7 @@ export class PortalFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 

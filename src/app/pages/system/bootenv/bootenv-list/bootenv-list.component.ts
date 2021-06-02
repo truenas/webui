@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -23,16 +23,16 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   selector: 'app-bootenv-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class BootEnvironmentListComponent {
+export class BootEnvironmentListComponent implements EntityTableConfig {
   @ViewChild('scrubIntervalEvent', { static: true }) scrubIntervalEvent: ElementRef;
 
   title = T('Boot Environments');
-  protected resource_name = 'system/bootenv';
-  protected queryCall: 'bootenv.query' = 'bootenv.query';
-  protected route_add: string[] = ['system', 'boot', 'create'];
+  resource_name = 'system/bootenv';
+  queryCall: 'bootenv.query' = 'bootenv.query';
+  route_add: string[] = ['system', 'boot', 'create'];
   protected route_delete: string[] = ['system', 'boot', 'delete'];
-  protected wsDelete: 'bootenv.delete' = 'bootenv.delete';
-  protected wsMultiDelete: 'core.bulk' = 'core.bulk';
+  wsDelete: 'bootenv.delete' = 'bootenv.delete';
+  wsMultiDelete: 'core.bulk' = 'core.bulk';
   protected entityList: EntityTableComponent;
   protected wsActivate: 'bootenv.activate' = 'bootenv.activate';
   protected wsKeep: 'bootenv.set_attribute' = 'bootenv.set_attribute';
@@ -49,7 +49,7 @@ export class BootEnvironmentListComponent {
     public dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService,
     protected localeService: LocaleService, private sysGeneralService: SystemGeneralService) {}
 
-  columns: any[] = [
+  columns = [
     { name: T('Name'), prop: 'name', always_display: true },
     { name: T('Active'), prop: 'active' },
     { name: T('Created'), prop: 'created' },

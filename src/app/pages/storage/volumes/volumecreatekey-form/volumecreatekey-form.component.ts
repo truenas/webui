@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 
 import { WebSocketService } from '../../../../services';
@@ -125,7 +126,7 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     entityForm.formGroup.controls['adminpw'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.admin_pw = res;
       const btn = <HTMLInputElement> document.getElementById('cust_button_Download Encryption Key');

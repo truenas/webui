@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Subscription } from 'rxjs';
@@ -96,7 +97,7 @@ export class SyslogFormComponent implements FormConfiguration {
     },
   ];
 
-  private entityForm: any;
+  private entityForm: EntityFormComponent;
   private configData: any;
   title = helptext_system_advanced.fieldset_syslog;
 
@@ -119,7 +120,7 @@ export class SyslogFormComponent implements FormConfiguration {
   }
 
   reconnect(href: string): void {
-    if (this.entityForm.ws.connected) {
+    if (this.ws.connected) {
       this.loader.close();
       // ws is connected
       window.location.replace(href);
@@ -130,7 +131,7 @@ export class SyslogFormComponent implements FormConfiguration {
     }
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     this.ws.call('systemdataset.config').pipe(untilDestroyed(this)).subscribe((res) => {
       entityEdit.formGroup.controls.syslog.setValue(res.syslog);

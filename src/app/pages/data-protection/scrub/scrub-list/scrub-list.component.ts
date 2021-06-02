@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -9,7 +10,6 @@ import { ScrubFormComponent } from 'app/pages/data-protection/scrub/scrub-form/s
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
@@ -19,7 +19,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, UserService, EntityFormService],
 })
-export class ScrubListComponent implements InputTableConf {
+export class ScrubListComponent implements EntityTableConfig {
   title = T('Scrub Tasks');
   queryCall: 'pool.scrub.query' = 'pool.scrub.query';
   wsDelete: 'pool.scrub.delete' = 'pool.scrub.delete';
@@ -29,7 +29,7 @@ export class ScrubListComponent implements InputTableConf {
   entityList: EntityTableComponent;
   parent: ScrubListComponent;
 
-  columns: any[] = [
+  columns = [
     { name: T('Pool'), prop: 'pool_name', always_display: true },
     { name: T('Threshold days'), prop: 'threshold' },
     { name: T('Description'), prop: 'description' },

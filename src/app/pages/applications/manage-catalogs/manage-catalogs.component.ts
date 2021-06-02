@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CoreEvent } from 'app/interfaces/events';
-import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import {
+  EntityTableComponent,
+} from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../services/ws.service';
@@ -20,7 +23,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   selector: 'app-manage-catalogs',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class ManageCatalogsComponent implements InputTableConf, OnInit {
+export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
   addComponent: CatalogAddFormComponent;
   editComponent: CatalogEditFormComponent;
   title = 'Catalogs';
@@ -57,7 +60,7 @@ export class ManageCatalogsComponent implements InputTableConf, OnInit {
   filterString = '';
 
   private dialogRef: any;
-  protected entityList: any;
+  protected entityList: EntityTableComponent;
   protected loaderOpen = false;
 
   constructor(
@@ -87,7 +90,7 @@ export class ManageCatalogsComponent implements InputTableConf, OnInit {
     this.entityList.filter(this.filterString);
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
   }
 

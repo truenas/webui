@@ -149,7 +149,7 @@ export class TargetFormComponent implements FormConfiguration {
   fieldConfig: FieldConfig[];
   title = T('Add ISCSI Target');
   pk: any;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
     protected iscsiService: IscsiService,

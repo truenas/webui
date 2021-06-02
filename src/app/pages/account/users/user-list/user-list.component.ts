@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { T } from '../../../../translate-marker';
 import {
   DialogService, StorageService, ValidationService, UserService,
@@ -24,21 +24,20 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [UserService],
 })
-export class UserListComponent implements OnDestroy {
+export class UserListComponent implements EntityTableConfig, OnDestroy {
   title = 'Users';
-  protected route_add: string[] = ['account', 'users', 'add'];
+  route_add: string[] = ['account', 'users', 'add'];
   protected route_add_tooltip = 'Add User';
-  protected route_edit: string[] = ['account', 'users', 'edit'];
+  route_edit: string[] = ['account', 'users', 'edit'];
 
   protected entityList: any;
   protected loaderOpen = false;
   protected usr_lst: any[] = [];
   protected grp_lst: any[] = [];
-  protected hasDetails = true;
-  protected queryCall: 'user.query' = 'user.query';
-  protected wsDelete: 'user.delete' = 'user.delete';
-  // protected queryCallOption = [['OR', [['uid', '=', 0], ['builtin', '=', false]]]];
-  protected globalConfig = {
+  hasDetails = true;
+  queryCall: 'user.query' = 'user.query';
+  wsDelete: 'user.delete' = 'user.delete';
+  globalConfig = {
     id: 'config',
     tooltip: helptext.globalConfigTooltip,
     onClick: () => {
@@ -46,10 +45,10 @@ export class UserListComponent implements OnDestroy {
     },
   };
 
-  protected addComponent: UserFormComponent;
+  addComponent: UserFormComponent;
   private refreshTableSubscription: any;
 
-  columns: any[] = [
+  columns = [
     {
       name: 'Username', prop: 'username', always_display: true, minWidth: 150,
     },

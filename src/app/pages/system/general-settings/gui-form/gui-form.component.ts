@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -132,7 +133,7 @@ export class GuiFormComponent implements FormConfiguration {
   private https_port: any;
   private redirect: any;
   private guicertificate: any;
-  private entityForm: any;
+  private entityForm: EntityFormComponent;
   private configData: any;
   title = helptext.guiPageTitle;
 
@@ -187,7 +188,7 @@ export class GuiFormComponent implements FormConfiguration {
   }
 
   reconnect(href: string): void {
-    if (this.entityForm.ws.connected) {
+    if (this.ws.connected) {
       this.loader.close();
       // ws is connected
       window.location.replace(href);
@@ -198,15 +199,16 @@ export class GuiFormComponent implements FormConfiguration {
     }
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
 
     this.ui_certificate = this.fieldSets
       .find((set) => set.name === helptext.stg_fieldset_gui)
       .config.find((config) => config.name === 'ui_certificate');
 
-    entityEdit.ws.call('system.general.ui_certificate_choices')
-      .pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.ws.call('system.general.ui_certificate_choices')
+      .pipe(untilDestroyed(this))
+      .subscribe((res: any) => {
         this.ui_certificate.options = [{ label: '---', value: null }];
         for (const id in res) {
           this.ui_certificate.options.push({ label: res[id], value: id });
@@ -218,7 +220,7 @@ export class GuiFormComponent implements FormConfiguration {
       .find((set) => set.name === helptext.stg_fieldset_gui)
       .config.find((config) => config.name === 'ui_httpsprotocols');
 
-    entityEdit.ws.call('system.general.ui_httpsprotocols_choices').pipe(untilDestroyed(this)).subscribe(
+    this.ws.call('system.general.ui_httpsprotocols_choices').pipe(untilDestroyed(this)).subscribe(
       (res: any) => {
         httpsprotocolsField.options = [];
         for (const key in res) {
@@ -291,14 +293,14 @@ export class GuiFormComponent implements FormConfiguration {
             href = protocol + '//' + hostname + ':' + port + window.location.pathname;
 
             this.loader.open();
-            this.entityForm.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
-            this.entityForm.ws.call('service.restart', ['http']).pipe(untilDestroyed(this)).subscribe(() => {
+            this.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
+            this.ws.call('service.restart', ['http']).pipe(untilDestroyed(this)).subscribe(() => {
             }, (res: any) => {
               this.loader.close();
               this.dialog.errorReport(helptext.dialog_error_title, res.reason, res.trace.formatted);
             });
 
-            this.entityForm.ws.reconnect(protocol, hostname + ':' + port);
+            this.ws.reconnect(protocol, hostname + ':' + port);
             setTimeout(() => {
               this.reconnect(href);
             }, 1000);

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
@@ -136,13 +137,13 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
 
   private rsyncmod_group: any;
   private rsyncmod_user: any;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   customFilter: any;
   constructor(protected ws: WebSocketService, protected router: Router,
     protected userService: UserService, protected route: ActivatedRoute) {
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.isNew = entityForm.isNew;
 

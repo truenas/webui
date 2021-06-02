@@ -59,7 +59,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   hasConf = true;
   wsResponse: any;
   wsfg: any;
-  wsResponseIdx: number;
+  wsResponseIdx: any;
   queryResponse: any;
   saveSubmitText = T('Save');
   showPassword = false;

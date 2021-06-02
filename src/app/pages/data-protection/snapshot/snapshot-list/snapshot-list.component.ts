@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -10,7 +11,6 @@ import { T } from 'app/translate-marker';
 import { ModalService } from 'app/services/modal.service';
 import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
@@ -20,7 +20,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, StorageService],
 })
-export class SnapshotListComponent implements InputTableConf {
+export class SnapshotListComponent implements EntityTableConfig {
   title = T('Periodic Snapshot Tasks');
   queryCall: 'pool.snapshottask.query' = 'pool.snapshottask.query';
   updateCall: 'pool.snapshottask.update' = 'pool.snapshottask.update';
@@ -31,7 +31,7 @@ export class SnapshotListComponent implements InputTableConf {
   entityList: EntityTableComponent;
   asyncView = true;
 
-  columns: any[] = [
+  columns = [
     { name: T('Pool/Dataset'), prop: 'dataset', always_display: true },
     { name: T('Recursive'), prop: 'recursive' },
     { name: T('Naming Schema'), prop: 'naming_schema' },

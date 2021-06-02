@@ -22,6 +22,7 @@ import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/di
 import { EntityUtils } from '../../../common/entity/utils';
 import { DiskComponent } from './disk';
 import { VdevComponent } from './vdev';
+import * as filesize from 'filesize';
 
 @UntilDestroy()
 @Component({
@@ -42,8 +43,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   original_disks: any[];
   orig_suggestable_disks: any[];
   error: string;
-  @ViewChildren(VdevComponent) vdevComponents: QueryList < VdevComponent > ;
-  @ViewChildren(DiskComponent) diskComponents: QueryList < DiskComponent > ;
+  @ViewChildren(VdevComponent) vdevComponents: QueryList<VdevComponent> ;
+  @ViewChildren(DiskComponent) diskComponents: QueryList<DiskComponent> ;
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
   temp: any[] = [];
 
@@ -77,7 +78,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   protected needs_disk = true;
   protected needsDiskMessage = helptext.manager_needsDiskMessage;
   protected extendedNeedsDiskMessage = helptext.manager_extendedNeedsDiskMessage;
-  size: number;
+  size: string;
   protected extendedAvailable: any;
   sizeMessage = helptext.manager_sizeMessage;
   protected extendedSizeMessage = helptext.manager_extendedSizeMessage;
@@ -209,7 +210,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         const setParatext = function (vdevs: number): void {
           const used = parent.first_data_vdev_disknum * vdevs;
           const remaining = parent.duplicable_disks.length - used;
-          const size = (<any>window).filesize(parent.first_data_vdev_disksize, { standard: 'iec' });
+          const size = filesize(parent.first_data_vdev_disksize, { standard: 'iec' });
           const type = parent.first_data_vdev_disktype;
           const vdev_type = parent.first_data_vdev_type;
           const paraText = 'Create ' + vdevs + ' new ' + vdev_type + ' data vdevs using ' + used
@@ -283,7 +284,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         this.ws.call(this.datasetQueryCall, [[['id', '=', res[0].name]]]).pipe(untilDestroyed(this)).subscribe((datasets) => {
           if (datasets[0]) {
             this.extendedAvailable = datasets[0].available.parsed;
-            this.size = (<any>window).filesize(this.extendedAvailable, { standard: 'iec' });
+            this.size = filesize(this.extendedAvailable, { standard: 'iec' });
           }
         });
       }
@@ -334,7 +335,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.disks = [];
       for (const i in res) {
         res[i]['real_capacity'] = res[i]['size'];
-        res[i]['capacity'] = (<any>window).filesize(res[i]['size'], { standard: 'iec' });
+        res[i]['capacity'] = filesize(res[i]['size'], { standard: 'iec' });
         const details = [];
         if (res[i]['rotationrate']) {
           details.push({ label: T('Rotation Rate'), value: res[i]['rotationrate'] });
@@ -482,7 +483,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     } else {
       this.needs_disk = true;
     }
-    this.size = (<any>window).filesize(size_estimate, { standard: 'iec' });
+    this.size = filesize(size_estimate, { standard: 'iec' });
 
     this.getDuplicableDisks();
   }

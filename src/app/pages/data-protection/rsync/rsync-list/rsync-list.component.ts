@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import {
   WebSocketService, DialogService, TaskService, JobService, UserService,
@@ -13,7 +14,6 @@ import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/r
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -24,7 +24,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, JobService, UserService, EntityFormService],
 })
-export class RsyncListComponent implements InputTableConf {
+export class RsyncListComponent implements EntityTableConfig {
   title = T('Rsync Tasks');
   queryCall: 'rsynctask.query' = 'rsynctask.query';
   wsDelete: 'rsynctask.delete' = 'rsynctask.delete';
@@ -34,7 +34,7 @@ export class RsyncListComponent implements InputTableConf {
   entityList: EntityTableComponent;
   asyncView = true;
 
-  columns: any[] = [
+  columns = [
     { name: T('Path'), prop: 'path', always_display: true },
     { name: T('Remote Host'), prop: 'remotehost' },
     { name: T('Remote SSH Port'), prop: 'remoteport', hidden: true },

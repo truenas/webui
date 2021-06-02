@@ -2,6 +2,7 @@ import {
   ApplicationRef, Component, Injector,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
@@ -10,16 +11,15 @@ import { T } from '../../../../translate-marker';
   selector: 'system-tunables-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-
-export class TunableListComponent {
+export class TunableListComponent implements EntityTableConfig {
   title = T('Tunables');
   title_scale = T('Sysctl');
-  protected wsDelete = 'tunable.delete';
-  queryCall = 'tunable.query';
+  wsDelete: 'tunable.delete' = 'tunable.delete';
+  queryCall: 'tunable.query' = 'tunable.query';
 
-  protected route_edit: string[] = ['system', 'tunable', 'edit'];
+  route_edit: string[] = ['system', 'tunable', 'edit'];
   protected route_success: string[] = ['system', 'tunable'];
-  protected route_add: string[] = ['system', 'tunable', 'add'];
+  route_add: string[] = ['system', 'tunable', 'add'];
   protected route_add_tooltip = T('Add Tunable');
 
   protected route_edit_scale: string[] = ['system', 'sysctl', 'edit'];
@@ -31,7 +31,7 @@ export class TunableListComponent {
 
   protected entityList: any;
 
-  wsMultiDelete = 'core.bulk';
+  wsMultiDelete: 'core.bulk' = 'core.bulk';
   multiActions: any[] = [
     {
       id: 'mdelete',
@@ -45,7 +45,7 @@ export class TunableListComponent {
     },
   ];
 
-  columns: any[] = [
+  columns = [
     { name: T('Variable'), prop: 'var', always_display: true },
     { name: T('Value'), prop: 'value' },
     { name: T('Type'), prop: 'type' },

@@ -5,7 +5,7 @@ import { helptext_sharing_webdav, shared } from '../../../../helptext/sharing';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
-import { DialogService, WebSocketService } from '../../../../services';
+import { AppLoaderService, DialogService, WebSocketService } from '../../../../services';
 import { Router } from '@angular/router';
 import { T } from 'app/translate-marker';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -86,8 +86,12 @@ export class WebdavFormComponent implements FormConfiguration {
       ],
     }];
 
-  constructor(protected router: Router,
-    protected ws: WebSocketService, private dialog: DialogService) {}
+  constructor(
+    protected router: Router,
+    protected ws: WebSocketService,
+    private dialog: DialogService,
+    private loader: AppLoaderService,
+  ) {}
 
   afterInit(entityForm: EntityFormComponent): void {
     entityForm.formGroup.controls['perm'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
@@ -96,25 +100,25 @@ export class WebdavFormComponent implements FormConfiguration {
     this.title = entityForm.isNew ? T('Add WebDAV') : T('Edit WebDAV');
   }
 
-  afterSave(entityForm: any): void {
+  afterSave(): void {
     this.ws.call('service.query', [[]]).pipe(untilDestroyed(this)).subscribe((res) => {
       const service = _.find(res, { service: ServiceName.WebDav });
       if (!service.enable) {
         this.dialog.confirm(shared.dialog_title, shared.dialog_message,
           true, shared.dialog_button).pipe(untilDestroyed(this)).subscribe((dialogRes: boolean) => {
           if (dialogRes) {
-            entityForm.loader.open();
+            this.loader.open();
             this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
               this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
-                entityForm.loader.close();
+                this.loader.close();
                 this.dialog.Info(T('WebDAV') + shared.dialog_started_title, T('The WebDAV') + shared.dialog_started_message, '250px')
                   .pipe(untilDestroyed(this)).subscribe(() => {});
               }, (err) => {
-                entityForm.loader.close();
+                this.loader.close();
                 this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
               });
             }, (err) => {
-              entityForm.loader.close();
+              this.loader.close();
               this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
             });
           }

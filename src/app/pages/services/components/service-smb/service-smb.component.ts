@@ -41,7 +41,7 @@ export class ServiceSMBComponent implements FormConfiguration {
   protected defaultIdmap: any;
   protected dialogRef: any;
   protected idNumber: any;
-  entityEdit: any;
+  entityEdit: EntityFormComponent;
   private validBindIps: any;
   title = helptext.formTitle;
 
@@ -273,7 +273,7 @@ export class ServiceSMBComponent implements FormConfiguration {
     return true;
   }
 
-  preInit(entityForm: any): void {
+  preInit(entityForm: EntityFormComponent): void {
     this.entityEdit = entityForm;
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {

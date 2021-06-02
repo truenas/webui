@@ -4,7 +4,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { WebSocketService, StorageService, DialogService } from 'app/services';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -18,6 +18,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { Snapshot } from 'app/interfaces/storage.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as filesize from 'filesize';
 
 interface DialogData {
   datasets: string[];
@@ -29,32 +30,32 @@ interface DialogData {
   selector: 'app-snapshot-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class SnapshotListComponent {
+export class SnapshotListComponent implements EntityTableConfig {
   title = 'Snapshots';
-  protected queryCall: 'zfs.snapshot.query' = 'zfs.snapshot.query';
-  protected route_add: string[] = ['storage', 'snapshots', 'add'];
+  queryCall: 'zfs.snapshot.query' = 'zfs.snapshot.query';
+  route_add: string[] = ['storage', 'snapshots', 'add'];
   protected route_add_tooltip = 'Add Snapshot';
-  protected wsDelete: 'zfs.snapshot.delete' = 'zfs.snapshot.delete';
+  wsDelete: 'zfs.snapshot.delete' = 'zfs.snapshot.delete';
   protected loaderOpen = false;
   protected entityList: any;
   protected rollback: any;
-  protected globalConfig = {
+  globalConfig = {
     id: 'config',
     onClick: () => {
       this.toggleExtraCols();
     },
   };
 
-  // Vairables to show or hide the extra columns
-  protected queryCallOption: any[] = [];
+  // Variables to show or hide the extra columns
+  queryCallOption: any[] = [];
   protected queryCallOptionShow = [[['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']], { select: ['name', 'properties'], order_by: ['name'] }];
   protected queryCallOptionHide = [[['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']], { select: ['name'], order_by: ['name'] }];
-  protected hasDetails: boolean;
-  protected columnFilter = window.localStorage.getItem('snapshotXtraCols') === 'true';
-  protected rowDetailComponent: Type<SnapshotDetailsComponent>;
+  hasDetails: boolean;
+  columnFilter = window.localStorage.getItem('snapshotXtraCols') === 'true';
+  rowDetailComponent: Type<SnapshotDetailsComponent>;
   snapshotXtraCols = false;
 
-  columns: any[] = [
+  columns = [
     { name: 'Dataset', prop: 'dataset' },
     { name: 'Snapshot', prop: 'snapshot' },
     { name: 'Used', prop: 'used' },
@@ -87,7 +88,7 @@ export class SnapshotListComponent {
     },
   };
 
-  protected wsMultiDelete = 'core.bulk';
+  wsMultiDelete: 'core.bulk' = 'core.bulk';
   multiActions: any[] = [
     {
       id: 'mdelete',
@@ -183,9 +184,9 @@ export class SnapshotListComponent {
   rowValue(row: any, attr: any): any {
     switch (attr) {
       case 'used':
-        return (<any>window).filesize(row[attr], { standard: 'iec' });
+        return filesize(row[attr], { standard: 'iec' });
       case 'refer':
-        return (<any>window).filesize(row[attr], { standard: 'iec' });
+        return filesize(row[attr], { standard: 'iec' });
       default:
         return row[attr];
     }

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FormControl, ValidatorFn } from '@angular/forms';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import { WebSocketService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
@@ -18,10 +19,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 @Component({
   selector: 'app-support-form-licensed',
   template: '<entity-form [conf]="this"></entity-form>',
-
 })
 export class SupportFormLicensedComponent implements FormConfiguration {
-  entityEdit: any;
+  entityEdit: EntityFormComponent;
   screenshot: any;
   subs: any[];
   saveSubmitText = helptext.submitBtn;
@@ -166,7 +166,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
     public ws: WebSocketService, public dialogService: DialogService, public router: Router,
     private modalService: ModalService) { }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     this.custActions = [
       {
