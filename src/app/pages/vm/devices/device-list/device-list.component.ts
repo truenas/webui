@@ -2,10 +2,9 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import {
-  EntityTableAction,
   EntityTableComponent,
-  EntityTableConfig,
 } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 

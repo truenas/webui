@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { EntityTableComponent, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { Subscription } from 'rxjs';
 
 import { helptext_sharing_webdav } from 'app/helptext/sharing';
