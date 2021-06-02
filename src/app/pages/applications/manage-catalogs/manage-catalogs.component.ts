@@ -2,10 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CoreEvent } from 'app/interfaces/events';
 import {
-  EntityTableAction,
   EntityTableComponent,
-  InputTableConf,
 } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../services/ws.service';
@@ -22,7 +21,7 @@ import { EntityUtils } from '../../common/entity/utils';
   selector: 'app-manage-catalogs',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class ManageCatalogsComponent implements InputTableConf, OnInit {
+export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
   addComponent: CatalogAddFormComponent;
   editComponent: CatalogEditFormComponent;
   title = 'Catalogs';

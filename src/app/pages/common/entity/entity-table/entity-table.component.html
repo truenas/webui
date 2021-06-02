@@ -3,11 +3,16 @@
   <ng-container *ngIf="!isTableEmpty">
 
   <!-- BATCH OPERATIONS START -->
-  <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton fn-toolbar"
-    [ngClass]="{'icons-only': multiActionsIconsOnly}" *ngIf="conf && selection.selected.length > 0"
-    [style.display]="selection.selected.length > 0 ? 'block' : 'none'">
+  <div
+    *ngIf="conf && selection.selected.length > 0"
+    fxLayout="row wrap"
+    fxLayoutAlign="start center"
+    class="multiActionsButton fn-toolbar"
+    [ngClass]="{'icons-only': multiActionsIconsOnly}"
+    [style.display]="selection.selected.length > 0 ? 'block' : 'none'"
+  >
     <div fxFlex="100%">
-      <div class="multiactions-title" *ngIf="conf.multiActions.length > 0 && !multiActionsIconsOnly">
+      <div *ngIf="conf.multiActions.length > 0 && !multiActionsIconsOnly" class="multiactions-title">
         <strong>{{"Batch Operations" | translate}}</strong>
       </div>
       <!-- -->
@@ -55,16 +60,23 @@
   <!-- BATCH OPERATIONS END -->
 
   <div class="table-container">
-    <table *ngIf="conf && currentColumns && currentColumns.length > 0 && dataSource"
-      multiTemplateDataRows mat-table
-      [dataSource]="dataSource" matSort
-       style="min-width: {{displayedColumns.length * 25}}px; border-collapse: separate;"
-      #newEntityTable>
-      <ng-container *ngFor="let column of columnsToString(currentColumns, 'prop'); let i = index;">
+    <table
+      *ngIf="conf && currentColumns && currentColumns.length > 0 && dataSource"
+      multiTemplateDataRows
+      mat-table
+      matSort
+      [dataSource]="dataSource"
+      style="min-width: {{displayedColumns.length * 25}}px; border-collapse: separate;"
+      #newEntityTable
+    >
+      <ng-container *ngFor="let column of columnsProps; let i = index;">
 
         <!-- Column Template -->
-        <ng-container *ngIf="column !== 'expandedDetail' && column !== 'action' && column !== 'multiselect' && column !== 'expansion-chevrons' && !isInteractive(column)" [sticky]="isLeftStickyColumnNo(i)"
-       matColumnDef="{{column}}">
+        <ng-container
+          *ngIf="column !== 'expandedDetail' && column !== 'action' && column !== 'multiselect' && column !== 'expansion-chevrons' && !isInteractive(column)"
+          [sticky]="isLeftStickyColumnNo(i)"
+          matColumnDef="{{column}}"
+        >
           <th [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" class="data-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
           <td [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" [ngStyle]="{'cursor': (checkLength() && !conf.onRowClick) ? 'auto' : 'pointer'}" class="data-column" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" mat-cell *matCellDef="let element">
             <div class="text-overflow-ellipsis" [matTooltip]="currentColumns[i].enableMatTooltip ? element[column] : null">{{element[column]}}</div>
@@ -177,10 +189,10 @@
       </ng-container>
 
 
-      <tr mat-header-row *matHeaderRowDef="columnsToString(currentColumns, 'prop')"></tr>
-      <tr mat-row class="element-row" id="{{element[getFirstKey(element)]}}"
-        ix-auto ix-auto-type="expander" ix-auto-identifier="{{element[getFirstKey(element)]}}"
-        *matRowDef="let element; columns: columnsToString(currentColumns, 'prop'); let i = dataIndex;"
+      <tr mat-header-row *matHeaderRowDef="columnsProps"></tr>
+      <tr mat-row class="element-row" id="{{element[getFirstKey()]}}"
+        ix-auto ix-auto-type="expander" ix-auto-identifier="{{element[getFirstKey()]}}"
+        *matRowDef="let element; columns: columnsProps; let i = dataIndex;"
         (click)="doRowClick(element)"
         [ngClass]="{'expanded-row': expandedElement === element}">
       </tr>

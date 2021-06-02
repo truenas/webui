@@ -4308,7 +4308,6 @@
   "is already in use.": "уже используется.",
   "mountd(8) bind port": "Порт привязки mountd(8)",
   "name": "имя",
-  "no": "нет",
   "overview": "обзор",
   "owner": "владелец",
   "password": "пароль",
@@ -4320,6 +4319,5 @@
   "service failed to stop.": "служба не остановилась.",
   "template": "шаблон",
   "was successfully attached.": "был успешно подключен.",
-  "while pool is encrypted": "пока пул зашифрован",
-  "yes": "да"
+  "while pool is encrypted": "пока пул зашифрован"
 }

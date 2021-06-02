@@ -1,8 +1,9 @@
 import {
   Component, Input, OnChanges, OnInit,
 } from '@angular/core';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import * as _ from 'lodash';
-import { EntityTableAction, EntityTableComponent } from '../entity-table.component';
+import { EntityTableComponent } from '../entity-table.component';
 import cronstrue from 'cronstrue';
 
 @Component({

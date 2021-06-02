@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { DialogService, WebSocketService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -14,20 +14,20 @@ import helptext from '../../../../helptext/jails/storage';
   selector: 'app-storage-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class StorageListComponent {
+export class StorageListComponent implements EntityTableConfig {
   title: string;
-  protected queryCall = 'jail.fstab';
-  protected queryCallOption: any[] = [];
-  protected queryRes: any = [];
-  protected route_add: string[] = ['jails', 'storage'];
+  queryCall: 'jail.fstab' = 'jail.fstab';
+  queryCallOption: any[] = [];
+  queryRes: any = [];
+  route_add: string[] = ['jails', 'storage'];
   protected route_delete: string[] = ['jails', 'storage'];
-  protected route_edit: string[] = ['jails', 'storage'];
+  route_edit: string[] = ['jails', 'storage'];
 
   protected jailId: string;
   busy: Subscription;
   protected loaderOpen = false;
 
-  columns: any[] = [
+  columns = [
     { name: T('Source'), prop: 'source', always_display: true },
     { name: T('Destination'), prop: 'destination' },
   ];

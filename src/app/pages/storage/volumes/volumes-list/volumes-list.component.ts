@@ -19,7 +19,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableService } from 'app/pages/common/entity/entity-table/entity-table.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -89,11 +89,11 @@ interface ZfsData {
   source: string;
 }
 
-export class VolumesListTableConfig implements InputTableConf {
+export class VolumesListTableConfig {
   hideTopActions = true;
   flattenedVolData: any;
   tableData: TreeNode[] = [];
-  columns: any[] = [
+  columns = [
     { name: T('Name'), prop: 'name', always_display: true },
     { name: T('Type'), prop: 'type', hidden: false },
     {
@@ -1792,7 +1792,7 @@ export class VolumesListTableConfig implements InputTableConf {
 export class VolumesListComponent extends EntityTableComponent implements OnInit, OnDestroy {
   title = T('Pools');
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(
+  conf = new VolumesListTableConfig(
     this,
     this.router,
     '',
@@ -1916,7 +1916,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     public tableService: EntityTableService,
     protected validationService: ValidationService,
   ) {
-    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog, modalService, tableService);
+    super(core, rest, router, ws, dialogService, loader, translate, sorter, job, pref, mdDialog, modalService);
 
     this.actionsConfig = { actionType: VolumesListControlsComponent, actionConfig: this };
     this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });

@@ -6,7 +6,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import * as _ from 'lodash';
 import helptext from '../../../helptext/jails/jails-list';
 import { DialogService, RestService, WebSocketService } from '../../../services';
@@ -36,7 +36,7 @@ export class JailListComponent {
   protected route_add_tooltip = 'Add Jail';
   toActivatePool = false;
 
-  columns: any[] = [
+  columns = [
     { name: T('JID'), prop: 'jid' },
     { name: T('Name'), prop: 'host_hostuuid', always_display: true },
     { name: T('Boot'), prop: 'boot_readble', hidden: true },

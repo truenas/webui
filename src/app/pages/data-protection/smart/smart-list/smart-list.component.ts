@@ -1,5 +1,6 @@
 import { Router, ActivatedRoute } from '@angular/router';
 import { Component, OnDestroy } from '@angular/core';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { Subscription } from 'rxjs';
 
 import { StorageService } from 'app/services/storage.service';
@@ -9,7 +10,6 @@ import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/s
 import { ModalService } from 'app/services/modal.service';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { TaskService, WebSocketService } from 'app/services';
-import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { TranslateService } from '@ngx-translate/core';
 import { SmartTestUi } from 'app/interfaces/smart-test.interface';
@@ -19,17 +19,17 @@ import { SmartTestUi } from 'app/interfaces/smart-test.interface';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, EntityFormService],
 })
-export class SmartListComponent implements InputTableConf, OnDestroy {
+export class SmartListComponent implements EntityTableConfig, OnDestroy {
   title = T('S.M.A.R.T. Tests');
-  queryCall = 'smart.test.query';
+  queryCall: 'smart.test.query' = 'smart.test.query';
   route_add: string[] = ['tasks', 'smart', 'add'];
   route_add_tooltip = T('Add S.M.A.R.T. Test');
   route_edit: string[] = ['tasks', 'smart', 'edit'];
-  wsDelete = 'smart.test.delete';
+  wsDelete: 'smart.test.delete' = 'smart.test.delete';
   entityList: EntityTableComponent;
   parent: SmartListComponent;
 
-  columns: any[] = [
+  columns = [
     {
       name: helptext.smartlist_column_disks,
       prop: 'disks',

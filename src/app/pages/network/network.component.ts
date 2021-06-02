@@ -8,6 +8,7 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { Interval } from 'app/interfaces/timeout.interface';
 import { AppTableAction } from 'app/pages/common/entity/table/table.component';
 import * as ipRegex from 'ip-regex';
 import { Subject, Subscription } from 'rxjs';
@@ -53,7 +54,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   checkin_remaining: number = null;
   private uniqueIPs: string[] = [];
   private affectedServices: string[] = [];
-  checkin_interval: any;
+  checkin_interval: Interval;
 
   private navigation: any;
   helptext = helptext;

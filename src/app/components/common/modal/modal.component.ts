@@ -11,7 +11,7 @@ import { ModalService } from '../../../services/modal.service';
 })
 export class ModalComponent implements OnInit, OnDestroy {
   @Input() id: string;
-  private element: any;
+  private element: HTMLElement;
   conf: any;
   formOpen = false;
   wizard = false;
@@ -37,8 +37,8 @@ export class ModalComponent implements OnInit, OnDestroy {
     document.body.appendChild(this.element);
 
     // close modal on background click
-    this.element.addEventListener('click', (e: any) => {
-      if (e.target.className === 'jw-modal') {
+    this.element.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).className === 'jw-modal') {
         modal.close();
       }
     });

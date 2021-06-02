@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { IscsiService } from '../../../../../services/iscsi.service';
 import { T } from 'app/translate-marker';
@@ -16,17 +16,17 @@ import { TranslateService } from '@ngx-translate/core';
   `,
   providers: [IscsiService],
 })
-export class TargetListComponent implements OnInit {
+export class TargetListComponent implements EntityTableConfig, OnInit {
   @Input('fcEnabled') fcEnabled: boolean;
 
   tableTitle = 'Targets';
-  protected queryCall = 'iscsi.target.query';
-  protected wsDelete = 'iscsi.target.delete';
-  protected route_add: string[] = ['sharing', 'iscsi', 'target', 'add'];
+  queryCall: 'iscsi.target.query' = 'iscsi.target.query';
+  wsDelete: 'iscsi.target.delete' = 'iscsi.target.delete';
+  route_add: string[] = ['sharing', 'iscsi', 'target', 'add'];
   protected route_add_tooltip = 'Add Target';
-  protected route_edit: string[] = ['sharing', 'iscsi', 'target', 'edit'];
+  route_edit: string[] = ['sharing', 'iscsi', 'target', 'edit'];
 
-  columns: any[] = [
+  columns = [
     {
       name: T('Target Name'),
       prop: 'name',

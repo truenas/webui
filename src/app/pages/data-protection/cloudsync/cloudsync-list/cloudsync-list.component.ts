@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,8 +10,6 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import {
   EntityTableComponent,
-  InputTableConf,
-  EntityTableAction,
 } from 'app/pages/common/entity/entity-table/entity-table.component';
 import {
   AppLoaderService,
@@ -36,7 +35,7 @@ import { TransferMode } from 'app/enums/transfer-mode.enum';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [JobService, TaskService, CloudCredentialService],
 })
-export class CloudsyncListComponent implements InputTableConf, OnDestroy {
+export class CloudsyncListComponent implements EntityTableConfig, OnDestroy {
   title = T('Cloud Sync Tasks');
   queryCall: 'cloudsync.query' = 'cloudsync.query';
   route_add: string[] = ['tasks', 'cloudsync', 'add'];
@@ -46,7 +45,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
   entityList: EntityTableComponent;
   asyncView = true;
 
-  columns: any[] = [
+  columns = [
     { name: T('Description'), prop: 'description', always_display: true },
     { name: T('Credential'), prop: 'credential', hidden: true },
     { name: T('Direction'), prop: 'direction', hidden: true },

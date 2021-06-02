@@ -6,10 +6,10 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import {
-  EntityTableAction,
   EntityTableComponent,
-  InputTableConf,
+
 } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { T } from '../../../../translate-marker';
 import { StorageService, DialogService, WebSocketService } from '../../../../services';
@@ -26,13 +26,13 @@ import * as filesize from 'filesize';
   selector: 'disk-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class DiskListComponent implements InputTableConf {
+export class DiskListComponent implements EntityTableConfig {
   title = T('Disks');
   queryCall: 'disk.query' = 'disk.query';
   queryCallOption: QueryParams<Disk, { extra: { pools: true } }> = [[], { extra: { pools: true } }];
   noAdd = true;
 
-  columns: any[] = [
+  columns = [
     { name: T('Name'), prop: 'name', always_display: true },
     { name: T('Serial'), prop: 'serial' },
     { name: T('Disk Size'), prop: 'readable_size' },

@@ -7,7 +7,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -31,7 +31,7 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
   @ViewChild('filter', { static: false }) filter: ElementRef;
   @Input() entity: VolumesListComponent;
 
-  conf: InputTableConf;
+  conf: EntityTableConfig;
   filterValue = '';
   actions: any[];
 
