@@ -18,7 +18,6 @@ export class WebdavListComponent implements InputTableConf {
   wsDelete: 'sharing.webdav.delete' = 'sharing.webdav.delete';
   busy: Subscription;
   sub: Subscription;
-  self = this;
   addSubscription: Subscription;
   editSubscription: Subscription;
   constructor(private modalService: ModalService, private router: Router, private ws: WebSocketService, private dialog: DialogService) {}
