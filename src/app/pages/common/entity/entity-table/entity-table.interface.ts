@@ -55,8 +55,8 @@ export interface EntityTableConfig {
   rowValue?: (row: any, attr: any) => any;
   wsMultiDeleteParams?: (selected: any) => any;
   updateMultiAction?: (selected: any) => any;
-  doAdd?: () => void;
-  doEdit?: (id?: any) => void;
+  doAdd?: (id?: string | number, tableComponent?: EntityTableComponent) => void;
+  doEdit?: (id?: string | number, tableComponent?: EntityTableComponent) => void;
   onCheckboxChange?: (row: any) => any;
   onSliderChange?: (row: any) => any;
   onButtonClick?: (row: any) => any;
