@@ -48,5 +48,5 @@
       </div>
     </div>
   </mat-card>
-  <entity-empty *ngIf="filteredCatalogApps.length == 0" [conf]="emptyPageConf"></entity-empty>
+  <entity-empty *ngIf="!filteredCatalogApps.length" [conf]="emptyPageConf"></entity-empty>
 </div>
