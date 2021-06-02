@@ -1,5 +1,5 @@
 import {
-  Component, ElementRef, Input, ViewChild, OnInit, AfterViewInit, OnChanges, SimpleChanges,
+  Component, ElementRef, Input, ViewChild, OnInit, AfterViewInit,
 } from '@angular/core';
 import { fromEvent as observableFromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { EntityTableComponent } from './entity-table.component';
   selector: 'app-entity-table-add-actions',
   templateUrl: './entity-table-add-actions.component.html',
 })
-export class EntityTableAddActionsComponent implements OnInit, AfterViewInit, OnChanges {
+export class EntityTableAddActionsComponent implements OnInit, AfterViewInit {
   @ViewChild('filter', { static: false }) filter: ElementRef;
   @Input('entity') entity: EntityTableComponent;
   conf: any;
@@ -23,7 +23,7 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit, On
   animationMode = 'fling';
 
   get totalActions(): number {
-    const addAction = this.entity.conf.route_add ? 1 : 0;
+    const addAction = this.entity.conf.route_add ? 1 : this.entity.conf.doAdd ? 1 : 0;
     return this.actions.length + addAction;
   }
 
@@ -35,10 +35,6 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit, On
 
   ngAfterViewInit(): void {
     this.filterInit();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
   }
 
   applyConfig(entity: any): void {

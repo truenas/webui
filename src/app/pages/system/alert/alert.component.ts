@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { CoreEvent } from 'app/interfaces/events';
 
 import * as _ from 'lodash';
@@ -47,8 +48,7 @@ export class AlertConfigComponent implements OnInit {
     { label: T('ALERT'), value: AlertLevel.Alert },
     { label: T('EMERGENCY'), value: AlertLevel.Emergency },
   ];
-  formGroup: any;
-  settingFormGroup: any;
+  formGroup: FormGroup;
   isReady = false;
   protected defaults: any[] = [];
 
@@ -147,7 +147,7 @@ export class AlertConfigComponent implements OnInit {
                 if (this.formGroup.controls[prop]) {
                   this.formGroup.controls[prop].setValue(res.classes[k][j]);
                 } else {
-                  console.log('Missing prop: ' + prop); // some properties don't exist between both calls?
+                  console.error('Missing prop: ' + prop); // some properties don't exist between both calls?
                 }
               }
             }

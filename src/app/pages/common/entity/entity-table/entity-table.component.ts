@@ -763,7 +763,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   doAdd(): void {
     if (this.conf.doAdd) {
-      this.conf.doAdd();
+      this.conf.doAdd(null, this);
     } else {
       this.router.navigate(new Array('/').concat(this.conf.route_add));
     }
@@ -772,7 +772,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   doEdit(id: string): void {
     if (this.conf.doEdit) {
-      this.conf.doEdit(id);
+      this.conf.doEdit(id, this);
     } else {
       this.router.navigate(
         new Array('/').concat(this.conf.route_edit).concat(id),

@@ -72,7 +72,6 @@ export class ViewChartDonutComponent extends ViewChartComponent implements OnIni
         format: {
           value: (value: any) => {
             if (this.units) {
-              console.log('Units = ' + this.units);
               return value + this.units;
             }
             return value;

@@ -193,7 +193,6 @@ export class DisplayObject {
     // let handles = document.createElement(ResizeHandles.template);
     wrapper.innerHTML = ResizeHandles.template;
     wrapper.classList.add('shadow');
-    // console.log(ResizeHandles.template);
     parent.insertBefore(wrapper, this.rawElement);
     wrapper.appendChild(this.rawElement);
     this.rawTarget = wrapper;
@@ -257,7 +256,6 @@ export class DisplayObject {
       this.resizeHandleLeft = this.rawElement.parentNode.querySelector('.resize-handle-left');
       this.resizeHandleRight = this.rawElement.parentNode.querySelector('.resize-handle-right');
 
-      // console.log(this.resizeHandleTop);
       listen(this.resizeHandleTop, 'mousedown touchstart').while(() => this._resizeable).start(this.startResizeTop.bind(this));
       listen(this.resizeHandleBottom, 'mousedown touchstart').while(() => this._resizeable).start(this.startResizeBottom.bind(this));
       listen(this.resizeHandleLeft, 'mousedown touchstart').while(() => this._resizeable).start(this.startResizeLeft.bind(this));
@@ -325,7 +323,6 @@ export class DisplayObject {
     if (this.hasFocus && this.isDragging) {
       if (eventType == 'drag' || eventType == 'exit') {
         this.rawTarget.classList.remove(eventType);
-        // console.log("stop dragging");
         // eventType = "drag";
         // if(this.hasFocus){
         this.messageBus.emit({ name: 'DisplayObjectReleased', sender: this });
@@ -371,17 +368,14 @@ export class DisplayObject {
   }
 
   unfocus(value: any): void {
-    // console.log("ManagerNotification: value = ")
-    console.log('unfocus method');
     let blurValue = value.y / 5 * -1;
     if (blurValue < 10) {
       blurValue = 0;
     } else {
       blurValue -= 15;
     }
-    // document.querySelector('.wallpaper').style.filter = "blur(" + blurValue + "px)";
-    // document.querySelector('.panel').style.filter = "blur(" + blurValue + "px)";
-    (<any>document).querySelector('.desktop').style.filter = 'blur(' + blurValue + 'px)';
+
+    document.querySelector<HTMLElement>('.desktop').style.filter = 'blur(' + blurValue + 'px)';
   }
 
   refocus(): void {
@@ -429,7 +423,6 @@ export class DisplayObject {
 
   // Resize Methods
   startResizeTop(): void {
-    // console.log("Start Resizing!");
     this.messageBus.emit({ name: 'ResizeStarted' + this.id });
     const element = styler(this.rawElement, {});
     const startH = this.target.get('height');
@@ -438,7 +431,6 @@ export class DisplayObject {
 
     this.pointerTracker = pointer(this.anchorXY.get()).pipe(transformMap({
       y: (v: number) => {
-        // console.log(v);
         element.set({ height: startH + (startY - v) });
         this.target.set({ y: v });
         return v;
@@ -448,18 +440,15 @@ export class DisplayObject {
   }
 
   startResizeBottom(): void {
-    // console.log("Start Resizing!");
     this.messageBus.emit({ name: 'ResizeStarted' + this.id });
     const element = styler(this.rawElement, {});
     const startH = this.target.get('height');
     const startY = this.target.get('y');
     const startX = this.target.get('x');
-    // console.log("startY =  " + startY);
 
     this.pointerTracker = pointer(this.anchorXY.get()).pipe(transformMap({
       y: (v: number) => {
         const diff = v - startY;
-        // console.log(diff);
         element.set({ height: startH + diff });
         // this.target.set({y: startY});
         return startY;
@@ -469,7 +458,6 @@ export class DisplayObject {
   }
 
   startResizeLeft(): void {
-    console.log('Start Resizing!');
     this.messageBus.emit({ name: 'ResizeStarted' + this.id });
     const element = styler(this.rawElement, {});
 
@@ -479,9 +467,6 @@ export class DisplayObject {
 
     this.pointerTracker = pointer(this.anchorXY.get()).pipe(transformMap({
       x: (v: number) => {
-        // console.log("cursor: " + diff + " && width: " +  resizedW);
-        // console.log(diff)
-
         // setting transform-origin left has no effect
         // width changes anchoring element to center
         // element.set({ width: resizedW * 1.1});
@@ -494,7 +479,6 @@ export class DisplayObject {
   }
 
   startResizeRight(): void {
-    // console.log("Start Resizing!");
     this.messageBus.emit({ name: 'ResizeStarted' + this.id });
     const element = styler(this.rawElement, {});
 
@@ -505,8 +489,6 @@ export class DisplayObject {
     this.pointerTracker = pointer(this.anchorXY.get()).pipe(transformMap({
       x: (v: number) => {
         const diff = v - startX;
-        // console.log(startW);
-
         // setting transform-origin left has no effect
         // width changes anchoring element to center
         // element.set({ width: startW + (diff * 2)}); // Like center anchor point in AS3
@@ -519,7 +501,6 @@ export class DisplayObject {
   }
 
   stopResize(): void {
-    // console.log("Stop Resizing!");
     // this.anchorXY.stop();
     this.stop('resize');
     this.messageBus.emit({ name: 'ResizeStopped' + this.id });

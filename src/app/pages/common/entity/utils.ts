@@ -1,4 +1,6 @@
+import { Option } from 'app/interfaces/option.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import * as _ from 'lodash';
 import { Relation } from './entity-form/models/field-relation.interface';
 
@@ -22,7 +24,7 @@ export class EntityUtils {
       }
     } else {
       entity.error = 'Fatal error! Check logs.';
-      console.log('Unknown error code', res.code);
+      console.error('Unknown error code', res.code);
     }
   }
 
@@ -129,7 +131,7 @@ export class EntityUtils {
       dialog.errorReport(res.state, res.error, res.exception);
     } else {
       // if it can't print the error at least put it on the console.
-      console.log(res);
+      console.error(res);
     }
   }
 
@@ -163,7 +165,7 @@ export class EntityUtils {
       : !!v;
   }
 
-  array1DToLabelValuePair(arr: any[]): { label: string; value: any }[] {
+  array1DToLabelValuePair(arr: (string | number)[]): Option[] {
     return arr.map((value) => ({ label: value.toString(), value }));
   }
 
@@ -252,7 +254,7 @@ export class EntityUtils {
       const relationFieldName = relation.fieldName;
 
       return {
-        action: 'SHOW',
+        action: RelationAction.Show,
         when: [{
           name: relationFieldName,
           operator: relation.operatorName,
@@ -385,7 +387,7 @@ export class EntityUtils {
               subResults.forEach((subFieldConfig) => {
                 subFieldConfig['isHidden'] = true;
                 subFieldConfig['relation'] = [{
-                  action: 'SHOW',
+                  action: RelationAction.Show,
                   when: [{
                     name,
                     value: schemaConfig.schema.show_subquestions_if,

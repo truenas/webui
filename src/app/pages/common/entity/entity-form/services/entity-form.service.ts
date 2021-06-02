@@ -227,8 +227,8 @@ export class EntityFormService {
       config.allowUnits.forEach((item) => item.toUpperCase());
     }
     // do uppercase except when type is duration and unit is only one character (M is for minutes while m is for month)
-    unit = (config.type === UnitType.size || unit.length > 1) ? unit.toUpperCase() : unit;
-    const matchUnits = unit.match(config.type === UnitType.size ? this.sizeRegex : this.durationRegex);
+    unit = (config.type === UnitType.Size || unit.length > 1) ? unit.toUpperCase() : unit;
+    const matchUnits = unit.match(config.type === UnitType.Size ? this.sizeRegex : this.durationRegex);
 
     if (matchUnits && matchUnits[0] === unit) {
       const humanReableUnit = this.getHumanReadableUnit(num, unit, config.type);
@@ -244,7 +244,7 @@ export class EntityFormService {
   }
 
   getHumanReadableUnit(num: number, unit: string, type: UnitType): string {
-    if (type === UnitType.duration) {
+    if (type === UnitType.Duration) {
       let readableUnit = unit.length > 1 ? unit : (this.shortDurationUnit as any)[unit];
       if (num <= 1 && _.endsWith(readableUnit, 'S')) {
         readableUnit = readableUnit.substring(0, readableUnit.length - 1);
@@ -253,7 +253,7 @@ export class EntityFormService {
       }
       return readableUnit;
     }
-    if (type === UnitType.size) {
+    if (type === UnitType.Size) {
       return unit[0] + 'iB';
     }
   }

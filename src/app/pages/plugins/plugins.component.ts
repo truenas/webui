@@ -188,7 +188,7 @@ export class PluginsComponent implements EntityTableConfig {
     myIP.v4().then((pubIp) => {
       this.publicIp = pubIp;
     }).catch((e) => {
-      console.log('Error getting Public IP: ', e);
+      console.error('Error getting Public IP: ', e);
       this.publicIp = '';
     });
   }

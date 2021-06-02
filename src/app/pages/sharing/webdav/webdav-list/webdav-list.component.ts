@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { Subscription } from 'rxjs';
 
 import { helptext_sharing_webdav } from 'app/helptext/sharing';
+import { DialogService, ModalService, WebSocketService } from 'app/services';
+import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'webdav-list',
@@ -14,10 +18,10 @@ export class WebdavListComponent implements EntityTableConfig {
   wsDelete: 'sharing.webdav.delete' = 'sharing.webdav.delete';
   busy: Subscription;
   sub: Subscription;
+  addSubscription: Subscription;
+  editSubscription: Subscription;
+  constructor(private modalService: ModalService, private router: Router, private ws: WebSocketService, private dialog: DialogService) {}
 
-  route_add: string[] = ['sharing', 'webdav', 'add'];
-  protected route_add_tooltip = 'Add WebDAV Share';
-  route_edit: string[] = ['sharing', 'webdav', 'edit'];
   protected route_delete: string[] = ['sharing', 'webdav', 'delete'];
 
   columns = [
@@ -30,6 +34,20 @@ export class WebdavListComponent implements EntityTableConfig {
   ];
   rowIdentifier = helptext_sharing_webdav.column_name;
 
+  doAdd(id: any, tableComponent: EntityTableComponent): void {
+    this.modalService.open('slide-in-form', new WebdavFormComponent(this.router, this.ws, this.dialog));
+    this.addSubscription = this.modalService.onClose$.subscribe(() => {
+      tableComponent.getData();
+    });
+  }
+
+  doEdit(rowId: string, tableComponent: EntityTableComponent): void {
+    this.modalService.open('slide-in-form', new WebdavFormComponent(this.router, this.ws, this.dialog), rowId);
+    this.editSubscription = this.modalService.onClose$.subscribe(() => {
+      tableComponent.getData();
+    });
+  }
+
   config: any = {
     paging: true,
     sorting: { columns: this.columns },
@@ -38,4 +56,14 @@ export class WebdavListComponent implements EntityTableConfig {
       key_props: ['name'],
     },
   };
+
+  ngOnDestroy(): void {
+    if (this.addSubscription) {
+      this.addSubscription.unsubscribe();
+    }
+
+    if (this.editSubscription) {
+      this.editSubscription.unsubscribe();
+    }
+  }
 }

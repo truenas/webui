@@ -2,7 +2,6 @@
 
 // Write a bunch of pure functions above
 // and add it to our commands below
-const debug = true;
 
 const maxDecimals = (input: number, max?: number): number => {
   if (!max) {
@@ -271,16 +270,19 @@ function avgCpuTempReport(report: any): any {
 const commands = {
   // POC commands
   echo: (input: string) => {
+    // eslint-disable-next-line no-console
     console.log(input);
     return input;
   },
   toLowerCase: (input: string) => {
     const output = input.toLowerCase();
+    // eslint-disable-next-line no-console
     console.log(output);
     return output;
   },
   length: (input: string) => {
     const output = input.length;
+    // eslint-disable-next-line no-console
     console.log(output);
     return output;
   },
@@ -330,10 +332,6 @@ function emit(evt: any): void {
 addEventListener('message', ({ data }) => {
   const evt = data;
   let output;
-  if (debug) {
-    // console.warn("RCVD");
-    // console.warn(evt);
-  }
 
   switch (evt.name) {
     case 'SayHello':

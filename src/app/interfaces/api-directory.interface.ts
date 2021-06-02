@@ -3,6 +3,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Acl } from 'app/interfaces/acl.interface';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { AlertService } from 'app/interfaces/alert-service.interface';
 import { Alert } from 'app/interfaces/alert.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
@@ -70,7 +71,7 @@ export type ApiDirectory = {
   // Alert Service
   'alertservice.update': { params: any; response: any };
   'alertservice.create': { params: any; response: any };
-  'alertservice.query': { params: any; response: any };
+  'alertservice.query': { params: QueryParams<AlertService>; response: AlertService[] };
   'alertservice.test': { params: any; response: any };
   'alertservice.delete': { params: any; response: any };
 
