@@ -1,7 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -802,11 +804,11 @@ export class ReplicationWizardComponent {
         for (const task of res) {
           if (task.transport !== TransportMode.Legacy) {
             // TODO: Change to icu message format.
-            const lable = task.name + ' (' + ((task.state && task.state.datetime)
+            const label = task.name + ' (' + ((task.state && task.state.datetime)
               ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy')
               : 'never ran')
             + ')';
-            exist_replicationField.options.push({ label: lable, value: task });
+            exist_replicationField.options.push({ label, value: task });
             if (this.pk === task.id) {
               this.loadOrClearReplicationTask(task);
             }
@@ -816,20 +818,18 @@ export class ReplicationWizardComponent {
     );
 
     const privateKeyField = _.find(this.dialogFieldConfig, { name: 'private_key' });
-    this.keychainCredentialService.getSSHKeys().subscribe(
-      (res) => {
-        for (const i in res) {
-          privateKeyField.options.push({ label: res[i].name, value: res[i].id });
-        }
-      },
-    );
+    this.keychainCredentialService.getSSHKeys().subscribe((keyPairs) => {
+      for (const i in keyPairs) {
+        (privateKeyField.options as Option[]).push({ label: keyPairs[i].name, value: String(keyPairs[i].id) });
+      }
+    });
 
     const ssh_credentials_source_field = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' });
     const ssh_credentials_target_field = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' });
-    this.keychainCredentialService.getSSHConnections().subscribe((res) => {
-      for (const i in res) {
-        ssh_credentials_source_field.options.push({ label: res[i].name, value: res[i].id });
-        ssh_credentials_target_field.options.push({ label: res[i].name, value: res[i].id });
+    this.keychainCredentialService.getSSHConnections().subscribe((connections) => {
+      for (const i in connections) {
+        ssh_credentials_source_field.options.push({ label: connections[i].name, value: connections[i].id });
+        ssh_credentials_target_field.options.push({ label: connections[i].name, value: connections[i].id });
       }
       ssh_credentials_source_field.options.push({ label: T('Create New'), value: 'NEW' });
       ssh_credentials_target_field.options.push({ label: T('Create New'), value: 'NEW' });
@@ -1064,7 +1064,7 @@ export class ReplicationWizardComponent {
     if (item === 'private_key') {
       payload = {
         name: data['name'] + ' Key',
-        type: 'SSH_KEY_PAIR',
+        type: KeychainCredentialType.SshKeyPair,
         attributes: data['sshkeypair'],
       };
       return this.ws.call(this.createCalls[item], [payload]).toPromise();
@@ -1075,7 +1075,7 @@ export class ReplicationWizardComponent {
       if (data['setup_method'] == 'manual') {
         payload = {
           name: data['name'],
-          type: 'SSH_CREDENTIALS',
+          type: KeychainCredentialType.SshCredentials,
           attributes: {
             cipher: data['cipher'],
             host: data['host'],
@@ -1302,8 +1302,8 @@ export class ReplicationWizardComponent {
 
         if (value['private_key'] == 'NEW') {
           await self.replicationService.genSSHKeypair().then(
-            (res) => {
-              value['sshkeypair'] = res;
+            (keyPair) => {
+              value['sshkeypair'] = keyPair;
             },
             (err) => {
               prerequisite = false;

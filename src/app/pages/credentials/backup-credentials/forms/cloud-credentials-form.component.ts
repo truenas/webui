@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { Subscription } from 'rxjs';
@@ -1253,10 +1254,10 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     );
     const authenticationFieldset = _.find(this.fieldSets, { class: 'authentication' });
     const privateKeySFTPField = _.find(authenticationFieldset.config, { name: 'private_key-SFTP' });
-    this.ws.call('keychaincredential.query', [[['type', '=', 'SSH_KEY_PAIR']]]).subscribe(
-      (res) => {
-        for (let i = 0; i < res.length; i++) {
-          privateKeySFTPField.options.push({ label: res[i].name, value: res[i].id });
+    this.ws.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshKeyPair]]]).subscribe(
+      (credentials) => {
+        for (let i = 0; i < credentials.length; i++) {
+          privateKeySFTPField.options.push({ label: credentials[i].name, value: credentials[i].id });
         }
       },
     );
@@ -1429,11 +1430,11 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
   async makeNewKeyPair(value: any, submitting?: boolean): Promise<void> {
     await this.replicationService.genSSHKeypair().then(
-      async (res) => {
+      async (keyPair) => {
         const payload = {
           name: value['name'] + ' Key',
-          type: 'SSH_KEY_PAIR',
-          attributes: res,
+          type: KeychainCredentialType.SshKeyPair,
+          attributes: keyPair,
         };
         await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
           (sshKey) => {

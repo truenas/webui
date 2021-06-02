@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { AppTableAction } from 'app/pages/common/entity/table/table.component';
 import {
   WebSocketService, KeychainCredentialService, AppLoaderService,
@@ -136,11 +137,11 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
   }
 
   sshConnectionsDataSourceHelper(res: any[]): any[] {
-    return res.filter((item) => item.type === 'SSH_CREDENTIALS');
+    return res.filter((item) => item.type === KeychainCredentialType.SshCredentials);
   }
 
   sshKeyPairsDataSourceHelper(res: any[]): any[] {
-    return res.filter((item) => item.type === 'SSH_KEY_PAIR');
+    return res.filter((item) => item.type === KeychainCredentialType.SshKeyPair);
   }
 
   sshKeyPairActions(): AppTableAction[] {
