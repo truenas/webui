@@ -51,7 +51,7 @@ export class LocaleService {
   getDateFormatOptions(tz?: string): Option[] {
     let date = new Date();
     if (tz) {
-      date = utcToZonedTime(new Date(), tz);
+      date = utcToZonedTime(new Date().valueOf(), tz);
     }
 
     return [
@@ -69,7 +69,7 @@ export class LocaleService {
   getTimeFormatOptions(tz?: string): Option[] {
     let date = new Date();
     if (tz) {
-      date = utcToZonedTime(new Date(), tz);
+      date = utcToZonedTime(new Date().valueOf(), tz);
     }
     return [
       { label: `${format(date, 'HH:mm:ss')} ${this.t24}`, value: 'HH:mm:ss' },
@@ -80,9 +80,9 @@ export class LocaleService {
 
   formatDateTime(date: Date, tz?: string): string {
     if (tz) {
-      date = utcToZonedTime(date, tz);
+      date = utcToZonedTime(date.valueOf(), tz);
     } else if (this.timeZone) {
-      date = utcToZonedTime(date, this.timeZone);
+      date = utcToZonedTime(date.valueOf(), this.timeZone);
     }
 
     const dateFormatFns = this.dateFormat.replace('YYYY', 'yyyy').replace('YY', 'yy').replace('DD', 'dd').replace('D', 'd');
@@ -98,26 +98,18 @@ export class LocaleService {
   }
 
   getTimeOnly(date: Date, seconds = true, tz?: string): string {
-    tz ? moment.tz.setDefault(tz) : moment.tz.setDefault(this.timeZone);
-    let format: string;
-    if (!seconds) {
-      switch (this.timeFormat) {
-        case 'HH:mm:ss':
-          format = 'HH:mm';
-          break;
-        case 'hh:mm:ss a':
-          format = 'hh:mm a';
-          break;
-        case 'hh:mm:ss A':
-          format = 'hh:mm A';
-          break;
-        default:
-          format = this.timeFormat;
-      }
-    } else {
-      format = this.timeFormat;
+    if (tz) {
+      date = utcToZonedTime(date.valueOf(), tz);
+    } else if (this.timeZone) {
+      date = utcToZonedTime(date.valueOf(), this.timeZone);
     }
-    return moment(date).format(format);
+    let formatStr: string;
+    formatStr = this.timeFormat.replace(' a', " aaaaa'm'").replace(' A', ' aa');
+    if (!seconds) {
+      formatStr = formatStr.replace(':ss', '');
+    }
+
+    return format(date, formatStr);
   }
 
   saveDateTimeFormat(dateFormat: any, timeFormat: any): void {
