@@ -30,19 +30,19 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_url}"."""
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
-        time.sleep(3)
+        time.sleep(1)
 
 
 @when(parsers.parse('If login page appear enter "{user}" and "{password}"'))
 def if_login_appear_enter_user_and_password(driver, user, password):
     """If login page appear enter "user" and "password"."""
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
+        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
+        assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -54,33 +54,33 @@ def if_login_appear_enter_user_and_password(driver, user, password):
 @then('You should see the dashboard and "System Information"')
 def you_should_see_the_dashboard_and_system_information(driver):
     """You should see the dashboard and "System Information"."""
-    assert wait_on_element(driver, 1, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
 
 
 @then('Go on Sharing click Windows Shares(SMB)')
 def go_on_sharing_click_windows_sharessmb(driver):
     """Go on Sharing click Windows Shares(SMB)."""
-    assert wait_on_element(driver, 1, 7, '//span[contains(.,"root")]')
+    assert wait_on_element(driver, 7, '//span[contains(.,"root")]')
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Sharing"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Windows Shares (SMB)"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Windows Shares (SMB)"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Windows Shares (SMB)"]').click()
 
 
 @then('The Windows Shares(SMB) page should open')
 def the_windows_sharessmb_page_should_open(driver):
     """The Windows Shares(SMB) page should open."""
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Samba")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Samba")]')
 
 
 @then('Click Add')
 def click_add(driver):
     """Click Add."""
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__Samba_ADD"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__Samba_ADD"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__Samba_ADD"]').click()
-    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Basic")]')
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Basic")]')
 
 
 @then(parsers.parse('Set Path to the wheel dataset "{path}"'))
@@ -88,7 +88,7 @@ def set_path_to_the_wheel_dataset(driver, path):
     """Set Path to the wheel dataset "/mnt/dozer/my_wheel_dataset"."""
     global smb_path
     smb_path = path
-    assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__path"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__path"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys(path)
 
@@ -96,7 +96,7 @@ def set_path_to_the_wheel_dataset(driver, path):
 @then(parsers.parse('Input "{smbname}" as name, Click to enable'))
 def input_wheelsmbshare_as_name_click_to_enable(driver, smbname):
     """Input "wheelsmbshare" as name, Click to enable."""
-    assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__Name"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(smbname)
     checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
@@ -108,7 +108,7 @@ def input_wheelsmbshare_as_name_click_to_enable(driver, smbname):
 @then(parsers.parse('Input "{description}" as description'))
 def input_my_ldap_smb_test_share_as_description(driver, description):
     """Input "My ldap smb test share" as description."""
-    assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__Description"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Description"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
 
@@ -116,17 +116,17 @@ def input_my_ldap_smb_test_share_as_description(driver, description):
 @then('Click Summit')
 def click_summit(driver):
     """Click Summit."""
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SUBMIT"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    assert wait_on_element(driver, 1, 7, '//h1[contains(.,"Configure ACL")]')
+    assert wait_on_element(driver, 7, '//h1[contains(.,"Configure ACL")]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
 
 
 @then(parsers.parse('The "{smbname}" should be added'))
 def the_wheelsmbshare_should_be_added(driver, smbname):
     """The "wheelsmbshare" should be added."""
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Samba")]')
-    assert wait_on_element(driver, 1, 7, f'//div[contains(.,"{smbname}")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Samba")]')
+    assert wait_on_element(driver, 7, f'//div[contains(.,"{smbname}")]')
 
 
 @then('Click on service')
@@ -138,14 +138,14 @@ def click_on_service(driver):
 @then('The Service page should open')
 def the_service_page_should_open(driver):
     """The Service page should open."""
-    assert wait_on_element(driver, 1, 7, '//services')
+    assert wait_on_element(driver, 7, '//services')
 
 
 @then('If the SMB service is not started start the service')
 def if_the_smb_service_is_not_started_start_the_service(driver):
     """If the SMB service is not started start the service."""
-    assert wait_on_element(driver, 1, 7, '//services')
-    assert wait_on_element(driver, 1, 7, '//button[@ix-auto="button__S3_Actions"]')
+    assert wait_on_element(driver, 7, '//services')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__S3_Actions"]')
     # Scroll to SMB service
     element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)

@@ -140,4 +140,3 @@ def enable_failover():
     web_driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    wait_on_element(1, 90, '//mat-icon[@svgicon="ha_enabled"]')
