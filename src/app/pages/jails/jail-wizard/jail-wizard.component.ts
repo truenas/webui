@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { RestService, WebSocketService } from '../../../services';
 import { FormGroup } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
@@ -117,7 +119,7 @@ export class JailWizardComponent {
       tooltip: helptext.dhcp_tooltip,
       value: false,
       relation: [{
-        action: 'DISABLE',
+        action: RelationAction.Disable,
         when: [{
           name: 'nat',
           value: true,
@@ -148,8 +150,8 @@ export class JailWizardComponent {
       tooltip: helptext.ip4_interface_tooltip,
       options: this.interfaces.vnetDisabled,
       relation: [{
-        action: 'ENABLE',
-        connective: 'AND',
+        action: RelationAction.Enable,
+        connective: RelationConnection.And,
         when: [{
           name: 'dhcp',
           value: false,
@@ -170,8 +172,8 @@ export class JailWizardComponent {
       tooltip: helptext.ip4_addr_tooltip,
       validation: [ipv4Validator()],
       relation: [{
-        action: 'ENABLE',
-        connective: 'AND',
+        action: RelationAction.Enable,
+        connective: RelationConnection.And,
         when: [{
           name: 'dhcp',
           value: false,
@@ -191,8 +193,8 @@ export class JailWizardComponent {
       options: this.networkService.getV4Netmasks(),
       value: '',
       relation: [{
-        action: 'ENABLE',
-        connective: 'AND',
+        action: RelationAction.Enable,
+        connective: RelationConnection.And,
         when: [{
           name: 'dhcp',
           value: false,
@@ -210,8 +212,8 @@ export class JailWizardComponent {
       placeholder: helptext.defaultrouter_placeholder,
       tooltip: helptext.defaultrouter_tooltip,
       relation: [{
-        action: 'DISABLE',
-        connective: 'OR',
+        action: RelationAction.Disable,
+        connective: RelationConnection.Or,
         when: [{
           name: 'dhcp',
           value: true,
@@ -241,7 +243,7 @@ export class JailWizardComponent {
       value: '',
       required: false,
       relation: [{
-        action: 'DISABLE',
+        action: RelationAction.Disable,
         when: [{
           name: 'auto_configure_ip6',
           value: true,
@@ -257,7 +259,7 @@ export class JailWizardComponent {
       class: 'inline',
       width: '50%',
       relation: [{
-        action: 'DISABLE',
+        action: RelationAction.Disable,
         when: [{
           name: 'auto_configure_ip6',
           value: true,
@@ -274,7 +276,7 @@ export class JailWizardComponent {
       width: '20%',
       value: '',
       relation: [{
-        action: 'DISABLE',
+        action: RelationAction.Disable,
         when: [{
           name: 'auto_configure_ip6',
           value: true,

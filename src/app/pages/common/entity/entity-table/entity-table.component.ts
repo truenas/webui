@@ -90,8 +90,8 @@ export interface InputTableConf {
   wsMultiDelete?(resp: any): any;
   wsMultiDeleteParams?(selected: any): any;
   updateMultiAction?(selected: any): any;
-  doAdd?(): void;
-  doEdit?(id?: any): void;
+  doAdd?(id?: string | number, tableComponent?: EntityTableComponent): void;
+  doEdit?(id?: string | number, tableComponent?: EntityTableComponent): void;
   onCheckboxChange?(row: any): any;
   onSliderChange?(row: any): any;
   callGetFunction?(entity: EntityTableComponent): any;
@@ -857,7 +857,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   doAdd(): void {
     if (this.conf.doAdd) {
-      this.conf.doAdd();
+      this.conf.doAdd(null, this);
     } else {
       this.router.navigate(new Array('/').concat(this.conf.route_add));
     }
@@ -866,7 +866,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   doEdit(id: string): void {
     if (this.conf.doEdit) {
-      this.conf.doEdit(id);
+      this.conf.doEdit(id, this);
     } else {
       this.router.navigate(
         new Array('/').concat(this.conf.route_edit).concat(id),

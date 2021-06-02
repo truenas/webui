@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { CoreEvent } from 'app/interfaces/events';
 
 import * as _ from 'lodash';
@@ -49,8 +50,7 @@ export class AlertConfigComponent implements OnInit {
     { label: T('ALERT'), value: AlertLevel.Alert },
     { label: T('EMERGENCY'), value: AlertLevel.Emergency },
   ];
-  formGroup: any;
-  settingFormGroup: any;
+  formGroup: FormGroup;
   isReady = false;
   protected defaults: any[] = [];
 

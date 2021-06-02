@@ -69,8 +69,8 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
 
   fieldConfig: FieldConfig[];
 
-  protected target_control: any;
-  protected extent_control: any;
+  protected target_control: FieldConfig;
+  protected extent_control: FieldConfig;
   pk: any;
   protected entityForm: any;
 

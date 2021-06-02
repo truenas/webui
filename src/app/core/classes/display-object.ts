@@ -374,9 +374,8 @@ export class DisplayObject {
     } else {
       blurValue -= 15;
     }
-    // document.querySelector('.wallpaper').style.filter = "blur(" + blurValue + "px)";
-    // document.querySelector('.panel').style.filter = "blur(" + blurValue + "px)";
-    (<any>document).querySelector('.desktop').style.filter = 'blur(' + blurValue + 'px)';
+
+    document.querySelector<HTMLElement>('.desktop').style.filter = 'blur(' + blurValue + 'px)';
   }
 
   refocus(): void {

@@ -25,7 +25,7 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit {
   animationMode = 'fling';
 
   get totalActions(): number {
-    const addAction = this.entity.conf.route_add ? 1 : 0;
+    const addAction = this.entity.conf.route_add ? 1 : this.entity.conf.doAdd ? 1 : 0;
     return this.actions.length + addAction;
   }
 

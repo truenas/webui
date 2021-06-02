@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from '../../../../../services/modal.service';
@@ -41,7 +42,7 @@ export class ProactiveComponent implements FormConfiguration {
           required: true,
           validation: helptext.proactive.pc_validation,
           relation: [{
-            action: 'DISABLE',
+            action: RelationAction.Disable,
             when: [{
               name: 'enabled',
               value: false,
@@ -55,7 +56,7 @@ export class ProactiveComponent implements FormConfiguration {
           required: true,
           validation: helptext.proactive.pc_validation,
           relation: [{
-            action: 'DISABLE',
+            action: RelationAction.Disable,
             when: [{
               name: 'enabled',
               value: false,
@@ -69,7 +70,7 @@ export class ProactiveComponent implements FormConfiguration {
           required: true,
           validation: helptext.proactive.pc_email_validation,
           relation: [{
-            action: 'DISABLE',
+            action: RelationAction.Disable,
             when: [{
               name: 'enabled',
               value: false,
@@ -83,7 +84,7 @@ export class ProactiveComponent implements FormConfiguration {
           required: true,
           validation: helptext.proactive.pc_validation,
           relation: [{
-            action: 'DISABLE',
+            action: RelationAction.Disable,
             when: [{
               name: 'enabled',
               value: false,
@@ -108,7 +109,7 @@ export class ProactiveComponent implements FormConfiguration {
           required: true,
           validation: helptext.proactive.pc_validation,
           relation: [{
-            action: 'DISABLE',
+            action: RelationAction.Disable,
             when: [{
               name: 'enabled',
               value: false,
@@ -122,7 +123,7 @@ export class ProactiveComponent implements FormConfiguration {
           required: true,
           validation: helptext.proactive.pc_validation,
           relation: [{
-            action: 'DISABLE',
+            action: RelationAction.Disable,
             when: [{
               name: 'enabled',
               value: false,
@@ -136,7 +137,7 @@ export class ProactiveComponent implements FormConfiguration {
           validation: helptext.proactive.sec_email_validation,
           required: true,
           relation: [{
-            action: 'DISABLE',
+            action: RelationAction.Disable,
             when: [{
               name: 'enabled',
               value: false,
@@ -150,7 +151,7 @@ export class ProactiveComponent implements FormConfiguration {
           required: true,
           validation: helptext.proactive.pc_validation,
           relation: [{
-            action: 'DISABLE',
+            action: RelationAction.Disable,
             when: [{
               name: 'enabled',
               value: false,

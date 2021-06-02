@@ -5,6 +5,7 @@ import { MediaObserver } from '@angular/flex-layout';
 import { CoreService } from 'app/core/services/core.service';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { CoreEvent } from 'app/interfaces/events';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import {
   Application, Container,
 } from 'pixi.js';
@@ -690,7 +691,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   optimizeChassisOpacity(extractedEnclosure?: ChassisView): void {
-    const css = (<any>document).documentElement.style.getPropertyValue('--contrast-darkest');
+    const css = document.documentElement.style.getPropertyValue('--contrast-darkest');
     const hsl = this.themeUtils.hslToArray(css);
 
     let opacity;
@@ -1047,7 +1048,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           placeholder: 'Enclosure Label',
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'reset',
                 value: true,

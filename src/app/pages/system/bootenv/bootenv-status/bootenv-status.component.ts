@@ -46,7 +46,6 @@ export class BootStatusListComponent implements OnInit {
       { name: 'Status', prop: 'status' },
     ],
   };
-  boot_pool: any;
 
   constructor(_rest: RestService, private _router: Router, private ws: WebSocketService,
     private dialog: DialogService, protected loader: AppLoaderService, protected aroute: ActivatedRoute) {

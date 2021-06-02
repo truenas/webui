@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import * as _ from 'lodash';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
@@ -79,7 +80,7 @@ export class IdmapFormComponent implements FormConfiguration {
           required: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'name',
                 value: 'custom',

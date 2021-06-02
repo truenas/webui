@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { Subscription } from 'rxjs';
 import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloudcredentials';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -38,7 +40,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
   protected selectedProvider = 'S3';
   protected credentialsOauth = false;
-  protected oauthURL: any;
+  protected oauthURL: string;
   hideSaveBtn = true;
 
   fieldSets: FieldSet[] = [
@@ -117,7 +119,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'S3',
@@ -136,7 +138,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'S3',
@@ -154,7 +156,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           validation: helptext.max_upload_parts_s3.validation,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'S3',
@@ -172,7 +174,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'B2',
@@ -189,7 +191,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'B2',
@@ -207,7 +209,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'BOX',
@@ -225,7 +227,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'DROPBOX',
@@ -243,7 +245,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'FTP',
@@ -259,7 +261,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'FTP',
@@ -276,7 +278,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'FTP',
@@ -295,7 +297,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           togglePw: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'FTP',
@@ -313,7 +315,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'GOOGLE_CLOUD_STORAGE',
@@ -331,7 +333,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           validation: helptext.service_account_credentials_google_cloud_storage.validation,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'GOOGLE_CLOUD_STORAGE',
@@ -349,7 +351,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'GOOGLE_DRIVE',
@@ -366,7 +368,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'GOOGLE_DRIVE',
@@ -384,7 +386,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'HTTP',
@@ -402,7 +404,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'HUBIC',
@@ -420,7 +422,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'MEGA',
@@ -439,7 +441,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           togglePw: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'MEGA',
@@ -457,7 +459,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'AZUREBLOB',
@@ -474,7 +476,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'AZUREBLOB',
@@ -492,7 +494,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'ONEDRIVE',
@@ -513,7 +515,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'ONEDRIVE',
@@ -545,7 +547,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'ONEDRIVE',
@@ -562,7 +564,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'ONEDRIVE',
@@ -579,7 +581,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           required: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
@@ -595,7 +597,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           required: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
@@ -611,7 +613,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           required: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
@@ -645,7 +647,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           value: '0',
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
@@ -663,7 +665,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'PCLOUD',
@@ -679,7 +681,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'PCLOUD',
@@ -697,7 +699,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'SFTP',
@@ -714,7 +716,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'SFTP',
@@ -731,7 +733,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'SFTP',
@@ -750,7 +752,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           togglePw: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'SFTP',
@@ -778,7 +780,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'SFTP',
@@ -796,7 +798,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'WEBDAV',
@@ -832,7 +834,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'WEBDAV',
@@ -849,7 +851,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'WEBDAV',
@@ -868,7 +870,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           togglePw: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'WEBDAV',
@@ -886,7 +888,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'YANDEX',
@@ -911,7 +913,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           value: false,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'S3',
@@ -926,8 +928,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.user_id_openstack_swift.tooltip,
           relation: [
             {
-              action: 'SHOW',
-              connective: 'AND',
+              action: RelationAction.Show,
+              connective: RelationConnection.And,
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
@@ -945,8 +947,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.domain_openstack_swift.tooltip,
           relation: [
             {
-              action: 'SHOW',
-              connective: 'AND',
+              action: RelationAction.Show,
+              connective: RelationConnection.And,
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
@@ -965,7 +967,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           required: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
@@ -981,7 +983,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           required: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
@@ -996,8 +998,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.tenant_domain_openstack_swift.tooltip,
           relation: [
             {
-              action: 'SHOW',
-              connective: 'AND',
+              action: RelationAction.Show,
+              connective: RelationConnection.And,
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
@@ -1015,7 +1017,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.auth_token_openstack_swift.tooltip,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
@@ -1040,8 +1042,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
-              connective: 'AND',
+              action: RelationAction.Show,
+              connective: RelationConnection.And,
               when: [{
                 name: 'provider',
                 value: 'S3',
@@ -1060,8 +1062,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
-              connective: 'AND',
+              action: RelationAction.Show,
+              connective: RelationConnection.And,
               when: [{
                 name: 'provider',
                 value: 'S3',
@@ -1080,8 +1082,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
-              connective: 'AND',
+              action: RelationAction.Show,
+              connective: RelationConnection.And,
               when: [{
                 name: 'provider',
                 value: 'S3',
@@ -1100,8 +1102,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
-              connective: 'AND',
+              action: RelationAction.Show,
+              connective: RelationConnection.And,
               when: [{
                 name: 'provider',
                 value: 'S3',
@@ -1119,7 +1121,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.region_openstack_swift.tooltip,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
@@ -1134,7 +1136,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.storage_url_openstack_swift.tooltip,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
@@ -1163,7 +1165,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           ],
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',

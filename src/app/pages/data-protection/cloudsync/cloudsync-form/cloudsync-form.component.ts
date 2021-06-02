@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 
 import { Observable } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
@@ -158,7 +160,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           disabled: true,
           relation: [
             {
-              action: 'HIDE',
+              action: RelationAction.Hide,
               when: [{
                 name: 'credentials',
                 value: null,
@@ -203,8 +205,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
           disabled: false,
           relation: [
             {
-              action: 'HIDE',
-              connective: 'OR',
+              action: RelationAction.Hide,
+              connective: RelationConnection.Or,
               when: [{
                 name: 'direction',
                 value: Direction.Pull,
@@ -306,7 +308,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'encryption',
                 value: true,
@@ -322,7 +324,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'encryption',
                 value: true,
@@ -338,7 +340,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           isHidden: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'encryption',
                 value: true,

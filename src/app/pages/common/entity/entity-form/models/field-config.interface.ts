@@ -3,9 +3,10 @@ import { Option } from 'app/interfaces/option.interface';
 import { RelationGroup } from './field-relation.interface';
 
 export enum UnitType {
-  duration = 'duration',
-  size = 'size',
+  Duration = 'duration',
+  Size = 'size',
 }
+
 export interface InputUnitConfig {
   type: UnitType;
   decimal?: boolean;
@@ -14,31 +15,89 @@ export interface InputUnitConfig {
 }
 
 export interface FieldConfig {
-  onChange?(data: any): void;
+  acceptedFiles?: string;
+  addBtnMessage?: string;
+  addInitialList?: boolean;
   alert?: { message: string; forValues: any[] };
-  searchable?: boolean; disabled?: boolean; label?: string; inlineLabel?: string; name: string; options?: any[];
-  errors?: string; hasErrors?: boolean; placeholder?: string; type: string;
-  inputType?: string; inputUnit?: InputUnitConfig; validation?: any[] | ValidatorFn | ValidatorFn[];
   asyncValidation?: AsyncValidatorFn | AsyncValidatorFn[];
-  value?: any; multiple?: boolean; tristate?: boolean; tooltip?: string; tooltipPosition?: string;
-  relation?: RelationGroup[]; isHidden?: boolean; formarray?: any;
-  initialCount?: number; readonly?: boolean; initial?: string; rootSelectable?: boolean;
-  min?: number; max?: number; tabs?: any[]; tabName?: string; class?: string;
-  customEventActionLabel?: string; explorerType?: string; explorerParam?: any; customTemplateStringOptions?: any;
-  required?: boolean; deleteButtonOnFirst?: boolean; addBtnMessage?: string;
-  acceptedFiles?: string; fileLocation?: string; fileType?: string;width?: string;
-  message?: any; updater?: any; parent?: any;togglePw?: boolean; paraText?: any;
-  hideOthersPermissions?: boolean; blurStatus?: boolean;blurEvent?: any;noMinutes?: boolean;
-  warnings?: string; hideButton?: boolean;
-  searchOptions?: Option[];
+  autocomplete?: boolean;
+  blurEvent?: any;
+  blurStatus?: boolean;
+  box?: boolean;
+  buttonClass?: string;
+  buttonColor?: string;
+  class?: string;
+  customEventActionLabel?: string;
+  customTemplateStringOptions?: any;
+  deleteButtonOnFirst?: boolean;
+  disabled?: boolean;
+  enableTextWrapForOptions?: boolean;
+  errors?: string;
+  expandedHeight?: boolean;
+  explorerParam?: any;
+  explorerType?: string;
+  fileLocation?: string;
+  fileType?: string;
+  filereader?: boolean;
+  formarray?: any;
+  hasErrors?: boolean;
+  hideButton?: boolean;
   hideDirs?: any;
-  listFields?: FieldConfig[][]; templateListField?: FieldConfig[];
-  updateLocal?: boolean; isLoading?: boolean; textAreaRows?: number; netmaskPreset?: number;
-  isLargeText?: boolean; paragraphIcon?: string; paragraphIconSize?: string; zeroStateMessage?: string; isDoubleConfirm?: boolean;
-  maskValue?: any; hideErrMsg?: boolean; id?: string; autocomplete?: boolean;
-  buttonClass?: string; buttonColor?: string; filereader?: boolean; box?: boolean;
-  customEventMethod?(data: any): void;
-  onChangeOption?(data: any): void; hint?: string; loadMoreOptions?: any;
-  enableTextWrapForOptions?: boolean; expandedHeight?: boolean; addInitialList?: boolean;
+  hideErrMsg?: boolean;
+  hideOthersPermissions?: boolean;
+  hint?: string;
+  id?: string;
+  initial?: string;
+  initialCount?: number;
+  inlineLabel?: string;
+  inputType?: string;
+  inputUnit?: InputUnitConfig;
+  isDoubleConfirm?: boolean;
+  isHidden?: boolean;
+  isLargeText?: boolean;
+  isLoading?: boolean;
+  label?: string;
+  listFields?: FieldConfig[][];
+  loadMoreOptions?: any;
+  maskValue?: any;
+  max?: number;
+  message?: any;
+  min?: number;
+  multiple?: boolean;
+  name: string;
+  netmaskPreset?: number;
+  noMinutes?: boolean;
+  options?: any[];
+  paraText?: any;
+  paragraphIcon?: string;
+  paragraphIconSize?: string;
+  parent?: any;
+  placeholder?: string;
+  readonly?: boolean;
+  relation?: RelationGroup[];
+  required?: boolean;
+  rootSelectable?: boolean;
+  searchOptions?: Option[];
+  searchable?: boolean;
   subFields?: FieldConfig[];
+  tabName?: string;
+  tabs?: any[];
+  templateListField?: FieldConfig[];
+  textAreaRows?: number;
+  togglePw?: boolean;
+  tooltip?: string;
+  tooltipPosition?: string;
+  tristate?: boolean;
+  type: string;
+  updateLocal?: boolean;
+  updater?: any;
+  validation?: any[] | ValidatorFn | ValidatorFn[];
+  value?: any;
+  warnings?: string;
+  width?: string;
+  zeroStateMessage?: string;
+
+  customEventMethod?(data: any): void;
+  onChange?(data: any): void;
+  onChangeOption?(data: any): void;
 }

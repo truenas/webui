@@ -65,9 +65,9 @@ export class TooltipComponent {
       }
     }
     // Clears any open tooltip from screen
-    const tooltips: any = document.getElementsByClassName('tooltip-container');
+    const tooltips = document.getElementsByClassName('tooltip-container');
     for (let i = 0; i < tooltips.length; i++) {
-      tooltips[i].firstChild.classList.remove('show');
+      (tooltips[i].firstChild as HTMLElement).classList.remove('show');
     }
 
     if (!this.isShowTooltip) {

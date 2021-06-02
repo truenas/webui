@@ -27,7 +27,7 @@ export class TunableFormComponent implements FormConfiguration {
   isEntity = true;
 
   protected product_type: ProductType;
-  protected type_fc: any;
+  protected type_fc: FieldConfig;
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [

@@ -1,9 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../services/dialog.service';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { EntityUtils } from '../../common/entity/utils';
 import { WebSocketService } from '../../../services';
 import { T } from '../../../translate-marker';
@@ -20,7 +20,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   styleUrls: [],
   providers: [],
 })
-
 export class FailoverComponent implements FormConfiguration, OnDestroy {
   queryCall: 'failover.config' = 'failover.config';
   updateCall = 'failover.update';
@@ -113,7 +112,7 @@ export class FailoverComponent implements FormConfiguration, OnDestroy {
           value: true,
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'disabled',
                 value: false,
@@ -134,7 +133,6 @@ export class FailoverComponent implements FormConfiguration, OnDestroy {
     private dialog: DialogService,
     private ws: WebSocketService,
     protected matDialog: MatDialog,
-    private router: Router,
   ) {}
 
   afterInit(entityEdit: any): void {

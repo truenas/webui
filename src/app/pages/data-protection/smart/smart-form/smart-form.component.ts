@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
@@ -47,7 +48,7 @@ export class SmartFormComponent implements FormConfiguration {
           required: true,
           validation: helptext.smarttest_disks_validation,
           relation: [{
-            action: 'DISABLE',
+            action: RelationAction.Disable,
             when: [{
               name: 'all_disks',
               value: true,

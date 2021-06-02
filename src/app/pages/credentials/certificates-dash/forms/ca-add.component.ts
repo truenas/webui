@@ -3,6 +3,7 @@ import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import * as _ from 'lodash';
 import { SystemGeneralService, WebSocketService } from '../../../../services';
 import { ModalService } from 'app/services/modal.service';
@@ -72,7 +73,7 @@ export class CertificateAuthorityAddComponent {
           ],
           relation: [
             {
-              action: 'HIDE',
+              action: RelationAction.Hide,
               when: [{
                 name: 'create_type',
                 value: 'CA_CREATE_IMPORTED',
@@ -124,7 +125,7 @@ export class CertificateAuthorityAddComponent {
           disabled: true,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'key_type',
                 value: 'EC',
@@ -148,7 +149,7 @@ export class CertificateAuthorityAddComponent {
           isHidden: false,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'key_type',
                 value: 'RSA',
@@ -280,7 +281,7 @@ export class CertificateAuthorityAddComponent {
           tooltip: helptext_system_ca.add.basic_constraints.path_length.tooltip,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'BasicConstraints-enabled',
                 value: true,
@@ -308,7 +309,7 @@ export class CertificateAuthorityAddComponent {
           ],
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'BasicConstraints-enabled',
                 value: true,
@@ -342,7 +343,7 @@ export class CertificateAuthorityAddComponent {
           ],
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'AuthorityKeyIdentifier-enabled',
                 value: true,
@@ -366,7 +367,7 @@ export class CertificateAuthorityAddComponent {
           required: false,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'ExtendedKeyUsage-enabled',
                 value: true,
@@ -381,7 +382,7 @@ export class CertificateAuthorityAddComponent {
           tooltip: helptext_system_ca.add.extended_key_usage.extension_critical.tooltip,
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'ExtendedKeyUsage-enabled',
                 value: true,
@@ -455,7 +456,7 @@ export class CertificateAuthorityAddComponent {
           ],
           relation: [
             {
-              action: 'SHOW',
+              action: RelationAction.Show,
               when: [{
                 name: 'KeyUsage-enabled',
                 value: true,
@@ -559,10 +560,10 @@ export class CertificateAuthorityAddComponent {
     'KeyUsage-enabled',
   ];
 
-  private country: any;
-  private signedby: any;
+  private country: FieldConfig;
+  private signedby: FieldConfig;
   identifier: any;
-  usageField: any;
+  usageField: FieldConfig;
   private currenProfile: any;
   private entityForm: any;
 

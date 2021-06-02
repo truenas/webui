@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { Observable } from 'rxjs';
 import { ProductType } from '../../../enums/product-type.enum';
 
@@ -172,8 +174,8 @@ export class ConfigurationComponent implements FormConfiguration {
           tooltip: helptext.outbound_network_value.tooltip,
           options: [],
           relation: [{
-            action: 'HIDE',
-            connective: 'OR',
+            action: RelationAction.Hide,
+            connective: RelationConnection.Or,
             when: [{
               name: 'outbound_network_activity',
               value: 'ALLOW',
@@ -208,7 +210,7 @@ export class ConfigurationComponent implements FormConfiguration {
           tooltip: helptext.netwait_ip_tooltip,
           relation: [
             {
-              action: 'HIDE',
+              action: RelationAction.Hide,
               when: [{
                 name: 'netwait_enabled',
                 value: false,

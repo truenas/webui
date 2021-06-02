@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
@@ -47,7 +48,7 @@ export class InitiatorFormComponent implements OnInit {
         parent.source.deselectAll();
       },
       relation: [{
-        action: 'DISABLE',
+        action: RelationAction.Disable,
         when: [{
           name: 'all',
           value: true,
@@ -67,7 +68,7 @@ export class InitiatorFormComponent implements OnInit {
         parent.source.deselectAll();
       },
       relation: [{
-        action: 'DISABLE',
+        action: RelationAction.Disable,
         when: [{
           name: 'all',
           value: true,

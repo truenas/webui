@@ -50,7 +50,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   buildDate: string;
   loader = false;
   product_type = window.localStorage['product_type'] as ProductType;
-  systemLogo: any;
   isFN = false;
   isUpdateRunning = false;
   is_ha: boolean;

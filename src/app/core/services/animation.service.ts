@@ -18,22 +18,18 @@ export interface AnimationConfig {
   animationTarget: DisplayObject; // Support DisplayObject
   animation: string; // eg. fadeIn, slideOut etc
   finishState: string; // In || Out || Start || Stop
-  finishPosition?: any; // XY?  Haven't decided how this one will work yet
 }
 
 export interface GroupAnimationConfig {
   animationTargets: DisplayObject[]; // Supports DisplayObjects only
   animation: string; // eg. fadeIn, slideOut etc
   finishState: string; // In || Out || Start || Stop
-  finishPosition?: any; // XY?  Haven't decided how this one will work yet
   staggered?: boolean;
 }
 
 @UntilDestroy()
 @Injectable()
 export class AnimationService {
-  private doc: any; // Document Object
-  private colorLoopActive: any;
   private activeAnimations: any = {};
 
   constructor(private core: CoreService) {
@@ -267,7 +263,7 @@ export class AnimationService {
   }
 
   private scrollTo(destination: string): void {
-    const rawScrollTarget = (<any>document).querySelector(destination);
+    const rawScrollTarget = document.querySelector(destination);
 
     rawScrollTarget.scrollIntoView(); // native method works but without a smooth transition
   }

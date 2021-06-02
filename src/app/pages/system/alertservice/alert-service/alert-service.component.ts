@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AlertServiceType } from 'app/enums/alert-service-type.enum';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 
 import * as _ from 'lodash';
 
@@ -62,36 +65,36 @@ export class AlertServiceComponent implements FormConfiguration {
           tooltip: helptext.type_tooltip,
           options: [{
             label: 'AWS SNS',
-            value: 'AWSSNS',
+            value: AlertServiceType.AwsSns,
           }, {
             label: 'E-Mail',
-            value: 'Mail',
+            value: AlertServiceType.Mail,
           }, {
             label: 'InfluxDB',
-            value: 'InfluxDB',
+            value: AlertServiceType.InfluxDb,
           }, {
             label: 'Mattermost',
-            value: 'Mattermost',
+            value: AlertServiceType.Mattermost,
           }, {
             label: 'OpsGenie',
-            value: 'OpsGenie',
+            value: AlertServiceType.OpsGenie,
           }, {
             label: 'PagerDuty',
-            value: 'PagerDuty',
+            value: AlertServiceType.PagerDuty,
           }, {
             label: 'Slack',
-            value: 'Slack',
+            value: AlertServiceType.Slack,
           }, {
             label: 'SNMP Trap',
-            value: 'SNMPTrap',
+            value: AlertServiceType.SnmpTrap,
           }, {
             label: 'Telegram',
-            value: 'Telegram',
+            value: AlertServiceType.Telegram,
           }, {
             label: 'VictorOps',
-            value: 'VictorOps',
+            value: AlertServiceType.VictorOps,
           }],
-          value: 'AWSSNS',
+          value: AlertServiceType.AwsSns,
         },
         {
           type: 'select',
@@ -126,10 +129,10 @@ export class AlertServiceComponent implements FormConfiguration {
           required: true,
           validation: [Validators.required],
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'AWSSNS',
+              value: AlertServiceType.AwsSns,
             }],
           }],
         }, {
@@ -140,10 +143,10 @@ export class AlertServiceComponent implements FormConfiguration {
           required: true,
           validation: [Validators.required],
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'AWSSNS',
+              value: AlertServiceType.AwsSns,
             }],
           }],
         }, {
@@ -154,10 +157,10 @@ export class AlertServiceComponent implements FormConfiguration {
           required: true,
           validation: [Validators.required],
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'AWSSNS',
+              value: AlertServiceType.AwsSns,
             }],
           }],
         }, {
@@ -170,10 +173,10 @@ export class AlertServiceComponent implements FormConfiguration {
           required: true,
           validation: [Validators.required],
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'AWSSNS',
+              value: AlertServiceType.AwsSns,
             }],
           }],
         },
@@ -185,10 +188,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.Mail_email_placeholder,
           tooltip: helptext.Mail_email_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'Mail',
+              value: AlertServiceType.Mail,
             }],
           }],
         },
@@ -199,10 +202,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.InfluxDB_host_placeholder,
           tooltip: helptext.InfluxDB_host_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'InfluxDB',
+              value: AlertServiceType.InfluxDb,
             }],
           }],
           required: true,
@@ -213,10 +216,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.InfluxDB_username_placeholder,
           tooltip: helptext.InfluxDB_username_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'InfluxDB',
+              value: AlertServiceType.InfluxDb,
             }],
           }],
           required: true,
@@ -229,10 +232,10 @@ export class AlertServiceComponent implements FormConfiguration {
           togglePw: true,
           tooltip: helptext.InfluxDB_password_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'InfluxDB',
+              value: AlertServiceType.InfluxDb,
             }],
           }],
           required: true,
@@ -243,10 +246,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.InfluxDB_database_placeholder,
           tooltip: helptext.InfluxDB_database_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'InfluxDB',
+              value: AlertServiceType.InfluxDb,
             }],
           }],
           required: true,
@@ -257,10 +260,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.InfluxDB_series_name_placeholder,
           tooltip: helptext.InfluxDB_series_name_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'InfluxDB',
+              value: AlertServiceType.InfluxDb,
             }],
           }],
           required: true,
@@ -273,10 +276,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.Mattermost_url_placeholder,
           tooltip: helptext.Mattermost_url_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'Mattermost',
+              value: AlertServiceType.Mattermost,
             }],
           }],
           required: true,
@@ -287,10 +290,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.Mattermost_username_placeholder,
           tooltip: helptext.Mattermost_username_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'Mattermost',
+              value: AlertServiceType.Mattermost,
             }],
           }],
           required: true,
@@ -301,10 +304,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.Mattermost_channel_placeholder,
           tooltip: helptext.Mattermost_channel_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'Mattermost',
+              value: AlertServiceType.Mattermost,
             }],
           }],
         }, {
@@ -313,10 +316,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.Mattermost_icon_url_placeholder,
           tooltip: helptext.Mattermost_icon_url_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'Mattermost',
+              value: AlertServiceType.Mattermost,
             }],
           }],
         },
@@ -327,10 +330,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.OpsGenie_api_key_placeholder,
           tooltip: helptext.OpsGenie_api_key_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'OpsGenie',
+              value: AlertServiceType.OpsGenie,
             }],
           }],
           required: true,
@@ -341,10 +344,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.OpsGenie_api_url_placeholder,
           tooltip: helptext.OpsGenie_api_url_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'OpsGenie',
+              value: AlertServiceType.OpsGenie,
             }],
           }],
         },
@@ -355,10 +358,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.PagerDuty_service_key_placeholder,
           tooltip: helptext.PagerDuty_service_key_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'PagerDuty',
+              value: AlertServiceType.PagerDuty,
             }],
           }],
           required: true,
@@ -369,10 +372,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.PagerDuty_client_name_placeholder,
           tooltip: helptext.PagerDuty_client_name_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'PagerDuty',
+              value: AlertServiceType.PagerDuty,
             }],
           }],
           required: true,
@@ -385,10 +388,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.Slack_url_placeholder,
           tooltip: helptext.Slack_url_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'Slack',
+              value: AlertServiceType.Slack,
             }],
           }],
           required: true,
@@ -401,10 +404,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.SNMPTrap_host_placeholder,
           tooltip: helptext.SNMPTrap_host_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'SNMPTrap',
+              value: AlertServiceType.SnmpTrap,
             }],
           }],
           required: true,
@@ -417,10 +420,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.SNMPTrap_port_placeholder,
           tooltip: helptext.SNMPTrap_port_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'SNMPTrap',
+              value: AlertServiceType.SnmpTrap,
             }],
           }],
           value: 162,
@@ -431,10 +434,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.SNMPTrap_v3_placeholder,
           tooltip: helptext.SNMPTrap_v3_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'SNMPTrap',
+              value: AlertServiceType.SnmpTrap,
             }],
           }],
           value: false,
@@ -445,11 +448,11 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.SNMPTrap_v3_username_placeholder,
           tooltip: helptext.SNMPTrap_v3_username_tooltip,
           relation: [{
-            action: 'SHOW',
-            connective: 'AND',
+            action: RelationAction.Show,
+            connective: RelationConnection.And,
             when: [{
               name: 'type',
-              value: 'SNMPTrap',
+              value: AlertServiceType.SnmpTrap,
             }, {
               name: 'SNMPTrap-v3',
               value: true,
@@ -462,11 +465,11 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.SNMPTrap_v3_authkey_placeholder,
           tooltip: helptext.SNMPTrap_v3_authkey_tooltip,
           relation: [{
-            action: 'SHOW',
-            connective: 'AND',
+            action: RelationAction.Show,
+            connective: RelationConnection.And,
             when: [{
               name: 'type',
-              value: 'SNMPTrap',
+              value: AlertServiceType.SnmpTrap,
             }, {
               name: 'SNMPTrap-v3',
               value: true,
@@ -479,11 +482,11 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.SNMPTrap_v3_privkey_placeholder,
           tooltip: helptext.SNMPTrap_v3_privkey_tooltip,
           relation: [{
-            action: 'SHOW',
-            connective: 'AND',
+            action: RelationAction.Show,
+            connective: RelationConnection.And,
             when: [{
               name: 'type',
-              value: 'SNMPTrap',
+              value: AlertServiceType.SnmpTrap,
             }, {
               name: 'SNMPTrap-v3',
               value: true,
@@ -527,11 +530,11 @@ export class AlertServiceComponent implements FormConfiguration {
           ],
           value: '',
           relation: [{
-            action: 'SHOW',
-            connective: 'AND',
+            action: RelationAction.Show,
+            connective: RelationConnection.And,
             when: [{
               name: 'type',
-              value: 'SNMPTrap',
+              value: AlertServiceType.SnmpTrap,
             }, {
               name: 'SNMPTrap-v3',
               value: true,
@@ -579,11 +582,11 @@ export class AlertServiceComponent implements FormConfiguration {
           ],
           value: '',
           relation: [{
-            action: 'SHOW',
-            connective: 'AND',
+            action: RelationAction.Show,
+            connective: RelationConnection.And,
             when: [{
               name: 'type',
-              value: 'SNMPTrap',
+              value: AlertServiceType.SnmpTrap,
             }, {
               name: 'SNMPTrap-v3',
               value: true,
@@ -596,10 +599,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.SNMPTrap_community_placeholder,
           tooltip: helptext.SNMPTrap_community_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'SNMPTrap',
+              value: AlertServiceType.SnmpTrap,
             }],
           }],
           value: 'public',
@@ -611,10 +614,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.Telegram_bot_token_placeholder,
           tooltip: helptext.Telegram_bot_token_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'Telegram',
+              value: AlertServiceType.Telegram,
             }],
           }],
           required: true,
@@ -626,10 +629,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.Telegram_chat_ids_placeholder,
           tooltip: helptext.Telegram_chat_ids_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'Telegram',
+              value: AlertServiceType.Telegram,
             }],
           }],
           required: true,
@@ -642,10 +645,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.VictorOps_api_key_placeholder,
           tooltip: helptext.VictorOps_api_key_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'VictorOps',
+              value: AlertServiceType.VictorOps,
             }],
           }],
           required: true,
@@ -656,10 +659,10 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.VictorOps_routing_key_placeholder,
           tooltip: helptext.VictorOps_routing_key_tooltip,
           relation: [{
-            action: 'SHOW',
+            action: RelationAction.Show,
             when: [{
               name: 'type',
-              value: 'VictorOps',
+              value: AlertServiceType.VictorOps,
             }],
           }],
           required: true,

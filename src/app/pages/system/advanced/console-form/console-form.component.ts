@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Subscription } from 'rxjs';
 import {
   DialogService, LanguageService, StorageService,
@@ -54,7 +55,7 @@ export class ConsoleFormComponent implements FormConfiguration, OnDestroy {
           options: [],
           tooltip: helptext_system_advanced.serialport_tooltip,
           relation: [{
-            action: 'DISABLE',
+            action: RelationAction.Disable,
             when: [{
               name: 'serialconsole',
               value: false,
@@ -74,7 +75,7 @@ export class ConsoleFormComponent implements FormConfiguration, OnDestroy {
           ],
           tooltip: helptext_system_advanced.serialspeed_tooltip,
           relation: [{
-            action: 'DISABLE',
+            action: RelationAction.Disable,
             when: [{
               name: 'serialconsole',
               value: false,

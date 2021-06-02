@@ -118,8 +118,6 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
   ];
 
   pk: any;
-  protected peeruser_field: any;
-  protected peersecret_field: any;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected loader: AppLoaderService,
     protected ws: WebSocketService) {}

@@ -8,6 +8,7 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
@@ -246,7 +247,7 @@ export class DatasetFormComponent implements FormConfiguration {
           validation: helptext.dataset_form_refquota_warning_validation,
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'refquota_warning_inherit',
                 value: true,
@@ -275,7 +276,7 @@ export class DatasetFormComponent implements FormConfiguration {
           validation: helptext.dataset_form_refquota_critical_validation,
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'refquota_critical_inherit',
                 value: true,
@@ -381,7 +382,7 @@ export class DatasetFormComponent implements FormConfiguration {
           validation: helptext.dataset_form_quota_warning_validation,
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'quota_warning_inherit',
                 value: true,
@@ -410,7 +411,7 @@ export class DatasetFormComponent implements FormConfiguration {
           validation: helptext.dataset_form_quota_critical_validation,
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'quota_critical_inherit',
                 value: true,

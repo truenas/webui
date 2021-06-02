@@ -2,6 +2,7 @@ import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import helptext from '../../../../helptext/services/components/service-ups';
 import { RestService, WebSocketService } from '../../../../services';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -55,7 +56,7 @@ export class ServiceUPSComponent implements FormConfiguration {
           validation: helptext.ups_remotehost_validation,
           relation: [
             {
-              action: 'ENABLE',
+              action: RelationAction.Enable,
               when: [{
                 name: 'mode',
                 value: 'SLAVE',
@@ -75,7 +76,7 @@ export class ServiceUPSComponent implements FormConfiguration {
           validation: helptext.ups_remoteport_validation,
           relation: [
             {
-              action: 'ENABLE',
+              action: RelationAction.Enable,
               when: [{
                 name: 'mode',
                 value: 'SLAVE',
@@ -95,7 +96,7 @@ export class ServiceUPSComponent implements FormConfiguration {
           enableTextWrapForOptions: true,
           relation: [
             {
-              action: 'DISABLE',
+              action: RelationAction.Disable,
               when: [{
                 name: 'mode',
                 value: 'SLAVE',
