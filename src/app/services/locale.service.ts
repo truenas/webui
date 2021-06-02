@@ -79,8 +79,16 @@ export class LocaleService {
   }
 
   formatDateTime(date: Date, tz?: string): string {
-    tz ? moment.tz.setDefault(tz) : moment.tz.setDefault(this.timeZone);
-    return moment(date).format(`${this.dateFormat} ${this.timeFormat}`);
+    if (tz) {
+      date = utcToZonedTime(date, tz);
+    } else if (this.timeZone) {
+      date = utcToZonedTime(date, this.timeZone);
+    }
+
+    const dateFormatFns = this.dateFormat.replace('YYYY', 'yyyy').replace('YY', 'yy').replace('DD', 'dd').replace('D', 'd');
+    const timeFormatFns = this.timeFormat.replace(' a', " aaaaa'm'").replace(' A', ' aa');
+
+    return format(date, `${dateFormatFns} ${timeFormatFns}`);
   }
 
   formatDateTimeWithNoTz(date: Date): string {
