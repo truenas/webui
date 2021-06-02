@@ -92,8 +92,9 @@ export class LocaleService {
   }
 
   formatDateTimeWithNoTz(date: Date): string {
-    moment.tz.setDefault('');
-    return moment(date).format(`${this.dateFormat} ${this.timeFormat}`);
+    const dateFormatFns = this.dateFormat.replace('YYYY', 'yyyy').replace('YY', 'yy').replace('DD', 'dd').replace('D', 'd');
+    const timeFormatFns = this.timeFormat.replace(' a', " aaaaa'm'").replace(' A', ' aa');
+    return format(date.valueOf(), `${dateFormatFns} ${timeFormatFns}`);
   }
 
   getTimeOnly(date: Date, seconds = true, tz?: string): string {
