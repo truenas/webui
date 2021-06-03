@@ -309,9 +309,9 @@ export class TwoFactorComponent implements FormConfiguration {
   }
 
   updateSecretAndUri(): void {
-    this.ws.call('auth.twofactor.config').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.entityEdit.formGroup.controls['secret'].setValue(res.secret);
-      this.secret = res.secret;
+    this.ws.call('auth.twofactor.config').pipe(untilDestroyed(this)).subscribe((config) => {
+      this.entityEdit.formGroup.controls['secret'].setValue(config.secret);
+      this.secret = config.secret;
       this.getURI();
     }, (err) => {
       this.loader.close();

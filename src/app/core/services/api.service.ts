@@ -53,9 +53,6 @@ export class ApiService {
         args: [] as any[], // eg. [["id", "=", "foo"]]
         responseEvent: 'UserData',
       },
-      preProcessor(def: ApiCall) {
-        return def;
-      },
     },
     UserDataUpdate: {
       apiCall: {

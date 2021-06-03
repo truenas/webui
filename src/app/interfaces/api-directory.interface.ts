@@ -1,11 +1,15 @@
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import { SystemUpdate } from 'app/interfaces/system-update.interface';
+import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { Acl } from 'app/interfaces/acl.interface';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AlertService } from 'app/interfaces/alert-service.interface';
 import { Alert } from 'app/interfaces/alert.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
@@ -24,6 +28,7 @@ import {
   IscsiPortal,
   IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
+import { NetworkActivityChoice, NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
@@ -31,6 +36,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { Disk, DiskQueryOptions, DiskUpdate } from 'app/interfaces/storage.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
@@ -76,10 +82,10 @@ export type ApiDirectory = {
   'alertservice.delete': { params: any; response: any };
 
   // Api Key
-  'api_key.create': { params: any; response: any };
-  'api_key.update': { params: any; response: any };
-  'api_key.delete': { params: any; response: any };
-  'api_key.query': { params: any; response: any };
+  'api_key.create': { params: CreateApiKeyRequest; response: ApiKey };
+  'api_key.update': { params: UpdateApiKeyRequest; response: ApiKey };
+  'api_key.delete': { params: [/* id */ string]; response: boolean };
+  'api_key.query': { params: QueryParams<ApiKey>; response: ApiKey[] };
 
   // Auth
   'auth.generate_token': { params: [number]; response: string };
@@ -94,7 +100,7 @@ export type ApiDirectory = {
   'auth.twofactor.provisioning_uri': { params: void; response: string };
   'auth.two_factor_auth': { params: any; response: any };
   'auth.twofactor.renew_secret': { params: any; response: any };
-  'auth.twofactor.config': { params: any; response: any };
+  'auth.twofactor.config': { params: void; response: TwoFactorConfig };
 
   // Boot
   'boot.set_scrub_interval': { params: any; response: any };
@@ -159,7 +165,7 @@ export type ApiDirectory = {
   'core.get_jobs': { params: any; response: any };
   'core.job_abort': { params: any; response: any };
   'core.bulk': { params: any; response: any };
-  'core.resize_shell': { params: any; response: any };
+  'core.resize_shell': { params: ResizeShellRequest; response: void };
 
   // Config
   'config.upload': { params: any; response: any };
@@ -259,9 +265,9 @@ export type ApiDirectory = {
 
   // Keychain Credential
   'keychaincredential.create': { params: any; response: any };
-  'keychaincredential.query': { params: any; response: any };
+  'keychaincredential.query': { params: QueryParams<KeychainCredential>; response: KeychainCredential[] };
   'keychaincredential.update': { params: any; response: any };
-  'keychaincredential.generate_ssh_key_pair': { params: any; response: any };
+  'keychaincredential.generate_ssh_key_pair': { params: void; response: SshKeyPair };
   'keychaincredential.remote_ssh_host_key_scan': { params: any; response: any };
   'keychaincredential.delete': { params: any; response: any };
   'keychaincredential.remote_ssh_semiautomatic_setup': { params: any; response: any };
@@ -365,10 +371,10 @@ export type ApiDirectory = {
   'notifier.choices': { params: any; response: any };
 
   // Network
-  'network.configuration.activity_choices': { params: any; response: any };
+  'network.configuration.activity_choices': { params: void; response: NetworkActivityChoice[] };
   'network.configuration.update': { params: any; response: any };
   'network.general.summary': { params: any; response: any };
-  'network.configuration.config': { params: any; response: any };
+  'network.configuration.config': { params: void; response: NetworkConfiguration };
 
   // Kerberos
   'kerberos.realm.query': { params: any; response: any };
@@ -696,7 +702,7 @@ export type ApiDirectory = {
   'update.get_trains': { params: any; response: any };
   'update.set_auto_download': { params: any; response: any };
   'update.get_pending': { params: any; response: any };
-  'update.check_available': { params: any; response: any };
+  'update.check_available': { params: void; response: SystemUpdate };
   'update.set_train': { params: any; response: any };
 
   // ZFS

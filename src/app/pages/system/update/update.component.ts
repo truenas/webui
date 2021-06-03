@@ -1,22 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { CoreService } from 'app/core/services/core.service';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { ProductType } from '../../../enums/product-type.enum';
-import { WebSocketService, SystemGeneralService, StorageService } from '../../../services';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MatDialog } from '@angular/material/dialog';
-import { DialogService } from '../../../services/dialog.service';
+import { StorageService, SystemGeneralService, WebSocketService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { TranslateService } from '@ngx-translate/core';
+import { DialogService } from '../../../services/dialog.service';
 import { T } from '../../../translate-marker';
+
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
-import { CoreService } from 'app/core/services/core.service';
 
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
@@ -26,8 +28,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   templateUrl: './update.component.html',
 })
 export class UpdateComponent implements OnInit {
-  packages: any[] = [];
-  status: string;
+  packages: { operation: string; name: string }[] = [];
+  status: SystemUpdateStatus;
   releaseNotes: any = '';
   changeLog: any = '';
   updating = false;
@@ -67,7 +69,7 @@ export class UpdateComponent implements OnInit {
                                   one is available. Click \
                                   <i>APPLY PENDING UPDATE</i> to install \
                                   the downloaded update.');
-  train_version: any = null;
+  train_version: string = null;
 
   protected saveConfigFieldConf: FieldConfig[] = [
     {
@@ -95,6 +97,7 @@ export class UpdateComponent implements OnInit {
   protected dialogRef: any;
 
   readonly ProductType = ProductType;
+  readonly SystemUpdateStatus = SystemUpdateStatus;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected ws: WebSocketService, protected dialog: MatDialog, public sysGenService: SystemGeneralService,
@@ -304,76 +307,75 @@ export class UpdateComponent implements OnInit {
     this.showSpinner = true;
     this.pendingupdates();
     this.error = null;
-    this.ws.call('update.check_available')
-      .pipe(untilDestroyed(this)).subscribe(
-        (res) => {
-          if (res.version) {
-            this.train_version = res.version;
-          }
-          this.status = res.status;
-          if (res.status === 'AVAILABLE') {
-            this.updates_available = true;
-            this.packages = [];
-            res.changes.forEach((item: any) => {
-              if (item.operation === 'upgrade') {
+    this.ws.call('update.check_available').pipe(untilDestroyed(this)).subscribe(
+      (update) => {
+        if (update.version) {
+          this.train_version = update.version;
+        }
+        this.status = update.status;
+        if (update.status === SystemUpdateStatus.Available) {
+          this.updates_available = true;
+          this.packages = [];
+          update.changes.forEach((change) => {
+            if (change.operation === SystemUpdateOperationType.Upgrade) {
+              this.packages.push({
+                operation: 'Upgrade',
+                name: change.old.name + '-' + change.old.version
+                  + ' -> ' + change.new.name + '-'
+                  + change.new.version,
+              });
+            } else if (change.operation === SystemUpdateOperationType.Install) {
+              this.packages.push({
+                operation: 'Install',
+                name: change.new.name + '-' + change.new.version,
+              });
+            } else if (change.operation === SystemUpdateOperationType.Delete) {
+              if (change.old) {
                 this.packages.push({
-                  operation: 'Upgrade',
-                  name: item.old.name + '-' + item.old.version
-                    + ' -> ' + item.new.name + '-'
-                    + item.new.version,
+                  operation: 'Delete',
+                  name: change.old.name + '-' + change.old.version,
                 });
-              } else if (item.operation === 'install') {
+              } else if (change.new) {
                 this.packages.push({
-                  operation: 'Install',
-                  name: item.new.name + '-' + item.new.version,
+                  operation: 'Delete',
+                  name: change.new.name + '-' + change.new.version,
                 });
-              } else if (item.operation === 'delete') {
-                if (item.old) {
-                  this.packages.push({
-                    operation: 'Delete',
-                    name: item.old.name + '-' + item.old.version,
-                  });
-                } else if (item.new) {
-                  this.packages.push({
-                    operation: 'Delete',
-                    name: item.new.name + '-' + item.new.version,
-                  });
-                }
-              } else {
-                console.error('Unknown operation:', item.operation);
               }
-            });
+            } else {
+              console.error('Unknown operation:', change.operation);
+            }
+          });
 
-            if (res.changelog) {
-              this.changeLog = res.changelog.replace(/\n/g, '<br>');
-            }
-            if (res.notes) {
-              this.releaseNotes = res.notes.ReleaseNotes;
-            }
+          if (update.changelog) {
+            this.changeLog = update.changelog.replace(/\n/g, '<br>');
           }
-          if (this.currentTrainDescription && this.currentTrainDescription.includes('[release]')) {
-            this.release_train = true;
-            this.pre_release_train = false;
-            this.nightly_train = false;
-          } else if (this.currentTrainDescription.includes('[prerelease]')) {
-            this.release_train = false;
-            this.pre_release_train = true;
-            this.nightly_train = false;
-          } else {
-            this.release_train = false;
-            this.pre_release_train = false;
-            this.nightly_train = true;
+          if (update.notes) {
+            this.releaseNotes = update.notes.ReleaseNotes;
           }
-          this.showSpinner = false;
-        },
-        (err) => {
-          this.general_update_error = err.reason.replace('>', '').replace('<', '') + T(': Automatic update check failed. Please check system network settings.');
-          this.showSpinner = false;
-        },
-        () => {
-          this.showSpinner = false;
-        },
-      );
+        }
+        if (this.currentTrainDescription && this.currentTrainDescription.includes('[release]')) {
+          this.release_train = true;
+          this.pre_release_train = false;
+          this.nightly_train = false;
+        } else if (this.currentTrainDescription.includes('[prerelease]')) {
+          this.release_train = false;
+          this.pre_release_train = true;
+          this.nightly_train = false;
+        } else {
+          this.release_train = false;
+          this.pre_release_train = false;
+          this.nightly_train = true;
+        }
+        this.showSpinner = false;
+      },
+      (err) => {
+        this.general_update_error = err.reason.replace('>', '').replace('<', '') + T(': Automatic update check failed. Please check system network settings.');
+        this.showSpinner = false;
+      },
+      () => {
+        this.showSpinner = false;
+      },
+    );
   }
 
   // Shows an update in progress as a job dialog on the update page
@@ -434,70 +436,69 @@ export class UpdateComponent implements OnInit {
   startUpdate(): void {
     this.error = null;
     this.loader.open();
-    this.ws.call('update.check_available')
-      .pipe(untilDestroyed(this)).subscribe(
-        (res) => {
-          this.loader.close();
-          this.status = res.status;
-          if (res.status === 'AVAILABLE') {
-            this.packages = [];
-            res.changes.forEach((item: any) => {
-              if (item.operation === 'upgrade') {
+    this.ws.call('update.check_available').pipe(untilDestroyed(this)).subscribe(
+      (update) => {
+        this.loader.close();
+        this.status = update.status;
+        if (update.status === SystemUpdateStatus.Available) {
+          this.packages = [];
+          update.changes.forEach((change) => {
+            if (change.operation === SystemUpdateOperationType.Upgrade) {
+              this.packages.push({
+                operation: 'Upgrade',
+                name: change.old.name + '-' + change.old.version
+                  + ' -> ' + change.new.name + '-'
+                  + change.new.version,
+              });
+            } else if (change.operation === SystemUpdateOperationType.Install) {
+              this.packages.push({
+                operation: 'Install',
+                name: change.new.name + '-' + change.new.version,
+              });
+            } else if (change.operation === SystemUpdateOperationType.Delete) {
+              // FIXME: For some reason new is populated instead of
+              // old?
+              if (change.old) {
                 this.packages.push({
-                  operation: 'Upgrade',
-                  name: item.old.name + '-' + item.old.version
-                    + ' -> ' + item.new.name + '-'
-                    + item.new.version,
+                  operation: 'Delete',
+                  name: change.old.name + '-' + change.old.version,
                 });
-              } else if (item.operation === 'install') {
+              } else if (change.new) {
                 this.packages.push({
-                  operation: 'Install',
-                  name: item.new.name + '-' + item.new.version,
+                  operation: 'Delete',
+                  name: change.new.name + '-' + change.new.version,
                 });
-              } else if (item.operation === 'delete') {
-                // FIXME: For some reason new is populated instead of
-                // old?
-                if (item.old) {
-                  this.packages.push({
-                    operation: 'Delete',
-                    name: item.old.name + '-' + item.old.version,
-                  });
-                } else if (item.new) {
-                  this.packages.push({
-                    operation: 'Delete',
-                    name: item.new.name + '-' + item.new.version,
-                  });
-                }
-              } else {
-                console.error('Unknown operation:', item.operation);
               }
-            });
-            if (res.changelog) {
-              this.changeLog = res.changelog.replace(/\n/g, '<br>');
+            } else {
+              console.error('Unknown operation:', change.operation);
             }
-            if (res.notes) {
-              this.releaseNotes = res.notes.ReleaseNotes;
-            }
-            this.updateType = 'standard';
-            // Calls the 'Save Config' dialog - Returns here if user declines
-            this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
-              if (res === false) {
-                this.confirmAndUpdate();
-              }
-            });
-          } else if (res.status === 'UNAVAILABLE') {
-            this.dialogService.Info(T('Check Now'), T('No updates available.'));
+          });
+          if (update.changelog) {
+            this.changeLog = update.changelog.replace(/\n/g, '<br>');
           }
-        },
-        (err) => {
-          this.loader.close();
-          new EntityUtils().handleWSError(this, err, this.dialogService);
-          this.dialogService.errorReport(T('Error checking for updates.'), err.reason, err.trace.formatted);
-        },
-        () => {
-          this.loader.close();
-        },
-      );
+          if (update.notes) {
+            this.releaseNotes = update.notes.ReleaseNotes;
+          }
+          this.updateType = 'standard';
+          // Calls the 'Save Config' dialog - Returns here if user declines
+          this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
+            if (res === false) {
+              this.confirmAndUpdate();
+            }
+          });
+        } else if (update.status === SystemUpdateStatus.Unavailable) {
+          this.dialogService.Info(T('Check Now'), T('No updates available.'));
+        }
+      },
+      (err) => {
+        this.loader.close();
+        new EntityUtils().handleWSError(this, err, this.dialogService);
+        this.dialogService.errorReport(T('Error checking for updates.'), err.reason, err.trace.formatted);
+      },
+      () => {
+        this.loader.close();
+      },
+    );
   }
 
   // Continues the update process began in startUpdate(), after passing through the Save Config dialog

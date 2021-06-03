@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CoreEvent } from 'app/interfaces/events';
+import { UserDataEvent } from 'app/interfaces/events/user-data-event.interface';
+import { Preferences } from 'app/interfaces/preferences.interface';
 import { CoreService } from './core.service';
 import { ApiService } from './api.service';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
@@ -13,39 +15,14 @@ interface PropertyReport {
   newProperties: string[];
 }
 
-export interface UserPreferences {
-  platform?: string; // FreeNAS || TrueNAS
-  retroLogo?: boolean; // Brings back FreeNAS branding
-  timestamp?: Date;
-  userTheme?: string; // Theme name
-  customThemes?: Theme[];
-  favoriteThemes?: string[]; // Deprecate
-  showGuide?: boolean; // Guided Tour on/off
-  showTooltips?: boolean; // Form Tooltips on/off // Deprecated, remove in v12!
-  metaphor?: string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
-  allowPwToggle?: boolean;
-  preferIconsOnly?: boolean;
-  rebootAfterManualUpdate?: boolean;
-  tableDisplayedColumns?: any;
-  hide_builtin_users?: boolean;
-  hide_builtin_groups?: boolean;
-  dateFormat?: string;
-  timeFormat?: string;
-  showWelcomeDialog?: boolean;
-  showUserListMessage?: boolean;
-  showGroupListMessage?: boolean;
-  expandAvailablePlugins?: boolean;
-  storedValues?: any;
-}
-
 @UntilDestroy()
 @Injectable()
 export class PreferencesService {
   private startupComplete = false;
-  defaultPreferences: UserPreferences = {
+  defaultPreferences: Preferences = {
     platform: 'freenas', // Detect platform
     retroLogo: false,
-    timestamp: new Date(),
+    timestamp: new Date() as any,
     userTheme: 'default', // Theme name
     customThemes: [], // Theme Objects
     favoriteThemes: [], // Theme Names
@@ -67,7 +44,7 @@ export class PreferencesService {
     storedValues: {}, // For key/value pairs to save most recent values in form fields, etc
   };
 
-  preferences: UserPreferences;
+  preferences: Preferences;
 
   constructor(protected core: CoreService, protected themeService: ThemeService, private api: ApiService, private router: Router,
     private aroute: ActivatedRoute) {
@@ -89,7 +66,7 @@ export class PreferencesService {
       }
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserData', sender: this.api }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserData', sender: this.api }).pipe(untilDestroyed(this)).subscribe((evt: UserDataEvent) => {
       if (evt.data[0]) {
         const data = evt.data[0].attributes.preferences;
         if (!data) {
@@ -131,7 +108,7 @@ export class PreferencesService {
     this.core.register({ observerClass: this, eventName: 'ResetPreferences' }).pipe(untilDestroyed(this)).subscribe(() => {
       const prefs = Object.assign(this.defaultPreferences, {});
       prefs.customThemes = this.preferences.customThemes;
-      prefs.timestamp = new Date();
+      (prefs.timestamp as any) = new Date();
       this.savePreferences(prefs);
     });
 
@@ -142,7 +119,7 @@ export class PreferencesService {
         prefs[key] = evt.data[key];
       });
       this.setShowGuide(evt.data.showGuide);
-      this.preferences.timestamp = new Date();
+      (this.preferences.timestamp as any) = new Date();
       this.savePreferences(this.preferences);
     });
 
@@ -158,7 +135,7 @@ export class PreferencesService {
   }
 
   // Update local cache
-  updatePreferences(data: UserPreferences): void {
+  updatePreferences(data: Preferences): void {
     if (data && !this.startupComplete) {
       console.warn('Startup is not complete!');
       console.warn(data);
@@ -184,7 +161,7 @@ export class PreferencesService {
   }
 
   // Save to middleware
-  savePreferences(data?: UserPreferences): void {
+  savePreferences(data?: Preferences): void {
     if (!data) {
       data = this.preferences;
     }
@@ -208,18 +185,15 @@ export class PreferencesService {
     }
   }
 
-  sanityCheck(data: UserPreferences): PropertyReport {
-    let oldKeys = [];
-    let newKeys = [];
-
+  sanityCheck(data: Preferences): PropertyReport {
     const savedKeys = Object.keys(data);
     const currentKeys = Object.keys(this.preferences);
 
     // Find Deprecated
-    oldKeys = savedKeys.filter((key) => currentKeys.indexOf(key) == -1);
+    const oldKeys = savedKeys.filter((key) => currentKeys.indexOf(key) == -1);
 
     // Find New
-    newKeys = currentKeys.filter((key) => savedKeys.indexOf(key) == -1);
+    const newKeys = currentKeys.filter((key) => savedKeys.indexOf(key) == -1);
 
     const report: PropertyReport = {
       middlewareProperties: savedKeys, // Inbound from Middleware

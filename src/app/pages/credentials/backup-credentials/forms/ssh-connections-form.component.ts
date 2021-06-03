@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Subscription } from 'rxjs';
@@ -249,23 +250,23 @@ export class SshConnectionsFormComponent implements FormConfiguration {
         value: 'NEW',
       });
     }
-    this.keychainCredentialService.getSSHConnections().toPromise().then(
-      (res: any[]) => {
-        const sshConnections = res.filter((item) => item.id != this.rowNum).map((sshConnection) => sshConnection.name);
-        this.namesInUse.push(...sshConnections);
-        this.namesInUseConnection.push(...sshConnections);
-      },
-    );
+    this.keychainCredentialService.getSSHConnections().toPromise().then((connections) => {
+      const sshConnections = connections
+        .filter((connection) => connection.id != this.rowNum)
+        .map((connection) => connection.name);
+      this.namesInUse.push(...sshConnections);
+      this.namesInUseConnection.push(...sshConnections);
+    });
     const privateKeyField = _.find(this.fieldSets[1].config, { name: 'private_key' });
-    this.keychainCredentialService.getSSHKeys().toPromise().then(
-      (res: any[]) => {
-        this.namesInUse.push(...res.filter((sshKey) => sshKey.name.endsWith(' Key')).map((sshKey) =>
-          sshKey.name.substring(0, sshKey.name.length - 4)));
-        for (const i in res) {
-          privateKeyField.options.push({ label: res[i].name, value: res[i].id });
-        }
-      },
-    );
+    this.keychainCredentialService.getSSHKeys().toPromise().then((keyPairs) => {
+      const namesInUse = keyPairs
+        .filter((sshKey) => sshKey.name.endsWith(' Key'))
+        .map((sshKey) => sshKey.name.substring(0, sshKey.name.length - 4));
+      this.namesInUse.push(...namesInUse);
+      for (const i in keyPairs) {
+        privateKeyField.options.push({ label: keyPairs[i].name, value: keyPairs[i].id });
+      }
+    });
   }
 
   afterInit(entityForm: EntityFormComponent): void {
@@ -367,11 +368,11 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     this.loader.open();
     if (data['private_key'] == 'NEW') {
       await this.replicationService.genSSHKeypair().then(
-        async (res) => {
+        async (keyPair) => {
           const payload = {
             name: data['name'] + ' Key',
-            type: 'SSH_KEY_PAIR',
-            attributes: res,
+            type: KeychainCredentialType.SshKeyPair,
+            attributes: keyPair,
           };
           await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
             (sshKey) => {
@@ -398,7 +399,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
       }
       data['attributes'] = attributes;
       if (this.entityForm.isNew) {
-        data['type'] = 'SSH_CREDENTIALS';
+        data['type'] = KeychainCredentialType.SshCredentials;
       }
     }
     delete data['setup_method'];

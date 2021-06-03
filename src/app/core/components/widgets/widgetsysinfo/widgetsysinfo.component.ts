@@ -1,21 +1,23 @@
 import {
-  Component, OnDestroy, AfterViewInit, Input,
+  AfterViewInit, Component, Input, OnDestroy,
 } from '@angular/core';
-import { Router } from '@angular/router';
-import { CoreEvent } from 'app/interfaces/events';
-import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { ProductType } from '../../../../enums/product-type.enum';
-import { WebSocketService, SystemGeneralService } from '../../../../services';
-import { LocaleService } from 'app/services/locale.service';
 import { MediaObserver } from '@angular/flex-layout';
-
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-import { environment } from 'app/../environments/environment';
+import { Router } from '@angular/router';
 
 import { TranslateService } from '@ngx-translate/core';
+import { environment } from 'app/../environments/environment';
+
+import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { CoreEvent } from 'app/interfaces/events';
+import { UpdateCheckedEvent } from 'app/interfaces/events/update-checked-event.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { LocaleService } from 'app/services/locale.service';
+import { ProductType } from '../../../../enums/product-type.enum';
+import { SystemGeneralService, WebSocketService } from '../../../../services';
 
 import { T } from '../../../../translate-marker';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
@@ -86,8 +88,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
         return;
       }
 
-      this.core.register({ observerClass: this, eventName: 'UpdateChecked' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-        if (evt.data.status == 'AVAILABLE') {
+      this.core.register({ observerClass: this, eventName: 'UpdateChecked' }).pipe(untilDestroyed(this)).subscribe((evt: UpdateCheckedEvent) => {
+        if (evt.data.status == SystemUpdateStatus.Available) {
           this.updateAvailable = true;
         }
       });
