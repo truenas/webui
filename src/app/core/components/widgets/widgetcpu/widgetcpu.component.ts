@@ -131,7 +131,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   }
 
   parseCpuData(data) {
-    this.tempAvailable = data.temperature && Object.keys(data.temperature).length > 0 ? 'true' : 'false';
+    this.tempAvailable = data.temperature_celsius && Object.keys(data.temperature_celsius).length > 0 ? 'true' : 'false';
     const usageColumn: any[] = ['Usage'];
     const temperatureColumn: any[] = ['Temperature'];
 
@@ -139,13 +139,14 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     const keys = Object.keys(data);
 
     if (!this.coreCount) {
-      this.coreCount = data.temperature ? keys.length - 3 : keys.length - 1;
+      // Middleware always returns an empty array if no temperature data is reported
+      this.coreCount = keys.length - 3; // Disregard keys for temperature, temperature_celsius and average
     }
 
     for (let i = 0; i < this.coreCount; i++) {
       usageColumn.push(parseInt(data[i.toString()].usage.toFixed(1)));
 
-      if (data.temperature_celsius && data.temperature_celsius[i]) {
+      if (this.tempAvailable && data.temperature_celsius && data.temperature_celsius[i]) {
         temperatureColumn.push(data.temperature_celsius[i]);
       }
     }
