@@ -10,9 +10,9 @@ import {
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 
-import { RestService, WebSocketService } from '../../../../services';
+import { RestService, WebSocketService } from 'app/services';
 
-import helptext from '../../../../helptext/storage/snapshots/snapshots';
+import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

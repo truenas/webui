@@ -16,15 +16,15 @@ import { ModalService } from 'app/services/modal.service';
 import * as _ from 'lodash';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { ProductType } from '../../../../../enums/product-type.enum';
-import globalHelptext from '../../../../../helptext/global-helptext';
-import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-form';
-import { StorageService, WebSocketService } from '../../../../../services';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
-import { T } from '../../../../../translate-marker';
-import { EntityFormComponent } from '../../../../common/entity/entity-form';
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { EntityUtils } from '../../../../common/entity/utils';
+import { ProductType } from 'app/../enums/product-type.enum';
+import globalHelptext from 'app/../helptext/global-helptext';
+import helptext from 'app/../helptext/storage/volumes/datasets/dataset-form';
+import { StorageService, WebSocketService } from 'app/../services';
+import { AppLoaderService } from 'app/../services/app-loader/app-loader.service';
+import { T } from 'app/../translate-marker';
+import { EntityFormComponent } from 'app/common/entity/entity-form';
+import { FieldConfig } from 'app/common/entity/entity-form/models/field-config.interface';
+import { EntityUtils } from 'app/common/entity/utils';
 
 interface DatasetFormData {
   name: string;

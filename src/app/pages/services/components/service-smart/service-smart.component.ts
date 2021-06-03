@@ -4,8 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { T } from 'app/translate-marker';
-import helptext from '../../../../helptext/services/components/service-smart';
-import { RestService, WebSocketService } from '../../../../services';
+import helptext from 'app/helptext/services/components/service-smart';
+import { RestService, WebSocketService } from 'app/services';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 enum PowerMode {

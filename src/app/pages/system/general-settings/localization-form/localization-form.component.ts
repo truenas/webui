@@ -6,9 +6,9 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import * as _ from 'lodash';
 import {
   DialogService, LanguageService, SystemGeneralService, WebSocketService,
-} from '../../../../services';
-import { ModalService } from '../../../../services/modal.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+} from 'app/services';
+import { ModalService } from 'app/services/modal.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { LocaleService } from 'app/services/locale.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';

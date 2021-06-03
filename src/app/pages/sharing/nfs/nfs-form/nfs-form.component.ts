@@ -8,7 +8,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { T } from 'app/translate-marker';
 import * as _ from 'lodash';
-import { ProductType } from '../../../../enums/product-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import {
   DialogService, NetworkService, WebSocketService, UserService, ModalService,
 } from 'app/services';

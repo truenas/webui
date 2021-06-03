@@ -3,17 +3,17 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 import {
   DialogService, StorageService, ValidationService, UserService,
 } from 'app/services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { WebSocketService } from '../../../../services/ws.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { ModalService } from '../../../../services/modal.service';
+import { ModalService } from 'app/services/modal.service';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import * as _ from 'lodash';
-import helptext from '../../../../helptext/account/user-list';
+import helptext from 'app/helptext/account/user-list';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { UserFormComponent } from '../user-form/user-form.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

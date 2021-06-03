@@ -6,11 +6,11 @@ import * as _ from 'lodash';
 
 import {
   AppLoaderService, WebSocketService, DialogService, JailService,
-} from '../../../../services';
+} from 'app/services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/jails/storage';
+import { T } from 'app/translate-marker';
+import helptext from 'app/helptext/jails/storage';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

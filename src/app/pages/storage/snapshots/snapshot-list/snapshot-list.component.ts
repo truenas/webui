@@ -8,11 +8,11 @@ import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/en
 import { WebSocketService, StorageService, DialogService } from 'app/services';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { LocaleService } from 'app/services/locale.service';
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { SnapshotDetailsComponent } from './components/snapshot-details.component';
-import helptext from '../../../../helptext/storage/snapshots/snapshots';
+import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';

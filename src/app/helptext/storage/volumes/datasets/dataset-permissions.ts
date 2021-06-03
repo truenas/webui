@@ -1,4 +1,4 @@
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 export default {
   dataset_permissions_id_placeholder: T('Path'),

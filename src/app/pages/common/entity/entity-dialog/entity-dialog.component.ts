@@ -7,14 +7,14 @@ import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FieldRelationService } from '../entity-form/services/field-relation.service';
 import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { FormGroup } from '@angular/forms';
-import { RestService } from '../../../../services/rest.service';
-import { WebSocketService } from '../../../../services/ws.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { RestService } from 'app/services/rest.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { EntityUtils } from '../utils';
 import * as _ from 'lodash';
 import { DialogFormConfiguration } from './dialog-form-configuration.interface';
 import { DatePipe } from '@angular/common';
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

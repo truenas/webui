@@ -28,13 +28,13 @@ import { Observable, of, Subscription } from 'rxjs';
 import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
-import { DialogService, JobService } from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { ModalService } from '../../../../services/modal.service';
-import { RestService } from '../../../../services/rest.service';
-import { StorageService } from '../../../../services/storage.service';
-import { WebSocketService } from '../../../../services/ws.service';
-import { T } from '../../../../translate-marker';
+import { DialogService, JobService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
+import { RestService } from 'app/services/rest.service';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { T } from 'app/translate-marker';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
 import { EntityUtils } from '../utils';

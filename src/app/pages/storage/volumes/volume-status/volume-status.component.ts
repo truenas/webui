@@ -6,7 +6,7 @@ import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interf
 import { VDev } from 'app/interfaces/storage.interface';
 import {
   WebSocketService, RestService, AppLoaderService, DialogService,
-} from '../../../../services';
+} from 'app/services';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -20,8 +20,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { Validators } from '@angular/forms';
 import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
 import { LocaleService } from 'app/services/locale.service';
-import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/storage/volumes/volume-status';
+import { T } from 'app/translate-marker';
+import helptext from 'app/helptext/storage/volumes/volume-status';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
 import { CoreService } from 'app/core/services/core.service';

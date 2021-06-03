@@ -16,7 +16,7 @@ import * as moment from 'moment-timezone';
 import * as parser from 'cron-parser';
 import { WebSocketService } from 'app/services/ws.service';
 import { EntityUtils } from '../../../utils';
-import globalHelptext from '../../../../../../helptext/global-helptext';
+import globalHelptext from 'app/../../helptext/global-helptext';
 import { SystemGeneralService } from 'app/services';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

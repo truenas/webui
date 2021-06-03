@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { DialogService, WebSocketService } from '../../../../../services';
-import { ModalService } from '../../../../../services/modal.service';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+import { DialogService, WebSocketService } from 'app/../services';
+import { ModalService } from 'app/../services/modal.service';
+import { AppLoaderService } from 'app/../services/app-loader/app-loader.service';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

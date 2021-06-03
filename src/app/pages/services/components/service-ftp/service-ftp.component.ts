@@ -6,13 +6,13 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Observable } from 'rxjs';
-import helptext from '../../../../helptext/services/components/service-ftp';
-import global_helptext from '../../../../helptext/global-helptext';
+import helptext from 'app/helptext/services/components/service-ftp';
+import global_helptext from 'app/helptext/global-helptext';
 import * as _ from 'lodash';
 import {
   DialogService, RestService, SystemGeneralService, WebSocketService, StorageService,
-} from '../../../../services';
-import { T } from '../../../../translate-marker';
+} from 'app/services';
+import { T } from 'app/translate-marker';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

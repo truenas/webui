@@ -8,17 +8,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService } from '../../../../services';
+import { RestService, WebSocketService } from 'app/services';
 import {
   FieldConfig,
 } from '../../../common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/dialog.service';
-import { EncryptionService } from '../../../../services/encryption.service';
+import { EncryptionService } from 'app/services/encryption.service';
 import { MatDialog } from '@angular/material/dialog';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/storage/volumes/volume-key';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { T } from 'app/translate-marker';
+import helptext from 'app/helptext/storage/volumes/volume-key';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

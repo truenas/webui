@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import * as _ from 'lodash';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material/dialog';
 import { FormArray } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { WebSocketService, DialogService } from '../../../../services';
+import { WebSocketService, DialogService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from '../../../common/entity/utils';

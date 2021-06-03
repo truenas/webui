@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
-import { T } from '../../../../../../translate-marker';
+import { T } from 'app/../../translate-marker';
 
 @Component({
   selector: 'form-explorer',

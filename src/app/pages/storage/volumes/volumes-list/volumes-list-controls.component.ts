@@ -12,7 +12,7 @@ import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/vol
 import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
-import { RestService } from '../../../../services/rest.service';
+import { RestService } from 'app/services/rest.service';
 import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
 import { CoreService } from 'app/core/services/core.service';
 import { ModalService } from 'app/services/modal.service';

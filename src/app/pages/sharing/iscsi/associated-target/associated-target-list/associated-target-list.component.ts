@@ -3,10 +3,10 @@ import { Router } from '@angular/router';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { forkJoin } from 'rxjs';
 
-import { IscsiService } from '../../../../../services';
+import { IscsiService } from 'app/../services';
 import * as _ from 'lodash';
 import { T } from 'app/translate-marker';
-import { EntityUtils } from '../../../../common/entity/utils';
+import { EntityUtils } from 'app/common/entity/utils';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

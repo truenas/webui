@@ -7,20 +7,20 @@ import { Option } from 'app/interfaces/option.interface';
 import { combineLatest, Observable } from 'rxjs';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService, StorageService } from '../../../../../services';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+import { RestService, WebSocketService, StorageService } from 'app/../services';
+import { AppLoaderService } from 'app/../services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
-import { T } from '../../../../../translate-marker';
+import { T } from 'app/../translate-marker';
 
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityFormComponent } from '../../../../common/entity/entity-form';
-import { EntityUtils } from '../../../../common/entity/utils';
-import helptext from '../../../../../helptext/storage/volumes/zvol-form';
+import { EntityFormComponent } from 'app/common/entity/entity-form';
+import { EntityUtils } from 'app/common/entity/utils';
+import helptext from 'app/../helptext/storage/volumes/zvol-form';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import globalHelptext from '../../../../../helptext/global-helptext';
+import globalHelptext from 'app/../helptext/global-helptext';
 import { ModalService } from 'app/services/modal.service';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from 'app/common/entity/entity-form/models/field-config.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface ZvolFormData {

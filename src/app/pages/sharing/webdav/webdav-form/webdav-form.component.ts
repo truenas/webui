@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { helptext_sharing_webdav, shared } from '../../../../helptext/sharing';
+import { helptext_sharing_webdav, shared } from 'app/helptext/sharing';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
-import { AppLoaderService, DialogService, WebSocketService } from '../../../../services';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { Router } from '@angular/router';
 import { T } from 'app/translate-marker';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

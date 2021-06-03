@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
-import { DialogService, AppLoaderService } from '../../../../services';
+import { DialogService, AppLoaderService } from 'app/services';
 import { MatDialog } from '@angular/material/dialog';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { EntityUtils } from '../utils';
 import { EmptyType } from '../entity-empty/entity-empty.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

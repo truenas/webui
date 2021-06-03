@@ -20,10 +20,10 @@ import { CoreEvent } from 'app/interfaces/events';
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 
-import { RestService, WebSocketService } from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { RestService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { EntityTemplateDirective } from '../entity-template.directive';
 
 import { FieldConfig } from './models/field-config.interface';

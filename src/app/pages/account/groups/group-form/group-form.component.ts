@@ -4,9 +4,9 @@ import { Validators } from '@angular/forms';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import * as _ from 'lodash';
-import helptext from '../../../../helptext/account/groups';
+import helptext from 'app/helptext/account/groups';
 
-import { WebSocketService, UserService } from '../../../../services';
+import { WebSocketService, UserService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';

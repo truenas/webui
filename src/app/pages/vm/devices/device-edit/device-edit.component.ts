@@ -3,18 +3,18 @@ import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { VmDeviceType } from 'app/enums/vm.enum';
-import { ProductType } from '../../../../enums/product-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 import * as _ from 'lodash';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 
-import { WebSocketService, NetworkService, VmService } from '../../../../services';
+import { WebSocketService, NetworkService, VmService } from 'app/services';
 import { EntityUtils } from '../../../common/entity/utils';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import helptext from '../../../../helptext/vm/devices/device-add-edit';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import helptext from 'app/helptext/vm/devices/device-add-edit';
 import { CoreService } from 'app/core/services/core.service';
-import { DialogService } from '../../../../services/dialog.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

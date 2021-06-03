@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import {
   WebSocketService, AppLoaderService, StorageService, DialogService, SystemGeneralService,
-} from '../../../../services';
+} from 'app/services';
 import * as _ from 'lodash';
 import { ModalService } from 'app/services/modal.service';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';

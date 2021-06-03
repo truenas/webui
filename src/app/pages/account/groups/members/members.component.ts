@@ -3,10 +3,10 @@ import { User } from 'app/interfaces/user.interface';
 import { mergeMap } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { WebSocketService } from '../../../../services/ws.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
-import helptext from '../../../../helptext/account/members';
+import helptext from 'app/helptext/account/members';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

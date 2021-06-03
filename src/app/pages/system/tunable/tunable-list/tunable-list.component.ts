@@ -3,9 +3,9 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { ProductType } from '../../../../enums/product-type.enum';
-import { WebSocketService } from '../../../../services';
-import { T } from '../../../../translate-marker';
+import { ProductType } from 'app/enums/product-type.enum';
+import { WebSocketService } from 'app/services';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'system-tunables-list',

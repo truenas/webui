@@ -11,7 +11,7 @@ import { UUID } from 'angular2-uuid';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { TranslateService } from '@ngx-translate/core';
 
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 export interface TimeData {
   start: number;

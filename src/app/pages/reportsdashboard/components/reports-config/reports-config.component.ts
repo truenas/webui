@@ -3,7 +3,7 @@ import { helptext } from 'app/helptext/system/reporting';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { Subscription } from 'rxjs';
-import { DialogService, WebSocketService } from '../../../../services';
+import { DialogService, WebSocketService } from 'app/services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

@@ -7,14 +7,14 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { RestService } from '../../../../services/rest.service';
-import { WebSocketService, SystemGeneralService } from '../../../../services';
-import { StorageService } from '../../../../services/storage.service';
+import { RestService } from 'app/services/rest.service';
+import { WebSocketService, SystemGeneralService } from 'app/services';
+import { StorageService } from 'app/services/storage.service';
 import { LocaleService } from 'app/services/locale.service';
 import { EntityUtils } from '../../../common/entity/utils';
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

@@ -8,10 +8,10 @@ import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-set
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Observable } from 'rxjs';
-import helptext from '../../../../helptext/account/user-form';
+import helptext from 'app/helptext/account/user-form';
 import {
   AppLoaderService, StorageService, UserService, WebSocketService, ValidationService,
-} from '../../../../services';
+} from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';

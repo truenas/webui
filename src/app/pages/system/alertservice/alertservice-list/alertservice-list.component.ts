@@ -4,7 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
-import { WebSocketService, DialogService } from '../../../../services';
+import { WebSocketService, DialogService } from 'app/services';
 import { EntityUtils } from '../../../common/entity/utils';
 
 @UntilDestroy()

@@ -9,7 +9,7 @@ import { iXObject } from 'app/core/classes/ix-object';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'widget',

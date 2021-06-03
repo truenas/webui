@@ -8,15 +8,15 @@ import {
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { helptext_sharing_iscsi } from '../../../../helptext/sharing/iscsi/iscsi';
+import { helptext_sharing_iscsi } from 'app/helptext/sharing/iscsi/iscsi';
 import {
   IscsiService, WebSocketService, NetworkService, StorageService,
-} from '../../../../services';
+} from 'app/services';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
-import { CloudCredentialService } from '../../../../services/cloudcredential.service';
+import { CloudCredentialService } from 'app/services/cloudcredential.service';
 import { EntityUtils } from '../../../common/entity/utils';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogService } from '../../../../services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
 import globalHelptext from 'app/helptext/global-helptext';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

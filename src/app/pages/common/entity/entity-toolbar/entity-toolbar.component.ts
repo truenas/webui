@@ -7,7 +7,7 @@ import { CoreEvent } from 'app/interfaces/events';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 import { Subject } from 'rxjs';
 import { Control } from './models/control.interface';

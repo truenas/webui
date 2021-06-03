@@ -7,13 +7,13 @@ import { RelationAction } from 'app/pages/common/entity/entity-form/models/relat
 import { Subscription } from 'rxjs';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
-import helptext from '../../../../helptext/system/ssh-connections';
+import helptext from 'app/helptext/system/ssh-connections';
 import {
   KeychainCredentialService, WebSocketService, DialogService, ReplicationService,
-} from '../../../../services';
+} from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import * as _ from 'lodash';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

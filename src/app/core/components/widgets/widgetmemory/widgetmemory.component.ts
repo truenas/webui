@@ -20,7 +20,7 @@ import { ViewChartGaugeComponent } from 'app/core/components/viewchartgauge/view
 import { ViewChartBarComponent } from 'app/core/components/viewchartbar/viewchartbar.component';
 import { TranslateService } from '@ngx-translate/core';
 
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

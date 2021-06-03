@@ -5,11 +5,11 @@ import { helptext_system_ca } from 'app/helptext/system/ca';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import * as _ from 'lodash';
-import { SystemGeneralService, WebSocketService } from '../../../../services';
+import { SystemGeneralService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogService } from '../../../../services/dialog.service';
-import { T } from '../../../../translate-marker';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
+import { T } from 'app/translate-marker';
 
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';

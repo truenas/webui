@@ -2,7 +2,7 @@ import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-t
 import { InitshutdownFormComponent } from '../initshutdown-form/initshutdown-form.component';
 import { Component } from '@angular/core';
 import { ModalService } from 'app/services/modal.service';
-import { T } from '../../../../../translate-marker';
+import { T } from 'app/../translate-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

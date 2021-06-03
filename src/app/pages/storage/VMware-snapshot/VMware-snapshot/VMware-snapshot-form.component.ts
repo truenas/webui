@@ -11,11 +11,11 @@ import * as _ from 'lodash';
 
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
-import { RestService, WebSocketService } from '../../../../services';
-import { T } from '../../../../translate-marker';
+import { RestService, WebSocketService } from 'app/services';
+import { T } from 'app/translate-marker';
 import { DialogService } from 'app/services/dialog.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import helptext from '../../../../helptext/storage/VMware-snapshot/VMware-snapshot';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import helptext from 'app/helptext/storage/VMware-snapshot/VMware-snapshot';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

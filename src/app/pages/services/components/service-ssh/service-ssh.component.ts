@@ -5,8 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import globalHelptext from 'app/helptext/global-helptext';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import helptext from '../../../../helptext/services/components/service-ssh';
-import { NetworkService, RestService, WebSocketService } from '../../../../services';
+import helptext from 'app/helptext/services/components/service-ssh';
+import { NetworkService, RestService, WebSocketService } from 'app/services';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

@@ -10,7 +10,7 @@ import {
 import { CoreEvent } from 'app/interfaces/events';
 import { WebSocketService, SystemGeneralService } from 'app/services/';
 import { Theme } from 'app/services/theme/theme.service';
-import { ProductType } from '../../../../enums/product-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { ReportsService } from '../../reports.service';
 import { Subject } from 'rxjs';
 import { NgForm } from '@angular/forms';
@@ -24,7 +24,7 @@ import { WidgetComponent } from 'app/core/components/widgets/widget/widget.compo
 import { TranslateService } from '@ngx-translate/core';
 import { LocaleService } from 'app/services/locale.service';
 
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface DateTime {

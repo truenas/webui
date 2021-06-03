@@ -4,20 +4,20 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
 import { CoreEvent } from 'app/interfaces/events';
-import { ProductType } from '../../../../enums/product-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { TranslateService } from '@ngx-translate/core';
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 import {
   WebSocketService, NetworkService, VmService, StorageService,
-} from '../../../../services';
+} from 'app/services';
 import { EntityUtils } from '../../../common/entity/utils';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogService } from '../../../../services/dialog.service';
-import helptext from '../../../../helptext/vm/devices/device-add-edit';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
+import helptext from 'app/helptext/vm/devices/device-add-edit';
 import { ModalService } from 'app/services/modal.service';
 import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard';
 import { CoreService } from 'app/core/services/core.service';

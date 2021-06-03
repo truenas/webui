@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { SystemGeneralService, WebSocketService } from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { ModalService } from '../../../../services/modal.service';
+import { SystemGeneralService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { T } from 'app/translate-marker';

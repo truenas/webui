@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { FieldConfig } from '../../models/field-config.interface';
 import { EntityFormService } from '../../services/entity-form.service';
 import { Field } from '../../models/field.interface';
-import globalHelptext from '../../../../../../helptext/global-helptext';
+import globalHelptext from 'app/../../helptext/global-helptext';
 
 @Component({
   selector: 'form-input',

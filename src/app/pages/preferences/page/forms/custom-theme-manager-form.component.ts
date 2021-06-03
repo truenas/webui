@@ -9,7 +9,7 @@ import { RestService, WebSocketService } from 'app/services/';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

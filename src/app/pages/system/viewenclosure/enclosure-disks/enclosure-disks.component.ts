@@ -29,7 +29,7 @@ import { Subject } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Temperature } from 'app/core/services/disk-temperature.service';
 import { DialogService } from 'app/services/dialog.service';
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 export enum EnclosureLocation {

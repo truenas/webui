@@ -11,13 +11,13 @@ import {
 } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
-import { T } from '../../../../translate-marker';
-import { StorageService, DialogService, WebSocketService } from '../../../../services';
+import { T } from 'app/translate-marker';
+import { StorageService, DialogService, WebSocketService } from 'app/services';
 import { CoreService } from 'app/core/services/core.service';
 import { LocaleService } from 'app/services/locale.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import helptext from '../../../../helptext/storage/disks/disks';
+import helptext from 'app/helptext/storage/disks/disks';
 import { EntityUtils } from '../../../common/entity/utils';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

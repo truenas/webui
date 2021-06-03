@@ -3,11 +3,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
-import { DialogService, WebSocketService } from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
-import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/jails/storage';
+import { T } from 'app/translate-marker';
+import helptext from 'app/helptext/jails/storage';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

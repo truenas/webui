@@ -20,10 +20,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 
-import { RestService, WebSocketService, SystemGeneralService } from '../../../../services';
+import { RestService, WebSocketService, SystemGeneralService } from 'app/services';
 import { Observable } from 'rxjs';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { ModalService } from '../../../../services/modal.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
 import { EntityTemplateDirective } from '../entity-template.directive';
 import { EntityUtils } from '../utils';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
@@ -31,8 +31,8 @@ import { FieldConfig } from './models/field-config.interface';
 import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
 import { FieldRelationService } from './services/field-relation.service';
-import { DialogService } from '../../../../services';
-import { T } from '../../../../translate-marker';
+import { DialogService } from 'app/services';
+import { T } from 'app/translate-marker';
 
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

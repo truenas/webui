@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import {
   animate, state, style, transition, trigger,
 } from '@angular/animations';
-import { WebSocketService } from '../../../../services';
+import { WebSocketService } from 'app/services';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

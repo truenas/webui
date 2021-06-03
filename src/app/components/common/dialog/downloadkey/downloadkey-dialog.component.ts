@@ -3,12 +3,12 @@ import { Component } from '@angular/core';
 import {
   WebSocketService,
   StorageService,
-} from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+} from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
-import { EntityUtils } from '../../../../pages/common/entity/utils';
-import helptext from '../../../../helptext/storage/volumes/download-key';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import helptext from 'app/helptext/storage/volumes/download-key';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

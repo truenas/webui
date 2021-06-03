@@ -2,22 +2,22 @@ import {
   Component, Input, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { RestService, WebSocketService } from '../../../../services';
+import { RestService, WebSocketService } from 'app/services';
 import {
   AbstractControl, FormBuilder, FormGroup,
 } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FieldRelationService } from '../entity-form/services/field-relation.service';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 import { MatStepper } from '@angular/material/stepper';
-import { DialogService } from '../../../../services';
+import { DialogService } from 'app/services';
 import { EntityUtils } from '../utils';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

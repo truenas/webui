@@ -10,9 +10,9 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import * as _ from 'lodash';
 import {
   CloudCredentialService, DialogService, WebSocketService, ReplicationService,
-} from '../../../../services';
-import { ModalService } from '../../../../services/modal.service';
-import { T } from '../../../../translate-marker';
+} from 'app/services';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

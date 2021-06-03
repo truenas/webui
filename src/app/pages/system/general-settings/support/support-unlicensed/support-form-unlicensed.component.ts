@@ -7,7 +7,7 @@ import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-j
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService } from 'app/services/';
-import { ModalService } from '../../../../../services/modal.service';
+import { ModalService } from 'app/../services/modal.service';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

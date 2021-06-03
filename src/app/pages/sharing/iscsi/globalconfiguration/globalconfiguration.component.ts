@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { ProductType } from '../../../../enums/product-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import {
   DialogService, WebSocketService, AppLoaderService, SystemGeneralService,
-} from '../../../../services';
+} from 'app/services';
 import * as _ from 'lodash';
 import { shared, helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { T } from 'app/translate-marker';

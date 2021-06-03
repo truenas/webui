@@ -3,8 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import helptext from '../../../../helptext/services/components/service-ups';
-import { RestService, WebSocketService } from '../../../../services';
+import helptext from 'app/helptext/services/components/service-ups';
+import { RestService, WebSocketService } from 'app/services';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

@@ -15,18 +15,18 @@ import { EntityFormService } from 'app/pages/common/entity/entity-form/services/
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import * as _ from 'lodash';
 
-import { UserService } from '../../../../../services/user.service';
-import { WebSocketService, StorageService, DialogService } from '../../../../../services';
+import { UserService } from 'app/../services/user.service';
+import { WebSocketService, StorageService, DialogService } from 'app/../services';
 import {
   FieldConfig,
-} from '../../../../common/entity/entity-form/models/field-config.interface';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+} from 'app/common/entity/entity-form/models/field-config.interface';
+import { AppLoaderService } from 'app/../services/app-loader/app-loader.service';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { T } from '../../../../../translate-marker';
-import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-acl';
+import { T } from 'app/../translate-marker';
+import helptext from 'app/../helptext/storage/volumes/datasets/dataset-acl';
 import { MatDialog } from '@angular/material/dialog';
-import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
-import { EntityUtils } from '../../../../common/entity/utils';
+import { EntityJobComponent } from 'app/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/common/entity/utils';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

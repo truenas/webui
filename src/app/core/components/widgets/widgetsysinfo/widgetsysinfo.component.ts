@@ -14,10 +14,10 @@ import { CoreEvent } from 'app/interfaces/events';
 import { UpdateCheckedEvent } from 'app/interfaces/events/update-checked-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { LocaleService } from 'app/services/locale.service';
-import { ProductType } from '../../../../enums/product-type.enum';
-import { SystemGeneralService, WebSocketService } from '../../../../services';
+import { ProductType } from 'app/enums/product-type.enum';
+import { SystemGeneralService, WebSocketService } from 'app/services';
 
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

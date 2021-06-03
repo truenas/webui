@@ -5,12 +5,12 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DatasetType } from 'app/enums/dataset-type.enum';
-import globalHelptext from '../../../../../helptext/global-helptext';
-import helptext from '../../../../../helptext/storage/volumes/zvol-form';
+import globalHelptext from 'app/../helptext/global-helptext';
+import helptext from 'app/../helptext/storage/volumes/zvol-form';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { WebSocketService, StorageService } from '../../../../../services';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+import { WebSocketService, StorageService } from 'app/../services';
+import { AppLoaderService } from 'app/../services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';

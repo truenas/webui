@@ -4,8 +4,8 @@ import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import helptext from '../../../../helptext/services/components/service-tftp';
-import { RestService, UserService, WebSocketService } from '../../../../services';
+import helptext from 'app/helptext/services/components/service-tftp';
+import { RestService, UserService, WebSocketService } from 'app/services';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

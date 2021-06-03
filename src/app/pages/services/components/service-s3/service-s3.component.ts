@@ -6,10 +6,10 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 
-import { DialogService } from '../../../../services';
-import { RestService, SystemGeneralService, WebSocketService } from '../../../../services';
+import { DialogService } from 'app/services';
+import { RestService, SystemGeneralService, WebSocketService } from 'app/services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import helptext from '../../../../helptext/services/components/service-s3';
+import helptext from 'app/helptext/services/components/service-s3';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { map } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

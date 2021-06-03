@@ -8,8 +8,8 @@ import {
 } from '@angular/forms';
 import * as _ from 'lodash';
 
-import { WebSocketService } from '../../../../../services/ws.service';
-import { RestService } from '../../../../../services/rest.service';
+import { WebSocketService } from 'app/../services/ws.service';
+import { RestService } from 'app/../services/rest.service';
 
 import { FieldConfig, UnitType, InputUnitConfig } from '../models/field-config.interface';
 

@@ -7,10 +7,10 @@ import * as _ from 'lodash';
 
 import {
   IscsiService, WebSocketService, AppLoaderService, ModalService,
-} from '../../../../../services';
-import { EntityUtils } from '../../../../common/entity/utils';
+} from 'app/../services';
+import { EntityUtils } from 'app/common/entity/utils';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
-import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
+import { FieldSet } from 'app/common/entity/entity-form/models/fieldset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { T } from 'app/translate-marker';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';

@@ -5,10 +5,10 @@ import { Observable } from 'rxjs';
 
 import {
   IdmapService, IscsiService, RestService, WebSocketService,
-} from '../../../../services';
+} from 'app/services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import helptext from '../../../../helptext/services/components/service-snmp';
+import helptext from 'app/helptext/services/components/service-snmp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MatTable } from '@angular/material/table';
 import { CoreEvent } from 'app/interfaces/events';
-import { DialogService, WebSocketService } from '../../../../services';
+import { DialogService, WebSocketService } from 'app/services';
 import { EntityUtils } from '../utils';
 import { EntityTreeTable } from './entity-tree-table.model';
 import { EntityTreeTableService } from './entity-tree-table.service';

@@ -7,13 +7,13 @@ import {
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { TranslateService } from '@ngx-translate/core';
 
-import { RestService, WebSocketService } from '../../../../services';
-import { DialogService } from '../../../../services/dialog.service';
+import { RestService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { ChangeDetectorRef } from '@angular/core';
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import * as _ from 'lodash';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
