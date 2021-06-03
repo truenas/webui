@@ -152,6 +152,7 @@ def click_the_save_button_should_be_returned_to_the_pool_page(driver):
 def verify_that_user_and_group_name_is_ldap_user(driver, ldap_user):
     """verify that user and group name is ldap_user."""
     assert wait_on_element(driver, 7, '//h4[contains(.,"Dataset Path")]')
+    time.sleep(0.5)
     assert wait_on_element(driver, 7, '//input[@placeholder="User"]', 'clickable')
     assert attribute_value_exist(driver, '//input[@placeholder="User"]', 'value', ldap_user)
     assert attribute_value_exist(driver, '//input[@placeholder="Group"]', 'value', ldap_user)
