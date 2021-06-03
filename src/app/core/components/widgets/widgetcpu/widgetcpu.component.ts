@@ -139,13 +139,14 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     const keys = Object.keys(data);
 
     if (!this.coreCount) {
-      this.coreCount = data.temperature ? keys.length - 2 : keys.length - 1;
+      this.coreCount = data.temperature ? keys.length - 3 : keys.length - 1;
     }
 
     for (let i = 0; i < this.coreCount; i++) {
       usageColumn.push(parseInt(data[i.toString()].usage.toFixed(1)));
-      if (data.temperature && data.temperature[i]) {
-        temperatureColumn.push(parseInt(((data.temperature[i] / 10) - 273.05).toFixed(1)));
+
+      if (data.temperature_celsius && data.temperature_celsius[i]) {
+        temperatureColumn.push(data.temperature_celsius[i]);
       }
     }
 
