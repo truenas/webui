@@ -13,7 +13,9 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 import * as moment from 'moment';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-snapshot-add',
   template: `
@@ -84,7 +86,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
 
   ngAfterViewInit(): void {
     this.ws.call('pool.dataset.query', [[['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']],
-      { extra: { flat: false } }]).subscribe((datasets) => {
+      { extra: { flat: false } }]).pipe(untilDestroyed(this)).subscribe((datasets) => {
       const rows = new EntityUtils().flattenData(datasets);
 
       rows.forEach((dataItem) => {
@@ -102,7 +104,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
     this.ws
       .call('replication.list_naming_schemas', [])
       .pipe(map(new EntityUtils().array1DToLabelValuePair))
-      .subscribe(
+      .pipe(untilDestroyed(this)).subscribe(
         (options) => {
           this.fieldConfig.find((config) => config.name === 'naming_schema').options = [
             { label: '---', value: undefined },

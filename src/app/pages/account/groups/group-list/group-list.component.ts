@@ -14,7 +14,9 @@ import { T } from '../../../../translate-marker';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { GroupFormComponent } from '../group-form/group-form.component';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-group-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -62,7 +64,7 @@ export class GroupListComponent implements EntityTableConfig, OnDestroy {
 
   ngOnInit(): void {
     this.refreshGroupForm();
-    this.modalService.refreshForm$.subscribe(() => {
+    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshGroupForm();
     });
   }
@@ -99,7 +101,7 @@ export class GroupListComponent implements EntityTableConfig, OnDestroy {
       }
     }, 2000);
 
-    this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
+    this.refreshTableSubscription = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -142,7 +144,7 @@ export class GroupListComponent implements EntityTableConfig, OnDestroy {
         onClick: (members_delete: any) => {
           const self = this;
           this.loader.open();
-          self.ws.call('user.query', [[['group.id', '=', members_delete.id]]]).subscribe(
+          self.ws.call('user.query', [[['group.id', '=', members_delete.id]]]).pipe(untilDestroyed(this)).subscribe(
             (usersInGroup) => {
               this.loader.close();
 
@@ -176,7 +178,7 @@ export class GroupListComponent implements EntityTableConfig, OnDestroy {
                 customSubmit(entityDialog: EntityDialogComponent) {
                   entityDialog.dialogRef.close(true);
                   self.loader.open();
-                  self.ws.call(self.wsDelete, [members_delete.id, entityDialog.formValue]).subscribe(() => {
+                  self.ws.call(self.wsDelete, [members_delete.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(() => {
                     self.entityList.getData();
                     self.loader.close();
                   },
@@ -207,12 +209,12 @@ export class GroupListComponent implements EntityTableConfig, OnDestroy {
     const show = this.prefService.preferences.hide_builtin_groups
       ? helptext.builtins_dialog.show
       : helptext.builtins_dialog.hide;
-    this.translate.get(show).subscribe((action: string) => {
-      this.translate.get(helptext.builtins_dialog.title).subscribe((title: string) => {
-        this.translate.get(helptext.builtins_dialog.message).subscribe((message: string) => {
+    this.translate.get(show).pipe(untilDestroyed(this)).subscribe((action: string) => {
+      this.translate.get(helptext.builtins_dialog.title).pipe(untilDestroyed(this)).subscribe((title: string) => {
+        this.translate.get(helptext.builtins_dialog.message).pipe(untilDestroyed(this)).subscribe((message: string) => {
           this.dialogService.confirm(action + title,
             action + message, true, action)
-            .subscribe((res: boolean) => {
+            .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
               if (res) {
                 this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
                 this.prefService.savePreferences();

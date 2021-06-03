@@ -18,6 +18,7 @@ import {
   tween,
   styler,
 } from 'popmotion';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface Slide {
   name: string;
@@ -66,6 +67,7 @@ export interface VolumeData {
   vol_name?: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'widget-pool',
   templateUrl: './widgetpool.component.html',
@@ -229,14 +231,14 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
     this.cdr.detectChanges();
 
-    this.core.register({ observerClass: this, eventName: 'MultipathData' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'MultipathData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.currentMultipathDetails = evt.data[0];
 
       const activeDisk = evt.data[0].children.filter((prop: any) => prop.status == 'ACTIVE');
       this.core.emit({ name: 'DisksRequest', data: [[['name', '=', activeDisk[0].name]]] });
     });
 
-    this.core.register({ observerClass: this, eventName: 'DisksData' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const currentPath = (this.path as any)[this.currentSlideIndex] as Slide;
       const currentName = currentPath && currentPath.dataSource
         ? this.currentMultipathDetails
@@ -461,7 +463,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     }
   }
 
-  nextPath(obj: any, index: number|string): any {
+  nextPath(obj: any, index: number | string): any {
     if (typeof index == 'string') { index = parseInt(index); }
     return obj[index];
   }

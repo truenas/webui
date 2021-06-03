@@ -7,7 +7,6 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { WebSocketService, StorageService, DialogService } from 'app/services';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { Subscription } from 'rxjs';
 import { LocaleService } from 'app/services/locale.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -18,6 +17,7 @@ import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/di
 import { MatDialog } from '@angular/material/dialog';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { Snapshot } from 'app/interfaces/storage.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as filesize from 'filesize';
 
 interface DialogData {
@@ -25,6 +25,7 @@ interface DialogData {
   snapshots: { [index: string]: string[] };
 }
 
+@UntilDestroy()
 @Component({
   selector: 'app-snapshot-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -38,8 +39,6 @@ export class SnapshotListComponent implements EntityTableConfig {
   protected loaderOpen = false;
   protected entityList: any;
   protected rollback: any;
-  busy: Subscription;
-  sub: Subscription;
   globalConfig = {
     id: 'config',
     onClick: () => {
@@ -229,7 +228,7 @@ export class SnapshotListComponent implements EntityTableConfig {
       if (res && res.basename && res.basename !== '') {
         this.queryCallOption[0][2] = (['name', '!^', res.basename]);
       }
-      this.ws.call(this.queryCall, this.queryCallOption).subscribe((res1) => {
+      this.ws.call(this.queryCall, this.queryCallOption).pipe(untilDestroyed(this)).subscribe((res1) => {
         entityList.handleData(res1, true);
       },
       () => {
@@ -259,11 +258,11 @@ export class SnapshotListComponent implements EntityTableConfig {
 
   doDelete(item: any): void {
     const deleteMsg = T('Delete snapshot ') + item.name + '?';
-    this.entityList.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).subscribe((res: boolean) => {
+    this.entityList.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         this.entityList.loader.open();
         this.entityList.loaderOpen = true;
-        this.ws.call(this.wsDelete, [item.name]).subscribe(
+        this.ws.call(this.wsDelete, [item.name]).pipe(untilDestroyed(this)).subscribe(
           () => {
             this.entityList.getData();
           },
@@ -329,7 +328,7 @@ export class SnapshotListComponent implements EntityTableConfig {
 
   doMultiDelete(selected: any): void {
     const multiDeleteMsg = this.getMultiDeleteMessage(selected);
-    this.dialogService.confirm('Delete', multiDeleteMsg, false, T('Delete')).subscribe((res: boolean) => {
+    this.dialogService.confirm('Delete', multiDeleteMsg, false, T('Delete')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         this.startMultiDeleteProgress(selected);
       }
@@ -342,7 +341,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     dialogRef.componentInstance.setCall(this.wsMultiDelete, params);
     dialogRef.componentInstance.submit();
 
-    dialogRef.componentInstance.success.subscribe((job_res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job_res: any) => {
       const jobErrors: string[] = [];
       const jobSuccess: any[] = [];
 
@@ -378,7 +377,7 @@ export class SnapshotListComponent implements EntityTableConfig {
       }
     });
 
-    dialogRef.componentInstance.failure.subscribe((err: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
       new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
       dialogRef.close();
     });
@@ -387,7 +386,7 @@ export class SnapshotListComponent implements EntityTableConfig {
   doRollback(item: any): void {
     this.entityList.loader.open();
     this.entityList.loaderOpen = true;
-    this.ws.call(this.queryCall, [[['id', '=', item.name]]]).subscribe((res) => {
+    this.ws.call(this.queryCall, [[['id', '=', item.name]]]).pipe(untilDestroyed(this)).subscribe((res) => {
       const snapshot = res[0];
       this.entityList.loader.close();
       this.entityList.loaderOpen = false;
@@ -416,7 +415,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     parent.entityList.loaderOpen = true;
     parent.ws
       .call('zfs.snapshot.rollback', [item.name, data])
-      .subscribe(
+      .pipe(untilDestroyed(this)).subscribe(
         () => {
           entityDialog.dialogRef.close();
           parent.entityList.getData();
@@ -442,7 +441,7 @@ export class SnapshotListComponent implements EntityTableConfig {
       message = helptext.extra_cols.message_show;
       button = helptext.extra_cols.button_show;
     }
-    this.dialogService.confirm(title, message, true, button).subscribe((res: boolean) => {
+    this.dialogService.confirm(title, message, true, button).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         this.entityList.loader.open();
         this.snapshotXtraCols = !this.snapshotXtraCols;

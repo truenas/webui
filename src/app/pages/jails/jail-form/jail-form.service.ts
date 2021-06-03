@@ -10,7 +10,9 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';
 import * as _ from 'lodash';
 import { EntityUtils } from '../../common/entity/utils';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Injectable()
 export class JailFormService {
   interfaces = {
@@ -103,7 +105,7 @@ export class JailFormService {
 
       this.fieldRelationService.getRelatedFormControls(config, formGroup)
         .forEach((control) => {
-          control.valueChanges.subscribe(
+          control.valueChanges.pipe(untilDestroyed(this)).subscribe(
             () => { this.relationUpdate(formGroup, formFields, config, activations); },
           );
         });

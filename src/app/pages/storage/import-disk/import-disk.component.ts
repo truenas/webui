@@ -22,7 +22,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { T } from '../../../translate-marker';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { CoreService } from 'app/core/services/core.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-import-disk',
   template: `
@@ -112,7 +114,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     this.msdosfs_locale = _.find(this.fieldConfig, { name: 'msdosfs_locale' });
     this.fs_type = entityForm.formGroup.controls['fs_type'];
 
-    this.ws.call('pool.import_disk_msdosfs_locales').subscribe((res) => {
+    this.ws.call('pool.import_disk_msdosfs_locales').pipe(untilDestroyed(this)).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
         this.msdosfs_locale.options.push({ label: res[i], value: res[i] });
       }
@@ -121,7 +123,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
       this.initialized = true;
     });
 
-    this.fs_type_subscription = this.fs_type.valueChanges.subscribe((value: any) => {
+    this.fs_type_subscription = this.fs_type.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value === 'msdosfs') {
         this.msdosfs_locale['isHidden'] = false;
       } else {
@@ -129,8 +131,8 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
       }
     });
 
-    entityForm.formGroup.controls['volume'].valueChanges.subscribe((res: any) => {
-      this.ws.call('pool.import_disk_autodetect_fs_type', [res]).subscribe((res: any) => {
+    entityForm.formGroup.controls['volume'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+      this.ws.call('pool.import_disk_autodetect_fs_type', [res]).pipe(untilDestroyed(this)).subscribe((res: any) => {
         // If ws call fails to return type, no type is selected; otherwise, type is autoselected.
         for (const option of this.fs_type_list.options) {
           if (res === option.value) {
@@ -143,14 +145,14 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     this.makeList();
 
     // Listen for disks being added/removed
-    this.core.register({ observerClass: this, eventName: 'DisksChanged' }).subscribe(() => {
+    this.core.register({ observerClass: this, eventName: 'DisksChanged' }).pipe(untilDestroyed(this)).subscribe(() => {
       this.makeList();
     });
   }
 
   makeList(): void {
     this.volume.options = [];
-    this.ws.call('disk.get_unused', [true]).subscribe((data) => {
+    this.ws.call('disk.get_unused', [true]).pipe(untilDestroyed(this)).subscribe((data) => {
       for (let i = 0; i < data.length; i++) {
         if (data[i].partitions) {
           for (let p = 0; p < data[i].partitions.length; p++) {
@@ -180,7 +182,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     this.dialogRef.componentInstance.setDescription(T('Importing Disk...'));
     this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, fs_options, payload.dst_path]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((job_res: any) => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job_res: any) => {
       this.dialogRef.close();
       this.entityForm.success = true;
       this.job.showLogs(job_res, T('Disk Imported: Log Summary'), T('Close'));
@@ -194,7 +196,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
         },
       ];
     });
-    this.dialogRef.componentInstance.aborted.subscribe((job: any) => {
+    this.dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe((job: any) => {
       this.dialogRef.close();
       this.entityForm.success = false;
       this.job.showLogs(job, T('Disk Import Aborted: Log Summary'), T('Close'));
@@ -208,7 +210,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
         },
       ];
     });
-    this.dialogRef.componentInstance.failure.subscribe((err: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
       new EntityUtils().handleWSError(this.entityForm, err);
     });
   }

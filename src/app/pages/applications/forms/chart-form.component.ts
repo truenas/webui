@@ -13,7 +13,9 @@ import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from '../../../helptext/apps/apps';
 import { EntityUtils } from '../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'chart-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -56,7 +58,7 @@ export class ChartFormComponent implements FormConfiguration {
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService, private appService: ApplicationsService) {
-    this.getRow = this.modalService.getRow$.subscribe((rowName: string) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowName: string) => {
       this.rowName = rowName;
       this.customFilter = [[['id', '=', rowName]], { extra: { include_chart_schema: true } }];
       this.getRow.unsubscribe();
@@ -162,7 +164,7 @@ export class ChartFormComponent implements FormConfiguration {
     });
     this.dialogRef.componentInstance.setCall(this.editCall, payload);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();

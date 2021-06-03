@@ -17,7 +17,9 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { EntityUtils } from '../../../common/entity/utils';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-ssh-connections-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -232,7 +234,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     private dialogService: DialogService,
     private replicationService: ReplicationService, private modalService: ModalService,
   ) {
-    this.getRow = this.modalService.getRow$.subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
       this.rowNum = rowId;
       this.getRow.unsubscribe();
     });
@@ -273,7 +275,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     this.updateDiscoverButtonDisabled();
     if (this.entityForm.isNew) {
       this.addCall = this.sshCalls[this.entityForm.formGroup.controls['setup_method'].value as keyof SshConnectionsFormComponent['sshCalls']];
-      this.entityForm.formGroup.controls['setup_method'].valueChanges.subscribe((res: any) => {
+      this.entityForm.formGroup.controls['setup_method'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
         this.addCall = this.sshCalls[res as keyof SshConnectionsFormComponent['sshCalls']];
         this.updateDiscoverButtonDisabled();
       });
@@ -283,7 +285,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
 
     const nameCtrl = this.entityForm.formGroup.controls['name'];
     let preValue = this.entityForm.formGroup.controls['private_key'].value;
-    this.entityForm.formGroup.controls['private_key'].valueChanges.subscribe((res: any) => {
+    this.entityForm.formGroup.controls['private_key'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res === 'NEW') {
         nameCtrl.setValidators([Validators.required, forbiddenValues(this.namesInUse)]);
         nameCtrl.updateValueAndValidity();
@@ -295,11 +297,11 @@ export class SshConnectionsFormComponent implements FormConfiguration {
       this.updateDiscoverButtonDisabled();
     });
 
-    this.entityForm.formGroup.controls['host'].valueChanges.subscribe(() => {
+    this.entityForm.formGroup.controls['host'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateDiscoverButtonDisabled();
     });
 
-    this.entityForm.formGroup.controls['username'].valueChanges.subscribe(() => {
+    this.entityForm.formGroup.controls['username'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateDiscoverButtonDisabled();
     });
   }
@@ -342,7 +344,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
       connect_timeout: this.entityForm.value['connect_timeout'],
     };
 
-    this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]).subscribe(
+    this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.loader.close();
         this.entityForm.formGroup.controls['remote_host_key'].setValue(res);
@@ -402,7 +404,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     }
     delete data['setup_method'];
 
-    this.entityForm.submitFunction(data).subscribe(
+    this.entityForm.submitFunction(data).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.modalService.close('slide-in-form');

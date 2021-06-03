@@ -21,7 +21,7 @@ import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 
 import { RestService, WebSocketService, SystemGeneralService } from '../../../../services';
-import { Subscription, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { ModalService } from '../../../../services/modal.service';
 import { EntityTemplateDirective } from '../entity-template.directive';
@@ -35,7 +35,9 @@ import { DialogService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'entity-form',
   templateUrl: './entity-form.component.html',
@@ -62,7 +64,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   saveSubmitText = T('Save');
   showPassword = false;
   successMessage = T('Settings saved.');
-  private getAdvancedConfig: Subscription;
 
   protected loaderOpen = false;
   protected keepLoaderOpen = false;
@@ -103,8 +104,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     private modalService: ModalService,
     private cdr: ChangeDetectorRef,
     private sysGeneralService: SystemGeneralService) {
-    this.loader.callStarted.subscribe(() => this.showSpinner = true);
-    this.loader.callDone.subscribe(() => this.showSpinner = false);
+    this.loader.callStarted.pipe(untilDestroyed(this)).subscribe(() => this.showSpinner = true);
+    this.loader.callDone.pipe(untilDestroyed(this)).subscribe(() => this.showSpinner = false);
   }
 
   ngAfterViewInit(): void {
@@ -197,7 +198,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   async ngOnInit(): Promise<void> {
     // get system general setting
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res) => {
+    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         if (this.conf.isBasicMode) {
           if (res.advancedmode) {
@@ -225,7 +226,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
-    this.sub = this.route.params.subscribe((params) => {
+    this.sub = this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.resourceName = this.conf.resource_name;
       if (this.resourceName && !this.resourceName.endsWith('/')) {
         this.resourceName = this.resourceName + '/';
@@ -300,7 +301,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       if (!this.isNew && this.conf.queryCall && this.getFunction) {
         this.loader.open();
         this.loaderOpen = true;
-        this.getFunction.subscribe((res: any) => {
+        this.getFunction.pipe(untilDestroyed(this)).subscribe((res: any) => {
           if (res.data) {
             this.data = res.data;
             if (typeof (this.conf.resourceTransformIncomingRestData) !== 'undefined') {
@@ -467,7 +468,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         this.conf.confirmSubmitDialog.hasOwnProperty('button')
           ? this.conf.confirmSubmitDialog['button']
           : T('Ok'),
-      ).subscribe((confirm: boolean) => {
+      ).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
         if (!confirm) {
           return;
         }
@@ -516,7 +517,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.loader.open();
       this.loaderOpen = true;
       this.submitFunction(value)
-        .subscribe(
+        .pipe(untilDestroyed(this)).subscribe(
           (res) => {
             this.loader.close();
             this.loaderOpen = false;
@@ -728,6 +729,5 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (typeof (this.sub) !== 'undefined' && typeof (this.sub.unsubscribe) !== 'undefined') {
       this.sub.unsubscribe();
     }
-    this.getAdvancedConfig.unsubscribe();
   }
 }

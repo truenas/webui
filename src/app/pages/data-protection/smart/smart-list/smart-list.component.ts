@@ -1,7 +1,6 @@
 import { Router, ActivatedRoute } from '@angular/router';
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { Subscription } from 'rxjs';
 
 import { StorageService } from 'app/services/storage.service';
 import helptext from 'app/helptext/data-protection/smart/smart';
@@ -13,13 +12,15 @@ import { TaskService, WebSocketService } from 'app/services';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { TranslateService } from '@ngx-translate/core';
 import { SmartTestUi } from 'app/interfaces/smart-test.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-smart-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, EntityFormService],
 })
-export class SmartListComponent implements EntityTableConfig, OnDestroy {
+export class SmartListComponent implements EntityTableConfig {
   title = T('S.M.A.R.T. Tests');
   queryCall: 'smart.test.query' = 'smart.test.query';
   route_add: string[] = ['tasks', 'smart', 'add'];
@@ -57,8 +58,6 @@ export class SmartListComponent implements EntityTableConfig, OnDestroy {
     },
   };
   listDisks: any[] = [];
-  private disksSubscription: Subscription;
-  private onModalClose: Subscription;
 
   constructor(
     protected ws: WebSocketService,
@@ -70,14 +69,14 @@ export class SmartListComponent implements EntityTableConfig, OnDestroy {
     protected entityFormService: EntityFormService,
     protected translate: TranslateService,
   ) {
-    this.disksSubscription = this.storageService.listDisks().subscribe((listDisks) => {
+    this.storageService.listDisks().pipe(untilDestroyed(this)).subscribe((listDisks) => {
       this.listDisks = listDisks;
     });
   }
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -104,10 +103,5 @@ export class SmartListComponent implements EntityTableConfig, OnDestroy {
 
   doEdit(id: number): void {
     this.doAdd(id);
-  }
-
-  ngOnDestroy(): void {
-    this.disksSubscription?.unsubscribe();
-    this.onModalClose?.unsubscribe();
   }
 }

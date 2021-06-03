@@ -5,6 +5,7 @@ import { WebSocketService } from '../../services/ws.service';
 import { RestService } from '../../services/rest.service';
 import { CoreService } from './core.service';
 import { DialogService } from '../../services';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 export interface ApiCall {
   protocol: 'websocket' | 'rest'; // TODO: rest is probably deprecated and can be removed
@@ -22,6 +23,7 @@ interface ApiDefinition {
   postProcessor?: (res: ApiCall, callArgs: any, core: any) => any;
 }
 
+@UntilDestroy()
 @Injectable()
 export class ApiService {
   private apiDefinitions: { [eventName: string]: ApiDefinition } = {
@@ -606,7 +608,7 @@ export class ApiService {
     protected rest: RestService,
     private dialog: DialogService,
   ) {
-    this.ws.authStatus.subscribe((evt: any) => {
+    this.ws.authStatus.pipe(untilDestroyed(this)).subscribe((evt: any) => {
       this.core.emit({ name: 'UserDataRequest', data: [[['id', '=', 1]]] });
       this.core.emit({ name: 'Authenticated', data: evt, sender: this });
     });
@@ -617,7 +619,7 @@ export class ApiService {
     // DEBUG: console.log("APISERVICE: Registering API Definitions");
     for (var def in this.apiDefinitions) {
       // DEBUG: console.log("def = " + def);
-      this.core.register({ observerClass: this, eventName: def }).subscribe(
+      this.core.register({ observerClass: this, eventName: def }).pipe(untilDestroyed(this)).subscribe(
         (evt: CoreEvent) => {
           // Process Event if CoreEvent is in the api definitions list
           // TODO: Proper type:
@@ -652,7 +654,7 @@ export class ApiService {
 
       const call = cloneDef.apiCall;// this.parseEventRest(evt);
       call.args = evt.data;
-      (this.rest as any)[call.operation](baseUrl + call.namespace, evt.data, false).subscribe((res: any) => {
+      (this.rest as any)[call.operation](baseUrl + call.namespace, evt.data, false).pipe(untilDestroyed(this)).subscribe((res: any) => {
         // PostProcess
         if (def.postProcessor) {
           res = def.postProcessor(res, evt.data, this.core);
@@ -668,7 +670,7 @@ export class ApiService {
 
       const call = cloneDef.apiCall;// this.parseEventRest(evt);
       call.args = evt.data;
-      (this.rest as any)[call.operation](baseUrl + call.namespace, {}, false).subscribe((res: any) => {
+      (this.rest as any)[call.operation](baseUrl + call.namespace, {}, false).pipe(untilDestroyed(this)).subscribe((res: any) => {
         // PostProcess
         if (def.postProcessor) {
           res = def.postProcessor(res, evt.data, this.core);
@@ -703,7 +705,7 @@ export class ApiService {
       }
 
       const call = cloneDef.apiCall;// this.parseEventWs(evt);
-      this.ws.call(call.namespace, call.args).subscribe((res) => {
+      this.ws.call(call.namespace, call.args).pipe(untilDestroyed(this)).subscribe((res) => {
         // PostProcess
         if (def.postProcessor) {
           res = def.postProcessor(res, evt.data, this.core);
@@ -727,7 +729,7 @@ export class ApiService {
       }
 
       const call = cloneDef.apiCall;// this.parseEventWs(evt);
-      this.ws.call(call.namespace, call.args || []).subscribe((res) => {
+      this.ws.call(call.namespace, call.args || []).pipe(untilDestroyed(this)).subscribe((res) => {
         // PostProcess
         if (def.postProcessor) {
           res = def.postProcessor(res, evt.data, this.core);

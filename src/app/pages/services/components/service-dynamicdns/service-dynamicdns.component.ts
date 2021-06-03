@@ -7,7 +7,9 @@ import { RestService, WebSocketService, ValidationService } from '../../../../se
 import helptext from '../../../../helptext/services/components/service-dynamic-dns';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'dynamicdns-edit',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -127,7 +129,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
     protected validationService: ValidationService) {}
 
   afterInit(entityForm: EntityFormComponent): void {
-    this.ws.call('dyndns.config').subscribe((res: any) => {
+    this.ws.call('dyndns.config').pipe(untilDestroyed(this)).subscribe((res: any) => {
       entityForm.formGroup.controls['provider'].setValue(res.provider);
       entityForm.formGroup.controls['checkip_ssl'].setValue(res.checkip_ssl);
       entityForm.formGroup.controls['checkip_server'].setValue(res.checkip_server);
@@ -145,7 +147,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
     });
     entityForm.submitFunction = this.submitFunction;
 
-    entityForm.formGroup.controls['provider'].valueChanges.subscribe((res: any) => {
+    entityForm.formGroup.controls['provider'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res === 'custom') {
         this.hideField('custom_ddns_server', false, entityForm);
         this.hideField('custom_ddns_path', false, entityForm);
@@ -174,7 +176,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
 
   preInit(): void {
     this.provider = this.fieldSets.config('provider');
-    this.ws.call('dyndns.provider_choices').subscribe((res) => {
+    this.ws.call('dyndns.provider_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       for (const key in res) {
         this.provider.options.push({ label: res[key], value: key });
       }

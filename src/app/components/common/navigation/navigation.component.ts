@@ -11,7 +11,9 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { WebSocketService } from '../../../services';
 import { DocsService } from '../../../services/docs.service';
 import { NavigationService } from '../../../services/navigation/navigation.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'navigation',
   templateUrl: './navigation.template.html',
@@ -34,15 +36,15 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
   ngOnInit(): void {
     this.iconTypeMenuTitle = this.navService.iconTypeMenuTitle;
     // Loads menu items from NavigationService
-    this.navService.menuItems$.subscribe((menuItem) => {
-      this.ws.call('failover.licensed').subscribe((hasFailover) => {
+    this.navService.menuItems$.pipe(untilDestroyed(this)).subscribe((menuItem) => {
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
         _.find(_.find(menuItem, { state: 'system' }).sub, { state: 'failover' }).disabled = !hasFailover;
       });
       if (window.localStorage.getItem('product_type') === ProductType.Enterprise) {
         this.ws
           .call('system.feature_enabled', ['VM'])
           .pipe(filter((vmsEnabled) => !vmsEnabled))
-          .subscribe(() => {
+          .pipe(untilDestroyed(this)).subscribe(() => {
             _.find(menuItem, { state: 'vm' }).disabled = true;
           });
 
@@ -58,7 +60,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
       this.core.register({
         observerClass: this,
         eventName: 'SysInfo',
-      }).subscribe((evt: SysInfoEvent) => {
+      }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
         if (window.localStorage.getItem('product_type') !== ProductType.Core) {
           // hide jail and plugins section if product type is SCALE or ENTERPRISE with jail unregistered
           if ((evt.data.license && evt.data.license.features.indexOf(LicenseFeature.Jails) === -1)

@@ -9,7 +9,9 @@ import { Observable, Observer, Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { filter, map } from 'rxjs/operators';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Injectable()
 export class WebSocketService {
   private _authStatus: Subject<boolean>;
@@ -238,8 +240,8 @@ export class WebSocketService {
 
   job(method: any, params?: any): Observable<any> {
     const source = Observable.create((observer: any) => {
-      this.call(method, params).subscribe((job_id) => {
-        this.subscribe('core.get_jobs').subscribe((res) => {
+      this.call(method, params).pipe(untilDestroyed(this)).subscribe((job_id) => {
+        this.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((res) => {
           if (res.id == job_id) {
             observer.next(res.fields);
             if (res.fields.state === EntityJobState.Success || res.fields.state == EntityJobState.Failed) {
@@ -257,7 +259,7 @@ export class WebSocketService {
       ? [username, password, otp_token]
       : [username, password];
     return Observable.create((observer: Observer<boolean>) => {
-      this.call('auth.login', params).subscribe((wasLoggedIn) => {
+      this.call('auth.login', params).pipe(untilDestroyed(this)).subscribe((wasLoggedIn) => {
         this.loginCallback(wasLoggedIn, observer);
       });
     });
@@ -288,7 +290,7 @@ export class WebSocketService {
   login_token(token: string): Observable<any> {
     return Observable.create((observer: any) => {
       if (token) {
-        this.call('auth.token', [token]).subscribe((result) => {
+        this.call('auth.token', [token]).pipe(untilDestroyed(this)).subscribe((result) => {
           this.loginCallback(result, observer);
         });
       }
@@ -306,7 +308,7 @@ export class WebSocketService {
   }
 
   logout(): void {
-    this.call('auth.logout').subscribe(() => {
+    this.call('auth.logout').pipe(untilDestroyed(this)).subscribe(() => {
       this.clearCredentials();
       this.socket.close();
       this._router.navigate(['/sessions/signin']);

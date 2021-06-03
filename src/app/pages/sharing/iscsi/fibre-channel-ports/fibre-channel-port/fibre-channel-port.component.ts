@@ -9,7 +9,9 @@ import * as _ from 'lodash';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { helptext_sharing_iscsi } from '../../../../../helptext/sharing';
 import { T } from 'app/translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-iscsi-fibre-channel-port',
   templateUrl: './fibre-channel-port.component.html',
@@ -84,7 +86,7 @@ export class FibreChannelPortComponent implements OnInit {
     private iscsiService: IscsiService,
   ) {
     const targetField = _.find(this.fieldSets[1].config, { name: 'target' });
-    this.iscsiService.getTargets().subscribe((targets) => {
+    this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
       for (let i = 0; i < targets.length; i++) {
         targetField.options.push({
           label: targets[i].name,
@@ -107,7 +109,7 @@ export class FibreChannelPortComponent implements OnInit {
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
     const targetField = _.find(this.fieldConfig, { name: 'target' });
-    this.formGroup.controls['mode'].valueChanges.subscribe((res) => {
+    this.formGroup.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       targetField.required = res == 'TARGET';
       if (res == 'TARGET') {
         this.formGroup.controls['target'].setValidators([Validators.required]);
@@ -139,7 +141,7 @@ export class FibreChannelPortComponent implements OnInit {
       value['target'] = null;
     }
     this.parent.loader.open();
-    this.ws.call('fcport.update', [this.config.id, value]).subscribe(
+    this.ws.call('fcport.update', [this.config.id, value]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.parent.loader.close();
         this.parent.dialogService.Info(T('Updated'), T('Fibre Channel Port ') + this.config.name + ' update successful.');

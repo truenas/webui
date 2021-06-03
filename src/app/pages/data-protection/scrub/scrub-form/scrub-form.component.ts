@@ -7,7 +7,9 @@ import { TaskService } from 'app/services';
 import helptext from 'app/helptext/data-protection/scrub/scrub-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-scrub-task-add',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -97,15 +99,15 @@ export class ScrubFormComponent implements FormConfiguration {
     this.title = entityForm.isNew ? helptext.scrub_task_add : helptext.scrub_task_edit;
 
     this.volume_field = this.fieldSets.config('pool');
-    this.taskService.getVolumeList().subscribe((pools) => {
+    this.taskService.getVolumeList().pipe(untilDestroyed(this)).subscribe((pools) => {
       pools.forEach((pool) => {
         this.volume_field.options.push({ label: pool.name, value: pool.id });
       });
     });
 
-    entityForm.formGroup.controls['pool'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['pool'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (!Number.isInteger(res)) {
-        this.taskService.getVolumeList().subscribe((list: any) => {
+        this.taskService.getVolumeList().pipe(untilDestroyed(this)).subscribe((list: any) => {
           // TODO: Weird typing.
           for (const i in list.data) {
             if (list.data[i].vol_name === res) {

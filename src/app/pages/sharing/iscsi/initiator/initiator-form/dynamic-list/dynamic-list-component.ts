@@ -1,7 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, AbstractControl } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 import { EntityFormService } from '../../../../../common/entity/entity-form/services/entity-form.service';
+
+@UntilDestroy()
 @Component({
   selector: 'app-dynamic-list',
   templateUrl: './dynamic-list.component.html',
@@ -40,7 +43,7 @@ export class DynamicListComponent implements OnInit {
     if (this.listControl.value === undefined) {
       this.listControl.setValue(new Set([]));
     }
-    this.listControl.statusChanges.subscribe((res) => {
+    this.listControl.statusChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       const method = res === 'DISABLED' ? 'disable' : 'enable';
       this.inputControl[method]();
     });

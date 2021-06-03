@@ -21,7 +21,9 @@ import { ViewChartBarComponent } from 'app/core/components/viewchartbar/viewchar
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'widget-memory',
   templateUrl: './widgetmemory.component.html',
@@ -71,7 +73,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
 
     this.utils = new ThemeUtils();
 
-    mediaObserver.media$.subscribe((evt) => {
+    mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
       const st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
       this.screenType = st;
     });
@@ -82,7 +84,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   }
 
   ngAfterViewInit(): void {
-    this.data.subscribe((evt: CoreEvent) => {
+    this.data.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.name == 'MemoryStats') {
         if (evt.data.used) {
           this.setMemData(evt.data);

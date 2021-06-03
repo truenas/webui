@@ -16,7 +16,9 @@ import * as _ from 'lodash';
 import helptext from '../../../../helptext/account/user-list';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { UserFormComponent } from '../user-form/user-form.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-user-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -104,7 +106,7 @@ export class UserListComponent implements EntityTableConfig, OnDestroy {
 
   ngOnInit(): void {
     this.refreshUserForm();
-    this.modalService.refreshForm$.subscribe(() => {
+    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshUserForm();
     });
   }
@@ -128,7 +130,7 @@ export class UserListComponent implements EntityTableConfig, OnDestroy {
       }
     }, 2000);
 
-    this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
+    this.refreshTableSubscription = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -171,7 +173,7 @@ export class UserListComponent implements EntityTableConfig, OnDestroy {
             customSubmit(entityDialog: EntityDialogComponent) {
               entityDialog.dialogRef.close(true);
               self.loader.open();
-              self.ws.call(self.wsDelete, [users_edit.id, entityDialog.formValue]).subscribe(() => {
+              self.ws.call(self.wsDelete, [users_edit.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(() => {
                 self.entityList.getData();
                 self.loader.close();
               },
@@ -203,7 +205,7 @@ export class UserListComponent implements EntityTableConfig, OnDestroy {
     this.usr_lst = [];
     this.grp_lst = [];
     this.usr_lst.push(data);
-    this.ws.call('group.query').subscribe((res) => {
+    this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((res) => {
       this.grp_lst.push(res);
       data.forEach((user: any) => {
         const group = _.find(res, { gid: user.group.bsdgrp_gid });
@@ -245,7 +247,7 @@ export class UserListComponent implements EntityTableConfig, OnDestroy {
       message: action + message,
       hideCheckBox: true,
       buttonMsg: action,
-    }).subscribe((result) => {
+    }).pipe(untilDestroyed(this)).subscribe((result) => {
       if (!result) {
         return;
       }

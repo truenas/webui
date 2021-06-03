@@ -13,7 +13,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-support',
   templateUrl: './support.component.html',
@@ -51,7 +53,7 @@ export class SupportComponent implements OnInit {
     private router: Router, private translate: TranslateService) {}
 
   ngOnInit(): void {
-    this.ws.call('system.info').subscribe((systemInfo) => {
+    this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
       this.systemInfo = systemInfo;
       this.systemInfo.memory = (systemInfo.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
       if (systemInfo.system_product.includes('MINI')) {
@@ -67,7 +69,7 @@ export class SupportComponent implements OnInit {
       this.licenseButtonText = this.hasLicense ? helptext.updateTxt : helptext.enterTxt;
     });
     setTimeout(() => {
-      this.ws.call('truenas.is_production').subscribe((res) => {
+      this.ws.call('truenas.is_production').pipe(untilDestroyed(this)).subscribe((res) => {
         this.isProduction = res;
       });
     }, 500);
@@ -157,7 +159,7 @@ export class SupportComponent implements OnInit {
     if (e.checked) {
       this.dialog.dialogForm(this.updateProdStatusConf);
     } else {
-      this.ws.call('truenas.set_production', [false, false]).subscribe(() => {
+      this.ws.call('truenas.set_production', [false, false]).pipe(untilDestroyed(this)).subscribe(() => {
         this.dialog.Info(helptext.is_production_dialog.title,
           helptext.is_production_dialog.message, '300px', 'info', true);
       }, (err) => {
@@ -193,7 +195,7 @@ export class SupportComponent implements OnInit {
       { data: { title: helptext.is_production_job.title, CloseOnClickOutside: false } });
     dialogRef.componentInstance.setDescription(helptext.is_production_job.message);
 
-    self.ws.call(self.conf.method_ws, [true, self.formValue.send_debug]).subscribe(() => {
+    self.ws.call(self.conf.method_ws, [true, self.formValue.send_debug]).pipe(untilDestroyed(this)).subscribe(() => {
       self.loader.close();
       self.dialogRef.close();
       dialogRef.componentInstance.setTitle(helptext.is_production_dialog.title);
