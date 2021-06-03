@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import {
-  Component, ElementRef, OnDestroy, OnInit,
+  Component, OnDestroy, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -24,7 +24,6 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entit
 import { EntityTableService } from 'app/pages/common/entity/entity-table/entity-table.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
-import { ErdService } from 'app/services/erd.service';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 import * as _ from 'lodash';
@@ -35,7 +34,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { ProductType } from '../../../../enums/product-type.enum';
 import dataset_helptext from '../../../../helptext/storage/volumes/datasets/dataset-form';
 import helptext from '../../../../helptext/storage/volumes/volume-list';
-import { JobService, RestService, ValidationService } from '../../../../services';
+import { JobService, ValidationService } from '../../../../services';
 import { StorageService } from '../../../../services/storage.service';
 import { T } from '../../../../translate-marker';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -1898,14 +1897,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   constructor(
     protected core: CoreService,
-    protected rest: RestService,
     protected router: Router,
     protected ws: WebSocketService,
-    protected _eRef: ElementRef,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected mdDialog: MatDialog,
-    protected erdService: ErdService,
     protected translate: TranslateService,
     public sorter: StorageService,
     protected job: JobService,
@@ -1917,7 +1913,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     public tableService: EntityTableService,
     protected validationService: ValidationService,
   ) {
-    super(core, rest, router, ws, dialogService, loader, translate, sorter, job, pref, mdDialog, modalService);
+    super(core, router, ws, dialogService, loader, translate, sorter, job, pref, mdDialog, modalService);
 
     this.actionsConfig = { actionType: VolumesListControlsComponent, actionConfig: this };
     this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
@@ -2050,7 +2046,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.dialogService.errorReport(T('Error getting pool data.'), res.message, res.stack);
     });
 
-    this.addZvolComponent = new ZvolFormComponent(this.router, this.aroute, this.rest, this.ws, this.loader,
+    this.addZvolComponent = new ZvolFormComponent(this.router, this.aroute, this.ws, this.loader,
       this.dialogService, this.storageService, this.translate, this.modalService);
 
     this.addDatasetFormComponent = new DatasetFormComponent(this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService);

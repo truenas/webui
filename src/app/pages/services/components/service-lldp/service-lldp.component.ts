@@ -6,7 +6,7 @@ import { FormControl, ValidatorFn, Validators } from '@angular/forms';
 
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/services/components/service-lldp';
-import { RestService, WebSocketService, ServicesService } from '../../../../services';
+import { WebSocketService, ServicesService } from '../../../../services';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
@@ -51,10 +51,14 @@ export class ServiceLLDPComponent implements FormConfiguration {
     },
   ];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef,
-    protected services: ServicesService) {}
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected _injector: Injector,
+    protected _appRef: ApplicationRef,
+    protected services: ServicesService,
+  ) {}
 
   afterInit(entityEdit: EntityFormComponent): void {
     entityEdit.submitFunction = (body) => this.ws.call('lldp.update', [body]);

@@ -11,7 +11,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { EntityFormEmbeddedComponent } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RestService, WebSocketService } from 'app/services/';
+import { WebSocketService } from 'app/services/';
 import { ThemeService, Theme, DefaultTheme } from 'app/services/theme/theme.service';
 import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
@@ -57,7 +57,6 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
 
   constructor(
     protected router: Router,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected _injector: Injector,
     protected _appRef: ApplicationRef,

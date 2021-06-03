@@ -7,7 +7,6 @@ import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FieldRelationService } from '../entity-form/services/field-relation.service';
 import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { FormGroup } from '@angular/forms';
-import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../utils';
@@ -46,7 +45,6 @@ export class EntityDialogComponent<P = any> implements OnInit {
   constructor(public dialogRef: MatDialogRef < EntityDialogComponent >,
     protected translate: TranslateService,
     protected entityFormService: EntityFormService,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
     public mdDialog: MatDialog,

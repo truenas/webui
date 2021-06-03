@@ -6,7 +6,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/services/components/service-ssh';
-import { NetworkService, RestService, WebSocketService } from '../../../../services';
+import { NetworkService, WebSocketService } from '../../../../services';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
@@ -156,7 +156,6 @@ export class ServiceSSHComponent implements FormConfiguration, OnInit {
   constructor(
     protected router: Router,
     protected route: ActivatedRoute,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected _injector: Injector,
     protected _appRef: ApplicationRef,

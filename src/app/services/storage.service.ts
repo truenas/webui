@@ -3,7 +3,6 @@ import { SortDirection } from '@angular/material/sort';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { WebSocketService } from './ws.service';
-import { RestService } from './rest.service';
 
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
@@ -23,7 +22,7 @@ export class StorageService {
   humanReadable: any;
   IECUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
-  constructor(protected ws: WebSocketService, protected rest: RestService) {}
+  constructor(protected ws: WebSocketService) {}
 
   filesystemStat(path: string): Observable<FileSystemStat> {
     return this.ws.call('filesystem.stat', [path]);

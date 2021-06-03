@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { Observable } from 'rxjs';
-import { BootEnvService, RestService, WebSocketService } from '../../../../services';
+import { BootEnvService, WebSocketService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -25,8 +25,12 @@ export class BootEnvironmentCreateComponent implements FormConfiguration {
 
   fieldConfig: FieldConfig[];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService, protected bootEnvService: BootEnvService) {}
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected bootEnvService: BootEnvService,
+  ) {}
 
   preInit(entityForm: EntityFormComponent): void {
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {

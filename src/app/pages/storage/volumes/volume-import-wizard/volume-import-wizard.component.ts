@@ -1,15 +1,13 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { ProductType } from '../../../../enums/product-type.enum';
-import { RestService, WebSocketService, DialogService } from '../../../../services';
+import { WebSocketService, DialogService } from '../../../../services';
 import { FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
 import { MessageService } from '../../../common/entity/entity-form/services/message.service';
-import { HttpClient } from '@angular/common/http';
 import { EntityUtils } from '../../../common/entity/utils';
 
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
@@ -183,11 +181,14 @@ export class VolumeImportWizardComponent {
   protected pool: any;
   protected hideCancel = true;
 
-  constructor(protected rest: RestService, protected ws: WebSocketService,
-    private router: Router, protected loader: AppLoaderService,
-    protected dialog: MatDialog, protected dialogService: DialogService,
-    protected http: HttpClient, public messageService: MessageService, public modalService: ModalService) {
-
+  constructor(
+    protected ws: WebSocketService,
+    protected loader: AppLoaderService,
+    protected dialog: MatDialog,
+    protected dialogService: DialogService,
+    public messageService: MessageService,
+    public modalService: ModalService,
+  ) {
   }
 
   customNext(stepper: any): void {

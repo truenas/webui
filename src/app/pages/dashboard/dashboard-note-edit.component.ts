@@ -8,7 +8,7 @@ import { FieldConfig } from '../common/entity/entity-form/models/field-config.in
 import { FieldSet } from '../common/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
 
-import { RestService, WebSocketService } from '../../services';
+import { WebSocketService } from '../../services';
 import { AppLoaderService } from '../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../common/entity/utils';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -17,7 +17,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 @Component({
   selector: 'dashboard-note-edit',
   templateUrl: './dashboard-note-edit.component.html',
-  // template: `<entity-form-embedded [args]="machineId" [conf]="this"></entity-form-embedded>`,
   providers: [EntityFormService],
 })
 export class DashboardNoteEditComponent implements OnInit {
@@ -54,11 +53,13 @@ export class DashboardNoteEditComponent implements OnInit {
   notes: any[] ;
   protected targetNoteIndex: number;
 
-  constructor(protected router: Router, protected rest: RestService,
+  constructor(
+    protected router: Router,
     protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected loader: AppLoaderService,
-    protected entityFormService: EntityFormService) {}
+    protected entityFormService: EntityFormService,
+  ) {}
 
   ngOnInit(): void {
     this.generateFieldConfig();

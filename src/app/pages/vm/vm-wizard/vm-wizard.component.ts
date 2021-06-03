@@ -5,7 +5,7 @@ import { VmBootloader, VmDeviceType, VmTime } from 'app/enums/vm.enum';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { ProductType } from '../../../enums/product-type.enum';
 import {
-  RestService, WebSocketService, NetworkService, StorageService, SystemGeneralService,
+  WebSocketService, NetworkService, StorageService, SystemGeneralService,
 } from '../../../services';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import {
@@ -449,15 +449,20 @@ export class VMWizardComponent {
   private nicType: FieldConfig;
   private bootloader: FieldConfig;
 
-  constructor(protected rest: RestService, protected ws: WebSocketService,
-    public vmService: VmService, public networkService: NetworkService,
-    protected loader: AppLoaderService, protected dialog: MatDialog,
+  constructor(
+    protected ws: WebSocketService,
+    public vmService: VmService,
+    public networkService: NetworkService,
+    protected loader: AppLoaderService,
+    protected dialog: MatDialog,
     public messageService: MessageService,
-    private dialogService: DialogService, private storageService: StorageService,
-    protected prefService: PreferencesService, private translate: TranslateService,
-    protected modalService: ModalService, private systemGeneralService: SystemGeneralService) {
-
-  }
+    private dialogService: DialogService,
+    private storageService: StorageService,
+    protected prefService: PreferencesService,
+    private translate: TranslateService,
+    protected modalService: ModalService,
+    private systemGeneralService: SystemGeneralService,
+  ) {}
 
   preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;

@@ -7,7 +7,7 @@ import {
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { TranslateService } from '@ngx-translate/core';
 
-import { RestService, WebSocketService } from '../../../../services';
+import { WebSocketService } from '../../../../services';
 import { DialogService } from '../../../../services/dialog.service';
 
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -61,7 +61,6 @@ export class DeviceListComponent implements EntityTableConfig {
   constructor(
     protected router: Router,
     protected aroute: ActivatedRoute,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
     public dialogService: DialogService,

@@ -8,7 +8,7 @@ import * as _ from 'lodash';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
 import {
-  IscsiService, RestService, WebSocketService, StorageService,
+  IscsiService, WebSocketService, StorageService,
 } from '../../../../../services';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
@@ -261,13 +261,14 @@ export class ExtentFormComponent implements FormConfiguration {
   protected avail_threshold_field: any;
   fieldConfig: FieldConfig[];
 
-  constructor(protected router: Router,
+  constructor(
+    protected router: Router,
     protected aroute: ActivatedRoute,
     protected iscsiService: IscsiService,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
-    protected storageService: StorageService) {}
+    protected storageService: StorageService,
+  ) {}
 
   preInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {

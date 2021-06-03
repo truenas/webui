@@ -9,7 +9,6 @@ import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/en
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { RestService } from '../../../../services/rest.service';
 import { WebSocketService, SystemGeneralService } from '../../../../services';
 import { StorageService } from '../../../../services/storage.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -45,9 +44,15 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   scrub_msg: string;
   scrub_interval: number;
 
-  constructor(private _rest: RestService, private _router: Router, public ws: WebSocketService,
-    public dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService,
-    protected localeService: LocaleService, private sysGeneralService: SystemGeneralService) {}
+  constructor(
+    private _router: Router,
+    public ws: WebSocketService,
+    public dialog: DialogService,
+    protected loader: AppLoaderService,
+    private storage: StorageService,
+    protected localeService: LocaleService,
+    private sysGeneralService: SystemGeneralService,
+  ) {}
 
   columns = [
     { name: T('Name'), prop: 'name', always_display: true },

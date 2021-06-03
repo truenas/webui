@@ -6,7 +6,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 
-import { JailService } from '../../services';
 import { EntityModule } from '../common/entity/entity.module';
 import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
 import { UserService } from '../../services/user.service';
@@ -80,7 +79,6 @@ import { SharesDashboardComponent } from './components/shares-dashboard/shares-d
     FibreChannelPortComponent,
   ],
   providers: [
-    JailService,
     EntityFormService,
     UserService,
   ],

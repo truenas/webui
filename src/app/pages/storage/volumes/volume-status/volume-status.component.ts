@@ -5,7 +5,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import {
-  WebSocketService, RestService, AppLoaderService, DialogService,
+  WebSocketService, AppLoaderService, DialogService,
 } from '../../../../services';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -150,17 +150,18 @@ export class VolumeStatusComponent implements OnInit {
 
   protected pool: Pool;
 
-  constructor(protected aroute: ActivatedRoute,
+  constructor(
+    protected aroute: ActivatedRoute,
     protected core: CoreService,
     protected ws: WebSocketService,
-    protected rest: RestService,
     protected translate: TranslateService,
     protected router: Router,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected matDialog: MatDialog,
     protected localeService: LocaleService,
-    protected modalService: ModalService) {}
+    protected modalService: ModalService,
+  ) {}
 
   getZfsPoolScan(poolName: string): void {
     this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe(
@@ -649,7 +650,7 @@ export class VolumeStatusComponent implements OnInit {
   }
 
   onClickEdit(pk: string): void {
-    const diskForm = new DiskFormComponent(this.router, this.rest, this.ws, this.aroute);
+    const diskForm = new DiskFormComponent(this.router, this.ws, this.aroute);
     diskForm.inIt(pk);
     this.modalService.open('slide-in-form', diskForm);
   }

@@ -2,7 +2,7 @@ import {
   Component, Input, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { RestService, WebSocketService } from '../../../../services';
+import { WebSocketService } from '../../../../services';
 import {
   AbstractControl, FormBuilder, FormGroup,
 } from '@angular/forms';
@@ -42,13 +42,17 @@ export class EntityWizardComponent implements OnInit {
 
   get formArray(): AbstractControl | null { return this.formGroup.get('formArray'); }
 
-  constructor(protected rest: RestService, protected ws: WebSocketService,
-    private formBuilder: FormBuilder, private entityFormService: EntityFormService,
-    protected loader: AppLoaderService, protected fieldRelationService: FieldRelationService,
-    protected router: Router, protected aroute: ActivatedRoute,
-    private dialog: DialogService, protected translate: TranslateService) {
-
-  }
+  constructor(
+    protected ws: WebSocketService,
+    private formBuilder: FormBuilder,
+    private entityFormService: EntityFormService,
+    protected loader: AppLoaderService,
+    protected fieldRelationService: FieldRelationService,
+    protected router: Router,
+    protected aroute: ActivatedRoute,
+    private dialog: DialogService,
+    protected translate: TranslateService,
+  ) {}
 
   ngOnInit(): void {
     if (this.conf.showSpinner) {

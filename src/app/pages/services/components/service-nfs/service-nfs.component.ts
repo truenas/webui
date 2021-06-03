@@ -5,7 +5,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { map } from 'rxjs/operators';
 import { ProductType } from '../../../../enums/product-type.enum';
 import helptext from '../../../../helptext/services/components/service-nfs';
-import { RestService, WebSocketService, DialogService } from '../../../../services';
+import { WebSocketService, DialogService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -175,9 +175,12 @@ export class ServiceNFSComponent implements FormConfiguration {
     },
   ];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    private dialog: DialogService) {}
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    private dialog: DialogService,
+  ) {}
 
   resourceTransformIncomingRestData(data: any): any {
     this.v4krbValue = data.v4_krb;

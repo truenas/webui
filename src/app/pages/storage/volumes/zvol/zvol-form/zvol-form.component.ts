@@ -7,7 +7,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { combineLatest, Observable } from 'rxjs';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService, StorageService } from '../../../../../services';
+import { WebSocketService, StorageService } from '../../../../../services';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from '../../../../../translate-marker';
@@ -399,10 +399,13 @@ export class ZvolFormComponent implements FormConfiguration {
   }
 
   constructor(
-    protected router: Router, protected aroute: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected loader: AppLoaderService, protected dialogService: DialogService,
-    protected storageService: StorageService, private translate: TranslateService,
+    protected router: Router,
+    protected aroute: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected loader: AppLoaderService,
+    protected dialogService: DialogService,
+    protected storageService: StorageService,
+    private translate: TranslateService,
     protected modalService: ModalService,
   ) {}
 

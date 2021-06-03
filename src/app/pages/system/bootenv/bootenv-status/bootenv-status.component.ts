@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TreeNode } from 'primeng/api';
 import { EntityTreeTable } from '../../../common/entity/entity-tree-table/entity-tree-table.model';
 
-import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { DialogService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -45,10 +44,13 @@ export class BootStatusListComponent implements OnInit {
     ],
   };
 
-  constructor(_rest: RestService, private _router: Router, private ws: WebSocketService,
-    private dialog: DialogService, protected loader: AppLoaderService, protected aroute: ActivatedRoute) {
-
-  }
+  constructor(
+    private _router: Router,
+    private ws: WebSocketService,
+    private dialog: DialogService,
+    protected loader: AppLoaderService,
+    protected aroute: ActivatedRoute,
+  ) {}
 
   getData(): void {
     this.ws.call('boot.get_state').pipe(untilDestroyed(this)).subscribe(

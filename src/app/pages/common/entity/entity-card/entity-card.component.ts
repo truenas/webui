@@ -6,7 +6,6 @@ import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 import { iXObject } from 'app/core/classes/ix-object';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { RestService } from 'app/services/rest.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { DialogService } from 'app/services/dialog.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -44,7 +43,6 @@ export class EntityCardComponent extends iXObject implements OnInit {
   protected loaderOpen = false;
 
   constructor(
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected router: Router,
     private dialog: DialogService,

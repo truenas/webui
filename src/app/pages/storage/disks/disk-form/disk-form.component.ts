@@ -5,7 +5,7 @@ import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 
-import { RestService, WebSocketService } from '../../../../services';
+import { WebSocketService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/storage/disks/disks';
@@ -186,7 +186,6 @@ export class DiskFormComponent implements FormConfiguration {
 
   constructor(
     private _router: Router,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected aroute: ActivatedRoute,
   ) {

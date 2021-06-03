@@ -1,13 +1,10 @@
-import {
-  ApplicationRef, Component, Injector, OnDestroy,
-} from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import helptext from '../../../helptext/storage/import-disk/import-disk';
 
 import {
-  RestService,
   WebSocketService,
   JobService,
 } from '../../../services';
@@ -97,10 +94,14 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
   protected dialogRef: any;
   custActions: any[];
 
-  constructor(protected router: Router, protected rest: RestService,
-    protected ws: WebSocketService, protected dialog: MatDialog,
-    protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService,
-    protected job: JobService, protected core: CoreService) {}
+  constructor(
+    protected router: Router,
+    protected ws: WebSocketService,
+    protected dialog: MatDialog,
+    protected dialogService: DialogService,
+    protected job: JobService,
+    protected core: CoreService,
+  ) {}
 
   preInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;

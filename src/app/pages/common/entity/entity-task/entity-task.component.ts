@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../entity-form';
-import { TaskService, UserService, RestService } from '../../../../services';
+import { TaskService, UserService } from '../../../../services';
 import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -38,13 +38,14 @@ export class EntityTaskComponent implements OnInit {
 
   protected preTaskName = '';
 
-  constructor(protected router: Router,
+  constructor(
+    protected router: Router,
     protected aroute: ActivatedRoute,
     protected taskService: TaskService,
     protected userService: UserService,
     protected entityFormService: EntityFormService,
     protected loader: AppLoaderService,
-    protected rest: RestService) {}
+  ) {}
 
   ngOnInit(): void {
     if (this.conf.preInit) {

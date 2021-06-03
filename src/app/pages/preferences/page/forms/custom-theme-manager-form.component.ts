@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { CoreEvent } from 'app/interfaces/events';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RestService, WebSocketService } from 'app/services/';
+import { WebSocketService } from 'app/services/';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
@@ -58,7 +58,6 @@ export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
 
   constructor(
     protected router: Router,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected _injector: Injector,
     protected _appRef: ApplicationRef,

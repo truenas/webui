@@ -20,7 +20,6 @@ export class ShellService {
   @LocalStorage() password: string;
   redirectUrl = '';
   token: string;
-  jailId: string;
   vmId: number;
   podInfo: any;
 
@@ -49,9 +48,7 @@ export class ShellService {
 
   onopen(): void {
     this.onOpenSubject.next(true);
-    if (this.jailId) {
-      this.send(JSON.stringify({ token: this.token, options: { jail: this.jailId } }));
-    } else if (this.vmId) {
+    if (this.vmId) {
       this.send(JSON.stringify({ token: this.token, options: { vm_id: this.vmId } }));
     } else if (this.podInfo) {
       this.send(JSON.stringify({

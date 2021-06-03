@@ -6,9 +6,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 
-import {
-  RestService, SystemGeneralService, WebSocketService, ValidationService,
-} from '../../../../services';
+import { SystemGeneralService, WebSocketService, ValidationService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/services/components/service-webdav';
@@ -101,7 +99,6 @@ export class ServiceWebdavComponent implements FormConfiguration, OnDestroy {
   constructor(
     protected router: Router,
     protected route: ActivatedRoute,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected _injector: Injector,
     protected _appRef: ApplicationRef,

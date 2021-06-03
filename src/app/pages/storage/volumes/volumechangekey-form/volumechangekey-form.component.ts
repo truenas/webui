@@ -1,14 +1,12 @@
 import {
-  ApplicationRef,
   Component,
-  Injector,
 } from '@angular/core';
 
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService } from '../../../../services';
+import { WebSocketService } from '../../../../services';
 import {
   FieldConfig,
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -118,10 +116,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
   constructor(
     protected router: Router,
     protected route: ActivatedRoute,
-    protected rest: RestService,
     protected ws: WebSocketService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     public mdDialog: MatDialog,

@@ -101,16 +101,6 @@ export const rootRouterConfig: Routes = [{
     data: { title: 'Storage', breadcrumb: 'Storage', toplevel: true },
   },
   {
-    path: 'plugins',
-    loadChildren: './pages/plugins/plugins.module#PluginsModule',
-    data: { title: 'Plugins', breadcrumb: 'Plugins', toplevel: true },
-  },
-  { // Listing partially updated for new 12.1 menu - TODO Move components, finish update ////////////////
-    path: 'virtualization',
-    loadChildren: './pages/jails/jails.module#JailsModule',
-    data: { title: 'Jails', breadcrumb: 'Jails', toplevel: true },
-  },
-  {
     path: 'reportsdashboard',
     loadChildren: './pages/reportsdashboard/reportsdashboard.module#ReportsDashboardModule',
     data: { title: 'Reporting', breadcrumb: 'Reporting' },

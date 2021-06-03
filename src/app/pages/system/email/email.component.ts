@@ -1,6 +1,4 @@
-import {
-  ApplicationRef, Component, Injector,
-} from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { helptext_system_email } from 'app/helptext/system/email';
@@ -8,7 +6,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import { ProductType } from '../../../enums/product-type.enum';
 import {
-  DialogService, RestService, WebSocketService, AppLoaderService,
+  DialogService, WebSocketService, AppLoaderService,
 } from '../../../services';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
@@ -233,10 +231,13 @@ export class EmailComponent implements FormConfiguration {
   private smtp: FormControl;
   private pass: FieldConfig;
 
-  constructor(protected router: Router, protected rest: RestService,
-    protected ws: WebSocketService, protected _injector: Injector,
-    protected _appRef: ApplicationRef, private dialogservice: DialogService,
-    protected dialog: MatDialog, protected loader: AppLoaderService) {}
+  constructor(
+    protected router: Router,
+    protected ws: WebSocketService,
+    private dialogservice: DialogService,
+    protected dialog: MatDialog,
+    protected loader: AppLoaderService,
+  ) {}
 
   resourceTransformIncomingRestData(data: any): void {
     if (_.isEmpty(data.oauth)) {

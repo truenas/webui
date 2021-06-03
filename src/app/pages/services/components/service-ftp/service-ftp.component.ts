@@ -10,7 +10,7 @@ import helptext from '../../../../helptext/services/components/service-ftp';
 import global_helptext from '../../../../helptext/global-helptext';
 import * as _ from 'lodash';
 import {
-  DialogService, RestService, SystemGeneralService, WebSocketService, StorageService,
+  DialogService, SystemGeneralService, WebSocketService, StorageService,
 } from '../../../../services';
 import { T } from '../../../../translate-marker';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -405,11 +405,16 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     return true;
   }
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef,
-    protected dialog: DialogService, protected storageService: StorageService,
-    protected systemGeneralService: SystemGeneralService) {}
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected _injector: Injector,
+    protected _appRef: ApplicationRef,
+    protected dialog: DialogService,
+    protected storageService: StorageService,
+    protected systemGeneralService: SystemGeneralService,
+  ) {}
 
   ngOnInit(): void {
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res: any[]) => {

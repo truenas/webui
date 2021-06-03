@@ -353,20 +353,6 @@ export type ApiDirectory = {
   'group.get_group_obj': { params: any; response: any };
   'group.get_next_gid': { params: any; response: any };
 
-  // Jail
-  'jail.query': { params: any; response: any };
-  'jail.create': { params: any; response: any };
-  'jail.delete': { params: any; response: any };
-  'jail.get_activated_pool': { params: any; response: any };
-  'jail.activate': { params: any; response: any };
-  'jail.update': { params: any; response: any };
-  'jail.upgrade': { params: any; response: any };
-  'jail.releases_choices': { params: any; response: any };
-  'jail.get_version': { params: any; response: any };
-  'jail.interface_choices': { params: any; response: any };
-  'jail.default_configuration': { params: any; response: any };
-  'jail.fstab': { params: any; response: any };
-
   // Notifier
   'notifier.choices': { params: any; response: any };
 

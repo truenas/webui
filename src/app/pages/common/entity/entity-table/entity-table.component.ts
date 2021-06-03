@@ -24,14 +24,15 @@ import {
   EntityTableConfig,
 } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import * as _ from 'lodash';
-import { Observable, of, Subscription } from 'rxjs';
+import {
+  EMPTY, Observable, of, Subscription,
+} from 'rxjs';
 import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { DialogService, JobService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { ModalService } from '../../../../services/modal.service';
-import { RestService } from '../../../../services/rest.service';
 import { StorageService } from '../../../../services/storage.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { T } from '../../../../translate-marker';
@@ -185,7 +186,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     protected core: CoreService,
-    protected rest: RestService,
     protected router: Router,
     protected ws: WebSocketService,
     protected dialogService: DialogService,
@@ -525,7 +525,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.getFunction = this.ws.call(this.conf.queryCall, []);
       }
     } else {
-      this.getFunction = this.rest.get(this.conf.resource_name, options) as any;
+      this.getFunction = EMPTY;
     }
 
     if (this.conf.callGetFunction) {
