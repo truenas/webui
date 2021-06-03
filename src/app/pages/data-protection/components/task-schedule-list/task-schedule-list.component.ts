@@ -1,9 +1,11 @@
 import {
   Component, Input, OnChanges, OnInit,
 } from '@angular/core';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { TaskService } from 'app/services';
 
+@UntilDestroy()
 @Component({
   selector: 'app-task-schedule-list',
   template: `

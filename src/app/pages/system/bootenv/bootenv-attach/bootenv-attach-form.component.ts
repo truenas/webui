@@ -9,8 +9,10 @@ import { RestService, WebSocketService, DialogService } from '../../../../servic
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as filesize from 'filesize';
 
+@UntilDestroy()
 @Component({
   selector: 'bootenv-attach-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -49,7 +51,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
     protected dialog: MatDialog, protected dialogService: DialogService) {}
 
   preInit(entityForm: EntityFormComponent): void {
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
     });
     this.entityForm = entityForm;
@@ -58,7 +60,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.diskChoice = _.find(this.fieldConfig, { name: 'dev' });
-    this.ws.call('disk.get_unused').subscribe((res: any[]) => {
+    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       res.forEach((item) => {
         const disk_name = item.name;
         const disksize = filesize(item['size'], { standard: 'iec' });
@@ -75,17 +77,17 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
     this.dialogRef.componentInstance.setDescription('Attaching Device...');
     this.dialogRef.componentInstance.setCall('boot.attach', [entityForm.dev, payload]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogRef.close(true);
       this.dialogService.Info(helptext_system_bootenv.attach_dialog.title,
         `<i>${entityForm.dev}</i> ${helptext_system_bootenv.attach_dialog.message}`, '300px', 'info', true)
-        .subscribe(() => {
+        .pipe(untilDestroyed(this)).subscribe(() => {
           this.router.navigate(
             new Array('').concat('system', 'boot'),
           );
         });
     });
-    this.dialogRef.componentInstance.failure.subscribe((res: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.dialogRef.componentInstance.setDescription(res.error);
     });
   }

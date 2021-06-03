@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CoreEvent } from 'app/interfaces/events';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import {
@@ -16,29 +16,28 @@ import { LocalizationFormComponent } from './localization-form/localization-form
 import { GuiFormComponent } from './gui-form/gui-form.component';
 import { NTPServerFormComponent } from './ntpservers/ntpserver-form/ntpserver-form.component';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { Subscription, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { AdminLayoutComponent } from '../../../components/common/layouts/admin-layout/admin-layout.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-general-settings',
   templateUrl: './general-settings.component.html',
 })
-export class GeneralSettingsComponent implements OnInit, OnDestroy {
+export class GeneralSettingsComponent implements OnInit {
   dataCards: any[] = [];
   supportTitle = helptext.supportTitle;
   ntpTitle = helptext.ntpTitle;
   localeData: any;
   configData: any;
-  refreshCardData: Subscription;
   displayedColumns: any;
   dataSource: any;
-  refreshTable: Subscription;
-  getGenConfig: Subscription;
   formEvents: Subject<CoreEvent>;
 
   // Components included in this dashboard
@@ -119,16 +118,16 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getDataCardData();
-    this.refreshCardData = this.sysGeneralService.refreshSysGeneral$.subscribe(() => {
+    this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getDataCardData();
     });
     this.getNTPData();
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getNTPData();
     });
 
     this.formEvents = new Subject();
-    this.formEvents.subscribe((evt: CoreEvent) => {
+    this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       switch (evt.data.configFiles.value) {
         case 'save_config':
           this.dialog.dialogForm(this.saveConfigFormConf);
@@ -168,7 +167,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   }
 
   getDataCardData(): void {
-    this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       this.configData = res;
       this.dataCards = [
         {
@@ -193,8 +192,8 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
         },
       ];
 
-      this.sysGeneralService.languageChoices().subscribe((languages) => {
-        this.sysGeneralService.kbdMapChoices().subscribe((mapchoices) => {
+      this.sysGeneralService.languageChoices().pipe(untilDestroyed(this)).subscribe((languages) => {
+        this.sysGeneralService.kbdMapChoices().pipe(untilDestroyed(this)).subscribe((mapchoices) => {
           const keyboardMap = mapchoices.find((x) => x.value === this.configData.kbdmap);
           this.localeData = {
             title: helptext.localeTitle,
@@ -231,10 +230,10 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
 
   doNTPDelete(server: any): void {
     this.dialog.confirm(helptext.deleteServer.title, `${helptext.deleteServer.message} ${server.address}?`,
-      false, helptext.deleteServer.message).subscribe((res: boolean) => {
+      false, helptext.deleteServer.message).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         this.loader.open();
-        this.ws.call('system.ntpserver.delete', [server.id]).subscribe(() => {
+        this.ws.call('system.ntpserver.delete', [server.id]).pipe(untilDestroyed(this)).subscribe(() => {
           this.loader.close();
           this.getNTPData();
         }, (err) => {
@@ -246,7 +245,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   }
 
   getNTPData(): void {
-    this.ws.call('system.ntpserver.query').subscribe((res) => {
+    this.ws.call('system.ntpserver.query').pipe(untilDestroyed(this)).subscribe((res) => {
       this.dataSource = res;
       this.displayedColumns = ['address', 'burst', 'iburst', 'prefer', 'minpoll', 'maxpoll', 'actions'];
     });
@@ -255,7 +254,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   saveConfigSubmit(entityDialog: any): void {
     parent = entityDialog.parent;
     entityDialog.loader.open();
-    (entityDialog.ws as WebSocketService).call('system.info', []).subscribe((systemInfo) => {
+    (entityDialog.ws as WebSocketService).call('system.info', []).pipe(untilDestroyed(this)).subscribe((systemInfo) => {
       let fileName = '';
       let mimetype: string;
       if (systemInfo) {
@@ -272,10 +271,10 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
       }
 
       entityDialog.ws.call('core.download', ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName])
-        .subscribe(
+        .pipe(untilDestroyed(this)).subscribe(
           (download: any) => {
             const url = download[1];
-            entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype).subscribe((file: Blob) => {
+            entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file: Blob) => {
               entityDialog.loader.close();
               entityDialog.dialogRef.close();
               entityDialog.parent.storage.downloadBlob(file, fileName);
@@ -320,11 +319,11 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     }));
     formData.append('file', parent.subs.file);
     dialogRef.componentInstance.wspost(parent.subs.apiEndPoint, formData);
-    dialogRef.componentInstance.success.subscribe(() => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
       parent.router.navigate(['/others/reboot']);
     });
-    dialogRef.componentInstance.failure.subscribe((res: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }
@@ -332,11 +331,5 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   resetConfigSubmit(entityDialog: EntityDialogComponent): void {
     const parent = entityDialog.parent;
     parent.router.navigate(new Array('').concat(['others', 'config-reset']));
-  }
-
-  ngOnDestroy(): void {
-    this.refreshCardData.unsubscribe();
-    this.refreshTable.unsubscribe();
-    this.getGenConfig.unsubscribe();
   }
 }

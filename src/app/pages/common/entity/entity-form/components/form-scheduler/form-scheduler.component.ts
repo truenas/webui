@@ -4,7 +4,6 @@ import {
 } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
@@ -19,6 +18,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import { EntityUtils } from '../../../utils';
 import globalHelptext from '../../../../../../helptext/global-helptext';
 import { SystemGeneralService } from 'app/services';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface CronPreset {
   label: string;
@@ -26,6 +26,7 @@ interface CronPreset {
   description?: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'form-scheduler',
   templateUrl: './form-scheduler.component.html',
@@ -41,7 +42,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   helptext = globalHelptext;
   timezone: string;
   offset: string;
-  private getGenConfig: Subscription;
 
   @ViewChild('calendar', { static: false, read: ElementRef }) calendar: ElementRef;
   @ViewChild('calendar', { static: false }) calendarComp: MatMonthView<any>;
@@ -279,7 +279,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     // Set default value
     this._months = '*';
 
-    this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       this.timezone = res.timezone;
       moment.tz.setDefault(res.timezone);
 
@@ -295,7 +295,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   ngOnInit(): void {
     this.control = this.group.controls[this.config.name];
 
-    this.control.valueChanges.subscribe((evt: string) => {
+    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((evt: string) => {
       this.crontab = evt;
 
       const isPreset: boolean = this.presets.filter((preset) => evt == preset.value).length != 0;
@@ -756,9 +756,5 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
 
     return tempOffset;
-  }
-
-  ngOnDestroy(): void {
-    this.getGenConfig.unsubscribe();
   }
 }

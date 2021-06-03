@@ -10,7 +10,9 @@ import { EntityUtils } from '../../../../common/entity/utils';
 import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-iscsi-authorizedaccess-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -121,7 +123,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
     protected ws: WebSocketService) {}
 
   preInit(): void {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
         this.customFilter[0][0].push(parseInt(params['pk'], 10));
@@ -135,7 +137,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
     const peeruserFieldset = _.find(this.fieldSets, { class: 'peeruser' });
     const peersecretConfig = _.find(peeruserFieldset.config, { name: 'peersecret' });
 
-    entityForm.formGroup.controls['peeruser'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['peeruser'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res != '') {
         peersecretControl.setValidators([
           Validators.required,
@@ -153,7 +155,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
     });
 
     [secretControl, peersecretControl].forEach((ctrl, index) => {
-      ctrl.valueChanges.subscribe((res) => {
+      ctrl.valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
         let errors = ctrl.errors;
         const compartedCtrlName = index === 0 ? 'peersecret' : 'secret';
         const otherCtrl = entityForm.formGroup.controls[compartedCtrlName];
@@ -191,7 +193,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
 
   customEditCall(value: any): void {
     this.loader.open();
-    this.ws.call(this.editCall, [this.pk, value]).subscribe(
+    this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));

@@ -16,6 +16,7 @@ import helptext from '../../../../helptext/vm/devices/device-add-edit';
 import { CoreService } from 'app/core/services/core.service';
 import { DialogService } from '../../../../services/dialog.service';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface DisplayDeviceAttributes {
   bind: string;
@@ -36,6 +37,7 @@ interface Device {
   vm: number;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'app-device-edit',
   templateUrl: './device-edit.component.html',
@@ -361,7 +363,7 @@ export class DeviceEditComponent implements OnInit {
 
   preInit(): void {
     // Display
-    this.ws.call('vm.device.bind_choices').subscribe((res) => {
+    this.ws.call('vm.device.bind_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       if (res && Object.keys(res).length > 0) {
         this.ipAddress = _.find(this.displayFieldConfig, { name: 'bind' });
         Object.keys(res).forEach((address) => {
@@ -370,7 +372,7 @@ export class DeviceEditComponent implements OnInit {
       }
     });
 
-    this.ws.call('vm.resolution_choices').subscribe((res) => {
+    this.ws.call('vm.resolution_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       const resolution = _.find(this.displayFieldConfig, { name: 'resolution' });
       for (const key in res) {
         resolution.options.push({ label: key, value: res[key] });
@@ -378,7 +380,7 @@ export class DeviceEditComponent implements OnInit {
     });
 
     // nic
-    this.networkService.getVmNicChoices().subscribe((res) => {
+    this.networkService.getVmNicChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       this.nic_attach = _.find(this.nicFieldConfig, { name: 'nic_attach' });
       this.nic_attach.options = Object.keys(res || {}).map((nicId) => ({
         label: nicId,
@@ -392,7 +394,7 @@ export class DeviceEditComponent implements OnInit {
     });
 
     // pci
-    this.ws.call('vm.device.passthrough_device_choices').subscribe((res) => {
+    this.ws.call('vm.device.passthrough_device_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       this.pptdev = _.find(this.pciFieldConfig, { name: 'pptdev' });
       this.pptdev.options = Object.keys(res || {}).map((pptdevId) => ({
         label: pptdevId,
@@ -412,7 +414,7 @@ export class DeviceEditComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.preInit();
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.deviceid = parseInt(params['pk'], 10);
       this.vmname = params['name'];
       this.vmId = params['vmid'];
@@ -451,7 +453,7 @@ export class DeviceEditComponent implements OnInit {
     this.displayFormGroup = this.entityFormService.createFormGroup(this.displayFieldConfig);
 
     this.activeFormGroup = this.cdromFormGroup;
-    await this.ws.call('vm.device.query', [[['id', '=', this.deviceid]]]).subscribe((device) => {
+    await this.ws.call('vm.device.query', [[['id', '=', this.deviceid]]]).pipe(untilDestroyed(this)).subscribe((device) => {
       if (device[0].attributes.physical_sectorsize !== undefined && device[0].attributes.logical_sectorsize !== undefined) {
         device[0].attributes['sectorsize'] = device[0].attributes.logical_sectorsize === null ? 0 : device[0].attributes.logical_sectorsize;
       }
@@ -490,7 +492,7 @@ export class DeviceEditComponent implements OnInit {
         case VmDeviceType.Display:
           this.activeFormGroup = this.displayFormGroup;
           this.isCustActionVisible = false;
-          this.ws.call('vm.get_display_devices', [this.vmId]).subscribe((devices: Device[]) => {
+          this.ws.call('vm.get_display_devices', [this.vmId]).pipe(untilDestroyed(this)).subscribe((devices: Device[]) => {
             if (devices.length > 1) {
               _.find(this.displayFieldConfig, { name: 'type' }).isHidden = true;
             }
@@ -502,8 +504,8 @@ export class DeviceEditComponent implements OnInit {
 
       this.setgetValues(this.activeFormGroup, deviceInformation);
     });
-    this.aroute.params.subscribe((params) => {
-      this.ws.call('vm.query', [[['id', '=', parseInt(params['vmid'], 10)]]]).subscribe((vms) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
+      this.ws.call('vm.query', [[['id', '=', parseInt(params['vmid'], 10)]]]).pipe(untilDestroyed(this)).subscribe((vms) => {
         if (vms[0].status.state === ServiceStatus.Running) {
           this.activeFormGroup.setErrors({ invalid: true });
         }
@@ -518,7 +520,7 @@ export class DeviceEditComponent implements OnInit {
   }
 
   afterInit(): void {
-    this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]], { extra: { properties: ['id'] } }]).subscribe((zvols) => {
+    this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]], { extra: { properties: ['id'] } }]).pipe(untilDestroyed(this)).subscribe((zvols) => {
       zvols.forEach((zvol) => {
         _.find(this.diskFieldConfig, { name: 'path' }).options.push(
           {
@@ -533,7 +535,7 @@ export class DeviceEditComponent implements OnInit {
         id: 'generate_mac_address',
         name: T('Generate MAC Address'),
         function: () => {
-          this.ws.call('vm.random_mac').subscribe((random_mac) => {
+          this.ws.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((random_mac) => {
             this.nicFormGroup.controls['mac'].setValue(random_mac);
           });
         },
@@ -546,7 +548,7 @@ export class DeviceEditComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       const deviceValue = _.cloneDeep(this.activeFormGroup.value);
       const deviceOrder = deviceValue['order'];
       delete deviceValue.order;
@@ -560,7 +562,7 @@ export class DeviceEditComponent implements OnInit {
       };
 
       this.loader.open();
-      this.ws.call(this.updateCall, [params.pk, payload]).subscribe(() => {
+      this.ws.call(this.updateCall, [params.pk, payload]).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },

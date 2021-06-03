@@ -21,7 +21,9 @@ import helptext from '../../../../helptext/vm/devices/device-add-edit';
 import { ModalService } from 'app/services/modal.service';
 import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard';
 import { CoreService } from 'app/core/services/core.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-device-add',
   templateUrl: './device-add.component.html',
@@ -346,7 +348,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
   preInit(): void {
     // Display
-    this.ws.call('vm.device.bind_choices').subscribe((res) => {
+    this.ws.call('vm.device.bind_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       if (res && Object.keys(res).length > 0) {
         this.ipAddress = _.find(this.displayFieldConfig, { name: 'bind' });
         Object.keys(res).forEach((address) => {
@@ -355,7 +357,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.ws.call('vm.resolution_choices').subscribe((res) => {
+    this.ws.call('vm.resolution_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       const resolution = _.find(this.displayFieldConfig, { name: 'resolution' });
       for (const key in res) {
         resolution.options.push({ label: key, value: res[key] });
@@ -363,7 +365,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       this.displayFormGroup.controls['resolution'].setValue(res[Object.keys(res)[0]]);
     });
 
-    this.ws.call('vm.get_display_devices', [this.vmid]).subscribe((devices) => {
+    this.ws.call('vm.get_display_devices', [this.vmid]).pipe(untilDestroyed(this)).subscribe((devices) => {
       if (devices.length > 1) {
         this.fieldConfig[0].options.splice(this.fieldConfig[0].options.findIndex((option) => option.value === VmDeviceType.Display));
       }
@@ -371,7 +373,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       new EntityUtils().handleWSError(this, err, this.dialogService);
     });
 
-    this.core.register({ observerClass: this, eventName: 'zvolCreated' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'zvolCreated' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const newZvol = {
         label: evt.data.id, value: '/dev/zvol/' + evt.data.id,
       };
@@ -381,7 +383,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       this.diskFormGroup.controls['path'].setValue(newZvol.value);
     });
     // nic
-    this.networkService.getVmNicChoices().subscribe((res) => {
+    this.networkService.getVmNicChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       this.nic_attach = _.find(this.nicFieldConfig, { name: 'nic_attach' });
       this.nic_attach.options = Object.keys(res || {}).map((nicId) => ({
         label: nicId,
@@ -395,7 +397,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     });
 
     // pci
-    this.ws.call('vm.device.passthrough_device_choices').subscribe((res) => {
+    this.ws.call('vm.device.passthrough_device_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       this.pptdev = _.find(this.pciFieldConfig, { name: 'pptdev' });
       this.pptdev.options = Object.keys(res || {}).map((pptdevId) => ({
         label: pptdevId,
@@ -405,7 +407,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.vmid = params['pk'];
       this.vmname = params['name'];
       this.route_success = ['vm', String(this.vmid), 'devices', this.vmname];
@@ -443,13 +445,13 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.displayFormGroup = this.entityFormService.createFormGroup(this.displayFieldConfig);
 
     this.activeFormGroup = this.cdromFormGroup;
-    this.diskFormGroup.controls['path'].valueChanges.subscribe((res: string) => {
+    this.diskFormGroup.controls['path'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       if (res === 'new') {
         this.diskFormGroup.controls['path'].setValue('');
         this.addZvol();
       }
     });
-    this.formGroup.controls['dtype'].valueChanges.subscribe((deviceType: VmDeviceType) => {
+    this.formGroup.controls['dtype'].valueChanges.pipe(untilDestroyed(this)).subscribe((deviceType: VmDeviceType) => {
       this.selectedType = deviceType;
       switch (deviceType) {
         case VmDeviceType.Cdrom:
@@ -491,7 +493,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   }
 
   async afterInit(): Promise<void> {
-    this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]]]).subscribe((zvols) => {
+    this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
       zvols.forEach((zvol) => {
         _.find(this.diskFieldConfig, { name: 'path' }).options.push(
           {
@@ -504,7 +506,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       });
     });
     // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing Display device, hide Display option.
-    await this.ws.call('vm.query', [[['id', '=', this.vmid]]]).subscribe((vm) => {
+    await this.ws.call('vm.query', [[['id', '=', this.vmid]]]).pipe(untilDestroyed(this)).subscribe((vm) => {
       const dtypeField = _.find(this.fieldConfig, { name: 'dtype' });
       const vmDisplayDevices = _.filter(vm[0].devices, { dtype: VmDeviceType.Display });
       if (vm[0].bootloader === VmBootloader.Grub || vm[0].bootloader === VmBootloader.UefiCsm || vmDisplayDevices) {
@@ -551,7 +553,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     this.error = '';
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       const device = _.cloneDeep(this.formGroup.value);
       const deviceValue = _.cloneDeep(this.activeFormGroup.value);
       const deviceOrder = deviceValue['order'];
@@ -569,7 +571,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       };
 
       this.loader.open();
-      this.ws.call(this.addCall, [payload]).subscribe(() => {
+      this.ws.call(this.addCall, [payload]).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },
@@ -586,7 +588,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   }
 
   updateZvolSearchOptions(value = '', parent: any): void {
-    (parent.ws as WebSocketService).call('pool.dataset.query', [[['type', '=', DatasetType.Volume], ['id', '^', value]]]).subscribe((zvols) => {
+    (parent.ws as WebSocketService).call('pool.dataset.query', [[['type', '=', DatasetType.Volume], ['id', '^', value]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
       const searchedZvols = [];
       zvols.forEach((zvol) => {
         searchedZvols.push(
@@ -607,7 +609,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   }
 
   private generateRandomMac(): void {
-    this.ws.call('vm.random_mac').subscribe((randomMac) => {
+    this.ws.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((randomMac) => {
       this.nicFormGroup.controls['mac'].setValue(randomMac);
     });
   }

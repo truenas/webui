@@ -7,7 +7,9 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import helptext from '../../../../helptext/services/components/service-tftp';
 import { RestService, UserService, WebSocketService } from '../../../../services';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'tftp-edit',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -111,7 +113,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
   }
 
   preInit(): void {
-    this.userService.userQueryDSCache().subscribe((items) => {
+    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -128,7 +130,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
   }
 
   updateUserSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
+    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });

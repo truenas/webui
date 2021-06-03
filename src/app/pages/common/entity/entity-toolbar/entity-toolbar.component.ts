@@ -13,7 +13,9 @@ import { Subject } from 'rxjs';
 import { Control } from './models/control.interface';
 import { ToolbarConfig } from './models/control-config.interface';
 import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'entity-toolbar',
   templateUrl: './entity-toolbar.component.html',
@@ -33,7 +35,7 @@ export class EntityToolbarComponent implements OnChanges, GlobalAction {
   }
 
   init(): void {
-    this.controller.subscribe((evt: Control) => {
+    this.controller.pipe(untilDestroyed(this)).subscribe((evt: Control) => {
       const clone = Object.assign([], this.values);
       clone[evt.name] = evt.value;
       this.values = clone;
@@ -41,7 +43,7 @@ export class EntityToolbarComponent implements OnChanges, GlobalAction {
       this.config.target.next({ name: 'ToolbarChanged', data: clone });
     });
 
-    this.config.target.subscribe((evt: CoreEvent) => {
+    this.config.target.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       switch (evt.name) {
         case 'Refresh':
           // The parent can ping toolbar for latest values

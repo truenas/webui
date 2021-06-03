@@ -4,7 +4,9 @@ import {
   animate, state, style, transition, trigger,
 } from '@angular/animations';
 import { WebSocketService } from '../../../../services';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-directory-services-monitor',
   templateUrl: './directory-services-monitor.component.html',
@@ -32,7 +34,7 @@ export class DirectoryServicesMonitorComponent implements OnInit {
   getStatus(): void {
     const tempArray: any[] = [];
     this.showSpinner = true;
-    this.ws.call('directoryservices.get_state').subscribe((res) => {
+    this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((res) => {
       this.showSpinner = false;
       tempArray.push({ name: 'Active Directory', state: res.activedirectory, id: 'activedirectory' });
       tempArray.push({ name: 'LDAP', state: res.ldap, id: 'ldap' });

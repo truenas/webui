@@ -20,8 +20,10 @@ import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/di
 import helptext from '../../../../helptext/storage/disks/disks';
 import { EntityUtils } from '../../../common/entity/utils';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as filesize from 'filesize';
 
+@UntilDestroy()
 @Component({
   selector: 'disk-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -129,10 +131,10 @@ export class DiskListComponent implements EntityTableConfig {
     private dialog: MatDialog,
     private core: CoreService,
   ) {
-    this.ws.call('disk.get_unused', []).subscribe((unused_res) => {
+    this.ws.call('disk.get_unused', []).pipe(untilDestroyed(this)).subscribe((unused_res) => {
       this.unused = unused_res;
     }, (err) => new EntityUtils().handleWSError(this, err));
-    this.ws.call('smart.test.disk_choices').subscribe((res) => this.SMARTdiskChoices = res, (err) => new EntityUtils().handleWSError(this, err));
+    this.ws.call('smart.test.disk_choices').pipe(untilDestroyed(this)).subscribe((res) => this.SMARTdiskChoices = res, (err) => new EntityUtils().handleWSError(this, err));
   }
 
   getActions(parentRow: any): EntityTableAction[] {
@@ -220,14 +222,14 @@ export class DiskListComponent implements EntityTableConfig {
               self.dialogService.confirm(
                 helptext.diskWipeDialogForm.title + row.name,
                 helptext.diskWipeDialogForm.confirmContent,
-              ).subscribe((res: boolean) => {
+              ).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
                 if (res) {
                   const dialogRef = self.dialog.open(EntityJobComponent, { data: { title: helptext.diskWipeDialogForm.title + row.name } });
                   dialogRef.componentInstance.setDescription(helptext.diskWipeDialogForm.startDescription);
                   dialogRef.componentInstance.setCall('disk.wipe', [entityDialogForm.formValue.disk_name, entityDialogForm.formValue.wipe_method]);
                   dialogRef.componentInstance.submit();
 
-                  dialogRef.componentInstance.success.subscribe(() => {
+                  dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
                     if (dialogRef.componentInstance) {
                       dialogRef.close(true);
                       self.dialogService.generalDialog({
@@ -237,10 +239,10 @@ export class DiskListComponent implements EntityTableConfig {
                       });
                     }
                   });
-                  dialogRef.componentInstance.failure.subscribe((wipeRes: any) => {
+                  dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((wipeRes: any) => {
                     dialogRef.componentInstance.setDescription(wipeRes.error);
                   });
-                  dialogRef.componentInstance.aborted.subscribe(() => {
+                  dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
                     dialogRef.close(true);
                   });
                   entityDialogForm.dialogRef.close(true);
@@ -270,7 +272,7 @@ export class DiskListComponent implements EntityTableConfig {
     this.core.register({
       observerClass: this,
       eventName: 'DisksChanged',
-    }).subscribe((evt: CoreEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt) {
         (entityList as any).needTableResize = false;
         entityList.getData();
@@ -328,7 +330,7 @@ export class DiskListComponent implements EntityTableConfig {
           (item as any)['type'] = entityDialog.formValue.type;
         });
 
-        parent.ws.call('smart.test.manual_test', [disksIdentifier]).subscribe(
+        parent.ws.call('smart.test.manual_test', [disksIdentifier]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             entityDialog.dialogRef.close(true);
             parent.generateManualTestSummary(res);

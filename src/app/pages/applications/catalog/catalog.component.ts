@@ -10,7 +10,7 @@ import {
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core.service';
 
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
@@ -26,7 +26,10 @@ import { ChartWizardComponent } from '../forms/chart-wizard.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from '../../../helptext/apps/apps';
 import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
 
+@UntilDestroy()
 @Component({
   selector: 'app-catalog',
   templateUrl: './catalog.component.html',
@@ -46,9 +49,16 @@ export class CatalogComponent implements OnInit {
   private kubernetesForm: KubernetesSettingsComponent;
   private chartReleaseForm: ChartReleaseAddComponent;
   private chartWizardComponent: ChartWizardComponent;
-  private refreshForm: Subscription;
+
   protected utils: CommonUtils;
   imagePlaceholder = appImagePlaceholder;
+  private noAvailableCatalog = true;
+  isLoading = false;
+  emptyPageConf: EmptyConfig = {
+    type: EmptyType.loading,
+    large: true,
+    title: helptext.catalogMessage.loading,
+  };
 
   choosePool: DialogFormConfiguration = {
     title: helptext.choosePool.title,
@@ -83,49 +93,89 @@ export class CatalogComponent implements OnInit {
     this.loadCatalogs();
     this.checkForConfiguredPool();
     this.refreshForms();
-    this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
+    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshForms();
     });
   }
 
   loadCatalogs(): void {
-    this.appService.getAllCatalogItems().subscribe((catalogs) => {
-      this.catalogNames = [];
-      this.catalogApps = [];
-      catalogs.forEach((catalog) => {
-        this.catalogNames.push(catalog.label);
-        catalog.preferred_trains.forEach((train) => {
-          for (const i in catalog.trains[train]) {
-            const item = catalog.trains[train][i];
-            const versions = item.versions;
-            const versionKeys = Object.keys(versions).filter((versionKey) => versions[versionKey].healthy);
+    this.catalogNames = [];
+    this.catalogApps = [];
+    this.isLoading = true;
+    this.showLoadStatus(EmptyType.loading);
 
-            const latest = versionKeys.sort(this.utils.versionCompare)[0];
-            const latestDetails = versions[latest];
+    this.appService.getAllCatalogItems().pipe(untilDestroyed(this)).subscribe((catalogs) => {
+      this.noAvailableCatalog = true;
+      for (let i = 0; i < catalogs.length; i++) {
+        const catalog = catalogs[i];
 
-            const catalogItem = {
-              name: item.name,
-              catalog: {
-                id: catalog.id,
-                label: catalog.label,
-                train,
-              },
-              icon_url: item.icon_url ? item.icon_url : '/assets/images/ix-original.png',
-              latest_version: latestDetails?.human_version,
-              info: latestDetails?.app_readme,
-              categories: item.categories,
-              healthy: item.healthy,
-              healthy_error: item.healthy_error,
-              versions: item.versions,
-              schema: latestDetails?.schema,
-            };
-            this.catalogApps.push(catalogItem);
-          }
-        });
-      });
+        if (!catalog.error) {
+          this.noAvailableCatalog = false;
+          this.catalogNames.push(catalog.label);
+          catalog.preferred_trains.forEach((train) => {
+            for (const i in catalog.trains[train]) {
+              const item = catalog.trains[train][i];
+              const versions = item.versions;
+              const versionKeys = Object.keys(versions).filter((versionKey) => versions[versionKey].healthy);
+
+              const latest = versionKeys.sort(this.utils.versionCompare)[0];
+              const latestDetails = versions[latest];
+
+              const catalogItem = {
+                name: item.name,
+                catalog: {
+                  id: catalog.id,
+                  label: catalog.label,
+                  train,
+                },
+                icon_url: item.icon_url ? item.icon_url : '/assets/images/ix-original.png',
+                latest_version: latestDetails?.human_version,
+                info: latestDetails?.app_readme,
+                categories: item.categories,
+                healthy: item.healthy,
+                healthy_error: item.healthy_error,
+                versions: item.versions,
+                schema: latestDetails?.schema,
+              };
+              this.catalogApps.push(catalogItem);
+            }
+          });
+        }
+      }
+
       this.refreshToolbarMenus();
       this.filterApps();
+      this.isLoading = false;
     });
+  }
+
+  showLoadStatus(type: EmptyType): void {
+    let title = '';
+    let message;
+
+    if (this.isLoading) {
+      type = EmptyType.loading;
+    }
+
+    switch (type) {
+      case EmptyType.loading:
+        title = helptext.catalogMessage.loading;
+        break;
+      case EmptyType.no_page_data:
+        if (this.noAvailableCatalog) {
+          title = helptext.catalogMessage.no_catalog;
+        } else {
+          title = helptext.catalogMessage.no_application;
+        }
+        break;
+      case EmptyType.no_search_results:
+        title = helptext.catalogMessage.no_search_result;
+        break;
+    }
+
+    this.emptyPageConf.type = type;
+    this.emptyPageConf.title = title;
+    this.emptyPageConf.message = message;
   }
 
   onToolbarAction(evt: CoreEvent): void {
@@ -165,7 +215,7 @@ export class CatalogComponent implements OnInit {
   }
 
   checkForConfiguredPool(): void {
-    this.appService.getKubernetesConfig().subscribe((config) => {
+    this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
       if (!config.pool) {
         this.selectPool();
       } else {
@@ -176,14 +226,14 @@ export class CatalogComponent implements OnInit {
   }
 
   selectPool(): void {
-    this.appService.getPoolList().subscribe((pools) => {
+    this.appService.getPoolList().pipe(untilDestroyed(this)).subscribe((pools) => {
       if (pools.length === 0) {
         this.dialogService.confirm({
           title: helptext.noPool.title,
           message: helptext.noPool.message,
           hideCheckBox: true,
           buttonMsg: helptext.noPool.action,
-        }).subscribe((confirmed) => {
+        }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
           if (!confirmed) {
             return;
           }
@@ -211,7 +261,7 @@ export class CatalogComponent implements OnInit {
       message: helptext.choosePool.unsetPool.confirm.message,
       hideCheckBox: true,
       buttonMsg: helptext.choosePool.unsetPool.confirm.button,
-    }).subscribe((confirmed) => {
+    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
       if (!confirmed) {
         return;
       }
@@ -224,17 +274,17 @@ export class CatalogComponent implements OnInit {
       });
       dialogRef.componentInstance.setCall('kubernetes.update', [{ pool: null }]);
       dialogRef.componentInstance.submit();
-      dialogRef.componentInstance.success.subscribe(() => {
+      dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.dialogService.closeAllDialogs();
         this.selectedPool = null;
         this.refreshToolbarMenus();
-        this.translate.get(helptext.choosePool.unsetPool.label).subscribe((msg) => {
+        this.translate.get(helptext.choosePool.unsetPool.label).pipe(untilDestroyed(this)).subscribe((msg) => {
           this.dialogService.Info(helptext.choosePool.success, msg,
             '500px', 'info', true);
         });
       });
 
-      dialogRef.componentInstance.failure.subscribe((err: any) => {
+      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
         new EntityUtils().handleWSError(self, err, this.dialogService);
       });
     });
@@ -252,16 +302,16 @@ export class CatalogComponent implements OnInit {
     });
     dialogRef.componentInstance.setCall('kubernetes.update', [{ pool }]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
       self.selectedPool = pool;
       self.refreshToolbarMenus();
       self.dialogService.closeAllDialogs();
-      self.translate.get(helptext.choosePool.message).subscribe((msg: string) => {
+      self.translate.get(helptext.choosePool.message).pipe(untilDestroyed(this)).subscribe((msg: string) => {
         self.dialogService.Info(helptext.choosePool.success, msg + res.result.pool,
           '500px', 'info', true);
       });
     });
-    dialogRef.componentInstance.failure.subscribe((err: string) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: string) => {
       new EntityUtils().handleWSError(self, err, self.dialogService);
     });
   }
@@ -289,6 +339,14 @@ export class CatalogComponent implements OnInit {
 
     this.filteredCatalogApps = this.filteredCatalogApps.filter((app) =>
       this.filteredCatalogNames.includes(app.catalog.label) && app.name !== ixChartApp);
+
+    if (this.filteredCatalogApps.length == 0) {
+      if (this.filterString) {
+        this.showLoadStatus(EmptyType.no_search_results);
+      } else {
+        this.showLoadStatus(EmptyType.no_page_data);
+      }
+    }
   }
 
   showSummaryDialog(name: string, catalog = officialCatalog, train = chartsTrain): void {
@@ -313,7 +371,7 @@ export class CatalogComponent implements OnInit {
     });
     dialogRef.componentInstance.setCall('catalog.sync_all');
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe(() => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.loadCatalogs();
     });

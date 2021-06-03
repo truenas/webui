@@ -6,7 +6,9 @@ import * as _ from 'lodash';
 import { map, switchMap } from 'rxjs/operators';
 
 import { WebSocketService } from './ws.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Injectable()
 export class LanguageService {
   currentLanguage: string = null;
@@ -394,7 +396,7 @@ export class LanguageService {
 
   setMiddlewareLanguage(lang: any): void {
     this.ws.call(this.updateCall,
-      [{ language: lang }]).subscribe(
+      [{ language: lang }]).pipe(untilDestroyed(this)).subscribe(
       () => {},
       (err) => {
         console.error(err);

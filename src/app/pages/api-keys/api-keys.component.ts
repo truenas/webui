@@ -9,7 +9,9 @@ import { LocaleService } from '../../services/locale.service';
 import helptext from '../../helptext/api-keys';
 import { ConfirmDialog } from '../common/confirm-dialog/confirm-dialog.component';
 import { EntityUtils } from '../common/entity/utils';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-api-keys',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -112,7 +114,7 @@ export class ApiKeysComponent implements EntityTableConfig {
   doSubmit(entityDialogForm: any): void {
     const that = entityDialogForm.parent;
     if (that.currItem) {
-      that.ws.call(that.editCall, [that.currItem.id, entityDialogForm.formValue]).subscribe(
+      that.ws.call(that.editCall, [that.currItem.id, entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
         (res: any) => {
           entityDialogForm.dialogRef.close(true);
           if (res.key) {
@@ -125,7 +127,7 @@ export class ApiKeysComponent implements EntityTableConfig {
         },
       );
     } else {
-      that.ws.call(that.addCall, [entityDialogForm.formValue]).subscribe(
+      that.ws.call(that.addCall, [entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
         (res: any) => {
           entityDialogForm.dialogRef.close(true);
           that.displayKey(res.key);

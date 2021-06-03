@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Subscription } from 'rxjs';
@@ -13,7 +14,9 @@ import { WebSocketService, DialogService, StorageService } from '../../../../ser
 import { ModalService } from 'app/services/modal.service';
 import { atLeastOne } from 'app/pages/common/entity/entity-form/validators/at-least-one-validation';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-ssh-keypairs-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -108,7 +111,7 @@ export class SshKeypairsFormComponent implements FormConfiguration {
 
   constructor(private aroute: ActivatedRoute, private ws: WebSocketService, private loader: AppLoaderService,
     private dialogService: DialogService, private storage: StorageService, private modalService: ModalService) {
-    this.getRow = this.modalService.getRow$.subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
       this.rowNum = rowId;
       this.getRow.unsubscribe();
     });
@@ -137,17 +140,15 @@ export class SshKeypairsFormComponent implements FormConfiguration {
     this.clearPreviousErrors();
     const elements = document.getElementsByTagName('mat-error');
     while (elements[0]) elements[0].parentNode.removeChild(elements[0]);
-    this.ws.call('keychaincredential.generate_ssh_key_pair').subscribe(
-      (res) => {
-        this.loader.close();
-        this.entityForm.formGroup.controls['private_key'].setValue(res.private_key);
-        this.entityForm.formGroup.controls['public_key'].setValue(res.public_key);
-      },
-      (err) => {
-        this.loader.close();
-        new EntityUtils().handleWSError(this, err, this.dialogService);
-      },
-    );
+    this.ws.call('keychaincredential.generate_ssh_key_pair').pipe(untilDestroyed(this)).subscribe((keyPair) => {
+      this.loader.close();
+      this.entityForm.formGroup.controls['private_key'].setValue(keyPair.private_key);
+      this.entityForm.formGroup.controls['public_key'].setValue(keyPair.public_key);
+    },
+    (err) => {
+      this.loader.close();
+      new EntityUtils().handleWSError(this, err, this.dialogService);
+    });
   }
 
   downloadKey(key_type: any): void {
@@ -161,10 +162,10 @@ export class SshKeypairsFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
-    this.entityForm.formGroup.controls['private_key'].valueChanges.subscribe(() => {
+    this.entityForm.formGroup.controls['private_key'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.clearPreviousErrors();
     });
-    this.entityForm.formGroup.controls['public_key'].valueChanges.subscribe(() => {
+    this.entityForm.formGroup.controls['public_key'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.clearPreviousErrors();
     });
   }
@@ -188,7 +189,7 @@ export class SshKeypairsFormComponent implements FormConfiguration {
     }
     delete data['key_instructions'];
     if (this.entityForm.isNew) {
-      data['type'] = 'SSH_KEY_PAIR';
+      data['type'] = KeychainCredentialType.SshKeyPair;
     }
 
     data['attributes'] = {

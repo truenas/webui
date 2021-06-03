@@ -15,6 +15,7 @@ import {
   tween,
   styler,
 } from 'popmotion';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface NetTraffic {
   sent: string;
@@ -33,6 +34,7 @@ interface Slide {
   index?: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'widget-nic',
   templateUrl: './widgetnic.component.html',
@@ -100,7 +102,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   }
 
   ngAfterViewInit(): void {
-    this.stats.subscribe((evt: CoreEvent) => {
+    this.stats.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.name == 'NetTraffic_' + this.nicState.name) {
         const sent: Converted = this.convert(evt.data.sent_bytes_rate);
         const received: Converted = this.convert(evt.data.received_bytes_rate);
@@ -144,7 +146,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     this.title = this.currentSlide == '0' ? 'Interface' : this.nicState.name;
   }
 
-  vlanAliases(vlanIndex: string|number): any[] {
+  vlanAliases(vlanIndex: string | number): any[] {
     if (typeof vlanIndex == 'string') { vlanIndex = parseInt(vlanIndex); }
     const vlan = this.nicState.vlans[vlanIndex];
     return vlan.aliases.filter((item: any) =>

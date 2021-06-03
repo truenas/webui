@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { ProductType } from '../../../enums/product-type.enum';
 import { WebSocketService, SystemGeneralService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -8,7 +7,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from '../../../services/dialog.service';
 import { MatDialog } from '@angular/material/dialog';
 import { LocaleService } from 'app/services/locale.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'system-failover',
   templateUrl: './failover.component.html',
@@ -17,7 +18,6 @@ import { LocaleService } from 'app/services/locale.service';
 export class FailoverComponent implements OnInit {
   product_type: ProductType;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
-  private getProdType: Subscription;
 
   readonly ProductType = ProductType;
 
@@ -26,9 +26,8 @@ export class FailoverComponent implements OnInit {
     protected dialogService: DialogService, protected dialog: MatDialog,
     private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
     this.ws = ws;
-    this.getProdType = this.sysGeneralService.getProductType.subscribe((res) => {
+    this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
       this.product_type = res as ProductType;
-      this.getProdType.unsubscribe();
     });
   }
 
@@ -48,9 +47,9 @@ export class FailoverComponent implements OnInit {
     this.product_type = window.localStorage.getItem('product_type') as ProductType;
 
     this.dialog.closeAll();
-    this.ws.call('failover.force_master', {}).subscribe(
+    this.ws.call('failover.force_master', {}).pipe(untilDestroyed(this)).subscribe(
       (res) => { // error on reboot
-        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted).subscribe(() => {
+        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted).pipe(untilDestroyed(this)).subscribe(() => {
           this.router.navigate(['/session/signin']);
         });
       },

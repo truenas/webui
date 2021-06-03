@@ -11,7 +11,9 @@ import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autoc
 import { fromEvent } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'form-combobox',
   styleUrls: ['form-combobox.component.scss', '../dynamic-field/dynamic-field.scss'],
@@ -65,7 +67,7 @@ export class FormComboboxComponent implements Field {
             map(() => this.autoCompleteRef.panel.nativeElement.scrollTop),
             takeUntil(this.autocompleteTrigger.panelClosingActions),
           )
-          .subscribe(() => {
+          .pipe(untilDestroyed(this)).subscribe(() => {
             const scrollTop = this.autoCompleteRef.panel.nativeElement
               .scrollTop;
             const scrollHeight = this.autoCompleteRef.panel.nativeElement
@@ -86,7 +88,7 @@ export class FormComboboxComponent implements Field {
       const menuPanel = this.menuRef ? document.getElementById(this.menuRef.panelId) : undefined;
       if (menuPanel) {
         fromEvent(menuPanel, 'scroll')
-          .subscribe(() => {
+          .pipe(untilDestroyed(this)).subscribe(() => {
             const scrollTop = menuPanel.scrollTop;
             const scrollHeight = menuPanel.scrollHeight;
             const elementHeight = menuPanel.clientHeight;

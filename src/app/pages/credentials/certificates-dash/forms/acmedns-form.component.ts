@@ -10,7 +10,9 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { helptext_system_acme as helptext, helptext_system_acme } from 'app/helptext/system/acme';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-acmedns-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -37,12 +39,12 @@ export class AcmednsFormComponent implements FormConfiguration {
     protected dialog: DialogService,
     private modalService: ModalService,
   ) {
-    this.getRow = this.modalService.getRow$.subscribe((rowId: number) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.rowNum = rowId;
       this.queryCallOption = [['id', '=', rowId]];
       this.getRow.unsubscribe();
     });
-    this.ws.call('acme.dns.authenticator.authenticator_schemas').subscribe((schemas) => {
+    this.ws.call('acme.dns.authenticator.authenticator_schemas').pipe(untilDestroyed(this)).subscribe((schemas) => {
       const authenticatorConfig: FieldConfig = {
         type: 'select',
         name: 'authenticator',

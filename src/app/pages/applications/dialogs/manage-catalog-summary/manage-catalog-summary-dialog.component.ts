@@ -6,14 +6,15 @@ import { ApplicationsService } from '../../applications.service';
 import helptext from '../../../../helptext/apps/apps';
 import { LocaleService } from 'app/services/locale.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'manage-catalog-summary-dialog',
   styleUrls: ['./manage-catalog-summary-dialog.component.scss'],
   templateUrl: './manage-catalog-summary-dialog.component.html',
   encapsulation: ViewEncapsulation.None,
 })
-
 export class ManageCatalogSummaryDialog implements OnInit {
   catalog: any;
   statusOptions: string[] = ['All', 'Healthy', 'Unhealthy'];
@@ -35,7 +36,7 @@ export class ManageCatalogSummaryDialog implements OnInit {
   }
 
   ngOnInit(): void {
-    this.appService.getCatItems(this.catalog.label).subscribe((evt) => {
+    this.appService.getCatItems(this.catalog.label).pipe(untilDestroyed(this)).subscribe((evt) => {
       this.catalogItems = [];
       this.trainOptions = ['All'];
       Object.keys(evt).forEach((trainKey) => {

@@ -13,7 +13,9 @@ import helptext from '../../../helptext/apps/apps';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { PullImageFormComponent } from '../forms/pull-image-form.component';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-docker-images',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -68,7 +70,7 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit, OnDestr
   ngOnInit(): void {
     this.refreshUserForm();
 
-    this.modalService.refreshForm$.subscribe(() => {
+    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshUserForm();
     });
   }
@@ -168,7 +170,7 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit, OnDestr
     });
     self.dialogRef.componentInstance.setCall('container.image.pull', payload);
     self.dialogRef.componentInstance.submit();
-    self.dialogRef.componentInstance.success.subscribe(() => {
+    self.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       self.dialogService.closeAllDialogs();
       self.modalService.refreshTable();
     });

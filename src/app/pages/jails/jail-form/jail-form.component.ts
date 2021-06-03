@@ -21,7 +21,9 @@ import { forbiddenValues } from '../../common/entity/entity-form/validators/forb
 import helptext from '../../../helptext/jails/jail-configuration';
 import { T } from '../../../translate-marker';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-jail-form',
   templateUrl: './jail-form.component.html',
@@ -863,7 +865,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     protected networkService: NetworkService) { }
 
   getReleaseAndInterface(): void {
-    this.jailService.getInterfaceChoice().subscribe(
+    this.jailService.getInterfaceChoice().pipe(untilDestroyed(this)).subscribe(
       (res) => {
         for (const i in res) {
           this.interfaces.vnetDisabled.push({ label: res[i], value: i });
@@ -878,7 +880,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     if (this.plugin === undefined) {
       this.template_list = new Array<string>();
       // get jail templates as release options
-      this.jailService.getTemplates().subscribe(
+      this.jailService.getTemplates().pipe(untilDestroyed(this)).subscribe(
         (templates) => {
           for (const template of templates) {
             this.template_list.push(template.host_hostuuid);
@@ -890,7 +892,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
         },
       );
 
-      this.jailService.getReleaseChoices().subscribe(
+      this.jailService.getReleaseChoices().pipe(untilDestroyed(this)).subscribe(
         (releases) => {
           for (const item in releases) {
             this.releaseField.options.push({ label: item, value: releases[item] });
@@ -905,11 +907,11 @@ export class JailFormComponent implements OnInit, AfterViewInit {
 
   setValuechange(): void {
     const httpsField = _.find(this.formFields, { name: 'https' });
-    this.formGroup.controls['release'].valueChanges.subscribe((res: any) => {
+    this.formGroup.controls['release'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       httpsField.isHidden = !(_.indexOf(this.unfetchedRelease, res) > -1);
     });
 
-    this.formGroup.controls['dhcp'].valueChanges.subscribe((res: any) => {
+    this.formGroup.controls['dhcp'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       ['vnet', 'bpf'].forEach((item) => {
         if (res) {
           this.formGroup.controls[item].setValue(res);
@@ -922,14 +924,14 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     });
 
     const vnetFieldConfig = _.find(this.basicfieldConfig, { name: 'vnet' });
-    this.formGroup.controls['nat'].valueChanges.subscribe((res: any) => {
+    this.formGroup.controls['nat'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res) {
         this.formGroup.controls['vnet'].setValue(res);
       }
       vnetFieldConfig.required = res;
     });
 
-    this.formGroup.controls['vnet'].valueChanges.subscribe((res: any) => {
+    this.formGroup.controls['vnet'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       const hasError = !!((!res && (
         (this.formGroup.controls['dhcp'].value || this.formGroup.controls['nat'].value)
         || this.formGroup.controls['auto_configure_ip6'].value)));
@@ -942,19 +944,19 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     });
 
     const bpfFieldConfig = _.find(this.basicfieldConfig, { name: 'bpf' });
-    this.formGroup.controls['bpf'].valueChanges.subscribe((res: any) => {
+    this.formGroup.controls['bpf'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       const hasError = !!((!res && this.formGroup.controls['dhcp'].value));
       bpfFieldConfig.hasErrors = hasError;
       bpfFieldConfig.errors = hasError ? T('BPF is required.') : '';
     });
 
-    this.formGroup.controls['auto_configure_ip6'].valueChanges.subscribe((res: any) => {
+    this.formGroup.controls['auto_configure_ip6'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.formGroup.controls['vnet'].setValue(res ? true : this.formGroup.controls['vnet'].value);
       _.find(this.basicfieldConfig, { name: 'vnet' }).required = res;
     });
 
     ['ip4_addr', 'ip6_addr'].forEach((item) => {
-      this.formGroup.controls[item].valueChanges.subscribe(() => {
+      this.formGroup.controls[item].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
         this.jailFromService.updateInterface(this.formGroup, this.basicfieldConfig);
       });
     });
@@ -991,7 +993,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
 
   loadFormValue(): void {
     if (this.pk === undefined) {
-      this.jailService.getDefaultConfiguration().subscribe(
+      this.jailService.getDefaultConfiguration().pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.save_button_enabled = true;
           for (const i in res) {
@@ -1025,7 +1027,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
         },
       );
     } else {
-      this.ws.call(this.queryCall, [[['host_hostuuid', '=', this.pk]]]).subscribe(
+      this.ws.call(this.queryCall, [[['host_hostuuid', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.wsResponse = res[0];
           if (res[0] && res[0].state == 'up') {
@@ -1097,7 +1099,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
   async ngOnInit(): Promise<void> {
     this.formGroup = this.jailFromService.createForm(this.formFields);
     await this.formGroup.disable();
-    this.aroute.params.subscribe(async (params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe(async (params) => {
       this.pk = params['pk'];
       this.plugin = params['plugin'];
       this.getReleaseAndInterface();
@@ -1252,7 +1254,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
       delete value['uuid'];
 
       const dialogRef = this.openJobDialog('pluginInstall', this.pluginAddCall, [value]);
-      dialogRef.componentInstance.success.subscribe((res: any) => {
+      dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
         dialogRef.componentInstance.setTitle(T('Plugin Installed Successfully'));
         let install_notes = '<p><b>Install Notes:</b></p>';
         for (const msg of res.result.install_notes.split('\n')) {
@@ -1261,17 +1263,17 @@ export class JailFormComponent implements OnInit, AfterViewInit {
         dialogRef.componentInstance.setDescription(install_notes);
         dialogRef.componentInstance.showCloseButton = true;
 
-        dialogRef.afterClosed().subscribe(() => {
+        dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
           this.router.navigate(new Array('/').concat(this.plugin_route_success));
         });
       });
     } else if (this.pk === undefined) {
       const dialogRef = this.openJobDialog('jailInstall', this.addCall, [value]);
-      dialogRef.componentInstance.success.subscribe(() => {
+      dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         dialogRef.close(true);
         this.router.navigate(new Array('/').concat(this.route_success));
       });
-      dialogRef.componentInstance.failure.subscribe((res: any) => {
+      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
         dialogRef.close();
         // show error inline if error is EINVAL
         if (res.error.indexOf('[EINVAL]') > -1) {
@@ -1289,7 +1291,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
       });
     } else {
       this.loader.open();
-      this.ws.call(this.updateCall, [this.pk, value]).subscribe(
+      this.ws.call(this.updateCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.loader.close();
           if (updateRelease) {
@@ -1298,7 +1300,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
               plugin: this.isPlugin,
             };
             const dialogRef = this.openJobDialog('jailEdit', this.upgradeCall, [this.pk, option]);
-            dialogRef.componentInstance.success.subscribe(() => {
+            dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
               dialogRef.close(true);
               this.router.navigate(new Array('/').concat(this.route_success));
             });

@@ -15,7 +15,9 @@ import * as FontFaceObserver from 'fontfaceobserver';
 import { CoreService } from 'app/core/services/core.service';
 import { Subject, Observable } from 'rxjs';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-shell',
   templateUrl: './shell.component.html',
@@ -48,9 +50,9 @@ export class ShellComponent implements OnInit, OnDestroy {
   connectionId: string;
 
   ngOnInit(): void {
-    this.getAuthToken().subscribe((token) => {
+    this.getAuthToken().pipe(untilDestroyed(this)).subscribe((token) => {
       this.initializeWebShell(token);
-      this.shellSubscription = this.ss.shellOutput.subscribe(() => {
+      this.shellSubscription = this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {
       });
       this.initializeTerminal();
     });
@@ -73,7 +75,7 @@ export class ShellComponent implements OnInit, OnDestroy {
 
   refreshToolbarButtons(): void {
     this.formEvents = new Subject();
-    this.formEvents.subscribe((evt: CoreEvent) => {
+    this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'restore') {
         this.resetDefault();
         this.refreshToolbarButtons();
@@ -216,7 +218,7 @@ export class ShellComponent implements OnInit, OnDestroy {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
-    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe(() => {
+    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
       this.xterm.focus();
     });
     return true;
@@ -228,7 +230,7 @@ export class ShellComponent implements OnInit, OnDestroy {
 
     this.refreshToolbarButtons();
 
-    this.shellConnectedSubscription = this.ss.shellConnected.subscribe((event: ShellConnectedEvent) => {
+    this.shellConnectedSubscription = this.ss.shellConnected.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
       this.shellConnected = event.connected;
       this.connectionId = event.id;
 

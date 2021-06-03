@@ -7,7 +7,9 @@ import { WebSocketService, DialogService, AppLoaderService } from 'app/services/
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { helptext } from 'app/helptext/system/2FA';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-two-factor',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -134,10 +136,10 @@ export class TwoFactorComponent implements FormConfiguration {
       function: () => {
         this.dialog.confirm(helptext.two_factor.confirm_dialog.title,
           helptext.two_factor.confirm_dialog.message, true,
-          helptext.two_factor.confirm_dialog.btn).subscribe((res: boolean) => {
+          helptext.two_factor.confirm_dialog.btn).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
           if (res) {
             this.loader.open();
-            this.ws.call('auth.twofactor.update', [{ enabled: true }]).subscribe(() => {
+            this.ws.call('auth.twofactor.update', [{ enabled: true }]).pipe(untilDestroyed(this)).subscribe(() => {
               this.loader.close();
               this.TwoFactorEnabled = true;
               this.updateEnabledStatus();
@@ -156,7 +158,7 @@ export class TwoFactorComponent implements FormConfiguration {
       name: helptext.two_factor.disable_button,
       function: () => {
         this.loader.open();
-        this.ws.call('auth.twofactor.update', [{ enabled: false }]).subscribe(() => {
+        this.ws.call('auth.twofactor.update', [{ enabled: false }]).pipe(untilDestroyed(this)).subscribe(() => {
           this.loader.close();
           this.TwoFactorEnabled = false;
           this.updateEnabledStatus();
@@ -218,7 +220,7 @@ export class TwoFactorComponent implements FormConfiguration {
     this.entityEdit = entityEdit;
     this.getURI();
     const intervalValue = _.find(this.fieldConfig, { name: 'interval' });
-    entityEdit.formGroup.controls['interval'].valueChanges.subscribe((val: string) => {
+    entityEdit.formGroup.controls['interval'].valueChanges.pipe(untilDestroyed(this)).subscribe((val: string) => {
       if (parseInt(val) !== 30) {
         intervalValue.hint = helptext.two_factor.interval.hint;
       } else {
@@ -228,7 +230,7 @@ export class TwoFactorComponent implements FormConfiguration {
   }
 
   getURI(): void {
-    this.ws.call('auth.twofactor.provisioning_uri').subscribe((provisioningUri) => {
+    this.ws.call('auth.twofactor.provisioning_uri').pipe(untilDestroyed(this)).subscribe((provisioningUri) => {
       this.entityEdit.formGroup.controls['uri'].setValue(provisioningUri);
       this.qrInfo = provisioningUri;
     }, (err) => {
@@ -250,7 +252,7 @@ export class TwoFactorComponent implements FormConfiguration {
     } else {
       this.dialog.confirm(helptext.two_factor.submitDialog.title,
         helptext.two_factor.submitDialog.message, true, helptext.two_factor.submitDialog.btn)
-        .subscribe((res: boolean) => {
+        .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
           if (res) {
             this.intervalOnLoad = data.interval;
             this.digitsOnLoad = data.otp_digits;
@@ -268,7 +270,7 @@ export class TwoFactorComponent implements FormConfiguration {
       delete data[extra];
     });
     this.loader.open();
-    this.ws.call('auth.twofactor.update', [data]).subscribe(() => {
+    this.ws.call('auth.twofactor.update', [data]).pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
       if (openQR) {
         this.openQRDialog();
@@ -290,10 +292,10 @@ export class TwoFactorComponent implements FormConfiguration {
   renewSecret(): void {
     this.dialog.confirm(helptext.two_factor.renewSecret.title,
       helptext.two_factor.renewSecret.message, true,
-      helptext.two_factor.renewSecret.btn).subscribe((res: boolean) => {
+      helptext.two_factor.renewSecret.btn).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         this.loader.open();
-        this.ws.call('auth.twofactor.renew_secret').subscribe(() => {
+        this.ws.call('auth.twofactor.renew_secret').pipe(untilDestroyed(this)).subscribe(() => {
           this.loader.close();
           this.updateSecretAndUri();
         },
@@ -307,9 +309,9 @@ export class TwoFactorComponent implements FormConfiguration {
   }
 
   updateSecretAndUri(): void {
-    this.ws.call('auth.twofactor.config').subscribe((res) => {
-      this.entityEdit.formGroup.controls['secret'].setValue(res.secret);
-      this.secret = res.secret;
+    this.ws.call('auth.twofactor.config').pipe(untilDestroyed(this)).subscribe((config) => {
+      this.entityEdit.formGroup.controls['secret'].setValue(config.secret);
+      this.secret = config.secret;
       this.getURI();
     }, (err) => {
       this.loader.close();
@@ -319,6 +321,7 @@ export class TwoFactorComponent implements FormConfiguration {
   }
 }
 
+@UntilDestroy()
 @Component({
   selector: 'qr-dialog',
   templateUrl: 'qr-dialog.html',
