@@ -328,24 +328,27 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   update(name: string): void {
-    this.translate.get(helptext.charts.upgrade_dialog.msg).pipe(untilDestroyed(this)).subscribe((msg) => {
-      this.dialogService.confirm(helptext.charts.upgrade_dialog.title, msg + name + '?')
-        .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (res) {
-            this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-              data: {
-                title: (
-                  helptext.charts.upgrade_dialog.job),
-              },
-              disableClose: true,
-            });
-            this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name]);
-            this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-              this.dialogService.closeAllDialogs();
-            });
-          }
-        });
+    this.appLoaderService.open();
+    this.appService.getUpgradeSummary(name).pipe(untilDestroyed(this)).subscribe((res) => {
+      this.appLoaderService.close();
+      this.dialogService.confirm({
+        title: helptext.charts.upgrade_dialog.title + res.latest_human_version,
+        message: res.changelog,
+      }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
+        if (res) {
+          this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+            data: {
+              title: (
+                helptext.charts.upgrade_dialog.job),
+            },
+          });
+          this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name]);
+          this.dialogRef.componentInstance.submit();
+          this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+            this.dialogService.closeAllDialogs();
+          });
+        }
+      });
     });
   }
 

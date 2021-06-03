@@ -82,4 +82,8 @@ export class ApplicationsService {
   updateContainerConfig(enable_image_updates: boolean): Observable<any> {
     return this.ws.call('container.update', [{ enable_image_updates }]);
   }
+
+  getUpgradeSummary(name: string): Observable<any> {
+    return this.ws.call('chart.release.upgrade_summary', [name]);
+  }
 }

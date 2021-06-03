@@ -2024,6 +2024,7 @@
   "Upgrade": "",
   "Upgrade ": "",
   "Upgrade Waiting to Finish": "",
+  "Upgrade to ": "",
   "Upgrades both controllers. Files are downloaded to the Active Controller and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers.": "",
   "Upgrades both controllers. Files are downloaded to the Active Controller and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers. Continue with download?": "",
   "Upgrading...": "",
