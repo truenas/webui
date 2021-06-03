@@ -42,7 +42,7 @@ export class EntityWizardComponent implements OnInit {
 
   constructor(protected rest: RestService, protected ws: WebSocketService,
     private formBuilder: FormBuilder, private entityFormService: EntityFormService,
-    protected loader: AppLoaderService, protected fieldRelationService: FieldRelationService,
+    public loader: AppLoaderService, protected fieldRelationService: FieldRelationService,
     protected router: Router, protected aroute: ActivatedRoute,
     private dialog: DialogService, protected translate: TranslateService) {
 
