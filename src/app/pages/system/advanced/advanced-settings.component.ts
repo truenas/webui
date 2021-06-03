@@ -11,7 +11,6 @@ import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dat
 import { Subject, Subscription } from 'rxjs';
 
 import * as cronParser from 'cron-parser';
-import { Moment } from 'moment';
 
 import {
   WebSocketService,
@@ -584,7 +583,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
 
       /* Weird type assertions are due to a type definition error in the cron-parser library */
       job.next_run = ((cronParser.parseExpression(job.cron_schedule, { iterator: true }).next() as unknown) as {
-        value: { _date: Moment };
+        value: { _date: any };
       }).value._date.fromNow();
 
       return job;

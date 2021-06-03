@@ -26,8 +26,8 @@ import { DialogService } from 'app/services/dialog.service';
 import { ErdService } from 'app/services/erd.service';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { format } from 'date-fns';
 import * as _ from 'lodash';
-import * as moment from 'moment';
 import { TreeNode } from 'primeng/api';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
@@ -1700,7 +1700,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
   getTimestamp(): string {
     const dateTime = new Date();
-    return moment(dateTime).format('YYYY-MM-DD_HH-mm');
+    return format(dateTime, 'YYYY-MM-DD_HH-mm');
   }
 
   dataHandler(data: any): TreeNode {

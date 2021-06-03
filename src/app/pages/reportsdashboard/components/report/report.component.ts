@@ -19,7 +19,7 @@ import { LineChartComponent } from '../lineChart/lineChart.component';
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
 
-import * as moment from 'moment';
+import { add, sub } from 'date-fns';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { TranslateService } from '@ngx-translate/core';
 import { LocaleService } from 'app/services/locale.service';
@@ -347,20 +347,22 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
         break;
     }
 
-    let mom: any;
     if (direction == 'backward') {
-      mom = moment(endDate);
-      startDate = mom.subtract(value, units).toDate();
+      const subOptions: any = {};
+      subOptions[units.toLowerCase()] = value;
+      startDate = sub(endDate, subOptions);
     } else if (direction == 'forward') {
-      mom = moment(startDate);
-      endDate = mom.add(value, units).toDate();
+      const subOptions: any = {};
+      subOptions[units.toLowerCase()] = value;
+      endDate = add(startDate, subOptions);
     }
 
     // if endDate is in the future, reset with endDate to now
     if (endDate.getTime() >= now.getTime()) {
       endDate = new Date();
-      mom = moment(endDate);
-      startDate = mom.subtract(value, units).toDate();
+      const subOptions: any = {};
+      subOptions[units.toLowerCase()] = value;
+      startDate = sub(endDate, subOptions);
       this.stepForwardDisabled = true;
     } else {
       this.stepForwardDisabled = false;

@@ -12,7 +12,7 @@ import { EntityFormComponent } from '../../../common/entity/entity-form/entity-f
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
-import * as moment from 'moment';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-snapshot-add',
@@ -53,7 +53,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
         placeholder: helptext.snapshot_add_name_placeholder,
         tooltip: helptext.snapshot_add_name_tooltip,
         options: [],
-        value: 'manual-' + moment().format('YYYY-MM-DD_HH-mm'),
+        value: 'manual-' + format(new Date(), 'yyyy-MM-dd_HH-mm'),
         validation: this.nameValidator,
         errors: T('Name or Naming Schema is required. Only one field can be used at a time.'),
         blurStatus: true,
