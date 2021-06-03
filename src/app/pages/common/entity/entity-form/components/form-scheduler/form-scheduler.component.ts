@@ -285,7 +285,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
       this.minDate = this.zonedTime;
       this.maxDate = dateFns.endOfMonth(this.minDate);
       this.currentDate = this.minDate;
-      this.activeDate = dateFns.format(this.currentDate, 'yyyy-MM-ddTHH:mm:ss.SSS');
+      this.activeDate = dateFns.format(this.currentDate, 'yyyy-MM-dd[T]HH:mm:ssZZ');
 
       this.disablePrevious = true;
     });
