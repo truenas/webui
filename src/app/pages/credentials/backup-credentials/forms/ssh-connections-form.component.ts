@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Subscription } from 'rxjs';
@@ -16,7 +17,9 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { EntityUtils } from '../../../common/entity/utils';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-ssh-connections-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -231,7 +234,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     private dialogService: DialogService,
     private replicationService: ReplicationService, private modalService: ModalService,
   ) {
-    this.getRow = this.modalService.getRow$.subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
       this.rowNum = rowId;
       this.getRow.unsubscribe();
     });
@@ -247,23 +250,23 @@ export class SshConnectionsFormComponent implements FormConfiguration {
         value: 'NEW',
       });
     }
-    this.keychainCredentialService.getSSHConnections().toPromise().then(
-      (res: any[]) => {
-        const sshConnections = res.filter((item) => item.id != this.rowNum).map((sshConnection) => sshConnection.name);
-        this.namesInUse.push(...sshConnections);
-        this.namesInUseConnection.push(...sshConnections);
-      },
-    );
+    this.keychainCredentialService.getSSHConnections().toPromise().then((connections) => {
+      const sshConnections = connections
+        .filter((connection) => connection.id != this.rowNum)
+        .map((connection) => connection.name);
+      this.namesInUse.push(...sshConnections);
+      this.namesInUseConnection.push(...sshConnections);
+    });
     const privateKeyField = _.find(this.fieldSets[1].config, { name: 'private_key' });
-    this.keychainCredentialService.getSSHKeys().toPromise().then(
-      (res: any[]) => {
-        this.namesInUse.push(...res.filter((sshKey) => sshKey.name.endsWith(' Key')).map((sshKey) =>
-          sshKey.name.substring(0, sshKey.name.length - 4)));
-        for (const i in res) {
-          privateKeyField.options.push({ label: res[i].name, value: res[i].id });
-        }
-      },
-    );
+    this.keychainCredentialService.getSSHKeys().toPromise().then((keyPairs) => {
+      const namesInUse = keyPairs
+        .filter((sshKey) => sshKey.name.endsWith(' Key'))
+        .map((sshKey) => sshKey.name.substring(0, sshKey.name.length - 4));
+      this.namesInUse.push(...namesInUse);
+      for (const i in keyPairs) {
+        privateKeyField.options.push({ label: keyPairs[i].name, value: keyPairs[i].id });
+      }
+    });
   }
 
   afterInit(entityForm: EntityFormComponent): void {
@@ -272,7 +275,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     this.updateDiscoverButtonDisabled();
     if (this.entityForm.isNew) {
       this.addCall = this.sshCalls[this.entityForm.formGroup.controls['setup_method'].value as keyof SshConnectionsFormComponent['sshCalls']];
-      this.entityForm.formGroup.controls['setup_method'].valueChanges.subscribe((res: any) => {
+      this.entityForm.formGroup.controls['setup_method'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
         this.addCall = this.sshCalls[res as keyof SshConnectionsFormComponent['sshCalls']];
         this.updateDiscoverButtonDisabled();
       });
@@ -282,7 +285,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
 
     const nameCtrl = this.entityForm.formGroup.controls['name'];
     let preValue = this.entityForm.formGroup.controls['private_key'].value;
-    this.entityForm.formGroup.controls['private_key'].valueChanges.subscribe((res: any) => {
+    this.entityForm.formGroup.controls['private_key'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res === 'NEW') {
         nameCtrl.setValidators([Validators.required, forbiddenValues(this.namesInUse)]);
         nameCtrl.updateValueAndValidity();
@@ -294,11 +297,11 @@ export class SshConnectionsFormComponent implements FormConfiguration {
       this.updateDiscoverButtonDisabled();
     });
 
-    this.entityForm.formGroup.controls['host'].valueChanges.subscribe(() => {
+    this.entityForm.formGroup.controls['host'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateDiscoverButtonDisabled();
     });
 
-    this.entityForm.formGroup.controls['username'].valueChanges.subscribe(() => {
+    this.entityForm.formGroup.controls['username'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateDiscoverButtonDisabled();
     });
   }
@@ -341,7 +344,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
       connect_timeout: this.entityForm.value['connect_timeout'],
     };
 
-    this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]).subscribe(
+    this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.loader.close();
         this.entityForm.formGroup.controls['remote_host_key'].setValue(res);
@@ -365,11 +368,11 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     this.loader.open();
     if (data['private_key'] == 'NEW') {
       await this.replicationService.genSSHKeypair().then(
-        async (res) => {
+        async (keyPair) => {
           const payload = {
             name: data['name'] + ' Key',
-            type: 'SSH_KEY_PAIR',
-            attributes: res,
+            type: KeychainCredentialType.SshKeyPair,
+            attributes: keyPair,
           };
           await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
             (sshKey) => {
@@ -396,12 +399,12 @@ export class SshConnectionsFormComponent implements FormConfiguration {
       }
       data['attributes'] = attributes;
       if (this.entityForm.isNew) {
-        data['type'] = 'SSH_CREDENTIALS';
+        data['type'] = KeychainCredentialType.SshCredentials;
       }
     }
     delete data['setup_method'];
 
-    this.entityForm.submitFunction(data).subscribe(
+    this.entityForm.submitFunction(data).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.modalService.close('slide-in-form');

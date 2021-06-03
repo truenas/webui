@@ -34,7 +34,9 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { MatStepper } from '@angular/material/stepper';
 import { GpuDevice } from 'app/interfaces/gpu-device.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-vm-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
@@ -460,12 +462,12 @@ export class VMWizardComponent implements WizardConfiguration {
 
   preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
-    this.ws.call('vm.maximum_supported_vcpus').subscribe((max) => {
+    this.ws.call('vm.maximum_supported_vcpus').pipe(untilDestroyed(this)).subscribe((max) => {
       this.maxVCPUs = max;
       const vcpuLimitConf = _.find(this.wizardConfig[1].fieldConfig, { name: 'vcpu_limit' });
       vcpuLimitConf.paraText = helptext.vcpus_warning + ` ${this.maxVCPUs} ` + helptext.vcpus_warning_b;
     });
-    this.ws.call('device.get_info', ['GPU']).subscribe((gpus) => {
+    this.ws.call('device.get_info', ['GPU']).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
       const gpusConf = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' });
       for (const item of gpus) {
@@ -473,7 +475,7 @@ export class VMWizardComponent implements WizardConfiguration {
       }
     });
 
-    this.systemGeneralService.getAdvancedConfig.subscribe((res) => {
+    this.systemGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       this.isolatedGpuPciIds = res.isolated_gpu_pci_ids;
     });
   }
@@ -507,11 +509,11 @@ export class VMWizardComponent implements WizardConfiguration {
   }
 
   afterInit(entityWizard: EntityWizardComponent): void {
-    this.ws.call('vm.query').subscribe((vms) => {
+    this.ws.call('vm.query').pipe(untilDestroyed(this)).subscribe((vms) => {
       vms.forEach((i) => this.namesInUse.push(i.name));
     });
 
-    this.ws.call('vm.device.bind_choices').subscribe((res) => {
+    this.ws.call('vm.device.bind_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       if (res && Object.keys(res).length > 0) {
         const bind = _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' });
         Object.keys(res).forEach((address) => {
@@ -527,7 +529,7 @@ export class VMWizardComponent implements WizardConfiguration {
       const cpuModel = _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_model' });
       cpuModel.isHidden = false;
 
-      this.vmService.getCPUModels().subscribe((models) => {
+      this.vmService.getCPUModels().pipe(untilDestroyed(this)).subscribe((models) => {
         for (const model in models) {
           cpuModel.options.push(
             {
@@ -541,11 +543,11 @@ export class VMWizardComponent implements WizardConfiguration {
     this.ws
       .call('pool.filesystem_choices', [['FILESYSTEM']])
       .pipe(map(new EntityUtils().array1DToLabelValuePair))
-      .subscribe((options) => {
+      .pipe(untilDestroyed(this)).subscribe((options) => {
         this.wizardConfig[2].fieldConfig.find((config) => config.name === 'datastore').options = options;
       });
 
-    this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]]]).subscribe((zvols) => {
+    this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
       zvols.forEach((zvol) => {
         _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' }).options.push(
           {
@@ -555,7 +557,7 @@ export class VMWizardComponent implements WizardConfiguration {
       });
     });
 
-    this.getFormControlFromFieldName('bootloader').valueChanges.subscribe((bootloader) => {
+    this.getFormControlFromFieldName('bootloader').valueChanges.pipe(untilDestroyed(this)).subscribe((bootloader) => {
       if (!this.productType.includes(ProductType.Scale) && bootloader !== VmBootloader.Uefi) {
         _.find(this.wizardConfig[0].fieldConfig, { name: 'enable_display' })['isHidden'] = true;
         _.find(this.wizardConfig[0].fieldConfig, { name: 'wait' })['isHidden'] = true;
@@ -571,14 +573,14 @@ export class VMWizardComponent implements WizardConfiguration {
       }
     });
 
-    this.getFormControlFromFieldName('enable_display').valueChanges.subscribe((res) => {
+    this.getFormControlFromFieldName('enable_display').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (!this.productType.includes(ProductType.Scale)) {
         _.find(this.wizardConfig[0].fieldConfig, { name: 'wait' }).isHidden = !res;
       }
       _.find(this.wizardConfig[0].fieldConfig, { name: 'display_type' }).isHidden = !res;
       _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' }).isHidden = !res;
       if (res) {
-        this.ws.call('vm.port_wizard').subscribe(({ port }) => {
+        this.ws.call('vm.port_wizard').pipe(untilDestroyed(this)).subscribe(({ port }) => {
           this.displayPort = port;
         });
         if (!this.productType.includes(ProductType.Scale)) {
@@ -593,65 +595,65 @@ export class VMWizardComponent implements WizardConfiguration {
       }
     });
 
-    this.getFormControlFromFieldName('os').valueChanges.subscribe((res) => {
+    this.getFormControlFromFieldName('os').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.summary[T('Guest Operating System')] = res;
-      this.getFormControlFromFieldName('name').valueChanges.subscribe((name) => {
+      this.getFormControlFromFieldName('name').valueChanges.pipe(untilDestroyed(this)).subscribe((name) => {
         this.summary[T('Name')] = name;
       });
-      this.getFormControlFromFieldName('vcpus').valueChanges.subscribe((vcpus) => {
+      this.getFormControlFromFieldName('vcpus').valueChanges.pipe(untilDestroyed(this)).subscribe((vcpus) => {
         this.vcpus = vcpus;
         this.summary[T('Number of CPUs')] = vcpus;
       });
-      this.getFormControlFromFieldName('cores').valueChanges.subscribe((cores) => {
+      this.getFormControlFromFieldName('cores').valueChanges.pipe(untilDestroyed(this)).subscribe((cores) => {
         this.cores = cores;
         this.summary[T('Number of Cores')] = cores;
       });
-      this.getFormControlFromFieldName('threads').valueChanges.subscribe((threads) => {
+      this.getFormControlFromFieldName('threads').valueChanges.pipe(untilDestroyed(this)).subscribe((threads) => {
         this.threads = threads;
         this.summary[T('Number of Threads')] = threads;
       });
 
       if (this.productType.includes(ProductType.Scale)) {
-        this.getFormControlFromFieldName('cpu_mode').valueChanges.subscribe((mode) => {
+        this.getFormControlFromFieldName('cpu_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
           this.mode = mode;
           this.summary[T('CPU Mode')] = mode;
         });
-        this.getFormControlFromFieldName('cpu_model').valueChanges.subscribe((model) => {
+        this.getFormControlFromFieldName('cpu_model').valueChanges.pipe(untilDestroyed(this)).subscribe((model) => {
           this.model = model;
           this.summary[T('CPU Model')] = model !== '' ? model : 'null';
         });
       }
 
-      this.getFormControlFromFieldName('memory').valueChanges.subscribe((memory) => {
+      this.getFormControlFromFieldName('memory').valueChanges.pipe(untilDestroyed(this)).subscribe((memory) => {
         this.summary[T('Memory')] = isNaN(this.storageService.convertHumanStringToNum(memory))
           ? '0 MiB'
           : this.storageService.humanReadable;
       });
 
-      this.getFormControlFromFieldName('volsize').valueChanges.subscribe((volsize) => {
+      this.getFormControlFromFieldName('volsize').valueChanges.pipe(untilDestroyed(this)).subscribe((volsize) => {
         this.summary[T('Disk Size')] = volsize;
       });
 
-      this.getFormControlFromFieldName('disk_radio').valueChanges.subscribe((disk_radio) => {
+      this.getFormControlFromFieldName('disk_radio').valueChanges.pipe(untilDestroyed(this)).subscribe((disk_radio) => {
         if (this.summary[T('Disk')] || this.summary[T('Disk Size')]) {
           delete this.summary[T('Disk')];
           delete this.summary[T('Disk Size')];
         }
         if (disk_radio) {
           this.summary[T('Disk Size')] = this.getFormControlFromFieldName('volsize').value;
-          this.getFormControlFromFieldName('volsize').valueChanges.subscribe((volsize) => {
+          this.getFormControlFromFieldName('volsize').valueChanges.pipe(untilDestroyed(this)).subscribe((volsize) => {
             this.summary[T('Disk Size')] = volsize;
           });
         } else {
           this.summary[T('Disk')] = this.getFormControlFromFieldName('hdd_path').value;
-          this.getFormControlFromFieldName('hdd_path').valueChanges.subscribe((existing_hdd_path) => {
+          this.getFormControlFromFieldName('hdd_path').valueChanges.pipe(untilDestroyed(this)).subscribe((existing_hdd_path) => {
             this.summary[T('Disk')] = existing_hdd_path;
           });
         }
       });
 
       const gpusFormControl = this.getFormControlFromFieldName('gpus');
-      gpusFormControl.valueChanges.subscribe((gpusValue) => {
+      gpusFormControl.valueChanges.pipe(untilDestroyed(this)).subscribe((gpusValue) => {
         const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
         for (const gpuValue of gpusValue) {
           if (finalIsolatedPciIds.findIndex((pciId) => pciId === gpuValue) === -1) {
@@ -675,12 +677,12 @@ export class VMWizardComponent implements WizardConfiguration {
         }
       });
 
-      this.getFormControlFromFieldName('datastore').valueChanges.subscribe((datastore) => {
+      this.getFormControlFromFieldName('datastore').valueChanges.pipe(untilDestroyed(this)).subscribe((datastore) => {
         if (datastore !== undefined && datastore !== '' && datastore !== '/mnt') {
           _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).hasErrors = false;
           _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = null;
           const volsize = this.storageService.convertHumanStringToNum(this.getFormControlFromFieldName('volsize').value.toString());
-          this.ws.call('filesystem.statfs', [`/mnt/${datastore}`]).subscribe((stat) => {
+          this.ws.call('filesystem.statfs', [`/mnt/${datastore}`]).pipe(untilDestroyed(this)).subscribe((stat) => {
             this.statSize = stat;
             _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['hasErrors'] = false;
             _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['errors'] = '';
@@ -709,7 +711,7 @@ export class VMWizardComponent implements WizardConfiguration {
             _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = T('Please select a valid path');
           }
         }
-        this.getFormControlFromFieldName('NIC_type').valueChanges.subscribe((res) => {
+        this.getFormControlFromFieldName('NIC_type').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
           this.prefService.preferences.storedValues.vm_nicType = res;
           this.prefService.savePreferences();
         });
@@ -717,14 +719,14 @@ export class VMWizardComponent implements WizardConfiguration {
         this.prefService.preferences.storedValues.vm_zvolLocation = this.getFormControlFromFieldName('datastore').value;
         this.prefService.savePreferences();
       });
-      this.getFormControlFromFieldName('iso_path').valueChanges.subscribe((iso_path) => {
+      this.getFormControlFromFieldName('iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((iso_path) => {
         if (iso_path && iso_path !== undefined) {
           this.summary[T('Installation Media')] = iso_path;
         } else {
           delete this.summary[T('Installation Media')];
         }
       });
-      this.messageService.messageSourceHasNewMessage$.subscribe((message) => {
+      this.messageService.messageSourceHasNewMessage$.pipe(untilDestroyed(this)).subscribe((message) => {
         this.getFormControlFromFieldName('iso_path').setValue(message);
       });
       this.res = res;
@@ -750,7 +752,7 @@ export class VMWizardComponent implements WizardConfiguration {
         this.getFormControlFromFieldName('volsize').setValue('10 GiB');
       }
     });
-    this.getFormControlFromFieldName('disk_radio').valueChanges.subscribe((res) => {
+    this.getFormControlFromFieldName('disk_radio').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).isHidden = false;
         _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).isHidden = false;
@@ -763,7 +765,7 @@ export class VMWizardComponent implements WizardConfiguration {
         entityWizard.setDisabled('datastore', true, '2');
       }
     });
-    this.getFormControlFromFieldName('upload_iso_checkbox').valueChanges.subscribe((res) => {
+    this.getFormControlFromFieldName('upload_iso_checkbox').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' })['isHidden'] = false;
         _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso_path' })['isHidden'] = false;
@@ -772,25 +774,25 @@ export class VMWizardComponent implements WizardConfiguration {
         _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso_path' })['isHidden'] = true;
       }
     });
-    this.getFormControlFromFieldName('upload_iso_path').valueChanges.subscribe((res) => {
+    this.getFormControlFromFieldName('upload_iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' }).fileLocation = res;
       }
     });
 
-    this.networkService.getVmNicChoices().subscribe((res) => {
+    this.networkService.getVmNicChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       this.nicAttach = _.find(this.wizardConfig[3].fieldConfig, { name: 'nic_attach' });
       this.nicAttach.options = Object.keys(res || {}).map((nicId) => ({
         label: nicId,
         value: nicId,
       }));
 
-      this.getFormControlFromFieldName('nic_attach').valueChanges.subscribe((res) => {
+      this.getFormControlFromFieldName('nic_attach').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
         this.prefService.preferences.storedValues.vm_nicAttach = res;
         this.prefService.savePreferences();
       });
 
-      this.ws.call('vm.random_mac').subscribe((mac_res) => {
+      this.ws.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((mac_res) => {
         this.getFormControlFromFieldName('NIC_mac').setValue(mac_res);
       });
     });
@@ -799,14 +801,14 @@ export class VMWizardComponent implements WizardConfiguration {
       this.nicType.options.push({ label: item[1], value: item[0] });
     });
 
-    this.getFormControlFromFieldName('NIC_type').valueChanges.subscribe((res) => {
+    this.getFormControlFromFieldName('NIC_type').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.prefService.preferences.storedValues.vm_nicType = res;
       this.prefService.savePreferences();
     });
 
     this.bootloader = _.find(this.wizardConfig[0].fieldConfig, { name: 'bootloader' });
 
-    this.vmService.getBootloaderOptions().subscribe((options) => {
+    this.vmService.getBootloaderOptions().pipe(untilDestroyed(this)).subscribe((options) => {
       for (const option in options) {
         this.bootloader.options.push({ label: options[option], value: option });
       }
@@ -818,11 +820,11 @@ export class VMWizardComponent implements WizardConfiguration {
     setTimeout(() => {
       let globalLabel: string;
       let globalTooltip: string;
-      this.translate.get(helptext.memory_placeholder).subscribe((mem) => {
-        this.translate.get(helptext.global_label).subscribe((gLabel) => {
-          this.translate.get(helptext.global_tooltip).subscribe((gTooltip) => {
-            this.translate.get(helptext.memory_tooltip).subscribe((mem_tooltip) => {
-              this.translate.get(helptext.memory_unit).subscribe((mem_unit) => {
+      this.translate.get(helptext.memory_placeholder).pipe(untilDestroyed(this)).subscribe((mem) => {
+        this.translate.get(helptext.global_label).pipe(untilDestroyed(this)).subscribe((gLabel) => {
+          this.translate.get(helptext.global_tooltip).pipe(untilDestroyed(this)).subscribe((gTooltip) => {
+            this.translate.get(helptext.memory_tooltip).pipe(untilDestroyed(this)).subscribe((mem_tooltip) => {
+              this.translate.get(helptext.memory_unit).pipe(untilDestroyed(this)).subscribe((mem_unit) => {
                 globalLabel = gLabel;
                 globalTooltip = gTooltip;
                 _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' }).placeholder = `${mem} ${globalLabel}`;
@@ -832,9 +834,9 @@ export class VMWizardComponent implements WizardConfiguration {
           });
         });
       });
-      this.translate.get(helptext.volsize_placeholder).subscribe((placeholder) => {
-        this.translate.get(helptext.volsize_tooltip).subscribe((tooltip) => {
-          this.translate.get(helptext.volsize_tooltip_B).subscribe((tooltipB) => {
+      this.translate.get(helptext.volsize_placeholder).pipe(untilDestroyed(this)).subscribe((placeholder) => {
+        this.translate.get(helptext.volsize_tooltip).pipe(untilDestroyed(this)).subscribe((tooltip) => {
+          this.translate.get(helptext.volsize_tooltip_B).pipe(untilDestroyed(this)).subscribe((tooltipB) => {
             _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).placeholder = `${placeholder} ${globalLabel}`;
             _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).tooltip = `${tooltip} ${globalLabel} ${tooltipB}`;
           });
@@ -880,7 +882,7 @@ export class VMWizardComponent implements WizardConfiguration {
 
         if (errors) {
           config.hasErrors = true;
-          self.translate.get(helptext.vcpus_warning).subscribe((warning) => {
+          self.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(this)).subscribe((warning) => {
             config.warnings = warning + ` ${self.maxVCPUs}.`;
           });
         } else {
@@ -905,8 +907,8 @@ export class VMWizardComponent implements WizardConfiguration {
 
         if (errors) {
           config.hasErrors = true;
-          self.translate.get('Cannot allocate').subscribe((msg) => {
-            self.translate.get('to storage for this virtual machine.').subscribe((msg2) => {
+          self.translate.get('Cannot allocate').pipe(untilDestroyed(this)).subscribe((msg) => {
+            self.translate.get('to storage for this virtual machine.').pipe(untilDestroyed(this)).subscribe((msg2) => {
               config.warnings = `${msg} ${self.storageService.humanReadable} ${msg2}`;
             });
           });
@@ -1060,7 +1062,7 @@ export class VMWizardComponent implements WizardConfiguration {
           finalIsolatedPciIds.push(gpuValue);
         }
       }
-      this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids: finalIsolatedPciIds }]).subscribe(
+      this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids: finalIsolatedPciIds }]).pipe(untilDestroyed(this)).subscribe(
         (res) => res,
         (err) => new EntityUtils().handleWSError(this.entityWizard, err),
       );
@@ -1074,7 +1076,7 @@ export class VMWizardComponent implements WizardConfiguration {
 
       const devices = [...vmPayload['devices']];
       delete vmPayload['devices'];
-      this.ws.call('vm.create', [vmPayload]).subscribe((vm_res) => {
+      this.ws.call('vm.create', [vmPayload]).pipe(untilDestroyed(this)).subscribe((vm_res) => {
         const observables: Observable<any>[] = [];
         for (const device of devices) {
           device.vm = vm_res.id;
@@ -1086,14 +1088,14 @@ export class VMWizardComponent implements WizardConfiguration {
             }),
           ));
         }
-        combineLatest(observables).subscribe(
+        combineLatest(observables).pipe(untilDestroyed(this)).subscribe(
           () => {
             this.loader.close();
             this.modalService.close('slide-in-form');
           },
           (error) => {
             setTimeout(() => {
-              this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).subscribe(
+              this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).pipe(untilDestroyed(this)).subscribe(
                 () => {
                   this.loader.close();
                   this.dialogService.errorReport(
@@ -1137,7 +1139,7 @@ export class VMWizardComponent implements WizardConfiguration {
 
       const devices = [...vmPayload['devices']];
       delete vmPayload['devices'];
-      this.ws.call('vm.create', [vmPayload]).subscribe((vm_res) => {
+      this.ws.call('vm.create', [vmPayload]).pipe(untilDestroyed(this)).subscribe((vm_res) => {
         const observables: Observable<any>[] = [];
         for (const device of devices) {
           device.vm = vm_res.id;
@@ -1149,14 +1151,14 @@ export class VMWizardComponent implements WizardConfiguration {
             }),
           ));
         }
-        combineLatest(observables).subscribe(
+        combineLatest(observables).pipe(untilDestroyed(this)).subscribe(
           () => {
             this.loader.close();
             this.modalService.close('slide-in-form');
           },
           (error) => {
             setTimeout(() => {
-              this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).subscribe(
+              this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).pipe(untilDestroyed(this)).subscribe(
                 () => {
                   this.loader.close();
                   this.dialogService.errorReport(

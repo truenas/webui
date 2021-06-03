@@ -18,6 +18,7 @@ export interface Catalog {
   trains: {
     [trainName: string]: CatalogTrain;
   };
+  error: boolean;
 }
 
 export interface CatalogTrain {

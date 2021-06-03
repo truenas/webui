@@ -7,7 +7,9 @@ import { Observable } from 'rxjs';
 import { RestService, WebSocketService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'bootenv-replace-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -37,7 +39,7 @@ export class BootEnvReplaceFormComponent implements FormConfiguration {
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
   preInit(entityForm: EntityFormComponent): void {
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
     });
     this.entityForm = entityForm;
@@ -46,7 +48,7 @@ export class BootEnvReplaceFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.diskChoice = _.find(this.fieldConfig, { name: 'dev' });
-    this.ws.call('disk.get_unused').subscribe((res: any[]) => {
+    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       res.forEach((item) => {
         this.diskChoice.options.push({ label: item.name, value: item.name });
       });

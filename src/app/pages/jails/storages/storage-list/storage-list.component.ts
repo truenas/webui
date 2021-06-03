@@ -5,11 +5,12 @@ import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/en
 
 import { DialogService, WebSocketService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { Subscription } from 'rxjs';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/jails/storage';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-storage-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -24,7 +25,6 @@ export class StorageListComponent implements EntityTableConfig {
   route_edit: string[] = ['jails', 'storage'];
 
   protected jailId: string;
-  busy: Subscription;
   protected loaderOpen = false;
 
   columns = [
@@ -45,7 +45,7 @@ export class StorageListComponent implements EntityTableConfig {
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected dialog: DialogService,
     protected loader: AppLoaderService, protected ws: WebSocketService,
     protected translate: TranslateService) {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.jailId = params['jail'];
       this.queryCallOption.push(params['jail']);
       this.queryCallOption.push({
@@ -54,7 +54,7 @@ export class StorageListComponent implements EntityTableConfig {
       this.route_add.push(params['jail'], 'add');
       this.route_delete.push(params['jail'], 'delete');
       this.route_edit.push(params['jail'], 'edit');
-      this.translate.get(T('Mount Points of ')).subscribe(
+      this.translate.get(T('Mount Points of ')).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.title = res + this.jailId;
         },
@@ -93,19 +93,19 @@ export class StorageListComponent implements EntityTableConfig {
       [
         ['host_hostuuid', '=', this.jailId],
       ],
-    ]).subscribe((res) => {
+    ]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res[0] && res[0].state == 'up') {
         this.dialog.Info(T('Delete Mountpoint'), '<i>' + this.jailId + T('</i> cannot be running when deleting a mountpoint.'), '500px', 'info', true);
       } else {
         let deleteMsg = 'Delete Mount Point <b>' + item['source'] + '</b>?';
-        this.translate.get(deleteMsg).subscribe((res) => {
+        this.translate.get(deleteMsg).pipe(untilDestroyed(this)).subscribe((res) => {
           deleteMsg = res;
         });
-        this.dialog.confirm(T('Delete'), deleteMsg, false, T('Delete Mount Point')).subscribe((res: boolean) => {
+        this.dialog.confirm(T('Delete'), deleteMsg, false, T('Delete Mount Point')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
           if (res) {
             this.entityList.loader.open();
             this.entityList.loaderOpen = true;
-            this.busy = this.ws.call('jail.fstab', [this.jailId, { action: 'REMOVE', index: item.id }]).subscribe(
+            this.ws.call('jail.fstab', [this.jailId, { action: 'REMOVE', index: item.id }]).pipe(untilDestroyed(this)).subscribe(
               () => { this.entityList.getData(); },
               (res: any) => {
                 new EntityUtils().handleWSError(this, res, this.dialog);
@@ -132,7 +132,7 @@ export class StorageListComponent implements EntityTableConfig {
       [
         ['host_hostuuid', '=', this.jailId],
       ],
-    ]).subscribe((res) => {
+    ]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res[0] && res[0].state == 'up') {
         this.dialog.Info(T('Add Mountpoint'), '<i>' + this.jailId + '</i> cannot be running when adding a mountpoint.', '500px', 'info', true);
       } else {

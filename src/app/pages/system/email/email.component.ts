@@ -1,5 +1,5 @@
 import {
-  ApplicationRef, Component, Injector, OnDestroy,
+  ApplicationRef, Component, Injector,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -15,9 +15,10 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface OAuthData {
   client_id?: string;
@@ -25,13 +26,14 @@ interface OAuthData {
   refresh_token?: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'app-email',
   template: `
   <entity-form [conf]="this"></entity-form>
   `,
 })
-export class EmailComponent implements FormConfiguration, OnDestroy {
+export class EmailComponent implements FormConfiguration {
   queryCall: 'mail.config' = 'mail.config';
   updateCall: 'mail.update' = 'mail.update';
   entityEdit: EntityFormComponent;
@@ -59,18 +61,18 @@ export class EmailComponent implements FormConfiguration, OnDestroy {
           subject: 'TrueNAS Test Message',
           text: `This is a test message from TrueNAS ${product_type}.`,
         };
-        this.ws.call('system.info').subscribe((systemInfo) => {
+        this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
           value.pass = value.pass || this.entityEdit.data.pass;
 
           mailObj['subject'] += ' hostname: ' + systemInfo.hostname;
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'EMAIL' }, disableClose: true });
           this.dialogRef.componentInstance.setCall('mail.send', [mailObj, value]);
           this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.subscribe(() => {
+          this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.dialogRef.close(false);
             this.dialogservice.Info(T('Email'), T('Test email sent!'));
           });
-          this.dialogRef.componentInstance.failure.subscribe((e_res: any) => {
+          this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((e_res: any) => {
             this.dialogRef.componentInstance.setDescription(e_res.error);
           });
         });
@@ -228,8 +230,6 @@ export class EmailComponent implements FormConfiguration, OnDestroy {
   protected dialogRef: any;
 
   private sendMailMethod: FormControl;
-  private sendMailMethodSubscription: Subscription;
-  private smtpSubscription: Subscription;
   private smtp: FormControl;
   private pass: FieldConfig;
 
@@ -251,18 +251,18 @@ export class EmailComponent implements FormConfiguration, OnDestroy {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
-    this.ws.call('user.query', [[['username', '=', 'root']]]).subscribe((res) => {
+    this.ws.call('user.query', [[['username', '=', 'root']]]).pipe(untilDestroyed(this)).subscribe((res) => {
       this.rootEmail = res[0].email;
     });
     this.pass = this.fieldSets.config('pass');
     this.smtp = entityEdit.formGroup.controls['smtp'] as FormControl;
     this.sendMailMethod = entityEdit.formGroup.controls['send_mail_method'] as FormControl;
 
-    this.oauthCreds.subscribe((value) => {
+    this.oauthCreds.pipe(untilDestroyed(this)).subscribe((value) => {
       this.sendMailMethod.setValue(!value.client_id);
     });
 
-    this.sendMailMethodSubscription = this.sendMailMethod.valueChanges.subscribe((value) => {
+    this.sendMailMethod.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       this.toggleSmtpControls();
       this.toggleSmtpAuthControls();
       this.pass.hideButton = !value;
@@ -274,7 +274,7 @@ export class EmailComponent implements FormConfiguration, OnDestroy {
         entityEdit.setDisabled('oauth_not_applied', true, true);
       }
     });
-    this.smtpSubscription = this.smtp.valueChanges.subscribe(() => {
+    this.smtp.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.toggleSmtpAuthControls();
     });
   }
@@ -300,11 +300,6 @@ export class EmailComponent implements FormConfiguration, OnDestroy {
     this.entityEdit.setDisabled('security', !this.sendMailMethod.value, !this.sendMailMethod.value);
     this.entityEdit.setDisabled('smtp', false, !this.sendMailMethod.value);
     this.entityEdit.setDisabled('login-gmail', this.sendMailMethod.value, this.sendMailMethod.value);
-  }
-
-  ngOnDestroy(): void {
-    this.sendMailMethodSubscription.unsubscribe();
-    this.smtpSubscription.unsubscribe();
   }
 
   saveConfigSubmit(emailConfig: any): void {
@@ -351,7 +346,7 @@ export class EmailComponent implements FormConfiguration, OnDestroy {
 
     this.ws
       .call(this.updateCall, [emailConfig])
-      .subscribe(
+      .pipe(untilDestroyed(this)).subscribe(
         () => {
           this.entityEdit.success = true;
           this.entityEdit.formGroup.markAsPristine();

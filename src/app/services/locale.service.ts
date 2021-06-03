@@ -7,7 +7,9 @@ import { SystemGeneralService } from '.';
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core.service';
 import { T } from 'app/translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Injectable()
 export class LocaleService {
   t24 = T('(24 Hours)');
@@ -20,7 +22,7 @@ export class LocaleService {
 
   constructor(public prefService: PreferencesService, public sysGeneralService: SystemGeneralService,
     private core: CoreService) {
-    this.sysGeneralService.getGeneralConfig.subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       this.timeZone = res.timezone;
     });
     if (window.localStorage.dateFormat) {
@@ -35,7 +37,7 @@ export class LocaleService {
   getPrefs(): void {
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
     this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' })
-      .subscribe((evt: CoreEvent) => {
+      .pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
         if (this.isWaiting) {
           this.target.next({ name: 'SubmitComplete', sender: this });
           this.isWaiting = false;

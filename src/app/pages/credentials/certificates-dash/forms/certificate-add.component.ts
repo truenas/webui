@@ -21,7 +21,9 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { DialogService } from '../../../../services/dialog.service';
 import { T } from '../../../../translate-marker';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'system-certificate-add',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
@@ -642,14 +644,14 @@ export class CertificateAddComponent implements WizardConfiguration {
   constructor(protected ws: WebSocketService, protected dialog: MatDialog,
     protected systemGeneralService: SystemGeneralService, private modalService: ModalService,
     protected loader: AppLoaderService, private dialogService: DialogService) {
-    this.getType = this.modalService.getRow$.subscribe((rowId) => {
+    this.getType = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
       this.type = rowId;
     });
   }
 
   preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
-    this.systemGeneralService.getUnsignedCAs().subscribe((res: any[]) => {
+    this.systemGeneralService.getUnsignedCAs().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       this.signedby = this.getTarget('signedby');
       res.forEach((item) => {
         this.signedby.options.push(
@@ -658,14 +660,14 @@ export class CertificateAddComponent implements WizardConfiguration {
       });
     });
 
-    this.ws.call('certificate.ec_curve_choices').subscribe((res) => {
+    this.ws.call('certificate.ec_curve_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       const ec_curves_field = this.getTarget('ec_curve');
       for (const key in res) {
         ec_curves_field.options.push({ label: res[key], value: key });
       }
     });
 
-    this.systemGeneralService.getCertificateCountryChoices().subscribe((res) => {
+    this.systemGeneralService.getCertificateCountryChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       this.country = this.getTarget('country');
       for (const item in res) {
         this.country.options.push(
@@ -674,7 +676,7 @@ export class CertificateAddComponent implements WizardConfiguration {
       }
     });
 
-    this.ws.call('certificate.query').subscribe((certificates) => {
+    this.ws.call('certificate.query').pipe(untilDestroyed(this)).subscribe((certificates) => {
       this.csrlist = this.getTarget('csrlist');
       certificates.forEach((certificate) => {
         if (certificate.CSR !== null) {
@@ -687,14 +689,14 @@ export class CertificateAddComponent implements WizardConfiguration {
     });
 
     this.usageField = this.getTarget('ExtendedKeyUsage-usages');
-    this.ws.call('certificate.extended_key_usage_choices').subscribe((res) => {
+    this.ws.call('certificate.extended_key_usage_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       Object.keys(res).forEach((key) => {
         this.usageField.options.push({ label: res[key], value: key });
       });
     });
 
     const profilesField = this.getTarget('profiles');
-    this.ws.call('certificate.profiles').subscribe((res) => {
+    this.ws.call('certificate.profiles').pipe(untilDestroyed(this)).subscribe((res) => {
       Object.keys(res).forEach((item) => {
         profilesField.options.push({ label: item, value: res[item] });
       });
@@ -724,7 +726,7 @@ export class CertificateAddComponent implements WizardConfiguration {
       if (fieldConfig.value !== undefined) {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, fieldConfig.value);
       }
-      this.getField(fieldName).valueChanges.subscribe((res) => {
+      this.getField(fieldName).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, res);
       });
     }
@@ -760,10 +762,10 @@ export class CertificateAddComponent implements WizardConfiguration {
       this.hideField(this.internalFields[i], false);
     }
     this.hideField(this.internalFields[2], true);
-    this.getField('csronsys').valueChanges.subscribe((res) => {
+    this.getField('csronsys').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.hideField('csrlist', !res);
     });
-    this.getField('create_type').valueChanges.subscribe((res) => {
+    this.getField('create_type').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.wizardConfig[2].skip = false;
 
       if (res == 'CERTIFICATE_CREATE_INTERNAL') {
@@ -863,12 +865,12 @@ export class CertificateAddComponent implements WizardConfiguration {
       this.setSummary();
     });
 
-    this.getField('name').valueChanges.subscribe((res) => {
+    this.getField('name').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.identifier = res;
       this.setSummary();
     });
 
-    this.getField('name').statusChanges.subscribe((res) => {
+    this.getField('name').statusChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (this.identifier && res === 'INVALID') {
         this.getTarget('name')['hasErrors'] = true;
       } else {
@@ -877,7 +879,7 @@ export class CertificateAddComponent implements WizardConfiguration {
       this.setSummary();
     });
 
-    this.getField('ExtendedKeyUsage-enabled').valueChanges.subscribe((res) => {
+    this.getField('ExtendedKeyUsage-enabled').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       const usagesRequired = res !== undefined ? res : false;
       this.usageField.required = usagesRequired;
       if (usagesRequired) {
@@ -889,7 +891,7 @@ export class CertificateAddComponent implements WizardConfiguration {
       this.setSummary();
     });
 
-    this.getField('profiles').valueChanges.subscribe((res) => {
+    this.getField('profiles').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       // undo revious profile settings
       this.loadProfiles(this.currentProfile, true);
       // load selected profile settings
@@ -1062,12 +1064,12 @@ export class CertificateAddComponent implements WizardConfiguration {
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Creating Certificate') }, disableClose: true });
     dialogRef.componentInstance.setCall(this.addWsCall, [data]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe(() => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialog.closeAll();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
-    dialogRef.componentInstance.failure.subscribe((err: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
       this.dialog.closeAll();
       // Dialog needed b/c handleWSError doesn't open a dialog when rejection comes back from provider
       if (err.error.includes('[EFAULT')) {

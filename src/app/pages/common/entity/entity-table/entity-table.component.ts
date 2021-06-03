@@ -1,3 +1,4 @@
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   animate, state, style, transition, trigger,
 } from '@angular/animations';
@@ -54,6 +55,7 @@ export interface Command {
   options?: any[]; // Function parameters
 }
 
+@UntilDestroy()
 @Component({
   selector: 'entity-table',
   templateUrl: './entity-table.component.html',
@@ -195,12 +197,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     protected matDialog: MatDialog,
     public modalService: ModalService,
   ) {
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.multiActionsIconsOnly = evt.data.preferIconsOnly;
     });
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
     // watch for navigation events as ngOnDestroy doesn't always trigger on these
-    this.routeSub = this.router.events.subscribe((event) => {
+    this.routeSub = this.router.events.pipe(untilDestroyed(this)).subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.cleanup();
       }
@@ -543,7 +545,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   callGetFunction(skipActions = false): void {
-    this.getFunction.subscribe(
+    this.getFunction.pipe(untilDestroyed(this)).subscribe(
       (res: any) => {
         this.handleData(res, skipActions);
       },
@@ -796,7 +798,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       msg_content += '</b>?';
       deleteMsg += msg_content;
     }
-    this.translate.get(deleteMsg).subscribe((res) => {
+    this.translate.get(deleteMsg).pipe(untilDestroyed(this)).subscribe((res) => {
       deleteMsg = res;
     });
     return deleteMsg;
@@ -824,7 +826,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {
       // double confirm: input delete item's name to confirm deletion
-      this.conf.config.deleteMsg.doubleConfirm(item).subscribe((doubleConfirmDialog: boolean) => {
+      this.conf.config.deleteMsg.doubleConfirm(item).pipe(untilDestroyed(this)).subscribe((doubleConfirmDialog: boolean) => {
         if (doubleConfirmDialog) {
           this.toDeleteRow = item;
           this.delete(id);
@@ -836,7 +838,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         message: dialog.hasOwnProperty('message') ? dialog['message'] + deleteMsg : deleteMsg,
         hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : false,
         buttonMsg: dialog.hasOwnProperty('button') ? dialog['button'] : T('Delete'),
-      }).subscribe((res) => {
+      }).pipe(untilDestroyed(this)).subscribe((res) => {
         if (res) {
           this.toDeleteRow = item;
           this.delete(id);
@@ -848,7 +850,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   delete(id: string): void {
     this.loader.open();
     this.loaderOpen = true;
-    this.busy = this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id])).subscribe(
+    this.busy = this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id])).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.getData();
         this.excuteDeletion = true;
@@ -941,7 +943,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       msg_content += '</ul>';
       deleteMsg += msg_content;
     }
-    this.translate.get(deleteMsg).subscribe((res) => {
+    this.translate.get(deleteMsg).pipe(untilDestroyed(this)).subscribe((res) => {
       deleteMsg = res;
     });
     return deleteMsg;
@@ -954,7 +956,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       message: multiDeleteMsg,
       hideCheckBox: false,
       buttonMsg: T('Delete'),
-    }).subscribe((res) => {
+    }).pipe(untilDestroyed(this)).subscribe((res) => {
       if (!res) {
         return;
       }
@@ -964,7 +966,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.conf.wsMultiDelete) {
         // ws to do multi-delete
         if (this.conf.wsMultiDeleteParams) {
-          this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected)).subscribe(
+          this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected)).pipe(untilDestroyed(this)).subscribe(
             (res1) => {
               if (res1.state === EntityJobState.Success) {
                 this.loader.close();
@@ -1099,10 +1101,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Task is running') }, disableClose: false });
     dialogRef.componentInstance.jobId = jobid;
     dialogRef.componentInstance.wsshow();
-    dialogRef.componentInstance.success.subscribe(() => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
     });
-    dialogRef.componentInstance.failure.subscribe(() => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
     });
   }

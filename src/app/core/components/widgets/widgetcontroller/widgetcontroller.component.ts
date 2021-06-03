@@ -13,6 +13,7 @@ import { EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.c
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 
 import { T } from '../../../../translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 export interface DashConfigItem {
   name: string; // Shown in UI fields
@@ -22,6 +23,7 @@ export interface DashConfigItem {
   id?: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'widget-controller',
   templateUrl: './widgetcontroller.component.html',
@@ -45,7 +47,7 @@ export class WidgetControllerComponent extends WidgetComponent {
   constructor(public router: Router, public translate: TranslateService, public mediaObserver: MediaObserver) {
     super(translate);
 
-    mediaObserver.media$.subscribe((evt) => {
+    mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
       const st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
       this.screenType = st;
     });

@@ -10,6 +10,7 @@ import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
 import { ErrorMessage } from 'app/core/classes/ix-interfaces';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface ViewConfig {
   name: string;
@@ -20,6 +21,7 @@ interface ViewConfig {
   showInNavbar: boolean;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'view-enclosure',
   templateUrl: './view-enclosure.component.html',
@@ -64,7 +66,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
 
   constructor(private core: CoreService, protected router: Router) {
     this.events = new Subject<CoreEvent>();
-    this.events.subscribe((evt: CoreEvent) => {
+    this.events.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       switch (evt.name) {
         case 'VisualizerReady':
           this.extractVisualizations();
@@ -95,39 +97,39 @@ export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
       }
     });
 
-    core.register({ observerClass: this, eventName: 'ThemeChanged' }).subscribe(() => {
+    core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe(() => {
       if (this.system) {
         this.extractVisualizations();
       }
     });
 
-    core.register({ observerClass: this, eventName: 'EnclosureData' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'EnclosureData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.system = new SystemProfiler(this.system_product, evt.data);
       this.selectedEnclosure = this.system.profile[this.system.headIndex];
       core.emit({ name: 'DisksRequest', sender: this });
       core.emit({ name: 'SensorDataRequest', sender: this });
     });
 
-    core.register({ observerClass: this, eventName: 'EnclosureLabelChanged' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'EnclosureLabelChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.system.enclosures[evt.data.index].label = evt.data.label;
       this.events.next(evt);
     });
 
-    core.register({ observerClass: this, eventName: 'PoolData' }).subscribe((evt: PoolDataEvent) => {
+    core.register({ observerClass: this, eventName: 'PoolData' }).pipe(untilDestroyed(this)).subscribe((evt: PoolDataEvent) => {
       this.system.pools = evt.data;
       this.events.next({ name: 'PoolsChanged', sender: this });
       this.addViews();
     });
 
-    core.register({ observerClass: this, eventName: 'SensorData' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'SensorData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.system.sensorData = evt.data;
     });
 
-    core.register({ observerClass: this, eventName: 'DisksChanged' }).subscribe(() => {
+    core.register({ observerClass: this, eventName: 'DisksChanged' }).pipe(untilDestroyed(this)).subscribe(() => {
       this.fetchData();
     });
 
-    core.register({ observerClass: this, eventName: 'DisksData' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.system.diskData = evt.data;
       core.emit({ name: 'PoolDataRequest', sender: this });
       setTimeout(() => {
@@ -135,7 +137,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
       }, 1500);
     });
 
-    core.register({ observerClass: this, eventName: 'SysInfo' }).subscribe((evt: SysInfoEvent) => {
+    core.register({ observerClass: this, eventName: 'SysInfo' }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
       if (!this.system_product) {
         this.system_product = evt.data.system_product;
         this.system_manufacturer = evt.data.system_manufacturer.toLowerCase();

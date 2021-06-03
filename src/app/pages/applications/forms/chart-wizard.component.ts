@@ -11,7 +11,9 @@ import { Wizard } from '../../common/entity/entity-form/models/wizard.interface'
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import { Subject } from 'rxjs';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'chart-add-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
@@ -104,7 +106,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
       this.wizardConfig = this.wizardConfig.filter((wizard) => wizard.fieldConfig.length > 0);
       if (this.entityWizard) {
         this.entityWizard.resetFields();
-        this.entityWizard.formArray.get([0]).get('version').valueChanges.subscribe((value: any) => {
+        this.entityWizard.formArray.get([0]).get('version').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
           this.selectedVersionKey = value;
           this.parseSchema();
         });
@@ -118,7 +120,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
   afterInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
 
-    entityWizard.formArray.get([0]).get('version').valueChanges.subscribe((value) => {
+    entityWizard.formArray.get([0]).get('version').valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       this.selectedVersionKey = value;
       this.parseSchema();
     });
@@ -148,12 +150,12 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
     });
     this.dialogRef.componentInstance.setCall(apiCall, payload);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
-    this.dialogRef.componentInstance.failure.subscribe((res: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res.exc_info && res.exc_info.extra) {
         new EntityUtils().handleWSError(this, res);
       } else {

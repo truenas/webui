@@ -14,6 +14,9 @@ import { EntityUtils } from '../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { forkJoin, of } from 'rxjs';
 import { tap, map, catchError } from 'rxjs/operators';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+@UntilDestroy()
 @Component({
   selector: 'app-kubernetes-settings',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -139,7 +142,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
-    this.appService.getContainerConfig().subscribe((res) => {
+    this.appService.getContainerConfig().pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.entityEdit.formGroup.controls['enable_container_image_update'].setValue(res.enable_image_updates);
       }

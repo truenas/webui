@@ -10,7 +10,9 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/storage/disks/disks';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-disk-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -196,7 +198,7 @@ export class DiskFormComponent implements FormConfiguration {
   }
 
   preInit(): void {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       /*
        * Make sure the route is "storage/disks" before
        * using the pk value
@@ -208,7 +210,7 @@ export class DiskFormComponent implements FormConfiguration {
   }
 
   afterInit(entityEdit: EntityFormComponent): void {
-    entityEdit.formGroup.controls['hddstandby'].valueChanges.subscribe((value: any) => {
+    entityEdit.formGroup.controls['hddstandby'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value === DiskStandby.AlwaysOn) {
         entityEdit.formGroup.controls['hddstandby_force'].setValue(false);
       }

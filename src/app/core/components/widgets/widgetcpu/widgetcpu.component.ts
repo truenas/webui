@@ -23,7 +23,9 @@ import { ViewChartBarComponent } from 'app/core/components/viewchartbar/viewchar
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'widget-cpu',
   templateUrl: './widgetcpu.component.html',
@@ -82,7 +84,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
     this.utils = new ThemeUtils();
 
-    mediaObserver.media$.subscribe((evt) => {
+    mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
       const size = {
         width: evt.mqAlias == 'xs' ? 320 : 536,
         height: 140,
@@ -100,7 +102,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.core.register({
       observerClass: this,
       eventName: 'SysInfo',
-    }).subscribe((evt: SysInfoEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
       this.threadCount = evt.data.cores;
       this.coreCount = evt.data.physical_cores;
       this.hyperthread = this.threadCount !== this.coreCount;
@@ -120,7 +122,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.core.register({
       observerClass: this,
       eventName: 'ThemeChanged',
-    }).subscribe(() => {
+    }).pipe(untilDestroyed(this)).subscribe(() => {
       d3.select('#grad1 .begin')
         .style('stop-color', this.getHighlightColor(0));
 
@@ -128,7 +130,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         .style('stop-color', this.getHighlightColor(0.15));
     });
 
-    this.data.subscribe((evt: CoreEvent) => {
+    this.data.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.name !== 'CpuStats') {
         return;
       }

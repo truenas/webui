@@ -7,7 +7,9 @@ import { BootEnvService, RestService, WebSocketService } from '../../../../servi
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-bootenv-rename',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -27,7 +29,7 @@ export class BootEnvironmentRenameComponent implements FormConfiguration {
     protected rest: RestService, protected ws: WebSocketService, protected bootEnvService: BootEnvService) {}
 
   preInit(entityForm: EntityFormComponent): void {
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
       this.fieldConfig = [
         {

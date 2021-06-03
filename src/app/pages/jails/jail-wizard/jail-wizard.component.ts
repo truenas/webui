@@ -18,7 +18,9 @@ import { forbiddenValues } from '../../common/entity/entity-form/validators/forb
 import { T } from '../../../translate-marker';
 import helptext from '../../../helptext/jails/jail-configuration';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'jail-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
@@ -318,7 +320,7 @@ export class JailWizardComponent implements WizardConfiguration {
   preInit(): void {
     this.releaseField = _.find(this.wizardConfig[0].fieldConfig, { name: 'release' });
     this.template_list = new Array<string>();
-    this.jailService.getTemplates().subscribe(
+    this.jailService.getTemplates().pipe(untilDestroyed(this)).subscribe(
       (templates) => {
         for (const template of templates) {
           this.template_list.push(template.host_hostuuid);
@@ -329,7 +331,7 @@ export class JailWizardComponent implements WizardConfiguration {
         new EntityUtils().handleWSError(this, err, this.dialogService);
       },
     );
-    this.jailService.getReleaseChoices().subscribe(
+    this.jailService.getReleaseChoices().pipe(untilDestroyed(this)).subscribe(
       (releases) => {
         for (const item in releases) {
           this.releaseField.options.push({ label: item, value: releases[item] });
@@ -345,7 +347,7 @@ export class JailWizardComponent implements WizardConfiguration {
     this.ip6_interfaceField = _.find(this.wizardConfig[1].fieldConfig, { name: 'ip6_interface' });
     this.ip6_prefixField = _.find(this.wizardConfig[1].fieldConfig, { name: 'ip6_prefix' });
 
-    this.jailService.getInterfaceChoice().subscribe(
+    this.jailService.getInterfaceChoice().pipe(untilDestroyed(this)).subscribe(
       (res) => {
         for (const i in res) {
           this.interfaces.vnetDisabled.push({ label: res[i], value: i });
@@ -356,7 +358,7 @@ export class JailWizardComponent implements WizardConfiguration {
       },
     );
 
-    this.jailService.getDefaultConfiguration().subscribe(
+    this.jailService.getDefaultConfiguration().pipe(untilDestroyed(this)).subscribe(
       (res) => {
         const ventInterfaces = res['interfaces'].split(',');
         for (const item of ventInterfaces) {
@@ -425,26 +427,26 @@ export class JailWizardComponent implements WizardConfiguration {
 
     const httpsField = _.find(this.wizardConfig[0].fieldConfig, { name: 'https' });
 
-    (< FormGroup > entityWizard.formArray.get([0]).get('uuid')).valueChanges.subscribe((res) => {
+    (< FormGroup > entityWizard.formArray.get([0]).get('uuid')).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.summary[T('Jail Name')] = res;
     });
-    (< FormGroup > entityWizard.formArray.get([0])).get('release').valueChanges.subscribe((res) => {
+    (< FormGroup > entityWizard.formArray.get([0])).get('release').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.summary[T('Release')] = res;
 
       httpsField.isHidden = !(_.indexOf(this.unfetchedRelease, res) > -1);
     });
     // update ipv4
-    (< FormGroup > entityWizard.formArray.get([1])).get('ip4_interface').valueChanges.subscribe(() => {
+    (< FormGroup > entityWizard.formArray.get([1])).get('ip4_interface').valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateIpAddress(entityWizard, 'ipv4');
     });
-    (< FormGroup > entityWizard.formArray.get([1])).get('ip4_netmask').valueChanges.subscribe(() => {
+    (< FormGroup > entityWizard.formArray.get([1])).get('ip4_netmask').valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateIpAddress(entityWizard, 'ipv4');
     });
-    (< FormGroup > entityWizard.formArray.get([1])).get('ip4_addr').valueChanges.subscribe(() => {
+    (< FormGroup > entityWizard.formArray.get([1])).get('ip4_addr').valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateIpAddress(entityWizard, 'ipv4');
     });
 
-    (< FormGroup > entityWizard.formArray.get([1]).get('defaultrouter')).valueChanges.subscribe((res) => {
+    (< FormGroup > entityWizard.formArray.get([1]).get('defaultrouter')).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res == undefined || res == '') {
         delete this.summary[T('Default Router For IPv4')];
       } else {
@@ -452,7 +454,7 @@ export class JailWizardComponent implements WizardConfiguration {
       }
     });
 
-    (< FormGroup > entityWizard.formArray.get([1]).get('auto_configure_ip6')).valueChanges.subscribe((res) => {
+    (< FormGroup > entityWizard.formArray.get([1]).get('auto_configure_ip6')).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       const vnet_ctrl = (< FormGroup > entityWizard.formArray.get([1])).controls['vnet'];
       if (res) {
         vnet_ctrl.setValue(true);
@@ -463,17 +465,17 @@ export class JailWizardComponent implements WizardConfiguration {
     });
 
     // update ipv6
-    (< FormGroup > entityWizard.formArray.get([1])).get('ip6_interface').valueChanges.subscribe(() => {
+    (< FormGroup > entityWizard.formArray.get([1])).get('ip6_interface').valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateIpAddress(entityWizard, 'ipv6');
     });
-    (< FormGroup > entityWizard.formArray.get([1])).get('ip6_prefix').valueChanges.subscribe(() => {
+    (< FormGroup > entityWizard.formArray.get([1])).get('ip6_prefix').valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateIpAddress(entityWizard, 'ipv6');
     });
-    (< FormGroup > entityWizard.formArray.get([1])).get('ip6_addr').valueChanges.subscribe(() => {
+    (< FormGroup > entityWizard.formArray.get([1])).get('ip6_addr').valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateIpAddress(entityWizard, 'ipv6');
     });
 
-    (< FormGroup > entityWizard.formArray.get([1]).get('defaultrouter6')).valueChanges.subscribe((res) => {
+    (< FormGroup > entityWizard.formArray.get([1]).get('defaultrouter6')).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res == undefined || res == '') {
         delete this.summary[T('Default Router For IPv6')];
       } else {
@@ -481,7 +483,7 @@ export class JailWizardComponent implements WizardConfiguration {
       }
     });
 
-    (< FormGroup > entityWizard.formArray.get([1]).get('dhcp')).valueChanges.subscribe((res) => {
+    (< FormGroup > entityWizard.formArray.get([1]).get('dhcp')).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.summary[T('DHCP Autoconfigure IPv4')] = res ? T('Yes') : T('No');
 
       if (res) {
@@ -494,7 +496,7 @@ export class JailWizardComponent implements WizardConfiguration {
       }
       _.find(this.wizardConfig[1].fieldConfig, { name: 'vnet' }).required = res;
     });
-    (< FormGroup > entityWizard.formArray.get([1]).get('nat')).valueChanges.subscribe((res) => {
+    (< FormGroup > entityWizard.formArray.get([1]).get('nat')).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.summary[T('NAT Autoconfigure IPv4')] = res ? T('Yes') : T('No');
       if ((< FormGroup > entityWizard.formArray.get([1]).get('dhcp')).disabled) {
         delete this.summary[T('DHCP Autoconfigure IPv4')];
@@ -504,7 +506,7 @@ export class JailWizardComponent implements WizardConfiguration {
       }
       _.find(this.wizardConfig[1].fieldConfig, { name: 'vnet' }).required = res;
     });
-    (< FormGroup > entityWizard.formArray.get([1]).get('vnet')).valueChanges.subscribe((res) => {
+    (< FormGroup > entityWizard.formArray.get([1]).get('vnet')).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.summary[T('VNET Virtual Networking')] = res ? T('Yes') : T('No');
       this.ip4_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
       this.ip6_interfaceField.options = res ? this.interfaces.vnetEnabled : this.interfaces.vnetDisabled;
@@ -576,11 +578,11 @@ export class JailWizardComponent implements WizardConfiguration {
     this.dialogRef.componentInstance.setDescription(T('Creating Jail...'));
     this.dialogRef.componentInstance.setCall(this.addWsCall, [value]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogRef.close(true);
       this.router.navigate(new Array('/').concat(this.route_success));
     });
-    this.dialogRef.componentInstance.failure.subscribe((res: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.dialogRef.close();
       new EntityUtils().handleWSError(this, res, this.dialogService);
     });

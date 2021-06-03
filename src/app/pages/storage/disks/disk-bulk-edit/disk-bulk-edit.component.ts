@@ -10,7 +10,9 @@ import { StorageService } from '../../../../services/storage.service';
 import helptext from '../../../../helptext/storage/disks/disks';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-disk-bulk-edit',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -95,7 +97,7 @@ export class DiskBulkEditComponent implements FormConfiguration {
     protected loader: AppLoaderService,
     public diskBucket: StorageService,
   ) {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['poolId']) {
         this.route_success = ['storage', 'pools', 'status', params['poolId']];
       }
@@ -127,7 +129,7 @@ export class DiskBulkEditComponent implements FormConfiguration {
     }
 
     this.ws.job('core.bulk', ['disk.update', req])
-      .subscribe(
+      .pipe(untilDestroyed(this)).subscribe(
         (res) => {
           if (res.state === EntityJobState.Success) {
             this.loader.close();

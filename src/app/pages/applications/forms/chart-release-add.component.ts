@@ -18,7 +18,9 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import helptext from '../../../helptext/apps/apps';
 import { EntityUtils } from '../../common/entity/utils';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-chart-release-add',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
@@ -348,7 +350,7 @@ export class ChartReleaseAddComponent implements OnDestroy, WizardConfiguration 
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService, private appService: ApplicationsService) {
-    this.appService.getNICChoices().subscribe((res) => {
+    this.appService.getNICChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       for (const item in res) {
         this.interfaceList.push({ label: item, value: item });
       }
@@ -390,7 +392,7 @@ export class ChartReleaseAddComponent implements OnDestroy, WizardConfiguration 
       .pipe(
         takeUntil(this.destroy$),
       )
-      .subscribe((res) => {
+      .pipe(untilDestroyed(this)).subscribe((res) => {
         this.summary[(label)] = res;
       });
   }
@@ -495,7 +497,7 @@ export class ChartReleaseAddComponent implements OnDestroy, WizardConfiguration 
     });
     this.dialogRef.componentInstance.setCall(this.addCall, payload);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();

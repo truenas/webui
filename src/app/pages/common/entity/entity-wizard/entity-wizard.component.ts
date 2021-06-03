@@ -18,7 +18,9 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { MatStepper } from '@angular/material/stepper';
 import { DialogService } from '../../../../services';
 import { EntityUtils } from '../utils';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'entity-wizard',
   templateUrl: './entity-wizard.component.html',
@@ -174,7 +176,7 @@ export class EntityWizardComponent implements OnInit {
     } else {
       this.loader.open();
 
-      this.ws.job(this.conf.addWsCall, [value]).subscribe(
+      this.ws.job(this.conf.addWsCall, [value]).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.loader.close();
           if (res.error) {

@@ -1,7 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -10,7 +12,6 @@ import { RelationAction } from 'app/pages/common/entity/entity-form/models/relat
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { CipherType } from 'app/enums/cipher-type.enum';
@@ -42,7 +43,9 @@ import {
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-replication-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
@@ -53,7 +56,6 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   isLinear = true;
   summaryTitle = T('Replication Summary');
   pk: number;
-  getRow: Subscription;
   saveSubmitText = T('START REPLICATION');
 
   protected entityWizard: any;
@@ -768,12 +770,15 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     private ws: WebSocketService, private replicationService: ReplicationService,
     private datePipe: DatePipe, private entityFormService: EntityFormService,
     private modalService: ModalService) {
-    this.ws.call('replication.query').subscribe(
+    this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe(
       (res: any[]) => {
         this.namesInUse.push(...res.map((replication) => replication.name));
       },
     );
-    this.getRow = this.modalService.getRow$.pipe(take(1)).subscribe((rowId: number) => {
+    this.modalService.getRow$.pipe(
+      take(1),
+      untilDestroyed(this),
+    ).subscribe((rowId: number) => {
       this.pk = rowId;
     });
   }
@@ -798,16 +803,16 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
   step0Init(): void {
     const exist_replicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' });
-    this.replicationService.getReplicationTasks().subscribe(
+    this.replicationService.getReplicationTasks().pipe(untilDestroyed(this)).subscribe(
       (res: ReplicationTask[]) => {
         for (const task of res) {
           if (task.transport !== TransportMode.Legacy) {
             // TODO: Change to icu message format.
-            const lable = task.name + ' (' + ((task.state && task.state.datetime)
+            const label = task.name + ' (' + ((task.state && task.state.datetime)
               ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy')
               : 'never ran')
             + ')';
-            exist_replicationField.options.push({ label: lable, value: task });
+            exist_replicationField.options.push({ label, value: task });
             if (this.pk === task.id) {
               this.loadOrClearReplicationTask(task);
             }
@@ -817,35 +822,33 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     );
 
     const privateKeyField = _.find(this.dialogFieldConfig, { name: 'private_key' });
-    this.keychainCredentialService.getSSHKeys().subscribe(
-      (res) => {
-        for (const i in res) {
-          privateKeyField.options.push({ label: res[i].name, value: res[i].id });
-        }
-      },
-    );
+    this.keychainCredentialService.getSSHKeys().pipe(untilDestroyed(this)).subscribe((keyPairs) => {
+      for (const i in keyPairs) {
+        (privateKeyField.options as Option[]).push({ label: keyPairs[i].name, value: String(keyPairs[i].id) });
+      }
+    });
 
     const ssh_credentials_source_field = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' });
     const ssh_credentials_target_field = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' });
-    this.keychainCredentialService.getSSHConnections().subscribe((res) => {
-      for (const i in res) {
-        ssh_credentials_source_field.options.push({ label: res[i].name, value: res[i].id });
-        ssh_credentials_target_field.options.push({ label: res[i].name, value: res[i].id });
+    this.keychainCredentialService.getSSHConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
+      for (const i in connections) {
+        ssh_credentials_source_field.options.push({ label: connections[i].name, value: connections[i].id });
+        ssh_credentials_target_field.options.push({ label: connections[i].name, value: connections[i].id });
       }
       ssh_credentials_source_field.options.push({ label: T('Create New'), value: 'NEW' });
       ssh_credentials_target_field.options.push({ label: T('Create New'), value: 'NEW' });
     });
 
-    this.entityWizard.formArray.controls[0].controls['exist_replication'].valueChanges.subscribe((value: any) => {
+    this.entityWizard.formArray.controls[0].controls['exist_replication'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value !== null) {
         this.loadOrClearReplicationTask(value);
       }
     });
-    this.entityWizard.formArray.controls[0].controls['source_datasets'].valueChanges.subscribe(() => {
+    this.entityWizard.formArray.controls[0].controls['source_datasets'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.genTaskName();
       this.getSnapshots();
     });
-    this.entityWizard.formArray.controls[0].controls['target_dataset'].valueChanges.subscribe(() => {
+    this.entityWizard.formArray.controls[0].controls['target_dataset'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.genTaskName();
     });
 
@@ -853,7 +856,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       const credentialName = 'ssh_credentials_' + i;
       const datasetName = i === 'source' ? 'source_datasets' : 'target_dataset';
       const datasetFrom = datasetName + '_from';
-      this.entityWizard.formArray.controls[0].controls[datasetFrom].valueChanges.subscribe((value: any) => {
+      this.entityWizard.formArray.controls[0].controls[datasetFrom].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
         if (value === DatasetSource.Remote) {
           if (datasetFrom === 'source_datasets_from') {
             this.entityWizard.formArray.controls[0].controls['target_dataset_from'].setValue(DatasetSource.Local);
@@ -869,7 +872,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         }
       });
 
-      this.entityWizard.formArray.controls[0].controls[credentialName].valueChanges.subscribe((value: any) => {
+      this.entityWizard.formArray.controls[0].controls[credentialName].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
         if (value === 'NEW' && this.entityWizard.formArray.controls[0].controls[datasetFrom].value === DatasetSource.Remote) {
           this.createSSHConnection(credentialName);
           this.setDisable(datasetName, false, false, 0);
@@ -889,14 +892,14 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       });
     }
 
-    this.entityWizard.formArray.controls[0].controls['recursive'].valueChanges.subscribe((value: any) => {
+    this.entityWizard.formArray.controls[0].controls['recursive'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       const explorerComponent = _.find(this.source_fieldSet.config, { name: 'source_datasets' }).customTemplateStringOptions;
       if (explorerComponent) {
         explorerComponent.useTriState = value;
       }
     });
 
-    this.entityWizard.formArray.controls[0].controls['custom_snapshots'].valueChanges.subscribe((value: any) => {
+    this.entityWizard.formArray.controls[0].controls['custom_snapshots'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.setDisable('naming_schema', !value, !value, 0);
       if (!value) {
         this.getSnapshots();
@@ -914,7 +917,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   step1Init(): void {
-    this.entityWizard.formArray.controls[1].controls['retention_policy'].valueChanges.subscribe((value: any) => {
+    this.entityWizard.formArray.controls[1].controls['retention_policy'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       const disable = value === RetentionPolicy.Source;
       if (disable) {
         this.entityWizard.formArray.controls[1].controls['lifetime_value'].disable();
@@ -1065,7 +1068,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     if (item === 'private_key') {
       payload = {
         name: data['name'] + ' Key',
-        type: 'SSH_KEY_PAIR',
+        type: KeychainCredentialType.SshKeyPair,
         attributes: data['sshkeypair'],
       };
       return this.ws.call(this.createCalls[item], [payload]).toPromise();
@@ -1076,7 +1079,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       if (data['setup_method'] == 'manual') {
         payload = {
           name: data['name'],
-          type: 'SSH_CREDENTIALS',
+          type: KeychainCredentialType.SshCredentials,
           attributes: {
             cipher: data['cipher'],
             host: data['host'],
@@ -1303,8 +1306,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
         if (value['private_key'] == 'NEW') {
           await self.replicationService.genSSHKeypair().then(
-            (res) => {
-              value['sshkeypair'] = res;
+            (keyPair) => {
+              value['sshkeypair'] = keyPair;
             },
             (err) => {
               prerequisite = false;
@@ -1406,7 +1409,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     ];
 
     if (payload[0].length > 0) {
-      this.ws.call('replication.count_eligible_manual_snapshots', payload).subscribe(
+      this.ws.call('replication.count_eligible_manual_snapshots', payload).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.eligibleSnapshots = res.eligible;
           const isPush = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === DatasetSource.Local;

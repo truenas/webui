@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, ValidatorFn } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -18,18 +18,19 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { EntityUtils } from '../../../common/entity/utils';
 import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout/admin-layout.component';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-gui-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class GuiFormComponent implements FormConfiguration, OnDestroy {
+export class GuiFormComponent implements FormConfiguration {
   updateCall = 'system.general.update';
   sortLanguagesByName = true;
   languageList: Option[] = [];
   languageKey: string;
-  private getDataFromDash: Subscription;
   fieldConfig: FieldConfig[] = [];
 
   fieldSets: FieldSet[] = [
@@ -148,7 +149,7 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
     private modalService: ModalService,
     private adminLayout: AdminLayoutComponent,
   ) {
-    this.getDataFromDash = this.sysGeneralService.sendConfigData$.subscribe((res) => {
+    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.configData = res;
     });
   }
@@ -206,6 +207,7 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
       .config.find((config) => config.name === 'ui_certificate');
 
     this.ws.call('system.general.ui_certificate_choices')
+      .pipe(untilDestroyed(this))
       .subscribe((res: any) => {
         this.ui_certificate.options = [{ label: '---', value: null }];
         for (const id in res) {
@@ -218,7 +220,7 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
       .find((set) => set.name === helptext.stg_fieldset_gui)
       .config.find((config) => config.name === 'ui_httpsprotocols');
 
-    this.ws.call('system.general.ui_httpsprotocols_choices').subscribe(
+    this.ws.call('system.general.ui_httpsprotocols_choices').pipe(untilDestroyed(this)).subscribe(
       (res: any) => {
         httpsprotocolsField.options = [];
         for (const key in res) {
@@ -230,7 +232,7 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
 
     this.sysGeneralService
       .ipChoicesv4()
-      .subscribe((ips) => {
+      .pipe(untilDestroyed(this)).subscribe((ips) => {
         this.fieldSets
           .find((set) => set.name === helptext.stg_fieldset_gui)
           .config.find((config) => config.name === 'ui_address').options = ips;
@@ -239,7 +241,7 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
 
     this.sysGeneralService
       .ipChoicesv6()
-      .subscribe((v6Ips) => {
+      .pipe(untilDestroyed(this)).subscribe((v6Ips) => {
         this.fieldSets
           .find((set) => set.name === helptext.stg_fieldset_gui)
           .config.find((config) => config.name === 'ui_v6address').options = v6Ips;
@@ -275,7 +277,7 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
         || !(this.v6addresses.length === new_v6addresses.length
            && this.v6addresses.every((val, index) => val === new_v6addresses[index]))) {
       this.dialog.confirm(helptext.dialog_confirm_title, helptext.dialog_confirm_title)
-        .subscribe((res: boolean) => {
+        .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
           if (res) {
             let href = window.location.href;
             const hostname = window.location.hostname;
@@ -292,7 +294,7 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
 
             this.loader.open();
             this.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
-            this.ws.call('service.restart', ['http']).subscribe(() => {
+            this.ws.call('service.restart', ['http']).pipe(untilDestroyed(this)).subscribe(() => {
             }, (res: any) => {
               this.loader.close();
               this.dialog.errorReport(helptext.dialog_error_title, res.reason, res.trace.formatted);
@@ -311,7 +313,7 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
 
   customSubmit(body: any): Subscription {
     this.loader.open();
-    return this.ws.call('system.general.update', [body]).subscribe(() => {
+    return this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
       this.modalService.close('slide-in-form');
       this.sysGeneralService.refreshSysGeneral();
@@ -323,9 +325,5 @@ export class GuiFormComponent implements FormConfiguration, OnDestroy {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
-  }
-
-  ngOnDestroy(): void {
-    this.getDataFromDash.unsubscribe();
   }
 }
