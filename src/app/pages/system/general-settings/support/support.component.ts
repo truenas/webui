@@ -10,8 +10,8 @@ import { SupportFormLicensedComponent } from './support-licensed/support-form-li
 import { SupportFormUnlicensedComponent } from './support-unlicensed/support-form-unlicensed.component';
 import { ProactiveComponent } from './proactive/proactive.component';
 import { TranslateService } from '@ngx-translate/core';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

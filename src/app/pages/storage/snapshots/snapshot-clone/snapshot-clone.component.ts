@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
   FieldConfig,
-} from '../../../common/entity/entity-form/models/field-config.interface';
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 
 import { RestService, WebSocketService } from 'app/services';

@@ -11,7 +11,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { ModalService } from 'app/services/modal.service';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/account/user-list';
 import { EntityUtils } from 'app/pages/common/entity/utils';

@@ -4,8 +4,8 @@ import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { Observable } from 'rxjs';
 import { BootEnvService, RestService, WebSocketService } from 'app/services';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

@@ -2,21 +2,21 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { RestService, WebSocketService } from '../../../services';
+import { RestService, WebSocketService } from 'app/services';
 import { FormGroup } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import { MatDialog } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import * as _ from 'lodash';
-import { JailService, NetworkService, DialogService } from '../../../services';
+import { JailService, NetworkService, DialogService } from 'app/services';
 import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { ipv4Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import { ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import { forbiddenValues } from '../../common/entity/entity-form/validators/forbidden-values-validation';
-import { T } from '../../../translate-marker';
-import helptext from '../../../helptext/jails/jail-configuration';
+import { T } from 'app/translate-marker';
+import helptext from 'app/helptext/jails/jail-configuration';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

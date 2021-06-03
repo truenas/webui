@@ -6,10 +6,10 @@ import { Router } from '@angular/router';
 import { helptext_system_email } from 'app/helptext/system/email';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
-import { ProductType } from '../../../enums/product-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import {
   DialogService, RestService, WebSocketService, AppLoaderService,
-} from '../../../services';
+} from 'app/services';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';

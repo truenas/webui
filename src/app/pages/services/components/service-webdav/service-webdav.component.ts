@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 import {
   RestService, SystemGeneralService, WebSocketService, ValidationService,
 } from 'app/services';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from 'app/helptext/services/components/service-webdav';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

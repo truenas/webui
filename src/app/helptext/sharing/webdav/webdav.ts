@@ -1,4 +1,4 @@
-import { T } from '../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { Validators } from '@angular/forms';
 
 export const helptext_sharing_webdav = {

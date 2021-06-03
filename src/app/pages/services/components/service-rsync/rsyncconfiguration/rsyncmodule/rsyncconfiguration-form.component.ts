@@ -6,7 +6,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
-import helptext from 'app/../../helptext/services/components/service-rsync';
+import helptext from 'app/helptext/services/components/service-rsync';
 import { UserService, WebSocketService } from 'app/../../services';
 import { FieldConfig } from 'app/../common/entity/entity-form/models/field-config.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

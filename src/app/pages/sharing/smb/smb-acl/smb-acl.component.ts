@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormGroup, Validators } from '@angular/forms';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_sharing_smb } from 'app/helptext/sharing/smb/smb';
 import * as _ from 'lodash';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

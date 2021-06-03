@@ -1,5 +1,5 @@
 import { Validators } from '@angular/forms';
-import { T } from '../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
 
 export default {

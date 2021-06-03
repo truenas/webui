@@ -8,9 +8,9 @@ import { Observable } from 'rxjs';
 
 import { DialogService } from 'app/services';
 import { RestService, SystemGeneralService, WebSocketService } from 'app/services';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from 'app/helptext/services/components/service-s3';
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { map } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

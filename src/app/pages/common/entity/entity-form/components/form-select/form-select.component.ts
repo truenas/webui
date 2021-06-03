@@ -10,9 +10,9 @@ import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
 import * as _ from 'lodash';
 import { DialogService } from 'app/services';
-import { DialogFormConfiguration } from '../../../entity-dialog/dialog-form-configuration.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { T } from 'app/translate-marker';
-import { EntityUtils, NULL_VALUE } from '../../../utils';
+import { EntityUtils, NULL_VALUE } from 'app/pages/common/entity/utils';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

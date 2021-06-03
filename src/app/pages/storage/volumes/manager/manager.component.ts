@@ -18,8 +18,8 @@ import { DialogService, WebSocketService, SystemGeneralService } from 'app/servi
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { StorageService } from 'app/services/storage.service';
 import { T } from 'app/translate-marker';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityUtils } from '../../../common/entity/utils';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DiskComponent } from './disk';
 import { VdevComponent } from './vdev';
 import * as filesize from 'filesize';

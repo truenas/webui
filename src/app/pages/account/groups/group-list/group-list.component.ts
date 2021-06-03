@@ -6,7 +6,7 @@ import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/en
 import { DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import helptext from 'app/helptext/account/group-list';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { ModalService } from 'app/services/modal.service';

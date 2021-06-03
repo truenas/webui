@@ -4,7 +4,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { Subscription } from 'rxjs';
 import { DialogService, WebSocketService } from 'app/services';
-import { EntityUtils } from '../../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

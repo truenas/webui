@@ -5,16 +5,16 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { ProductType } from '../../../enums/product-type.enum';
-import { DialogService, WebSocketService } from '../../../services';
+import { ProductType } from 'app/enums/product-type.enum';
+import { DialogService, WebSocketService } from 'app/services';
 import { ipv4Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import helptext from '../../../helptext/network/ipmi/ipmi';
-import globalHelptext from '../../../helptext/global-helptext';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import helptext from 'app/helptext/network/ipmi/ipmi';
+import globalHelptext from 'app/helptext/global-helptext';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { EntityUtils } from '../../common/entity/utils';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { T } from '../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

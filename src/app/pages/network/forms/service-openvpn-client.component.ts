@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { ServicesService } from '../../../services';
+import { ServicesService } from 'app/services';
 import * as _ from 'lodash';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';

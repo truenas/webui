@@ -4,13 +4,13 @@ import {
 import { Router } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
-import helptext from '../../../helptext/storage/import-disk/import-disk';
+import helptext from 'app/helptext/storage/import-disk/import-disk';
 
 import {
   RestService,
   WebSocketService,
   JobService,
-} from '../../../services';
+} from 'app/services';
 import {
   FieldConfig,
 } from '../../common/entity/entity-form/models/field-config.interface';
@@ -19,7 +19,7 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { DialogService } from 'app/services/dialog.service';
 import { EntityUtils } from '../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { T } from '../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { CoreService } from 'app/core/services/core.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

@@ -9,24 +9,24 @@ import {
 } from 'app/services';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { EntityUtils } from '../../../common/entity/utils';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
-import { EntityTreeTable } from '../../../common/entity/entity-tree-table/entity-tree-table.model';
+import { EntityTreeTable } from 'app/pages/common/entity/entity-tree-table/entity-tree-table.model';
 
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { Validators } from '@angular/forms';
-import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
+import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
 import { LocaleService } from 'app/services/locale.service';
 import { T } from 'app/translate-marker';
 import helptext from 'app/helptext/storage/volumes/volume-status';
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 
 import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
-import { EntityToolbarComponent } from '../../../common/entity/entity-toolbar/entity-toolbar.component';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { ModalService } from 'app/services/modal.service';
 import { DiskFormComponent } from '../../disks/disk-form';

@@ -1,10 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { WebSocketService, JailService, DialogService } from '../../../services';
+import { WebSocketService, JailService, DialogService } from 'app/services';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { EntityUtils } from '../../common/entity/utils';
-import { T } from '../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

@@ -20,12 +20,12 @@ import {
   LanguageService,
   StorageService,
   UserService,
-} from '../../../services';
+} from 'app/services';
 import { CoreService } from 'app/core/services/core.service';
-import { ModalService } from '../../../services/modal.service';
+import { ModalService } from 'app/services/modal.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
 import { KernelFormComponent } from './kernel-form/kernel-form.component';
 import { SyslogFormComponent } from './syslog-form/syslog-form.component';

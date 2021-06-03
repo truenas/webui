@@ -8,9 +8,9 @@ import { CoreEvent } from 'app/interfaces/events';
 import { Subject, Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
-import { DialogService, SystemGeneralService, WebSocketService } from '../../../services/index';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services/index';
 import { ApplicationsService } from '../applications.service';
-import { ModalService } from '../../../services/modal.service';
+import { ModalService } from 'app/services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component';
@@ -18,7 +18,7 @@ import { CommonUtils } from 'app/core/classes/common-utils';
 import { ChartFormComponent } from '../forms/chart-form.component';
 import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
 
-import helptext from '../../../helptext/apps/apps';
+import helptext from 'app/helptext/apps/apps';
 import { CoreService } from 'app/core/services/core.service';
 import { Router } from '@angular/router';
 import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';

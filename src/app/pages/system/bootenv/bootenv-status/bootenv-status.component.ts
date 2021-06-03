@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TreeNode } from 'primeng/api';
-import { EntityTreeTable } from '../../../common/entity/entity-tree-table/entity-tree-table.model';
+import { EntityTreeTable } from 'app/pages/common/entity/entity-tree-table/entity-tree-table.model';
 
 import { RestService } from 'app/services/rest.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { EntityUtils } from '../../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

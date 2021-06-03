@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import helptext from 'app/../../helptext/services/components/service-rsync';
+import helptext from 'app/helptext/services/components/service-rsync';
 import { RestService } from 'app/../../services/rest.service';
 import { WebSocketService } from 'app/../../services/ws.service';
 import { FieldConfig } from 'app/../common/entity/entity-form/models/field-config.interface';

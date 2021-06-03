@@ -6,8 +6,8 @@ import {
 } from '@angular/router';
 import { CoreEvent } from 'app/interfaces/events';
 import { filter } from 'rxjs/operators';
-import { ProductType } from '../../../enums/product-type.enum';
-import { RoutePartsService } from '../../../services/route-parts/route-parts.service';
+import { ProductType } from 'app/enums/product-type.enum';
+import { RoutePartsService } from 'app/services/route-parts/route-parts.service';
 import { CoreService } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { ViewButtonComponent } from 'app/core/components/viewbutton/viewbutton.component';

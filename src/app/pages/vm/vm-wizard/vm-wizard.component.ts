@@ -3,10 +3,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { VmBootloader, VmDeviceType, VmTime } from 'app/enums/vm.enum';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { ProductType } from '../../../enums/product-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import {
   RestService, WebSocketService, NetworkService, StorageService, SystemGeneralService,
-} from '../../../services';
+} from 'app/services';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import {
   FormGroup, Validators, ValidationErrors, FormControl, ValidatorFn,
@@ -17,17 +17,17 @@ import { MessageService } from '../../common/entity/entity-form/services/message
 import { ModalService } from 'app/services/modal.service';
 import * as _ from 'lodash';
 
-import { VmService } from '../../../services/vm.service';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { VmService } from 'app/services/vm.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material/dialog';
-import { T } from '../../../translate-marker';
-import { DialogService } from '../../../services/dialog.service';
-import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
-import add_edit_helptext from '../../../helptext/vm/devices/device-add-edit';
+import { T } from 'app/translate-marker';
+import { DialogService } from 'app/services/dialog.service';
+import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import add_edit_helptext from 'app/helptext/vm/devices/device-add-edit';
 import { catchError, map } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import globalHelptext from '../../../helptext/global-helptext';
+import globalHelptext from 'app/helptext/global-helptext';
 import { combineLatest, Observable } from 'rxjs';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';

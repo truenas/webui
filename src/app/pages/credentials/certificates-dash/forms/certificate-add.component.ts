@@ -9,13 +9,13 @@ import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { EntityUtils } from '../../../common/entity/utils';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 
-import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
+import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';

@@ -1,4 +1,4 @@
-import { T } from '../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 export default {
   dw_disk_name_placeholder: T('Name'),

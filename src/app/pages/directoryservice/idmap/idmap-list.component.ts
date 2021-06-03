@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { T } from '../../../translate-marker';
+import { T } from 'app/translate-marker';
 import {
   IdmapService, ValidationService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { IdmapFormComponent } from './idmap-form.component';
-import helptext from '../../../helptext/directoryservice/idmap';
-import { ModalService } from '../../../services/modal.service';
+import helptext from 'app/helptext/directoryservice/idmap';
+import { ModalService } from 'app/services/modal.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ActiveDirectoryComponent } from '../activedirectory/activedirectory.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

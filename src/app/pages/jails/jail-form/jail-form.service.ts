@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Observable } from 'rxjs';
 
-import { WebSocketService } from '../../../services';
+import { WebSocketService } from 'app/services';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';

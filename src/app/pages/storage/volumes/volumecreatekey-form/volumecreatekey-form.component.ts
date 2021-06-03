@@ -12,7 +12,7 @@ import { WebSocketService } from 'app/services';
 import { EncryptionService } from 'app/services/encryption.service';
 import {
   FieldConfig,
-} from '../../../common/entity/entity-form/models/field-config.interface';
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { MatDialog } from '@angular/material/dialog';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

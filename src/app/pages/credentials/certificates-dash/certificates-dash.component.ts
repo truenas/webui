@@ -11,10 +11,10 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import * as _ from 'lodash';
 import {
   SystemGeneralService, WebSocketService, AppLoaderService, DialogService, StorageService,
-} from '../../../services';
+} from 'app/services';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
-import { ModalService } from '../../../services/modal.service';
-import { T } from '../../../translate-marker';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 import { CertificateAddComponent } from './forms/certificate-add.component';
 import { CertificateEditComponent } from './forms/certificate-edit.component';
 import { CertificateAuthorityAddComponent } from './forms/ca-add.component';

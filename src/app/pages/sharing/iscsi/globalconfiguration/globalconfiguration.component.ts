@@ -3,7 +3,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { ProductType } from 'app/enums/product-type.enum';
 
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
   DialogService, WebSocketService, AppLoaderService, SystemGeneralService,
 } from 'app/services';

@@ -3,8 +3,8 @@ import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 
-import { WebSocketService } from '../../../services/ws.service';
-import { StorageService } from '../../../services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { StorageService } from 'app/services/storage.service';
 import { EntityUtils } from '../entity/utils';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

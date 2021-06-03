@@ -7,11 +7,11 @@ import { CoreService } from 'app/core/services/core.service';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
-import { ProductType } from '../../../enums/product-type.enum';
-import { StorageService, SystemGeneralService, WebSocketService } from '../../../services';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { DialogService } from '../../../services/dialog.service';
-import { T } from '../../../translate-marker';
+import { ProductType } from 'app/enums/product-type.enum';
+import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
+import { T } from 'app/translate-marker';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';

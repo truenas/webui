@@ -7,16 +7,16 @@ import { Observable } from 'rxjs';
 import {
   SystemGeneralService,
   WebSocketService,
-} from '../../../services';
+} from 'app/services';
 import {
   FieldConfig,
 } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { DialogService } from '../../../services';
-import helptext from '../../../helptext/directoryservice/ldap';
-import global_helptext from '../../../helptext/global-helptext';
+import { DialogService } from 'app/services';
+import helptext from 'app/helptext/directoryservice/ldap';
+import global_helptext from 'app/helptext/global-helptext';
 import { T } from 'app/translate-marker';
-import { ModalService } from '../../../services/modal.service';
+import { ModalService } from 'app/services/modal.service';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

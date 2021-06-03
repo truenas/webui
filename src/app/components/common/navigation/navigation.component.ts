@@ -8,9 +8,9 @@ import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
-import { WebSocketService } from '../../../services';
-import { DocsService } from '../../../services/docs.service';
-import { NavigationService } from '../../../services/navigation/navigation.service';
+import { WebSocketService } from 'app/services';
+import { DocsService } from 'app/services/docs.service';
+import { NavigationService } from 'app/services/navigation/navigation.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

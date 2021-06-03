@@ -3,17 +3,17 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { VmDeviceType, VmTime } from 'app/enums/vm.enum';
 import * as _ from 'lodash';
-import { ProductType } from '../../../enums/product-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import {
   FieldConfig,
 } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { T } from '../../../translate-marker';
-import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
-import globalHelptext from '../../../helptext/global-helptext';
+import { T } from 'app/translate-marker';
+import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import globalHelptext from 'app/helptext/global-helptext';
 import {
   WebSocketService, StorageService, VmService, AppLoaderService, DialogService, SystemGeneralService,
-} from '../../../services';
+} from 'app/services';
 import { Validators } from '@angular/forms';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 

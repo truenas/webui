@@ -6,11 +6,11 @@ import { RelationAction } from 'app/pages/common/entity/entity-form/models/relat
 import { Subscription } from 'rxjs';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
-import { ModalService } from '../../../services/modal.service';
-import { DialogService } from '../../../services/index';
+import { ModalService } from 'app/services/modal.service';
+import { DialogService } from 'app/services/index';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { ApplicationsService } from '../applications.service';
-import helptext from '../../../helptext/apps/apps';
+import helptext from 'app/helptext/apps/apps';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { EntityUtils } from '../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

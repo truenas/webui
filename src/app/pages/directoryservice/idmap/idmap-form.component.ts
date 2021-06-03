@@ -5,11 +5,11 @@ import { RelationAction } from 'app/pages/common/entity/entity-form/models/relat
 import * as _ from 'lodash';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
-import { ValidationService, IdmapService, DialogService } from '../../../services';
+import { ValidationService, IdmapService, DialogService } from 'app/services';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
-import helptext from '../../../helptext/directoryservice/idmap';
-import { ModalService } from '../../../services/modal.service';
+import helptext from 'app/helptext/directoryservice/idmap';
+import { ModalService } from 'app/services/modal.service';
 import { Subscription } from 'rxjs';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

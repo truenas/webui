@@ -4,13 +4,13 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { T } from 'app/translate-marker';
 import * as _ from 'lodash';
-import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 
 import { WebSocketService, NetworkService, VmService } from 'app/services';
-import { EntityUtils } from '../../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import helptext from 'app/helptext/vm/devices/device-add-edit';
 import { CoreService } from 'app/core/services/core.service';

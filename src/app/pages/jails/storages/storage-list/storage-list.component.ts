@@ -5,7 +5,7 @@ import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/en
 
 import { DialogService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { EntityUtils } from '../../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
 import helptext from 'app/helptext/jails/storage';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

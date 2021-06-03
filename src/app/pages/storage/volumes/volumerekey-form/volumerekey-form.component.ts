@@ -5,7 +5,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import * as _ from 'lodash';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EncryptionService } from 'app/services/encryption.service';
 import { T } from 'app/translate-marker';

@@ -4,10 +4,10 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 import {
   WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService,
 }
-  from '../../../services';
+  from 'app/services';
 import { CoreService } from 'app/core/services/core.service';
-import { LocaleService } from '../../../services/locale.service';
-import { ModalService } from '../../../services/modal.service';
+import { LocaleService } from 'app/services/locale.service';
+import { ModalService } from 'app/services/modal.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -15,14 +15,14 @@ import { helptext_system_general as helptext } from 'app/helptext/system/general
 import { LocalizationFormComponent } from './localization-form/localization-form.component';
 import { GuiFormComponent } from './gui-form/gui-form.component';
 import { NTPServerFormComponent } from './ntpservers/ntpserver-form/ntpserver-form.component';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { Subject } from 'rxjs';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { AdminLayoutComponent } from '../../../components/common/layouts/admin-layout/admin-layout.component';
+import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout/admin-layout.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

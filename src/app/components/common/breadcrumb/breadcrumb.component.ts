@@ -4,8 +4,8 @@ import {
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { CoreEvent } from 'app/interfaces/events';
-import { ProductType } from '../../../enums/product-type.enum';
-import { RoutePartsService } from '../../../services/route-parts/route-parts.service';
+import { ProductType } from 'app/enums/product-type.enum';
+import { RoutePartsService } from 'app/services/route-parts/route-parts.service';
 import { CoreService } from 'app/core/services/core.service';
 import { filter } from 'rxjs/operators';
 import { LocaleService } from 'app/services/locale.service';

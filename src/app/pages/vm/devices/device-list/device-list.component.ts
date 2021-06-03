@@ -11,10 +11,10 @@ import { RestService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { EntityUtils } from '../../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ChangeDetectorRef } from '@angular/core';
 import { T } from 'app/translate-marker';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import * as _ from 'lodash';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

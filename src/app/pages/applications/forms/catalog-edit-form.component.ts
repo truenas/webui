@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { ModalService } from '../../../services/modal.service';
-import { DialogService } from '../../../services/index';
-import helptext from '../../../helptext/apps/apps';
+import { ModalService } from 'app/services/modal.service';
+import { DialogService } from 'app/services/index';
+import helptext from 'app/helptext/apps/apps';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

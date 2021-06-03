@@ -6,11 +6,11 @@ import {
   WebSocketService, KeychainCredentialService, AppLoaderService,
   DialogService, ReplicationService, StorageService, CloudCredentialService,
 } from 'app/services';
-import { ModalService } from '../../../services/modal.service';
+import { ModalService } from 'app/services/modal.service';
 import { SshConnectionsFormComponent } from './forms/ssh-connections-form.component';
 import { SshKeypairsFormComponent } from './forms/ssh-keypairs-form.component';
 import { CloudCredentialsFormComponent } from './forms/cloud-credentials-form.component';
-import { T } from '../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

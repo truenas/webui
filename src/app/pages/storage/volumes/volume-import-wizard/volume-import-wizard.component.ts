@@ -5,14 +5,14 @@ import { RelationAction } from 'app/pages/common/entity/entity-form/models/relat
 import { ProductType } from 'app/enums/product-type.enum';
 import { RestService, WebSocketService, DialogService } from 'app/services';
 import { FormGroup, Validators } from '@angular/forms';
-import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
+import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import * as _ from 'lodash';
-import { MessageService } from '../../../common/entity/entity-form/services/message.service';
+import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { HttpClient } from '@angular/common/http';
-import { EntityUtils } from '../../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material/dialog';
 import { T } from 'app/translate-marker';

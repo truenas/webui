@@ -1,6 +1,6 @@
-import { T } from '../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { Validators } from '@angular/forms';
-import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
+import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
 import globalHelptext from '../../global-helptext';
 
 export default {

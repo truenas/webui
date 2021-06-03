@@ -4,14 +4,14 @@ import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { Observable } from 'rxjs';
-import { ProductType } from '../../../enums/product-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 
-import { TooltipsService, WebSocketService } from '../../../services';
+import { TooltipsService, WebSocketService } from 'app/services';
 import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { ipv4Validator, ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
-import helptext from '../../../helptext/network/configuration/configuration';
+import helptext from 'app/helptext/network/configuration/configuration';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

@@ -13,7 +13,7 @@ import {
   AppLoaderService, StorageService, UserService, WebSocketService, ValidationService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

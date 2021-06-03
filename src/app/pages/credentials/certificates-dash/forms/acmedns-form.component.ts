@@ -5,7 +5,7 @@ import { RelationAction } from 'app/pages/common/entity/entity-form/models/relat
 import { DialogService, WebSocketService, AppLoaderService } from 'app/services';
 import { Subscription } from 'rxjs';
 import { ModalService } from 'app/services/modal.service';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_acme as helptext, helptext_system_acme } from 'app/helptext/system/acme';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';

@@ -5,16 +5,16 @@ import { DatasetType } from 'app/enums/dataset-type.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { ProductType } from 'app/enums/product-type.enum';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
-import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from 'app/translate-marker';
 
 import {
   WebSocketService, NetworkService, VmService, StorageService,
 } from 'app/services';
-import { EntityUtils } from '../../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import helptext from 'app/helptext/vm/devices/device-add-edit';

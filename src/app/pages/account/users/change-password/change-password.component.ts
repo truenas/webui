@@ -4,10 +4,10 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { Subscription } from 'rxjs';
 import { WebSocketService, DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from 'app/helptext/account/user-change-pw';
-import { EntityUtils } from '../../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

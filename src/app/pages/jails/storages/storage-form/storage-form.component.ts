@@ -7,8 +7,8 @@ import * as _ from 'lodash';
 import {
   AppLoaderService, WebSocketService, DialogService, JailService,
 } from 'app/services';
-import { EntityUtils } from '../../../common/entity/utils';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { T } from 'app/translate-marker';
 import helptext from 'app/helptext/jails/storage';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

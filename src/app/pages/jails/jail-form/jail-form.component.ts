@@ -10,7 +10,7 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import * as _ from 'lodash';
 import {
   JailService, WebSocketService, AppLoaderService, DialogService, NetworkService,
-} from '../../../services';
+} from 'app/services';
 import { JailFormService } from './jail-form.service';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';
@@ -18,8 +18,8 @@ import { EntityUtils } from '../../common/entity/utils';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { ipv4Validator, ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import { forbiddenValues } from '../../common/entity/entity-form/validators/forbidden-values-validation';
-import helptext from '../../../helptext/jails/jail-configuration';
-import { T } from '../../../translate-marker';
+import helptext from 'app/helptext/jails/jail-configuration';
+import { T } from 'app/translate-marker';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

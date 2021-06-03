@@ -11,8 +11,8 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from 'app/translate-marker';
 
-import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
+import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

@@ -1,9 +1,9 @@
 import { ProductType } from 'app/enums/product-type.enum';
-import { EntityFormComponent } from '../../../common/entity/entity-form/entity-form.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { Component } from '@angular/core';
 import { helptext_system_tunable as helptext } from 'app/helptext/system/tunable';
 import { SystemGeneralService, WebSocketService } from 'app/services';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { T } from 'app/translate-marker';

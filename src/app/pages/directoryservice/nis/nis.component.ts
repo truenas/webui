@@ -1,15 +1,15 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { DialogService } from '../../../services';
+import { DialogService } from 'app/services';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import helptext from '../../../helptext/directoryservice/nis';
+import helptext from 'app/helptext/directoryservice/nis';
 
 import {
   RestService,
   SystemGeneralService,
   WebSocketService,
-} from '../../../services';
+} from 'app/services';
 import {
   FieldConfig,
 } from '../../common/entity/entity-form/models/field-config.interface';

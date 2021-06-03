@@ -5,11 +5,11 @@ import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { ProductType } from '../../../enums/product-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 
 import {
   WebSocketService, StorageService, AppLoaderService, DialogService, RestService, VmService, NetworkService, SystemGeneralService,
-} from '../../../services';
+} from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { MessageService } from '../../common/entity/entity-form/services/message.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -17,10 +17,10 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MatDialog } from '@angular/material/dialog';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { T } from '../../../translate-marker';
-import globalHelptext from '../../../helptext/global-helptext';
-import helptext from '../../../helptext/vm/vm-list';
-import wizardHelptext from '../../../helptext/vm/vm-wizard/vm-wizard';
+import { T } from 'app/translate-marker';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/vm/vm-list';
+import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import * as _ from 'lodash';

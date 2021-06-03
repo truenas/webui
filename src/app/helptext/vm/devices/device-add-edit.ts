@@ -1,7 +1,7 @@
 import { VmDeviceType } from 'app/enums/vm.enum';
-import { T } from '../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { Validators } from '@angular/forms';
-import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 
 export default {
   dtype_placeholder: T('Type'),

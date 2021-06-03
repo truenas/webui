@@ -1,8 +1,8 @@
-import { T } from '../../../translate-marker';
+import { T } from 'app/translate-marker';
 import { Validators } from '@angular/forms';
 import {
   regexValidator,
-} from '../../../pages/common/entity/entity-form/validators/regex-validation';
+} from 'app/pages/common/entity/entity-form/validators/regex-validation';
 
 export default {
   global_paratext: T('Global Settings'),

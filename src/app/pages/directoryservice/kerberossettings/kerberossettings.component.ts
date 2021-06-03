@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import helptext from '../../../helptext/directoryservice/kerberossettings';
+import helptext from 'app/helptext/directoryservice/kerberossettings';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({

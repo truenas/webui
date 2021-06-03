@@ -1,5 +1,5 @@
 import { Validators } from '@angular/forms';
-import { T } from '../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 const passphrase_msg = T(' a passphrase invalidates an existing pool \
  recovery key file. To save a backup of the existing encryption key \

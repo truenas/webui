@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard';
-import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
+import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import {
   Validators, FormControl, ValidationErrors, ValidatorFn,
 } from '@angular/forms';
@@ -14,10 +14,10 @@ import {
 } from 'app/services';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
 import { CloudCredentialService } from 'app/services/cloudcredential.service';
-import { EntityUtils } from '../../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services';
-import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import globalHelptext from 'app/helptext/global-helptext';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
