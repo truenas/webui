@@ -89,27 +89,6 @@ export class ES102 extends Chassis {
     };
   }
 
-  /* isBelowModules(index): boolean{
-    return index > 5;
-  } */
-
-  /* generatePosition(displayObject, index): Position{
-    console.log("ES102: GENERATING POSITION");
-    let gapX = 8;// was 16
-    let gapY = 6;
-    let mod = index % this.front[this.front.orientation];
-    let m = index % 2;
-    if(m == 0){
-      console.log("even");
-      this.front.colorDriveTray(index, "#CC00CC");
-    }
-
-    let nextPositionX = Math.floor(index / this.front[this.front.orientation]) * (displayObject.width + gapX);
-    let nextPositionY = mod * (displayObject.height + gapY);
-
-    return {x: nextPositionX, y: nextPositionY};
-  } */
-
   generatePerspectiveOffset() {
     this.front.driveTrays.transform.position.x = 32;
     this.front.driveTrays.transform.position.y = 32;
