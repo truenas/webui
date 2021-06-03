@@ -179,6 +179,9 @@ export class ChartReleasesComponent implements OnInit {
       case EmptyType.first_use:
         title = helptext.message.not_configured;
         break;
+      case EmptyType.no_search_results:
+        title = helptext.message.no_search_result;
+        break;
       case EmptyType.no_page_data:
         title = helptext.message.no_installed;
         message = helptext.message.no_installed_message;
@@ -229,9 +232,9 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   refreshChartReleases(): void {
-    this.showLoadStatus(EmptyType.loading);
     this.chartItems = {};
     this.filerChartItems();
+    this.showLoadStatus(EmptyType.loading);
     setTimeout(() => {
       this.updateChartReleases();
     }, 1000);
@@ -285,10 +288,6 @@ export class ChartReleasesComponent implements OnInit {
                   this.chartItems[chartObj.name] = chartObj;
                 }
               });
-
-              if (this.getChartItems().length == 0) {
-                this.showLoadStatus(EmptyType.no_page_data);
-              }
 
               this.filerChartItems();
             });
@@ -511,6 +510,14 @@ export class ChartReleasesComponent implements OnInit {
       this.filteredChartItems = this.getChartItems().filter((chart: any) => chart.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1);
     } else {
       this.filteredChartItems = this.getChartItems();
+    }
+
+    if (this.filteredChartItems.length == 0) {
+      if (this.filterString) {
+        this.showLoadStatus(EmptyType.no_search_results);
+      } else {
+        this.showLoadStatus(EmptyType.no_page_data);
+      }
     }
 
     this.refreshToolbarMenus();
