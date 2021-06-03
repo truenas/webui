@@ -122,7 +122,7 @@ module.exports = {
         "rxjs-angular/prefer-takeuntil": ["error", {
           "alias": ["untilDestroyed"],
           "checkComplete": false,
-          "checkDecorators": ["UntilDestroy", "Component"],
+          "checkDecorators": ["Component"], // default
           "checkDestroy": false
         }]
       }
