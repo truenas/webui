@@ -32,7 +32,9 @@ import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-replication-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -1100,11 +1102,11 @@ export class ReplicationFormComponent implements FormConfiguration {
     protected replicationService: ReplicationService,
     protected modalService: ModalService,
   ) {
-    this.modalService.getRow$.pipe(take(1)).subscribe((id: number) => {
+    this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((id: number) => {
       this.queryCallOption = [['id', '=', id]];
     });
     const sshCredentialsField = this.fieldSets.config('ssh_credentials');
-    this.keychainCredentialService.getSSHConnections().subscribe((res) => {
+    this.keychainCredentialService.getSSHConnections().pipe(untilDestroyed(this)).subscribe((res) => {
       for (const i in res) {
         sshCredentialsField.options.push({
           label: res[i].name,
@@ -1113,7 +1115,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       }
     });
     const periodicSnapshotTasksField = this.fieldSets.config('periodic_snapshot_tasks');
-    this.ws.call('pool.snapshottask.query').subscribe((res) => {
+    this.ws.call('pool.snapshottask.query').pipe(untilDestroyed(this)).subscribe((res) => {
       for (const i in res) {
         const label = `${res[i].dataset} - ${res[i].naming_schema} - ${res[i].lifetime_value} ${
           res[i].lifetime_unit
@@ -1156,7 +1158,7 @@ export class ReplicationFormComponent implements FormConfiguration {
         this.entityForm.formGroup.controls['transport'].value,
         this.entityForm.formGroup.controls['ssh_credentials'].value,
       ])
-      .subscribe(
+      .pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.form_message.type = res.eligible === 0 ? 'warning' : 'info';
           this.form_message.content = T(
@@ -1186,7 +1188,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       const presetSpeed = this.entityForm.formGroup.controls['speed_limit'].value.toString();
       this.storageService.humanReadable = presetSpeed;
     }
-    this.entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.subscribe(() => {
+    this.entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       if (
         entityForm.formGroup.controls['direction'].value === Direction.Push
         && entityForm.formGroup.controls['transport'].value !== TransportMode.Local
@@ -1197,7 +1199,7 @@ export class ReplicationFormComponent implements FormConfiguration {
         this.form_message.content = '';
       }
     });
-    entityForm.formGroup.controls['direction'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['direction'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (
         res === Direction.Push
         && entityForm.formGroup.controls['transport'].value !== TransportMode.Local
@@ -1210,7 +1212,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     });
 
     const retentionPolicyField = this.fieldSets.config('retention_policy');
-    entityForm.formGroup.controls['transport'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['transport'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (
         res !== TransportMode.Local
         && entityForm.formGroup.controls['direction'].value === Direction.Push
@@ -1233,14 +1235,14 @@ export class ReplicationFormComponent implements FormConfiguration {
       }
     });
 
-    entityForm.formGroup.controls['schedule'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['schedule'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       entityForm.setDisabled('schedule_picker', !res, !res);
       entityForm.setDisabled('schedule_begin', !res, !res);
       entityForm.setDisabled('schedule_end', !res, !res);
       entityForm.setDisabled('only_matching_schedule', !res, !res);
     });
 
-    entityForm.formGroup.controls['schedule_picker'].valueChanges.subscribe((value) => {
+    entityForm.formGroup.controls['schedule_picker'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
         entityForm.setDisabled('schedule_begin', true, true);
         entityForm.setDisabled('schedule_end', true, true);
@@ -1250,7 +1252,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       }
     });
 
-    entityForm.formGroup.controls['restrict_schedule_picker'].valueChanges.subscribe((value) => {
+    entityForm.formGroup.controls['restrict_schedule_picker'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
         entityForm.setDisabled('restrict_schedule_begin', true, true);
         entityForm.setDisabled('restrict_schedule_end', true, true);
@@ -1260,7 +1262,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       }
     });
 
-    entityForm.formGroup.controls['ssh_credentials'].valueChanges.subscribe(() => {
+    entityForm.formGroup.controls['ssh_credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
         const explorerComponent = this.fieldSets.config(item).customTemplateStringOptions.explorerComponent;
         if (explorerComponent) {
@@ -1275,7 +1277,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       }
     });
 
-    entityForm.formGroup.controls['speed_limit'].valueChanges.subscribe((value) => {
+    entityForm.formGroup.controls['speed_limit'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       const speedLimitField = this.fieldSets.config('speed_limit');
       const filteredValue = value ? this.storageService.convertHumanStringToNum(value) : undefined;
       speedLimitField['hasErrors'] = false;
@@ -1286,7 +1288,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       }
     });
 
-    entityForm.formGroup.controls['properties_override'].valueChanges.subscribe((value) => {
+    entityForm.formGroup.controls['properties_override'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       if (value) {
         for (const item of value) {
           if (item && (item.indexOf('=') <= 0 || item.indexOf('=') >= item.length - 1)) {

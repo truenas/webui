@@ -5,7 +5,9 @@ import { fromEvent as observableFromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityTableComponent } from './entity-table.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-entity-table-add-actions',
   templateUrl: './entity-table-add-actions.component.html',
@@ -50,7 +52,7 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit {
         debounceTime(150),
         distinctUntilChanged(),
       )
-        .subscribe(() => {
+        .pipe(untilDestroyed(this)).subscribe(() => {
           this.entity.filter(this.filter.nativeElement.value);
         });
     }

@@ -11,6 +11,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { EntityUtils } from '../../common/entity/utils';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface PullImageFormValues {
   from_image: string;
@@ -19,6 +20,7 @@ interface PullImageFormValues {
   password: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'app-pull-image-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -107,12 +109,12 @@ export class PullImageFormComponent implements FormConfiguration {
     });
     dialogRef.componentInstance.setCall('container.image.pull', [params]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe(() => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
-    dialogRef.componentInstance.failure.subscribe((error: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error: any) => {
       new EntityUtils().handleWSError(this, error, this.dialogService);
     });
   }

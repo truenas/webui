@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-rsync',
   templateUrl: './service-rsync.component.html',
@@ -19,7 +21,7 @@ export class ServiceRSYNCComponent implements OnInit {
   constructor(protected router: Router, protected aroute: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.activedTab = params['pk'];
     });
   }

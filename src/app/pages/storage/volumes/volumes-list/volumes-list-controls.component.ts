@@ -21,7 +21,9 @@ import { AppLoaderService, DialogService, WebSocketService } from 'app/services'
 import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-volumes-list-controls',
   templateUrl: './volumes-list-controls.component.html',
@@ -36,8 +38,6 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
   actions: any[];
 
   private filterSubscription: Subscription;
-  private poolChoicesSubscription: Subscription;
-  private poolConfigSubscription: Subscription;
 
   get totalActions(): number {
     const addAction = this.entity.conf.route_add ? 1 : 0;
@@ -59,8 +59,6 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
 
   ngOnDestroy(): void {
     this.filterSubscription?.unsubscribe();
-    this.poolChoicesSubscription?.unsubscribe();
-    this.poolConfigSubscription?.unsubscribe();
   }
 
   ngAfterViewInit(): void {
@@ -73,7 +71,7 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
       'keyup',
     )
       .pipe(debounceTime(250), distinctUntilChanged())
-      .subscribe(() => {
+      .pipe(untilDestroyed(this)).subscribe(() => {
         this.filterValue = this.filter.nativeElement.value || '';
         this.filterDatasets(this.filterValue);
       });

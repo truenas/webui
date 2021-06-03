@@ -14,7 +14,9 @@ import {
   FieldConfig,
 } from '../../common/entity/entity-form/models/field-config.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-nis',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -28,7 +30,7 @@ export class NISComponent implements FormConfiguration {
       id: helptext.nis_custactions_clearcache_id,
       name: helptext.nis_custactions_clearcache_name,
       function: async () => {
-        this.systemGeneralService.refreshDirServicesCache().subscribe(() => {
+        this.systemGeneralService.refreshDirServicesCache().pipe(untilDestroyed(this)).subscribe(() => {
           this.dialogservice.Info(helptext.nis_custactions_clearcache_dialog_title,
             helptext.nis_custactions_clearcache_dialog_message);
         });

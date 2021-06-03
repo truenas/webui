@@ -19,7 +19,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-key';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-createpassphrase-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -87,7 +89,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
       name: T('Download Encryption Key'),
       disabled: true,
       function: () => {
-        this.ws.call('auth.check_user', ['root', this.admin_pw]).subscribe((res) => {
+        this.ws.call('auth.check_user', ['root', this.admin_pw]).pipe(untilDestroyed(this)).subscribe((res) => {
           if (res) {
             this.encryptionService.openEncryptDialog(this.pk, this.route_return, this.poolName);
           } else {
@@ -129,13 +131,13 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
   }
 
   preInit(): void {
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
     });
   }
 
   afterInit(entityForm: EntityFormComponent): void {
-    entityForm.formGroup.controls['remove_passphrase'].valueChanges.subscribe((res: any) => {
+    entityForm.formGroup.controls['remove_passphrase'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res) {
         entityForm.setDisabled('passphrase', true);
         entityForm.setDisabled('passphrase2', true);
@@ -144,7 +146,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
         entityForm.setDisabled('passphrase2', false);
       }
     });
-    entityForm.formGroup.controls['adminpw'].valueChanges.subscribe((res: any) => {
+    entityForm.formGroup.controls['adminpw'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.admin_pw = res;
       const btn = <HTMLInputElement> document.getElementById('cust_button_Download Encryption Key');
       this.admin_pw !== '' ? btn.disabled = false : btn.disabled = true;
@@ -168,7 +170,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
     };
     params.push(payload);
 
-    this.ws.call('auth.check_user', ['root', value.adminpw]).subscribe((res) => {
+    this.ws.call('auth.check_user', ['root', value.adminpw]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.encryptionService.setPassphrase(this.pk, value.passphrase, value.adminpw,
           value.name, this.route_return, false, true, success_msg);

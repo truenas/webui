@@ -10,7 +10,9 @@ import { Option } from 'app/interfaces/option.interface';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'form-chip',
   templateUrl: './form-chip.component.html',
@@ -35,7 +37,7 @@ export class FormChipComponent implements Field, OnInit {
 
   ngOnInit(): void {
     this.chipLists = this.group.controls[this.config.name].value || [];
-    this.group.controls[this.config.name].valueChanges.subscribe(() => {
+    this.group.controls[this.config.name].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       if (this.chipLists !== this.group.controls[this.config.name].value && typeof this.group.controls[this.config.name].value === 'object') {
         this.chipLists = this.group.controls[this.config.name].value;
       }

@@ -12,7 +12,9 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-group-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -94,7 +96,7 @@ export class GroupFormComponent implements FormConfiguration {
   }
 
   getNamesInUse(currentName?: string): void {
-    this.ws.call('group.query').subscribe((groups) => {
+    this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
       if (currentName) {
         _.remove(groups, (group) => group.group == currentName);
       }
@@ -114,7 +116,7 @@ export class GroupFormComponent implements FormConfiguration {
     } else {
       this.title = helptext.title_add;
       this.getNamesInUse();
-      this.ws.call('group.get_next_gid').subscribe((res) => {
+      this.ws.call('group.get_next_gid').pipe(untilDestroyed(this)).subscribe((res) => {
         entityForm.formGroup.controls['gid'].setValue(res);
       });
     }

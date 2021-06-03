@@ -1,17 +1,19 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ConsolePanelModalDialog } from 'app/components/common/dialog/consolepanel/consolepanel-dialog.component';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { WebSocketService } from '../ws.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-app-loader',
   templateUrl: './app-loader.component.html',
   styleUrls: ['./app-loader.component.scss'],
 })
-export class AppLoaderComponent implements OnDestroy {
+export class AppLoaderComponent {
   title: string;
   message: string;
 
@@ -22,14 +24,14 @@ export class AppLoaderComponent implements OnDestroy {
 
   consoleDialog: MatDialogRef<ConsolePanelModalDialog>;
   private _consoleSubscription: Subscription;
-  private getAdvancedConfig: Subscription;
 
   constructor(
     public dialogRef: MatDialogRef<AppLoaderComponent>,
     private _dialog: MatDialog,
     private _ws: WebSocketService, private sysGeneralService: SystemGeneralService,
   ) {
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig
+    this.sysGeneralService.getAdvancedConfig
+      .pipe(untilDestroyed(this))
       .subscribe((res) => {
         if (res.consolemsg) {
           this.isShowConsole = true;
@@ -43,17 +45,13 @@ export class AppLoaderComponent implements OnDestroy {
 
     this._consoleSubscription = this.consoleDialog.componentInstance.onEventEmitter
       .pipe(switchMap(() => this._ws.consoleMessages))
-      .subscribe((consoleMsg) => {
+      .pipe(untilDestroyed(this)).subscribe((consoleMsg) => {
         this.consoleDialog.componentInstance.consoleMsg = consoleMsg;
       });
 
-    this.consoleDialog.afterClosed().subscribe(() => {
+    this.consoleDialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
       clearInterval(this.consoleDialog.componentInstance.intervalPing);
       this._consoleSubscription.unsubscribe();
     });
-  }
-
-  ngOnDestroy(): void {
-    this.getAdvancedConfig.unsubscribe();
   }
 }

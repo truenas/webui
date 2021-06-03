@@ -7,6 +7,9 @@ import helptext from '../../../helptext/directoryservice/kerberosrealms-form-lis
 import { Subscription } from 'rxjs';
 import { ModalService } from '../../../services/modal.service';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+@UntilDestroy()
 @Component({
   selector: 'app-group-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -59,7 +62,7 @@ export class KerberosRealmsFormComponent implements FormConfiguration {
   ];
 
   constructor(private modalService: ModalService) {
-    this.getRow = this.modalService.getRow$.subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
       this.pk = rowId;
       this.getRow.unsubscribe();
     });

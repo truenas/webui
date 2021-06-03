@@ -15,7 +15,9 @@ import { T } from '../../../../translate-marker';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-cloudcredentials-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -1232,13 +1234,13 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     protected dialog: DialogService,
     protected replicationService: ReplicationService,
     private modalService: ModalService) {
-    this.getRow = this.modalService.getRow$.subscribe((row) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((row) => {
       this.rowNum = row;
       this.getRow.unsubscribe();
     });
     const basicFieldset = _.find(this.fieldSets, { class: 'basic' });
     this.providerField = _.find(basicFieldset.config, { name: 'provider' });
-    this.cloudcredentialService.getProviders().subscribe(
+    this.cloudcredentialService.getProviders().pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.providers = res;
         for (const i in res) {
@@ -1253,7 +1255,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     );
     const authenticationFieldset = _.find(this.fieldSets, { class: 'authentication' });
     const privateKeySFTPField = _.find(authenticationFieldset.config, { name: 'private_key-SFTP' });
-    this.ws.call('keychaincredential.query', [[['type', '=', 'SSH_KEY_PAIR']]]).subscribe(
+    this.ws.call('keychaincredential.query', [[['type', '=', 'SSH_KEY_PAIR']]]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         for (let i = 0; i < res.length; i++) {
           privateKeySFTPField.options.push({ label: res[i].name, value: res[i].id });
@@ -1301,7 +1303,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
-    entityForm.formGroup.controls['provider'].valueChanges.subscribe((res: any) => {
+    entityForm.formGroup.controls['provider'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (this.providerField.hasErrors) {
         this.providerField.hasErrors = false;
         this.providerField.errors = '';
@@ -1316,17 +1318,17 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       entityForm.setDisabled('oauth_signin_button', !this.credentialsOauth, !this.credentialsOauth);
     });
     // preview service_account_credentials
-    entityForm.formGroup.controls['service_account_credentials-GOOGLE_CLOUD_STORAGE'].valueChanges.subscribe((value: any) => {
+    entityForm.formGroup.controls['service_account_credentials-GOOGLE_CLOUD_STORAGE'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       entityForm.formGroup.controls['preview-GOOGLE_CLOUD_STORAGE'].setValue(value);
     });
     // Allow blank values for pass and key_file fields (but at least one should be non-blank)
-    entityForm.formGroup.controls['pass-SFTP'].valueChanges.subscribe((res: any) => {
+    entityForm.formGroup.controls['pass-SFTP'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res !== undefined) {
         const required = res === '';
         this.setFieldRequired('private_key-SFTP', required, entityForm);
       }
     });
-    entityForm.formGroup.controls['private_key-SFTP'].valueChanges.subscribe((res: any) => {
+    entityForm.formGroup.controls['private_key-SFTP'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res !== undefined) {
         const required = res === '';
         this.setFieldRequired('pass-SFTP', required, entityForm);
@@ -1335,7 +1337,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
     const driveTypeCtrl = entityForm.formGroup.controls['drive_type-ONEDRIVE'];
     const driveIdCtrl = entityForm.formGroup.controls['drive_id-ONEDRIVE'];
-    entityForm.formGroup.controls['drives-ONEDRIVE'].valueChanges.subscribe((res: any) => {
+    entityForm.formGroup.controls['drives-ONEDRIVE'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res) {
         driveTypeCtrl.setValue(res.drive_type);
         driveIdCtrl.setValue(res.drive_id);
@@ -1348,7 +1350,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     const authCtrl = entityForm.formGroup.controls['auth_version-OPENSTACK_SWIFT'];
     const tenantCtrl = entityForm.formGroup.controls['tenant-OPENSTACK_SWIFT'];
     const tenantIdCtrl = entityForm.formGroup.controls['tenant_id-OPENSTACK_SWIFT'];
-    entityForm.formGroup.controls['auth_version-OPENSTACK_SWIFT'].valueChanges.subscribe(
+    entityForm.formGroup.controls['auth_version-OPENSTACK_SWIFT'].valueChanges.pipe(untilDestroyed(this)).subscribe(
       (res: any) => {
         if (res === '1') {
           this.setFieldRequired('tenant-OPENSTACK_SWIFT', false, entityForm);
@@ -1361,14 +1363,14 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       },
     );
 
-    entityForm.formGroup.controls['tenant-OPENSTACK_SWIFT'].valueChanges.subscribe(
+    entityForm.formGroup.controls['tenant-OPENSTACK_SWIFT'].valueChanges.pipe(untilDestroyed(this)).subscribe(
       (res: any) => {
         if (authCtrl.value !== '1') {
           this.setFieldRequired('tenant_id-OPENSTACK_SWIFT', res === '' || res === undefined, entityForm);
         }
       },
     );
-    entityForm.formGroup.controls['tenant_id-OPENSTACK_SWIFT'].valueChanges.subscribe(
+    entityForm.formGroup.controls['tenant_id-OPENSTACK_SWIFT'].valueChanges.pipe(untilDestroyed(this)).subscribe(
       (res: any) => {
         if (authCtrl.value !== '1') {
           this.setFieldRequired('tenant-OPENSTACK_SWIFT', res === '' || res === undefined, entityForm);
@@ -1379,7 +1381,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
   verifyCredentials(value: any): void {
     delete value['name'];
-    this.ws.call('cloudsync.credentials.verify', [value]).subscribe(
+    this.ws.call('cloudsync.credentials.verify', [value]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.entityForm.loader.close();
         if (res.valid) {
@@ -1477,7 +1479,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     }
     value['attributes'] = attributes;
 
-    this.entityForm.submitFunction(value).subscribe(
+    this.entityForm.submitFunction(value).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.entityForm.loader.close();
         this.modalService.close('slide-in-form');
@@ -1543,7 +1545,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       client_id: data.client_id,
       client_secret: data.client_secret,
       token: data.token,
-    }]).subscribe(
+    }]).pipe(untilDestroyed(this)).subscribe(
       (drives) => {
         for (let i = 0; i < drives.length; i++) {
           drivesConfig.options.push({ label: drives[i].drive_type + ' - ' + drives[i].drive_id, value: drives[i] });

@@ -13,7 +13,9 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-certificate-edit',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -201,7 +203,7 @@ export class CertificateEditComponent implements FormConfiguration {
   constructor(protected ws: WebSocketService, protected matDialog: MatDialog,
     protected loader: AppLoaderService, protected dialog: DialogService,
     private modalService: ModalService, private storage: StorageService, private http: HttpClient) {
-    this.getRow = this.modalService.getRow$.subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
       this.rowNum = rowId;
       this.queryCallOption = [['id', '=', rowId]];
       this.getRow.unsubscribe();
@@ -263,11 +265,11 @@ export class CertificateEditComponent implements FormConfiguration {
   exportCertificate(): void {
     const path = this.incomingData.CSR ? this.incomingData.csr_path : this.incomingData.certificate_path;
     const fileName = this.incomingData.name + '.crt'; // is this right for a csr?
-    this.ws.call('core.download', ['filesystem.get', [path], fileName]).subscribe(
+    this.ws.call('core.download', ['filesystem.get', [path], fileName]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         const url = res[1];
         const mimetype = 'application/x-x509-user-cert';
-        this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe((file) => {
+        this.storage.streamDownloadFile(this.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
           this.storage.downloadBlob(file, fileName);
         }, (err) => {
           this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
@@ -282,11 +284,11 @@ export class CertificateEditComponent implements FormConfiguration {
 
   exportKey(): void {
     const fileName = this.incomingData.name + '.key';
-    this.ws.call('core.download', ['filesystem.get', [this.incomingData.privatekey_path], fileName]).subscribe(
+    this.ws.call('core.download', ['filesystem.get', [this.incomingData.privatekey_path], fileName]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         const url = res[1];
         const mimetype = 'text/plain';
-        this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe((file) => {
+        this.storage.streamDownloadFile(this.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
           this.storage.downloadBlob(file, fileName);
         }, (err) => {
           this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
@@ -303,7 +305,7 @@ export class CertificateEditComponent implements FormConfiguration {
     if (this.incomingData.CSR) {
       this.dialog.confirm(this.incomingData.name, this.incomingData.CSR, true,
         helptext_system_certificates.viewDialog.download, false, '',
-        '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.CSR, true).subscribe((res: boolean) => {
+        '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.CSR, true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
         if (res) {
           this.exportCertificate();
         }
@@ -311,7 +313,7 @@ export class CertificateEditComponent implements FormConfiguration {
     } else {
       this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true,
         helptext_system_certificates.viewDialog.download, false, '',
-        '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.certificate, true).subscribe((res: boolean) => {
+        '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.certificate, true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
         if (res) {
           this.exportCertificate();
         }
@@ -322,7 +324,7 @@ export class CertificateEditComponent implements FormConfiguration {
   viewKey(): void {
     this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true,
       helptext_system_certificates.viewDialog.download, false, '',
-      '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.privatekey, true).subscribe((res: boolean) => {
+      '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.privatekey, true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         this.exportKey();
       }
@@ -333,12 +335,12 @@ export class CertificateEditComponent implements FormConfiguration {
     this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: 'Updating Identifier' } });
     this.dialogRef.componentInstance.setCall(this.editCall, [this.rowNum, { name: value['name'] }]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.matDialog.closeAll();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
-    this.dialogRef.componentInstance.failure.subscribe((res: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.matDialog.closeAll();
       this.modalService.refreshTable();
       new EntityUtils().handleWSError(this.entityForm, res);

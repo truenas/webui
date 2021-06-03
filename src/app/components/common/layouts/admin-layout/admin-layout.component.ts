@@ -9,7 +9,6 @@ import { CoreService } from 'app/core/services/core.service';
 import { LayoutService } from 'app/core/services/layout.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
-import { Subscription } from 'rxjs';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { RestService, WebSocketService, SystemGeneralService } from '../../../../services';
 import { LanguageService } from '../../../../services/language.service';
@@ -17,7 +16,9 @@ import { Theme, ThemeService } from '../../../../services/theme/theme.service';
 import { ModalService } from '../../../../services/modal.service';
 import { ConsolePanelModalDialog } from '../../dialog/consolepanel/consolepanel-dialog.component';
 import { LocaleService } from 'app/services/locale.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-admin-layout',
   templateUrl: './admin-layout.component.html',
@@ -25,8 +26,6 @@ import { LocaleService } from 'app/services/locale.service';
 })
 export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   private isMobile: boolean;
-  screenSizeWatcher: Subscription;
-  getAdvancedConfig: Subscription;
   isSidenavOpen = true;
   isSidenavCollapsed = false;
   sidenavMode = 'over';
@@ -68,18 +67,18 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     private layoutService: LayoutService,
   ) {
     // detect server type
-    sysGeneralService.getProductType.subscribe((res) => {
+    sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
       this.product_type = res as ProductType;
     });
 
     // Close sidenav after route change in mobile
-    router.events.subscribe((routeChange) => {
+    router.events.pipe(untilDestroyed(this)).subscribe((routeChange) => {
       if (routeChange instanceof NavigationEnd && this.isMobile) {
         this.sideNave.close();
       }
     });
     // Watches screen size and open/close sidenav
-    this.screenSizeWatcher = media.media$.subscribe((change: MediaChange) => {
+    media.media$.pipe(untilDestroyed(this)).subscribe((change: MediaChange) => {
       this.isMobile = this.layoutService.isMobile;
       this.updateSidenav();
       core.emit({ name: 'MediaChange', data: change, sender: this });
@@ -89,7 +88,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     core.register({
       observerClass: this,
       eventName: 'UserPreferencesChanged',
-    }).subscribe((evt: CoreEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.retroLogo = evt.data.retroLogo ? evt.data.retroLogo : false;
     });
 
@@ -97,21 +96,21 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     core.register({
       observerClass: this,
       eventName: 'SysInfo',
-    }).subscribe((evt: SysInfoEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
       this.hostname = evt.data.hostname;
     });
 
     core.register({
       observerClass: this,
       eventName: 'ForceSidenav',
-    }).subscribe((evt: CoreEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.updateSidenav(evt.data);
     });
 
     core.register({
       observerClass: this,
       eventName: 'SidenavStatus',
-    }).subscribe((evt: CoreEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.isSidenavOpen = evt.data.isOpen;
       this.sidenavMode = evt.data.mode;
       this.isSidenavCollapsed = evt.data.isCollapsed;
@@ -181,14 +180,15 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   checkIfConsoleMsgShows(): void {
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig
-      .subscribe((res) => this.onShowConsoleFooterBar(res.consolemsg));
+    this.sysGeneralService.getAdvancedConfig.pipe(
+      untilDestroyed(this),
+    ).subscribe((res) => this.onShowConsoleFooterBar(res.consolemsg));
   }
 
   getLogConsoleMsg(): void {
     const subName = 'filesystem.file_tail_follow:/var/log/messages:500';
 
-    this.ws.sub(subName).subscribe((res) => {
+    this.ws.sub(subName).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res && res.data && typeof res.data === 'string') {
         this.consoleMsg = this.accumulateConsoleMsg(res.data, 3);
       }
@@ -231,11 +231,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   onShowConsolePanel(): void {
     const dialogRef = this.dialog.open(ConsolePanelModalDialog, {});
-    const sub = dialogRef.componentInstance.onEventEmitter.subscribe(() => {
+    const sub = dialogRef.componentInstance.onEventEmitter.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.componentInstance.consoleMsg = this.accumulateConsoleMsg('', 500);
     });
 
-    dialogRef.afterClosed().subscribe(() => {
+    dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
       clearInterval(dialogRef.componentInstance.intervalPing);
       sub.unsubscribe();
     });

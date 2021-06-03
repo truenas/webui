@@ -12,7 +12,9 @@ import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-set
 import { ipv4Validator, ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import helptext from '../../../helptext/network/configuration/configuration';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-networkconfiguration',
   template: `
@@ -239,7 +241,7 @@ export class ConfigurationComponent implements FormConfiguration {
 
   preInit(): void {
     const outbound_network_value_field = this.fieldSets.config('outbound_network_value');
-    this.ws.call('network.configuration.activity_choices').subscribe(
+    this.ws.call('network.configuration.activity_choices').pipe(untilDestroyed(this)).subscribe(
       (res) => {
         for (const [value, label] of res) {
           outbound_network_value_field.options.push({ label, value });
@@ -251,7 +253,7 @@ export class ConfigurationComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     if ([ProductType.Enterprise, ProductType.ScaleEnterprise].includes(window.localStorage.getItem('product_type') as ProductType)) {
-      this.ws.call('failover.licensed').subscribe((is_ha) => { // fixme, stupid race condition makes me need to call this again
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => { // fixme, stupid race condition makes me need to call this again
         for (let i = 0; i < this.failover_fields.length; i++) {
           entityEdit.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
         }

@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
-import { Subscription } from 'rxjs';
 import { ProductType } from '../../../enums/product-type.enum';
 import { WebSocketService, SystemGeneralService, StorageService } from '../../../services';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
@@ -18,13 +17,15 @@ import { CoreService } from 'app/core/services/core.service';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-update',
   styleUrls: ['update.component.scss'],
   templateUrl: './update.component.html',
 })
-export class UpdateComponent implements OnInit, OnDestroy {
+export class UpdateComponent implements OnInit {
   packages: any[] = [];
   status: string;
   releaseNotes: any = '';
@@ -53,9 +54,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
   product_type: ProductType;
   ds: any;
   failover_upgrade_pending = false;
-  busy: Subscription;
-  busy2: Subscription;
-  private checkChangesSubscription: Subscription;
   showSpinner = false;
   singleDescription: string;
   updateType: string;
@@ -102,7 +100,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     protected ws: WebSocketService, protected dialog: MatDialog, public sysGenService: SystemGeneralService,
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService,
     protected storage: StorageService, protected http: HttpClient, public core: CoreService) {
-    this.sysGenService.updateRunning.subscribe((res: string) => {
+    this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((res: string) => {
       res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false;
     });
   }
@@ -135,16 +133,16 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.product_type = window.localStorage.getItem('product_type') as ProductType;
 
     // Get system info from global cache
-    this.core.register({ observerClass: this, eventName: 'SysInfo' }).subscribe((evt: SysInfoEvent) => {
+    this.core.register({ observerClass: this, eventName: 'SysInfo' }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
       this.sysInfo = evt.data;
       this.isHA = !!(evt.data.license && evt.data.license.system_serial_ha.length > 0);
     });
     this.core.emit({ name: 'SysInfoRequest', sender: this });
 
-    this.busy = this.ws.call('update.get_auto_download').subscribe((isAutoDownloadOn) => {
+    this.ws.call('update.get_auto_download').pipe(untilDestroyed(this)).subscribe((isAutoDownloadOn) => {
       this.autoCheck = isAutoDownloadOn;
 
-      this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
+      this.ws.call('update.get_trains').pipe(untilDestroyed(this)).subscribe((res) => {
         this.fullTrainList = res.trains;
 
         // On page load, make sure we are working with train of the current OS
@@ -183,7 +181,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
     if (this.product_type.includes(ProductType.Enterprise)) {
       setTimeout(() => { // To get around too many concurrent calls???
-        this.ws.call('failover.licensed').subscribe((res) => {
+        this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((res) => {
           if (res) {
             this.updateMethod = 'failover.upgrade';
             this.is_ha = true;
@@ -197,7 +195,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   checkForUpdateRunning(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).subscribe(
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         if (res && res.length > 0) {
           this.isUpdateRunning = true;
@@ -211,23 +209,23 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   checkUpgradePending(): void {
-    this.ws.call('failover.upgrade_pending').subscribe((res) => {
+    this.ws.call('failover.upgrade_pending').pipe(untilDestroyed(this)).subscribe((res) => {
       this.failover_upgrade_pending = res;
     });
   }
 
   applyFailoverUpgrade(): void {
-    this.dialogService.confirm(T('Finish Upgrade?'), T(''), true, T('Continue')).subscribe((res: boolean) => {
+    this.dialogService.confirm(T('Finish Upgrade?'), T(''), true, T('Continue')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Update') }, disableClose: false });
         this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
         this.dialogRef.componentInstance.submit();
-        this.dialogRef.componentInstance.success.subscribe((success: any) => {
+        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((success: any) => {
           console.info('success', success);
           this.failover_upgrade_pending = false;
           this.dialogRef.close(false);
         });
-        this.dialogRef.componentInstance.failure.subscribe((failure: any) => {
+        this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failure: any) => {
           this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
         });
       }
@@ -247,7 +245,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
       warning = T('Changing to a nightly train is one-way. Changing back to a stable train is not supported! ');
     }
 
-    this.dialogService.confirm(T('Switch Train'), warning + T('Switch update trains?')).subscribe((train_res: boolean) => {
+    this.dialogService.confirm(T('Switch Train'), warning + T('Switch update trains?')).pipe(untilDestroyed(this)).subscribe((train_res: boolean) => {
       if (train_res) {
         this.train = event;
         this.setTrainDescription();
@@ -270,7 +268,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   toggleAutoCheck(): void {
     // TODO: Likely a bug
     this.autoCheck === !this.autoCheck;
-    this.ws.call('update.set_auto_download', [this.autoCheck]).subscribe(() => {
+    this.ws.call('update.set_auto_download', [this.autoCheck]).pipe(untilDestroyed(this)).subscribe(() => {
       if (this.autoCheck) {
         this.check();
       }
@@ -278,7 +276,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   pendingupdates(): void {
-    this.ws.call('update.get_pending').subscribe((pending) => {
+    this.ws.call('update.get_pending').pipe(untilDestroyed(this)).subscribe((pending) => {
       if (pending.length !== 0) {
         this.update_downloaded = true;
       }
@@ -287,7 +285,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
   setTrainAndCheck(): void {
     this.showSpinner = true;
-    this.ws.call('update.set_train', [this.train]).subscribe(() => {
+    this.ws.call('update.set_train', [this.train]).pipe(untilDestroyed(this)).subscribe(() => {
       this.check();
     }, (err) => {
       new EntityUtils().handleWSError(this, err, this.dialogService);
@@ -307,7 +305,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.pendingupdates();
     this.error = null;
     this.ws.call('update.check_available')
-      .subscribe(
+      .pipe(untilDestroyed(this)).subscribe(
         (res) => {
           if (res.version) {
             this.train_version = res.version;
@@ -386,10 +384,10 @@ export class UpdateComponent implements OnInit, OnDestroy {
     }
     this.dialogRef.componentInstance.jobId = jobId;
     this.dialogRef.componentInstance.wsshow();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.router.navigate(['/others/reboot']);
     });
-    this.dialogRef.componentInstance.failure.subscribe((err: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
       new EntityUtils().handleWSError(this, err, this.dialogService);
     });
   }
@@ -398,7 +396,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
   // Buttons in the template activate these three functions
   downloadUpdate(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).subscribe(
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         if (res[0]) {
           this.showRunningUpdate(res[0].id);
@@ -415,7 +413,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   ApplyPendingUpdate(): void {
     this.updateType = 'applyPending';
     // Calls the 'Save Config' dialog - Returns here if user declines
-    this.dialogService.dialogForm(this.saveConfigFormConf).subscribe((res) => {
+    this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res === false) {
         this.continueUpdate();
       }
@@ -425,7 +423,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   ManualUpdate(): void {
     this.updateType = 'manual';
     // Calls the 'Save Config' dialog - Returns here if user declines
-    this.dialogService.dialogForm(this.saveConfigFormConf).subscribe((res) => {
+    this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res === false) {
         this.continueUpdate();
       }
@@ -437,7 +435,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.error = null;
     this.loader.open();
     this.ws.call('update.check_available')
-      .subscribe(
+      .pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.loader.close();
           this.status = res.status;
@@ -482,7 +480,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             }
             this.updateType = 'standard';
             // Calls the 'Save Config' dialog - Returns here if user declines
-            this.dialogService.dialogForm(this.saveConfigFormConf).subscribe((res) => {
+            this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
               if (res === false) {
                 this.confirmAndUpdate();
               }
@@ -522,18 +520,18 @@ export class UpdateComponent implements OnInit, OnDestroy {
     );
 
     this.ds.componentInstance.isSubmitEnabled = true;
-    this.ds.afterClosed().subscribe((status: any) => {
+    this.ds.afterClosed().pipe(untilDestroyed(this)).subscribe((status: any) => {
       if (status) {
         if (!this.ds.componentInstance.data[0].reboot) {
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Update') }, disableClose: false });
           this.dialogRef.componentInstance.setCall('update.download');
           this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.subscribe(() => {
+          this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.dialogRef.close(false);
             this.dialogService.Info(T('Updates successfully downloaded'), '', '450px', 'info', true);
             this.pendingupdates();
           });
-          this.dialogRef.componentInstance.failure.subscribe((err: any) => {
+          this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
             new EntityUtils().handleWSError(this, err, this.dialogService);
           });
         } else {
@@ -550,25 +548,25 @@ export class UpdateComponent implements OnInit, OnDestroy {
       this.dialogRef.componentInstance.setCall('update.update', [{ reboot: true }]);
       this.dialogRef.componentInstance.submit();
 
-      this.dialogRef.componentInstance.failure.subscribe((res: any) => {
+      this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
         this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
       });
     } else {
-      this.ws.call('update.set_train', [this.train]).subscribe(() => {
+      this.ws.call('update.set_train', [this.train]).pipe(untilDestroyed(this)).subscribe(() => {
         this.dialogRef.componentInstance.setCall('failover.upgrade');
         this.dialogRef.componentInstance.disableProgressValue(true);
         this.dialogRef.componentInstance.submit();
-        this.dialogRef.componentInstance.success.subscribe(() => {
+        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           this.dialogService.closeAllDialogs();
           this.isUpdateRunning = false;
           this.sysGenService.updateDone(); // Send 'finished' signal to topbar
           this.router.navigate(['/']);
           this.dialogService.confirm(helptext.ha_update.complete_title,
             helptext.ha_update.complete_msg, true,
-            helptext.ha_update.complete_action, false, '', '', '', '', true).subscribe(() => {
+            helptext.ha_update.complete_action, false, '', '', '', '', true).pipe(untilDestroyed(this)).subscribe(() => {
           });
         });
-        this.dialogRef.componentInstance.failure.subscribe((err: any) => {
+        this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
           new EntityUtils().handleWSError(this, err, this.dialogService);
         });
       });
@@ -594,18 +592,18 @@ export class UpdateComponent implements OnInit, OnDestroy {
     }
 
     entityDialog.ws.call('core.download', ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName])
-      .subscribe(
+      .pipe(untilDestroyed(this)).subscribe(
         (succ: any) => {
           const url = succ[1];
           entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)
-            .subscribe((file: Blob) => {
+            .pipe(untilDestroyed(this)).subscribe((file: Blob) => {
               entityDialog.dialogRef.close();
               entityDialog.parent.storage.downloadBlob(file, fileName);
               entityDialog.parent.continueUpdate();
             }, () => {
               entityDialog.dialogRef.close();
               entityDialog.parent.dialogService.confirm(helptext.save_config_err.title, helptext.save_config_err.message,
-                false, helptext.save_config_err.button_text).subscribe((res: any) => {
+                false, helptext.save_config_err.button_text).pipe(untilDestroyed(this)).subscribe((res: any) => {
                 if (res) {
                   entityDialog.parent.continueUpdate();
                 }
@@ -615,7 +613,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
         },
         () => {
           entityDialog.parent.dialogService.confirm(helptext.save_config_err.title, helptext.save_config_err.message,
-            false, helptext.save_config_err.button_text).subscribe((res: boolean) => {
+            false, helptext.save_config_err.button_text).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
             if (res) {
               entityDialog.parent.continueUpdate();
             }
@@ -636,7 +634,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
           : 'The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?';
         this.dialogService.confirm(
           T('Apply Pending Updates'), T(message),
-        ).subscribe((res: boolean) => {
+        ).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
           if (res) {
             this.update();
           }
@@ -644,12 +642,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
         break;
       case 'standard':
         this.confirmAndUpdate();
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.checkChangesSubscription) {
-      this.checkChangesSubscription.unsubscribe();
     }
   }
 }

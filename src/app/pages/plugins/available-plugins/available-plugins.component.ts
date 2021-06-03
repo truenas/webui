@@ -5,7 +5,9 @@ import { WebSocketService, JailService, DialogService } from '../../../services'
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { EntityUtils } from '../../common/entity/utils';
 import { T } from '../../../translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-plugins-list',
   templateUrl: './available-plugins.component.html',
@@ -30,7 +32,7 @@ export class AvailablePluginsComponent implements OnInit {
   constructor(private ws: WebSocketService, protected jailService: JailService,
     private router: Router, protected dialogService: DialogService,
     protected prefService: PreferencesService) {
-    this.ws.call('plugin.official_repositories').subscribe(
+    this.ws.call('plugin.official_repositories').pipe(untilDestroyed(this)).subscribe(
       (res) => {
         for (const repo in res) {
           this.availableRepo.push(res[repo]);
@@ -41,8 +43,8 @@ export class AvailablePluginsComponent implements OnInit {
           const officialRepo = this.availableRepo.filter((repo) => repo.name === 'iXsystems');
           this.selectedRepo = officialRepo.length > 0 ? officialRepo[0]['git_repository'] : this.availableRepo[0]['git_repository'];
 
-          this.ws.job(this.queryCall, [{ plugin_repository: this.availableRepo[0]['git_repository'] }]).subscribe((community) => {
-            this.ws.job(this.queryCall, [{ plugin_repository: this.availableRepo[1]['git_repository'] }]).subscribe((official) => {
+          this.ws.job(this.queryCall, [{ plugin_repository: this.availableRepo[0]['git_repository'] }]).pipe(untilDestroyed(this)).subscribe((community) => {
+            this.ws.job(this.queryCall, [{ plugin_repository: this.availableRepo[1]['git_repository'] }]).pipe(untilDestroyed(this)).subscribe((official) => {
               this.completeList = community.result.concat(official.result);
               this.parent.conf.allPlugins = this.completeList;
             });
@@ -56,7 +58,7 @@ export class AvailablePluginsComponent implements OnInit {
   }
 
   getInstances(): void {
-    this.ws.call('plugin.query').subscribe(
+    this.ws.call('plugin.query').pipe(untilDestroyed(this)).subscribe(
       (res) => {
         for (const item of res) {
           if (this.installedPlugins[item.plugin] == undefined) {
@@ -78,7 +80,7 @@ export class AvailablePluginsComponent implements OnInit {
     this.queryCallOption['plugin_repository'] = this.selectedRepo;
     this.queryCallOption['cache'] = cache;
 
-    this.ws.job(this.queryCall, [this.queryCallOption]).subscribe(
+    this.ws.job(this.queryCall, [this.queryCallOption]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         if (res.result) {
           this.plugins = res.result;
@@ -126,7 +128,7 @@ export class AvailablePluginsComponent implements OnInit {
  not provide support in configuration, diagnosis, or use of this unofficial plugin regardless of the current\
  support level. Thorough research is strongly recommended before installing or using an unofficial plugin.'),
         true, T('Continue'),
-      ).subscribe(
+      ).pipe(untilDestroyed(this)).subscribe(
         (res: any) => {
           if (res) {
             this.router.navigate(new Array('').concat(['plugins', 'add', plugin.plugin, { plugin_repository: this.selectedRepo }]));

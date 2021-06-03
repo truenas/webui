@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppTableAction } from 'app/pages/common/entity/table/table.component';
 import {
@@ -9,19 +9,17 @@ import { ModalService } from '../../../services/modal.service';
 import { SshConnectionsFormComponent } from './forms/ssh-connections-form.component';
 import { SshKeypairsFormComponent } from './forms/ssh-keypairs-form.component';
 import { CloudCredentialsFormComponent } from './forms/cloud-credentials-form.component';
-import { Subscription } from 'rxjs';
 import { T } from '../../../translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-backup-credentials',
   templateUrl: './backup-credentials.component.html',
   providers: [KeychainCredentialService, ReplicationService, CloudCredentialService],
 })
-export class BackupCredentialsComponent implements OnInit, OnDestroy {
+export class BackupCredentialsComponent implements OnInit {
   cards: any;
-  refreshTable: Subscription;
-  refreshForm: Subscription;
-  getProviders: Subscription;
 
   // Components included in this dashboard
   protected sshConnections: SshConnectionsFormComponent;
@@ -36,15 +34,15 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     private modalService: ModalService) {}
 
   ngOnInit(): void {
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getCards();
     });
     this.refreshForms();
-    this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
+    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshForms();
     });
 
-    this.getProviders = this.cloudCredentialsService.getProviders().subscribe(
+    this.cloudCredentialsService.getProviders().pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.providers = res;
         this.getCards();
@@ -167,14 +165,5 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
       this.dialogService, this.storage, this.modalService);
     this.cloudCredentials = new CloudCredentialsFormComponent(this.router, this.aroute, this.ws,
       this.cloudCredentialsService, this.dialogService, this.replicationService, this.modalService);
-  }
-
-  ngOnDestroy(): void {
-    this.refreshTable.unsubscribe();
-    this.refreshForm.unsubscribe();
-
-    if (this.getProviders) {
-      this.getProviders.unsubscribe();
-    }
   }
 }

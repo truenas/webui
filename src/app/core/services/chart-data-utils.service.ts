@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CoreEvent } from 'app/interfaces/events';
 import { CoreService } from './core.service';
 import { Thread } from 'app/core/classes/thread';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 export interface ProcessTask {
   responseEvent: string;
@@ -9,6 +10,7 @@ export interface ProcessTask {
   data: any[];
 }
 
+@UntilDestroy()
 @Injectable()
 export class ChartDataUtilsService {
   protected runAsWebWorker = false;
@@ -51,11 +53,11 @@ export class ChartDataUtilsService {
     // Test Message
     thread.postMessage({ name: 'TEST FROM SERVICE', data: 'Test Data Placeholder' });
 
-    core.register({ observerClass: this, eventName: 'ReportsHandleSources' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'ReportsHandleSources' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       thread.postMessage(evt);
     });
 
-    core.register({ observerClass: this, eventName: 'ReportsHandleStats' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'ReportsHandleStats' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       thread.postMessage(evt);
     });
   }

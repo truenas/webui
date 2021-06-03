@@ -15,7 +15,9 @@ import * as _ from 'lodash';
 import { DialogFormConfiguration } from './dialog-form-configuration.interface';
 import { DatePipe } from '@angular/common';
 import { T } from '../../../../translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-entity-dialog',
   templateUrl: './entity-dialog.component.html',
@@ -52,7 +54,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
     protected fieldRelationService: FieldRelationService) {}
 
   ngOnInit(): void {
-    this.translate.get(this.conf.title).subscribe((title) => {
+    this.translate.get(this.conf.title).pipe(untilDestroyed(this)).subscribe((title) => {
       this.title = title;
     });
 
@@ -99,7 +101,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
       this.conf.customSubmit(this);
     } else {
       this.loader.open();
-      this.ws.call(this.conf.method_ws, [this.formValue]).subscribe(
+      this.ws.call(this.conf.method_ws, [this.formValue]).pipe(untilDestroyed(this)).subscribe(
         () => {},
         (e) => {
           this.loader.close();

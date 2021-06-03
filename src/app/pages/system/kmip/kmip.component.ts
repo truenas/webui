@@ -9,7 +9,9 @@ import { helptext_system_kmip } from 'app/helptext/system/kmip';
 import * as _ from 'lodash';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-system-kmip',
   templateUrl: './kmip.component.html',
@@ -135,11 +137,11 @@ export class KmipComponent {
     private dialog: MatDialog,
     private ws: WebSocketService,
   ) {
-    this.ws.call(this.queryCall).subscribe(
+    this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.kmip_enabled = res.enabled;
         if (this.kmip_enabled) {
-          this.ws.call('kmip.kmip_sync_pending').subscribe(
+          this.ws.call('kmip.kmip_sync_pending').pipe(untilDestroyed(this)).subscribe(
             (isPending) => {
               this.showSpinner = false;
               this.sync_pending = isPending;
@@ -163,12 +165,12 @@ export class KmipComponent {
     const certificateField = _.find(certificateFieldset.config, { name: 'certificate' });
     const certificateAuthorityField = _.find(certificateFieldset.config, { name: 'certificate_authority' });
 
-    this.systemGeneralService.getCA().subscribe((res) => {
+    this.systemGeneralService.getCA().pipe(untilDestroyed(this)).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
         certificateAuthorityField.options.push({ label: res[i].name, value: res[i].id });
       }
     });
-    this.systemGeneralService.getCertificates().subscribe((res) => {
+    this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
         certificateField.options.push({ label: res[i].name, value: res[i].id });
       }
@@ -187,12 +189,12 @@ export class KmipComponent {
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: helptext_system_kmip.jobDialog.title }, disableClose: true });
     dialogRef.componentInstance.setCall(this.editCall, [data]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe(() => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close(true);
       this.entityForm.success = true;
       this.entityForm.formGroup.markAsPristine();
     });
-    dialogRef.componentInstance.failure.subscribe((err: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
       dialogRef.close(true);
       if (err.exc_info && err.exc_info.extra) {
         err.extra = err.exc_info.extra;
@@ -202,7 +204,7 @@ export class KmipComponent {
   }
 
   syncKeys(): void {
-    this.ws.call('kmip.sync_keys').subscribe(
+    this.ws.call('kmip.sync_keys').pipe(untilDestroyed(this)).subscribe(
       () => {
         this.dialogService.Info(helptext_system_kmip.syncInfoDialog.title, helptext_system_kmip.syncInfoDialog.info, '500px', 'info', true);
       },
@@ -213,7 +215,7 @@ export class KmipComponent {
   }
 
   clearSyncKeys(): void {
-    this.ws.call('kmip.clear_sync_pending_keys').subscribe(
+    this.ws.call('kmip.clear_sync_pending_keys').pipe(untilDestroyed(this)).subscribe(
       () => {
         this.dialogService.Info(helptext_system_kmip.clearSyncKeyInfoDialog.title, helptext_system_kmip.clearSyncKeyInfoDialog.info, '500px', 'info', true);
       },
