@@ -24,10 +24,22 @@ export class LocaleService {
       this.timeZone = res.timezone;
     });
     if (window.localStorage.dateFormat) {
-      this.dateFormat = window.localStorage.getItem('dateFormat');
+      this.dateFormat = window.localStorage.getItem('dateFormat')
+        .replace('YYYY', 'yyyy')
+        .replace('YY', 'y')
+        .replace('DD', 'dd')
+        .replace('D', 'd')
+        .replace(' a', 'aaaaa\'m\'')
+        .replace(' A', ' aa');
     }
     if (window.localStorage.timeFormat) {
-      this.timeFormat = window.localStorage.getItem('timeFormat');
+      this.timeFormat = window.localStorage.getItem('timeFormat')
+        .replace('YYYY', 'yyyy')
+        .replace('YY', 'y')
+        .replace('DD', 'dd')
+        .replace('D', 'd')
+        .replace(' a', 'aaaaa\'m\'')
+        .replace(' A', ' aa');
     }
     this.getPrefs();
   }
@@ -88,7 +100,11 @@ export class LocaleService {
   }
 
   formatDateTimeWithNoTz(date: Date): string {
-    return format(date.valueOf(), `${this.dateFormat} ${this.timeFormat}`);
+    try {
+      return format(date.valueOf(), `${this.dateFormat} ${this.timeFormat}`);
+    } catch (e) {
+      return 'Invalid date';
+    }
   }
 
   getTimeOnly(date: Date, seconds = true, tz?: string): string {

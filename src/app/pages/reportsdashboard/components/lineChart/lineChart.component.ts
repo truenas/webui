@@ -9,7 +9,7 @@ import { Report, ReportData } from '../report/report.component';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
 
 import { UUID } from 'angular2-uuid';
-import * as moment from 'moment-timezone';
+import { utcToZonedTime } from 'date-fns-tz';
 import Dygraph from 'dygraphs';
 import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
 
@@ -213,7 +213,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
       for (let i = 0; i < rd.data.length; i++) {
         const item = Object.assign([], rd.data[i]);
-        let dateStr = moment.tz(new Date(rd.start * 1000 + i * rd.step * 1000), this.timezone).format();
+        let dateStr = utcToZonedTime(new Date(rd.start * 1000 + i * rd.step * 1000), this.timezone).toString();
         // UTC: 2020-12-17T16:33:10Z
         // Los Angeles: 2020-12-17T08:36:30-08:00
         // Change dateStr from '2020-12-17T08:36:30-08:00' to '2020-12-17T08:36'
