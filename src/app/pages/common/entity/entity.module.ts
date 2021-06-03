@@ -1,6 +1,6 @@
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../appMaterial.module';
 import { ColorPickerModule } from 'ngx-color-picker';
@@ -69,7 +69,6 @@ import { EntityComingsoonComponent } from './entity-comingsoon/entity-comingsoon
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
 
-// CDK
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
 import { OverlayModule } from '@angular/cdk/overlay';
@@ -240,7 +239,6 @@ import { ExpandableTableComponent } from 'app/pages/common/entity/table/expandab
     TaskScheduleListComponent,
     FormDictComponent,
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     EntityTableService,
     AppLoaderService,

@@ -5,18 +5,15 @@
   "description": "TrueNAS Angular WebUI",
   "homepage": "https://github.com/truenas/webui/",
   "scripts": {
-    "ie-support": "webpack-cli src/ie-polyfills.js -o src/assets/scripts/ie-support/ie-polyfills.min.js -c webpack-polyfill.config.js",
     "ng": "ng",
     "rimraf": "rimraf",
     "changelog": "standard-changelog",
-    "start": "yarn run ie-support && yarn run generate_licenses && node node_modules/@angular/cli/bin/ng serve --proxy-config proxy.config.json --aot --source-map",
-    "start:dev:aot": "yarn run ie-support && node node_modules/@angular/cli/bin/ng serve --proxy-config proxy.config.json --aot --source-map",
-    "start:dev": "yarn run ie-support && ng serve --proxy-config proxy.config.json --aot=false --source-map",
-    "start:prod": "yarn run ie-support && ng serve --prod",
-    "start:prod:aot": "yarn run ie-support && ng serve --prod --aot",
-    "build": "yarn run ie-support && yarn run generate_licenses && yarn run clean:dist && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build",
+    "start": "ng serve --proxy-config proxy.config.json --source-map",
+    "start:dev": "ng serve --proxy-config proxy.config.json --source-map",
+    "start:prod": "ng serve --prod",
+    "build": "yarn run generate_licenses && yarn run clean:dist && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build",
     "build:prod": "node scripts/setup_prod.js && yarn run build -- --prod",
-    "build:prod:aot": "yarn run build:prod --aot --source-map --base-href /ui/ && node scripts/verify_build.js",
+    "build:prod:aot": "yarn run build:prod --source-map --base-href /ui/ && node scripts/verify_build.js",
     "test": "ng test",
     "lint": "ng lint && stylelint src/**/*.scss",
     "lint:fix": "ng lint --fix && stylelint --fix src/**/*.scss",
@@ -151,8 +148,7 @@
     "stylelint-config-sass-guidelines": "~8.0.0",
     "stylelint-config-standard": "^22.0.0",
     "ts-node": "8.6.2",
-    "typescript": "3.9.6",
-    "webpack-cli": "3.3.11"
+    "typescript": "3.9.6"
   },
   "lint-staged": {
     "*.{ts,html}": "eslint --cache --fix",
