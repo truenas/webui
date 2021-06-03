@@ -27,6 +27,7 @@ import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from '../../../helptext/apps/apps';
 import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
 
 @UntilDestroy()
 @Component({
@@ -49,6 +50,13 @@ export class CatalogComponent implements OnInit {
   private chartReleaseForm: ChartReleaseAddComponent;
   protected utils: CommonUtils;
   imagePlaceholder = appImagePlaceholder;
+  private noAvailableCatalog = true;
+  isLoading = false;
+  emptyPageConf: EmptyConfig = {
+    type: EmptyType.loading,
+    large: true,
+    title: helptext.catalogMessage.loading,
+  };
 
   choosePool: DialogFormConfiguration = {
     title: helptext.choosePool.title,
@@ -89,43 +97,83 @@ export class CatalogComponent implements OnInit {
   }
 
   loadCatalogs(): void {
+    this.catalogNames = [];
+    this.catalogApps = [];
+    this.isLoading = true;
+    this.showLoadStatus(EmptyType.loading);
+
     this.appService.getAllCatalogItems().pipe(untilDestroyed(this)).subscribe((catalogs) => {
-      this.catalogNames = [];
-      this.catalogApps = [];
-      catalogs.forEach((catalog) => {
-        this.catalogNames.push(catalog.label);
-        catalog.preferred_trains.forEach((train) => {
-          for (const i in catalog.trains[train]) {
-            const item = catalog.trains[train][i];
-            const versions = item.versions;
-            const versionKeys = Object.keys(versions).filter((versionKey) => versions[versionKey].healthy);
+      this.noAvailableCatalog = true;
+      for (let i = 0; i < catalogs.length; i++) {
+        const catalog = catalogs[i];
 
-            const latest = versionKeys.sort(this.utils.versionCompare)[0];
-            const latestDetails = versions[latest];
+        if (!catalog.error) {
+          this.noAvailableCatalog = false;
+          this.catalogNames.push(catalog.label);
+          catalog.preferred_trains.forEach((train) => {
+            for (const i in catalog.trains[train]) {
+              const item = catalog.trains[train][i];
+              const versions = item.versions;
+              const versionKeys = Object.keys(versions).filter((versionKey) => versions[versionKey].healthy);
 
-            const catalogItem = {
-              name: item.name,
-              catalog: {
-                id: catalog.id,
-                label: catalog.label,
-                train,
-              },
-              icon_url: item.icon_url ? item.icon_url : '/assets/images/ix-original.png',
-              latest_version: latestDetails?.human_version,
-              info: latestDetails?.app_readme,
-              categories: item.categories,
-              healthy: item.healthy,
-              healthy_error: item.healthy_error,
-              versions: item.versions,
-              schema: latestDetails?.schema,
-            };
-            this.catalogApps.push(catalogItem);
-          }
-        });
-      });
+              const latest = versionKeys.sort(this.utils.versionCompare)[0];
+              const latestDetails = versions[latest];
+
+              const catalogItem = {
+                name: item.name,
+                catalog: {
+                  id: catalog.id,
+                  label: catalog.label,
+                  train,
+                },
+                icon_url: item.icon_url ? item.icon_url : '/assets/images/ix-original.png',
+                latest_version: latestDetails?.human_version,
+                info: latestDetails?.app_readme,
+                categories: item.categories,
+                healthy: item.healthy,
+                healthy_error: item.healthy_error,
+                versions: item.versions,
+                schema: latestDetails?.schema,
+              };
+              this.catalogApps.push(catalogItem);
+            }
+          });
+        }
+      }
+
       this.refreshToolbarMenus();
       this.filterApps();
+      this.isLoading = false;
     });
+  }
+
+  showLoadStatus(type: EmptyType): void {
+    let title = '';
+    let message;
+
+    if (this.isLoading) {
+      type = EmptyType.loading;
+    }
+
+    switch (type) {
+      case EmptyType.loading:
+        title = helptext.catalogMessage.loading;
+        break;
+      case EmptyType.no_page_data:
+        if (this.noAvailableCatalog) {
+          title = helptext.catalogMessage.no_catalog;
+        } else {
+          title = helptext.catalogMessage.no_application;
+        }
+        break;
+      case EmptyType.no_search_results:
+        title = helptext.catalogMessage.no_search_result;
+        break;
+    }
+
+    this.emptyPageConf.type = type;
+    this.emptyPageConf.title = title;
+    this.emptyPageConf.message = message;
   }
 
   onToolbarAction(evt: CoreEvent): void {
@@ -290,6 +338,14 @@ export class CatalogComponent implements OnInit {
 
     this.filteredCatalogApps = this.filteredCatalogApps.filter((app) =>
       this.filteredCatalogNames.includes(app.catalog.label) && app.name !== ixChartApp);
+
+    if (this.filteredCatalogApps.length == 0) {
+      if (this.filterString) {
+        this.showLoadStatus(EmptyType.no_search_results);
+      } else {
+        this.showLoadStatus(EmptyType.no_page_data);
+      }
+    }
   }
 
   showSummaryDialog(name: string, catalog = officialCatalog, train = chartsTrain): void {
