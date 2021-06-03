@@ -249,7 +249,7 @@ def click_apply_and_please_wait_should_appear_while_settings_are_being_applied(d
     """Click Apply and "Please wait" should appear while settings are being applied."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__APPLY"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__APPLY"]').click()
-    wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 
 @then('Click Test Changes, check Confirm, Click Test Changes again')
