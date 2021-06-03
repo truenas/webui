@@ -42,7 +42,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   product_type: ProductType;
   logo_ready: Boolean = false;
   product = productText.product;
-  showPassword = false;
   ha_info_ready = false;
   checking_status = false;
 
