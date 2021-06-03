@@ -22,9 +22,8 @@ import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.servic
 import { customSvgIcons } from 'app/core/classes/custom-icons';
 
 import productText from './helptext/product';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { untilDestroyed } from '@ngneat/until-destroy';
 
-@UntilDestroy()
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
