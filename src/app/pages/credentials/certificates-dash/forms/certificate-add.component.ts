@@ -20,6 +20,7 @@ import { EntityWizardComponent } from '../../../common/entity/entity-wizard/enti
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/dialog.service';
 import { T } from '../../../../translate-marker';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
@@ -29,8 +30,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   providers: [SystemGeneralService],
 })
 
-export class CertificateAddComponent {
-  protected addWsCall = 'certificate.create';
+export class CertificateAddComponent implements WizardConfiguration {
+  addWsCall: 'certificate.create' = 'certificate.create';
   protected dialogRef: any;
   private entityForm: any;
   private CSRList: any[] = [];
@@ -38,9 +39,10 @@ export class CertificateAddComponent {
   private getType = new Subscription();
   private type: any;
   hideCancel = true;
-  private summary: any = {};
+  isLinear = true;
+  summary: any = {};
 
-  entityWizard: any;
+  entityWizard: EntityWizardComponent;
   private currentStep = 0;
 
   wizardConfig: Wizard[] = [

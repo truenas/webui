@@ -18,6 +18,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-import-wizard';
 import { ModalService } from 'app/services/modal.service';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
@@ -26,9 +27,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [],
 })
-export class VolumeImportWizardComponent {
-  // public route_success: string[] = ['storage'];
-  route_create: string[] = ['storage', 'manager'];
+export class VolumeImportWizardComponent implements WizardConfiguration {
   summary: any = {};
   isLinear = true;
   firstFormGroup: FormGroup;
@@ -36,12 +35,12 @@ export class VolumeImportWizardComponent {
   summaryTitle = 'Pool Import Summary';
   subs: any;
   saveSubmitText = T('Import');
-  entityWizard: any;
+  entityWizard: EntityWizardComponent;
   protected productType: ProductType;
   protected importIndex = 2;
   title: string;
 
-  protected wizardConfig: Wizard[] = [{
+  wizardConfig: Wizard[] = [{
     label: helptext.is_new_main_label,
     fieldConfig: [
       {
@@ -181,7 +180,7 @@ export class VolumeImportWizardComponent {
   protected passphrase_fg: FormGroup;
   protected guid: FieldConfig;
   protected pool: any;
-  protected hideCancel = true;
+  hideCancel = true;
 
   constructor(protected rest: RestService, protected ws: WebSocketService,
     private router: Router, protected loader: AppLoaderService,

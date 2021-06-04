@@ -17,6 +17,7 @@ import { ipv6Validator } from '../../common/entity/entity-form/validators/ip-val
 import { forbiddenValues } from '../../common/entity/entity-form/validators/forbidden-values-validation';
 import { T } from '../../../translate-marker';
 import helptext from '../../../helptext/jails/jail-configuration';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
@@ -25,18 +26,18 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [JailService, NetworkService],
 })
-export class JailWizardComponent {
-  protected addWsCall = 'jail.create';
+export class JailWizardComponent implements WizardConfiguration {
+  addWsCall: 'jail.create' = 'jail.create';
   route_success: string[] = ['jails'];
   summary: any = {};
   summaryTitle = 'Jail Summary';
   objectKeys = Object.keys;
-  entityWizard: any;
+  entityWizard: EntityWizardComponent;
   protected namesInUse: string[] = [];
 
   isLinear = true;
   firstFormGroup: FormGroup;
-  protected custActions: any[] = [
+  custActions: any[] = [
     {
       id: 'advanced_add',
       name: T('Advanced Jail Creation'),
@@ -62,7 +63,7 @@ export class JailWizardComponent {
     ],
   };
 
-  protected wizardConfig: Wizard[] = [{
+  wizardConfig: Wizard[] = [{
     label: helptext.wizard_step1_label,
     fieldConfig: [{
       type: 'input',
