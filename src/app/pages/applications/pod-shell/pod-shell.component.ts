@@ -17,7 +17,9 @@ import { CoreService } from 'app/core/services/core.service';
 import { Subject, Observable } from 'rxjs';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-pod-shell',
   templateUrl: './pod-shell.component.html',
@@ -70,12 +72,12 @@ export class PodShellComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.chart_release_name = params['rname'];
       this.pod_name = params['pname'];
       this.command = params['cname'];
 
-      this.ws.call('chart.release.pod_console_choices', [this.chart_release_name]).subscribe((res) => {
+      this.ws.call('chart.release.pod_console_choices', [this.chart_release_name]).pipe(untilDestroyed(this)).subscribe((res) => {
         this.podDetails = res;
 
         const podDetail = res[this.pod_name];
@@ -85,10 +87,10 @@ export class PodShellComponent implements OnInit, OnDestroy {
           this.conatiner_name = podDetail[0];
           this.updateChooseShellDialog();
 
-          this.getAuthToken().subscribe((token) => {
+          this.getAuthToken().pipe(untilDestroyed(this)).subscribe((token) => {
             this.initializeWebShell(token);
 
-            this.shellSubscription = this.ss.shellOutput.subscribe((value: any) => {
+            this.shellSubscription = this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe((value: any) => {
               if (value !== undefined) {
                 if (_.trim(value) == 'logout') {
                   this.xterm.destroy();
@@ -117,7 +119,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
 
   refreshToolbarButtons(): void {
     this.formEvents = new Subject();
-    this.formEvents.subscribe((evt: CoreEvent) => {
+    this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'restore') {
         this.resetDefault();
         this.refreshToolbarButtons();
@@ -267,7 +269,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
-    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe(() => {
+    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
       this.xterm.focus();
     });
     return true;
@@ -279,7 +281,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
     this.initializeTerminal();
     this.refreshToolbarButtons();
 
-    this.shellConnectedSubscription = this.ss.shellConnected.subscribe((res: any) => {
+    this.shellConnectedSubscription = this.ss.shellConnected.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.shellConnected = res.connected;
       this.connectionId = res.id;
       this.updateTerminal();
@@ -356,7 +358,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
   afterShellDialogInit(entityDialog: any): void {
     const self = entityDialog.parent;
 
-    entityDialog.formGroup.controls['pods'].valueChanges.subscribe((value: any) => {
+    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       const containers = self.podDetails[value];
       const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' });
       containerFC.options = containers.map((item: any) => ({

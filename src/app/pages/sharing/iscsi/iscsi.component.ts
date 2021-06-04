@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 
 import { WebSocketService, IscsiService } from 'app/services';
 import { T } from 'app/translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'iscsi',
   templateUrl: './iscsi.component.html',
@@ -46,7 +48,7 @@ export class ISCSI implements OnInit {
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected ws: WebSocketService) {}
 
   ngOnInit(): void {
-    this.ws.call('system.info').subscribe(
+    this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe(
       (systemInfo) => {
         if (systemInfo.license && systemInfo.license.features.indexOf(LicenseFeature.FibreChannel) > -1) {
           this.fcEnabled = true;
@@ -57,7 +59,7 @@ export class ISCSI implements OnInit {
         }
       },
     );
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.activedTab = params['pk'];
     });
   }

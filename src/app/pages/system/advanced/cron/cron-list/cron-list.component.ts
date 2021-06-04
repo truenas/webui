@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { filter, switchMap } from 'rxjs/operators';
 import { DialogService } from '../../../../../services';
@@ -10,22 +10,24 @@ import { T } from '../../../../../translate-marker';
 import { ModalService } from 'app/services/modal.service';
 import { CronFormComponent } from '../cron-form/cron-form.component';
 import { UserService } from '../../../../../services/user.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-cron-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, UserService],
 })
-export class CronListComponent {
+export class CronListComponent implements EntityTableConfig {
   title = 'Cron Jobs';
-  protected wsDelete = 'cronjob.delete';
-  queryCall = 'cronjob.query';
-  protected route_add: string[] = ['tasks', 'cron', 'add'];
+  wsDelete: 'cronjob.delete' = 'cronjob.delete';
+  queryCall: 'cronjob.query' = 'cronjob.query';
+  route_add: string[] = ['tasks', 'cron', 'add'];
   protected route_add_tooltip = 'Add Cron Job';
-  protected route_edit: string[] = ['tasks', 'cron', 'edit'];
+  route_edit: string[] = ['tasks', 'cron', 'edit'];
   entityList: any;
 
-  columns: any[] = [
+  columns = [
     { name: T('Users'), prop: 'user', always_display: true },
     { name: T('Command'), prop: 'command' },
     { name: T('Description'), prop: 'description' },
@@ -68,7 +70,7 @@ export class CronListComponent {
   afterInit(entityList: any): void {
     this.entityList = entityList;
 
-    this.modalService.onClose$.subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.loaderOpen = true;
       this.entityList.needRefreshTable = true;
       this.entityList.getData();
@@ -97,7 +99,7 @@ export class CronListComponent {
               filter((run) => !!run),
               switchMap(() => this.ws.call('cronjob.run', [row.id])),
             )
-            .subscribe(
+            .pipe(untilDestroyed(this)).subscribe(
               () => {
                 const message = row.enabled == true
                   ? T('This job is scheduled to run again ' + row.next_run + '.')

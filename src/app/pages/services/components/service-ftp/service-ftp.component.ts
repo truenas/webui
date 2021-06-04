@@ -2,6 +2,7 @@ import {
   ApplicationRef, Component, Injector, OnInit,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Observable } from 'rxjs';
@@ -13,7 +14,9 @@ import {
 } from '../../../../services';
 import { T } from '../../../../translate-marker';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'ftp-edit',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -25,7 +28,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
   route_success: string[] = ['services'];
 
   isBasicMode = true;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
 
   protected rootlogin_fg: any;
   protected rootloginSubscription: any;
@@ -409,18 +412,18 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     protected systemGeneralService: SystemGeneralService) {}
 
   ngOnInit(): void {
-    this.systemGeneralService.getCertificates().subscribe((res: any[]) => {
+    this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       if (res.length > 0) {
         this.fieldSets.config('ssltls_certificate').options = res.map((cert) => ({ label: cert.name, value: cert.id }));
       }
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     entityEdit.submitFunction = this.submitFunction;
     this.rootlogin_fg = entityEdit.formGroup.controls['rootlogin'];
-    this.rootloginSubscription = this.rootlogin_fg.valueChanges.subscribe((res: any) => {
+    this.rootloginSubscription = this.rootlogin_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res && !this.warned && !this.rootlogin) {
         this.dialog.confirm({
           title: helptext.rootlogin_dialog_title,
@@ -428,7 +431,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
           buttonMsg: T('Continue'),
           cancelMsg: T('Cancel'),
           disableClose: true,
-        }).subscribe((confirm) => {
+        }).pipe(untilDestroyed(this)).subscribe((confirm) => {
           if (!confirm) {
             this.rootlogin_fg.setValue(false);
           } else {
@@ -442,7 +445,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     });
 
     this.bwFields.forEach((field) =>
-      entityEdit.formGroup.controls[field].valueChanges.subscribe((value: any) => {
+      entityEdit.formGroup.controls[field].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
         const formField = _.find(this.fieldConfig, { name: field });
         const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
         formField['hasErrors'] = false;

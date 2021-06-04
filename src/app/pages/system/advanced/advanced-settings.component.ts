@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, OnDestroy,
+  Component, OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -8,7 +8,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CoreEvent } from 'app/interfaces/events';
 import { TranslateService } from '@ngx-translate/core';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 
 import * as cronParser from 'cron-parser';
 
@@ -42,6 +42,7 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { GpuDevice } from 'app/interfaces/gpu-device.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 enum CardId {
   Console = 'console',
@@ -54,20 +55,15 @@ enum CardId {
   Gpus = 'gpus',
 }
 
+@UntilDestroy()
 @Component({
   selector: 'app-advanced-settings',
   templateUrl: './advanced-settings.component.html',
   providers: [DatePipe, UserService],
 })
-export class AdvancedSettingsComponent implements OnInit, OnDestroy {
+export class AdvancedSettingsComponent implements OnInit {
   dataCards: any[] = [];
   configData: AdvancedConfig;
-  refreshCardData: Subscription;
-  refreshTable: Subscription;
-  refreshForm: Subscription;
-  refreshOnClose: Subscription;
-  getAdvancedConfig: Subscription;
-  getDatasetConfig: Subscription;
   syslog: boolean;
   systemDatasetPool: string;
   entityForm: EntityFormComponent;
@@ -196,26 +192,26 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getDatasetData();
     this.getDataCardData();
-    this.refreshCardData = this.sysGeneralService.refreshSysGeneral$.subscribe(() => {
+    this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getDatasetData();
       this.getDataCardData();
     });
 
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
     });
 
-    this.refreshOnClose = this.modalService.onClose$.subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
     });
 
     this.refreshForms();
-    this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
+    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshForms();
     });
 
     this.formEvents = new Subject();
-    this.formEvents.subscribe((evt: CoreEvent) => {
+    this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.save_debug) {
         this.saveDebug();
       }
@@ -246,7 +242,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
 
-    this.ws.call('failover.licensed').subscribe((is_ha) => {
+    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
       this.isHA = is_ha;
     });
   }
@@ -256,7 +252,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   }
 
   getDatasetData(): void {
-    this.getDatasetConfig = this.ws.call('systemdataset.config').subscribe((config) => {
+    this.ws.call('systemdataset.config').pipe(untilDestroyed(this)).subscribe((config) => {
       if (!config) {
         return;
       }
@@ -269,7 +265,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   }
 
   getDataCardData(): void {
-    this.getAdvancedConfig = this.ws.call('system.advanced.config').subscribe((advancedConfig) => {
+    this.ws.call('system.advanced.config').pipe(untilDestroyed(this)).subscribe((advancedConfig) => {
       this.configData = advancedConfig;
 
       this.dataCards = [
@@ -366,7 +362,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
         },
       ];
 
-      this.ws.call('device.get_info', ['GPU']).subscribe((gpus: GpuDevice[]) => {
+      this.ws.call('device.get_info', ['GPU']).pipe(untilDestroyed(this)).subscribe((gpus: GpuDevice[]) => {
         const isolatedGpus = gpus.filter((gpu: GpuDevice) => advancedConfig.isolated_gpu_pci_ids.findIndex(
           (pciId: string) => pciId === gpu.addr.pci_slot,
         ) > -1).map((gpu: GpuDevice) => gpu.description).join(', ');
@@ -420,7 +416,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     if (this.isFirstTime) {
       this.dialog
         .Info(helptext_system_advanced.first_time.title, helptext_system_advanced.first_time.message)
-        .subscribe(() => {
+        .pipe(untilDestroyed(this)).subscribe(() => {
           if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
             this.sysGeneralService.sendConfigData(this.configData);
           }
@@ -437,7 +433,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   }
 
   saveDebug(): void {
-    this.ws.call('system.info', []).subscribe((systemInfo) => {
+    this.ws.call('system.info', []).pipe(untilDestroyed(this)).subscribe((systemInfo) => {
       let fileName = '';
       let mimeType = 'application/gzip';
       if (systemInfo) {
@@ -457,13 +453,13 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
           true,
           helptext_system_advanced.dialog_button_ok,
         )
-        .subscribe((ires: boolean) => {
+        .pipe(untilDestroyed(this)).subscribe((ires: boolean) => {
           if (ires) {
-            this.ws.call('core.download', ['system.debug', [], fileName]).subscribe(
+            this.ws.call('core.download', ['system.debug', [], fileName]).pipe(untilDestroyed(this)).subscribe(
               (res: any) => {
                 const url = res[1];
                 let failed = false;
-                this.storage.streamDownloadFile(this.http, url, fileName, mimeType).subscribe(
+                this.storage.streamDownloadFile(this.http, url, fileName, mimeType).pipe(untilDestroyed(this)).subscribe(
                   (file) => {
                     this.storage.downloadBlob(file, fileName);
                   },
@@ -495,10 +491,10 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
                   });
                   this.dialogRef.componentInstance.jobId = res[0];
                   this.dialogRef.componentInstance.wsshow();
-                  this.dialogRef.componentInstance.success.subscribe(() => {
+                  this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
                     this.dialogRef.close();
                   });
-                  this.dialogRef.componentInstance.failure.subscribe((save_debug_err: any) => {
+                  this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((save_debug_err: any) => {
                     this.dialogRef.close();
                     if (!reported) {
                       new EntityUtils().handleWSError(this, save_debug_err, this.dialog);
@@ -588,14 +584,5 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
 
       return job;
     });
-  }
-
-  ngOnDestroy(): void {
-    this.refreshCardData.unsubscribe();
-    this.refreshTable.unsubscribe();
-    this.refreshForm.unsubscribe();
-    this.refreshOnClose.unsubscribe();
-    this.getDatasetConfig.unsubscribe();
-    this.getAdvancedConfig.unsubscribe();
   }
 }

@@ -13,7 +13,9 @@ import { T } from '../../../../translate-marker';
 
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'system-ca-add',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
@@ -571,7 +573,7 @@ export class CertificateAuthorityAddComponent {
 
   preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
-    this.systemGeneralService.getUnsignedCAs().subscribe((res: any[]) => {
+    this.systemGeneralService.getUnsignedCAs().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       this.signedby = this.getTarget('signedby');
       res.forEach((item) => {
         this.signedby.options.push(
@@ -580,14 +582,14 @@ export class CertificateAuthorityAddComponent {
       });
     });
 
-    this.ws.call('certificate.ec_curve_choices').subscribe((res) => {
+    this.ws.call('certificate.ec_curve_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       const ec_curves_field = this.getTarget('ec_curve');
       for (const key in res) {
         ec_curves_field.options.push({ label: res[key], value: key });
       }
     });
 
-    this.systemGeneralService.getCertificateCountryChoices().subscribe((res) => {
+    this.systemGeneralService.getCertificateCountryChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       this.country = this.getTarget('country');
       for (const item in res) {
         this.country.options.push(
@@ -597,14 +599,14 @@ export class CertificateAuthorityAddComponent {
     });
 
     this.usageField = this.getTarget('ExtendedKeyUsage-usages');
-    this.ws.call('certificate.extended_key_usage_choices').subscribe((res) => {
+    this.ws.call('certificate.extended_key_usage_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       Object.keys(res).forEach((key) => {
         this.usageField.options.push({ label: res[key], value: key });
       });
     });
 
     const profilesField = this.getTarget('profiles');
-    this.ws.call('certificateauthority.profiles').subscribe((res) => {
+    this.ws.call('certificateauthority.profiles').pipe(untilDestroyed(this)).subscribe((res) => {
       Object.keys(res).forEach((item) => {
         profilesField.options.push({ label: item, value: res[item] });
       });
@@ -634,7 +636,7 @@ export class CertificateAuthorityAddComponent {
       if (fieldConfig.value !== undefined) {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, fieldConfig.value);
       }
-      this.getField(fieldName).valueChanges.subscribe((res) => {
+      this.getField(fieldName).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, res);
       });
     }
@@ -669,7 +671,7 @@ export class CertificateAuthorityAddComponent {
     }
     this.hideField(this.internalcaFields[1], true);
 
-    this.getField('create_type').valueChanges.subscribe((res) => {
+    this.getField('create_type').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.wizardConfig[1].skip = false;
       this.wizardConfig[2].skip = false;
 
@@ -730,13 +732,13 @@ export class CertificateAuthorityAddComponent {
       this.setSummary();
     });
 
-    this.getField('name').valueChanges.subscribe((res) => {
+    this.getField('name').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.identifier = res;
       this.summary[this.getTarget('name').placeholder] = res;
       this.setSummary();
     });
 
-    this.getField('name').statusChanges.subscribe((res) => {
+    this.getField('name').statusChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (this.identifier && res === 'INVALID') {
         this.getTarget('name')['hasErrors'] = true;
       } else {
@@ -745,7 +747,7 @@ export class CertificateAuthorityAddComponent {
       this.setSummary();
     });
 
-    this.getField('ExtendedKeyUsage-enabled').valueChanges.subscribe((res) => {
+    this.getField('ExtendedKeyUsage-enabled').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       const usagesRequired = res !== undefined ? res : false;
       this.usageField.required = usagesRequired;
       this.summary[this.getTarget('ExtendedKeyUsage-enabled').placeholder] = usagesRequired;
@@ -758,7 +760,7 @@ export class CertificateAuthorityAddComponent {
       this.setSummary();
     });
 
-    this.getField('profiles').valueChanges.subscribe((res) => {
+    this.getField('profiles').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       // undo revious profile settings
       this.loadProfiels(this.currenProfile, true);
       // load selected profile settings
@@ -768,7 +770,7 @@ export class CertificateAuthorityAddComponent {
     });
 
     for (const i in this.relationFields) {
-      this.getField(this.relationFields[i]).valueChanges.subscribe(() => {
+      this.getField(this.relationFields[i]).valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
         this.setSummary();
       });
     }
@@ -900,7 +902,7 @@ export class CertificateAuthorityAddComponent {
 
   customSubmit(data: any): void {
     this.loader.open();
-    this.ws.call(this.addWsCall, [data]).subscribe(() => {
+    this.ws.call(this.addWsCall, [data]).pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
       this.modalService.refreshTable();
       this.modalService.close('slide-in-form');

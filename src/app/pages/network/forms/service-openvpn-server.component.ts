@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import {
   ServicesService, DialogService, AppLoaderService, WebSocketService, StorageService,
@@ -10,16 +11,18 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+@UntilDestroy()
 @Component({
   selector: 'openvpn-server',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-
 export class OpenvpnServerComponent implements FormConfiguration {
   queryCall: 'openvpn.server.config' = 'openvpn.server.config';
   protected certID: number;
   protected serverAddress: string;
-  protected entityEdit: any;
+  protected entityEdit: EntityFormComponent;
   dialogConf: DialogFormConfiguration;
   protected certOptions: any;
   title = helptext.server.formTitle;
@@ -146,7 +149,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
       name: helptext.server.buttons.renew,
       function: () => {
         this.loader.open();
-        this.services.renewStaticKey().subscribe((res) => {
+        this.services.renewStaticKey().pipe(untilDestroyed(this)).subscribe((res) => {
           let msg = '';
           for (const item in res) {
             msg += `${item}: ${res[item]} \n`;
@@ -179,12 +182,12 @@ export class OpenvpnServerComponent implements FormConfiguration {
           ],
           saveButtonText: ('Submit'),
           customSubmit(entityDialog: EntityDialogComponent) {
-            self.ws.call('interface.websocket_local_ip').subscribe((localip) => {
+            self.ws.call('interface.websocket_local_ip').pipe(untilDestroyed(this)).subscribe((localip) => {
               const value = entityDialog.formValue;
               entityDialog.dialogRef.close(true);
               self.loader.open();
               self.services.generateOpenServerClientConfig(value.client_certificate_id,
-                localip).subscribe((key) => {
+                localip).pipe(untilDestroyed(this)).subscribe((key) => {
                 const filename = 'openVPNClientConfig.ovpn';
                 const blob = new Blob([key], { type: 'text/plain' });
                 self.storageService.downloadBlob(blob, filename);
@@ -214,15 +217,15 @@ export class OpenvpnServerComponent implements FormConfiguration {
     return data;
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     entityEdit.submitFunction = (body: any) => this.services.updateOpenVPN('openvpn.server.update', body);
 
-    this.services.getClientInfo().subscribe((res) => {
+    this.services.getClientInfo().pipe(untilDestroyed(this)).subscribe((res) => {
       this.certID = res.client_certificate;
     });
 
-    this.services.getOpenVPNServerAuthAlgorithmChoices().subscribe((res) => {
+    this.services.getOpenVPNServerAuthAlgorithmChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       const config = this.fieldConfig.find((c) => c.name === 'authentication_algorithm');
       for (const item in res) {
         config.options.push(
@@ -230,7 +233,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
         );
       }
     });
-    this.services.getOpenServerCipherChoices().subscribe((res) => {
+    this.services.getOpenServerCipherChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       const config = this.fieldConfig.find((c) => c.name === 'cipher');
       for (const item in res) {
         config.options.push(
@@ -238,20 +241,20 @@ export class OpenvpnServerComponent implements FormConfiguration {
         );
       }
     });
-    this.services.getCerts().subscribe((certificates) => {
+    this.services.getCerts().pipe(untilDestroyed(this)).subscribe((certificates) => {
       const config = this.fieldConfig.find((c) => c.name === 'server_certificate');
       certificates.forEach((certificate) => {
         config.options.push({ label: certificate.name, value: certificate.id });
       });
       this.certOptions = config.options;
     });
-    this.services.getCAs().subscribe((res: any[]) => {
+    this.services.getCAs().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       const config = this.fieldConfig.find((c) => c.name === 'root_ca');
       res.forEach((item) => {
         config.options.push({ label: item.name, value: item.id });
       });
     });
-    entityEdit.formGroup.controls['server'].valueChanges.subscribe((res: string) => {
+    entityEdit.formGroup.controls['server'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.serverAddress = res;
     });
   }

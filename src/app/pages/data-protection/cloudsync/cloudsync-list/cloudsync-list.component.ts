@@ -1,16 +1,14 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
-import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import {
   EntityTableComponent,
-  InputTableConf,
-  EntityTableAction,
 } from 'app/pages/common/entity/entity-table/entity-table.component';
 import {
   AppLoaderService,
@@ -30,13 +28,15 @@ import { ModalService } from 'app/services/modal.service';
 import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-cloudsync-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [JobService, TaskService, CloudCredentialService],
 })
-export class CloudsyncListComponent implements InputTableConf, OnDestroy {
+export class CloudsyncListComponent implements EntityTableConfig {
   title = T('Cloud Sync Tasks');
   queryCall: 'cloudsync.query' = 'cloudsync.query';
   route_add: string[] = ['tasks', 'cloudsync', 'add'];
@@ -46,7 +46,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
   entityList: EntityTableComponent;
   asyncView = true;
 
-  columns: any[] = [
+  columns = [
     { name: T('Description'), prop: 'description', always_display: true },
     { name: T('Credential'), prop: 'credential', hidden: true },
     { name: T('Direction'), prop: 'direction', hidden: true },
@@ -80,7 +80,6 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
       key_props: ['description'],
     },
   };
-  private onModalClose: Subscription;
 
   constructor(
     protected router: Router,
@@ -98,7 +97,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -114,7 +113,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
         task.state = { state: EntityJobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.job.getJobStatus(task.job.id).subscribe((job: EntityJob) => {
+        this.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
           task.state = { state: job.state };
           task.job = job;
         });
@@ -135,10 +134,10 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
         onClick: (row: any) => {
           this.dialog
             .confirm({ title: T('Run Now'), message: T('Run this cloud sync now?'), hideCheckBox: true })
-            .subscribe((res: boolean) => {
+            .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
               if (res) {
                 row.state = { state: EntityJobState.Running };
-                this.ws.call('cloudsync.sync', [row.id]).subscribe(
+                this.ws.call('cloudsync.sync', [row.id]).pipe(untilDestroyed(this)).subscribe(
                   (jobId: number) => {
                     this.dialog.Info(
                       T('Task Started'),
@@ -147,7 +146,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
                       'info',
                       true,
                     );
-                    this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
+                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
                       row.state = { state: job.state };
                       row.job = job;
                     });
@@ -173,9 +172,9 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
               message: T('Stop this cloud sync?'),
               hideCheckBox: true,
             })
-            .subscribe((res: boolean) => {
+            .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
               if (res) {
-                this.ws.call('cloudsync.abort', [row.id]).subscribe(
+                this.ws.call('cloudsync.abort', [row.id]).pipe(untilDestroyed(this)).subscribe(
                   () => {
                     this.dialog.Info(
                       T('Task Stopped'),
@@ -206,9 +205,9 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
               message: helptext.dry_run_dialog,
               hideCheckBox: true,
             })
-            .subscribe((res: boolean) => {
+            .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
               if (res) {
-                this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).subscribe(
+                this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).pipe(untilDestroyed(this)).subscribe(
                   (jobId: number) => {
                     this.dialog.Info(
                       T('Task Started'),
@@ -217,7 +216,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
                       'info',
                       true,
                     );
-                    this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
+                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
                       row.state = { state: job.state };
                       row.job = job;
                     });
@@ -281,7 +280,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
             ],
             saveButtonText: T('Restore'),
             afterInit(entityDialog: EntityDialogComponent) {
-              entityDialog.formGroup.get('transfer_mode').valueChanges.subscribe((mode) => {
+              entityDialog.formGroup.get('transfer_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
                 const paragraph = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
                 switch (mode) {
                   case TransferMode.Sync:
@@ -296,7 +295,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
             },
             customSubmit(entityDialog: EntityDialogComponent) {
               parent.loader.open();
-              parent.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).subscribe(
+              parent.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
                 () => {
                   entityDialog.dialogRef.close(true);
                   parent.entityList.getData();
@@ -380,9 +379,5 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
 
   doEdit(id: number): void {
     this.doAdd(id);
-  }
-
-  ngOnDestroy(): void {
-    this.onModalClose?.unsubscribe();
   }
 }

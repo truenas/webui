@@ -9,7 +9,9 @@ import { RestService, WebSocketService, DialogService } from '../../../../servic
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'nfs-edit',
   template: ' <entity-form [conf]="this"></entity-form>',
@@ -217,7 +219,7 @@ export class ServiceNFSComponent implements FormConfiguration {
     }
     entityForm.submitFunction = (body) => this.ws.call('nfs.update', [body]);
 
-    this.ipChoices$.subscribe((ipChoices) => {
+    this.ipChoices$.pipe(untilDestroyed(this)).subscribe((ipChoices) => {
       ipChoices.forEach((ip) => {
         this.validBindIps.push(ip.value);
       });
@@ -226,20 +228,20 @@ export class ServiceNFSComponent implements FormConfiguration {
         .config.find((config) => config.name === 'bindip').options = ipChoices;
     });
 
-    entityForm.formGroup.controls['v4_v3owner'].valueChanges.subscribe((value) => {
+    entityForm.formGroup.controls['v4_v3owner'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       if (value) {
         entityForm.formGroup.controls['userd_manage_gids'].setValue(false);
       }
     });
 
-    entityForm.formGroup.controls['v4_krb'].valueChanges.subscribe((value) => {
+    entityForm.formGroup.controls['v4_krb'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       value ? this.v4krbValue = true : this.v4krbValue = false;
     });
 
-    this.ws.call('kerberos.keytab.has_nfs_principal').subscribe((res) => {
+    this.ws.call('kerberos.keytab.has_nfs_principal').pipe(untilDestroyed(this)).subscribe((res) => {
       this.hasNfsStatus = res;
       if (!this.hasNfsStatus) {
-        this.ws.call('directoryservices.get_state').subscribe(({ activedirectory }) => {
+        this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe(({ activedirectory }) => {
           this.adHealth = activedirectory;
         });
       }
@@ -259,9 +261,9 @@ export class ServiceNFSComponent implements FormConfiguration {
     data = this.compareBindIps(data);
   }
 
-  afterSave(data: any): void {
+  afterSave(entityForm: EntityFormComponent): void {
     this.router.navigate(this.route_success);
-    if (data.formGroup.value.v4_krb && !this.v4krbValue) {
+    if (entityForm.formGroup.value.v4_krb && !this.v4krbValue) {
       this.addSPN();
     }
   }
@@ -271,7 +273,7 @@ export class ServiceNFSComponent implements FormConfiguration {
     if (!this.hasNfsStatus && this.adHealth === 'HEALTHY') {
       this.dialog.confirm(helptext.add_principal_prompt.title,
         helptext.add_principal_prompt.message, true, helptext.add_principal_prompt.affirmative,
-        false, '', '', '', '', false, helptext.add_principal_prompt.negative).subscribe((res: boolean) => {
+        false, '', '', '', '', false, helptext.add_principal_prompt.negative).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
         if (res) {
           this.dialog.dialogForm(
             {
@@ -298,7 +300,7 @@ export class ServiceNFSComponent implements FormConfiguration {
                 const self = entityDialog;
                 self.loader.open();
                 self.ws.call('nfs.add_principal', [{ username: value.username, password: value.password }])
-                  .subscribe(() => {
+                  .pipe(untilDestroyed(this)).subscribe(() => {
                     self.loader.close();
                     self.dialogRef.close(true);
                     that.dialog.Info(helptext.addSPN.success, helptext.addSPN.success_msg);

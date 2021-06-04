@@ -4,6 +4,7 @@ import {
   Injector,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
   FieldConfig,
 } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -13,6 +14,9 @@ import { RestService, WebSocketService } from '../../../../services';
 
 import helptext from '../../../../helptext/storage/snapshots/snapshots';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+@UntilDestroy()
 @Component({
   selector: 'snapshot-clone',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -55,12 +59,12 @@ export class SnapshotCloneComponent implements FormConfiguration {
     protected _injector: Injector, protected _appRef: ApplicationRef) {}
 
   preInit(): void {
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     entityForm.formGroup.controls['dataset_dst'].setValue(this.setName(this.pk));
     entityForm.formGroup.controls['snapshot'].setValue(this.pk);
   }

@@ -13,7 +13,9 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-ca-edit',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -197,7 +199,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   constructor(protected ws: WebSocketService, protected loader: AppLoaderService,
     private modalService: ModalService, private storage: StorageService, private http: HttpClient,
     private dialog: DialogService, private systemGeneralService: SystemGeneralService) {
-    this.getRow = this.modalService.getRow$.subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
       this.rowNum = rowId;
       this.queryCallOption = [['id', '=', rowId]];
       this.getRow.unsubscribe();
@@ -237,7 +239,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
       id: 'sign_CSR',
       name: helptext_system_certificates.edit.signCSR,
       function: () => {
-        this.systemGeneralService.getUnsignedCertificates().subscribe((res) => {
+        this.systemGeneralService.getUnsignedCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
           res.forEach((item: any) => {
             this.unsignedCAs.push(
               { label: item.name, value: parseInt(item.id) },
@@ -278,7 +280,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
       name: entityDialog.formGroup.controls.name.value,
     };
     entityDialog.loader.open();
-    entityDialog.ws.call('certificateauthority.ca_sign_csr', [payload]).subscribe(() => {
+    entityDialog.ws.call('certificateauthority.ca_sign_csr', [payload]).pipe(untilDestroyed(this)).subscribe(() => {
       entityDialog.loader.close();
       self.dialog.closeAllDialogs();
       self.modalService.refreshTable();
@@ -291,7 +293,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   viewCertificate(): void {
     this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true,
       helptext_system_certificates.viewDialog.download, false, '',
-      '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.certificate, true).subscribe((res: boolean) => {
+      '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.certificate, true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         this.exportCertificate();
       }
@@ -300,11 +302,11 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
 
   exportCertificate(): void {
     const fileName = this.incomingData.name + '.crt';
-    this.ws.call('core.download', ['filesystem.get', [this.incomingData.certificate_path], fileName]).subscribe(
+    this.ws.call('core.download', ['filesystem.get', [this.incomingData.certificate_path], fileName]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         const url = res[1];
         const mimetype = 'application/x-x509-ca-cert';
-        this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe((file) => {
+        this.storage.streamDownloadFile(this.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
           this.storage.downloadBlob(file, fileName);
         }, (err) => {
           this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
@@ -320,7 +322,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   viewKey(): void {
     this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true,
       helptext_system_certificates.viewDialog.download, false, '',
-      '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.privatekey, true).subscribe((res: boolean) => {
+      '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.privatekey, true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         this.exportKey();
       }
@@ -329,11 +331,11 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
 
   exportKey(): void {
     const fileName = this.incomingData.name + '.key';
-    this.ws.call('core.download', ['filesystem.get', [this.incomingData.privatekey_path], fileName]).subscribe(
+    this.ws.call('core.download', ['filesystem.get', [this.incomingData.privatekey_path], fileName]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         const url = res[1];
         const mimetype = 'text/plain';
-        this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe((file) => {
+        this.storage.streamDownloadFile(this.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
           this.storage.downloadBlob(file, fileName);
         }, (err) => {
           this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
@@ -351,7 +353,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     payload['name'] = value.name;
 
     this.loader.open();
-    this.ws.call(this.editCall, [this.rowNum, payload]).subscribe(
+    this.ws.call(this.editCall, [this.rowNum, payload]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.modalService.close('slide-in-form');

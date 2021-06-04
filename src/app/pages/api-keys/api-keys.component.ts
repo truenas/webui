@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { DialogService, WebSocketService } from '../../services';
@@ -9,13 +9,15 @@ import { LocaleService } from '../../services/locale.service';
 import helptext from '../../helptext/api-keys';
 import { ConfirmDialog } from '../common/confirm-dialog/confirm-dialog.component';
 import { EntityUtils } from '../common/entity/utils';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-api-keys',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [Clipboard],
 })
-export class ApiKeysComponent {
+export class ApiKeysComponent implements EntityTableConfig {
   title = helptext.title;
   queryCall: 'api_key.query' = 'api_key.query';
   wsDelete: 'api_key.delete' = 'api_key.delete';
@@ -26,7 +28,7 @@ export class ApiKeysComponent {
   currItem: any;
   entityList: any;
 
-  columns: any[] = [
+  columns = [
     { name: helptext.col_name, prop: 'name', always_display: true },
     { name: helptext.col_created_at, prop: 'created_time' },
   ];
@@ -70,7 +72,7 @@ export class ApiKeysComponent {
 
   timeZone: string;
 
-  protected custActions = [
+  custActions = [
     {
       id: 'add',
       name: helptext.action_add,
@@ -112,7 +114,7 @@ export class ApiKeysComponent {
   doSubmit(entityDialogForm: any): void {
     const that = entityDialogForm.parent;
     if (that.currItem) {
-      that.ws.call(that.editCall, [that.currItem.id, entityDialogForm.formValue]).subscribe(
+      that.ws.call(that.editCall, [that.currItem.id, entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
         (res: any) => {
           entityDialogForm.dialogRef.close(true);
           if (res.key) {
@@ -125,7 +127,7 @@ export class ApiKeysComponent {
         },
       );
     } else {
-      that.ws.call(that.addCall, [entityDialogForm.formValue]).subscribe(
+      that.ws.call(that.addCall, [entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
         (res: any) => {
           entityDialogForm.dialogRef.close(true);
           that.displayKey(res.key);

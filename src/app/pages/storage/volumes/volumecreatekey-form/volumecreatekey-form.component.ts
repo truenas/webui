@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 
 import { WebSocketService } from '../../../../services';
@@ -18,7 +19,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-key';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-createpassphrase-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -79,7 +82,7 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
       name: T('Download Encryption Key'),
       disabled: true,
       function: () => {
-        this.ws.call('auth.check_user', ['root', this.admin_pw]).subscribe((res) => {
+        this.ws.call('auth.check_user', ['root', this.admin_pw]).pipe(untilDestroyed(this)).subscribe((res) => {
           if (res) {
             this.encryptionService.openEncryptDialog(this.pk, this.route_return, this.poolName);
           } else {
@@ -118,13 +121,13 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
   ) {}
 
   preInit(): void {
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
     });
   }
 
-  afterInit(entityForm: any): void {
-    entityForm.formGroup.controls['adminpw'].valueChanges.subscribe((res: string) => {
+  afterInit(entityForm: EntityFormComponent): void {
+    entityForm.formGroup.controls['adminpw'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.admin_pw = res;
       const btn = <HTMLInputElement> document.getElementById('cust_button_Download Encryption Key');
       this.admin_pw !== '' ? btn.disabled = false : btn.disabled = true;
@@ -132,7 +135,7 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
   }
 
   customSubmit(value: any): void {
-    this.ws.call('auth.check_user', ['root', value.adminpw]).subscribe((res) => {
+    this.ws.call('auth.check_user', ['root', value.adminpw]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.encryptionService.setPassphrase(this.pk, value.passphrase, value.adminpw,
           value.name, this.route_return, false, true, 'created for');

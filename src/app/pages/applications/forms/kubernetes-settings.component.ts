@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
@@ -13,6 +14,9 @@ import { EntityUtils } from '../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { forkJoin, of } from 'rxjs';
 import { tap, map, catchError } from 'rxjs/operators';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+@UntilDestroy()
 @Component({
   selector: 'app-kubernetes-settings',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -23,7 +27,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
   isEditJob = true;
   private newEnableContainerImageUpdate = true;
   title = helptext.kubForm.title;
-  private entityEdit: any;
+  private entityEdit: EntityFormComponent;
   fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
@@ -136,9 +140,9 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     ).toPromise();
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
-    this.appService.getContainerConfig().subscribe((res) => {
+    this.appService.getContainerConfig().pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.entityEdit.formGroup.controls['enable_container_image_update'].setValue(res.enable_image_updates);
       }

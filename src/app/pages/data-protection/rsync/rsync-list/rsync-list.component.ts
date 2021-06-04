@@ -1,8 +1,7 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-
-import { Subscription } from 'rxjs';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import {
   WebSocketService, DialogService, TaskService, JobService, UserService,
@@ -15,16 +14,17 @@ import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/r
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-rsync-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, JobService, UserService, EntityFormService],
 })
-export class RsyncListComponent implements InputTableConf, OnDestroy {
+export class RsyncListComponent implements EntityTableConfig {
   title = T('Rsync Tasks');
   queryCall: 'rsynctask.query' = 'rsynctask.query';
   wsDelete: 'rsynctask.delete' = 'rsynctask.delete';
@@ -34,7 +34,7 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
   entityList: EntityTableComponent;
   asyncView = true;
 
-  columns: any[] = [
+  columns = [
     { name: T('Path'), prop: 'path', always_display: true },
     { name: T('Remote Host'), prop: 'remotehost' },
     { name: T('Remote SSH Port'), prop: 'remoteport', hidden: true },
@@ -69,7 +69,6 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
       key_props: ['remotehost', 'remotemodule'],
     },
   };
-  private onModalClose: Subscription;
 
   constructor(
     protected router: Router,
@@ -86,7 +85,7 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -103,10 +102,10 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
           title: T('Run Now'),
           message: T('Run this rsync now?'),
           hideCheckBox: true,
-        }).subscribe((run: boolean) => {
+        }).pipe(untilDestroyed(this)).subscribe((run: boolean) => {
           if (run) {
             row.state = { state: EntityJobState.Running };
-            this.ws.call('rsynctask.run', [row.id]).subscribe(
+            this.ws.call('rsynctask.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
               (jobId: number) => {
                 this.dialog.Info(
                   T('Task Started'),
@@ -115,7 +114,7 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
                   'info',
                   true,
                 );
-                this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
+                this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
                   row.state = { state: job.state };
                   row.job = job;
                 });
@@ -160,7 +159,7 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
         task.state = { state: EntityJobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.job.getJobStatus(task.job.id).subscribe((job: EntityJob) => {
+        this.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
           task.state = { state: job.state };
           task.job = job;
         });
@@ -195,9 +194,5 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
 
   doEdit(id: number): void {
     this.doAdd(id);
-  }
-
-  ngOnDestroy(): void {
-    this.onModalClose?.unsubscribe();
   }
 }

@@ -1,28 +1,30 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogFormConfiguration } from '../../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityUtils } from '../../../../common/entity/utils';
 
 import { T } from 'app/translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-iscsi-extent-list',
   template: `
     <entity-table [conf]="this" [title]="tableTitle"></entity-table>
   `,
 })
-export class ExtentListComponent {
+export class ExtentListComponent implements EntityTableConfig {
   tableTitle = 'Extents';
   protected entityTable: any;
-  protected queryCall = 'iscsi.extent.query';
-  protected route_add: string[] = ['sharing', 'iscsi', 'extent', 'add'];
+  queryCall: 'iscsi.extent.query' = 'iscsi.extent.query';
+  route_add: string[] = ['sharing', 'iscsi', 'extent', 'add'];
   protected route_add_tooltip = 'Add Extent';
-  protected route_edit: string[] = ['sharing', 'iscsi', 'extent', 'edit'];
-  protected wsDelete = 'iscsi.extent.delete';
+  route_edit: string[] = ['sharing', 'iscsi', 'extent', 'edit'];
+  wsDelete: 'iscsi.extent.delete' = 'iscsi.extent.delete';
 
-  columns: any[] = [
+  columns = [
     {
       name: T('Extent Name'),
       prop: 'name',
@@ -103,7 +105,7 @@ export class ExtentListComponent {
         const value = entityDialog.formValue;
         entityTable.loader.open();
         entityTable.loaderOpen = true;
-        entityTable.ws.call(self.wsDelete, [id, value.remove, value.force]).subscribe(
+        entityTable.ws.call(self.wsDelete, [id, value.remove, value.force]).pipe(untilDestroyed(this)).subscribe(
           () => {
             entityDialog.dialogRef.close(true);
             entityTable.getData();

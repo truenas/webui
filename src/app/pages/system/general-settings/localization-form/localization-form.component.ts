@@ -1,9 +1,9 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
 import {
   DialogService, LanguageService, SystemGeneralService, WebSocketService,
 } from '../../../../services';
@@ -13,19 +13,19 @@ import { LocaleService } from 'app/services/locale.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-localization-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
+export class LocalizationFormComponent implements FormConfiguration {
   protected updateCall = 'system.general.update';
   sortLanguagesByName = true;
   languageList: any = [];
   languageKey: string;
-  private dateTimeChangeSubscription: Subscription;
-  private getDataFromDash: Subscription;
   title = helptext.localeTitle;
   protected isOneColumnForm = true;
   fieldConfig: FieldConfig[] = [];
@@ -76,7 +76,7 @@ export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
     },
   ];
 
-  private entityForm: any;
+  private entityForm: EntityFormComponent;
   private configData: any;
 
   constructor(
@@ -88,24 +88,24 @@ export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
     public localeService: LocaleService,
     private modalService: ModalService,
   ) {
-    this.getDataFromDash = this.sysGeneralService.sendConfigData$.subscribe((res) => {
+    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.configData = res;
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     this.setTimeOptions(this.configData.timezone);
     this.makeLanguageList();
 
-    this.sysGeneralService.kbdMapChoices().subscribe((mapChoices) => {
+    this.sysGeneralService.kbdMapChoices().pipe(untilDestroyed(this)).subscribe((mapChoices) => {
       this.fieldSets
         .find((set) => set.name === helptext.stg_fieldset_loc)
         .config.find((config) => config.name === 'kbdmap').options = mapChoices;
       this.entityForm.formGroup.controls['kbdmap'].setValue(this.configData.kbdmap);
     });
 
-    this.sysGeneralService.timezoneChoices().subscribe((tzChoices) => {
+    this.sysGeneralService.timezoneChoices().pipe(untilDestroyed(this)).subscribe((tzChoices) => {
       tzChoices = _.sortBy(tzChoices, [function (o) { return o.label.toLowerCase(); }]);
       this.fieldSets
         .find((set) => set.name === helptext.stg_fieldset_loc)
@@ -114,11 +114,11 @@ export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
     });
 
     this.getDateTimeFormats();
-    this.dateTimeChangeSubscription = this.localeService.dateTimeFormatChange$.subscribe(() => {
+    this.localeService.dateTimeFormatChange$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getDateTimeFormats();
     });
 
-    entityEdit.formGroup.controls['language'].valueChanges.subscribe((res: any) => {
+    entityEdit.formGroup.controls['language'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.languageKey = this.getKeyByValue(this.languageList, res);
       if (this.languageList[res]) {
         entityEdit.formGroup.controls['language'].setValue(`${this.languageList[res]}`);
@@ -146,7 +146,7 @@ export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
   }
 
   makeLanguageList(): void {
-    this.sysGeneralService.languageChoices().subscribe((res) => {
+    this.sysGeneralService.languageChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       this.languageList = res;
       const options: Option[] = Object.keys(this.languageList || {}).map((key) => ({
         label: this.sortLanguagesByName
@@ -178,7 +178,7 @@ export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
     delete body.date_format;
     delete body.time_format;
     this.loader.open();
-    return this.ws.call('system.general.update', [body]).subscribe(() => {
+    return this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.sysGeneralService.refreshSysGeneral();
       this.loader.close();
       this.entityForm.success = true;
@@ -194,10 +194,5 @@ export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
 
   getKeyByValue(object: any, value: any): any {
     return Object.keys(object).find((key) => object[key] === value);
-  }
-
-  ngOnDestroy(): void {
-    this.dateTimeChangeSubscription.unsubscribe();
-    this.getDataFromDash.unsubscribe();
   }
 }

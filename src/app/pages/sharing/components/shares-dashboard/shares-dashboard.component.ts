@@ -29,6 +29,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { AppTableHeaderExtraAction } from 'app/pages/common/entity/table/table.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 enum ShareType {
   SMB = 'smb',
@@ -37,6 +38,7 @@ enum ShareType {
   WebDAV = 'webdav',
 }
 
+@UntilDestroy()
 @Component({
   selector: 'app-shares-dashboard',
   templateUrl: './shares-dashboard.template.html',
@@ -84,7 +86,7 @@ export class SharesDashboardComponent {
     this.ws
       .call('service.query', [])
       .pipe(takeUntil(this.onDestroy$))
-      .subscribe((services) => {
+      .pipe(untilDestroyed(this)).subscribe((services) => {
         [
           _.find(services, { service: ServiceName.Cifs }),
           _.find(services, { service: ServiceName.Iscsi }),
@@ -334,14 +336,14 @@ export class SharesDashboardComponent {
         formComponent = new SMBFormComponent(this.router, this.ws, this.dialog, this.loader, this.sysGeneralService, this.modalService);
         break;
       case ShareType.WebDAV:
-        formComponent = new WebdavFormComponent(this.router, this.ws, this.dialog);
+        formComponent = new WebdavFormComponent(this.router, this.ws, this.dialog, this.loader);
         break;
       case ShareType.ISCSI:
         formComponent = new TargetFormComponent(this.router, this.aroute, this.iscsiService, this.loader, this.translate, this.ws, this.modalService);
         break;
     }
     this.modalService.open('slide-in-form', formComponent, id);
-    this.modalService.onClose$.subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       if (!tableComponent) {
         this.refreshDashboard();
       } else {
@@ -471,7 +473,7 @@ export class SharesDashboardComponent {
         return;
     }
 
-    this.ws.call(updateCall, [row.id, { enabled: row.enabled }]).subscribe(
+    this.ws.call(updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
       (updatedEntity) => {
         row.enabled = updatedEntity.enabled;
 
@@ -513,7 +515,7 @@ export class SharesDashboardComponent {
         onClick: () => {
           const rpc = service.state === ServiceStatus.Running ? 'service.stop' : 'service.start';
           this.updateTableServiceStatus({ ...service, state: ServiceStatus.Loading });
-          this.ws.call(rpc, [service.service]).pipe(takeUntil(this.onDestroy$)).subscribe((hasChanged: boolean) => {
+          this.ws.call(rpc, [service.service]).pipe(takeUntil(this.onDestroy$)).pipe(untilDestroyed(this)).subscribe((hasChanged: boolean) => {
             if (hasChanged) {
               if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
                 this.dialog.Info(

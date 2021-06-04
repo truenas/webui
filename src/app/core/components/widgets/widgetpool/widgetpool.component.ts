@@ -10,6 +10,7 @@ import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 
 import { TranslateService } from '@ngx-translate/core';
+import * as filesize from 'filesize';
 
 import { T } from '../../../../translate-marker';
 
@@ -17,6 +18,7 @@ import {
   tween,
   styler,
 } from 'popmotion';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface Slide {
   name: string;
@@ -65,6 +67,7 @@ export interface VolumeData {
   vol_name?: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'widget-pool',
   templateUrl: './widgetpool.component.html',
@@ -228,14 +231,14 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
     this.cdr.detectChanges();
 
-    this.core.register({ observerClass: this, eventName: 'MultipathData' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'MultipathData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.currentMultipathDetails = evt.data[0];
 
       const activeDisk = evt.data[0].children.filter((prop: any) => prop.status == 'ACTIVE');
       this.core.emit({ name: 'DisksRequest', data: [[['name', '=', activeDisk[0].name]]] });
     });
 
-    this.core.register({ observerClass: this, eventName: 'DisksData' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const currentPath = (this.path as any)[this.currentSlideIndex] as Slide;
       const currentName = currentPath && currentPath.dataSource
         ? this.currentMultipathDetails
@@ -271,8 +274,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     if (isNaN(this.volumeData.used)) {
       usedValue = this.volumeData.used;
     } else {
-      const usedObj = (<any>window).filesize(this.volumeData.used, { output: 'object', exponent: 3 });
-      usedValue = usedObj.value;
+      usedValue = filesize(this.volumeData.used, { exponent: 3 });
     }
 
     if (usedValue == 'Locked') {
@@ -287,7 +289,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
     this.core.emit({ name: 'PoolDisksRequest', data: [this.poolState.id] });
 
-    this.displayValue = (<any>window).filesize(this.volumeData.avail, { standard: 'iec' });
+    this.displayValue = filesize(this.volumeData.avail, { standard: 'iec' });
     if (this.displayValue.slice(-2) === ' B') {
       this.diskSizeLabel = this.displayValue.slice(-1);
       this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -2)));
@@ -461,7 +463,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     }
   }
 
-  nextPath(obj: any, index: number|string): any {
+  nextPath(obj: any, index: number | string): any {
     if (typeof index == 'string') { index = parseInt(index); }
     return obj[index];
   }

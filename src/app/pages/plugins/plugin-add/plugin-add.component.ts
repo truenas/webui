@@ -19,7 +19,9 @@ import { EntityJobComponent } from '../../common/entity/entity-job';
 import { MatDialog } from '@angular/material/dialog';
 import helptext from '../../../helptext/plugins/plugins';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-plugin-add',
   templateUrl: './plugin-add.component.html',
@@ -327,7 +329,7 @@ export class PluginAddComponent implements OnInit {
     this.ip6_interfaceField = _.find(this.fieldConfig, { name: 'ip6_interface' });
     this.ip6_prefixField = _.find(this.fieldConfig, { name: 'ip6_prefix' });
     // get interface options
-    this.jailService.getInterfaceChoice().subscribe(
+    this.jailService.getInterfaceChoice().pipe(untilDestroyed(this)).subscribe(
       (res) => {
         for (const i in res) {
           this.ip4_interfaceField.options.push({ label: res[i], value: i });
@@ -341,13 +343,13 @@ export class PluginAddComponent implements OnInit {
 
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     this.formGroup.disable();
-    this.formGroup.controls['ip4_addr'].valueChanges.subscribe(() => {
+    this.formGroup.controls['ip4_addr'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateIpValidation();
     });
-    this.formGroup.controls['ip6_addr'].valueChanges.subscribe(() => {
+    this.formGroup.controls['ip6_addr'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateIpValidation();
     });
-    this.formGroup.controls['dhcp'].valueChanges.subscribe((res: any) => {
+    this.formGroup.controls['dhcp'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (!this.showSpinner) {
         if (res && !this.formGroup.controls['nat'].disabled) {
           this.setDisabled('nat', true);
@@ -370,7 +372,7 @@ export class PluginAddComponent implements OnInit {
         this.formGroup.controls[ctrl].disable();
       }
     }
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pluginName = params['name'];
       this.pluginRepository = params['plugin_repository'];
       this.formGroup.controls['plugin_name'].setValue(this.pluginName);
@@ -378,7 +380,7 @@ export class PluginAddComponent implements OnInit {
         plugin: this.pluginName,
         plugin_repository: this.pluginRepository,
         refresh: false,
-      }]).subscribe((defaults) => {
+      }]).pipe(untilDestroyed(this)).subscribe((defaults) => {
         this.showSpinner = false;
         this.formGroup.enable();
         for (const i in defaults.properties) {
@@ -449,7 +451,7 @@ export class PluginAddComponent implements OnInit {
     this.dialogRef.componentInstance.setDescription(T('Installing plugin...'));
     this.dialogRef.componentInstance.setCall(this.addCall, [value]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res: any) => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.dialogRef.componentInstance.setTitle(T('Plugin installed successfully'));
       let install_notes = '<p><b>Install Notes:</b></p>';
       for (const msg of res.result.install_notes.split('\n')) {
@@ -458,7 +460,7 @@ export class PluginAddComponent implements OnInit {
       this.dialogRef.componentInstance.setDescription(install_notes);
       this.dialogRef.componentInstance.showCloseButton = true;
 
-      this.dialogRef.afterClosed().subscribe(() => {
+      this.dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
         this.router.navigate(new Array('/').concat(this.route_success));
       });
     });
@@ -489,7 +491,7 @@ export class PluginAddComponent implements OnInit {
 
       this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
         .forEach((control) => {
-          control.valueChanges.subscribe(
+          control.valueChanges.pipe(untilDestroyed(this)).subscribe(
             () => { this.relationUpdate(config, activations); },
           );
         });

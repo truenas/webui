@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import {
   WebSocketService,
@@ -26,17 +25,17 @@ import { IdmapFormComponent } from './idmap/idmap-form.component';
 import { KerberosSettingsComponent } from './kerberossettings/kerberossettings.component';
 import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form.component';
 import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'directoryservices',
   templateUrl: './directoryservices.component.html',
   providers: [DatePipe, UserService],
 })
-export class DirectoryservicesComponent implements OnInit, OnDestroy {
+export class DirectoryservicesComponent implements OnInit {
   dataCards: any[] = [];
   tableCards: any[] = [];
-
-  refreshOnClose: Subscription;
 
   // Components included in this dashboard
   protected ldapFormComponent: LdapComponent;
@@ -164,7 +163,7 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     ];
 
     this.getDataCardData();
-    this.refreshOnClose = this.modalService.onClose$.subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
     });
 
@@ -289,12 +288,12 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     }
 
     if (name == 'idmap' && !id) {
-      this.idmapService.getADStatus().subscribe((res) => {
+      this.idmapService.getADStatus().pipe(untilDestroyed(this)).subscribe((res) => {
         if (res.enable) {
           this.modalService.open('slide-in-form', addComponent, id);
         } else {
           this.dialog.confirm(idmapHelptext.idmap.enable_ad_dialog.title, idmapHelptext.idmap.enable_ad_dialog.message,
-            true, idmapHelptext.idmap.enable_ad_dialog.button).subscribe((res: boolean) => {
+            true, idmapHelptext.idmap.enable_ad_dialog.button).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
             if (res) {
               addComponent = this.activeDirectoryFormComponent;
               this.modalService.open('slide-in-form', addComponent, id);
@@ -345,9 +344,5 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     this.kerberosSettingFormComponent = new KerberosSettingsComponent();
     this.kerberosRealmsFormComponent = new KerberosRealmsFormComponent(this.modalService);
     this.kerberosKeytabsFormComponent = new KerberosKeytabsFormComponent(this.modalService);
-  }
-
-  ngOnDestroy(): void {
-    this.refreshOnClose.unsubscribe();
   }
 }

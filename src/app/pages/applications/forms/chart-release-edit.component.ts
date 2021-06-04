@@ -14,7 +14,9 @@ import helptext from '../../../helptext/apps/apps';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { EntityUtils } from '../../common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-chart-release-edit',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -388,12 +390,12 @@ export class ChartReleaseEditComponent implements FormConfiguration {
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService, private appService: ApplicationsService) {
-    this.appService.getNICChoices().subscribe((res) => {
+    this.appService.getNICChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       for (const item in res) {
         this.interfaceList.push({ label: item, value: item });
       }
     });
-    this.getRow = this.modalService.getRow$.subscribe((rowName: string) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowName: string) => {
       this.rowName = rowName;
       this.customFilter = [[['id', '=', rowName]], { extra: { include_chart_schema: true } }];
       this.getRow.unsubscribe();
@@ -548,7 +550,7 @@ export class ChartReleaseEditComponent implements FormConfiguration {
     });
     this.dialogRef.componentInstance.setCall(this.editCall, payload);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();

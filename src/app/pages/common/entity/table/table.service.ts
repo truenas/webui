@@ -7,12 +7,14 @@ import { EntityJobComponent } from '../entity-job/entity-job.component';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../utils';
 import { EmptyType } from '../entity-empty/entity-empty.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 const stateClass = {
   UP: 'STATE_UP',
   DOWN: 'STATE_DOWN',
 };
 
+@UntilDestroy()
 @Injectable()
 export class TableService {
   protected dialogRef: any;
@@ -26,7 +28,7 @@ export class TableService {
 
   // get table data source
   getData(table: any): void {
-    table.ws.call(table.tableConf.queryCall).subscribe((res: any) => {
+    table.ws.call(table.tableConf.queryCall).pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (table.tableConf.dataSourceHelper) {
         res = table.tableConf.dataSourceHelper(res);
       }
@@ -80,7 +82,7 @@ export class TableService {
 
     if (table.tableConf.deleteMsg && table.tableConf.deleteMsg.doubleConfirm) {
       // double confirm: input delete item's name to confirm deletion
-      table.tableConf.deleteMsg.doubleConfirm(item).subscribe((doubleConfirmDialog: any) => {
+      table.tableConf.deleteMsg.doubleConfirm(item).pipe(untilDestroyed(this)).subscribe((doubleConfirmDialog: any) => {
         if (doubleConfirmDialog) {
           this.doDelete(table, item);
         }
@@ -91,7 +93,7 @@ export class TableService {
         dialog.hasOwnProperty('message') ? dialog['message'] + deleteMsg : deleteMsg,
         dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : false,
         dialog.hasOwnProperty('button') ? dialog['button'] : T('Delete'),
-      ).subscribe((res: boolean) => {
+      ).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
         if (res) {
           this.doDelete(table, item);
         }
@@ -115,7 +117,7 @@ export class TableService {
       msg_content += '</b>?';
       deleteMsg += msg_content;
     }
-    this.translateService.get(deleteMsg).subscribe((res) => {
+    this.translateService.get(deleteMsg).pipe(untilDestroyed(this)).subscribe((res) => {
       deleteMsg = res;
     });
     return deleteMsg;
@@ -137,7 +139,7 @@ export class TableService {
     const params = table.tableConf.getDeleteCallParams ? table.tableConf.getDeleteCallParams(item, id) : [id];
 
     if (!table.tableConf.deleteCallIsJob) {
-      table.busy = table.ws.call(table.tableConf.deleteCall, params).subscribe(
+      table.busy = table.ws.call(table.tableConf.deleteCall, params).pipe(untilDestroyed(this)).subscribe(
         () => {
           this.getData(table);
           table.excuteDeletion = true;
@@ -155,7 +157,7 @@ export class TableService {
       this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Deleting...') }, disableClose: false });
       this.dialogRef.componentInstance.setCall(table.tableConf.deleteCall, params);
       this.dialogRef.componentInstance.submit();
-      this.dialogRef.componentInstance.success.subscribe(() => {
+      this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.dialogRef.close(true);
         this.getData(table);
         table.excuteDeletion = true;
@@ -163,7 +165,7 @@ export class TableService {
           table.tableConf.afterDelete();
         }
       });
-      this.dialogRef.componentInstance.failure.subscribe((err: any) => {
+      this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
         this.loader.close();
         table.loaderOpen = false;
         new EntityUtils().handleWSError(this, err, this.dialogService);

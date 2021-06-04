@@ -1,11 +1,11 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ModalService } from 'app/services/modal.service';
-import { of, Subscription, Observable } from 'rxjs';
+import { of, Observable } from 'rxjs';
 import {
   DialogService, WebSocketService, AppLoaderService, SystemGeneralService,
 } from 'app/services';
@@ -13,15 +13,17 @@ import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-set
 import _ from 'lodash';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { filter, switchMap } from 'rxjs/operators';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 const poolFieldName = 'pool';
 
+@UntilDestroy()
 @Component({
   selector: 'app-system-dataset-pool',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class SystemDatasetPoolComponent implements FormConfiguration, OnDestroy {
+export class SystemDatasetPoolComponent implements FormConfiguration {
   isOneColumnForm = true;
 
   fieldSets = new FieldSets([
@@ -43,8 +45,6 @@ export class SystemDatasetPoolComponent implements FormConfiguration, OnDestroy 
   title = this.translate.instant('System Dataset Pool');
 
   private entityForm: EntityFormComponent;
-  private poolChoicesSubscription: Subscription;
-  private systemDatasetConfigSubscription: Subscription;
 
   constructor(
     private ws: WebSocketService,
@@ -61,14 +61,10 @@ export class SystemDatasetPoolComponent implements FormConfiguration, OnDestroy 
     this.loadCurrentDatasetPool();
   }
 
-  ngOnDestroy(): void {
-    this.poolChoicesSubscription?.unsubscribe();
-    this.systemDatasetConfigSubscription?.unsubscribe();
-  }
-
   private loadChoices(): void {
-    this.poolChoicesSubscription = this.ws
+    this.ws
       .call('systemdataset.pool_choices')
+      .pipe(untilDestroyed(this))
       .subscribe((poolChoices) => {
         const poolField = this.fieldSets.config(poolFieldName);
         poolField.options = Object.entries(poolChoices)
@@ -77,7 +73,7 @@ export class SystemDatasetPoolComponent implements FormConfiguration, OnDestroy 
   }
 
   private loadCurrentDatasetPool(): void {
-    this.systemDatasetConfigSubscription = this.ws.call('systemdataset.config').subscribe((config) => {
+    this.ws.call('systemdataset.config').pipe(untilDestroyed(this)).subscribe((config) => {
       if (!config) {
         return;
       }
@@ -94,6 +90,7 @@ export class SystemDatasetPoolComponent implements FormConfiguration, OnDestroy 
       switchMap(() => this.confirmSmbRestartIfNeeded()),
       filter(Boolean),
       switchMap(() => this.ws.job('systemdataset.update', [formValues])),
+      untilDestroyed(this),
     ).subscribe({
       complete: () => {
         this.loader.close();

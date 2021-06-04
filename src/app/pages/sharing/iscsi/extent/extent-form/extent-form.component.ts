@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators, FormControl, ValidationErrors } from '@angular/forms';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { Subscription } from 'rxjs';
 
 import * as _ from 'lodash';
 
@@ -16,7 +15,9 @@ import { AppLoaderService } from '../../../../../services/app-loader/app-loader.
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import globalHelptext from 'app/helptext/global-helptext';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-iscsi-initiator-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -32,7 +33,6 @@ export class ExtentFormComponent implements FormConfiguration {
   isEntity = true;
   protected entityForm: EntityFormComponent;
   isNew = false;
-  sub: Subscription;
   protected originalFilesize: number;
 
   fieldSets: FieldSet[] = [
@@ -270,7 +270,7 @@ export class ExtentFormComponent implements FormConfiguration {
     protected storageService: StorageService) {}
 
   preInit(): void {
-    this.sub = this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       // removed serial field in edit mode
       if (!params['pk']) {
         this.isNew = true;
@@ -284,12 +284,12 @@ export class ExtentFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
     const extent_disk_field = _.find(this.fieldConfig, { name: 'disk' });
     // get device options
-    this.iscsiService.getExtentDevices().subscribe((res) => {
+    this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
       const options = [];
       for (const i in res) {
         options.push({ label: res[i], value: i });
@@ -298,13 +298,13 @@ export class ExtentFormComponent implements FormConfiguration {
     });
 
     this.extent_type_control = entityForm.formGroup.controls['type'];
-    this.extent_type_control.valueChanges.subscribe((value: any) => {
+    this.extent_type_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.formUpdate(value);
     });
 
     this.avail_threshold_field = _.find(this.fieldConfig, { name: 'avail_threshold' });
     this.extent_disk_control = entityForm.formGroup.controls['disk'];
-    this.extent_disk_control.valueChanges.subscribe((value: any) => {
+    this.extent_disk_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       // zvol
       if (_.startsWith(value, 'zvol')) {
         this.avail_threshold_field.isHidden = false;
@@ -366,7 +366,7 @@ export class ExtentFormComponent implements FormConfiguration {
     if (value['type'] == 'DISK') {
       value['path'] = value['disk'];
     }
-    this.ws.call(this.editCall, [parseInt(this.pk, 10), value]).subscribe(
+    this.ws.call(this.editCall, [parseInt(this.pk, 10), value]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));

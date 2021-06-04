@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CoreEvent } from 'app/interfaces/events';
-import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import {
+  EntityTableComponent,
+} from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../services/ws.service';
@@ -13,12 +16,14 @@ import { ManageCatalogSummaryDialog } from '../dialogs/manage-catalog-summary/ma
 import { CatalogAddFormComponent } from '../forms/catalog-add-form.component';
 import { CatalogEditFormComponent } from '../forms/catalog-edit-form.component';
 import { EntityUtils } from '../../common/entity/utils';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-manage-catalogs',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class ManageCatalogsComponent implements InputTableConf, OnInit {
+export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
   addComponent: CatalogAddFormComponent;
   editComponent: CatalogEditFormComponent;
   title = 'Catalogs';
@@ -55,7 +60,7 @@ export class ManageCatalogsComponent implements InputTableConf, OnInit {
   filterString = '';
 
   private dialogRef: any;
-  protected entityList: any;
+  protected entityList: EntityTableComponent;
   protected loaderOpen = false;
 
   constructor(
@@ -70,7 +75,7 @@ export class ManageCatalogsComponent implements InputTableConf, OnInit {
   ngOnInit(): void {
     this.refreshUserForm();
 
-    this.modalService.refreshForm$.subscribe(() => {
+    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshUserForm();
     });
   }
@@ -85,7 +90,7 @@ export class ManageCatalogsComponent implements InputTableConf, OnInit {
     this.entityList.filter(this.filterString);
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
   }
 
@@ -176,7 +181,7 @@ export class ManageCatalogsComponent implements InputTableConf, OnInit {
     });
     this.dialogRef.componentInstance.setCall('catalog.sync_all');
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.refresh();
     });
@@ -185,7 +190,7 @@ export class ManageCatalogsComponent implements InputTableConf, OnInit {
   syncRow(row: any): void {
     const payload = [row.label];
     this.loader.open();
-    this.ws.call('catalog.sync', payload).subscribe(
+    this.ws.call('catalog.sync', payload).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.refresh();

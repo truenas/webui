@@ -15,7 +15,9 @@ import {
 } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'smb-edit',
   template: ' <entity-form [conf]="this"></entity-form>',
@@ -39,7 +41,7 @@ export class ServiceSMBComponent implements FormConfiguration {
   protected defaultIdmap: any;
   protected dialogRef: any;
   protected idNumber: any;
-  entityEdit: any;
+  entityEdit: EntityFormComponent;
   private validBindIps: any;
   title = helptext.formTitle;
 
@@ -271,10 +273,10 @@ export class ServiceSMBComponent implements FormConfiguration {
     return true;
   }
 
-  preInit(entityForm: any): void {
+  preInit(entityForm: EntityFormComponent): void {
     this.entityEdit = entityForm;
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-      this.ws.call('failover.licensed').subscribe((is_ha) => {
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
         entityForm.setDisabled('netbiosname_b', !is_ha, !is_ha);
       });
     }
@@ -283,14 +285,14 @@ export class ServiceSMBComponent implements FormConfiguration {
     const otherColTwoSet = _.find(this.fieldSets, { name: 'otherColTwo' });
 
     this.cifs_srv_unixcharset = otherSet.config.find((config) => config.name === 'unixcharset');
-    this.ws.call('smb.unixcharset_choices').subscribe((res) => {
+    this.ws.call('smb.unixcharset_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       const values = Object.values(res);
       for (let i = 0; i < values.length; i++) {
         this.cifs_srv_unixcharset.options.push({ label: values[i], value: values[i] });
       }
     });
 
-    this.servicesService.getSmbBindIPChoices().subscribe((res) => {
+    this.servicesService.getSmbBindIPChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       this.validBindIps = res;
       this.cifs_srv_bindip = otherColTwoSet.config.find((config) => config.name === 'bindip');
       for (const key in res) {
@@ -300,14 +302,14 @@ export class ServiceSMBComponent implements FormConfiguration {
       }
     });
 
-    this.ws.call('user.query').subscribe((users) => {
+    this.ws.call('user.query').pipe(untilDestroyed(this)).subscribe((users) => {
       this.cifs_srv_guest = otherColTwoSet.config.find((config) => config.name === 'guest');
       users.forEach((user) => {
         this.cifs_srv_guest.options.push({ label: user.username, value: user.username });
       });
     });
 
-    this.userService.groupQueryDSCache('', true).subscribe((groups) => {
+    this.userService.groupQueryDSCache('', true).pipe(untilDestroyed(this)).subscribe((groups) => {
       const groupOptions: Option[] = [];
       groups.forEach((item) => {
         groupOptions.push({ label: item.group, value: item.group });
@@ -354,7 +356,7 @@ export class ServiceSMBComponent implements FormConfiguration {
   }
 
   updateGroupSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).groupQueryDSCache(value, true).subscribe((items) => {
+    (parent.userService as UserService).groupQueryDSCache(value, true).pipe(untilDestroyed(this)).subscribe((items) => {
       const groupOptions: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         groupOptions.push({ label: items[i].group, value: items[i].group });

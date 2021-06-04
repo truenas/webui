@@ -19,7 +19,9 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { DialogService } from '../../../../services';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
 import globalHelptext from 'app/helptext/global-helptext';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-iscsi-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
@@ -528,10 +530,10 @@ export class IscsiWizardComponent {
     private networkService: NetworkService,
     private router: Router,
     private storageService: StorageService) {
-    this.iscsiService.getExtents().subscribe((extents) => {
+    this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
       this.namesInUse.push(...extents.map((extent) => extent.name));
     });
-    this.iscsiService.getTargets().subscribe((targets) => {
+    this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
       this.namesInUse.push(...targets.map((target) => target.name));
     });
   }
@@ -547,41 +549,41 @@ export class IscsiWizardComponent {
   step0Init(): void {
     const disk_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' });
     // get device options
-    this.iscsiService.getExtentDevices().subscribe((res) => {
+    this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
       for (const i in res) {
         disk_field.options.push({ label: res[i], value: i });
       }
     });
     const taregt_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' });
-    this.iscsiService.getTargets().subscribe((targets) => {
+    this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
       for (const item of targets) {
         taregt_field.options.push({ label: item.name, value: item.id });
       }
     });
 
-    this.entityWizard.formArray.controls[0].controls['type'].valueChanges.subscribe((value: any) => {
+    this.entityWizard.formArray.controls[0].controls['type'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.formTypeUpdate(value);
     });
 
-    this.entityWizard.formArray.controls[0].controls['disk'].valueChanges.subscribe((value: any) => {
+    this.entityWizard.formArray.controls[0].controls['disk'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       const disableZvolGroup = !(value == 'NEW' && this.entityWizard.formArray.controls[0].controls['type'].value == 'DISK');
       this.disablefieldGroup(this.zvolFieldGroup, disableZvolGroup, 0);
     });
 
-    this.entityWizard.formArray.controls[0].controls['dataset'].valueChanges.subscribe((value: any) => {
+    this.entityWizard.formArray.controls[0].controls['dataset'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value) {
         this.getDatasetValue(value);
       }
     });
 
-    this.entityWizard.formArray.controls[0].controls['usefor'].valueChanges.subscribe((value: any) => {
+    this.entityWizard.formArray.controls[0].controls['usefor'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.formUseforValueUpdate(value);
     });
 
     this.entityWizard.formArray.controls[0].controls['type'].setValue('DISK');
     this.entityWizard.formArray.controls[0].controls['usefor'].setValue('vmware');
 
-    this.entityWizard.formArray.controls[0].controls['target'].valueChanges.subscribe((value: any) => {
+    this.entityWizard.formArray.controls[0].controls['target'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value !== 'NEW' && !this.wizardConfig[1].skip && !this.wizardConfig[2].skip) {
         this.wizardConfig[1].skip = true;
         this.wizardConfig[2].skip = true;
@@ -600,7 +602,7 @@ export class IscsiWizardComponent {
     const authGroupField = _.find(this.wizardConfig[1].fieldConfig, { name: 'discovery_authgroup' });
     const listenIpField = _.find(this.wizardConfig[1].fieldConfig, { name: 'listen' }).templateListField[0];
 
-    this.iscsiService.listPortals().subscribe((portals) => {
+    this.iscsiService.listPortals().pipe(untilDestroyed(this)).subscribe((portals) => {
       const field = _.find(this.wizardConfig[1].fieldConfig, { name: 'portal' });
       for (const portal of portals) {
         const ips = portal.listen.map((ip) => ip.ip + ':' + ip.port);
@@ -608,7 +610,7 @@ export class IscsiWizardComponent {
       }
     });
 
-    this.iscsiService.getAuth().subscribe((accessRecords) => {
+    this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
       for (let i = 0; i < accessRecords.length; i++) {
         if (_.find(authGroupField.options, { value: accessRecords[i].tag }) == undefined) {
           authGroupField.options.push({ label: accessRecords[i].tag, value: accessRecords[i].tag });
@@ -616,7 +618,7 @@ export class IscsiWizardComponent {
       }
     });
 
-    this.iscsiService.getIpChoices().subscribe((ips) => {
+    this.iscsiService.getIpChoices().pipe(untilDestroyed(this)).subscribe((ips) => {
       for (const ip in ips) {
         listenIpField.options.push({ label: ips[ip], value: ip });
       }
@@ -628,12 +630,12 @@ export class IscsiWizardComponent {
       }
     });
 
-    this.entityWizard.formArray.controls[1].controls['portal'].valueChanges.subscribe((value: any) => {
+    this.entityWizard.formArray.controls[1].controls['portal'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.disablePortalGroup = value !== 'NEW';
       this.disablefieldGroup(this.portalFieldGroup, this.disablePortalGroup, 1);
     });
 
-    this.entityWizard.formArray.controls[1].controls['discovery_authmethod'].valueChanges.subscribe((value: any) => {
+    this.entityWizard.formArray.controls[1].controls['discovery_authmethod'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.disableAuth = !(((value === 'CHAP' || value === 'CHAP_MUTUAL') && !this.disablePortalGroup));
 
       authGroupField.required = !this.disableAuth;
@@ -645,7 +647,7 @@ export class IscsiWizardComponent {
       this.entityWizard.formArray.controls[1].controls['discovery_authgroup'].updateValueAndValidity();
     });
 
-    this.entityWizard.formArray.controls[1].controls['discovery_authgroup'].valueChanges.subscribe((value: any) => {
+    this.entityWizard.formArray.controls[1].controls['discovery_authgroup'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.disableAuthGroup = value !== 'NEW';
       this.disablefieldGroup(this.authAccessFieldGroup, this.disableAuthGroup, 1);
     });
@@ -655,7 +657,7 @@ export class IscsiWizardComponent {
     for (let step = 0; step < 3; step++) {
       Object.entries(this.entityWizard.formArray.controls[step].controls).forEach(([name, control]) => {
         if (name in this.summaryObj) {
-          (<FormControl>control).valueChanges.subscribe(((value) => {
+          (<FormControl>control).valueChanges.pipe(untilDestroyed(this)).subscribe(((value) => {
             if (value == undefined) {
               this.summaryObj[name] = null;
             } else {
@@ -764,7 +766,7 @@ export class IscsiWizardComponent {
     datasetField.hasErrors = false;
 
     const pool = dataset.split('/')[0];
-    this.ws.call('pool.dataset.query', [[['id', '=', dataset]]]).subscribe(
+    this.ws.call('pool.dataset.query', [[['id', '=', dataset]]]).pipe(untilDestroyed(this)).subscribe(
       (datasets) => {
         if (datasets.length == 0) {
           datasetField.hasErrors = true;
@@ -779,7 +781,7 @@ export class IscsiWizardComponent {
         }
       },
     );
-    this.ws.call('pool.dataset.recommended_zvol_blocksize', [pool]).subscribe(
+    this.ws.call('pool.dataset.recommended_zvol_blocksize', [pool]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.entityWizard.formArray.controls[0].controls['volblocksize'].setValue(res);
       },
@@ -922,7 +924,7 @@ export class IscsiWizardComponent {
   rollBack(items: any[]): void {
     for (const item in items) {
       if (items[item] != null) {
-        this.ws.call((this.deleteCalls as any)[item], [items[item]]).subscribe(
+        this.ws.call((this.deleteCalls as any)[item], [items[item]]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             console.info('rollback ' + item, res);
           },

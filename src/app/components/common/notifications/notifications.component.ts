@@ -1,32 +1,32 @@
 import {
-  Component, OnInit, Input, OnDestroy,
+  Component, OnInit, Input,
 } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { NotificationsService, NotificationAlert } from 'app/services/notifications.service';
 import { LocaleService } from 'app/services/locale.service';
-import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-notifications',
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.scss'],
 })
-export class NotificationsComponent implements OnInit, OnDestroy {
+export class NotificationsComponent implements OnInit {
   @Input() notificPanel: MatSidenav;
 
   notifications: NotificationAlert[] = [];
   dismissedNotifications: NotificationAlert[] = [];
   ngDateFormat = 'yyyy-MM-dd HH:mm:ss';
-  dateFormatSubscription: Subscription;
 
   constructor(private router: Router, private notificationsService: NotificationsService, protected localeService: LocaleService) {
   }
 
   ngOnInit(): void {
     this.initData();
-    this.notificationsService.getNotifications().subscribe((notifications) => {
+    this.notificationsService.getNotifications().pipe(untilDestroyed(this)).subscribe((notifications) => {
       this.notifications = [];
       this.dismissedNotifications = [];
 
@@ -43,7 +43,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         });
       }, -1);
     });
-    this.dateFormatSubscription = this.localeService.dateTimeFormatChange$.subscribe(() => {
+    this.localeService.dateTimeFormatChange$.pipe(untilDestroyed(this)).subscribe(() => {
       this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
     });
   }
@@ -80,10 +80,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   turnMeOn(notification: NotificationAlert, e: MouseEvent): void {
     e.preventDefault();
     this.notificationsService.restoreNotifications([notification]);
-  }
-
-  ngOnDestroy(): void {
-    this.dateFormatSubscription.unsubscribe();
   }
 
   closeNotificationsPanel(): void {

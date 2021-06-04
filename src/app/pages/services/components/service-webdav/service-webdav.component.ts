@@ -2,6 +2,7 @@ import {
   ApplicationRef, Component, Injector, OnDestroy,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 
@@ -12,7 +13,9 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/services/components/service-webdav';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'webdav-edit',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -93,7 +96,7 @@ export class ServiceWebdavComponent implements FormConfiguration, OnDestroy {
   private webdav_htauth_subscription: any;
   private webdav_password: any;
   private webdav_password2: any;
-  private entityForm: any;
+  private entityForm: EntityFormComponent;
 
   constructor(
     protected router: Router,
@@ -115,7 +118,7 @@ export class ServiceWebdavComponent implements FormConfiguration, OnDestroy {
     return data;
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.entityForm.submitFunction = this.submitFunction;
     this.webdav_tcpport = _.find(this.fieldConfig, { name: 'tcpport' });
@@ -126,15 +129,15 @@ export class ServiceWebdavComponent implements FormConfiguration, OnDestroy {
     this.webdav_protocol = entityForm.formGroup.controls['protocol'];
     this.handleProtocol(this.webdav_protocol.value);
     this.handleAuth(this.webdav_htauth.value);
-    this.webdav_protocol_subscription = this.webdav_protocol.valueChanges.subscribe((value: any) => {
+    this.webdav_protocol_subscription = this.webdav_protocol.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.handleProtocol(value);
     });
-    this.webdav_htauth_subscription = this.webdav_htauth.valueChanges.subscribe((value: any) => {
+    this.webdav_htauth_subscription = this.webdav_htauth.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.handleAuth(value);
     });
 
     this.webdav_certssl = _.find(this.fieldConfig, { name: 'certssl' });
-    this.systemGeneralService.getCertificates().subscribe((res: any[]) => {
+    this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       if (res.length > 0) {
         res.forEach((item) => {
           this.webdav_certssl.options.push(

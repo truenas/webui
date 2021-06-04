@@ -1,6 +1,7 @@
 import { Component, DoCheck, IterableDiffers } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import * as _ from 'lodash';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -9,14 +10,16 @@ import {
 } from 'app/services';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-user-quota-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
   isEntity = true;
-  entityForm: any;
+  entityForm: EntityFormComponent;
   pk: string;
   route_success: string[];
   searchedEntries: any[] = [];
@@ -136,7 +139,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
     }
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     this.route_success = ['storage', 'pools', 'user-quotas', this.pk];
     this.selectedEntriesField = _.find(this.fieldConfig, { name: 'system_entries' });
@@ -144,33 +147,33 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
     this.entryField = _.find(this.fieldSets.find((set) => set.name === helptext.users.user_title).config,
       { name: 'searched_entries' });
 
-    this.ws.call('user.query').subscribe((res) => {
+    this.ws.call('user.query').pipe(untilDestroyed(this)).subscribe((res) => {
       res.map((entry) => {
         this.selectedEntriesField.options.push({ label: entry.username, value: entry.uid });
       });
     });
 
-    this.entityForm.formGroup.controls['data_quota'].valueChanges.subscribe((res: any) => {
+    this.entityForm.formGroup.controls['data_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.dq = res;
       this.allowSubmit();
     });
 
-    this.entityForm.formGroup.controls['obj_quota'].valueChanges.subscribe((res: any) => {
+    this.entityForm.formGroup.controls['obj_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.oq = res;
       this.allowSubmit();
     });
 
-    this.entityForm.formGroup.controls['system_entries'].valueChanges.subscribe(() => {
+    this.entityForm.formGroup.controls['system_entries'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.allowSubmit();
     });
 
-    this.entityForm.formGroup.controls['searched_entries'].valueChanges.subscribe((value: any) => {
+    this.entityForm.formGroup.controls['searched_entries'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value) {
         this.validateEntry(value[value.length - 1]);
       }
     });
 
-    entityEdit.formGroup.controls['data_quota'].valueChanges.subscribe((value: any) => {
+    entityEdit.formGroup.controls['data_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       const formField = _.find(this.fieldConfig, { name: 'data_quota' });
       const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
       formField['hasErrors'] = false;
@@ -194,7 +197,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
   }
 
   updateSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
+    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       const entries: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         entries.push({ label: items[i].username, value: items[i].username });
@@ -239,7 +242,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
     }
 
     this.loader.open();
-    this.ws.call('pool.dataset.set_quota', [this.pk, payload]).subscribe(() => {
+    this.ws.call('pool.dataset.set_quota', [this.pk, payload]).pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
       this.router.navigate(new Array('/').concat(this.route_success));
     }, (err) => {

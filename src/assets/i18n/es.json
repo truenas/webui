@@ -2079,6 +2079,7 @@
   "No": "",
   "No ": "",
   "No Applications Installed": "",
+  "No Applications are Available": "",
   "No Communication Warning Time": "",
   "No Encryption (less secure, but faster)": "",
   "No Inherit": "",
@@ -3453,6 +3454,7 @@
   "UTC": "",
   "UUID": "",
   "Unable to download key, check network connection.": "",
+  "Unable to retrieve Available Applications": "",
   "Unable to terminate processes which are using this pool: ": "",
   "Unencrypted pools can be imported directly.": "",
   "Unhealthy": "",
@@ -3826,7 +3828,6 @@
   "msgqqueued": "",
   "msgqsize": "",
   "nmsgq": "",
-  "no": "",
   "nsemop": "",
   "nshm": "",
   "nthr": "",
@@ -4320,6 +4321,5 @@
   "password": "contraseña",
   "safe": "seguro",
   "swapuse": "uso de swap",
-  "template": "plantilla",
-  "yes": "sí"
+  "template": "plantilla"
 }

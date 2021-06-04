@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { Observable } from 'rxjs';
 
 import { WebSocketService } from './ws.service';
@@ -14,11 +15,7 @@ export class ReplicationService {
     return this.ws.call('pool.snapshottask.query');
   }
 
-  querySSHConnection(id: string): Observable<any[]> {
-    return this.ws.call('keychaincredential.query', [[['id', '=', id]]]);
-  }
-
-  genSSHKeypair(): Promise<any> {
+  genSSHKeypair(): Promise<SshKeyPair> {
     return this.ws.call('keychaincredential.generate_ssh_key_pair').toPromise();
   }
 

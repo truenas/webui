@@ -10,7 +10,9 @@ import { ThemeService } from 'app/services/theme/theme.service';
 import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { T } from '../../../../translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'custom-theme-manager-form',
   template: `
@@ -73,7 +75,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
     }
 
     // Otherwise wait for change events from message bus
-    this.core.register({ observerClass: this, eventName: 'ThemeListsChanged' }).subscribe(() => {
+    this.core.register({ observerClass: this, eventName: 'ThemeListsChanged' }).pipe(untilDestroyed(this)).subscribe(() => {
       this.initForm();
     });
   }
@@ -94,7 +96,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
   }
 
   initSubjects(): void {
-    this.target.subscribe((evt: CoreEvent) => {
+    this.target.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       switch (evt.name) {
         case 'FormSubmitted':
           const submission = [];

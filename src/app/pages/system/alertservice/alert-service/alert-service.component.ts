@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import * as _ from 'lodash';
 
@@ -16,7 +17,9 @@ import { T } from 'app/translate-marker';
 import helptext from 'app/helptext/system/alert-service';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-alertservice',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -31,7 +34,7 @@ export class AlertServiceComponent implements FormConfiguration {
   route_success: string[] = ['system', 'alertservice'];
 
   isEntity = true;
-  entityForm: any;
+  entityForm: EntityFormComponent;
 
   fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
@@ -679,7 +682,7 @@ export class AlertServiceComponent implements FormConfiguration {
         const testPayload = this.generatePayload(_.cloneDeep(this.entityForm.formGroup.value));
 
         this.loader.open();
-        this.ws.call(this.testCall, [testPayload]).subscribe(
+        this.ws.call(this.testCall, [testPayload]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             this.loader.close();
             if (res) {
@@ -690,7 +693,7 @@ export class AlertServiceComponent implements FormConfiguration {
           },
           (err) => {
             this.loader.close();
-            new EntityUtils().handleWSError(this, err, this.entityForm.dialog);
+            new EntityUtils().handleWSError(this, err, this.dialogService);
           },
         );
       },
@@ -707,19 +710,19 @@ export class AlertServiceComponent implements FormConfiguration {
   ) { }
 
   preInit(): void {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['pk']) {
         this.queryCallOption[0].push(Number(params['pk']));
       }
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
   }
 
-  dataAttributeHandler(entityForm: any): void {
+  dataAttributeHandler(entityForm: EntityFormComponent): void {
     const type = entityForm.formGroup.controls['type'].value;
     for (const i in entityForm.wsResponseIdx) {
       const field_name = type + '-' + i;
@@ -774,25 +777,25 @@ export class AlertServiceComponent implements FormConfiguration {
 
     this.loader.open();
     if (this.entityForm.isNew) {
-      this.ws.call(this.addCall, [payload]).subscribe(
+      this.ws.call(this.addCall, [payload]).pipe(untilDestroyed(this)).subscribe(
         () => {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
         },
         (err) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, err, this.entityForm.dialog);
+          new EntityUtils().handleWSError(this, err, this.dialogService);
         },
       );
     } else {
-      this.ws.call(this.editCall, [this.entityForm.pk, payload]).subscribe(
+      this.ws.call(this.editCall, [this.entityForm.pk, payload]).pipe(untilDestroyed(this)).subscribe(
         () => {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
         },
         (err) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, err, this.entityForm.dialog);
+          new EntityUtils().handleWSError(this, err, this.dialogService);
         },
       );
     }

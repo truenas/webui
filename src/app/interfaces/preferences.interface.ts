@@ -17,6 +17,10 @@ export interface Preferences {
   timestamp: string;
   userTheme: string;
   customThemes: { [theme: string]: any }[];
+
+  /**
+   * @deprecated
+   */
   favoriteThemes: { [theme: string]: any }[];
   showGuide: boolean;
   showTooltips: boolean;

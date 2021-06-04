@@ -4,15 +4,15 @@ import {
 import { Router } from '@angular/router';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
-import { Subscription } from 'rxjs';
-
 import { iXObject } from 'app/core/classes/ix-object';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { RestService } from 'app/services/rest.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { DialogService } from 'app/services/dialog.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'entity-card',
   templateUrl: './entity-card.component.html',
@@ -29,8 +29,6 @@ export class EntityCardComponent extends iXObject implements OnInit {
   @Input() back: TemplateRef<any>;
   @Input() lazyLoaded = false;
   actions = false;
-
-  busy: Subscription;
 
   rows: any[] = [];
   columns: any[] = [];
@@ -82,7 +80,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
       rpc = this.conf.toggleStop;
     }
 
-    this.busy = this.ws.call(rpc as ApiMethod, [row.id]).subscribe((res) => {
+    this.ws.call(rpc as ApiMethod, [row.id]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         row[this.conf.toggleProp] = ServiceStatus.Running;
       } else {
@@ -109,20 +107,6 @@ export class EntityCardComponent extends iXObject implements OnInit {
     if (sort.length > 0) {
       options['sort'] = sort.join(',');
     }
-
-    /* if we want to use this we will need to convert to websocket
-    this.busy =
-      this.rest.get(this.conf.resource_name, options).subscribe((res) => {
-        if (this.loaderOpen) {
-          this.loader.close();
-          this.loaderOpen = false;
-        }
-        this.length = res.total;
-        this.rows = new EntityUtils().flattenData(res.data);
-        if (this.conf.dataHandler) {
-          this.conf.dataHandler(this);
-        }
-      }); */
   }
 
   onChangeTable(
@@ -154,17 +138,6 @@ export class EntityCardComponent extends iXObject implements OnInit {
       return this.conf.cardActions;
     }
     this.actions = false;
-    /*
-      return [{
-        id: "edit",
-        label: "Edit",
-	onClick: (row) => {
-	  this.editCard.emit(true);
-	  this.toggleFlip();
-	  this.lazyLoaded = true;
-	  //this.conf.isFlipped = true;
-	},
-      }] */
   }
 
   getAddActions(): any[] {
@@ -187,32 +160,14 @@ export class EntityCardComponent extends iXObject implements OnInit {
 
   doSave(): void {
     this.toggleFlip();
-    /*
-    this.router.navigate(
-      new Array('/').concat(this.conf.route_edit).concat(id)
-    );
-    */
   }
 
   doDelete(): void {
-    this.dialog.confirm('Delete', 'Delete this item?').subscribe((res: boolean) => {
-      if (res) {
-        /*
-        this.loader.open();
-        this.loaderOpen = true;
-        let data = {};
-        this.busy = this.rest.delete(this.conf.resource_name + '/' + id, data).subscribe(
-          (res) => {
-            this.getData();
-          },
-          (res) => { new EntityUtils().handleError(this, res); this.loader.close();}
-        );
-	*/
-      }
-    });
+    this.dialog.confirm('Delete', 'Delete this item?').pipe(untilDestroyed(this)).subscribe();
 
     this.toggleFlip();
   }
+
   toggleFlip(): void {
     this.conf.isFlipped = !this.conf.isFlipped;
   }

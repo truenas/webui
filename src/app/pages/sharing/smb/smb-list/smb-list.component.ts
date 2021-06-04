@@ -1,14 +1,13 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
-import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
 import vol_helptext from 'app/helptext/storage/volumes/volume-list';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
-import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import {
   AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
@@ -17,12 +16,14 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ModalService } from 'app/services/modal.service';
 import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-smb-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class SMBListComponent implements InputTableConf, OnDestroy {
+export class SMBListComponent implements EntityTableConfig {
   title = 'Samba';
   queryCall: 'sharing.smb.query' = 'sharing.smb.query';
   updateCall: 'sharing.smb.update' = 'sharing.smb.update';
@@ -31,7 +32,6 @@ export class SMBListComponent implements InputTableConf, OnDestroy {
   protected route_add_tooltip = 'Add Windows (SMB) Share';
   protected route_delete: string[] = ['sharing', 'smb', 'delete'];
   private entityList: EntityTableComponent;
-  private refreshTable: Subscription;
   productType = window.localStorage.getItem('product_type') as ProductType;
   emptyTableConfigMessages = {
     first_use: {
@@ -45,7 +45,7 @@ export class SMBListComponent implements InputTableConf, OnDestroy {
     buttonText: T('Add SMB Share'),
   };
 
-  columns: any[] = [
+  columns = [
     { name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
     { name: helptext_sharing_smb.column_path, prop: 'path' },
     { name: helptext_sharing_smb.column_comment, prop: 'comment' },
@@ -78,10 +78,10 @@ export class SMBListComponent implements InputTableConf, OnDestroy {
     private sysGeneralService: SystemGeneralService,
   ) {}
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
 
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -113,14 +113,14 @@ export class SMBListComponent implements InputTableConf, OnDestroy {
         name: 'share_acl',
         label: helptext_sharing_smb.action_share_acl,
         onClick: (row: any) => {
-          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).subscribe(
+          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
             (res) => {
               if (res) {
                 this.lockedPathDialog(row.path);
               } else {
                 // A home share has a name (homes) set; row.name works for other shares
                 const searchName = row.home ? 'homes' : row.name;
-                this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).subscribe(
+                this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
                   (res: any) => {
                     this.router.navigate(
                       ['/'].concat(['sharing', 'smb', 'acl', res[0].id]),
@@ -141,7 +141,7 @@ export class SMBListComponent implements InputTableConf, OnDestroy {
         label: helptext_sharing_smb.action_edit_acl,
         onClick: (row: any) => {
           const datasetId = rowName;
-          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).subscribe(
+          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
             (res) => {
               if (res) {
                 this.lockedPathDialog(row.path);
@@ -184,7 +184,7 @@ export class SMBListComponent implements InputTableConf, OnDestroy {
   }
 
   onCheckboxChange(row: SmbShare): void {
-    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).subscribe(
+    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         row.enabled = res.enabled;
         if (!res) {
@@ -196,9 +196,5 @@ export class SMBListComponent implements InputTableConf, OnDestroy {
         new EntityUtils().handleWSError(this, err, this.dialog);
       },
     );
-  }
-
-  ngOnDestroy(): void {
-    this.refreshTable?.unsubscribe();
   }
 }

@@ -1,8 +1,9 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
@@ -27,9 +28,9 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { Subscription } from 'rxjs';
-import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-replication-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -43,7 +44,7 @@ import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-tabl
     DatePipe,
   ],
 })
-export class ReplicationListComponent implements InputTableConf, OnDestroy {
+export class ReplicationListComponent implements EntityTableConfig {
   title = T('Replication Tasks');
   queryCall: 'replication.query' = 'replication.query';
   wsDelete: 'replication.delete' = 'replication.delete';
@@ -53,7 +54,7 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
   entityList: EntityTableComponent;
   asyncView = true;
 
-  columns: any[] = [
+  columns = [
     { name: T('Name'), prop: 'name', always_display: true },
     { name: T('Direction'), prop: 'direction' },
     { name: T('Transport'), prop: 'transport', hidden: true },
@@ -77,7 +78,6 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
       key_props: ['name'],
     },
   };
-  private onModalClose: Subscription;
 
   constructor(
     private ws: WebSocketService,
@@ -96,7 +96,7 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -117,10 +117,10 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
         name: 'run',
         label: T('Run Now'),
         onClick: (row: any) => {
-          this.dialog.confirm(T('Run Now'), T('Replicate <i>') + row.name + T('</i> now?'), true).subscribe((res: boolean) => {
+          this.dialog.confirm(T('Run Now'), T('Replicate <i>') + row.name + T('</i> now?'), true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
             if (res) {
               row.state = { state: EntityJobState.Running };
-              this.ws.call('replication.run', [row.id]).subscribe(
+              this.ws.call('replication.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
                 (jobId: number) => {
                   this.dialog.Info(
                     T('Task started'),
@@ -129,7 +129,7 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
                     'info',
                     true,
                   );
-                  this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
+                  this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
                     row.state = { state: job.state };
                     row.job = job;
                   });
@@ -174,7 +174,7 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
             saveButtonText: helptext.replication_restore_dialog.saveButton,
             customSubmit(entityDialog: EntityDialogComponent) {
               parent.loader.open();
-              parent.ws.call('replication.restore', [row.id, entityDialog.formValue]).subscribe(
+              parent.ws.call('replication.restore', [row.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
                 () => {
                   entityDialog.dialogRef.close(true);
                   parent.entityList.getData();
@@ -229,7 +229,7 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
   }
 
   onCheckboxChange(row: any): void {
-    this.ws.call('replication.update', [row.id, { enabled: row.enabled }]).subscribe(
+    this.ws.call('replication.update', [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         row.enabled = res.enabled;
         if (!res) {
@@ -272,9 +272,5 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
       ),
       id,
     );
-  }
-
-  ngOnDestroy(): void {
-    this.onModalClose?.unsubscribe();
   }
 }

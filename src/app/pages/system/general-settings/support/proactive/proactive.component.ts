@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -9,13 +10,15 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-proactive',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ProactiveComponent implements FormConfiguration {
-  entityEdit: any;
+  entityEdit: EntityFormComponent;
   queryCall: 'support.config' = 'support.config';
   contacts: any;
   controls: any;
@@ -176,7 +179,7 @@ export class ProactiveComponent implements FormConfiguration {
     protected dialogService: DialogService, private translate: TranslateService,
     private modalService: ModalService) { }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     const proactiveFields: any[] = [
       'enabled',
@@ -198,7 +201,7 @@ export class ProactiveComponent implements FormConfiguration {
     ];
 
     setTimeout(() => {
-      this.ws.call('support.is_available').subscribe((res) => {
+      this.ws.call('support.is_available').pipe(untilDestroyed(this)).subscribe((res) => {
         if (!res) {
           for (const i in proactiveFields) {
             this.entityEdit.setDisabled(proactiveFields[i], true, false);
@@ -210,7 +213,7 @@ export class ProactiveComponent implements FormConfiguration {
         } else {
           this.getContacts();
           this.save_button_enabled = true;
-          this.ws.call('support.is_available_and_enabled').subscribe((res) => {
+          this.ws.call('support.is_available_and_enabled').pipe(untilDestroyed(this)).subscribe((res) => {
             if (res) {
               this.entityEdit.formGroup.controls['enabled'].setValue(true);
             } else {
@@ -224,7 +227,7 @@ export class ProactiveComponent implements FormConfiguration {
 
   getContacts(): void {
     this.controls = this.entityEdit.formGroup.controls;
-    this.ws.call(this.queryCall).subscribe((res) => {
+    this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res && res !== {}) {
         for (const i in res) {
           if (i !== 'id') {
@@ -248,7 +251,7 @@ export class ProactiveComponent implements FormConfiguration {
 
   customSubmit(data: any): void {
     this.loader.open();
-    this.ws.call('support.update', [data]).subscribe(() => {
+    this.ws.call('support.update', [data]).pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
       this.modalService.close('slide-in-form');
       this.dialogService.Info(helptext.proactive.dialog_title,

@@ -10,6 +10,7 @@ import {
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CoreEvent } from 'app/interfaces/events';
+import { Interval } from 'app/interfaces/timeout.interface';
 import { FailoverDisabledReason } from '../../../enums/failover-disabled-reason.enum';
 import { ProductType } from '../../../enums/product-type.enum';
 import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
@@ -27,6 +28,9 @@ import { CoreService } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
 import { AutofillMonitor } from '@angular/cdk/text-field';
 import { LocaleService } from 'app/services/locale.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+@UntilDestroy()
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.component.html',
@@ -50,10 +54,10 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     return window.localStorage && window.localStorage.buildtime ? this.localeService.getCopyrightYearFromBuildTime() : '';
   }
 
-  private interval: any;
+  private interval: Interval;
   exposeLegacyUI = false;
   tokenObservable: Subscription;
-  HAInterval: any;
+  HAInterval: Interval;
   isTwoFactor = false;
   private didSetFocus = false;
 
@@ -81,7 +85,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   ha_status = false;
   tc_ip: string;
   protected tc_url: string;
-  private getProdType: Subscription;
 
   readonly ProductType = ProductType;
 
@@ -99,7 +102,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.ha_status = true;
     }
     this.checkSystemType();
-    this.ws.call('truecommand.connected').subscribe((res) => {
+    this.ws.call('truecommand.connected').pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.connected) {
         this.tc_ip = res.truecommand_ip;
         this.tc_url = res.truecommand_url;
@@ -110,7 +113,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   checkSystemType(): void {
     if (!this.logo_ready) {
-      this.getProdType = this.sysGeneralService.getProductType.subscribe((res) => {
+      this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
         this.logo_ready = true;
         this.product_type = res as ProductType;
         if (this.interval) {
@@ -137,7 +140,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this._autofill.monitor(this.usernameInput).subscribe(() => {
+    this._autofill.monitor(this.usernameInput).pipe(untilDestroyed(this)).subscribe(() => {
       if (!this.didSetFocus) {
         this.didSetFocus = true;
         this.usernameInput.nativeElement.focus();
@@ -146,7 +149,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (this.router.url == '/sessions/signin' && evt.sender.userThemeLoaded == true) {
         this.redirect();
       }
@@ -162,7 +165,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.loginToken();
     }
 
-    this.ws.call('user.has_root_password').subscribe((res) => {
+    this.ws.call('user.has_root_password').pipe(untilDestroyed(this)).subscribe((res) => {
       this.has_root_password = res;
     });
 
@@ -171,7 +174,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       password2: new FormControl('', [Validators.required, matchOtherValidator('password')]),
     });
 
-    this.ws.call('auth.two_factor_auth').subscribe((res) => {
+    this.ws.call('auth.two_factor_auth').pipe(untilDestroyed(this)).subscribe((res) => {
       this.isTwoFactor = res;
     });
   }
@@ -187,7 +190,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.tokenObservable) {
       this.tokenObservable.unsubscribe();
     }
-    this.getProdType.unsubscribe();
   }
 
   loginToken(): void {
@@ -202,7 +204,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (middleware_token) {
       this.ws.login_token(middleware_token)
-        .subscribe((result) => {
+        .pipe(untilDestroyed(this)).subscribe((result) => {
           this.loginCallback(result);
         });
     }
@@ -219,12 +221,12 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       }
 
       this.ws.login_token(this.ws.token)
-        .subscribe((result) => { this.loginCallback(result); });
+        .pipe(untilDestroyed(this)).subscribe((result) => { this.loginCallback(result); });
     }
   }
 
   checkBuildtime(): void {
-    this.ws.call('system.build_time').subscribe((buildTime) => {
+    this.ws.call('system.build_time').pipe(untilDestroyed(this)).subscribe((buildTime) => {
       const buildtime = String(buildTime.$date);
       const previous_buildtime = window.localStorage.getItem('buildtime');
       if (buildtime !== previous_buildtime) {
@@ -256,16 +258,16 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     if ((this.product_type.includes(ProductType.Enterprise) || this.product_type === ProductType.Scale)
       && !this.checking_status) {
       this.checking_status = true;
-      this.ws.call('failover.status').subscribe((res) => {
+      this.ws.call('failover.status').pipe(untilDestroyed(this)).subscribe((res) => {
         this.failover_status = res;
         this.ha_info_ready = true;
         if (res !== 'SINGLE') {
-          this.ws.call('failover.get_ips').subscribe((ips) => {
+          this.ws.call('failover.get_ips').pipe(untilDestroyed(this)).subscribe((ips) => {
             this.failover_ips = ips;
           }, (err) => {
             console.error(err);
           });
-          this.ws.call('failover.disabled_reasons').subscribe((reasons) => {
+          this.ws.call('failover.disabled_reasons').pipe(untilDestroyed(this)).subscribe((reasons) => {
             this.checking_status = false;
             this.ha_disabled_reasons = reasons;
             this.show_reasons = false;
@@ -324,18 +326,18 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (this.isTwoFactor) {
       this.ws.login(this.signinData.username, this.signinData.password, this.signinData.otp)
-        .subscribe((result) => { this.loginCallback(result); });
+        .pipe(untilDestroyed(this)).subscribe((result) => { this.loginCallback(result); });
     } else {
       this.ws.login(this.signinData.username, this.signinData.password)
-        .subscribe((result) => { this.loginCallback(result); });
+        .pipe(untilDestroyed(this)).subscribe((result) => { this.loginCallback(result); });
     }
   }
 
   setpassword(): void {
-    this.ws.call('user.set_root_password', [this.password.value]).subscribe(
+    this.ws.call('user.set_root_password', [this.password.value]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.ws.login('root', this.password.value)
-          .subscribe((result) => { this.loginCallback(result); });
+          .pipe(untilDestroyed(this)).subscribe((result) => { this.loginCallback(result); });
       },
     );
   }
@@ -368,7 +370,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   successLogin(): void {
     this.snackBar.dismiss();
-    this.tokenObservable = this.ws.call('auth.generate_token', [300]).subscribe((token) => {
+    this.tokenObservable = this.ws.call('auth.generate_token', [300]).pipe(untilDestroyed(this)).subscribe((token) => {
       if (!token) {
         return;
       }
@@ -392,8 +394,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       message = T('Token expired, please log back in.');
       this.ws.token = null;
     }
-    this.translate.get('close').subscribe((ok: string) => {
-      this.translate.get(message).subscribe((res: string) => {
+    this.translate.get('close').pipe(untilDestroyed(this)).subscribe((ok: string) => {
+      this.translate.get(message).pipe(untilDestroyed(this)).subscribe((res: string) => {
         this.snackBar.open(res, ok, { duration: 4000 });
       });
     });
@@ -402,7 +404,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   onGoToLegacy(): void {
     this.dialogService.confirm(T('Warning'),
       globalHelptext.legacyUIWarning,
-      true, T('Continue to Legacy UI')).subscribe((res: boolean) => {
+      true, T('Continue to Legacy UI')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         window.location.href = '/legacy/';
       }
@@ -419,7 +421,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       message: helptext.tcDialog.message,
       is_html: true,
       confirmBtnMsg: helptext.tcDialog.confirmBtnMsg,
-    }).subscribe((res) => {
+    }).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         window.open(this.tc_url);
       }

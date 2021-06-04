@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CoreEvent } from 'app/interfaces/events';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { T } from '../../../../translate-marker';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
@@ -18,7 +19,9 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { take } from 'rxjs/operators';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-manualupdate',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -90,7 +93,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     this.core.register({
       observerClass: this,
       eventName: 'SysInfo',
-    }).subscribe((evt: CoreEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       _.find(this.fieldConfig, { name: 'version' }).paraText += evt.data.version;
     });
 
@@ -99,7 +102,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
 
   preInit(): void {
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-      this.ws.call('failover.licensed').subscribe((is_ha) => {
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
         if (is_ha) {
           this.isHA = true;
           this.updateMethod = 'failover.upgrade';
@@ -110,7 +113,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
       });
     }
 
-    this.ws.call('pool.query').subscribe((pools) => {
+    this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
       if (!pools) {
         return;
       }
@@ -127,51 +130,52 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     });
   }
 
-  afterInit(entityForm: any): void {
-    this.ws.call('user.query', [[['id', '=', 1]]]).subscribe((ures) => {
+  afterInit(entityForm: EntityFormComponent): void {
+    this.ws.call('user.query', [[['id', '=', 1]]]).pipe(untilDestroyed(this)).subscribe((ures) => {
       if (ures[0].attributes.preferences['rebootAfterManualUpdate'] === undefined) {
         ures[0].attributes.preferences['rebootAfterManualUpdate'] = false;
       }
       entityForm.formGroup.controls['rebootAfterManualUpdate'].setValue(ures[0].attributes.preferences['rebootAfterManualUpdate']);
-      entityForm.formGroup.controls['rebootAfterManualUpdate'].valueChanges.subscribe((form_res: any) => {
+      entityForm.formGroup.controls['rebootAfterManualUpdate'].valueChanges.pipe(untilDestroyed(this)).subscribe((form_res: any) => {
         ures[0].attributes.preferences['rebootAfterManualUpdate'] = form_res;
-        this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe(() => {
+        this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).pipe(untilDestroyed(this)).subscribe(() => {
         });
       });
     });
 
-    entityForm.formGroup.controls['filelocation'].valueChanges.subscribe((filelocation: string) => {
+    entityForm.formGroup.controls['filelocation'].valueChanges.pipe(untilDestroyed(this)).subscribe((filelocation: string) => {
       if (filelocation === ':temp:') {
         _.find(this.fieldConfig, { name: 'filename' }).fileLocation = null;
       } else {
         _.find(this.fieldConfig, { name: 'filename' }).fileLocation = filelocation;
       }
     });
-    this.messageService.messageSourceHasNewMessage$.subscribe((message) => {
+    this.messageService.messageSourceHasNewMessage$.pipe(untilDestroyed(this)).subscribe((message) => {
       entityForm.formGroup.controls['filename'].setValue(message);
     });
-    entityForm.submitFunction = this.customSubmit;
+    // TODO: customSubmit need to return an Observable
+    entityForm.submitFunction = this.customSubmit as any;
   }
 
   customSubmit(): void {
     this.save_button_enabled = false;
     this.systemService.updateRunningNoticeSent.emit();
-    this.ws.call('user.query', [[['id', '=', 1]]]).subscribe((ures) => {
+    this.ws.call('user.query', [[['id', '=', 1]]]).pipe(untilDestroyed(this)).subscribe((ures) => {
       this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: helptext.manual_update_action }, disableClose: true });
       if (this.isHA) {
         this.dialogRef.componentInstance.disableProgressValue(true);
       }
       this.dialogRef.componentInstance.changeAltMessage(helptext.manual_update_description);
       this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
-      this.dialogRef.componentInstance.success.subscribe(() => {
+      this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.dialogRef.close(false);
         if (!this.isHA) {
           if (ures[0].attributes.preferences['rebootAfterManualUpdate']) {
             this.router.navigate(['/others/reboot']);
           } else {
-            this.translate.get('Restart').subscribe((reboot: string) => {
-              this.translate.get(helptext.rebootAfterManualUpdate.manual_reboot_msg).subscribe((reboot_prompt: string) => {
-                this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res: boolean) => {
+            this.translate.get('Restart').pipe(untilDestroyed(this)).subscribe((reboot: string) => {
+              this.translate.get(helptext.rebootAfterManualUpdate.manual_reboot_msg).pipe(untilDestroyed(this)).subscribe((reboot_prompt: string) => {
+                this.dialogService.confirm(reboot, reboot_prompt).pipe(untilDestroyed(this)).subscribe((reboot_res: boolean) => {
                   if (reboot_res) {
                     this.router.navigate(['/others/reboot']);
                   }
@@ -186,11 +190,11 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
           this.router.navigate(['/']);
           this.dialogService.confirm(helptext.ha_update.complete_title,
             helptext.ha_update.complete_msg, true,
-            helptext.ha_update.complete_action, false, '', '', '', '', true).subscribe(() => {
+            helptext.ha_update.complete_action, false, '', '', '', '', true).pipe(untilDestroyed(this)).subscribe(() => {
           });
         }
       });
-      this.dialogRef.componentInstance.prefailure.subscribe((prefailure: any) => {
+      this.dialogRef.componentInstance.prefailure.pipe(untilDestroyed(this)).subscribe((prefailure: any) => {
         this.dialogRef.close(false);
         this.dialogService.errorReport(helptext.manual_update_error_dialog.message,
           `${prefailure.status.toString()} ${prefailure.statusText}`);
@@ -198,7 +202,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
       });
       this.dialogRef.componentInstance.failure
         .pipe(take(1))
-        .subscribe((failure: any) => {
+        .pipe(untilDestroyed(this)).subscribe((failure: any) => {
           this.dialogRef.close(false);
           this.dialogService.errorReport(failure.error, failure.state, failure.exception);
           this.save_button_enabled = true;
@@ -235,16 +239,16 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     }
     this.dialogRef.componentInstance.jobId = jobId;
     this.dialogRef.componentInstance.wsshow();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.router.navigate(['/others/reboot']);
     });
-    this.dialogRef.componentInstance.failure.subscribe((err: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
       new EntityUtils().handleWSError(this, err, this.dialogService);
     });
   }
 
   checkForUpdateRunning(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).subscribe(
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         if (res && res.length > 0) {
           this.isUpdateRunning = true;

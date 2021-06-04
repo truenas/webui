@@ -1,7 +1,7 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -11,15 +11,16 @@ import { T } from 'app/translate-marker';
 import { ModalService } from 'app/services/modal.service';
 import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-snapshot-task-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, StorageService],
 })
-export class SnapshotListComponent implements InputTableConf, OnDestroy {
+export class SnapshotListComponent implements EntityTableConfig {
   title = T('Periodic Snapshot Tasks');
   queryCall: 'pool.snapshottask.query' = 'pool.snapshottask.query';
   updateCall: 'pool.snapshottask.update' = 'pool.snapshottask.update';
@@ -30,7 +31,7 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
   entityList: EntityTableComponent;
   asyncView = true;
 
-  columns: any[] = [
+  columns = [
     { name: T('Pool/Dataset'), prop: 'dataset', always_display: true },
     { name: T('Recursive'), prop: 'recursive' },
     { name: T('Naming Schema'), prop: 'naming_schema' },
@@ -54,7 +55,6 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
       key_props: ['dataset', 'naming_schema', 'keepfor'],
     },
   };
-  private onModalClose: Subscription;
 
   constructor(
     private dialogService: DialogService,
@@ -68,7 +68,7 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -97,7 +97,7 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
 
   onCheckboxChange(row: any): void {
     row.enabled = !row.enabled;
-    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).subscribe(
+    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         if (!res) {
           row.enabled = !row.enabled;
@@ -120,9 +120,5 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
 
   doEdit(id: number): void {
     this.doAdd(id);
-  }
-
-  ngOnDestroy(): void {
-    this.onModalClose?.unsubscribe();
   }
 }

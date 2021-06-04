@@ -1869,6 +1869,7 @@
   "Next Run": "",
   "No ": "",
   "No Applications Installed": "",
+  "No Applications are Available": "",
   "No Communication Warning Time": "",
   "No Encryption (less secure, but faster)": "",
   "No Inherit": "",
@@ -3123,6 +3124,7 @@
   "UTC": "",
   "UUID": "",
   "Unable to download key, check network connection.": "",
+  "Unable to retrieve Available Applications": "",
   "Unable to terminate processes which are using this pool: ": "",
   "Unencrypted pools can be imported directly.": "",
   "Unhealthy": "",
@@ -4310,7 +4312,6 @@
   "ip6": "IPv6",
   "is already in use.": "se již používá.",
   "name": "název",
-  "no": "ne",
   "overview": "přehled",
   "owner": "vlastník",
   "password": "heslo",
@@ -4320,6 +4321,5 @@
   "template": "šablona",
   "wallclock": "nástěnné hodiny",
   "was successfully attached.": "byl úspěšně připojen.",
-  "while pool is encrypted": "zatímco je pool zašifrován",
-  "yes": "ano"
+  "while pool is encrypted": "zatímco je pool zašifrován"
 }

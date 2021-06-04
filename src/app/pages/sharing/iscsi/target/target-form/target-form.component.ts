@@ -14,7 +14,9 @@ import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { T } from 'app/translate-marker';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-iscsi-target-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -147,7 +149,7 @@ export class TargetFormComponent implements FormConfiguration {
   fieldConfig: FieldConfig[];
   title = T('Add ISCSI Target');
   pk: any;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
     protected iscsiService: IscsiService,
@@ -155,12 +157,12 @@ export class TargetFormComponent implements FormConfiguration {
     public translate: TranslateService,
     protected ws: WebSocketService,
     private modalService: ModalService) {
-    this.modalService.getRow$.subscribe((rowId: string) => {
+    this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: string) => {
       this.customFilter = [[['id', '=', rowId]]];
       this.pk = rowId;
     });
     const basicFieldset = _.find(this.fieldSets, { class: 'basic' });
-    this.ws.call('system.info').subscribe(
+    this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe(
       (systemInfo) => {
         if (systemInfo.license && systemInfo.license.features.indexOf(LicenseFeature.FibreChannel) > -1) {
           _.find(basicFieldset.config, { name: 'mode' }).isHidden = false;
@@ -238,7 +240,7 @@ export class TargetFormComponent implements FormConfiguration {
 
   customEditCall(value: any): void {
     this.loader.open();
-    this.ws.call(this.editCall, [this.pk, value]).subscribe(
+    this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.modalService.close('slide-in-form');

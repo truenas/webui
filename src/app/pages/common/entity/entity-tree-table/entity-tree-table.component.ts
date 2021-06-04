@@ -11,12 +11,14 @@ import { TranslateService } from '@ngx-translate/core';
 import { CoreService } from 'app/core/services/core.service';
 import { Sort } from '@angular/material/sort';
 import { TreeNode } from 'primeng/api';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface FilterValue {
   column: string;
   value: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'entity-tree-table',
   templateUrl: './entity-tree-table.component.html',
@@ -118,7 +120,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.core.register({ observerClass: this, eventName: 'TreeTableGlobalFilter' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'TreeTableGlobalFilter' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const value = evt.data.value ? evt.data.value : '';
       this.filterNodes(evt.data.column, value);
     });
@@ -131,7 +133,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
 
   // TODO: This block does nothing.
   getData(): void {
-    this.ws.call(this._conf.queryCall).subscribe(
+    this.ws.call(this._conf.queryCall).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.treeTableService.buildTree(res);
       },
