@@ -713,7 +713,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     } else if (fieldConfig.type == 'dict' && fieldConfig.subFields) {
       fieldConfig.subFields.forEach((subFieldConfig) => {
         if (subFieldConfig.type == 'list' || subFieldConfig.type == 'dict') {
-          const subFromControl = this.formGroup.controls[subFieldConfig.name];
+          const subFromControl = formControl.get(subFieldConfig.name);
           this.addExtraFormControls(subFieldConfig, subFromControl);
         }
       });
