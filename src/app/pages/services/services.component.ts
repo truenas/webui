@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+import { filter, switchMap } from 'rxjs/operators';
+
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -10,7 +13,6 @@ import { IscsiService, SystemGeneralService, WebSocketService } from 'app/servic
 
 import { DialogService } from 'app/services/dialog.service';
 import { T } from 'app/translate-marker';
-import { filter, switchMap } from 'rxjs/operators';
 
 interface ServiceRow extends Service {
   onChanging: boolean;

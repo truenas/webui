@@ -1,13 +1,18 @@
 import { Injectable } from '@angular/core';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as moment from 'moment-timezone';
+
+import { Subject } from 'rxjs';
+
+import { CoreService } from 'app/core/services/core.service';
+import { PreferencesService } from 'app/core/services/preferences.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
-import * as moment from 'moment-timezone';
-import { PreferencesService } from 'app/core/services/preferences.service';
-import { SystemGeneralService } from '.';
-import { Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core.service';
+
 import { T } from 'app/translate-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+import { SystemGeneralService } from '.';
 
 @UntilDestroy()
 @Injectable()

@@ -4,9 +4,10 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatCellDef } from '@angular/material/table/cell';
 
-import { WebSocketService } from 'app/services';
-import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { WebSocketService } from 'app/services';
+
+import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { TableService } from './table.service';
 
 export interface AppTableAction {

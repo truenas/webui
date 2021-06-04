@@ -1,22 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { DatasetType } from 'app/enums/dataset-type.enum';
-import { VmDeviceType } from 'app/enums/vm.enum';
-import { ProductType } from 'app/enums/product-type.enum';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { T } from 'app/translate-marker';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+
+import { CoreService } from 'app/core/services/core.service';
+import { DatasetType } from 'app/enums/dataset-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
+import { VmDeviceType } from 'app/enums/vm.enum';
+import helptext from 'app/helptext/vm/devices/device-add-edit';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 
-import { WebSocketService, NetworkService, VmService } from 'app/services';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService, NetworkService, VmService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import helptext from 'app/helptext/vm/devices/device-add-edit';
-import { CoreService } from 'app/core/services/core.service';
 import { DialogService } from 'app/services/dialog.service';
-import { ServiceStatus } from 'app/enums/service-status.enum';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 interface DisplayDeviceAttributes {
   bind: string;

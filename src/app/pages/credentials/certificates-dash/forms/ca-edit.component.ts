@@ -1,19 +1,20 @@
-import { Component } from '@angular/core';
-import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import {
-  WebSocketService, AppLoaderService, StorageService, DialogService, SystemGeneralService,
-} from 'app/services';
+import { Component } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { ModalService } from 'app/services/modal.service';
+import { Subscription } from 'rxjs';
+
+import { helptext_system_ca } from 'app/helptext/system/ca';
+import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { helptext_system_ca } from 'app/helptext/system/ca';
-import { helptext_system_certificates } from 'app/helptext/system/certificates';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import {
+  WebSocketService, AppLoaderService, StorageService, DialogService, SystemGeneralService,
+} from 'app/services';
+import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({

@@ -4,6 +4,11 @@ import {
   Injector,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+import helptext from 'app/helptext/storage/snapshots/snapshots';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
   FieldConfig,
@@ -11,10 +16,6 @@ import {
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 
 import { RestService, WebSocketService } from 'app/services';
-
-import helptext from 'app/helptext/storage/snapshots/snapshots';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

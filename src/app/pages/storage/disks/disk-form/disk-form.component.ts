@@ -1,16 +1,18 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
 import { DiskStandby } from 'app/enums/disk-standby.enum';
+import helptext from 'app/helptext/storage/disks/disks';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 
 import { RestService, WebSocketService } from 'app/services';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import helptext from 'app/helptext/storage/disks/disks';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

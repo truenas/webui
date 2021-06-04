@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { WebSocketService } from 'app/services/ws.service';
+
 import { ProductType } from 'app/enums/product-type.enum';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

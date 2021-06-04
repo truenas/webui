@@ -2,13 +2,15 @@ import {
   ApplicationRef, Component, Injector, OnInit,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
 import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/services/components/service-ssh';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import helptext from 'app/helptext/services/components/service-ssh';
 import { NetworkService, RestService, WebSocketService } from 'app/services';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

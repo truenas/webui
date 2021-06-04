@@ -3,20 +3,22 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+
+import * as _ from 'lodash';
+
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import helptext from 'app/helptext/jails/jails-list';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import * as _ from 'lodash';
-import helptext from 'app/helptext/jails/jails-list';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, RestService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { StorageService } from 'app/services/storage.service';
 import { T } from 'app/translate-marker';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @UntilDestroy()
 @Component({

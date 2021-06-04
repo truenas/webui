@@ -1,10 +1,6 @@
-import { throwError as observableThrowError, Observable } from 'rxjs';
-
-import 'rxjs';
-
-import { Injectable } from '@angular/core';
-
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { throwError as observableThrowError, Observable } from 'rxjs';
 
 import { WebSocketService } from './ws.service';
 

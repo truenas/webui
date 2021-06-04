@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+
 import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/viewchart/viewchart.component';
 
 interface TimeData {

@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
+
 import { NavigationService } from 'app/services/navigation/navigation.service';
 
 @Component({

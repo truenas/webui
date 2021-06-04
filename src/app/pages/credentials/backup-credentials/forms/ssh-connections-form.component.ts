@@ -1,23 +1,25 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
-import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { ActivatedRoute } from '@angular/router';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+
+import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
+import helptext from 'app/helptext/system/ssh-connections';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import helptext from 'app/helptext/system/ssh-connections';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   KeychainCredentialService, WebSocketService, DialogService, ReplicationService,
 } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
-import * as _ from 'lodash';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({

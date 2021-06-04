@@ -1,5 +1,6 @@
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+
 import { FieldConfig } from '../entity-form/models/field-config.interface';
 
 export interface DialogFormConfiguration<P = any> {

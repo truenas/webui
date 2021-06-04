@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BaseService } from './base.service';
+
 import { WebSocketService } from 'app/services/ws.service';
+
+import { BaseService } from './base.service';
 
 export interface Temperature {
   keys: string[];

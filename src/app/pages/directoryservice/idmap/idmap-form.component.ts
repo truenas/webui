@@ -1,18 +1,21 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+
+import { Subscription } from 'rxjs';
+
+import helptext from 'app/helptext/directoryservice/idmap';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { ValidationService, IdmapService, DialogService } from 'app/services';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import helptext from 'app/helptext/directoryservice/idmap';
+import { ValidationService, IdmapService, DialogService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { Subscription } from 'rxjs';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

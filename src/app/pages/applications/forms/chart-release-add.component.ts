@@ -1,25 +1,30 @@
 import { Component, OnDestroy } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+
+import { Subject } from 'rxjs';
+
+import { takeUntil } from 'rxjs/operators';
+
 import {
   chartsTrain, ixChartApp, latestVersion, officialCatalog,
 } from 'app/constants/catalog.constants';
+import helptext from 'app/helptext/apps/apps';
 import { Option } from 'app/interfaces/option.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import * as _ from 'lodash';
-import { FormGroup } from '@angular/forms';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { ModalService } from 'app/services/modal.service';
-import { DialogService } from 'app/services/index';
-import { ApplicationsService } from '../applications.service';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import helptext from 'app/helptext/apps/apps';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DialogService } from 'app/services/index';
+import { ModalService } from 'app/services/modal.service';
+
+import { ApplicationsService } from '../applications.service';
 
 @UntilDestroy()
 @Component({

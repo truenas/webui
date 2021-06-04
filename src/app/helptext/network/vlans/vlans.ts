@@ -1,6 +1,7 @@
-import { T } from 'app/translate-marker';
 import { Validators } from '@angular/forms';
+
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { T } from 'app/translate-marker';
 
 export default {
   vlan_vint_placeholder: T('Virtual Interface'),

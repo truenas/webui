@@ -1,7 +1,8 @@
-import { LinkAggregationProtocol, NetworkInterfaceType } from 'app/enums/network-interface.enum';
-import { T } from 'app/translate-marker';
 import { Validators } from '@angular/forms';
+
+import { LinkAggregationProtocol, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
+import { T } from 'app/translate-marker';
 
 export default {
   title_add: T('Add Interface'),

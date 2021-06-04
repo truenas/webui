@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Option } from 'app/interfaces/option.interface';
+
+import * as isCidr from 'is-cidr';
 import { Observable } from 'rxjs';
+
+import { Option } from 'app/interfaces/option.interface';
+
 import { RestService } from './rest.service';
 import { WebSocketService } from './ws.service';
-import * as isCidr from 'is-cidr';
 
 @Injectable({ providedIn: 'root' })
 export class NetworkService {

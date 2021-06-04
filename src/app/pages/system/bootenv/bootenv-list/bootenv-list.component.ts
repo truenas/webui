@@ -2,21 +2,23 @@ import {
   Component, ElementRef, ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { DialogService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { RestService } from 'app/services/rest.service';
-import { WebSocketService, SystemGeneralService } from 'app/services';
-import { StorageService } from 'app/services/storage.service';
-import { LocaleService } from 'app/services/locale.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { LocaleService } from 'app/services/locale.service';
+import { RestService } from 'app/services/rest.service';
+
+import { StorageService } from 'app/services/storage.service';
 import { T } from 'app/translate-marker';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

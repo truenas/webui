@@ -1,17 +1,33 @@
+import { DatePipe } from '@angular/common';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {
   Component, OnInit,
 } from '@angular/core';
-import { Router } from '@angular/router';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { DatePipe } from '@angular/common';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { CoreEvent } from 'app/interfaces/events';
+import { Router } from '@angular/router';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
-import { Subject } from 'rxjs';
 
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
+import { Subject } from 'rxjs';
+
+import { CoreService } from 'app/core/services/core.service';
+import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { CoreEvent } from 'app/interfaces/events';
+import { GpuDevice } from 'app/interfaces/gpu-device.interface';
+import { EmptyType, EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { InputTableConf } from 'app/pages/common/entity/table/table.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
+import { InitshutdownFormComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-form/initshutdown-form.component';
+import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 
 import {
   WebSocketService,
@@ -21,29 +37,15 @@ import {
   StorageService,
   UserService,
 } from 'app/services';
-import { CoreService } from 'app/core/services/core.service';
-import { ModalService } from 'app/services/modal.service';
-import { helptext_system_general as helptext } from 'app/helptext/system/general';
-import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
+
+import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.component';
+import { ConsoleFormComponent } from './console-form/console-form.component';
+import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { KernelFormComponent } from './kernel-form/kernel-form.component';
 import { SyslogFormComponent } from './syslog-form/syslog-form.component';
-import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
-import { InitshutdownFormComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-form/initshutdown-form.component';
-import { InputTableConf } from 'app/pages/common/entity/table/table.component';
-import { EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { ConsoleFormComponent } from './console-form/console-form.component';
-import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.component';
-import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { GpuDevice } from 'app/interfaces/gpu-device.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 enum CardId {
   Console = 'console',

@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { WebSocketService } from 'app/services';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import helptext from 'app/helptext/storage/disks/disks';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { StorageService } from 'app/services/storage.service';
-import helptext from 'app/helptext/storage/disks/disks';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

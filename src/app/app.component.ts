@@ -1,28 +1,29 @@
 import { Component } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+import { MatIconRegistry } from '@angular/material/icon';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Title, DomSanitizer } from '@angular/platform-browser';
 import {
   Router, NavigationEnd, NavigationCancel, ActivatedRoute,
 } from '@angular/router';
 
-import { ThemeService } from 'app/services/theme/theme.service';
-import { RoutePartsService } from './services/route-parts/route-parts.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { RestService } from './services/rest.service';
-import { ApiService } from 'app/core/services/api.service';
-import { AnimationService } from 'app/core/services/animation.service';
-import { InteractionManagerService } from 'app/core/services/interaction-manager.service';
-import { DataService } from 'app/core/services/data.service';
-import { CoreService } from 'app/core/services/core.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
-import { SystemGeneralService } from './services';
-import { WebSocketService } from './services/ws.service';
-import { DomSanitizer } from '@angular/platform-browser';
-import { MatIconRegistry } from '@angular/material/icon';
-import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service'; // <-- Use this globally so we can run as web worker
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
 import { customSvgIcons } from 'app/core/classes/custom-icons';
+import { AnimationService } from 'app/core/services/animation.service';
+import { ApiService } from 'app/core/services/api.service';
+import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service'; // <-- Use this globally so we can run as web worker
+import { CoreService } from 'app/core/services/core.service';
+import { DataService } from 'app/core/services/data.service';
+import { InteractionManagerService } from 'app/core/services/interaction-manager.service';
+import { PreferencesService } from 'app/core/services/preferences.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 
 import productText from './helptext/product';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { SystemGeneralService } from './services';
+import { RestService } from './services/rest.service';
+import { RoutePartsService } from './services/route-parts/route-parts.service';
+
+import { WebSocketService } from './services/ws.service';
 
 @UntilDestroy()
 @Component({

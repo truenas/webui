@@ -1,12 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { EqualValidatorDirective } from './equal-validator.directive';
-import { SideNavAccordionDirective } from './sidenav-accordion.directive';
 import { AppAccordionDirective } from './app-accordion.directive';
+import { EqualValidatorDirective } from './equal-validator.directive';
 import { FontSizeDirective } from './font-size.directive';
-import { LazyViewerDirective } from './lazy-viewer/lazy-viewer.directive';
 import { IXAutoDirective } from './ix-auto.directive';
+import { LazyViewerDirective } from './lazy-viewer/lazy-viewer.directive';
+import { SideNavAccordionDirective } from './sidenav-accordion.directive';
 
 @NgModule({
   imports: [

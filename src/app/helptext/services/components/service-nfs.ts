@@ -1,7 +1,8 @@
+import { Validators } from '@angular/forms';
+
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { T } from 'app/translate-marker';
-import { Validators } from '@angular/forms';
 
 export default {
   nfs_srv_fieldset_general: T('General Options'),

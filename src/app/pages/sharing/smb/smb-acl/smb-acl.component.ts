@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+
+import { helptext_sharing_smb } from 'app/helptext/sharing/smb/smb';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { helptext_sharing_smb } from 'app/helptext/sharing/smb/smb';
-import * as _ from 'lodash';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

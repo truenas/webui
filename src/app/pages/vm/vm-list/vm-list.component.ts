@@ -1,33 +1,37 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { ProductType } from 'app/enums/product-type.enum';
+import { Component } from '@angular/core';
+import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+
+import * as _ from 'lodash';
+
+import { PreferencesService } from 'app/core/services/preferences.service';
+import { ProductType } from 'app/enums/product-type.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
+import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/vm/vm-list';
+import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   WebSocketService, StorageService, AppLoaderService, DialogService, RestService, VmService, NetworkService, SystemGeneralService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
-import { TranslateService } from '@ngx-translate/core';
-import { PreferencesService } from 'app/core/services/preferences.service';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { MatDialog } from '@angular/material/dialog';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { T } from 'app/translate-marker';
-import globalHelptext from 'app/helptext/global-helptext';
-import helptext from 'app/helptext/vm/vm-list';
-import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import * as _ from 'lodash';
+
 import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
-import { Validators } from '@angular/forms';
-import { ServiceStatus } from 'app/enums/service-status.enum';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface DisplayWebUri {
   error: string;

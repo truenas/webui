@@ -4,22 +4,24 @@ import {
   Injector,
 } from '@angular/core';
 
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService } from 'app/services';
+import helptext from 'app/helptext/storage/volumes/volume-key';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+
 import {
   FieldConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { RestService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { EncryptionService } from 'app/services/encryption.service';
-import { MatDialog } from '@angular/material/dialog';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
-import helptext from 'app/helptext/storage/volumes/volume-key';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

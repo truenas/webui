@@ -1,27 +1,29 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { VmDeviceType, VmTime } from 'app/enums/vm.enum';
+
 import * as _ from 'lodash';
+
+import { combineLatest, Observable } from 'rxjs';
+
 import { ProductType } from 'app/enums/product-type.enum';
+import { VmDeviceType, VmTime } from 'app/enums/vm.enum';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { GpuDevice } from 'app/interfaces/gpu-device.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
   FieldConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { T } from 'app/translate-marker';
-import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
-import globalHelptext from 'app/helptext/global-helptext';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   WebSocketService, StorageService, VmService, AppLoaderService, DialogService, SystemGeneralService,
 } from 'app/services';
-import { Validators } from '@angular/forms';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-
-import { GpuDevice } from 'app/interfaces/gpu-device.interface';
-import { combineLatest, Observable } from 'rxjs';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

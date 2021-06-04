@@ -1,5 +1,4 @@
-import { ValidatorFn } from '@angular/forms';
-import { FormControl } from '@angular/forms';
+import { ValidatorFn, FormControl } from '@angular/forms';
 
 export function rangeValidator(min: number, max?: number): ValidatorFn {
   let thisControl: FormControl;

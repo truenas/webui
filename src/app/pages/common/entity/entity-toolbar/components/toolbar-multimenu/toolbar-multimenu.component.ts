@@ -2,9 +2,11 @@ import {
   Component, Input, OnInit,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
 
 import { Subject } from 'rxjs';
+
+import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
+
 import { ControlConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.interface';
 

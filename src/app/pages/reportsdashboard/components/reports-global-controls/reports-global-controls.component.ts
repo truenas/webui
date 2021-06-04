@@ -1,6 +1,7 @@
 import {
   Component,
 } from '@angular/core';
+
 import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
 
 @Component({

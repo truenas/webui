@@ -1,11 +1,13 @@
-import { MatDialogRef } from '@angular/material/dialog';
 import { Component, Output, EventEmitter } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { SystemGeneralService } from 'app/services/system-general.service';
-import globalHelptext from 'app/helptext/global-helptext';
-import { T } from 'app/translate-marker';
-import { EntityUtils } from '../entity/utils';
+import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+
+import globalHelptext from 'app/helptext/global-helptext';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { T } from 'app/translate-marker';
+
+import { EntityUtils } from '../entity/utils';
 
 @UntilDestroy()
 @Component({

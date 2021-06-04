@@ -1,11 +1,16 @@
 import { Component } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ConsolePanelModalDialog } from 'app/components/common/dialog/consolepanel/consolepanel-dialog.component';
-import { Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { WebSocketService } from '../ws.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
+
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subscription } from 'rxjs';
+
+import { switchMap } from 'rxjs/operators';
+
+import { ConsolePanelModalDialog } from 'app/components/common/dialog/consolepanel/consolepanel-dialog.component';
+
+import { SystemGeneralService } from 'app/services/system-general.service';
+
+import { WebSocketService } from '../ws.service';
 
 @UntilDestroy()
 @Component({

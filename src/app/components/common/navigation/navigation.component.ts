@@ -2,16 +2,20 @@ import {
   Component, EventEmitter, OnInit, Output,
 } from '@angular/core';
 import { Router } from '@angular/router';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+
+import { filter } from 'rxjs/operators';
+
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
-import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
-import * as _ from 'lodash';
-import { filter } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
+import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
+
 import { WebSocketService } from 'app/services';
 import { DocsService } from 'app/services/docs.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

@@ -1,17 +1,20 @@
 import {
   Component, Input, AfterViewInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef,
 } from '@angular/core';
+import { UUID } from 'angular2-uuid';
+import Dygraph from 'dygraphs';
+// eslint-disable-next-line
+import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
+import * as moment from 'moment-timezone';
 import { BehaviorSubject } from 'rxjs';
-import { CoreService } from 'app/core/services/core.service';
+
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { ViewComponent } from 'app/core/components/view/view.component';
-import { Report, ReportData } from '../report/report.component';
+import { CoreService } from 'app/core/services/core.service';
+
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
 
-import { UUID } from 'angular2-uuid';
-import * as moment from 'moment-timezone';
-import Dygraph from 'dygraphs';
-import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
+import { Report, ReportData } from '../report/report.component';
 
 interface Conversion {
   value: number;

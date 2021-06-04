@@ -1,15 +1,18 @@
-import { Component } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+import helptext from 'app/helptext/api-keys';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
-import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { DialogService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
-import helptext from 'app/helptext/api-keys';
+
 import { ConfirmDialog } from '../common/confirm-dialog/confirm-dialog.component';
+import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityUtils } from '../common/entity/utils';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

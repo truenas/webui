@@ -1,25 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { Validators } from '@angular/forms';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { MatDialog } from '@angular/material/dialog';
+import { Router, ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 
 import * as _ from 'lodash';
+
+import helptext from 'app/helptext/plugins/plugins';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { WebSocketService, NetworkService } from 'app/services';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { T } from 'app/translate-marker';
-import { DialogService, JailService } from 'app/services';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { ipv4Validator, ipv6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
-import { MatDialog } from '@angular/material/dialog';
-import helptext from 'app/helptext/plugins/plugins';
-import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import {
+  WebSocketService, NetworkService, DialogService, JailService,
+} from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

@@ -1,15 +1,17 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
+
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/services/components/service-nfs';
-import { RestService, WebSocketService, DialogService } from 'app/services';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
+import { RestService, WebSocketService, DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({

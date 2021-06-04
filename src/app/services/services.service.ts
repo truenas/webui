@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
+
+import { Observable } from 'rxjs';
+
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
-import { Observable } from 'rxjs';
 
 import { WebSocketService } from './ws.service';
 

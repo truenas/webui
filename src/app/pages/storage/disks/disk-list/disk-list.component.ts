@@ -1,27 +1,30 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+import * as filesize from 'filesize';
+
+import { CoreService } from 'app/core/services/core.service';
+import { SmartTestType } from 'app/enums/smart-test-type.enum';
+import helptext from 'app/helptext/storage/disks/disks';
 import { CoreEvent } from 'app/interfaces/events';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import {
   EntityTableComponent,
 
 } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
-import { T } from 'app/translate-marker';
-import { StorageService, DialogService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/core/services/core.service';
-import { LocaleService } from 'app/services/locale.service';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import helptext from 'app/helptext/storage/disks/disks';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { SmartTestType } from 'app/enums/smart-test-type.enum';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as filesize from 'filesize';
+import { StorageService, DialogService, WebSocketService } from 'app/services';
+import { LocaleService } from 'app/services/locale.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

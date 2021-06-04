@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
+
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 @Component({

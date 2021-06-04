@@ -1,21 +1,24 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
+import { ValidationErrors, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ValidationErrors, FormControl } from '@angular/forms';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+
+import { ProductType } from 'app/enums/product-type.enum';
+import global_helptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/services/components/service-smb';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import * as _ from 'lodash';
-import { ProductType } from 'app/enums/product-type.enum';
-import helptext from 'app/helptext/services/components/service-smb';
-import global_helptext from 'app/helptext/global-helptext';
+
 import {
   IdmapService, RestService, ServicesService, UserService, WebSocketService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

@@ -1,22 +1,25 @@
 import { Component } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import * as _ from 'lodash';
-import { Observable } from 'rxjs';
-import { ProductType } from 'app/enums/product-type.enum';
 
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { SystemGeneralService, WebSocketService } from 'app/services';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { DialogService } from 'app/services';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+
+import { Observable } from 'rxjs';
+
+import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/directoryservice/activedirectory';
 import global_helptext from 'app/helptext/global-helptext';
-import { ModalService } from 'app/services/modal.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { SystemGeneralService, WebSocketService, DialogService } from 'app/services';
+
+import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({

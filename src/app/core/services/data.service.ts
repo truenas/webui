@@ -1,12 +1,15 @@
 import { Injectable, OnDestroy } from '@angular/core';
+
 import { CoreEvent } from 'app/interfaces/events';
-import { CoreService } from './core.service';
-import { ApiCall } from './api.service';
+
 import { WebSocketService } from 'app/services/ws.service';
-import { SystemProfileService } from './system-profile.service';
-import { DiskTemperatureService } from './disk-temperature.service';
+
+import { ApiCall } from './api.service';
+import { CoreService } from './core.service';
 import { DiskStateService } from './disk-state.service';
+import { DiskTemperatureService } from './disk-temperature.service';
 import { StatsService } from './stats.service';
+import { SystemProfileService } from './system-profile.service';
 
 /*
  * This is a collection of services that will

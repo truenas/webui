@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+
 import { EntityTableComponent } from './entity-table.component';
 
 /**

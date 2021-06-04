@@ -1,14 +1,16 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FormControl, ValidatorFn, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import helptext from 'app/helptext/services/components/service-lldp';
-import { RestService, WebSocketService, ServicesService } from 'app/services';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+import helptext from 'app/helptext/services/components/service-lldp';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+
+import { RestService, WebSocketService, ServicesService } from 'app/services';
 
 @UntilDestroy()
 @Component({

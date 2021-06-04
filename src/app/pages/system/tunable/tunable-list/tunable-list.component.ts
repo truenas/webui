@@ -2,8 +2,9 @@ import {
   ApplicationRef, Component, Injector,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+
 import { ProductType } from 'app/enums/product-type.enum';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { WebSocketService } from 'app/services';
 import { T } from 'app/translate-marker';
 

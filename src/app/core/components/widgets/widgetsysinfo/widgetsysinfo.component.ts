@@ -4,21 +4,22 @@ import {
 import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
 
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { environment } from '../../../../../environments/environment';
 
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { UpdateCheckedEvent } from 'app/interfaces/events/update-checked-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { LocaleService } from 'app/services/locale.service';
-import { ProductType } from 'app/enums/product-type.enum';
 import { SystemGeneralService, WebSocketService } from 'app/services';
+import { LocaleService } from 'app/services/locale.service';
 
 import { T } from 'app/translate-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+import { environment } from '../../../../../environments/environment';
 
 @UntilDestroy()
 @Component({

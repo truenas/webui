@@ -1,8 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+import helptext from 'app/helptext/directoryservice/dashboard';
+import idmapHelptext from 'app/helptext/directoryservice/idmap';
+import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 import {
   WebSocketService,
   SystemGeneralService,
@@ -11,21 +17,17 @@ import {
   IdmapService,
   UserService,
 } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
-import helptext from 'app/helptext/directoryservice/dashboard';
-import idmapHelptext from 'app/helptext/directoryservice/idmap';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { InputTableConf } from 'app/pages/common/entity/table/table.component';
+
 import { EmptyConfig } from '../common/entity/entity-empty/entity-empty.component';
-import { LdapComponent } from './ldap/ldap.component';
 import { ActiveDirectoryComponent } from './activedirectory/activedirectory.component';
 import { IdmapFormComponent } from './idmap/idmap-form.component';
-import { KerberosSettingsComponent } from './kerberossettings/kerberossettings.component';
-import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form.component';
 import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form.component';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form.component';
+import { KerberosSettingsComponent } from './kerberossettings/kerberossettings.component';
+import { LdapComponent } from './ldap/ldap.component';
 
 @UntilDestroy()
 @Component({

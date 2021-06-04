@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+
 import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
 
 @Component({

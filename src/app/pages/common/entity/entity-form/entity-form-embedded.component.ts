@@ -16,22 +16,25 @@ import {
   FormBuilder, FormControl, FormGroup,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CoreEvent } from 'app/interfaces/events';
-import * as _ from 'lodash';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { T } from 'app/translate-marker';
+import * as _ from 'lodash';
+
+import { Observable, Subscription, Subject } from 'rxjs';
+
+import { CoreEvent } from 'app/interfaces/events';
 
 import { RestService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { T } from 'app/translate-marker';
+
 import { EntityTemplateDirective } from '../entity-template.directive';
 
 import { FieldConfig } from './models/field-config.interface';
 import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
 import { FieldRelationService } from './services/field-relation.service';
-import { Subscription, Subject } from 'rxjs';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 export interface FormConfig {
   fieldSets?: any;

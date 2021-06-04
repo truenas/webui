@@ -3,21 +3,25 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
-import { CoreEvent } from 'app/interfaces/events';
-import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
-import * as _ from 'lodash';
-import { DialogService, ShellService, WebSocketService } from 'app/services';
-import helptext from 'app/helptext/shell/shell';
-import { Terminal } from 'xterm';
-import { FitAddon } from 'xterm-addon-fit';
-import * as FontFaceObserver from 'fontfaceobserver';
-import { CoreService } from 'app/core/services/core.service';
-import { Subject, Observable } from 'rxjs';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+
+import * as FontFaceObserver from 'fontfaceobserver';
+import * as _ from 'lodash';
+
+import { Subject, Observable } from 'rxjs';
+import { Terminal } from 'xterm';
+
+import { FitAddon } from 'xterm-addon-fit';
+
+import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
+import { CoreService } from 'app/core/services/core.service';
+import helptext from 'app/helptext/shell/shell';
+import { CoreEvent } from 'app/interfaces/events';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
+import { DialogService, ShellService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({

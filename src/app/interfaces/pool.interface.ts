@@ -1,8 +1,8 @@
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
-import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { VDev } from 'app/interfaces/storage.interface';
+import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
 export interface Pool {
   autotrim: ZfsProperty<string>;

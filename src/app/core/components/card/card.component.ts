@@ -1,6 +1,7 @@
 import {
   Component, ViewChild, Input,
 } from '@angular/core';
+
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 
 export const CardComponentMetadata = {

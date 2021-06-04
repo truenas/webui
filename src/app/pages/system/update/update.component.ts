@@ -2,24 +2,23 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+
 import { CoreService } from 'app/core/services/core.service';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
-import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { ProductType } from 'app/enums/product-type.enum';
+import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { helptext_system_update as helptext } from 'app/helptext/system/update';
+import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from 'app/translate-marker';
-
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { helptext_system_update as helptext } from 'app/helptext/system/update';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

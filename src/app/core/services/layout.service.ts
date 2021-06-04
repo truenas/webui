@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+
 import * as domHelper from 'app/helpers/dom.helper';
 
 @Injectable({

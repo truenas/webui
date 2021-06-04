@@ -1,18 +1,22 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { DialogService } from 'app/services/index';
-import { ApplicationsService } from '../applications.service';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { ModalService } from 'app/services/modal.service';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+
+import { Subject } from 'rxjs';
+
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from 'app/helptext/apps/apps';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
-import { Subject } from 'rxjs';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService } from 'app/services/index';
+
+import { ModalService } from 'app/services/modal.service';
+
+import { ApplicationsService } from '../applications.service';
 
 @UntilDestroy()
 @Component({

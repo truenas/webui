@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
-import { CoreEvent } from 'app/interfaces/events';
-import { DisplayObject } from '../classes/display-object';
-import { LayoutObject } from '../classes/layout-object';
-import { CoreService } from './core.service';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   multicast,
 } from 'popmotion';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+import { CoreEvent } from 'app/interfaces/events';
+
+import { DisplayObject } from '../classes/display-object';
+import { LayoutObject } from '../classes/layout-object';
+import { CoreService } from './core.service';
 
 interface DisplayObjectRegistration {
   displayObject: DisplayObject;

@@ -4,15 +4,17 @@ import {
 import {
   Router, NavigationEnd, ActivatedRoute,
 } from '@angular/router';
-import { CoreEvent } from 'app/interfaces/events';
-import { filter } from 'rxjs/operators';
-import { ProductType } from 'app/enums/product-type.enum';
-import { RoutePartsService } from 'app/services/route-parts/route-parts.service';
-import { CoreService } from 'app/core/services/core.service';
-import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { ViewButtonComponent } from 'app/core/components/viewbutton/viewbutton.component';
-import { LocaleService } from 'app/services/locale.service';
+
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter } from 'rxjs/operators';
+
+import { ViewButtonComponent } from 'app/core/components/viewbutton/viewbutton.component';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { CoreService } from 'app/core/services/core.service';
+import { ProductType } from 'app/enums/product-type.enum';
+import { CoreEvent } from 'app/interfaces/events';
+import { LocaleService } from 'app/services/locale.service';
+import { RoutePartsService } from 'app/services/route-parts/route-parts.service';
 
 export interface GlobalAction {
   applyConfig(config: any): any;

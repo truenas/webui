@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
-import { CoreEvent } from 'app/interfaces/events';
-import { RestService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/core/services/core.service';
+
+import { Router } from '@angular/router';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { ApiService } from 'app/core/services/api.service';
-import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { CoreService } from 'app/core/services/core.service';
+import { CoreEvent } from 'app/interfaces/events';
+import { RestService, WebSocketService } from 'app/services';
 
 export const DefaultTheme = {
   name: 'ix-dark',

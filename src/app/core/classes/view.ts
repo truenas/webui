@@ -1,5 +1,6 @@
-import { CoreEvent } from 'app/interfaces/events';
 import { Subject } from 'rxjs';
+
+import { CoreEvent } from 'app/interfaces/events';
 
 export abstract class View {
   superView = false; // if this is the top level view in the ViewController

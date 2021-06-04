@@ -1,11 +1,14 @@
 import { Component } from '@angular/core';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+import helptext from 'app/helptext/directoryservice/kerberosrealms-form-list';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
-import { T } from 'app/translate-marker';
-import helptext from 'app/helptext/directoryservice/kerberosrealms-form-list';
-import { KerberosRealmsFormComponent } from './kerberosrealms-form.component';
 import { ModalService } from 'app/services/modal.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
+
+import { KerberosRealmsFormComponent } from './kerberosrealms-form.component';
 
 @UntilDestroy()
 @Component({

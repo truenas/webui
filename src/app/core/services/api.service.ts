@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { WebSocketService } from 'app/services/ws.service';
-import { RestService } from 'app/services/rest.service';
-import { CoreService } from './core.service';
 import { DialogService } from 'app/services';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { RestService } from 'app/services/rest.service';
+import { WebSocketService } from 'app/services/ws.service';
+
+import { CoreService } from './core.service';
 
 export interface ApiCall {
   protocol: 'websocket' | 'rest'; // TODO: rest is probably deprecated and can be removed
