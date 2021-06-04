@@ -10,7 +10,7 @@ import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
 import { Catalog } from 'app/interfaces/catalog.interface';
-import { CertificateAuthorityUpdate } from 'app/interfaces/certificate-authority.interface';
+import { CertificateAuthorityCreate, CertificateAuthorityUpdate } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
@@ -141,7 +141,7 @@ export type ApiDirectory = {
   'certificate.get_domain_names': { params: any; response: any };
 
   // Certificate Authority
-  'certificateauthority.create': { params: any; response: any };
+  'certificateauthority.create': { params: [CertificateAuthorityCreate]; response: any };
   'certificateauthority.query': { params: any; response: any };
   'certificateauthority.update': { params: [number, CertificateAuthorityUpdate]; response: any };
   'certificateauthority.profiles': { params: any; response: any };

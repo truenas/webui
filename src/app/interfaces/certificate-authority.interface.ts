@@ -73,3 +73,5 @@ export interface CertificateAuthorityUpdate {
   san: string[];
   cert_extensions: CertificateExtensions;
 }
+
+export interface CertificateAuthorityCreate extends CertificateAuthorityUpdate {}
