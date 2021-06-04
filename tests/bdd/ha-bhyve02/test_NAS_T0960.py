@@ -53,7 +53,7 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     host = nas_url
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
-        assert wait_on_element(driver, 0.5, 5, '//input[@data-placeholder="Username"]')
+        assert wait_on_element(driver, 5, '//input[@data-placeholder="Username"]')
         time.sleep(1)
 
 
@@ -61,12 +61,12 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 def if_login_page_appear_enter_root_and_password(driver, user, password):
     """If the login page appears, enter "{user}" and "{password}"."""
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 0.5, 5, '//input[@data-placeholder="Username"]')
+        assert wait_on_element(driver, 5, '//input[@data-placeholder="Username"]')
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys(user)
         driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
-        assert wait_on_element(driver, 0.5, 5, '//button[@name="signin_button"]')
+        assert wait_on_element(driver, 5, '//button[@name="signin_button"]', 'clickable')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
@@ -75,8 +75,8 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
 @then('You should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """You should see the dashboard."""
-    assert wait_on_element(driver, 1, 10, '//h1[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 1, 10, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
 
 
 @then('Click on the Credentials item in the left side menu')
@@ -88,7 +88,7 @@ def click_on_the_credentials_item_in_the_left_side_menu(driver):
 @then('The Credentials menu should expand to the right')
 def the_credentials_menu_should_expand_to_the_right(driver):
     """The Credentials menu should expand to the right."""
-    assert wait_on_element(driver, 1, 7, '//mat-list-item[@ix-auto="option__Local Users"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
 
 
 @then('Click on Local Users')
@@ -100,20 +100,20 @@ def click_on_localusers(driver):
 @then('The Users page should open')
 def the_users_page_should_open(driver):
     """The Users page should open."""
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
 
 
 @then('On the right side of the table, click the expand arrow for the root user')
 def on_the_right_side_of_the_table_click_the_expand_arrow_for_the_root_user(driver):
     """On the right side of the table, click the expand arrow for the root user."""
-    assert wait_on_element(driver, 0.5, 7, '//tr[@ix-auto="expander__root"]/td')
+    assert wait_on_element(driver, 7, '//tr[@ix-auto="expander__root"]/td', 'clickable')
     driver.find_element_by_xpath('//tr[@ix-auto="expander__root"]/td').click()
 
 
 @then('The User Field should expand down to list further details')
 def the_user_field_should_expand_down_to_list_further_details(driver):
     """The User Field should expand down to list further details."""
-    assert wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__EDIT_root"]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__EDIT_root"]', 'clickable')
 
 
 @then('Click the Edit button that appears')
@@ -125,48 +125,50 @@ def click_the_edit_button_that_appears(driver):
 @then('The User Edit Page should open')
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
-    assert wait_on_element(driver, 1, 7, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 7, '//h3[contains(.,"Edit User")]')
+    time.sleep(0.5)
 
 
 @then('In the SSH public Key field, paste a public key and save the change')
 def in_the_ssh_public_key_field_paste_a_public_key_and_save_the_change(driver, ssh_key):
     """In the SSH public Key field, paste a public key and save the change."""
-    assert wait_on_element(driver, 1, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea')
+    assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'clickable')
     driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').clear()
     driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').send_keys(ssh_key)
-    assert wait_on_element(driver, 2, 5, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert not wait_on_element(driver, 1, 7, '//h3[contains(.,"Edit User")]')
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 1, 10, '//td[contains(.,"root")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 10, '//td[contains(.,"root")]')
 
 
 @then('Reopen the user edit page and ensure that the key was saved')
 def reopen_the_user_edit_page_and_ensure_that_the_key_was_saved(driver):
     """Reopen the user edit page and ensure that the key was saved."""
-    assert wait_on_element(driver, 1, 7, '//tr[@ix-auto="expander__root"]/td')
+    assert wait_on_element(driver, 7, '//tr[@ix-auto="expander__root"]/td', 'clickable')
     driver.find_element_by_xpath('//tr[@ix-auto="expander__root"]/td').click()
-    assert wait_on_element(driver, 1, 5, '//button[@ix-auto="button__EDIT_root"]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__EDIT_root"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_root"]').click()
-    assert wait_on_element(driver, 1, 5, '//h3[contains(.,"Edit User")]')
-    assert wait_on_element(driver, 1, 5, '//h4[contains(.,"Identification")]')
+    assert wait_on_element(driver, 5, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 5, '//h4[contains(.,"Identification")]')
+    time.sleep(1)
 
 
 @then('Public key should be on the root user page')
 def public_key_should_be_on_the_root_user_page(driver, ssh_key):
     """Public key should be on the root user page."""
-    assert wait_on_element(driver, 1, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea')
+    assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'clickable')
     assert attribute_value_exist(driver, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'value', ssh_key)
-    assert wait_on_element(driver, 1, 5, '//mat-icon[contains(.,"cancel")]')
+    assert wait_on_element(driver, 5, '//mat-icon[contains(.,"cancel")]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[contains(.,"cancel")]').click()
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 0.5, 10, '//td[contains(.,"root")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 10, '//td[contains(.,"root")]')
 
 
 @then('Try to ssh in with root and your sshkey')
