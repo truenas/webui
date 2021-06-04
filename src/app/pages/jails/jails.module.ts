@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../appMaterial.module';
+import { MaterialModule } from 'app/appMaterial.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
-import { JailService } from '../../services';
+import { JailService } from 'app/services';
 import { EntityModule } from '../common/entity/entity.module';
 
 import { routing } from './jails.routing';

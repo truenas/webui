@@ -1,13 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 
-import { WebSocketService, IscsiService } from 'app/../services';
-import { FieldConfig } from 'app/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/common/entity/entity-form/models/fieldset.interface';
-import { EntityFormService } from 'app/common/entity/entity-form/services/entity-form.service';
+import { WebSocketService, IscsiService } from 'app/services';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import * as _ from 'lodash';
-import { EntityUtils } from 'app/common/entity/utils';
-import { helptext_sharing_iscsi } from 'app/../helptext/sharing';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { T } from 'app/translate-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

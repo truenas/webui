@@ -14,9 +14,9 @@ import { DialogService, RestService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { StorageService } from 'app/services/storage.service';
 import { T } from 'app/translate-marker';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { EntityUtils } from '../../common/entity/utils';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @UntilDestroy()
 @Component({

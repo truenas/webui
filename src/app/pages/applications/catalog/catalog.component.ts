@@ -13,9 +13,9 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core.service';
 
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { EntityUtils } from '../../common/entity/utils';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { DialogService, WebSocketService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
 import { ApplicationsService } from '../applications.service';
@@ -27,7 +27,7 @@ import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from 'app/helptext/apps/apps';
 import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
+import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 
 @UntilDestroy()
 @Component({

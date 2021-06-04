@@ -10,15 +10,15 @@ import { FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { ModalService } from 'app/services/modal.service';
 import { DialogService } from 'app/services/index';
 import { ApplicationsService } from '../applications.service';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import helptext from 'app/helptext/apps/apps';
-import { EntityUtils } from '../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

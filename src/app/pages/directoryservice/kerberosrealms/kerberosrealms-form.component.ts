@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from 'app/helptext/directoryservice/kerberosrealms-form-list';
 import { Subscription } from 'rxjs';

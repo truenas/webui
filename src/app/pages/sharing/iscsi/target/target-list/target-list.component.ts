@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
-import { IscsiService } from 'app/../services/iscsi.service';
+import { IscsiService } from 'app/services/iscsi.service';
 import { T } from 'app/translate-marker';
-import { EntityUtils } from 'app/common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AppLoaderService, ModalService, WebSocketService } from 'app/services';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
 import { ActivatedRoute, Router } from '@angular/router';

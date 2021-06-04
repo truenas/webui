@@ -3,15 +3,15 @@ import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 
-import { FieldConfig } from 'app/common/entity/entity-form/models/field-config.interface';
-import { EntityFormService } from 'app/common/entity/entity-form/services/entity-form.service';
-import { FieldRelationService } from 'app/common/entity/entity-form/services/field-relation.service';
-import { AppLoaderService } from 'app/../services/app-loader/app-loader.service';
-import { EntityUtils } from 'app/common/entity/utils';
-import { WebSocketService, DialogService, NetworkService } from 'app/../services';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService, DialogService, NetworkService } from 'app/services';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import * as _ from 'lodash';
-import { ipv4or6OptionalCidrValidator } from 'app/common/entity/entity-form/validators/ip-validation';
+import { ipv4or6OptionalCidrValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

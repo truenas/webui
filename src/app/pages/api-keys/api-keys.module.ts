@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { routing } from './api-keys.routing';
 import { MaterialModule } from 'app/appMaterial.module';
-import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { TranslateModule } from '@ngx-translate/core';

@@ -3,10 +3,11 @@ import { Validators } from '@angular/forms';
 
 import { helptext_system_ntpservers as helptext } from 'app/helptext/system/ntpservers';
 import { ModalService } from 'app/services/modal.service';
-import { FieldConfig } from 'app/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { greaterThan } from 'app/pages/common/entity/entity-form/validators/compare-validation';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+
 @Component({
   selector: 'app-ntpserver-form',
   template: '<entity-form [conf]="this"></entity-form>',

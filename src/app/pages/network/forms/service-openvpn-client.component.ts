@@ -3,7 +3,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { ServicesService } from 'app/services';
 import * as _ from 'lodash';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

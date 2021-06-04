@@ -1,5 +1,5 @@
 import { Validators } from '@angular/forms';
-import { T } from '../../translate-marker';
+import { T } from 'app/translate-marker';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 
 export const helptext = {

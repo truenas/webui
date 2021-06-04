@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { ApplicationsComponent } from './applications.component';
 import { PodShellComponent } from './pod-shell/pod-shell.component';
 import { PodLogsComponent } from './pod-logs/pod-logs.component';
-import { T } from '../../translate-marker';
+import { T } from 'app/translate-marker';
 
 const routes: Routes = [
   {

@@ -36,7 +36,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { InitshutdownFormComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-form/initshutdown-form.component';
 import { InputTableConf } from 'app/pages/common/entity/table/table.component';
-import { EmptyConfig } from '../../common/entity/entity-empty/entity-empty.component';
+import { EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { ConsoleFormComponent } from './console-form/console-form.component';
 import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.component';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';

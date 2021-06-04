@@ -3,7 +3,7 @@ import { SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { Observable } from 'rxjs';
 
 import { WebSocketService } from './ws.service';
-import { EntityUtils } from '../pages/common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import * as _ from 'lodash';
 import { reject } from 'q';
 

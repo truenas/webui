@@ -11,7 +11,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { WebSocketService, SystemGeneralService } from 'app/services/';
 import { Theme } from 'app/services/theme/theme.service';
 import { ProductType } from 'app/enums/product-type.enum';
-import { ReportsService } from '../../reports.service';
+import { ReportsService } from 'app/pages/reportsdashboard/reports.service';
 import { Subject } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { LineChartComponent } from '../lineChart/lineChart.component';

@@ -13,14 +13,14 @@ import {
 } from 'app/services';
 import {
   FieldConfig,
-} from '../../common/entity/entity-form/models/field-config.interface';
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { MatDialog } from '@angular/material/dialog';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { DialogService } from 'app/services/dialog.service';
-import { EntityUtils } from '../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { T } from 'app/translate-marker';
-import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { CoreService } from 'app/core/services/core.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

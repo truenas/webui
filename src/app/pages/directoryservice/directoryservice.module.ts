@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxUploaderModule } from 'ngx-uploader';
-import { MaterialModule } from '../../appMaterial.module';
+import { MaterialModule } from 'app/appMaterial.module';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { SystemGeneralService } from '../../services';
+import { SystemGeneralService } from 'app/services';
 import { EntityModule } from '../common/entity/entity.module';
 
 import { ActiveDirectoryComponent } from './activedirectory/activedirectory.component';

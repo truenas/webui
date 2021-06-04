@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { WebSocketService, JailService, DialogService } from 'app/services';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { EntityUtils } from '../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

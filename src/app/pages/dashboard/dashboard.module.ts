@@ -1,9 +1,9 @@
-import { AppCommonModule } from '../../components/common/app-common.module';
+import { AppCommonModule } from 'app/components/common/app-common.module';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { MaterialModule } from '../../appMaterial.module';
+import { MaterialModule } from 'app/appMaterial.module';
 import { EntityModule } from '../common/entity/entity.module';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 

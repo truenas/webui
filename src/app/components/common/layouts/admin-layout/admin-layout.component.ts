@@ -14,7 +14,7 @@ import { RestService, WebSocketService, SystemGeneralService } from 'app/service
 import { LanguageService } from 'app/services/language.service';
 import { Theme, ThemeService } from 'app/services/theme/theme.service';
 import { ModalService } from 'app/services/modal.service';
-import { ConsolePanelModalDialog } from '../../dialog/consolepanel/consolepanel-dialog.component';
+import { ConsolePanelModalDialog } from 'app/components/common/dialog/consolepanel/consolepanel-dialog.component';
 import { LocaleService } from 'app/services/locale.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

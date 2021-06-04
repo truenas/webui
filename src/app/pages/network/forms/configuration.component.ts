@@ -7,10 +7,10 @@ import { Observable } from 'rxjs';
 import { ProductType } from 'app/enums/product-type.enum';
 
 import { TooltipsService, WebSocketService } from 'app/services';
-import { EntityFormComponent } from '../../common/entity/entity-form';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { ipv4Validator, ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
+import { ipv4Validator, ipv6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import helptext from 'app/helptext/network/configuration/configuration';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

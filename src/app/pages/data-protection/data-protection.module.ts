@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ResilverComponent } from 'app/pages/data-protection/scrub/resilver/resilver.component';
-import { MaterialModule } from '../../appMaterial.module';
+import { MaterialModule } from 'app/appMaterial.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { CalendarModule, DateAdapter } from 'angular-calendar';

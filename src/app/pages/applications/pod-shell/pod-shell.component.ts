@@ -16,7 +16,7 @@ import * as FontFaceObserver from 'fontfaceobserver';
 import { CoreService } from 'app/core/services/core.service';
 import { Subject, Observable } from 'rxjs';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

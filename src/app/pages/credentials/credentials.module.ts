@@ -5,8 +5,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatDividerModule } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
 import { EntityModule } from '../common/entity/entity.module';
-import { MaterialModule } from '../../appMaterial.module';
-import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
+import { MaterialModule } from 'app/appMaterial.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 
 import { BackupCredentialsComponent } from './backup-credentials/backup-credentials.component';
 import { SshConnectionsFormComponent } from './backup-credentials/forms/ssh-connections-form.component';

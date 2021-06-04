@@ -20,11 +20,11 @@ import { ErdService } from 'app/services/erd.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { TranslateService } from '@ngx-translate/core';
-import { T } from '../../translate-marker';
+import { T } from 'app/translate-marker';
 import {
   SystemGeneralService,
   WebSocketService,
-} from '../../services';
+} from 'app/services';
 
 import { ReportsConfigComponent } from './components/reports-config/reports-config.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

@@ -5,13 +5,13 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { DialogService } from 'app/services/index';
 import { ApplicationsService } from '../applications.service';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from 'app/services/modal.service';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from 'app/helptext/apps/apps';
-import { EntityUtils } from '../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

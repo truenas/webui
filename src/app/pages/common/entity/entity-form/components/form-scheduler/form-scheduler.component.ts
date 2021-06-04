@@ -5,8 +5,8 @@ import {
 import { FormGroup, FormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
-import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { T } from 'app/translate-marker';
 import { LocaleService } from 'app/services/locale.service';
 

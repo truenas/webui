@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 
-import { EntityFormComponent } from 'app/common/entity/entity-form';
-import { FieldConfig } from 'app/common/entity/entity-form/models/field-config.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import helptext from 'app/../helptext/system/initshutdown';
+import helptext from 'app/helptext/system/initshutdown';
 import { ModalService } from 'app/services/modal.service';
 import { take } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

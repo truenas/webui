@@ -6,7 +6,7 @@ import {
   ServicesService, DialogService, AppLoaderService, WebSocketService, StorageService,
 } from 'app/services';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 
 import helptext from 'app/helptext/services/components/service-openvpn';

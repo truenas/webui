@@ -17,7 +17,7 @@ import { ReportingRealtimeUpdate, VirtualMemoryUpdate } from 'app/interfaces/rep
 import { Subject } from 'rxjs';
 import { MediaObserver } from '@angular/flex-layout';
 
-import { WebSocketService } from '../../services';
+import { WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { DashConfigItem } from 'app/core/components/widgets/widgetcontroller/widgetcontroller.component';
 import { tween, styler } from 'popmotion';

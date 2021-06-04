@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MaterialModule } from '../../appMaterial.module';
+import { MaterialModule } from 'app/appMaterial.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 import { EntityModule } from '../common/entity/entity.module';
-import { AppConfirmModule } from '../../services/app-confirm/app-confirm.module';
-import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
+import { AppConfirmModule } from 'app/services/app-confirm/app-confirm.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 
 import { ServiceDDNSComponent } from './components/service-dynamicdns';
 import { ServiceFTPComponent } from './components/service-ftp';
@@ -28,7 +28,7 @@ import { Services } from './services.component';
 import { routing } from './services.routing';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { UserService } from '../../services/user.service';
+import { UserService } from 'app/services/user.service';
 
 @NgModule({
   imports: [

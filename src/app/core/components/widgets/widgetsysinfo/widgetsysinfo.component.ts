@@ -5,7 +5,7 @@ import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
 
 import { TranslateService } from '@ngx-translate/core';
-import { environment } from 'app/../environments/environment';
+import { environment } from '../../../../../environments/environment';
 
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';

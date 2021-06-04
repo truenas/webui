@@ -4,7 +4,7 @@ import {
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { ApplicationsService } from './applications.service';
-import { ModalService } from '../../services/modal.service';
+import { ModalService } from 'app/services/modal.service';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { CoreService } from 'app/core/services/core.service';
@@ -12,7 +12,7 @@ import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
 import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
 import { Subject } from 'rxjs';
-import helptext from '../../helptext/apps/apps';
+import helptext from 'app/helptext/apps/apps';
 import { ActivatedRoute } from '@angular/router';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { MatTabChangeEvent } from '@angular/material/tabs';

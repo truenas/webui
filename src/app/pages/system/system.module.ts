@@ -7,11 +7,11 @@ import { NgxUploaderModule } from 'ngx-uploader';
 import { QRCodeModule } from 'angular2-qrcode';
 import { EntityModule } from '../common/entity/entity.module';
 
-import { MaterialModule } from '../../appMaterial.module';
+import { MaterialModule } from 'app/appMaterial.module';
 import { MarkdownModule } from 'ngx-markdown';
 import { routing } from './system.routing';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 
 import { AdvancedSettingsComponent } from './advanced';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone';

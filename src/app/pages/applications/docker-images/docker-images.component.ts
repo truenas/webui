@@ -10,9 +10,9 @@ import { WebSocketService } from 'app/services/ws.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { ModalService } from 'app/services/modal.service';
 import helptext from 'app/helptext/apps/apps';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { PullImageFormComponent } from '../forms/pull-image-form.component';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

@@ -6,21 +6,21 @@ import { MatDialog } from '@angular/material/dialog';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import * as _ from 'lodash';
 import {
   JailService, WebSocketService, AppLoaderService, DialogService, NetworkService,
 } from 'app/services';
 import { JailFormService } from './jail-form.service';
-import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
-import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';
-import { EntityUtils } from '../../common/entity/utils';
-import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
-import { ipv4Validator, ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
-import { forbiddenValues } from '../../common/entity/entity-form/validators/forbidden-values-validation';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { ipv4Validator, ipv6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import helptext from 'app/helptext/jails/jail-configuration';
 import { T } from 'app/translate-marker';
-import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

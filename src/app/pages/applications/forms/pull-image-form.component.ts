@@ -2,14 +2,14 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { latestVersion } from 'app/constants/catalog.constants';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from 'app/services/modal.service';
 import { DialogService } from 'app/services/index';
 import helptext from 'app/helptext/apps/apps';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { EntityUtils } from '../../common/entity/utils';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 

@@ -10,7 +10,7 @@ import {
 } from 'app/services';
 import {
   FieldConfig,
-} from '../../common/entity/entity-form/models/field-config.interface';
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { DialogService } from 'app/services';
 import helptext from 'app/helptext/directoryservice/ldap';

@@ -4,8 +4,8 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
 import { Observable } from 'rxjs';
-import { ShellConnectedEvent } from '../../interfaces/shell.interface';
-import { ShellService, WebSocketService } from '../../services';
+import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
+import { ShellService, WebSocketService } from 'app/services';
 import { CopyPasteMessageComponent } from '../shell/copy-paste-message.component';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';

@@ -5,13 +5,13 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 
 import * as _ from 'lodash';
 
-import { EntityFormComponent } from 'app/common/entity/entity-form';
-import { FieldSet } from 'app/common/entity/entity-form/models/fieldset.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
   IscsiService, RestService, WebSocketService, StorageService,
-} from 'app/../services';
-import { EntityUtils } from 'app/common/entity/utils';
-import { AppLoaderService } from 'app/../services/app-loader/app-loader.service';
+} from 'app/services';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import globalHelptext from 'app/helptext/global-helptext';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

@@ -1,7 +1,7 @@
 import { T } from 'app/translate-marker';
 import { Validators } from '@angular/forms';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import globalHelptext from '../../global-helptext';
+import globalHelptext from 'app/helptext/global-helptext';
 
 export default {
   cifs_srv_fieldset_netbios: T('NetBIOS'),

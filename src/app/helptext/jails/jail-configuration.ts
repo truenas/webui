@@ -1,4 +1,4 @@
-import { T } from '../../translate-marker';
+import { T } from 'app/translate-marker';
 
 // All iocage jail configuration fields are combined into this master list.
 

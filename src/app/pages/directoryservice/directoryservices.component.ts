@@ -10,11 +10,11 @@ import {
   DialogService,
   IdmapService,
   UserService,
-} from '../../services';
-import { ModalService } from '../../services/modal.service';
-import helptext from '../../helptext/directoryservice/dashboard';
-import idmapHelptext from '../../helptext/directoryservice/idmap';
-import { AppLoaderService } from '../../services/app-loader/app-loader.service';
+} from 'app/services';
+import { ModalService } from 'app/services/modal.service';
+import helptext from 'app/helptext/directoryservice/dashboard';
+import idmapHelptext from 'app/helptext/directoryservice/idmap';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
 import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { InputTableConf } from 'app/pages/common/entity/table/table.component';

@@ -2,17 +2,17 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MaterialModule } from '../../appMaterial.module';
+import { MaterialModule } from 'app/appMaterial.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgxFilesizeModule } from 'ngx-filesize';
-import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 
 import { EntityModule } from '../common/entity/entity.module';
-import { UserService } from '../../services/user.service';
-import { StorageService } from '../../services/storage.service';
+import { UserService } from 'app/services/user.service';
+import { StorageService } from 'app/services/storage.service';
 
 import { SnapshotAddComponent } from './snapshots/snapshot-add';
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone';

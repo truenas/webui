@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { MaterialModule } from '../../appMaterial.module';
+import { MaterialModule } from 'app/appMaterial.module';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
@@ -15,7 +15,7 @@ import { Display } from 'app/core/components/display/display.component';
 import { ViewButtonComponent } from './viewbutton/viewbutton.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
-import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 
 import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
@@ -23,7 +23,7 @@ import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/view
 import { ViewChartGaugeComponent } from './viewchartgauge/viewchartgauge.component';
 import { ViewChartBarComponent } from './viewchartbar/viewchartbar.component';
 import { ViewChartLineComponent } from './viewchartline/viewchartline.component';
-import { StorageService } from '../../services/storage.service';
+import { StorageService } from 'app/services/storage.service';
 
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { WidgetChartComponent } from 'app/core/components/widgets/widgetchart/widgetchart.component';

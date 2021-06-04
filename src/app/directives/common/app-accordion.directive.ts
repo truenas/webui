@@ -1,7 +1,7 @@
 import {
   Directive, ElementRef, HostListener, OnInit,
 } from '@angular/core';
-import * as domHelper from '../../helpers/dom.helper';
+import * as domHelper from 'app/helpers/dom.helper';
 
 @Directive({ selector: '[appAccordion]' })
 export class AppAccordionDirective implements OnInit {

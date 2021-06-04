@@ -11,11 +11,11 @@ import { WebSocketService } from 'app/services/ws.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { ModalService } from 'app/services/modal.service';
 import helptext from 'app/helptext/apps/apps';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { ManageCatalogSummaryDialog } from '../dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { CatalogAddFormComponent } from '../forms/catalog-add-form.component';
 import { CatalogEditFormComponent } from '../forms/catalog-edit-form.component';
-import { EntityUtils } from '../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

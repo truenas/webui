@@ -11,7 +11,7 @@ import { TwoFactorComponent } from '../system/two-factor/two-factor.component';
 import { DirectoryservicesComponent } from '../directoryservice/directoryservices.component';
 import { BackupCredentialsComponent } from '../credentials/backup-credentials/backup-credentials.component';
 
-import { T } from '../../translate-marker';
+import { T } from 'app/translate-marker';
 import { CertificatesDashComponent } from '../credentials/certificates-dash/certificates-dash.component';
 
 export const routes: Routes = [{

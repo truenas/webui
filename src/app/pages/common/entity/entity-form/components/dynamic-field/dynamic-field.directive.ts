@@ -10,8 +10,8 @@ import {
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
-import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { FormArrayComponent } from '../form-array/form-array.component';
 import { FormButtonComponent } from '../form-button/form-button.component';
 import { FormCheckboxComponent } from '../form-checkbox/form-checkbox.component';

@@ -5,9 +5,9 @@ import { FormGroup } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select/select';
 import { TranslateService } from '@ngx-translate/core';
 
-import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
-import { NetworkService } from 'app/../../services';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
+import { NetworkService } from 'app/services';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

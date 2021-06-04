@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { MaterialModule } from '../../appMaterial.module';
+import { MaterialModule } from 'app/appMaterial.module';
 import { EntityModule } from '../common/entity/entity.module';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -23,7 +23,7 @@ import { ChartFormComponent } from './forms/chart-form.component';
 import { ChartWizardComponent } from './forms/chart-wizard.component';
 import { PodLogsComponent } from './pod-logs/pod-logs.component';
 import { ChartEventsDialog } from './dialogs/chart-events/chart-events-dialog.component';
-import { AppCommonModule } from '../../components/common/app-common.module';
+import { AppCommonModule } from 'app/components/common/app-common.module';
 import { CatalogSummaryDialog } from './dialogs/catalog-summary/catalog-summary-dialog.component';
 import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
 import { ManageCatalogSummaryDialog } from './dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';

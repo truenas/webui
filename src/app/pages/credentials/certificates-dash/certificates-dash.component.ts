@@ -5,14 +5,14 @@ import { Option } from 'app/interfaces/option.interface';
 import { AppTableAction } from 'app/pages/common/entity/table/table.component';
 import { MatDialog } from '@angular/material/dialog';
 
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 import * as _ from 'lodash';
 import {
   SystemGeneralService, WebSocketService, AppLoaderService, DialogService, StorageService,
 } from 'app/services';
-import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 import { CertificateAddComponent } from './forms/certificate-add.component';
@@ -23,7 +23,7 @@ import { CertificateAcmeAddComponent } from './forms/certificate-acme-add.compon
 import { AcmednsFormComponent } from './forms/acmedns-form.component';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { helptext_system_ca } from 'app/helptext/system/ca';
-import { EntityUtils } from '../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

@@ -1,15 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../appMaterial.module';
+import { MaterialModule } from 'app/appMaterial.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 
-import { JailService } from '../../services';
+import { JailService } from 'app/services';
 import { EntityModule } from '../common/entity/entity.module';
 import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
-import { UserService } from '../../services/user.service';
+import { UserService } from 'app/services/user.service';
 
 import { routing } from './sharing.routing';
 import { NFSListComponent } from './nfs/nfs-list';

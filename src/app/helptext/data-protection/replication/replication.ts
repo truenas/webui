@@ -1,5 +1,5 @@
 import { T } from 'app/translate-marker';
-import globalHelptext from '../../global-helptext';
+import globalHelptext from 'app/helptext/global-helptext';
 
 export default {
   fieldset_general: T('General'),

@@ -6,12 +6,12 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 import * as _ from 'lodash';
-import { IscsiService, WebSocketService, AppLoaderService } from 'app/../services';
-import { EntityUtils } from 'app/common/entity/utils';
+import { IscsiService, WebSocketService, AppLoaderService } from 'app/services';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 
-import { FieldSet } from 'app/common/entity/entity-form/models/fieldset.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { selectedOptionValidator } from 'app/pages/common/entity/entity-form/validators/invalid-option-selected';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

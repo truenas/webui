@@ -2,7 +2,7 @@ import {
   OnInit, Component, ViewEncapsulation, Inject,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ApplicationsService } from '../../applications.service';
+import { ApplicationsService } from 'app/pages/applications/applications.service';
 import helptext from 'app/helptext/apps/apps';
 import { LocaleService } from 'app/services/locale.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';

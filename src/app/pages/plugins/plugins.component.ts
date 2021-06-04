@@ -9,10 +9,10 @@ import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/en
 import * as _ from 'lodash';
 
 import * as myIP from 'what-is-my-ip-address';
-import jailHelptext from '../../helptext/jails/jails-list';
-import helptext from '../../helptext/plugins/plugins';
-import { AppLoaderService, DialogService, WebSocketService } from '../../services';
-import { T } from '../../translate-marker';
+import jailHelptext from 'app/helptext/jails/jails-list';
+import helptext from 'app/helptext/plugins/plugins';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { T } from 'app/translate-marker';
 import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityJobComponent } from '../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../common/entity/utils';

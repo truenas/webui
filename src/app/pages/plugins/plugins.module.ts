@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxUploaderModule } from 'ngx-uploader';
-import { MaterialModule } from '../../appMaterial.module';
-import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
+import { MaterialModule } from 'app/appMaterial.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 

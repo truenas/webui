@@ -19,7 +19,7 @@ import { AlertServiceComponent } from './alertservice/alert-service/alert-servic
 import { AlertConfigComponent } from './alert/alert.component';
 import { FailoverComponent } from './failover/failover.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
-import { T } from '../../translate-marker';
+import { T } from 'app/translate-marker';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { GeneralSettingsComponent } from './general-settings/general-settings.component';
 import { Services } from '../services/services.component';

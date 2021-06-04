@@ -11,9 +11,9 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import {
   FormGroup, Validators, ValidationErrors, FormControl, ValidatorFn,
 } from '@angular/forms';
-import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
-import { MessageService } from '../../common/entity/entity-form/services/message.service';
+import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
+import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { ModalService } from 'app/services/modal.service';
 import * as _ from 'lodash';
 

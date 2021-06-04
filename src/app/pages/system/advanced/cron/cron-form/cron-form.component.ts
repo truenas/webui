@@ -3,12 +3,12 @@ import { Option } from 'app/interfaces/option.interface';
 
 import * as _ from 'lodash';
 
-import { EntityFormComponent } from 'app/common/entity/entity-form';
-import { FieldConfig } from 'app/common/entity/entity-form/models/field-config.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { UserService } from 'app/../services';
-import helptext from 'app/../helptext/system/cron-form';
-import { ModalService } from 'app/../services/modal.service';
+import { UserService } from 'app/services';
+import helptext from 'app/helptext/system/cron-form';
+import { ModalService } from 'app/services/modal.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()

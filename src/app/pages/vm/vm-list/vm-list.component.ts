@@ -11,17 +11,17 @@ import {
   WebSocketService, StorageService, AppLoaderService, DialogService, RestService, VmService, NetworkService, SystemGeneralService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { MessageService } from '../../common/entity/entity-form/services/message.service';
+import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { TranslateService } from '@ngx-translate/core';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { MatDialog } from '@angular/material/dialog';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { T } from 'app/translate-marker';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
-import { EntityUtils } from '../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import * as _ from 'lodash';
 import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';

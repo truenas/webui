@@ -29,7 +29,7 @@ import { Subject } from 'rxjs';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { ModalService } from 'app/services/modal.service';
-import { DiskFormComponent } from '../../disks/disk-form';
+import { DiskFormComponent } from 'app/pages/storage/disks/disk-form';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as filesize from 'filesize';
 

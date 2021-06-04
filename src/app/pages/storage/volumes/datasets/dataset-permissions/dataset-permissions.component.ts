@@ -10,12 +10,12 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
-import helptext from 'app/../helptext/storage/volumes/datasets/dataset-permissions';
+import helptext from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import {
   DialogService, StorageService, UserService, WebSocketService,
-} from 'app/../services';
-import { T } from 'app/../translate-marker';
-import { EntityJobComponent } from 'app/common/entity/entity-job/entity-job.component';
+} from 'app/services';
+import { T } from 'app/translate-marker';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 
 @UntilDestroy()
 @Component({
