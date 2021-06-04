@@ -2,8 +2,9 @@ import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum'
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Acl } from 'app/interfaces/acl.interface';
+import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { AlertService } from 'app/interfaces/alert-service.interface';
+import { AlertService, AlertServiceCreate } from 'app/interfaces/alert-service.interface';
 import { Alert } from 'app/interfaces/alert.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
@@ -54,7 +55,7 @@ import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 export type ApiDirectory = {
   // Active Directory
   'activedirectory.config': { params: any; response: any };
-  'activedirectory.update': { params: any; response: any };
+  'activedirectory.update': { params: [ActiveDirectoryUpdate]; response: any };
   'activedirectory.nss_info_choices': { params: any; response: any };
 
   // Acme
@@ -76,7 +77,7 @@ export type ApiDirectory = {
 
   // Alert Service
   'alertservice.update': { params: any; response: any };
-  'alertservice.create': { params: any; response: any };
+  'alertservice.create': { params: [AlertServiceCreate]; response: any };
   'alertservice.query': { params: QueryParams<AlertService>; response: AlertService[] };
   'alertservice.test': { params: any; response: any };
   'alertservice.delete': { params: any; response: any };
