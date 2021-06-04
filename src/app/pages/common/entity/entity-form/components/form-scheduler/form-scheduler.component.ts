@@ -285,7 +285,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
       this.minDate = this.zonedTime;
       this.maxDate = dateFns.endOfMonth(this.minDate);
       this.currentDate = this.minDate;
-      this.activeDate = dateFns.format(this.currentDate, 'yyyy-MM-dd[T]HH:mm:ssZZ');
+      this.activeDate = this.formatDateToTz(this.currentDate, this.timezone);
 
       this.disablePrevious = true;
     });
@@ -416,14 +416,35 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   }
 
   get zonedTime(): Date {
-    return dateFnsTz.utcToZonedTime(new Date().toISOString(), this.timezone);
+    return dateFnsTz.utcToZonedTime(dateFnsTz.zonedTimeToUtc(new Date(), Intl.DateTimeFormat().resolvedOptions().timeZone), this.timezone);
+  }
+
+  formatDateToTz(date: Date, timezone?: string): string {
+    if (!timezone) {
+      if (!this.timezone) {
+        timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      } else {
+        timezone = this.timezone;
+      }
+    }
+    return dateFnsTz.format(
+      dateFnsTz.utcToZonedTime(
+        dateFnsTz.zonedTimeToUtc(
+          date,
+          Intl.DateTimeFormat().resolvedOptions().timeZone,
+        ),
+        timezone,
+      ),
+      'yyyy-MM-dd\'T\'HH:mm:ssXXX',
+      { timeZone: timezone },
+    );
   }
 
   // check if candidate schedule is between the beginTime and endTime
   isValidSchedule(schedule: any): boolean {
     const scheduleArray = schedule.toString().split(' ');
     const now = this.zonedTime;
-    const timeStrArr = scheduleArray[4].splice(':');
+    const timeStrArr = scheduleArray[4].split(':');
     const time = new Date(
       now.getFullYear(), now.getMonth(), now.getDate(),
       timeStrArr[0], timeStrArr[1], timeStrArr[2],
@@ -461,9 +482,10 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
 
     const options: any = {
-      currentDate: adjusted,
+      currentDate: this.formatDateToTz(adjusted, this.timezone),
       endDate: this.maxDate, // max
       iterator: true,
+      tz: this.timezone,
     };
 
     const interval = parser.parseExpression(this.crontab, options);
@@ -498,9 +520,10 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
       // Modified crontab so we can find days;
       const crontabDays = '0 0  ' + spl[1] + ' ' + spl[2] + ' ' + spl[3] + ' ' + spl[4];
       const intervalDays = parser.parseExpression(crontabDays, {
-        currentDate: dateFns.subSeconds(this.minDate, 1),
+        currentDate: this.formatDateToTz(dateFns.subSeconds(this.minDate, 1), this.timezone),
         endDate: this.maxDate as any,
         iterator: true,
+        tz: this.timezone,
       });
 
       while (true) {
