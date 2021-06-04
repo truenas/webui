@@ -48,6 +48,8 @@ export class CatalogComponent implements OnInit {
   settingsEvent: Subject<CoreEvent>;
   private kubernetesForm: KubernetesSettingsComponent;
   private chartReleaseForm: ChartReleaseAddComponent;
+  private chartWizardComponent: ChartWizardComponent;
+
   protected utils: CommonUtils;
   imagePlaceholder = appImagePlaceholder;
   private noAvailableCatalog = true;
@@ -209,6 +211,7 @@ export class CatalogComponent implements OnInit {
   refreshForms(): void {
     this.kubernetesForm = new KubernetesSettingsComponent(this.ws, this.appLoaderService, this.dialogService, this.modalService, this.appService);
     this.chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
+    this.chartWizardComponent = new ChartWizardComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
   }
 
   checkForConfiguredPool(): void {
@@ -319,13 +322,11 @@ export class CatalogComponent implements OnInit {
     });
 
     if (catalogApp && catalogApp.name != ixChartApp) {
-      const chartWizardComponent = new ChartWizardComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
-      chartWizardComponent.setCatalogApp(catalogApp);
-      this.modalService.open('slide-in-form', chartWizardComponent);
+      this.chartWizardComponent.setCatalogApp(catalogApp);
+      this.modalService.open('slide-in-form', this.chartWizardComponent);
     } else {
-      const chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
-      chartReleaseForm.setGpuConfiguration(catalogApp);
-      this.modalService.open('slide-in-form', chartReleaseForm);
+      this.chartReleaseForm.setGpuConfiguration(catalogApp);
+      this.modalService.open('slide-in-form', this.chartReleaseForm);
     }
   }
 
