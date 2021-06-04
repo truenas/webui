@@ -1,7 +1,7 @@
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 
-export class AlertServiceCreate {
+export interface AlertServiceCreate {
   enabled: boolean;
   level: AlertLevel;
   name: string;
