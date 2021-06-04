@@ -1,6 +1,14 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
+import time
+from function import(
+    wait_on_element,
+    is_element_present,
+    attribute_value_exist,
+    wait_for_attribute_value,
+    wait_on_element_disappear,
+)
 from pytest_bdd import (
     given,
     scenario,
@@ -15,49 +23,74 @@ def test_create_pool_with_2_disks():
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in():
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
     """the browser is open, the FreeNAS URL and logged in."""
-    raise NotImplementedError
-
-
-@when('when the Pools page appears, click Then select Click create pool')
-def when_the_pools_page_appears_click_then_select_click_create_pool():
-    """when the Pools page appears, click Then select Click create pool."""
-    raise NotImplementedError
+    if nas_ip not in driver.current_url:
+        driver.get(f"http://{nas_ip}")
+        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
+    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
+        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
+        assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
+        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+    else:
+        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
 @when('you should be on the dashboard, click Storage on the side menu')
-def you_should_be_on_the_dashboard_click_storage_on_the_side_menu():
+def you_should_be_on_the_dashboard_click_storage_on_the_side_menu(driver):
     """you should be on the dashboard, click Storage on the side menu."""
-    raise NotImplementedError
+    assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    
+@then('the pools page appears click create pool')
+def the_pools_page_appears_click_create_pool(driver):
+    """the pools page appears click create pool."""
+    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 10, '//button[@ix-auto="button___POOL_CREATE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button___POOL_CREATE"]').click()
 
-
-@then('Create pool should appear while pool is being created')
-def create_pool_should_appear_while_pool_is_being_created():
-    """Create pool should appear while pool is being created."""
-    raise NotImplementedError
-
-
-@then('click create, On the Warning widget, click confirm checkbox, click CREATE POOL')
-def click_create_on_the_warning_widget_click_confirm_checkbox_click_create_pool():
-    """click create, On the Warning widget, click confirm checkbox, click CREATE POOL."""
-    raise NotImplementedError
+@then('the Pool Manager appears, enter the tank for pool name')
+def the_pool_manager_appears_enter_the_tank_for_pool_name(driver):
+    """the Pool Manager appears, enter the tank for pool name."""
+    assert wait_on_element(driver, 7, '//div[contains(.,"Pool Manager")]')
+    assert wait_on_element(driver, 10, '//input[@id="pool-manager__name-input-field"]')
+    driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys('tank')
 
 
 @then('click sdb1 and sdb22 checkbox, press the right arrow under Data VDevs')
-def click_sdb1_and_sdb22_checkbox_press_the_right_arrow_under_data_vdevs():
+def click_sdb1_and_sdb22_checkbox_press_the_right_arrow_under_data_vdevs(driver):
     """click sdb1 and sdb22 checkbox, press the right arrow under Data VDevs."""
-    raise NotImplementedError
+    assert wait_on_element(driver, 7, '//mat-checkbox[@name="disk_0_checkbox"]', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[@name="disk_0_checkbox"]').click()
+    assert wait_on_element(driver, 7, '//mat-checkbox[@name="disk_1_checkbox"]', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[@name="disk_1_checkbox"]').click()
+    assert wait_on_element(driver, 5, '//button[@id="vdev__add-button"]', 'clickable')
+    driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
+    assert wait_on_element(driver, 5, '//button[@id="pool-manager__create-button"]', 'clickable')
+    driver.find_element_by_xpath('//button[@id="pool-manager__create-button"]').click()
 
+@then('click create, On the Warning widget, click confirm checkbox, click CREATE POOL')
+def click_create_on_the_warning_widget_click_confirm_checkbox_click_create_pool(driver):
+    """click create, On the Warning widget, click confirm checkbox, click CREATE POOL."""
+    assert wait_on_element(driver, 10, '//h1[contains(.,"Warning")]')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@name="confirm_checkbox"]', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[@name="confirm_checkbox"]').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
 
-@then('when the Pool Manager appears, enter the tank for pool name')
-def when_the_pool_manager_appears_enter_the_tank_for_pool_name():
-    """when the Pool Manager appears, enter the tank for pool name."""
-    raise NotImplementedError
+@then('Create pool should appear while pool is being created')
+def create_pool_should_appear_while_pool_is_being_created(driver):
+    """Create pool should appear while pool is being created."""
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Create Pool")]')
+    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
 
 
 @then('you should be returned to the list of pools and tank should appear in the list')
-def you_should_be_returned_to_the_list_of_pools_and_tank_should_appear_in_the_list():
+def you_should_be_returned_to_the_list_of_pools_and_tank_should_appear_in_the_list(driver):
     """you should be returned to the list of pools and tank should appear in the list."""
-    raise NotImplementedError
-
+    assert wait_on_element(driver, 7, '//div[contains(.,"tank")]')
