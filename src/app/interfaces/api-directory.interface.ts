@@ -248,6 +248,7 @@ export type ApiDirectory = {
   'filesystem.get_default_acl': { params: [DefaultAclType]; response: any };
   'filesystem.statfs': { params: any; response: any };
   'filesystem.getacl': { params: [/* path */ string]; response: Acl };
+  'filesystem.setacl': { params: any; response: any };
 
   // Failover
   'failover.licensed': { params: void; response: boolean };
