@@ -1701,7 +1701,7 @@ export class VolumesListTableConfig {
 
   getTimestamp(): string {
     const dateTime = new Date();
-    return format(dateTime, 'YYYY-MM-DD_HH-mm');
+    return format(dateTime, 'yyyy-MM-dd_HH-mm');
   }
 
   dataHandler(data: any): TreeNode {
