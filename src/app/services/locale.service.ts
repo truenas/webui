@@ -54,8 +54,20 @@ export class LocaleService {
           this.target.next({ name: 'SubmitComplete', sender: this });
           this.isWaiting = false;
         }
-        this.dateFormat = evt.data.dateFormat;
-        this.timeFormat = evt.data.timeFormat;
+        this.dateFormat = evt.data.dateFormat
+          .replace('YYYY', 'yyyy')
+          .replace('YY', 'y')
+          .replace('DD', 'dd')
+          .replace('D', 'd')
+          .replace(' a', 'aaaaa\'m\'')
+          .replace(' A', ' aa');
+        this.timeFormat = evt.data.timeFormat
+          .replace('YYYY', 'yyyy')
+          .replace('YY', 'y')
+          .replace('DD', 'dd')
+          .replace('D', 'd')
+          .replace(' a', 'aaaaa\'m\'')
+          .replace(' A', ' aa');
         this.storeDateTimeFormat(this.dateFormat, this.timeFormat);
         this.dateTimeFormatChange$.next();
       });
@@ -125,8 +137,20 @@ export class LocaleService {
   }
 
   saveDateTimeFormat(dateFormat: any, timeFormat: any): void {
-    this.dateFormat = dateFormat;
-    this.timeFormat = timeFormat;
+    this.dateFormat = dateFormat
+      .replace('YYYY', 'yyyy')
+      .replace('YY', 'y')
+      .replace('DD', 'dd')
+      .replace('D', 'd')
+      .replace(' a', 'aaaaa\'m\'')
+      .replace(' A', ' aa');
+    this.timeFormat = timeFormat
+      .replace('YYYY', 'yyyy')
+      .replace('YY', 'y')
+      .replace('DD', 'dd')
+      .replace('D', 'd')
+      .replace(' a', 'aaaaa\'m\'')
+      .replace(' A', ' aa');
     this.storeDateTimeFormat(this.dateFormat, this.timeFormat);
     this.dateTimeFormatChange$.next();
 
