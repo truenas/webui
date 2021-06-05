@@ -36,3 +36,37 @@ export enum DefaultAclType {
   Restricted = 'RESTRICTED',
   Home = 'HOME',
 }
+
+export enum DAclNfs4Tag {
+  Owner = 'owner@',
+  Group = 'group@',
+  Everyone = 'everyone@',
+  User = 'USER',
+  UserGroup = 'GROUP',
+}
+
+export enum DAclType {
+  Allow = 'ALLOW',
+  Deny = 'DENY',
+}
+
+export enum DAclPermissionsBasic {
+  FullControl = 'FULL_CONTROL',
+  Modify = 'MODIFY',
+  Read = 'READ',
+  Traverse = 'TRAVERSE',
+}
+
+export enum DAclFlagsBasic {
+  Inherit = 'INHERIT',
+  NoInherit = 'NOINHERIT',
+}
+
+export enum DAclPosix1eTag {
+  UserObj = 'USER_OBJ',
+  GroupObj = 'GROUP_OBJ',
+  User = 'USER',
+  Group = 'GROUP',
+  Other = 'OTHER',
+  Mask = 'MASK',
+}

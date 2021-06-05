@@ -2,7 +2,7 @@ import { DefaultAclType } from 'app/enums/acl-type.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { Acl } from 'app/interfaces/acl.interface';
+import { Acl, SetAcl } from 'app/interfaces/acl.interface';
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AlertService, AlertServiceCreate } from 'app/interfaces/alert-service.interface';
@@ -248,7 +248,7 @@ export type ApiDirectory = {
   'filesystem.get_default_acl': { params: [DefaultAclType]; response: any };
   'filesystem.statfs': { params: any; response: any };
   'filesystem.getacl': { params: [/* path */ string]; response: Acl };
-  'filesystem.setacl': { params: any; response: any };
+  'filesystem.setacl': { params: [SetAcl]; response: any };
 
   // Failover
   'failover.licensed': { params: void; response: boolean };
