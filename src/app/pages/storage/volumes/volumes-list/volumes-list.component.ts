@@ -1784,7 +1784,6 @@ export class VolumesListTableConfig {
   }
 }
 
-@UntilDestroy()
 @Component({
   selector: 'app-volumes-list',
   styleUrls: ['./volumes-list.component.scss'],
