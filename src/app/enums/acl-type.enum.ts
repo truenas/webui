@@ -24,3 +24,15 @@ export enum AclMode {
   Passthrough = 'PASSTHROUGH',
   Discard = 'DISCARD',
 }
+
+export enum DefaultAclType {
+  Nfs4Open = 'NFS4_OPEN',
+  Nfs4Restricted = 'NFS4_RESTRICTED',
+  Nfs4Home = 'NFS4_HOME',
+  Nfs4DomainHome = 'NFS4_DOMAIN_HOME',
+  PosixOpen = 'POSIX_OPEN',
+  PosixRestricted = 'POSIX_RESTRICTED',
+  Open = 'OPEN',
+  Restricted = 'RESTRICTED',
+  Home = 'HOME',
+}

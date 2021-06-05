@@ -1,3 +1,4 @@
+import { DefaultAclType } from 'app/enums/acl-type.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -20,6 +21,8 @@ import {
   CreateDnsAuthenticator,
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
+import { DynamicDnsUpdate } from 'app/interfaces/dynamic-dns.interface';
+import { FailoverUpdate } from 'app/interfaces/failover.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Group } from 'app/interfaces/group.interface';
 import {
@@ -204,7 +207,7 @@ export type ApiDirectory = {
 
   // DynDNS
   'dyndns.provider_choices': { params: any; response: any };
-  'dyndns.update': { params: any; response: any };
+  'dyndns.update': { params: [DynamicDnsUpdate]; response: any };
   'dyndns.config': { params: any; response: any };
 
   // Datastore
@@ -242,7 +245,7 @@ export type ApiDirectory = {
   'filesystem.listdir': { params: any; response: any };
   'filesystem.stat': { params: [/* path */ string]; response: FileSystemStat };
   'filesystem.default_acl_choices': { params: any; response: any };
-  'filesystem.get_default_acl': { params: any; response: any };
+  'filesystem.get_default_acl': { params: [DefaultAclType]; response: any };
   'filesystem.statfs': { params: any; response: any };
   'filesystem.getacl': { params: [/* path */ string]; response: Acl };
 
@@ -251,7 +254,7 @@ export type ApiDirectory = {
   'failover.upgrade_pending': { params: any; response: any };
   'failover.sync_from_peer': { params: any; response: any };
   'failover.status': { params: any; response: any };
-  'failover.update': { params: any; response: any };
+  'failover.update': { params: [FailoverUpdate]; response: any };
   'failover.force_master': { params: any; response: any };
   'failover.call_remote': { params: any; response: any };
   'failover.get_ips': { params: any; response: string[] };
