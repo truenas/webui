@@ -4,11 +4,12 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+import {
+  UntilDestroy, untilDestroyed,
+} from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import * as _ from 'lodash';
-
 import { combineLatest, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -20,6 +21,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import add_edit_helptext from 'app/helptext/vm/devices/device-add-edit';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { GpuDevice } from 'app/interfaces/gpu-device.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -34,9 +36,7 @@ import {
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
-
 import { VmService } from 'app/services/vm.service';
-
 import { T } from 'app/translate-marker';
 
 @UntilDestroy()
@@ -45,8 +45,8 @@ import { T } from 'app/translate-marker';
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [VmService],
 })
-export class VMWizardComponent {
-  protected addWsCall = 'vm.create';
+export class VMWizardComponent implements WizardConfiguration {
+  addWsCall: 'vm.create' = 'vm.create';
   summary: any = {};
   isLinear = true;
   firstFormGroup: FormGroup;
@@ -71,7 +71,7 @@ export class VMWizardComponent {
   res: any;
   private productType = window.localStorage.getItem('product_type') as ProductType;
 
-  protected wizardConfig: Wizard[] = [
+  wizardConfig: Wizard[] = [
     {
       label: helptext.os_label,
       fieldConfig: [

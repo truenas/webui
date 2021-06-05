@@ -8,17 +8,15 @@ import { Subscription } from 'rxjs';
 
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-
 import { SystemGeneralService, WebSocketService } from 'app/services';
-
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
@@ -30,9 +28,8 @@ import { T } from 'app/translate-marker';
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [SystemGeneralService],
 })
-
-export class CertificateAddComponent {
-  protected addWsCall = 'certificate.create';
+export class CertificateAddComponent implements WizardConfiguration {
+  addWsCall: 'certificate.create' = 'certificate.create';
   protected dialogRef: any;
   private entityForm: any;
   private CSRList: any[] = [];
@@ -40,9 +37,10 @@ export class CertificateAddComponent {
   private getType = new Subscription();
   private type: any;
   hideCancel = true;
-  private summary: any = {};
+  isLinear = true;
+  summary: any = {};
 
-  entityWizard: any;
+  entityWizard: EntityWizardComponent;
   private currentStep = 0;
 
   wizardConfig: Wizard[] = [

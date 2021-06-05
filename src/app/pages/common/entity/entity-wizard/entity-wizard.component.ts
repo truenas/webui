@@ -13,17 +13,13 @@ import { TranslateService } from '@ngx-translate/core';
 
 import * as _ from 'lodash';
 
-import { Subscription } from 'rxjs';
-
 import { RestService, WebSocketService, DialogService } from 'app/services';
-
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
 
 import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FieldRelationService } from '../entity-form/services/field-relation.service';
-
 import { EntityUtils } from '../utils';
 
 @UntilDestroy()
@@ -40,7 +36,6 @@ export class EntityWizardComponent implements OnInit {
 
   formGroup: FormGroup;
   showSpinner = false;
-  busy: Subscription;
 
   saveSubmitText = T('Submit');
   customNextText = T('Next');
@@ -49,7 +44,7 @@ export class EntityWizardComponent implements OnInit {
 
   constructor(protected rest: RestService, protected ws: WebSocketService,
     private formBuilder: FormBuilder, private entityFormService: EntityFormService,
-    protected loader: AppLoaderService, protected fieldRelationService: FieldRelationService,
+    public loader: AppLoaderService, protected fieldRelationService: FieldRelationService,
     protected router: Router, protected aroute: ActivatedRoute,
     private dialog: DialogService, protected translate: TranslateService) {
 
@@ -179,7 +174,7 @@ export class EntityWizardComponent implements OnInit {
 
     this.clearErrors();
     if (this.conf.customSubmit) {
-      this.busy = this.conf.customSubmit(value);
+      this.conf.customSubmit(value);
     } else {
       this.loader.open();
 

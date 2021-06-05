@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 
 import helptext from 'app/helptext/jails/jail-configuration';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
@@ -19,7 +20,6 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   RestService, WebSocketService, JailService, NetworkService, DialogService,
 } from 'app/services';
-
 import { T } from 'app/translate-marker';
 
 @UntilDestroy()
@@ -28,18 +28,18 @@ import { T } from 'app/translate-marker';
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [JailService, NetworkService],
 })
-export class JailWizardComponent {
-  protected addWsCall = 'jail.create';
+export class JailWizardComponent implements WizardConfiguration {
+  addWsCall: 'jail.create' = 'jail.create';
   route_success: string[] = ['jails'];
   summary: any = {};
   summaryTitle = 'Jail Summary';
   objectKeys = Object.keys;
-  entityWizard: any;
+  entityWizard: EntityWizardComponent;
   protected namesInUse: string[] = [];
 
   isLinear = true;
   firstFormGroup: FormGroup;
-  protected custActions: any[] = [
+  custActions: any[] = [
     {
       id: 'advanced_add',
       name: T('Advanced Jail Creation'),
@@ -65,7 +65,7 @@ export class JailWizardComponent {
     ],
   };
 
-  protected wizardConfig: Wizard[] = [{
+  wizardConfig: Wizard[] = [{
     label: helptext.wizard_step1_label,
     fieldConfig: [{
       type: 'input',

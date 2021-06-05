@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
-
 import {
-  Validators, FormControl, ValidationErrors, ValidatorFn,
+  Validators, FormControl, ValidationErrors, ValidatorFn, FormGroup,
 } from '@angular/forms';
-
 import { Router } from '@angular/router';
 
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -12,15 +10,14 @@ import * as _ from 'lodash';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing/iscsi/iscsi';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard';
-
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  IscsiService, WebSocketService, NetworkService, StorageService,
-  DialogService,
+  IscsiService, WebSocketService, NetworkService, StorageService, DialogService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { CloudCredentialService } from 'app/services/cloudcredential.service';
@@ -31,7 +28,7 @@ import { CloudCredentialService } from 'app/services/cloudcredential.service';
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [IscsiService, CloudCredentialService, NetworkService, StorageService],
 })
-export class IscsiWizardComponent {
+export class IscsiWizardComponent implements WizardConfiguration {
   route_success: string[] = ['sharing', 'iscsi'];
   isLinear = true;
   summaryTitle = 'iSCSI Summary';
@@ -59,7 +56,7 @@ export class IscsiWizardComponent {
   summary: any;
   protected namesInUse: string[] = [];
 
-  protected wizardConfig: Wizard[] = [
+  wizardConfig: Wizard[] = [
     {
       label: helptext_sharing_iscsi.step1_label,
       fieldConfig: [
@@ -501,7 +498,7 @@ export class IscsiWizardComponent {
     'secret_confirm',
   ];
 
-  protected entityWizard: any;
+  protected entityWizard: EntityWizardComponent;
   protected disablePortalGroup = true;
   protected disableAuth = true;
   protected disableAuthGroup = true;
@@ -565,39 +562,39 @@ export class IscsiWizardComponent {
       }
     });
 
-    this.entityWizard.formArray.controls[0].controls['type'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([0]).get('type').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.formTypeUpdate(value);
     });
 
-    this.entityWizard.formArray.controls[0].controls['disk'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
-      const disableZvolGroup = !(value == 'NEW' && this.entityWizard.formArray.controls[0].controls['type'].value == 'DISK');
+    this.entityWizard.formArray.get([0]).get('disk').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+      const disableZvolGroup = !(value == 'NEW' && this.entityWizard.formArray.get([0]).get('type').value == 'DISK');
       this.disablefieldGroup(this.zvolFieldGroup, disableZvolGroup, 0);
     });
 
-    this.entityWizard.formArray.controls[0].controls['dataset'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([0]).get('dataset').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value) {
         this.getDatasetValue(value);
       }
     });
 
-    this.entityWizard.formArray.controls[0].controls['usefor'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([0]).get('usefor').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.formUseforValueUpdate(value);
     });
 
-    this.entityWizard.formArray.controls[0].controls['type'].setValue('DISK');
-    this.entityWizard.formArray.controls[0].controls['usefor'].setValue('vmware');
+    this.entityWizard.formArray.get([0]).get('type').setValue('DISK');
+    this.entityWizard.formArray.get([0]).get('usefor').setValue('vmware');
 
-    this.entityWizard.formArray.controls[0].controls['target'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([0]).get('target').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value !== 'NEW' && !this.wizardConfig[1].skip && !this.wizardConfig[2].skip) {
         this.wizardConfig[1].skip = true;
         this.wizardConfig[2].skip = true;
-        this.entityWizard.formArray.controls[1].controls['portal'].clearValidators();
-        this.entityWizard.formArray.controls[1].controls['portal'].updateValueAndValidity();
+        this.entityWizard.formArray.get([1]).get('portal').clearValidators();
+        this.entityWizard.formArray.get([1]).get('portal').updateValueAndValidity();
       } else if (value === 'NEW' && this.wizardConfig[1].skip && this.wizardConfig[2].skip) {
         this.wizardConfig[1].skip = false;
         this.wizardConfig[2].skip = false;
-        this.entityWizard.formArray.controls[1].controls['portal'].setValidators([Validators.required]);
-        this.entityWizard.formArray.controls[1].controls['portal'].updateValueAndValidity();
+        this.entityWizard.formArray.get([1]).get('portal').setValidators([Validators.required]);
+        this.entityWizard.formArray.get([1]).get('portal').updateValueAndValidity();
       }
     });
   }
@@ -634,24 +631,24 @@ export class IscsiWizardComponent {
       }
     });
 
-    this.entityWizard.formArray.controls[1].controls['portal'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([1]).get('portal').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.disablePortalGroup = value !== 'NEW';
       this.disablefieldGroup(this.portalFieldGroup, this.disablePortalGroup, 1);
     });
 
-    this.entityWizard.formArray.controls[1].controls['discovery_authmethod'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([1]).get('discovery_authmethod').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.disableAuth = !(((value === 'CHAP' || value === 'CHAP_MUTUAL') && !this.disablePortalGroup));
 
       authGroupField.required = !this.disableAuth;
       if (this.disableAuth) {
-        this.entityWizard.formArray.controls[1].controls['discovery_authgroup'].clearValidators();
+        this.entityWizard.formArray.get([1]).get('discovery_authgroup').clearValidators();
       } else {
-        this.entityWizard.formArray.controls[1].controls['discovery_authgroup'].setValidators([Validators.required]);
+        this.entityWizard.formArray.get([1]).get('discovery_authgroup').setValidators([Validators.required]);
       }
-      this.entityWizard.formArray.controls[1].controls['discovery_authgroup'].updateValueAndValidity();
+      this.entityWizard.formArray.get([1]).get('discovery_authgroup').updateValueAndValidity();
     });
 
-    this.entityWizard.formArray.controls[1].controls['discovery_authgroup'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([1]).get('discovery_authgroup').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.disableAuthGroup = value !== 'NEW';
       this.disablefieldGroup(this.authAccessFieldGroup, this.disableAuthGroup, 1);
     });
@@ -659,7 +656,7 @@ export class IscsiWizardComponent {
 
   summaryInit(): void {
     for (let step = 0; step < 3; step++) {
-      Object.entries(this.entityWizard.formArray.controls[step].controls).forEach(([name, control]) => {
+      Object.entries((this.entityWizard.formArray.get([step]) as FormGroup).controls).forEach(([name, control]) => {
         if (name in this.summaryObj) {
           (<FormControl>control).valueChanges.pipe(untilDestroyed(this)).subscribe(((value) => {
             if (value == undefined) {
@@ -742,7 +739,7 @@ export class IscsiWizardComponent {
         const control: any = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
         control['isHidden'] = disabled;
         control.disabled = disabled;
-        disabled ? this.entityWizard.formArray.controls[stepIndex].controls[field].disable() : this.entityWizard.formArray.controls[stepIndex].controls[field].enable();
+        disabled ? this.entityWizard.formArray.get([stepIndex]).get(field).disable() : this.entityWizard.formArray.get([stepIndex]).get(field).enable();
         if (disabled) {
           this.summaryObj[field] = null;
         }
@@ -760,7 +757,7 @@ export class IscsiWizardComponent {
   formUseforValueUpdate(selected: any): void {
     const settings = _.find(this.defaultUseforSettings, { key: selected });
     for (const i in settings.values) {
-      const controller = this.entityWizard.formArray.controls[0].controls[i];
+      const controller = this.entityWizard.formArray.get([0]).get(i);
       controller.setValue(settings.values[i]);
     }
   }
@@ -778,7 +775,7 @@ export class IscsiWizardComponent {
           for (const i in this.zvolFieldGroup) {
             const fieldName = this.zvolFieldGroup[i];
             if (fieldName in datasets[0]) {
-              const controller = this.entityWizard.formArray.controls[0].controls[fieldName];
+              const controller = this.entityWizard.formArray.get([0]).get(fieldName);
               controller.setValue((datasets[0][fieldName as keyof Dataset] as any).value);
             }
           }
@@ -787,7 +784,7 @@ export class IscsiWizardComponent {
     );
     this.ws.call('pool.dataset.recommended_zvol_blocksize', [pool]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
-        this.entityWizard.formArray.controls[0].controls['volblocksize'].setValue(res);
+        this.entityWizard.formArray.get([0]).get('volblocksize').setValue(res);
       },
       () => {
         datasetField.hasErrors = true;
@@ -968,7 +965,7 @@ export class IscsiWizardComponent {
 
   blurFilesize(parent: any): void {
     if (parent.entityWizard) {
-      parent.entityWizard.formArray.controls[0].controls['filesize'].setValue(parent.storageService.humanReadable);
+      parent.entityWizard.formArray.get([0]).get('filesize').setValue(parent.storageService.humanReadable);
     }
   }
 }

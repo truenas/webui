@@ -4,23 +4,23 @@ import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import {
+  UntilDestroy, untilDestroyed,
+} from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
-
 import { EntityUtils } from 'app/pages/common/entity/utils';
-
 import { RestService, WebSocketService, DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 
@@ -30,9 +30,7 @@ import { T } from 'app/translate-marker';
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [],
 })
-export class VolumeImportWizardComponent {
-  // public route_success: string[] = ['storage'];
-  route_create: string[] = ['storage', 'manager'];
+export class VolumeImportWizardComponent implements WizardConfiguration {
   summary: any = {};
   isLinear = true;
   firstFormGroup: FormGroup;
@@ -40,12 +38,12 @@ export class VolumeImportWizardComponent {
   summaryTitle = 'Pool Import Summary';
   subs: any;
   saveSubmitText = T('Import');
-  entityWizard: any;
+  entityWizard: EntityWizardComponent;
   protected productType: ProductType;
   protected importIndex = 2;
   title: string;
 
-  protected wizardConfig: Wizard[] = [{
+  wizardConfig: Wizard[] = [{
     label: helptext.is_new_main_label,
     fieldConfig: [
       {
@@ -185,7 +183,7 @@ export class VolumeImportWizardComponent {
   protected passphrase_fg: FormGroup;
   protected guid: FieldConfig;
   protected pool: any;
-  protected hideCancel = true;
+  hideCancel = true;
 
   constructor(protected rest: RestService, protected ws: WebSocketService,
     private router: Router, protected loader: AppLoaderService,

@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 
 import { helptext_system_ca } from 'app/helptext/system/ca';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
@@ -22,16 +23,14 @@ import { T } from 'app/translate-marker';
   providers: [SystemGeneralService],
 })
 
-export class CertificateAuthorityAddComponent {
-  protected addWsCall: 'certificateauthority.create' = 'certificateauthority.create';
-  protected isEntity = true;
+export class CertificateAuthorityAddComponent implements WizardConfiguration {
+  addWsCall: 'certificateauthority.create' = 'certificateauthority.create';
   private title: string;
   hideCancel = true;
 
-  private isLinear = true;
-  private summary: any = {};
-
-  entityWizard: any;
+  isLinear = true;
+  summary: any = {};
+  entityWizard: EntityWizardComponent;
   private currentStep = 0;
 
   wizardConfig: Wizard[] = [
@@ -565,7 +564,7 @@ export class CertificateAuthorityAddComponent {
   identifier: any;
   usageField: FieldConfig;
   private currenProfile: any;
-  private entityForm: any;
+  private entityForm: EntityWizardComponent;
 
   constructor(protected ws: WebSocketService, private modalService: ModalService,
     protected loader: AppLoaderService, private dialogService: DialogService,
@@ -656,7 +655,7 @@ export class CertificateAuthorityAddComponent {
     });
   }
 
-  afterInit(entity: any): void {
+  afterInit(entity: EntityWizardComponent): void {
     this.entityForm = entity;
     this.title = helptext_system_ca.add.title;
 
