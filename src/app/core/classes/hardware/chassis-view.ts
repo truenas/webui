@@ -1,5 +1,4 @@
 import { Container, Sprite } from 'pixi.js';
-
 import {
   tween,
   easing,
@@ -12,7 +11,8 @@ import { CoreEvent } from 'app/interfaces/events';
 import { DriveTray } from './drivetray';
 
 // TODO: See if can be removed.
-// eslint-disable-next-line unused-imports/no-unused-imports
+// eslint-disable-next-line
+import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
 
 export interface Range {
   start: number;
