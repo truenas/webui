@@ -3,11 +3,9 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { mergeMap } from 'rxjs/operators';
-
 import helptext from 'app/helptext/account/members';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
-
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { WebSocketService } from 'app/services/ws.service';
 

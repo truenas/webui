@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-
 import { AppAccordionDirective } from './app-accordion.directive';
 import { EqualValidatorDirective } from './equal-validator.directive';
 import { FontSizeDirective } from './font-size.directive';

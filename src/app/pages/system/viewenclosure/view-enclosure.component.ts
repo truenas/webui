@@ -2,10 +2,8 @@ import {
   Component, AfterContentInit, OnDestroy, ViewChild, ElementRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
-
 import { ErrorMessage } from 'app/core/classes/ix-interfaces';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
 import { CoreService } from 'app/core/services/core.service';

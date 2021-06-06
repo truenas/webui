@@ -7,10 +7,8 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
-
 import { CoreService } from 'app/core/services/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { EntityFormEmbeddedComponent } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
@@ -18,7 +16,6 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RestService, WebSocketService } from 'app/services/';
 import { ThemeService, Theme, DefaultTheme } from 'app/services/theme/theme.service';
-
 import { T } from 'app/translate-marker';
 
 interface UserPreferences {

@@ -2,21 +2,16 @@ import {
   Component, Input, AfterContentInit, OnChanges, SimpleChanges, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-
 import { DomSanitizer } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Application, Container,
 } from 'pixi.js';
-
 import {
   tween, styler, value, keyframes,
 } from 'popmotion';
-
 import { Subject } from 'rxjs';
-
 import { Chassis } from 'app/core/classes/hardware/chassis';
-
 import { ChassisView } from 'app/core/classes/hardware/chassis-view';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { E16 } from 'app/core/classes/hardware/e16';
@@ -31,7 +26,6 @@ import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { CoreService } from 'app/core/services/core.service';
-
 import { Temperature } from 'app/core/services/disk-temperature.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';

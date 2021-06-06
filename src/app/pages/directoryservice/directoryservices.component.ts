@@ -2,9 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-
 import helptext from 'app/helptext/directoryservice/dashboard';
 import idmapHelptext from 'app/helptext/directoryservice/idmap';
 import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
@@ -20,7 +18,6 @@ import {
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-
 import { EmptyConfig } from '../common/entity/entity-empty/entity-empty.component';
 import { ActiveDirectoryComponent } from './activedirectory/activedirectory.component';
 import { IdmapFormComponent } from './idmap/idmap-form.component';

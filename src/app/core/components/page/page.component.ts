@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
-
 import { Subject } from 'rxjs';
-
 import { CoreService } from 'app/core/services/core.service';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreEvent } from 'app/interfaces/events';

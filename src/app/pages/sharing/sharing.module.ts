@@ -2,19 +2,13 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 import { TranslateModule } from '@ngx-translate/core';
-
 import { MaterialModule } from 'app/appMaterial.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-
 import { JailService } from 'app/services';
-
 import { UserService } from 'app/services/user.service';
-
 import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
 import { EntityModule } from '../common/entity/entity.module';
-
 import { SharesDashboardComponent } from './components/shares-dashboard/shares-dashboard.component';
 import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form';
 import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list';

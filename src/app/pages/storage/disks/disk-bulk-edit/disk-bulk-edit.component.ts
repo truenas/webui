@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import helptext from 'app/helptext/storage/disks/disks';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

@@ -3,9 +3,7 @@ import {
 } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialogRef } from '@angular/material/dialog';
-
 import { TranslateService } from '@ngx-translate/core';
-
 import { Interval } from 'app/interfaces/timeout.interface';
 
 @Component({

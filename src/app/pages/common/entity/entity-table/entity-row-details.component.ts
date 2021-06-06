@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-
 import { EntityAction, EntityRowDetails } from './entity-row-details.interface';
 
 @Component({

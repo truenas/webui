@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';

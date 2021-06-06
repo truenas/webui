@@ -4,11 +4,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import * as _ from 'lodash';
-
 import { take } from 'rxjs/operators';
-
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';

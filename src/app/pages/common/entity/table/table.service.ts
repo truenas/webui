@@ -2,14 +2,10 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import { DialogService, AppLoaderService } from 'app/services';
-
 import { T } from 'app/translate-marker';
-
 import { EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
-
 import { EntityUtils } from '../utils';
 
 const stateClass = {

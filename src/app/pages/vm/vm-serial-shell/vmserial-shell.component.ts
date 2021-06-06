@@ -5,14 +5,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import * as FontFaceObserver from 'fontfaceobserver';
 import { Observable } from 'rxjs';
-
 import { Terminal } from 'xterm';
-
 import { FitAddon } from 'xterm-addon-fit';
-
 import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
 import helptext from 'app/helptext/vm/vm-cards/vm-cards';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';

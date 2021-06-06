@@ -1,9 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-
 import { MatDialog } from '@angular/material/dialog';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-
 import { latestVersion } from 'app/constants/catalog.constants';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/apps/apps';
@@ -16,7 +13,6 @@ import { DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
-
 import { PullImageFormComponent } from '../forms/pull-image-form.component';
 
 @UntilDestroy()

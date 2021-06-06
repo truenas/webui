@@ -3,12 +3,9 @@ import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import * as _ from 'lodash';
-
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -23,14 +20,12 @@ import { MessageService } from 'app/pages/common/entity/entity-form/services/mes
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   WebSocketService, StorageService, AppLoaderService, DialogService, RestService, VmService, NetworkService, SystemGeneralService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-
 import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
 
 interface DisplayWebUri {

@@ -1,9 +1,7 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { DeviceAddComponent } from '../vm/devices/device-add/device-add.component';
 import { DeviceEditComponent } from '../vm/devices/device-edit/device-edit.component';
-
 import { DeviceListComponent } from '../vm/devices/device-list';
 import { VmFormComponent } from '../vm/vm-form';
 import { VMListComponent } from '../vm/vm-list/vm-list.component';

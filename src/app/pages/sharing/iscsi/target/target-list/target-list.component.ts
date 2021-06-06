@@ -1,12 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-
 import { ActivatedRoute, Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
 import { AppLoaderService, ModalService, WebSocketService } from 'app/services';

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import {
@@ -10,7 +9,6 @@ import {
 import {
   catchError, map, switchMap, take, tap, debounceTime,
 } from 'rxjs/operators';
-
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import globalHelptext from 'app/helptext/global-helptext';

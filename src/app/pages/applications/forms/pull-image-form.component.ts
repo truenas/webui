@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-
 import { latestVersion } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';

@@ -4,18 +4,14 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
-
 import { MaterialModule } from 'app/appMaterial.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-
 import { EntityModule } from '../common/entity/entity.module';
-
 import { BackupCredentialsComponent } from './backup-credentials/backup-credentials.component';
 import { CloudCredentialsFormComponent } from './backup-credentials/forms/cloud-credentials-form.component';
 import { SshConnectionsFormComponent } from './backup-credentials/forms/ssh-connections-form.component';
 import { SshKeypairsFormComponent } from './backup-credentials/forms/ssh-keypairs-form.component';
 import { CertificatesDashComponent } from './certificates-dash/certificates-dash.component';
-
 import { AcmednsFormComponent } from './certificates-dash/forms/acmedns-form.component';
 import { CertificateAuthorityAddComponent } from './certificates-dash/forms/ca-add.component';
 import { CertificateAuthorityEditComponent } from './certificates-dash/forms/ca-edit.component';

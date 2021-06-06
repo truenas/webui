@@ -1,6 +1,5 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { JailFormComponent } from '../jails/jail-form/jail-form.component';
 import { PluginAddComponent } from './plugin-add/plugin-add.component';
 import { PluginsComponent } from './plugins.component';

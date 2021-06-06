@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 import helptext from 'app/helptext/directoryservice/kerberossettings';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';

@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
 import helptext from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';

@@ -9,7 +9,6 @@ import {
 import { ColdSubscription } from 'popmotion/src/action/types';
 import { Subject } from 'rxjs';
 import { Styler } from 'stylefire/lib/styler/types';
-
 import { CoreService } from '../services/core.service';
 
 const transformMap = transform.transformMap;

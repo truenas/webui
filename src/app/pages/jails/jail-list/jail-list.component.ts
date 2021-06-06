@@ -3,9 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import * as _ from 'lodash';
-
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import helptext from 'app/helptext/jails/jails-list';
 import { Pool } from 'app/interfaces/pool.interface';

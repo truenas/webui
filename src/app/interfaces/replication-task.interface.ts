@@ -12,7 +12,6 @@ import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
-
 import { DataProtectionTaskState } from './data-protection-task-state.interface';
 
 export interface ReplicationTask {

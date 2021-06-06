@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import { CoreService } from 'app/core/services/core.service';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';

@@ -1,5 +1,4 @@
 import { Validators } from '@angular/forms';
-
 import { VmCpuMode } from 'app/enums/vm.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';

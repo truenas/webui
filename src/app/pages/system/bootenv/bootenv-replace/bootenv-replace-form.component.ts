@@ -1,15 +1,11 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
 import { Observable } from 'rxjs';
-
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RestService, WebSocketService } from 'app/services';
 

@@ -1,5 +1,4 @@
 import { Validators } from '@angular/forms';
-
 import { T } from 'app/translate-marker';
 
 const passphrase_msg = T(' a passphrase invalidates an existing pool \

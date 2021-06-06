@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
-
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/network/configuration/configuration';
@@ -13,7 +11,6 @@ import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-set
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-
 import { ipv4Validator, ipv6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { TooltipsService, WebSocketService } from 'app/services';
 

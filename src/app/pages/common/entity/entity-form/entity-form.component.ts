@@ -20,9 +20,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-
 import { Observable } from 'rxjs';
-
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import {
@@ -30,9 +28,7 @@ import {
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
-
 import { T } from 'app/translate-marker';
-
 import { EntityTemplateDirective } from '../entity-template.directive';
 import { EntityUtils } from '../utils';
 import { FieldConfig } from './models/field-config.interface';

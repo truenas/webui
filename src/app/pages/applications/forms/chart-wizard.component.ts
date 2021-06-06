@@ -1,9 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
-
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from 'app/helptext/apps/apps';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
@@ -13,7 +11,6 @@ import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/ent
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
-
 import { ApplicationsService } from '../applications.service';
 
 @UntilDestroy()

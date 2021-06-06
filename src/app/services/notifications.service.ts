@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Observable, Subject } from 'rxjs';
-
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-
 import { WebSocketService, SystemGeneralService } from 'app/services';
 
 export interface NotificationAlert {

@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
-
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import helptext from 'app/helptext/system/ssh-keypairs';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

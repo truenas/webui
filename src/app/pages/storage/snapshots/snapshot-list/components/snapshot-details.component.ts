@@ -1,9 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
-
 import { Option } from 'app/interfaces/option.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import {
@@ -11,9 +9,7 @@ import {
   EntityRowDetails,
 } from 'app/pages/common/entity/entity-table/entity-row-details.interface';
 import { WebSocketService, StorageService, SystemGeneralService } from 'app/services';
-
 import { LocaleService } from 'app/services/locale.service';
-
 import { SnapshotListComponent } from '../snapshot-list.component';
 
 @UntilDestroy()

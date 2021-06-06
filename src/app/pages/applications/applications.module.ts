@@ -2,16 +2,12 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-
 import { ImgFallbackModule } from 'ngx-img-fallback';
-
 import { MaterialModule } from 'app/appMaterial.module';
 import { AppCommonModule } from 'app/components/common/app-common.module';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-
 import { EntityModule } from '../common/entity/entity.module';
-
 import { ApplicationsRoutingModule } from './applications-routing.module';
 import { ApplicationsComponent } from './applications.component';
 import { CatalogComponent } from './catalog/catalog.component';
@@ -27,7 +23,6 @@ import { ChartReleaseAddComponent } from './forms/chart-release-add.component';
 import { ChartReleaseEditComponent } from './forms/chart-release-edit.component';
 import { ChartWizardComponent } from './forms/chart-wizard.component';
 import { KubernetesSettingsComponent } from './forms/kubernetes-settings.component';
-
 import { PullImageFormComponent } from './forms/pull-image-form.component';
 import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
 import { PodLogsComponent } from './pod-logs/pod-logs.component';

@@ -4,7 +4,6 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-
 import {
   UntilDestroy, untilDestroyed,
 } from '@ngneat/until-destroy';
@@ -12,7 +11,6 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';

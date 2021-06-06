@@ -1,5 +1,4 @@
 import { Subject } from 'rxjs';
-
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';

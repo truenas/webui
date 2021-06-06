@@ -2,25 +2,19 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-
 import * as _ from 'lodash';
-
 import * as myIP from 'what-is-my-ip-address';
-
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import jailHelptext from 'app/helptext/jails/jails-list';
 import helptext from 'app/helptext/plugins/plugins';
 import { Pool } from 'app/interfaces/pool.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { T } from 'app/translate-marker';
-
 import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityJobComponent } from '../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../common/entity/utils';
-
 import { AvailablePluginsComponent } from './available-plugins/available-plugins.component';
 
 @UntilDestroy()

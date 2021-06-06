@@ -2,15 +2,11 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 import { TranslateModule } from '@ngx-translate/core';
-
 import { MaterialModule } from 'app/appMaterial.module';
-
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
-
 import { ApiKeysComponent } from './api-keys.component';
 import { routing } from './api-keys.routing';
 

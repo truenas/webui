@@ -1,14 +1,11 @@
 import { Injectable } from '@angular/core';
-
 import * as cronParser from 'cron-parser';
 import { Options as CronOptions } from 'cronstrue/dist/options';
 import cronstrue from 'cronstrue/i18n';
 import { Moment } from 'moment';
 import { Observable } from 'rxjs';
-
 import { Option } from 'app/interfaces/option.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-
 import { LanguageService } from './language.service';
 import { WebSocketService } from './ws.service';
 

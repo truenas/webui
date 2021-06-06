@@ -8,26 +8,20 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
 import { ColorPickerModule } from 'ngx-color-picker';
-
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxUploaderModule } from 'ngx-uploader';
-
 import { TreeTableModule } from 'primeng/treetable';
-
 import { MaterialModule } from 'app/appMaterial.module';
-
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { ExpandableTableComponent } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
 import { TaskScheduleListComponent } from 'app/pages/data-protection/components/task-schedule-list/task-schedule-list.component';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DocsService } from 'app/services/docs.service';
 import { JobService } from 'app/services/index';
-
 import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
 import { EntityCardComponent } from './entity-card/entity-card.component';
 import { EntityComingsoonComponent } from './entity-comingsoon/entity-comingsoon.component';
@@ -62,7 +56,6 @@ import { FormTextareaButtonComponent } from './entity-form/components/form-texta
 import { FormTextareaComponent } from './entity-form/components/form-textarea/form-textarea.component';
 import { FormToggleButtonComponent } from './entity-form/components/form-toggle-button/form-toggle-button.component';
 import { FormUploadComponent } from './entity-form/components/form-upload/form-upload.component';
-
 import { TooltipDocReplacePipe } from './entity-form/components/tooltip/tooltip-docreplace';
 import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
 import { EntityFormConfigurationComponent } from './entity-form/entity-form-configuration.component';
@@ -90,11 +83,7 @@ import { ToolbarSliderComponent } from './entity-toolbar/components/toolbar-slid
 import { EntityToolbarComponent } from './entity-toolbar/entity-toolbar.component';
 import { EntityTreeTableComponent } from './entity-tree-table/entity-tree-table.component';
 import { EntityWizardComponent } from './entity-wizard/entity-wizard.component';
-
-// CDK
-
 import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
-
 import { TableComponent } from './table/table.component';
 
 @NgModule({

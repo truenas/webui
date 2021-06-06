@@ -5,11 +5,9 @@ import {
 import {
   Router, ActivatedRoute,
 } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, BehaviorSubject } from 'rxjs';
-
 import { CoreService } from 'app/core/services/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
@@ -17,20 +15,15 @@ import { Disk } from 'app/interfaces/storage.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
-
 import {
   SystemGeneralService,
   WebSocketService,
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ErdService } from 'app/services/erd.service';
-
 import { ModalService } from 'app/services/modal.service';
-
 import { T } from 'app/translate-marker';
-
 import { Report } from './components/report/report.component';
-
 import { ReportsConfigComponent } from './components/reports-config/reports-config.component';
 import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
 

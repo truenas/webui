@@ -7,7 +7,6 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -15,7 +14,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
-
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
@@ -23,9 +21,7 @@ import { ReportsService } from 'app/pages/reportsdashboard/reports.service';
 import { WebSocketService, SystemGeneralService } from 'app/services/';
 import { LocaleService } from 'app/services/locale.service';
 import { Theme } from 'app/services/theme/theme.service';
-
 import { T } from 'app/translate-marker';
-
 import { LineChartComponent } from '../lineChart/lineChart.component';
 
 interface DateTime {

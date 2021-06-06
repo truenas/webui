@@ -1,17 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import { fromEvent } from 'rxjs';
-
 import { map, takeUntil } from 'rxjs/operators';
-
 import { Option } from 'app/interfaces/option.interface';
-
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 

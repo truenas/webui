@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-
 import { Subject, Observable } from 'rxjs';
-
 import { CoreEvent } from 'app/interfaces/events';
 
 /*

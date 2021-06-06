@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';

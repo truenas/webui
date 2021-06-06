@@ -1,7 +1,5 @@
 import { Routes } from '@angular/router';
-
 import { ResilverComponent } from 'app/pages/data-protection/scrub/resilver/resilver.component';
-
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { DataProtectionDashboardComponent } from './components/data-protection-dashboard/data-protection-dashboard.component';

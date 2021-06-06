@@ -1,12 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import { ProductType } from 'app/enums/product-type.enum';
 import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
-
 import vol_helptext from 'app/helptext/storage/volumes/volume-list';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';

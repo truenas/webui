@@ -1,11 +1,8 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
-
 import { T } from 'app/translate-marker';
-
 import { BackupCredentialsComponent } from '../credentials/backup-credentials/backup-credentials.component';
 import { CertificatesDashComponent } from '../credentials/certificates-dash/certificates-dash.component';
 import { DirectoryservicesComponent } from '../directoryservice/directoryservices.component';

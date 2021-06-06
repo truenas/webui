@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { LockscreenComponent } from './lockscreen/lockscreen.component';
 import { SigninComponent } from './signin/signin.component';

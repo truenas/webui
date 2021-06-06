@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-
 import * as filesize from 'filesize';
-
 import { CoreService } from 'app/core/services/core.service';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import helptext from 'app/helptext/storage/disks/disks';
@@ -20,7 +17,6 @@ import {
 
 } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { StorageService, DialogService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';

@@ -1,8 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { T } from 'app/translate-marker';
-
 import { Services } from '../services/services.component';
 import { ShellComponent } from '../shell/shell.component';
 import { AdvancedSettingsComponent } from './advanced';

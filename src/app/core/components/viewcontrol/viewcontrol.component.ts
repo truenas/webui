@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 import { ViewControl } from 'app/core/classes/viewcontrol';
 
 @Component({

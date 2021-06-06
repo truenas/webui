@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
-
 import { latestVersion } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -16,7 +14,6 @@ import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-jo
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
-
 import { ApplicationsService } from '../applications.service';
 
 @UntilDestroy()

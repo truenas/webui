@@ -4,13 +4,10 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import * as FontFaceObserver from 'fontfaceobserver';
 import { Subject, Observable } from 'rxjs';
 import { Terminal } from 'xterm';
-
 import { FitAddon } from 'xterm-addon-fit';
-
 import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
 import { CoreService } from 'app/core/services/core.service';
 import helptext from 'app/helptext/shell/shell';
@@ -18,7 +15,6 @@ import { CoreEvent } from 'app/interfaces/events';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { ShellService, WebSocketService } from 'app/services';
-
 import { CopyPasteMessageComponent } from './copy-paste-message.component';
 
 @UntilDestroy()

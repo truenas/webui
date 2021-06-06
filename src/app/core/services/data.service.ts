@@ -1,9 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
-
 import { CoreEvent } from 'app/interfaces/events';
-
 import { WebSocketService } from 'app/services/ws.service';
-
 import { ApiCall } from './api.service';
 import { CoreService } from './core.service';
 import { DiskStateService } from './disk-state.service';

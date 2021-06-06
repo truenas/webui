@@ -1,8 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService, JailService, DialogService } from 'app/services';

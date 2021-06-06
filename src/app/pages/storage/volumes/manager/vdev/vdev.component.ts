@@ -6,11 +6,8 @@ import {
   ViewChild,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-
 import { DatatableComponent } from '@swimlane/ngx-datatable';
-
 import * as filesize from 'filesize';
-
 import helptext from 'app/helptext/storage/volumes/manager/vdev';
 import { StorageService } from 'app/services/storage.service';
 

@@ -5,21 +5,18 @@ import { MediaObserver } from '@angular/flex-layout';
 import {
   DomSanitizer, SafeStyle,
 } from '@angular/platform-browser';
-
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { Chart, ChartColor, ChartDataSets } from 'chart.js';
 import { Subject } from 'rxjs';
-
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { ViewChartBarComponent } from 'app/core/components/viewchartbar/viewchartbar.component';
 import { ViewChartGaugeComponent } from 'app/core/components/viewchartgauge/viewchartgauge.component';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { CoreEvent } from 'app/interfaces/events';
 import { Theme } from 'app/services/theme/theme.service';
-
 import { T } from 'app/translate-marker';
 
 @UntilDestroy()

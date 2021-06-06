@@ -8,27 +8,19 @@ import { RouterModule } from '@angular/router';
 import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
-
 import { MarkdownModule } from 'ngx-markdown';
 import {
   TranslateMessageFormatCompiler,
 } from 'ngx-translate-messageformat-compiler';
-
 import { NgxWebstorageModule } from 'ngx-webstorage';
-
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
-
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { setCoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreServices } from 'app/core/services/coreservices.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-
 import { ErdService } from 'app/services/erd.service';
 import { NotificationsService } from 'app/services/notifications.service';
-
-// Core Application Services and Service Injector
-
 import { ENV_PROVIDERS } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { rootRouterConfig } from './app.routes';
@@ -42,7 +34,6 @@ import { ResilverProgressDialogComponent } from './components/common/dialog/resi
 import { TaskManagerComponent } from './components/common/dialog/task-manager/task-manager.component';
 import { TruecommandComponent } from './components/common/dialog/truecommand/truecommand.component';
 import { ConfirmDialog } from './pages/common/confirm-dialog/confirm-dialog.component';
-
 import { EntityDialogComponent } from './pages/common/entity/entity-dialog/entity-dialog.component';
 import { FormCheckboxComponent } from './pages/common/entity/entity-form/components/form-checkbox/form-checkbox.component';
 import { FormInputComponent } from './pages/common/entity/entity-form/components/form-input/form-input.component';

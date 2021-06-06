@@ -4,12 +4,9 @@ import {
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
 import { BehaviorSubject } from 'rxjs';
-
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptext_system_email } from 'app/helptext/system/email';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

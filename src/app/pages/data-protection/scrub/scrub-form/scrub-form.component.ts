@@ -1,14 +1,11 @@
 import { Component } from '@angular/core';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-
 import helptext from 'app/helptext/data-protection/scrub/scrub-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { TaskService } from 'app/services';
-
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()

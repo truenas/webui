@@ -3,21 +3,16 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
 import { TranslateModule } from '@ngx-translate/core';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
-
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
-
 import { MaterialModule } from 'app/appMaterial.module';
 import { ResilverComponent } from 'app/pages/data-protection/scrub/resilver/resilver.component';
-
 import { EntityModule } from '../common/entity/entity.module';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { DataProtectionDashboardComponent } from './components/data-protection-dashboard/data-protection-dashboard.component';
 import { DataProtectionRoutes } from './data-protection.routing';
-
 import { ReplicationFormComponent } from './replication/replication-form/replication-form.component';
 import { ReplicationListComponent } from './replication/replication-list/replication-list.component';
 import { ReplicationWizardComponent } from './replication/replication-wizard/replication-wizard.component';

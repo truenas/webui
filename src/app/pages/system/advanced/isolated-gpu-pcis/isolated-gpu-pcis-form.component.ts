@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { GpuDevice } from 'app/interfaces/gpu-device.interface';

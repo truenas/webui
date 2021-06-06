@@ -10,24 +10,19 @@ import { MatButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import { Subscription } from 'rxjs';
-
 import { ApiService } from 'app/core/services/api.service';
 import { CoreService } from 'app/core/services/core.service';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-
 import globalHelptext from 'app/helptext/global-helptext';
 import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
 import { CoreEvent } from 'app/interfaces/events';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
-
 import { SystemGeneralService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';

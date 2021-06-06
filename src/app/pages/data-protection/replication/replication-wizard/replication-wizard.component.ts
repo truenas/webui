@@ -1,13 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Validators, FormArray, FormGroup } from '@angular/forms';
-
 import {
   UntilDestroy, untilDestroyed,
 } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
-
 import { CipherType } from 'app/enums/cipher-type.enum';
 import { DatasetSource } from 'app/enums/dataset-source.enum';
 import { Direction } from 'app/enums/direction.enum';

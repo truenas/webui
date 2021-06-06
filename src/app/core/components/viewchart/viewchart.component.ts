@@ -1,11 +1,8 @@
 import {
   Component, AfterViewInit, Input, SimpleChanges,
 } from '@angular/core';
-
 import { UUID } from 'angular2-uuid';
-
 import { ViewComponent } from 'app/core/components/view/view.component';
-
 import { LegendOptions, TooltipOptions } from './viewchart.component.types';
 
 export interface ChartData {

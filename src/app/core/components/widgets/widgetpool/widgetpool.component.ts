@@ -2,23 +2,18 @@ import {
   Component, AfterViewInit, OnDestroy, Input, ViewChild, ElementRef, TemplateRef, ChangeDetectorRef, OnChanges, SimpleChanges,
 } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import * as filesize from 'filesize';
-
 import {
   tween,
   styler,
 } from 'popmotion';
-
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
-
 import { T } from 'app/translate-marker';
 
 interface Slide {

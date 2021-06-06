@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-
 import { DocsService } from 'app/services/docs.service';
 
 @Pipe({

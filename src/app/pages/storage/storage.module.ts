@@ -3,18 +3,12 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-
 import { NgxFilesizeModule } from 'ngx-filesize';
-
 import { TreeTableModule } from 'primeng/treetable';
-
 import { MaterialModule } from 'app/appMaterial.module';
-
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form/volumechangekey-form.component';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form/volumecreatekey-form.component';
@@ -22,10 +16,8 @@ import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-
 import { JobService } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
-
 import { MessageService } from '../common/entity/entity-form/services/message.service';
 import { EntityModule } from '../common/entity/entity.module';
-
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
@@ -48,7 +40,6 @@ import { DatasetQuotasUserlistComponent } from './volumes/datasets/dataset-quota
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 import { DatasetUnlockComponent } from './volumes/datasets/dataset-unlock';
 import { UnlockDialogComponent } from './volumes/datasets/dataset-unlock/unlock-dialog/unlock-dialog.component';
-
 import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager';
 import { VolumeImportWizardComponent } from './volumes/volume-import-wizard';
 import { VolumeStatusComponent } from './volumes/volume-status';

@@ -2,13 +2,9 @@ import { Component } from '@angular/core';
 import { FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-
 import * as _ from 'lodash';
-
 import { combineLatest, Observable, Subscription } from 'rxjs';
-
 import { filter } from 'rxjs/operators';
-
 import { AclType } from 'app/enums/acl-type.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -27,7 +23,6 @@ import { StorageService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
-
 import { T } from 'app/translate-marker';
 
 interface DatasetFormData {

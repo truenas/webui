@@ -1,5 +1,4 @@
 import { Validators } from '@angular/forms';
-
 import globalHelptext from 'app/helptext/global-helptext';
 import { T } from 'app/translate-marker';
 

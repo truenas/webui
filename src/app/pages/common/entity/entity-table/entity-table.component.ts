@@ -2,7 +2,6 @@ import {
   animate, state, style, transition, trigger,
 } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
-
 import {
   AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
@@ -13,15 +12,11 @@ import { MatTableDataSource } from '@angular/material/table';
 import { NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import * as _ from 'lodash';
-
 import { Observable, of, Subscription } from 'rxjs';
-
 import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
-
 import { CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
@@ -32,7 +27,6 @@ import {
   EntityTableColumn,
   EntityTableConfig,
 } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
 import { DialogService, JobService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
@@ -40,7 +34,6 @@ import { RestService } from 'app/services/rest.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { T } from 'app/translate-marker';
-
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
 import { EntityUtils } from '../utils';

@@ -1,10 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
-
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

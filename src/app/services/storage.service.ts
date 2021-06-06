@@ -1,16 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { SortDirection } from '@angular/material/sort';
-
 import * as moment from 'moment';
-
 import { Observable } from 'rxjs';
-
 import { map } from 'rxjs/operators';
-
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-
 import { RestService } from './rest.service';
 import { WebSocketService } from './ws.service';
 

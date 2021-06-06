@@ -2,17 +2,14 @@ import {
   ApplicationRef, Component, Injector, OnInit, OnDestroy,
 } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
-
 import { CoreService } from 'app/core/services/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RestService, WebSocketService } from 'app/services/';
 import { ThemeService } from 'app/services/theme/theme.service';
-
 import { T } from 'app/translate-marker';
 
 @UntilDestroy()

@@ -1,9 +1,7 @@
 import {
   Component, ViewChild, OnDestroy,
 } from '@angular/core';
-
 import { Subject } from 'rxjs';
-
 import { LayoutContainer, LayoutChild } from 'app/core/classes/layouts';
 import { ViewController } from 'app/core/classes/viewcontroller';
 import { Display } from 'app/core/components/display/display.component';

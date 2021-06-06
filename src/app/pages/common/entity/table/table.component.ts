@@ -3,10 +3,8 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatCellDef } from '@angular/material/table/cell';
-
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { WebSocketService } from 'app/services';
-
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { TableService } from './table.service';
 

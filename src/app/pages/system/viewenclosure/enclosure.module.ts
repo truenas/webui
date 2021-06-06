@@ -1,12 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TranslateModule } from '@ngx-translate/core';
-
 import { MaterialModule } from 'app/appMaterial.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
-
 import { DiskComponent } from './enclosure-disks/components/disk.component';
 import { TabContentComponent } from './enclosure-disks/components/tab-content/tab-content.component';
 import { TemperatureMeterComponent } from './enclosure-disks/components/temperature-meter/temperature-meter.component';

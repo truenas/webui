@@ -1,5 +1,4 @@
 import { CoreEvent } from 'app/interfaces/events';
-
 import { Chassis } from './chassis';
 import { ChassisView } from './chassis-view';
 

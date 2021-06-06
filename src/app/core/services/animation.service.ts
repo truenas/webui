@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   tween,
@@ -11,9 +10,7 @@ import {
   timeline,
   ColdSubscription,
 } from 'popmotion';
-
 import { CoreEvent } from 'app/interfaces/events';
-
 import { DisplayObject } from '../classes/display-object';
 import { CoreService } from './core.service';
 

@@ -1,8 +1,6 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
 import { Observable } from 'rxjs';
-
 import helptext from 'app/helptext/services/components/service-snmp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';

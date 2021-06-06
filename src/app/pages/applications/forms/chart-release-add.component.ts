@@ -1,11 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-
 import {
   chartsTrain, ixChartApp, latestVersion, officialCatalog,
 } from 'app/constants/catalog.constants';

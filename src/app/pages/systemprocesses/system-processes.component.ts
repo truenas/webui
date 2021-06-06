@@ -2,19 +2,14 @@ import {
   Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as FontFaceObserver from 'fontfaceobserver';
 import { Observable } from 'rxjs';
-
 import { Terminal } from 'xterm';
-
 import { FitAddon } from 'xterm-addon-fit';
-
 import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { ShellService, WebSocketService } from 'app/services';
-
 import { CopyPasteMessageComponent } from '../shell/copy-paste-message.component';
 
 @UntilDestroy()

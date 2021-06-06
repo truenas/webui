@@ -1,15 +1,11 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
 import { take } from 'rxjs/operators';
-
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_nfs, shared } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

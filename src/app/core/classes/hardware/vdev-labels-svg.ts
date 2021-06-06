@@ -1,9 +1,7 @@
 import * as d3 from 'd3';
 import { Subject } from 'rxjs';
-
 import { CoreEvent } from 'app/interfaces/events';
 import { Theme } from 'app/services/theme/theme.service';
-
 import { ChassisView } from './chassis-view';
 
 export class VDevLabelsSVG {

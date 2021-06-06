@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
-
 import { helptext_system_acme as helptext, helptext_system_acme } from 'app/helptext/system/acme';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

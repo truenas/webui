@@ -1,9 +1,7 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
 import { T } from 'app/translate-marker';
-
 import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form';
 import { AuthorizedAccessFormComponent } from './iscsi/authorizedaccess/authorizedaccess-form';
 import { ExtentFormComponent } from './iscsi/extent/extent-form';

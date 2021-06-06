@@ -2,9 +2,7 @@ import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import helptext from 'app/helptext/data-protection/replication/replication';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -15,7 +13,6 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';

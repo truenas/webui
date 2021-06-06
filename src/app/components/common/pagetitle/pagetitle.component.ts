@@ -4,10 +4,8 @@ import {
 import {
   Router, NavigationEnd, ActivatedRoute,
 } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
-
 import { ViewButtonComponent } from 'app/core/components/viewbutton/viewbutton.component';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { CoreService } from 'app/core/services/core.service';

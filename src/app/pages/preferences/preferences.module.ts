@@ -1,16 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 import { TranslateModule } from '@ngx-translate/core';
-
 import { MaterialModule } from 'app/appMaterial.module';
-
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
-
 import { CustomThemeManagerFormComponent } from './page/forms/custom-theme-manager-form.component';
 import { GeneralPreferencesFormComponent } from './page/forms/general-preferences-form.component';
 import { PreferencesPage } from './page/preferences.component';

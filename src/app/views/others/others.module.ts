@@ -10,9 +10,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RouterModule } from '@angular/router';
-
 import { TranslateModule } from '@ngx-translate/core';
-
 import { ConfigResetComponent } from './config-reset/config-reset.component';
 import { FailoverComponent } from './failover/failover.component';
 import { OthersRoutes } from './others.routing';

@@ -4,12 +4,9 @@ import {
   easing,
 } from 'popmotion';
 import { Subject } from 'rxjs';
-
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { CoreEvent } from 'app/interfaces/events';
-
 import { DriveTray } from './drivetray';
-
 // TODO: See if can be removed.
 // eslint-disable-next-line
 import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';

@@ -1,6 +1,5 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { ActiveDirectoryComponent } from './activedirectory/activedirectory.component';
 import { DirectoryservicesComponent } from './directoryservices.component';
 import { IdmapListComponent } from './idmap/idmap-list.component';

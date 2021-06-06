@@ -1,12 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { forkJoin } from 'rxjs';
-
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { IscsiService } from 'app/services';
 import { T } from 'app/translate-marker';

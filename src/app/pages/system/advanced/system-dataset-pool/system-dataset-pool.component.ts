@@ -1,12 +1,9 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import _ from 'lodash';
 import { of, Observable } from 'rxjs';
-
 import { filter, switchMap } from 'rxjs/operators';
-
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

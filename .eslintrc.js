@@ -56,7 +56,7 @@ module.exports = {
             }
           ],
           "pathGroupsExcludedImportTypes": ["builtin", "internal"],
-          "newlines-between": "always-and-inside-groups",
+          "newlines-between": "never",
           "alphabetize": {
             "order": "asc",
             "caseInsensitive": false

@@ -1,16 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
 import { Subject } from 'rxjs';
-
 import { CoreService } from 'app/core/services/core.service';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import helptext from 'app/helptext/system/alert-settings';
 import { CoreEvent } from 'app/interfaces/events';
-
 import { Option } from 'app/interfaces/option.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';

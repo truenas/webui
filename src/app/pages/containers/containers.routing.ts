@@ -1,6 +1,5 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { ContainersComingsoonComponent } from './containers-comingsoon/containers-comingsoon.component';
 
 export const routes: Routes = [{

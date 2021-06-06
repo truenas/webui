@@ -3,9 +3,7 @@ import { FormArray } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
 import { Subscription } from 'rxjs';
-
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';

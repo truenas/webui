@@ -1,13 +1,9 @@
 import { Injectable } from '@angular/core';
-
 import * as _ from 'lodash';
 import { reject } from 'q';
 import { Observable } from 'rxjs';
-
 import { SshKeyPair } from 'app/interfaces/keychain-credential.interface';
-
 import { EntityUtils } from 'app/pages/common/entity/utils';
-
 import { WebSocketService } from './ws.service';
 
 @Injectable()

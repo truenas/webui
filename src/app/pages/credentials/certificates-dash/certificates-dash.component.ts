@@ -2,10 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { Option } from 'app/interfaces/option.interface';
@@ -13,14 +11,12 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { AppTableAction } from 'app/pages/common/entity/table/table.component';
-
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   SystemGeneralService, WebSocketService, AppLoaderService, DialogService, StorageService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-
 import { AcmednsFormComponent } from './forms/acmedns-form.component';
 import { CertificateAuthorityAddComponent } from './forms/ca-add.component';
 import { CertificateAuthorityEditComponent } from './forms/ca-edit.component';

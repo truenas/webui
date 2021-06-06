@@ -1,8 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-
 import { TranslateService } from '@ngx-translate/core';
-
 import { WebSocketService } from 'app/services/ws.service';
 
 export enum EmptyType {

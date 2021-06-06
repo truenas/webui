@@ -3,11 +3,8 @@ import { Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import * as _ from 'lodash';
-
 import { combineLatest, Observable } from 'rxjs';
-
 import { ProductType } from 'app/enums/product-type.enum';
 import { VmDeviceType, VmTime } from 'app/enums/vm.enum';
 import globalHelptext from 'app/helptext/global-helptext';

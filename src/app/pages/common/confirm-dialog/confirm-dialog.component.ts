@@ -2,7 +2,6 @@ import { Component, Output, EventEmitter } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-
 import { T } from 'app/translate-marker';
 
 @Component({

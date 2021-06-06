@@ -2,14 +2,11 @@ import {
   Component, Input, Output, EventEmitter,
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
-
 import { TranslateService } from '@ngx-translate/core';
-
 import { iXObject } from 'app/core/classes/ix-object';
 import { CoreService } from 'app/core/services/core.service';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { ThemeService } from 'app/services/theme/theme.service';
-
 import { T } from 'app/translate-marker';
 
 @Component({

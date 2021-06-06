@@ -1,9 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { Observable } from 'rxjs';
-
 import { map } from 'rxjs/operators';
-
 import { TranslatedMessages } from 'app/interfaces/translated-messages.interface';
 
 /**

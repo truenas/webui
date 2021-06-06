@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-
 import { WebSocketService } from 'app/services/ws.service';
-
 import { BaseService } from './base.service';
 
 export interface Temperature {

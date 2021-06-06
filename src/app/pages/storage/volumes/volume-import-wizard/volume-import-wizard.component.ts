@@ -3,12 +3,10 @@ import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-
 import {
   UntilDestroy, untilDestroyed,
 } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';

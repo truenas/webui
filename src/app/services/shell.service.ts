@@ -4,7 +4,6 @@ import {
 import { Router } from '@angular/router';
 import { LocalStorage } from 'ngx-webstorage';
 import { Observable, Subject } from 'rxjs';
-
 import { environment } from '../../environments/environment';
 import { ShellConnectedEvent } from '../interfaces/shell.interface';
 

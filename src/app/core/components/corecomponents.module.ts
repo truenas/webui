@@ -5,28 +5,21 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
 import { TranslateModule } from '@ngx-translate/core';
-
 import { MaterialModule } from 'app/appMaterial.module';
-
 import { CardComponent } from 'app/core/components/card/card.component';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { Display } from 'app/core/components/display/display.component';
 import { PageComponent } from 'app/core/components/page/page.component';
-
 import { ViewComponent } from 'app/core/components/view/view.component';
-
 import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewControlComponent } from 'app/core/components/viewcontrol/viewcontrol.component';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { WidgetChartComponent } from 'app/core/components/widgets/widgetchart/widgetchart.component';
 import { WidgetCpuComponent } from 'app/core/components/widgets/widgetcpu/widgetcpu.component';
-
 import { WidgetMemoryComponent } from 'app/core/components/widgets/widgetmemory/widgetmemory.component';
 import { WidgetNicComponent } from 'app/core/components/widgets/widgetnic/widgetnic.component';
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
@@ -36,9 +29,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import { StorageService } from 'app/services/storage.service';
-
 import { ContextMenuComponent } from './context-menu/context-menu.component';
-
 import { HtmlTooltipDirective } from './directives/html-tooltip/html-tooltip.directive';
 import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
 import { TextLimiterDirective } from './directives/text-limiter/text-limiter.directive';

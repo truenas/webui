@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-
 import { helptext_system_ntpservers as helptext } from 'app/helptext/system/ntpservers';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';

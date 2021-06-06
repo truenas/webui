@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
 import { take } from 'rxjs/operators';
-
 import { CompressionType } from 'app/enums/compression-type.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';

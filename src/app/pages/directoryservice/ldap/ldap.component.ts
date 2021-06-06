@@ -1,16 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
 import { Observable } from 'rxjs';
-
 import helptext from 'app/helptext/directoryservice/ldap';
 import global_helptext from 'app/helptext/global-helptext';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-
 import {
   FieldConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -20,7 +16,6 @@ import {
   WebSocketService,
   DialogService,
 } from 'app/services';
-
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 

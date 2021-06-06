@@ -1,7 +1,6 @@
 import {
   Component, ElementRef, Input, ViewChild,
 } from '@angular/core';
-
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 

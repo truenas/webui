@@ -1,9 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { MatSliderChange } from '@angular/material/slider/slider';
 import { TranslateService } from '@ngx-translate/core';
-
 import { Subject } from 'rxjs';
-
 import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
 
 @Component({

@@ -1,5 +1,4 @@
 import { Subject } from 'rxjs';
-
 import { CoreEvent } from 'app/interfaces/events';
 
 export interface ViewControllerOptions {

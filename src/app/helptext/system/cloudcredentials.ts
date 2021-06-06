@@ -1,5 +1,4 @@
 import { Validators } from '@angular/forms';
-
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { T } from 'app/translate-marker';
 

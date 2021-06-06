@@ -1,5 +1,4 @@
 import { Validators } from '@angular/forms';
-
 import { T } from 'app/translate-marker';
 
 export default {

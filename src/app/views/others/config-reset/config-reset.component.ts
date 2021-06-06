@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import { ProductType } from 'app/enums/product-type.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { WebSocketService, SystemGeneralService } from 'app/services';

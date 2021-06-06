@@ -1,6 +1,5 @@
 import { tween } from 'popmotion';
 import { debounceTime } from 'rxjs/operators';
-
 import { CoreService } from '../services/core.service';
 import { DisplayObject } from './display-object';
 

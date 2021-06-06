@@ -3,16 +3,12 @@ import {
 } from '@angular/core';
 import { Sort } from '@angular/material/sort';
 import { MatTable } from '@angular/material/table';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import { TreeNode } from 'primeng/api';
-
 import { CoreService } from 'app/core/services/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { DialogService, WebSocketService } from 'app/services';
-
 import { EntityUtils } from '../utils';
 import { EntityTreeTable } from './entity-tree-table.model';
 import { EntityTreeTableService } from './entity-tree-table.service';

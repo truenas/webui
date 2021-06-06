@@ -2,9 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import * as _ from 'lodash';
-
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/account/user-list';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -18,7 +16,6 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { T } from 'app/translate-marker';
-
 import { UserFormComponent } from '../user-form/user-form.component';
 
 @UntilDestroy()

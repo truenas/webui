@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-
 import { Observable } from 'rxjs';
-
 import { Catalog } from 'app/interfaces/catalog.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';

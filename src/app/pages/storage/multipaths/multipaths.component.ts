@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 import { EntityTreeTable } from 'app/pages/common/entity/entity-tree-table/entity-tree-table.model';
 
 @Component({

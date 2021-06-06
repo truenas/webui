@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
-
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { ApiService } from 'app/core/services/api.service';
 import { CoreService } from 'app/core/services/core.service';

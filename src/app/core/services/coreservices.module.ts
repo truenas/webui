@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { NgModule, ModuleWithProviders } from '@angular/core';
-
 import { AnimationService } from 'app/core/services/animation.service';
 import { ApiService } from 'app/core/services/api.service';
 import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service';

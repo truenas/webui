@@ -1,5 +1,4 @@
 import { T } from 'app/translate-marker';
-
 import globalHelptext from '../global-helptext';
 
 export const helptext_system_failover = {

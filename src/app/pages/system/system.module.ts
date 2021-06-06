@@ -2,18 +2,14 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 import { TranslateModule } from '@ngx-translate/core';
 import { QRCodeModule } from 'angular2-qrcode';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxUploaderModule } from 'ngx-uploader';
-
 import { MaterialModule } from 'app/appMaterial.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
-
 import { EntityModule } from '../common/entity/entity.module';
-
 import { AdvancedSettingsComponent } from './advanced';
 import { ConsoleFormComponent } from './advanced/console-form/console-form.component';
 import { CronFormComponent } from './advanced/cron/cron-form/cron-form.component';
@@ -28,7 +24,6 @@ import { AlertServiceComponent } from './alertservice/alert-service/alert-servic
 import { AlertServiceListComponent } from './alertservice/alertservice-list/alertservice-list.component';
 import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone';
-
 import { BootEnvironmentCreateComponent } from './bootenv/bootenv-create';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list';
 import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename';
@@ -54,7 +49,6 @@ import { TunableListComponent } from './tunable/tunable-list';
 import { TwoFactorComponent, QRDialog } from './two-factor/two-factor.component';
 import { UpdateComponent } from './update';
 import { ManualUpdateComponent } from './update/manualupdate';
-
 import { EnclosureModule } from './viewenclosure/enclosure.module';
 
 @NgModule({

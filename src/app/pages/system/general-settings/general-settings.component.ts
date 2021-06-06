@@ -1,13 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-
 import { MatDialog } from '@angular/material/dialog';
-
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
-
 import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout/admin-layout.component';
 import { CoreService } from 'app/core/services/core.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
@@ -25,7 +21,6 @@ import {
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ModalService } from 'app/services/modal.service';
-
 import { GuiFormComponent } from './gui-form/gui-form.component';
 import { LocalizationFormComponent } from './localization-form/localization-form.component';
 import { NTPServerFormComponent } from './ntpservers/ntpserver-form/ntpserver-form.component';

@@ -8,12 +8,10 @@ import {
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
-
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {

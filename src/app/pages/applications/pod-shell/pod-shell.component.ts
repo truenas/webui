@@ -5,15 +5,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import * as FontFaceObserver from 'fontfaceobserver';
 import * as _ from 'lodash';
-
 import { Subject, Observable } from 'rxjs';
 import { Terminal } from 'xterm';
-
 import { FitAddon } from 'xterm-addon-fit';
-
 import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
 import { CoreService } from 'app/core/services/core.service';
 import helptext from 'app/helptext/shell/shell';

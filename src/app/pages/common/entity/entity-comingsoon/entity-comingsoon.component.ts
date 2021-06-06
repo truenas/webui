@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-
 import urls from 'app/helptext/urls';
 
 @Component({

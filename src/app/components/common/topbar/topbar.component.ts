@@ -7,9 +7,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import { Subscription, Subject } from 'rxjs';
-
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { LayoutService } from 'app/core/services/layout.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
@@ -34,12 +32,10 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { Theme, ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { T } from 'app/translate-marker';
-
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { ResilverProgressDialogComponent } from '../dialog/resilver-progress/resilver-progress.component';
 import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
-
 import { TruecommandComponent } from '../dialog/truecommand/truecommand.component';
 
 @UntilDestroy()

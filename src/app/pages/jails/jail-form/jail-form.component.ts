@@ -3,15 +3,12 @@ import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router, ActivatedRoute } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
 import helptext from 'app/helptext/jails/jail-configuration';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
@@ -22,9 +19,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   JailService, WebSocketService, AppLoaderService, DialogService, NetworkService,
 } from 'app/services';
-
 import { T } from 'app/translate-marker';
-
 import { JailFormService } from './jail-form.service';
 
 @UntilDestroy()

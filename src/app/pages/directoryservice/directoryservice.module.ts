@@ -4,13 +4,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxUploaderModule } from 'ngx-uploader';
-
 import { MaterialModule } from 'app/appMaterial.module';
-
 import { SystemGeneralService } from 'app/services';
-
 import { EntityModule } from '../common/entity/entity.module';
-
 import { ActiveDirectoryComponent } from './activedirectory/activedirectory.component';
 import { routing } from './directoryservice.routing';
 import { DirectoryservicesComponent } from './directoryservices.component';

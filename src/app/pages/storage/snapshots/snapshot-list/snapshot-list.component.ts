@@ -5,9 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import * as filesize from 'filesize';
-
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { Snapshot } from 'app/interfaces/storage.interface';
@@ -20,7 +18,6 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService, StorageService, DialogService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { T } from 'app/translate-marker';
-
 import { SnapshotDetailsComponent } from './components/snapshot-details.component';
 
 interface DialogData {

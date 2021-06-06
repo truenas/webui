@@ -3,7 +3,6 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/account/group-list';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -15,7 +14,6 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { T } from 'app/translate-marker';
-
 import { GroupFormComponent } from '../group-form/group-form.component';
 
 @UntilDestroy()

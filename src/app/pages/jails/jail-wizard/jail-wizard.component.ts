@@ -2,10 +2,8 @@ import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
 import helptext from 'app/helptext/jails/jail-configuration';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';

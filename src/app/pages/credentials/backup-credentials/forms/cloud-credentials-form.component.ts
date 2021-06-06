@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloudcredentials';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -14,7 +12,6 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-
 import {
   CloudCredentialService, DialogService, WebSocketService, ReplicationService,
 } from 'app/services';

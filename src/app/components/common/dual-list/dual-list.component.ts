@@ -2,7 +2,6 @@ import { CdkDragDrop, CdkDragStart } from '@angular/cdk/drag-drop';
 import {
   Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef,
 } from '@angular/core';
-
 import { difference, ListSelection, ListSelectionImpl } from './models';
 
 @Component({

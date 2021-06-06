@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { throwError as observableThrowError, Observable } from 'rxjs';
-
 import { WebSocketService } from './ws.service';
 
 // TODO: The whole file appears to be unused.
