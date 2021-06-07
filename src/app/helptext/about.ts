@@ -1,4 +1,4 @@
-import { T } from '../translate-marker';
+import { T } from 'app/translate-marker';
 
 export default {
   tagline: T('Welcome to your new NAS'),

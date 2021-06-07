@@ -1,22 +1,20 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
+import { ProductType } from 'app/enums/product-type.enum';
 import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
 import vol_helptext from 'app/helptext/storage/volumes/volume-list';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import {
   AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
-import { ProductType } from 'app/enums/product-type.enum';
 import { ModalService } from 'app/services/modal.service';
-import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

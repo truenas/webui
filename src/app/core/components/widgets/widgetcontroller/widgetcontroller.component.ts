@@ -2,18 +2,13 @@ import {
   Component, Input, Output, EventEmitter,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-
 import { Router } from '@angular/router';
-
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
+import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
-
-import { T } from '../../../../translate-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 export interface DashConfigItem {
   name: string; // Shown in UI fields

@@ -1,12 +1,11 @@
-import { MatDialogRef } from '@angular/material/dialog';
-import { Component } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
-
-import { WebSocketService } from '../../../services/ws.service';
-import { StorageService } from '../../../services/storage.service';
-import { EntityUtils } from '../entity/utils';
+import { Component } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { EntityUtils } from '../entity/utils';
 
 @UntilDestroy()
 @Component({

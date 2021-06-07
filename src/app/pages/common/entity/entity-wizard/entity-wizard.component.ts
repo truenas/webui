@@ -1,24 +1,22 @@
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import {
   Component, Input, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { RestService, WebSocketService } from '../../../../services';
 import {
   AbstractControl, FormBuilder, FormGroup,
 } from '@angular/forms';
+import { MatStepper } from '@angular/material/stepper';
+import { Router, ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { T } from '../../../../translate-marker';
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import * as _ from 'lodash';
+import { RestService, WebSocketService, DialogService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { T } from 'app/translate-marker';
 import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FieldRelationService } from '../entity-form/services/field-relation.service';
-import * as _ from 'lodash';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-
-import { MatStepper } from '@angular/material/stepper';
-import { DialogService } from '../../../../services';
 import { EntityUtils } from '../utils';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

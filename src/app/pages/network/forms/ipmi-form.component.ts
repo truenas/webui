@@ -1,22 +1,21 @@
 import { Component } from '@angular/core';
-import { Option } from 'app/interfaces/option.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { ProductType } from '../../../enums/product-type.enum';
-import { DialogService, WebSocketService } from '../../../services';
-import { ipv4Validator } from '../../common/entity/entity-form/validators/ip-validation';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import helptext from '../../../helptext/network/ipmi/ipmi';
-import globalHelptext from '../../../helptext/global-helptext';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { EntityUtils } from '../../common/entity/utils';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { T } from '../../../translate-marker';
+import { ProductType } from 'app/enums/product-type.enum';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/network/ipmi/ipmi';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { ipv4Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

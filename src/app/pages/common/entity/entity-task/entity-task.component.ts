@@ -1,13 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-
-import * as _ from 'lodash';
-
-import { EntityFormComponent } from '../entity-form';
-import { TaskService, UserService, RestService } from '../../../../services';
-import { EntityFormService } from '../entity-form/services/entity-form.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { TaskService, UserService, RestService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { EntityFormComponent } from '../entity-form';
+import { EntityFormService } from '../entity-form/services/entity-form.service';
 
 @UntilDestroy()
 @Component({

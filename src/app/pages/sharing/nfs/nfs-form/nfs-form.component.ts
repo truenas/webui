@@ -1,23 +1,22 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
-import { ServiceName } from 'app/enums/service-name.enum';
-
-import { helptext_sharing_nfs, shared } from 'app/helptext/sharing';
-import { Option } from 'app/interfaces/option.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { T } from 'app/translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { ProductType } from '../../../../enums/product-type.enum';
+import { take } from 'rxjs/operators';
+import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
+import { ProductType } from 'app/enums/product-type.enum';
+import { ServiceName } from 'app/enums/service-name.enum';
+import globalHelptext from 'app/helptext/global-helptext';
+import { helptext_sharing_nfs, shared } from 'app/helptext/sharing';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { ipv4or6cidrValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import {
   DialogService, NetworkService, WebSocketService, UserService, ModalService,
 } from 'app/services';
-import { ipv4or6cidrValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import globalHelptext from 'app/helptext/global-helptext';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { take } from 'rxjs/operators';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

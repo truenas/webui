@@ -1,8 +1,8 @@
+import { CdkDrag } from '@angular/cdk/drag-drop';
 import {
   Component, Input, ViewChild, ElementRef,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { CdkDrag } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'tooltip',

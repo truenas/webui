@@ -1,7 +1,5 @@
-// Common Modules
 import { NgModule } from '@angular/core';
-import { MaterialModule } from '../../appMaterial.module';
-// Component Modules
+import { MaterialModule } from 'app/appMaterial.module';
 import { GuideComponent } from './guide.component';
 import { routing } from './guide.routing';
 

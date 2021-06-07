@@ -1,21 +1,20 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-
-import * as _ from 'lodash';
-import { ProductType } from '../../../enums/product-type.enum';
-import { NetworkService, DialogService, WebSocketService } from '../../../services';
-import { T } from '../../../translate-marker';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { ipv4or6cidrValidator, ipv4or6Validator } from '../../common/entity/entity-form/validators/ip-validation';
-import helptext from '../../../helptext/network/interfaces/interfaces-form';
-import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import globalHelptext from '../../../helptext/global-helptext';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import isCidr from 'is-cidr';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import isCidr from 'is-cidr';
+import * as _ from 'lodash';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { ProductType } from 'app/enums/product-type.enum';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/network/interfaces/interfaces-form';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
+import { NetworkService, DialogService, WebSocketService } from 'app/services';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

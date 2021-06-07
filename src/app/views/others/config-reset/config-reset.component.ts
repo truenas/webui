@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { ProductType } from '../../../enums/product-type.enum';
-import { WebSocketService, SystemGeneralService } from '../../../services';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { TranslateService } from '@ngx-translate/core';
-import { DialogService } from '../../../services/dialog.service';
 import { MatDialog } from '@angular/material/dialog';
-import { EntityJobComponent } from '../../../pages/common/entity/entity-job/entity-job.component';
-import { T } from '../../../translate-marker';
-import { LocaleService } from 'app/services/locale.service';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { ProductType } from 'app/enums/product-type.enum';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { WebSocketService, SystemGeneralService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
+import { LocaleService } from 'app/services/locale.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

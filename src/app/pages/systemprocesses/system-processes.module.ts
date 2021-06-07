@@ -2,7 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MaterialModule } from '../../appMaterial.module';
+import { MaterialModule } from 'app/appMaterial.module';
 import { EntityModule } from '../common/entity/entity.module';
 // Component Modules
 import { SystemProcessesComponent } from './system-processes.component';

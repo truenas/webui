@@ -1,6 +1,6 @@
-import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
-import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
+import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
+import { T } from 'app/translate-marker';
 
 export default {
   dc_realm_label: 'Realm',

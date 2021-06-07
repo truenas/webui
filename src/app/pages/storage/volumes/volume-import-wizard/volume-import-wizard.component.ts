@@ -1,25 +1,26 @@
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import {
+  UntilDestroy, untilDestroyed,
+} from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { ProductType } from 'app/enums/product-type.enum';
+import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { ProductType } from '../../../../enums/product-type.enum';
-import { RestService, WebSocketService, DialogService } from '../../../../services';
-import { FormGroup, Validators } from '@angular/forms';
-import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
-import * as _ from 'lodash';
-import { MessageService } from '../../../common/entity/entity-form/services/message.service';
-import { HttpClient } from '@angular/common/http';
-import { EntityUtils } from '../../../common/entity/utils';
-
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { MatDialog } from '@angular/material/dialog';
-import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/storage/volumes/volume-import-wizard';
+import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
+import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { RestService, WebSocketService, DialogService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
-import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

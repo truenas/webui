@@ -1,14 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
-import { CoreEvent } from 'app/interfaces/events';
-
 import { Subject } from 'rxjs';
-
-import { TooltipsService } from 'app/services';
-import { EntityFormEmbeddedComponent } from './entity-form-embedded.component';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { CoreEvent } from 'app/interfaces/events';
+import { TooltipsService } from 'app/services';
+import { FieldSets } from './classes/field-sets';
+import { EntityFormEmbeddedComponent } from './entity-form-embedded.component';
 import { EntityFormComponent } from './entity-form.component';
 import { FieldConfig } from './models/field-config.interface';
-import { FieldSets } from './classes/field-sets';
 
 @Component({
   selector: 'entity-form-configuration',

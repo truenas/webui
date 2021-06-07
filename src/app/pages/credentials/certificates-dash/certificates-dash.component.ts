@@ -1,30 +1,28 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Option } from 'app/interfaces/option.interface';
-import { AppTableAction } from 'app/pages/common/entity/table/table.component';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-
+import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { helptext_system_ca } from 'app/helptext/system/ca';
+import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { Option } from 'app/interfaces/option.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { AppTableAction } from 'app/pages/common/entity/table/table.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   SystemGeneralService, WebSocketService, AppLoaderService, DialogService, StorageService,
-} from '../../../services';
-import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
-import { ModalService } from '../../../services/modal.service';
-import { T } from '../../../translate-marker';
-import { CertificateAddComponent } from './forms/certificate-add.component';
-import { CertificateEditComponent } from './forms/certificate-edit.component';
+} from 'app/services';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
+import { AcmednsFormComponent } from './forms/acmedns-form.component';
 import { CertificateAuthorityAddComponent } from './forms/ca-add.component';
 import { CertificateAuthorityEditComponent } from './forms/ca-edit.component';
 import { CertificateAcmeAddComponent } from './forms/certificate-acme-add.component';
-import { AcmednsFormComponent } from './forms/acmedns-form.component';
-import { helptext_system_certificates } from 'app/helptext/system/certificates';
-import { helptext_system_ca } from 'app/helptext/system/ca';
-import { EntityUtils } from '../../common/entity/utils';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { CertificateAddComponent } from './forms/certificate-add.component';
+import { CertificateEditComponent } from './forms/certificate-edit.component';
 
 @UntilDestroy()
 @Component({

@@ -1,19 +1,19 @@
 import { Component } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import * as _ from 'lodash';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   DialogService, LanguageService, SystemGeneralService, WebSocketService,
-} from '../../../../services';
-import { ModalService } from '../../../../services/modal.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+} from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { LocaleService } from 'app/services/locale.service';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { EntityUtils } from '../../../common/entity/utils';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({

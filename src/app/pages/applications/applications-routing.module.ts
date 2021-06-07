@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-
+import { T } from 'app/translate-marker';
 import { ApplicationsComponent } from './applications.component';
-import { PodShellComponent } from './pod-shell/pod-shell.component';
 import { PodLogsComponent } from './pod-logs/pod-logs.component';
-import { T } from '../../translate-marker';
+import { PodShellComponent } from './pod-shell/pod-shell.component';
 
 const routes: Routes = [
   {

@@ -1,24 +1,22 @@
 import { Component, OnDestroy } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import {
   chartsTrain, ixChartApp, latestVersion, officialCatalog,
 } from 'app/constants/catalog.constants';
-import { Option } from 'app/interfaces/option.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { FormGroup } from '@angular/forms';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-
-import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
-import { ModalService } from 'app/services/modal.service';
-import { DialogService } from '../../../services/index';
-import { ApplicationsService } from '../applications.service';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import helptext from '../../../helptext/apps/apps';
-import { EntityUtils } from '../../common/entity/utils';
+import helptext from 'app/helptext/apps/apps';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Option } from 'app/interfaces/option.interface';
+import { ApplicationsService } from 'app/pages/applications/applications.service';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService, ModalService } from 'app/services';
 
 @UntilDestroy()
 @Component({

@@ -1,27 +1,26 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { DatasetType } from 'app/enums/dataset-type.enum';
-import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
-import { CoreEvent } from 'app/interfaces/events';
-import { ProductType } from '../../../../enums/product-type.enum';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import * as _ from 'lodash';
-import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { T } from '../../../../translate-marker';
-
+import * as _ from 'lodash';
+import { CoreService } from 'app/core/services/core.service';
+import { DatasetType } from 'app/enums/dataset-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
+import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
+import helptext from 'app/helptext/vm/devices/device-add-edit';
+import { CoreEvent } from 'app/interfaces/events';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard';
 import {
   WebSocketService, NetworkService, VmService, StorageService,
-} from '../../../../services';
-import { EntityUtils } from '../../../common/entity/utils';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogService } from '../../../../services/dialog.service';
-import helptext from '../../../../helptext/vm/devices/device-add-edit';
+} from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
-import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard';
-import { CoreService } from 'app/core/services/core.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

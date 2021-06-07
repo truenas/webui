@@ -1,8 +1,8 @@
-import { VmCpuMode } from 'app/enums/vm.enum';
-import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
-import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
-import globalHelptext from '../../global-helptext';
+import { VmCpuMode } from 'app/enums/vm.enum';
+import globalHelptext from 'app/helptext/global-helptext';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { T } from 'app/translate-marker';
 
 export default {
   no_pools_dialog: {

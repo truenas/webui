@@ -1,16 +1,16 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule, ModuleWithProviders } from '@angular/core';
+import { AnimationService } from 'app/core/services/animation.service';
 import { ApiService } from 'app/core/services/api.service';
-import { LayoutService } from 'app/core/services/layout.service';
-import { StatsService } from 'app/core/services/stats.service';
+import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service';
+import { CoreService } from 'app/core/services/core.service';
 import { DiskStateService } from 'app/core/services/disk-state.service';
 import { DiskTemperatureService } from 'app/core/services/disk-temperature.service';
-import { AnimationService } from 'app/core/services/animation.service';
 import { InteractionManagerService } from 'app/core/services/interaction-manager.service';
-import { CoreService } from 'app/core/services/core.service';
-import { ThemeService } from 'app/services/theme/theme.service';
+import { LayoutService } from 'app/core/services/layout.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service';
+import { StatsService } from 'app/core/services/stats.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 /*

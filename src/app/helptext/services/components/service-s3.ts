@@ -1,7 +1,7 @@
-import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
-import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
-import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
+import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { T } from 'app/translate-marker';
 
 export default {
   bindip_placeholder: T('IP Address'),

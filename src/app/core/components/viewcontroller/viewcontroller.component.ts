@@ -1,13 +1,13 @@
 import {
   Component, ViewChild, OnDestroy,
 } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
+import { Subject } from 'rxjs';
+import { LayoutContainer, LayoutChild } from 'app/core/classes/layouts';
+import { ViewController } from 'app/core/classes/viewcontroller';
 import { Display } from 'app/core/components/display/display.component';
 import { CoreService } from 'app/core/services/core.service';
-import { ViewController } from 'app/core/classes/viewcontroller';
-import { LayoutContainer, LayoutChild } from 'app/core/classes/layouts';
+import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreEvent } from 'app/interfaces/events';
-import { Subject } from 'rxjs';
 
 export interface ViewConfig {
   componentName: any;

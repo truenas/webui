@@ -1,5 +1,4 @@
-import { ValidatorFn } from '@angular/forms';
-import { FormControl } from '@angular/forms';
+import { ValidatorFn, FormControl } from '@angular/forms';
 
 export function regexValidator(regexString: RegExp): ValidatorFn {
   let thisControl: FormControl;

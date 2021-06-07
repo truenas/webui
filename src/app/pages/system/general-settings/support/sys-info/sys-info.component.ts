@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { WebSocketService } from 'app/services/';
-import { DialogService } from 'app/services/dialog.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
 
 @Component({
   selector: 'app-sys-info',

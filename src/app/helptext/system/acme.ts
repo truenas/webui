@@ -1,5 +1,5 @@
 import { Validators } from '@angular/forms';
-import { T } from '../../translate-marker';
+import { T } from 'app/translate-marker';
 
 export const helptext_system_acme = {
   edit_title: T('Edit DNS Authenticator'),

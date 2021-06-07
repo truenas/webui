@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
+import { Subject } from 'rxjs';
+import { View } from 'app/core/classes/view';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreEvent } from 'app/interfaces/events';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { Subject } from 'rxjs';
-import { View } from 'app/core/classes/view';
 
 // This makes the metadata available globally
 // Deal Breaker: Angular injects the component's

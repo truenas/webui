@@ -1,4 +1,3 @@
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Component,
   Input,
@@ -17,6 +16,7 @@ import {
   HostListener,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 const Z_INDEX_ITEM = 23;
 

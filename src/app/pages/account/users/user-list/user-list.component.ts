@@ -1,22 +1,22 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
+import { PreferencesService } from 'app/core/services/preferences.service';
+import helptext from 'app/helptext/account/user-list';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { T } from '../../../../translate-marker';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   DialogService, StorageService, ValidationService, UserService,
 } from 'app/services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { WebSocketService } from '../../../../services/ws.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
-import { ModalService } from '../../../../services/modal.service';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import * as _ from 'lodash';
-import helptext from '../../../../helptext/account/user-list';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { T } from 'app/translate-marker';
 import { UserFormComponent } from '../user-form/user-form.component';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

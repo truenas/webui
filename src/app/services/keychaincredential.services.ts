@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { KeychainCredential, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
-import { Observable } from 'rxjs';
-
 import { WebSocketService } from './ws.service';
 
 @Injectable()

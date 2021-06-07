@@ -2,9 +2,9 @@ import {
   ApplicationRef, Component, Injector, OnDestroy,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { RestService, WebSocketService } from '../../../services';
-import { ThemeService } from 'app/services/theme/theme.service';
 import { CoreService } from 'app/core/services/core.service';
+import { RestService, WebSocketService } from 'app/services';
+import { ThemeService } from 'app/services/theme/theme.service';
 
 @Component({
   selector: 'ui-preferences',

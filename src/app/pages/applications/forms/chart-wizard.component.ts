@@ -1,17 +1,17 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogService } from '../../../services/index';
-import { ApplicationsService } from '../applications.service';
-import { ModalService } from '../../../services/modal.service';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { CommonUtils } from 'app/core/classes/common-utils';
-import helptext from '../../../helptext/apps/apps';
-import { EntityUtils } from '../../common/entity/utils';
-import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
-import { Subject } from 'rxjs';
-import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subject } from 'rxjs';
+import { CommonUtils } from 'app/core/classes/common-utils';
+import helptext from 'app/helptext/apps/apps';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService } from 'app/services/index';
+import { ModalService } from 'app/services/modal.service';
+import { ApplicationsService } from '../applications.service';
 
 @UntilDestroy()
 @Component({

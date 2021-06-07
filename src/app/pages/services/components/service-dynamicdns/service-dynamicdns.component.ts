@@ -1,13 +1,12 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { Observable } from 'rxjs';
-
-import { RestService, WebSocketService, ValidationService } from '../../../../services';
-import helptext from '../../../../helptext/services/components/service-dynamic-dns';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Observable } from 'rxjs';
+import helptext from 'app/helptext/services/components/service-dynamic-dns';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { RestService, WebSocketService, ValidationService } from 'app/services';
 
 @UntilDestroy()
 @Component({

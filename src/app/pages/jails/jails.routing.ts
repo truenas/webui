@@ -1,20 +1,18 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
-import { JailListComponent } from './jail-list';
-import { JailFormComponent } from './jail-form/jail-form.component';
-import { StorageListComponent } from './storages/storage-list';
-import { StorageFormComponent } from './storages/storage-form';
-import { JailWizardComponent } from './jail-wizard';
-import { JailShellComponent } from './jail-shell';
-
+import { DeviceAddComponent } from '../vm/devices/device-add/device-add.component';
 import { DeviceEditComponent } from '../vm/devices/device-edit/device-edit.component';
 import { DeviceListComponent } from '../vm/devices/device-list';
 import { VmFormComponent } from '../vm/vm-form';
 import { VMListComponent } from '../vm/vm-list/vm-list.component';
-import { VMWizardComponent } from '../vm/vm-wizard';
 import { VMSerialShellComponent } from '../vm/vm-serial-shell';
-import { DeviceAddComponent } from '../vm/devices/device-add/device-add.component';
+import { VMWizardComponent } from '../vm/vm-wizard';
+import { JailFormComponent } from './jail-form/jail-form.component';
+import { JailListComponent } from './jail-list';
+import { JailShellComponent } from './jail-shell';
+import { JailWizardComponent } from './jail-wizard';
+import { StorageFormComponent } from './storages/storage-form';
+import { StorageListComponent } from './storages/storage-list';
 
 export const routes: Routes = [
   {

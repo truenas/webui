@@ -1,29 +1,25 @@
 import {
   Component, AfterViewInit, Input, ViewChild, OnDestroy, ElementRef,
 } from '@angular/core';
-import { ThemeUtils } from 'app/core/classes/theme-utils';
+import { MediaObserver } from '@angular/flex-layout';
 import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { UUID } from 'angular2-uuid';
+import { Chart, ChartDataSets, InteractionMode } from 'chart.js';
+import * as d3 from 'd3';
+import { Subject } from 'rxjs';
+import { ThemeUtils } from 'app/core/classes/theme-utils';
+import { ViewChartBarComponent } from 'app/core/components/viewchartbar/viewchartbar.component';
+import { ViewChartGaugeComponent } from 'app/core/components/viewchartgauge/viewchartgauge.component';
+import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { CoreEvent } from 'app/interfaces/events';
 import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/services/theme/theme.service';
-import { Subject } from 'rxjs';
-import { MediaObserver } from '@angular/flex-layout';
-import { Chart, ChartDataSets, InteractionMode } from 'chart.js';
-
-import { Router } from '@angular/router';
-import { UUID } from 'angular2-uuid';
-import * as d3 from 'd3';
-
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-
-import { ViewChartGaugeComponent } from 'app/core/components/viewchartgauge/viewchartgauge.component';
-import { ViewChartBarComponent } from 'app/core/components/viewchartbar/viewchartbar.component';
-import { TranslateService } from '@ngx-translate/core';
-
-import { T } from '../../../../translate-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

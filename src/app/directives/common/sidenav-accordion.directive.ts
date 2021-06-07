@@ -2,7 +2,7 @@ import {
   Directive, ElementRef, HostListener, OnInit,
 } from '@angular/core';
 import { LayoutService } from 'app/core/services/layout.service';
-import * as domHelper from '../../helpers/dom.helper';
+import * as domHelper from 'app/helpers/dom.helper';
 
 @Directive({ selector: '[sideNavAccordion]' })
 export class SideNavAccordionDirective implements OnInit {

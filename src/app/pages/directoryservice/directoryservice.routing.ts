@@ -1,14 +1,13 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { ActiveDirectoryComponent } from './activedirectory/activedirectory.component';
-import { LdapComponent } from './ldap/ldap.component';
-import { NISComponent } from './nis';
+import { DirectoryservicesComponent } from './directoryservices.component';
+import { IdmapListComponent } from './idmap/idmap-list.component';
+import { KerberosKeytabsListComponent } from './kerberoskeytabs/kerberoskeytabs-list.component';
 import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list.component';
 import { KerberosSettingsComponent } from './kerberossettings/kerberossettings.component';
-import { KerberosKeytabsListComponent } from './kerberoskeytabs/kerberoskeytabs-list.component';
-import { IdmapListComponent } from './idmap/idmap-list.component';
-import { DirectoryservicesComponent } from './directoryservices.component';
+import { LdapComponent } from './ldap/ldap.component';
+import { NISComponent } from './nis';
 
 export const routes: Routes = [{
   path: '',

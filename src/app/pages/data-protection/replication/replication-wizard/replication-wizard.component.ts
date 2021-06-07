@@ -1,23 +1,16 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
-import { Option } from 'app/interfaces/option.interface';
-import { Schedule } from 'app/interfaces/schedule.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-
+import { Validators, FormArray, FormGroup } from '@angular/forms';
+import {
+  UntilDestroy, untilDestroyed,
+} from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
-
 import { CipherType } from 'app/enums/cipher-type.enum';
 import { DatasetSource } from 'app/enums/dataset-source.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
@@ -25,8 +18,17 @@ import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication-wizard';
 import sshConnectionsHelptex from 'app/helptext/system/ssh-connections';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { Schedule } from 'app/interfaces/schedule.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
@@ -42,9 +44,6 @@ import {
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { FormArray, FormGroup } from '@angular/forms';
 
 @UntilDestroy()
 @Component({

@@ -1,6 +1,5 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { ClusteringComingsoonComponent } from './clustering-comingsoon/clustering-comingsoon.component';
 
 export const routes: Routes = [{

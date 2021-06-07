@@ -1,5 +1,5 @@
 import { Validators } from '@angular/forms';
-import { T } from '../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 export default {
   volume_delete_name_label: T('name'),
