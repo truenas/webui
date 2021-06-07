@@ -1,7 +1,5 @@
 import {
-  ApplicationRef,
   Component,
-  Injector,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -12,7 +10,7 @@ import {
   FieldConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RestService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -52,9 +50,11 @@ export class SnapshotCloneComponent implements FormConfiguration {
       ],
     }];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef) {}
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+  ) {}
 
   preInit(): void {
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {

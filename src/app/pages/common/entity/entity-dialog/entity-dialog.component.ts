@@ -7,7 +7,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { RestService } from 'app/services/rest.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { T } from 'app/translate-marker';
 import { FieldConfig } from '../entity-form/models/field-config.interface';
@@ -45,7 +44,6 @@ export class EntityDialogComponent<P = any> implements OnInit {
   constructor(public dialogRef: MatDialogRef < EntityDialogComponent >,
     protected translate: TranslateService,
     protected entityFormService: EntityFormService,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
     public mdDialog: MatDialog,

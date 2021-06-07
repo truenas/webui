@@ -9,7 +9,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
-import { RestService, WebSocketService, DialogService } from 'app/services';
+import { WebSocketService, DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -175,9 +175,12 @@ export class ServiceNFSComponent implements FormConfiguration {
     },
   ];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    private dialog: DialogService) {}
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    private dialog: DialogService,
+  ) {}
 
   resourceTransformIncomingRestData(data: any): any {
     this.v4krbValue = data.v4_krb;

@@ -21,7 +21,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, Subscription, Subject } from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
-import { RestService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
 import { EntityTemplateDirective } from '../entity-template.directive';
@@ -129,13 +129,16 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   error: string;
   success = false;
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
     protected location: Location, private fb: FormBuilder,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
-    public translate: TranslateService) {}
+    public translate: TranslateService,
+  ) {}
 
   ngAfterViewInit(): void {
     this.templates.forEach((item) => {

@@ -10,7 +10,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { RestService, WebSocketService, DialogService } from 'app/services';
+import { WebSocketService, DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
 import { FieldConfig } from '../entity-form/models/field-config.interface';
@@ -38,13 +38,17 @@ export class EntityWizardComponent implements OnInit {
 
   get formArray(): AbstractControl | null { return this.formGroup.get('formArray'); }
 
-  constructor(protected rest: RestService, protected ws: WebSocketService,
-    private formBuilder: FormBuilder, private entityFormService: EntityFormService,
-    public loader: AppLoaderService, protected fieldRelationService: FieldRelationService,
-    protected router: Router, protected aroute: ActivatedRoute,
-    private dialog: DialogService, protected translate: TranslateService) {
-
-  }
+  constructor(
+    protected ws: WebSocketService,
+    private formBuilder: FormBuilder,
+    private entityFormService: EntityFormService,
+    public loader: AppLoaderService,
+    protected fieldRelationService: FieldRelationService,
+    protected router: Router,
+    protected aroute: ActivatedRoute,
+    private dialog: DialogService,
+    protected translate: TranslateService,
+  ) {}
 
   ngOnInit(): void {
     if (this.conf.showSpinner) {

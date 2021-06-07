@@ -8,7 +8,6 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
-import { RestService } from 'app/services/rest.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -43,7 +42,6 @@ export class EntityCardComponent extends iXObject implements OnInit {
   protected loaderOpen = false;
 
   constructor(
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected router: Router,
     private dialog: DialogService,

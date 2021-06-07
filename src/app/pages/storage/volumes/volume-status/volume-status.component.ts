@@ -25,7 +25,7 @@ import { EntityTreeTable } from 'app/pages/common/entity/entity-tree-table/entit
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DiskFormComponent } from 'app/pages/storage/disks/disk-form';
 import {
-  WebSocketService, RestService, AppLoaderService, DialogService,
+  WebSocketService, AppLoaderService, DialogService,
 } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { ModalService } from 'app/services/modal.service';
@@ -148,17 +148,18 @@ export class VolumeStatusComponent implements OnInit {
 
   protected pool: Pool;
 
-  constructor(protected aroute: ActivatedRoute,
+  constructor(
+    protected aroute: ActivatedRoute,
     protected core: CoreService,
     protected ws: WebSocketService,
-    protected rest: RestService,
     protected translate: TranslateService,
     protected router: Router,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected matDialog: MatDialog,
     protected localeService: LocaleService,
-    protected modalService: ModalService) {}
+    protected modalService: ModalService,
+  ) {}
 
   getZfsPoolScan(poolName: string): void {
     this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe(
@@ -647,7 +648,7 @@ export class VolumeStatusComponent implements OnInit {
   }
 
   onClickEdit(pk: string): void {
-    const diskForm = new DiskFormComponent(this.router, this.rest, this.ws, this.aroute);
+    const diskForm = new DiskFormComponent(this.router, this.ws, this.aroute);
     diskForm.inIt(pk);
     this.modalService.open('slide-in-form', diskForm);
   }

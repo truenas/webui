@@ -13,7 +13,9 @@ import { NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { Observable, of, Subscription } from 'rxjs';
+import {
+  Observable, of, Subscription, EMPTY,
+} from 'rxjs';
 import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
@@ -30,7 +32,6 @@ import {
 import { DialogService, JobService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
-import { RestService } from 'app/services/rest.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { T } from 'app/translate-marker';
@@ -184,7 +185,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     protected core: CoreService,
-    protected rest: RestService,
     protected router: Router,
     protected ws: WebSocketService,
     protected dialogService: DialogService,
@@ -524,7 +524,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.getFunction = this.ws.call(this.conf.queryCall, []);
       }
     } else {
-      this.getFunction = this.rest.get(this.conf.resource_name, options) as any;
+      this.getFunction = EMPTY;
     }
 
     if (this.conf.callGetFunction) {

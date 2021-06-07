@@ -99,16 +99,6 @@ export const rootRouterConfig: Routes = [{
     data: { title: 'Storage', breadcrumb: 'Storage', toplevel: true },
   },
   {
-    path: 'plugins',
-    loadChildren: () => import('./pages/plugins/plugins.module').then((module) => module.PluginsModule),
-    data: { title: 'Plugins', breadcrumb: 'Plugins', toplevel: true },
-  },
-  {
-    path: 'virtualization',
-    loadChildren: () => import('./pages/jails/jails.module').then((module) => module.JailsModule),
-    data: { title: 'Jails', breadcrumb: 'Jails', toplevel: true },
-  },
-  {
     path: 'reportsdashboard',
     loadChildren: () => import('./pages/reportsdashboard/reportsdashboard.module').then((module) => module.ReportsDashboardModule),
     data: { title: 'Reporting', breadcrumb: 'Reporting' },

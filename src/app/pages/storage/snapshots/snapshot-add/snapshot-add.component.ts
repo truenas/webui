@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ApplicationRef, Component, Injector,
+  AfterViewInit, Component,
 } from '@angular/core';
 import { FormControl, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -12,7 +12,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { DialogService, RestService, WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { T } from 'app/translate-marker';
 
 @UntilDestroy()
@@ -79,9 +79,12 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
     },
   ];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef, protected dialog: DialogService) {
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected dialog: DialogService,
+  ) {
   }
 
   ngAfterViewInit(): void {

@@ -1,7 +1,5 @@
 import {
-  ApplicationRef,
   Component,
-  Injector,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,7 +11,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { RestService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from 'app/translate-marker';
@@ -121,10 +119,13 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
     return data;
   }
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService,
-    protected loader: AppLoaderService) { }
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected dialogService: DialogService,
+    protected loader: AppLoaderService,
+  ) { }
 
   preInit(): void {
     const queryPayload: any[] = [];

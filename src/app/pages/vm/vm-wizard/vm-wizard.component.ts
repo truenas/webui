@@ -29,7 +29,7 @@ import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  RestService, WebSocketService, NetworkService, StorageService, SystemGeneralService,
+  WebSocketService, NetworkService, StorageService, SystemGeneralService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -451,15 +451,20 @@ export class VMWizardComponent implements WizardConfiguration {
   private nicType: FieldConfig;
   private bootloader: FieldConfig;
 
-  constructor(protected rest: RestService, protected ws: WebSocketService,
-    public vmService: VmService, public networkService: NetworkService,
-    protected loader: AppLoaderService, protected dialog: MatDialog,
+  constructor(
+    protected ws: WebSocketService,
+    public vmService: VmService,
+    public networkService: NetworkService,
+    protected loader: AppLoaderService,
+    protected dialog: MatDialog,
     public messageService: MessageService,
-    private dialogService: DialogService, private storageService: StorageService,
-    protected prefService: PreferencesService, private translate: TranslateService,
-    protected modalService: ModalService, private systemGeneralService: SystemGeneralService) {
-
-  }
+    private dialogService: DialogService,
+    private storageService: StorageService,
+    protected prefService: PreferencesService,
+    private translate: TranslateService,
+    protected modalService: ModalService,
+    private systemGeneralService: SystemGeneralService,
+  ) {}
 
   preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;

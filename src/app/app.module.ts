@@ -50,7 +50,6 @@ import { AppLoaderModule } from './services/app-loader/app-loader.module';
 import { AppLoaderService } from './services/app-loader/app-loader.service';
 import { AuthService } from './services/auth/auth.service';
 import { NavigationService } from './services/navigation/navigation.service';
-import { RestService } from './services/rest.service';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
 import { WebSocketService } from './services/ws.service';
 
@@ -110,7 +109,6 @@ import { WebSocketService } from './services/ws.service';
     NavigationService,
     AuthService,
     WebSocketService,
-    RestService,
     AppLoaderService,
     NotificationsService,
     ErdService,

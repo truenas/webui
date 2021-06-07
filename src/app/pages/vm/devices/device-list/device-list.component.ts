@@ -10,7 +10,7 @@ import {
 } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { RestService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from 'app/translate-marker';
@@ -58,7 +58,6 @@ export class DeviceListComponent implements EntityTableConfig {
   constructor(
     protected router: Router,
     protected aroute: ActivatedRoute,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
     public dialogService: DialogService,

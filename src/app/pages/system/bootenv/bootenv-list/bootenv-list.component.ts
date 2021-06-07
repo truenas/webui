@@ -13,7 +13,6 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { LocaleService } from 'app/services/locale.service';
-import { RestService } from 'app/services/rest.service';
 import { StorageService } from 'app/services/storage.service';
 import { T } from 'app/translate-marker';
 
@@ -44,9 +43,15 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   scrub_msg: string;
   scrub_interval: number;
 
-  constructor(private _rest: RestService, private _router: Router, public ws: WebSocketService,
-    public dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService,
-    protected localeService: LocaleService, private sysGeneralService: SystemGeneralService) {}
+  constructor(
+    private _router: Router,
+    public ws: WebSocketService,
+    public dialog: DialogService,
+    protected loader: AppLoaderService,
+    private storage: StorageService,
+    protected localeService: LocaleService,
+    private sysGeneralService: SystemGeneralService,
+  ) {}
 
   columns = [
     { name: T('Name'), prop: 'name', always_display: true },

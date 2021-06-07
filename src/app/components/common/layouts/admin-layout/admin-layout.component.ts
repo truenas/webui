@@ -12,7 +12,7 @@ import { LayoutService } from 'app/core/services/layout.service';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
-import { RestService, WebSocketService, SystemGeneralService } from 'app/services';
+import { WebSocketService, SystemGeneralService } from 'app/services';
 import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ModalService } from 'app/services/modal.service';
@@ -57,7 +57,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     public cd: ChangeDetectorRef,
     public themeService: ThemeService,
     private media: MediaObserver,
-    protected rest: RestService,
     protected ws: WebSocketService,
     public language: LanguageService,
     public modalService: ModalService,

@@ -8,7 +8,7 @@ import helptext from 'app/helptext/services/components/service-ssh';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { NetworkService, RestService, WebSocketService } from 'app/services';
+import { NetworkService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -156,7 +156,6 @@ export class ServiceSSHComponent implements FormConfiguration, OnInit {
   constructor(
     protected router: Router,
     protected route: ActivatedRoute,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected _injector: Injector,
     protected _appRef: ApplicationRef,

@@ -12,7 +12,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import {
-  DialogService, RestService, SystemGeneralService, WebSocketService, StorageService,
+  DialogService, SystemGeneralService, WebSocketService, StorageService,
 } from 'app/services';
 import { T } from 'app/translate-marker';
 
@@ -405,11 +405,16 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     return true;
   }
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef,
-    protected dialog: DialogService, protected storageService: StorageService,
-    protected systemGeneralService: SystemGeneralService) {}
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected _injector: Injector,
+    protected _appRef: ApplicationRef,
+    protected dialog: DialogService,
+    protected storageService: StorageService,
+    protected systemGeneralService: SystemGeneralService,
+  ) {}
 
   ngOnInit(): void {
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res: any[]) => {

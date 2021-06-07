@@ -1,6 +1,4 @@
-import {
-  ApplicationRef, Component, Injector, OnDestroy,
-} from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -16,7 +14,6 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  RestService,
   WebSocketService,
   JobService,
 } from 'app/services';
@@ -96,10 +93,14 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
   protected dialogRef: any;
   custActions: any[];
 
-  constructor(protected router: Router, protected rest: RestService,
-    protected ws: WebSocketService, protected dialog: MatDialog,
-    protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService,
-    protected job: JobService, protected core: CoreService) {}
+  constructor(
+    protected router: Router,
+    protected ws: WebSocketService,
+    protected dialog: MatDialog,
+    protected dialogService: DialogService,
+    protected job: JobService,
+    protected core: CoreService,
+  ) {}
 
   preInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;

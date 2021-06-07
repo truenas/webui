@@ -15,7 +15,7 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { RestService, WebSocketService, StorageService } from 'app/services';
+import { WebSocketService, StorageService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
@@ -397,10 +397,13 @@ export class ZvolFormComponent implements FormConfiguration {
   }
 
   constructor(
-    protected router: Router, protected aroute: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected loader: AppLoaderService, protected dialogService: DialogService,
-    protected storageService: StorageService, private translate: TranslateService,
+    protected router: Router,
+    protected aroute: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected loader: AppLoaderService,
+    protected dialogService: DialogService,
+    protected storageService: StorageService,
+    private translate: TranslateService,
     protected modalService: ModalService,
   ) {}
 

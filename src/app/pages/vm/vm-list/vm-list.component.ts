@@ -22,7 +22,7 @@ import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-jo
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  WebSocketService, StorageService, AppLoaderService, DialogService, RestService, VmService, NetworkService, SystemGeneralService,
+  WebSocketService, StorageService, AppLoaderService, DialogService, VmService, NetworkService, SystemGeneralService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
@@ -99,11 +99,16 @@ export class VMListComponent implements EntityTableConfig {
     private storageService: StorageService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    private router: Router, protected dialog: MatDialog,
-    private http: HttpClient, private modalService: ModalService, private rest: RestService,
-    private vmService: VmService, private networkService: NetworkService,
-    private messageService: MessageService, private prefService: PreferencesService,
-    private translate: TranslateService, private systemGeneralService: SystemGeneralService,
+    private router: Router,
+    protected dialog: MatDialog,
+    private http: HttpClient,
+    private modalService: ModalService,
+    private vmService: VmService,
+    private networkService: NetworkService,
+    private messageService: MessageService,
+    private prefService: PreferencesService,
+    private translate: TranslateService,
+    private systemGeneralService: SystemGeneralService,
   ) {
     if (this.productType !== ProductType.Scale) {
       this.columns.push({ name: T('Com Port'), prop: 'com_port', hidden: true });
@@ -124,7 +129,7 @@ export class VMListComponent implements EntityTableConfig {
   }
 
   refreshVMWizard(): void {
-    this.addComponent = new VMWizardComponent(this.rest, this.ws, this.vmService, this.networkService, this.loader,
+    this.addComponent = new VMWizardComponent(this.ws, this.vmService, this.networkService, this.loader,
       this.dialog, this.messageService, this.dialogService, this.storageService, this.prefService,
       this.translate, this.modalService, this.systemGeneralService);
   }

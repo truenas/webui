@@ -10,7 +10,6 @@ import {
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
   DialogService,
-  RestService,
   SystemGeneralService,
   WebSocketService,
 } from 'app/services';
@@ -79,11 +78,15 @@ export class NISComponent implements FormConfiguration {
       ],
     }];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef,
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected _injector: Injector,
+    protected _appRef: ApplicationRef,
     protected systemGeneralService: SystemGeneralService,
-    private dialogservice: DialogService) {}
+    private dialogservice: DialogService,
+  ) {}
 
   afterInit(entityForm: EntityFormComponent): void {
     entityForm.submitFunction = (body: any) => this.ws.call(this.addCall, [body]);

@@ -1,7 +1,5 @@
 import {
-  ApplicationRef,
   Component,
-  Injector,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,7 +11,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
   FieldConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { RestService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { EncryptionService } from 'app/services/encryption.service';
@@ -116,10 +114,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
   constructor(
     protected router: Router,
     protected route: ActivatedRoute,
-    protected rest: RestService,
     protected ws: WebSocketService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     public mdDialog: MatDialog,

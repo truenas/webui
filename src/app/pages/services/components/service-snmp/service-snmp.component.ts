@@ -7,7 +7,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
-  IdmapService, IscsiService, RestService, WebSocketService,
+  IdmapService, IscsiService, WebSocketService,
 } from 'app/services';
 
 @Component({
@@ -142,11 +142,15 @@ export class ServiceSNMPComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef,
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected _injector: Injector,
+    protected _appRef: ApplicationRef,
     protected iscsiService: IscsiService,
-    protected idmapService: IdmapService) {}
+    protected idmapService: IdmapService,
+  ) {}
 
   afterInit(entityForm: EntityFormComponent): void {
     entityForm.submitFunction = this.submitFunction;

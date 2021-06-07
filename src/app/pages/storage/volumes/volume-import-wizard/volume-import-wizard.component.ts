@@ -1,8 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import {
   UntilDestroy, untilDestroyed,
 } from '@ngneat/until-destroy';
@@ -17,7 +15,7 @@ import { MessageService } from 'app/pages/common/entity/entity-form/services/mes
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { RestService, WebSocketService, DialogService } from 'app/services';
+import { WebSocketService, DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
@@ -183,11 +181,14 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   protected pool: any;
   hideCancel = true;
 
-  constructor(protected rest: RestService, protected ws: WebSocketService,
-    private router: Router, protected loader: AppLoaderService,
-    protected dialog: MatDialog, protected dialogService: DialogService,
-    protected http: HttpClient, public messageService: MessageService, public modalService: ModalService) {
-
+  constructor(
+    protected ws: WebSocketService,
+    protected loader: AppLoaderService,
+    protected dialog: MatDialog,
+    protected dialogService: DialogService,
+    public messageService: MessageService,
+    public modalService: ModalService,
+  ) {
   }
 
   customNext(stepper: any): void {

@@ -7,7 +7,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { BootEnvService, RestService, WebSocketService } from 'app/services';
+import { BootEnvService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -25,8 +25,12 @@ export class BootEnvironmentRenameComponent implements FormConfiguration {
 
   fieldConfig: FieldConfig[];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService, protected bootEnvService: BootEnvService) {}
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected bootEnvService: BootEnvService,
+  ) {}
 
   preInit(entityForm: EntityFormComponent): void {
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {

@@ -11,7 +11,7 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  IscsiService, RestService, WebSocketService, StorageService,
+  IscsiService, WebSocketService, StorageService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
@@ -259,13 +259,14 @@ export class ExtentFormComponent implements FormConfiguration {
   protected avail_threshold_field: any;
   fieldConfig: FieldConfig[];
 
-  constructor(protected router: Router,
+  constructor(
+    protected router: Router,
     protected aroute: ActivatedRoute,
     protected iscsiService: IscsiService,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
-    protected storageService: StorageService) {}
+    protected storageService: StorageService,
+  ) {}
 
   preInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {

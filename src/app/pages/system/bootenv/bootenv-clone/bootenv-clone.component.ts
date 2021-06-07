@@ -6,7 +6,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { BootEnvService, RestService, WebSocketService } from 'app/services';
+import { BootEnvService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -24,8 +24,12 @@ export class BootEnvironmentCloneComponent implements FormConfiguration {
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService, protected bootEnvService: BootEnvService) {}
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected bootEnvService: BootEnvService,
+  ) {}
 
   preInit(): void {
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {

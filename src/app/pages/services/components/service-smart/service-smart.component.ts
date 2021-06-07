@@ -5,7 +5,7 @@ import helptext from 'app/helptext/services/components/service-smart';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RestService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { T } from 'app/translate-marker';
 
 enum PowerMode {
@@ -81,9 +81,13 @@ export class ServiceSMARTComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef) {}
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected _injector: Injector,
+    protected _appRef: ApplicationRef,
+  ) {}
 
   afterInit(entityEdit: EntityFormComponent): void {
     entityEdit.submitFunction = (body) => this.ws.call('smart.update', [body]);

@@ -6,7 +6,6 @@ import { EntityTreeTable } from 'app/pages/common/entity/entity-tree-table/entit
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { RestService } from 'app/services/rest.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { T } from 'app/translate-marker';
 
@@ -44,10 +43,13 @@ export class BootStatusListComponent implements OnInit {
     ],
   };
 
-  constructor(_rest: RestService, private _router: Router, private ws: WebSocketService,
-    private dialog: DialogService, protected loader: AppLoaderService, protected aroute: ActivatedRoute) {
-
-  }
+  constructor(
+    private _router: Router,
+    private ws: WebSocketService,
+    private dialog: DialogService,
+    protected loader: AppLoaderService,
+    protected aroute: ActivatedRoute,
+  ) {}
 
   getData(): void {
     this.ws.call('boot.get_state').pipe(untilDestroyed(this)).subscribe(

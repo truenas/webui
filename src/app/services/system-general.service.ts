@@ -4,7 +4,6 @@ import { Subject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { RestService } from './rest.service';
 import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
@@ -89,7 +88,7 @@ export class SystemGeneralService {
     }, 5000);
   });
 
-  constructor(protected rest: RestService, protected ws: WebSocketService) {}
+  constructor(protected ws: WebSocketService) {}
 
   getCA(): Observable<any[]> {
     return this.ws.call(this.caList, []);

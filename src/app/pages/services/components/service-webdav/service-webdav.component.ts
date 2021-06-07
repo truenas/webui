@@ -10,9 +10,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import {
-  RestService, SystemGeneralService, WebSocketService, ValidationService,
-} from 'app/services';
+import { SystemGeneralService, WebSocketService, ValidationService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -100,7 +98,6 @@ export class ServiceWebdavComponent implements FormConfiguration, OnDestroy {
   constructor(
     protected router: Router,
     protected route: ActivatedRoute,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected _injector: Injector,
     protected _appRef: ApplicationRef,

@@ -1,6 +1,4 @@
-import {
-  ApplicationRef, Component, Injector,
-} from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -16,7 +14,7 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  DialogService, RestService, WebSocketService, AppLoaderService,
+  DialogService, WebSocketService, AppLoaderService,
 } from 'app/services';
 import { T } from 'app/translate-marker';
 
@@ -233,10 +231,13 @@ export class EmailComponent implements FormConfiguration {
   private smtp: FormControl;
   private pass: FieldConfig;
 
-  constructor(protected router: Router, protected rest: RestService,
-    protected ws: WebSocketService, protected _injector: Injector,
-    protected _appRef: ApplicationRef, private dialogservice: DialogService,
-    protected dialog: MatDialog, protected loader: AppLoaderService) {}
+  constructor(
+    protected router: Router,
+    protected ws: WebSocketService,
+    private dialogservice: DialogService,
+    protected dialog: MatDialog,
+    protected loader: AppLoaderService,
+  ) {}
 
   resourceTransformIncomingRestData(data: any): void {
     if (_.isEmpty(data.oauth)) {

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { CoreService } from 'app/core/services/core.service';
-import { RestService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 @Component({
@@ -41,7 +41,6 @@ export class PreferencesPage implements OnDestroy {
 
   constructor(
     protected router: Router,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected _injector: Injector,
     protected _appRef: ApplicationRef,

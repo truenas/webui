@@ -12,7 +12,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
-  DialogService, RestService, SystemGeneralService, WebSocketService,
+  DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 
 @UntilDestroy()
@@ -113,10 +113,15 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
   protected storage_path: any;
   protected storage_path_subscription: any;
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef,
-    protected systemGeneralService: SystemGeneralService, private dialog: DialogService) {}
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected _injector: Injector,
+    protected _appRef: ApplicationRef,
+    protected systemGeneralService: SystemGeneralService,
+    private dialog: DialogService,
+  ) {}
 
   ngOnDestroy(): void {
     this.storage_path_subscription.unsubscribe();

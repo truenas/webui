@@ -82,24 +82,6 @@ export class NavigationService {
     ],
   },
   {
-    name: T('Applications'),
-    type: 'link',
-    tooltip: T('Applications'),
-    icon: 'apps',
-    state: 'plugins', // rename to applications?
-  },
-  // {
-  //   name: T('Virtualization'),
-  //   type: 'slideOut',
-  //   tooltip: T('Virtualization'),
-  //   icon: 'computer',
-  //   state: 'virtualization',
-  //   sub: [
-  //     { name: T('Jails'), state: 'jails' },
-  //     { name: T('Virtual Machines'), state: 'vm' },
-  //   ]
-  // },
-  {
     name: T('Virtualization'),
     type: 'link',
     tooltip: T('Virtualization'),
