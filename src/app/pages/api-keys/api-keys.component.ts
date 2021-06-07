@@ -1,15 +1,16 @@
-import { Component } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import helptext from 'app/helptext/api-keys';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
-import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { DialogService, WebSocketService } from '../../services';
-import { LocaleService } from '../../services/locale.service';
-import helptext from '../../helptext/api-keys';
+import { DialogService, WebSocketService } from 'app/services';
+import { LocaleService } from 'app/services/locale.service';
 import { ConfirmDialog } from '../common/confirm-dialog/confirm-dialog.component';
+import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityUtils } from '../common/entity/utils';
 
+@UntilDestroy()
 @Component({
   selector: 'app-api-keys',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -112,7 +113,7 @@ export class ApiKeysComponent implements EntityTableConfig {
   doSubmit(entityDialogForm: any): void {
     const that = entityDialogForm.parent;
     if (that.currItem) {
-      that.ws.call(that.editCall, [that.currItem.id, entityDialogForm.formValue]).subscribe(
+      that.ws.call(that.editCall, [that.currItem.id, entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
         (res: any) => {
           entityDialogForm.dialogRef.close(true);
           if (res.key) {
@@ -125,7 +126,7 @@ export class ApiKeysComponent implements EntityTableConfig {
         },
       );
     } else {
-      that.ws.call(that.addCall, [entityDialogForm.formValue]).subscribe(
+      that.ws.call(that.addCall, [entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
         (res: any) => {
           entityDialogForm.dialogRef.close(true);
           that.displayKey(res.key);

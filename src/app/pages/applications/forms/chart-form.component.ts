@@ -1,19 +1,21 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { chartsTrain, latestVersion } from 'app/constants/catalog.constants';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { DialogService } from '../../../services/index';
-import { ApplicationsService } from '../applications.service';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
-import { ModalService } from '../../../services/modal.service';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { chartsTrain, latestVersion } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
-import helptext from '../../../helptext/apps/apps';
-import { EntityUtils } from '../../common/entity/utils';
+import helptext from 'app/helptext/apps/apps';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService } from 'app/services/index';
+import { ModalService } from 'app/services/modal.service';
+import { ApplicationsService } from '../applications.service';
 
+@UntilDestroy()
 @Component({
   selector: 'chart-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -56,7 +58,7 @@ export class ChartFormComponent implements FormConfiguration {
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService, private appService: ApplicationsService) {
-    this.getRow = this.modalService.getRow$.subscribe((rowName: string) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowName: string) => {
       this.rowName = rowName;
       this.customFilter = [[['id', '=', rowName]], { extra: { include_chart_schema: true } }];
       this.getRow.unsubscribe();
@@ -162,7 +164,7 @@ export class ChartFormComponent implements FormConfiguration {
     });
     this.dialogRef.componentInstance.setCall(this.editCall, payload);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();

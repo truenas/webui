@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { Subscription } from 'rxjs';
-import { T } from '../../../../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-rsync-module-list',
@@ -12,7 +11,6 @@ export class RSYNCconfigurationListComponent implements EntityTableConfig {
   queryCall: 'rsyncmod.query' = 'rsyncmod.query';
   hasDetails = true;
   protected entityList: any;
-  busy: Subscription;
   wsDelete: 'rsyncmod.delete' = 'rsyncmod.delete';
   route_add: string[] = ['services', 'rsync', 'rsync-module', 'add'];
   route_edit: string[] = ['services', 'rsync', 'rsync-module', 'edit'];

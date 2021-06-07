@@ -2,12 +2,13 @@ import {
   Component, OnInit, OnDestroy,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
-import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
 import { Subject } from 'rxjs';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
+@UntilDestroy()
 @Component({
   selector: 'form-permissions',
   styleUrls: ['../dynamic-field/dynamic-field.scss', 'form-permissions.scss'],
@@ -146,7 +147,7 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.control = this.group.controls[this.config.name];
-    this.control.valueChanges.subscribe((data: any) => {
+    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((data: any) => {
       if (this.value != data) {
         this.setValue(data);
         this.refreshPermissions();

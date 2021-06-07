@@ -1,16 +1,18 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Option } from 'app/interfaces/option.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
-import helptext from '../../../../../../helptext/services/components/service-rsync';
-import { UserService, WebSocketService } from '../../../../../../services';
-import { FieldConfig } from '../../../../../common/entity/entity-form/models/field-config.interface';
+import helptext from 'app/helptext/services/components/service-rsync';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { UserService, WebSocketService } from 'app/services';
 
+@UntilDestroy()
 @Component({
   selector: 'app-rsync-configuration-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -148,14 +150,14 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
     const accessSet = _.find(this.fieldSets, { name: helptext.rsyncd_fieldset_access });
 
     this.rsyncmod_user = accessSet.config.find((config) => config.name === 'user');
-    this.userService.userQueryDSCache().subscribe((users) => {
+    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((users) => {
       users.forEach((user) => {
         this.rsyncmod_user.options.push({ label: user.username, value: user.username });
       });
     });
 
     this.rsyncmod_group = accessSet.config.find((config) => config.name === 'group');
-    this.userService.groupQueryDSCache().subscribe((groups) => {
+    this.userService.groupQueryDSCache().pipe(untilDestroyed(this)).subscribe((groups) => {
       groups.forEach((group) => {
         this.rsyncmod_group.options.push({ label: group.group, value: group.group });
       });
@@ -165,14 +167,14 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
       entityForm.formGroup.controls['mode'].setValue('RO');
     }
 
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['pk']) {
         this.pk = parseInt(params['pk'], 10);
         this.ws.call('rsyncmod.query', [
           [
             ['id', '=', this.pk],
           ],
-        ]).subscribe((res) => {
+        ]).pipe(untilDestroyed(this)).subscribe((res) => {
           for (const i in res[0]) {
             if (i !== 'id') {
               entityForm.formGroup.controls[i].setValue(res[0][i]);
@@ -188,7 +190,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
   }
 
   updateGroupSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).groupQueryDSCache(value).subscribe((groups) => {
+    (parent.userService as UserService).groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
       const groupOptions: Option[] = [];
       for (let i = 0; i < groups.length; i++) {
         groupOptions.push({ label: groups[i].group, value: groups[i].group });
@@ -198,7 +200,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
   }
 
   updateUserSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
+    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });

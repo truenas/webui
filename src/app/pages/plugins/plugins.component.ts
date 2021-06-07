@@ -1,23 +1,23 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import * as myIP from 'what-is-my-ip-address';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import jailHelptext from 'app/helptext/jails/jails-list';
+import helptext from 'app/helptext/plugins/plugins';
 import { Pool } from 'app/interfaces/pool.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import * as _ from 'lodash';
-
-import * as myIP from 'what-is-my-ip-address';
-import jailHelptext from '../../helptext/jails/jails-list';
-import helptext from '../../helptext/plugins/plugins';
-import { AppLoaderService, DialogService, WebSocketService } from '../../services';
-import { T } from '../../translate-marker';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { T } from 'app/translate-marker';
 import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityJobComponent } from '../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../common/entity/utils';
-
 import { AvailablePluginsComponent } from './available-plugins/available-plugins.component';
 
+@UntilDestroy()
 @Component({
   selector: 'app-plugins-ui',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -88,7 +88,7 @@ export class PluginsComponent implements EntityTableConfig {
       onClick: (selected: any) => {
         const selectedJails = this.getSelectedNames(selected);
         this.loader.open();
-        this.entityList.busy = this.ws.job('core.bulk', ['jail.start', selectedJails]).subscribe(
+        this.entityList.busy = this.ws.job('core.bulk', ['jail.start', selectedJails]).pipe(untilDestroyed(this)).subscribe(
           () => {
             this.updateRows(selected).then(
               () => {
@@ -114,7 +114,7 @@ export class PluginsComponent implements EntityTableConfig {
       onClick: (selected: any) => {
         const selectedJails = this.getSelectedNames(selected);
         this.loader.open();
-        this.entityList.busy = this.ws.job('core.bulk', ['jail.stop', selectedJails]).subscribe(
+        this.entityList.busy = this.ws.job('core.bulk', ['jail.stop', selectedJails]).pipe(untilDestroyed(this)).subscribe(
           () => {
             this.updateRows(selected).then(
               () => {
@@ -140,7 +140,7 @@ export class PluginsComponent implements EntityTableConfig {
       onClick: (selected: any) => {
         const selectedJails = this.getSelectedNames(selected);
         this.dialogService.Info(helptext.multi_update_dialog.title, helptext.multi_update_dialog.content);
-        this.entityList.busy = this.ws.job('core.bulk', ['jail.update_to_latest_patch', selectedJails]).subscribe(
+        this.entityList.busy = this.ws.job('core.bulk', ['jail.update_to_latest_patch', selectedJails]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             let message = '';
             for (let i = 0; i < res.result.length; i++) {
@@ -220,7 +220,7 @@ export class PluginsComponent implements EntityTableConfig {
             this.activatePool();
           }
         }, (err) => {
-          this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted).subscribe(
+          this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted).pipe(untilDestroyed(this)).subscribe(
             () => {
               resolve(false);
             },
@@ -238,7 +238,7 @@ export class PluginsComponent implements EntityTableConfig {
       jailHelptext.noPoolDialog.buttonMsg,
     );
 
-    dialogRef.subscribe((res: boolean) => {
+    dialogRef.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         this.router.navigate(new Array('/').concat(['storage', 'pools', 'manager']));
       }
@@ -267,7 +267,7 @@ export class PluginsComponent implements EntityTableConfig {
       customSubmit(entityDialog: EntityDialogComponent) {
         const value = entityDialog.formValue;
         self.entityList.loader.open();
-        self.ws.call('jail.activate', [value['selectedPool']]).subscribe(
+        self.ws.call('jail.activate', [value['selectedPool']]).pipe(untilDestroyed(this)).subscribe(
           () => {
             self.activatedPool = value['selectedPool'];
             entityDialog.dialogRef.close(true);
@@ -329,7 +329,7 @@ export class PluginsComponent implements EntityTableConfig {
 
   updateRows(rows: any[]): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      this.ws.call('plugin.query').subscribe(
+      this.ws.call('plugin.query').pipe(untilDestroyed(this)).subscribe(
         (res) => {
           for (const row of rows) {
             const targetIndex = _.findIndex(res, (o: any) => o['name'] === row.name);
@@ -381,7 +381,7 @@ export class PluginsComponent implements EntityTableConfig {
       icon: 'play_arrow',
       onClick: (row: any) => {
         this.loader.open();
-        this.ws.job('jail.start', [row.name]).subscribe(
+        this.ws.job('jail.start', [row.name]).pipe(untilDestroyed(this)).subscribe(
           () => {
             this.updateRows([row]).then(() => {
               this.loader.close();
@@ -401,7 +401,7 @@ export class PluginsComponent implements EntityTableConfig {
       icon: 'replay',
       onClick: (row: any) => {
         this.loader.open();
-        this.ws.job('jail.restart', [row.name]).subscribe(
+        this.ws.job('jail.restart', [row.name]).pipe(untilDestroyed(this)).subscribe(
           () => {
             this.updateRows([row]).then(() => {
               this.loader.close();
@@ -421,7 +421,7 @@ export class PluginsComponent implements EntityTableConfig {
       icon: 'stop',
       onClick: (row: any) => {
         this.loader.open();
-        this.ws.job('jail.stop', [row.name]).subscribe(
+        this.ws.job('jail.stop', [row.name]).pipe(untilDestroyed(this)).subscribe(
           () => {
             this.updateRows([row]).then(() => {
               this.loader.close();
@@ -444,7 +444,7 @@ export class PluginsComponent implements EntityTableConfig {
         dialogRef.componentInstance.disableProgressValue(true);
         dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row.name]);
         dialogRef.componentInstance.submit();
-        dialogRef.componentInstance.success.subscribe(() => {
+        dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close(true);
           this.updateRows([row]);
           this.dialogService.Info(T('Plugin Updated'), T('Plugin ') + row.name + T(' updated.'));
@@ -577,7 +577,7 @@ export class PluginsComponent implements EntityTableConfig {
     this.loader.open();
     row.boot = !row.boot;
     this.ws.call('plugin.update', [row.id, { boot: row.boot ? 'on' : 'off' }])
-      .subscribe(
+      .pipe(untilDestroyed(this)).subscribe(
         (res) => {
           if (!res) {
             row.boot = !row.boot;

@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-
+import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { WebSocketService, AppLoaderService, DialogService } from '../../../../services';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import helptext from 'app/helptext/storage/volumes/volume-key';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EncryptionService } from '../../../../services/encryption.service';
-import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/storage/volumes/volume-key';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
+import { EncryptionService } from 'app/services/encryption.service';
+import { T } from 'app/translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'app-volumeunlock-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -93,24 +94,24 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
   ) {}
 
   preInit(): void {
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
     });
   }
 
   afterInit(entityForm: EntityFormComponent): void {
-    entityForm.formGroup.controls['encryptionkey_passphrase'].valueChanges.subscribe((res: any) => {
+    entityForm.formGroup.controls['encryptionkey_passphrase'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       entityForm.setDisabled('set_recoverykey', res === '');
     });
   }
 
   customSubmit(value: any): void {
-    this.ws.call('auth.check_user', ['root', value.passphrase]).subscribe((res) => {
+    this.ws.call('auth.check_user', ['root', value.passphrase]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (!res) {
         this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');
       } else {
         this.ws.call('pool.rekey', [parseInt(this.pk), { admin_password: value.passphrase }])
-          .subscribe(() => {
+          .pipe(untilDestroyed(this)).subscribe(() => {
             switch (true) {
               case value.encryptionkey_passphrase && !value.set_recoverykey:
                 this.encryptionService.setPassphrase(this.pk, value.encryptionkey_passphrase,

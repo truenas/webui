@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-
-import { WebSocketService } from '../../../../services';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogService } from '../../../../services/dialog.service';
-import { StorageService } from '../../../../services/storage.service';
-import helptext from '../../../../helptext/storage/disks/disks';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import helptext from 'app/helptext/storage/disks/disks';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
+import { StorageService } from 'app/services/storage.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-disk-bulk-edit',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -95,7 +96,7 @@ export class DiskBulkEditComponent implements FormConfiguration {
     protected loader: AppLoaderService,
     public diskBucket: StorageService,
   ) {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['poolId']) {
         this.route_success = ['storage', 'pools', 'status', params['poolId']];
       }
@@ -127,7 +128,7 @@ export class DiskBulkEditComponent implements FormConfiguration {
     }
 
     this.ws.job('core.bulk', ['disk.update', req])
-      .subscribe(
+      .pipe(untilDestroyed(this)).subscribe(
         (res) => {
           if (res.state === EntityJobState.Success) {
             this.loader.close();

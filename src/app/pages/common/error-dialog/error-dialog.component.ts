@@ -1,12 +1,13 @@
-import { MatDialogRef } from '@angular/material/dialog';
-import { Component } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
-
-import { WebSocketService } from '../../../services/ws.service';
-import { StorageService } from '../../../services/storage.service';
+import { Component } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { EntityUtils } from '../entity/utils';
 
+@UntilDestroy()
 @Component({
   selector: 'error-dialog',
   templateUrl: './error-dialog.component.html',
@@ -58,11 +59,11 @@ export class ErrorDialog {
   }
 
   downloadLogs(): void {
-    this.ws.call('core.download', ['filesystem.get', [this.logs.logs_path], this.logs.id + '.log']).subscribe(
+    this.ws.call('core.download', ['filesystem.get', [this.logs.logs_path], this.logs.id + '.log']).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         const url = res[1];
         const mimetype = 'text/plain';
-        this.storage.streamDownloadFile(this.http, url, this.logs.id + '.log', mimetype).subscribe((file) => {
+        this.storage.streamDownloadFile(this.http, url, this.logs.id + '.log', mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
           this.storage.downloadBlob(file, this.logs.id + '.log');
           if (this.dialogRef) {
             this.dialogRef.close();

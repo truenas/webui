@@ -1,23 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import {
   EntityTableComponent,
 } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { Subscription } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { RestService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
+import { T } from 'app/translate-marker';
 
-import { RestService, WebSocketService } from '../../../../services';
-import { DialogService } from '../../../../services/dialog.service';
-
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { EntityUtils } from '../../../common/entity/utils';
-import { ChangeDetectorRef } from '@angular/core';
-import { T } from '../../../../translate-marker';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import * as _ from 'lodash';
-
+@UntilDestroy()
 @Component({
   selector: 'app-device-list',
   template: `
@@ -31,12 +29,10 @@ export class DeviceListComponent implements EntityTableConfig {
   protected route_delete: string[];
   protected pk: any;
   vm: string;
-  sub: Subscription;
   private entityList: any;
   wsDelete: 'datastore.delete' = 'datastore.delete';
   queryCall: 'vm.device.query' = 'vm.device.query';
   queryCallOption: any[] = [[['vm', '=']]];
-  busy: Subscription;
   protected loaderOpen = false;
   columns = [
     { name: T('Device ID'), prop: 'id', always_display: true },
@@ -103,7 +99,7 @@ export class DeviceListComponent implements EntityTableConfig {
       icon: 'reorder',
       label: T('Change Device Order'),
       onClick: (row1: any) => {
-        self.translate.get('Change order for ').subscribe((orderMsg) => {
+        self.translate.get('Change order for ').pipe(untilDestroyed(this)).subscribe((orderMsg) => {
           const conf: DialogFormConfiguration = {
             title: T('Change Device Order'),
             message: orderMsg + `<b>${row1.dtype} ${row1.id}</b>`,
@@ -120,7 +116,7 @@ export class DeviceListComponent implements EntityTableConfig {
             customSubmit(entityDialog: EntityDialogComponent) {
               const value = entityDialog.formValue;
               self.loader.open();
-              self.ws.call('vm.device.update', [row1.id, { order: value.order }]).subscribe(() => {
+              self.ws.call('vm.device.update', [row1.id, { order: value.order }]).pipe(untilDestroyed(this)).subscribe(() => {
                 entityDialog.dialogRef.close(true);
                 self.loader.close();
                 this.parent.entityList.getData();
@@ -143,7 +139,7 @@ export class DeviceListComponent implements EntityTableConfig {
       icon: 'list',
       label: T('Details'),
       onClick: (device: any) => {
-        self.translate.get('Change order for ').subscribe((detailMsg) => {
+        self.translate.get('Change order for ').pipe(untilDestroyed(this)).subscribe((detailMsg) => {
           let details = '';
           for (const attribute in device.attributes) {
             details = `${attribute}: ${device.attributes[attribute]} \n` + details;
@@ -156,14 +152,14 @@ export class DeviceListComponent implements EntityTableConfig {
   }
 
   deviceDelete(row: any): void {
-    this.translate.get('Delete').subscribe((msg) => {
+    this.translate.get('Delete').pipe(untilDestroyed(this)).subscribe((msg) => {
       this.dialogService.confirm(T('Delete'), `${msg} <b>${row.dtype} ${row.id}</b>`,
-        true, T('Delete Device')).subscribe((res: boolean) => {
+        true, T('Delete Device')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
           if (this.wsDelete) {
-            this.busy = this.ws.call(this.wsDelete, ['vm.device', row.id]).subscribe(
+            this.ws.call(this.wsDelete, ['vm.device', row.id]).pipe(untilDestroyed(this)).subscribe(
               () => {
                 this.entityList.getData();
                 this.loader.close();
@@ -181,7 +177,7 @@ export class DeviceListComponent implements EntityTableConfig {
 
   preInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.sub = this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
       this.vm = params['name'];
       this.route_add = ['vm', this.pk, 'devices', this.vm, 'add'];

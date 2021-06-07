@@ -1,21 +1,22 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-
-import * as _ from 'lodash';
-import { ProductType } from '../../../enums/product-type.enum';
-import { NetworkService, DialogService, WebSocketService } from '../../../services';
-import { T } from '../../../translate-marker';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { ipv4or6cidrValidator, ipv4or6Validator } from '../../common/entity/entity-form/validators/ip-validation';
-import helptext from '../../../helptext/network/interfaces/interfaces-form';
-import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import globalHelptext from '../../../helptext/global-helptext';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import isCidr from 'is-cidr';
+import * as _ from 'lodash';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { ProductType } from 'app/enums/product-type.enum';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
+import { NetworkService, DialogService, WebSocketService } from 'app/services';
+import { T } from 'app/translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'app-interfaces-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -370,7 +371,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     }
 
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-      this.ws.call('failover.node').subscribe((node) => {
+      this.ws.call('failover.node').pipe(untilDestroyed(this)).subscribe((node) => {
         if (node === 'A') {
           this.ipPlaceholder = ` (${globalHelptext.thisCtlr})`;
           this.failoverPlaceholder = ` (${globalHelptext.Ctrlr} 2)`;
@@ -396,9 +397,12 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     }
     this.aliases_fc = _.find(this.fieldConfig, { name: 'aliases' });
 
-    this.offload_warning_sub = entityForm.formGroup.controls['disable_offload_capabilities'].valueChanges.subscribe((res: any) => {
+    this.offload_warning_sub = entityForm.formGroup.controls['disable_offload_capabilities'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res && !this.offload_warned) {
-        this.dialog.confirm(helptext.disable_offload_capabilities_warning_title, helptext.disable_offload_capabilities_warning_msg).subscribe((confirm: boolean) => {
+        this.dialog.confirm({
+          title: helptext.disable_offload_capabilities_warning_title,
+          message: helptext.disable_offload_capabilities_warning_msg,
+        }).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
           if (confirm) {
             this.offload_warned = true;
           } else {
@@ -409,7 +413,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     });
 
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-      this.ws.call('failover.licensed').subscribe((is_ha) => {
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
         this.failover_fieldset.label = is_ha;
         if (window.localStorage.getItem('product_type').includes(ProductType.Scale)) {
           _.remove(this.failover_fields, (el) => el === 'failover_vhid');
@@ -418,7 +422,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           entityForm.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
         }
         if (is_ha) {
-          this.aliases_subscription = this.entityForm.formGroup.controls['aliases'].valueChanges.subscribe((res: any) => {
+          this.aliases_subscription = this.entityForm.formGroup.controls['aliases'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
             let v6_found = false;
             let mismatch_found = false;
             for (let i = 0; i < res.length; i++) {
@@ -454,25 +458,25 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     }
     if (entityForm.isNew) {
       this.type_fg = entityForm.formGroup.controls['type'];
-      this.type_subscription = this.type_fg.valueChanges.subscribe((type: any) => {
+      this.type_subscription = this.type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((type: any) => {
         this.setType(type);
       });
-      this.networkService.getVlanParentInterfaceChoices().subscribe((res) => {
+      this.networkService.getVlanParentInterfaceChoices().pipe(untilDestroyed(this)).subscribe((res) => {
         for (const key in res) {
           this.vlan_pint.options.push({ label: res[key], value: key });
         }
       });
-      this.networkService.getLaggPortsChoices().subscribe((res) => {
+      this.networkService.getLaggPortsChoices().pipe(untilDestroyed(this)).subscribe((res) => {
         for (const key in res) {
           this.lag_ports.options.push({ label: res[key], value: key });
         }
       });
-      this.networkService.getLaggProtocolChoices().subscribe((res) => {
+      this.networkService.getLaggProtocolChoices().pipe(untilDestroyed(this)).subscribe((res) => {
         for (let i = 0; i < res.length; i++) {
           this.lag_protocol.options.push({ label: res[i], value: res[i] });
         }
       });
-      this.networkService.getBridgeMembersChoices().subscribe((res) => {
+      this.networkService.getBridgeMembersChoices().pipe(untilDestroyed(this)).subscribe((res) => {
         for (const key in res) {
           this.bridge_members.options.push({ label: res[key], value: key });
         }
@@ -549,19 +553,19 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     const id = data['id'];
     this.setType(type);
     if (type === NetworkInterfaceType.LinkAggregation) {
-      this.networkService.getLaggPortsChoices(id).subscribe((res) => {
+      this.networkService.getLaggPortsChoices(id).pipe(untilDestroyed(this)).subscribe((res) => {
         for (const key in res) {
           this.lag_ports.options.push({ label: res[key], value: key });
         }
       });
 
-      this.networkService.getLaggProtocolChoices().subscribe((res) => {
+      this.networkService.getLaggProtocolChoices().pipe(untilDestroyed(this)).subscribe((res) => {
         for (let i = 0; i < res.length; i++) {
           this.lag_protocol.options.push({ label: res[i], value: res[i] });
         }
       });
     } else if (type === NetworkInterfaceType.Bridge) {
-      this.networkService.getBridgeMembersChoices(id).subscribe((res) => {
+      this.networkService.getBridgeMembersChoices(id).pipe(untilDestroyed(this)).subscribe((res) => {
         for (const key in res) {
           this.bridge_members.options.push({ label: res[key], value: key });
         }

@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ViewControllerComponent } from './view-controller.component';
 
 describe('ViewControllerComponent', () => {

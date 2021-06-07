@@ -1,26 +1,26 @@
 import {
-  Component, OnInit, ViewChild, OnDestroy,
+  animate, state, style, transition, trigger,
+} from '@angular/animations';
+import { HttpClient } from '@angular/common/http';
+import {
+  Component, OnInit, ViewChild,
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
-import {
-  animate, state, style, transition, trigger,
-} from '@angular/animations';
-import { HttpClient } from '@angular/common/http';
-
-import * as _ from 'lodash';
-import { Observable, Subscription } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
-import { LocaleService } from 'app/services/locale.service';
+import * as _ from 'lodash';
+import { Observable } from 'rxjs';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   WebSocketService, JobService, SystemGeneralService, DialogService, StorageService,
 } from 'app/services';
+import { LocaleService } from 'app/services/locale.service';
 import { T } from 'app/translate-marker';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
+@UntilDestroy()
 @Component({
   selector: 'task-manager',
   templateUrl: './task-manager.component.html',
@@ -34,14 +34,13 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
     ]),
   ],
 })
-export class TaskManagerComponent implements OnInit, OnDestroy {
+export class TaskManagerComponent implements OnInit {
   @ViewChild('taskTable', { static: true }) taskTable: MatTable<any>;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   dataSource: MatTableDataSource<any>;
   displayedColumns = ['state', 'method', 'percent'];
   expandedElement: any | null;
   timeZone: string;
-  private subscrition: Subscription;
   readonly EntityJobState = EntityJobState;
 
   constructor(
@@ -59,10 +58,10 @@ export class TaskManagerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.sysGeneralService.getSysInfo().subscribe((systemInfo) => {
+    this.sysGeneralService.getSysInfo().pipe(untilDestroyed(this)).subscribe((systemInfo) => {
       this.timeZone = systemInfo.timezone;
     });
-    this.ws.call('core.get_jobs', [[], { order_by: ['-id'], limit: 50 }]).subscribe(
+    this.ws.call('core.get_jobs', [[], { order_by: ['-id'], limit: 50 }]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.dataSource.data = res;
         this.dataSource.sort = this.sort;
@@ -72,7 +71,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy {
       },
     );
 
-    this.getData().subscribe(
+    this.getData().pipe(untilDestroyed(this)).subscribe(
       (res) => {
         // only update exist jobs or add latest jobs
         if (res.id >= this.dataSource.data[49].id) {
@@ -90,13 +89,9 @@ export class TaskManagerComponent implements OnInit, OnDestroy {
     );
   }
 
-  ngOnDestroy(): void {
-    this.subscrition.unsubscribe();
-  }
-
   getData(): Observable<any> {
     const source = Observable.create((observer: any) => {
-      this.subscrition = this.ws.subscribe('core.get_jobs').subscribe((res) => {
+      this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((res) => {
         observer.next(res.fields);
       });
     });
@@ -115,14 +110,14 @@ export class TaskManagerComponent implements OnInit, OnDestroy {
 
   showLogs(element: any): void {
     this.dialogService.confirm(T('Logs'), `<pre>${element.logs_excerpt}</pre>`, true, T('Download Logs'),
-      false, '', '', '', '', false, T('Close'), true).subscribe(
+      false, '', '', '', '', false, T('Close'), true).pipe(untilDestroyed(this)).subscribe(
       (dialog_res: boolean) => {
         if (dialog_res) {
-          this.ws.call('core.download', ['filesystem.get', [element.logs_path], element.id + '.log']).subscribe(
+          this.ws.call('core.download', ['filesystem.get', [element.logs_path], element.id + '.log']).pipe(untilDestroyed(this)).subscribe(
             (snack_res) => {
               const url = snack_res[1];
               const mimetype = 'text/plain';
-              this.storageService.streamDownloadFile(this.http, url, element.id + '.log', mimetype).subscribe((file) => {
+              this.storageService.streamDownloadFile(this.http, url, element.id + '.log', mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
                 this.storageService.downloadBlob(file, element.id + '.log');
               }, (err) => {
                 new EntityUtils().handleWSError(this, err);
@@ -139,10 +134,10 @@ export class TaskManagerComponent implements OnInit, OnDestroy {
 
   abort(element: any): void {
     this.dialogService.confirm(T('Abort the task'), `<pre>${element.method}</pre>`, true, T('Abort'),
-      false, '', '', '', '', false, T('Close'), true).subscribe(
+      false, '', '', '', '', false, T('Close'), true).pipe(untilDestroyed(this)).subscribe(
       (dialog_res: boolean) => {
         if (dialog_res) {
-          this.ws.call('core.job_abort', [element.id]).subscribe();
+          this.ws.call('core.job_abort', [element.id]).pipe(untilDestroyed(this)).subscribe();
         }
       },
     );

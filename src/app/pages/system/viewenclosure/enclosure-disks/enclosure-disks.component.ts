@@ -2,34 +2,35 @@ import {
   Component, Input, AfterContentInit, OnChanges, SimpleChanges, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { CoreService } from 'app/core/services/core.service';
-import { ThemeUtils } from 'app/core/classes/theme-utils';
-import { CoreEvent } from 'app/interfaces/events';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { DomSanitizer } from '@angular/platform-browser';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Application, Container,
 } from 'pixi.js';
-import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
-import { DriveTray } from 'app/core/classes/hardware/drivetray';
-import { Chassis } from 'app/core/classes/hardware/chassis';
-import { ChassisView } from 'app/core/classes/hardware/chassis-view';
-import { M50 } from 'app/core/classes/hardware/m50';
-import { M50Rear } from 'app/core/classes/hardware/m50_rear';
-import { ES12 } from 'app/core/classes/hardware/es12';
-import { E16 } from 'app/core/classes/hardware/e16';
-import { E24 } from 'app/core/classes/hardware/e24';
-import { ES24 } from 'app/core/classes/hardware/es24';
-import { E60 } from 'app/core/classes/hardware/e60';
-import { ES60 } from 'app/core/classes/hardware/es60';
-import { SystemProfiler } from 'app/core/classes/system-profiler';
 import {
   tween, styler, value, keyframes,
 } from 'popmotion';
 import { Subject } from 'rxjs';
-import { DomSanitizer } from '@angular/platform-browser';
+import { Chassis } from 'app/core/classes/hardware/chassis';
+import { ChassisView } from 'app/core/classes/hardware/chassis-view';
+import { DriveTray } from 'app/core/classes/hardware/drivetray';
+import { E16 } from 'app/core/classes/hardware/e16';
+import { E24 } from 'app/core/classes/hardware/e24';
+import { E60 } from 'app/core/classes/hardware/e60';
+import { ES12 } from 'app/core/classes/hardware/es12';
+import { ES24 } from 'app/core/classes/hardware/es24';
+import { ES60 } from 'app/core/classes/hardware/es60';
+import { M50 } from 'app/core/classes/hardware/m50';
+import { M50Rear } from 'app/core/classes/hardware/m50_rear';
+import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
+import { SystemProfiler } from 'app/core/classes/system-profiler';
+import { ThemeUtils } from 'app/core/classes/theme-utils';
+import { CoreService } from 'app/core/services/core.service';
 import { Temperature } from 'app/core/services/disk-temperature.service';
+import { CoreEvent } from 'app/interfaces/events';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { DialogService } from 'app/services/dialog.service';
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 export enum EnclosureLocation {
   Front = 'front',
@@ -45,6 +46,7 @@ export interface DiskFailure {
   reasons?: string[];
 }
 
+@UntilDestroy()
 @Component({
   selector: 'enclosure-disks',
   templateUrl: './enclosure-disks.component.html',
@@ -156,7 +158,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   ) {
     this.themeUtils = new ThemeUtils();
 
-    core.register({ observerClass: this, eventName: 'DiskTemperatures' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'DiskTemperatures' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const chassisView = this.view == 'rear' ? this.chassis.rear : this.chassis.front;
       if (!this.chassis || !chassisView || !chassisView.driveTrayObjects) { return; }
 
@@ -176,7 +178,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
     core.emit({ name: 'DiskTemperaturesSubscribe', sender: this });
 
-    core.register({ observerClass: this, eventName: 'MediaChange' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'MediaChange' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.mqAlias = evt.data.mqAlias;
 
       if (evt.data.mqAlias == 'xs' || evt.data.mqAlias == 'sm' || evt.data.mqAlias == 'md') {
@@ -189,11 +191,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       this.resizeView();
     });
 
-    core.register({ observerClass: this, eventName: 'ThemeData' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'ThemeData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.theme = evt.data;
     });
 
-    core.register({ observerClass: this, eventName: 'ThemeChanged' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (this.theme == evt.data) { return; }
       this.theme = evt.data;
       this.setCurrentView(this.currentView);
@@ -211,7 +213,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   ngAfterContentInit(): void {
-    this.controllerEvents.subscribe((evt: CoreEvent) => {
+    this.controllerEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       switch (evt.name) {
         case 'CanvasExtract':
           this.createExtractedEnclosure(evt.data);
@@ -408,7 +410,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   setupEnclosureEvents(): void {
-    this.enclosure.events.subscribe((evt) => {
+    this.enclosure.events.pipe(untilDestroyed(this)).subscribe((evt) => {
       switch (evt.name) {
         case 'Ready':
           this.container.addChild(this.enclosure.container);
@@ -495,7 +497,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     const enclosure: ChassisView = chassis.front;
 
-    enclosure.events.subscribe((evt) => {
+    enclosure.events.pipe(untilDestroyed(this)).subscribe((evt) => {
       switch (evt.name) {
         case 'Ready':
           this.container.addChild(enclosure.container);

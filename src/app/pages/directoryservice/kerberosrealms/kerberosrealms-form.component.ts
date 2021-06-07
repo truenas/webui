@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import helptext from '../../../helptext/directoryservice/kerberosrealms-form-list';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
-import { ModalService } from '../../../services/modal.service';
+import helptext from 'app/helptext/directoryservice/kerberosrealms-form-list';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { ModalService } from 'app/services/modal.service';
+
+@UntilDestroy()
 @Component({
   selector: 'app-group-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -59,7 +61,7 @@ export class KerberosRealmsFormComponent implements FormConfiguration {
   ];
 
   constructor(private modalService: ModalService) {
-    this.getRow = this.modalService.getRow$.subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
       this.pk = rowId;
       this.getRow.unsubscribe();
     });

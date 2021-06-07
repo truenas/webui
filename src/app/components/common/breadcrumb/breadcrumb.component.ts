@@ -2,13 +2,15 @@ import { Component, OnInit, Input } from '@angular/core';
 import {
   Router, NavigationEnd, ActivatedRoute,
 } from '@angular/router';
-import { CoreEvent } from 'app/interfaces/events';
-import { ProductType } from '../../../enums/product-type.enum';
-import { RoutePartsService } from '../../../services/route-parts/route-parts.service';
-import { CoreService } from 'app/core/services/core.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
+import { CoreService } from 'app/core/services/core.service';
+import { ProductType } from 'app/enums/product-type.enum';
+import { CoreEvent } from 'app/interfaces/events';
 import { LocaleService } from 'app/services/locale.service';
+import { RoutePartsService } from 'app/services/route-parts/route-parts.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-breadcrumb',
   templateUrl: './breadcrumb.component.html',
@@ -46,8 +48,10 @@ export class BreadcrumbComponent implements OnInit {
 
     // only execute when routechange
     this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        untilDestroyed(this),
+      ).subscribe(() => {
         this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
         // generate url from parts
         this.routeParts.reverse().map((item, i) => {
@@ -66,7 +70,9 @@ export class BreadcrumbComponent implements OnInit {
       });
 
     // Pseudo routing events (for reports page)
-    this.core.register({ observerClass: this, eventName: 'PseudoRouteChange' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'PseudoRouteChange' }).pipe(
+      untilDestroyed(this),
+    ).subscribe((evt: CoreEvent) => {
       this.routeParts = evt.data;
       // generate url from parts
       this.routeParts.map((item, i) => {

@@ -1,12 +1,14 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import helptext from 'app/helptext/services/components/service-ups';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import helptext from '../../../../helptext/services/components/service-ups';
-import { RestService, WebSocketService } from '../../../../services';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { RestService, WebSocketService } from 'app/services';
 
+@UntilDestroy()
 @Component({
   selector: 'ups-edit',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -267,27 +269,27 @@ export class ServiceUPSComponent implements FormConfiguration {
     this.ups_driver = generalSet.config.find((config) => config.name === 'driver');
     this.ups_port = generalSet.config.find((config) => config.name === 'port');
 
-    this.ws.call('ups.driver_choices', []).subscribe((res) => {
+    this.ws.call('ups.driver_choices', []).pipe(untilDestroyed(this)).subscribe((res) => {
       this.ups_drivers_list = res;
       for (const item in res) {
         this.ups_driver.options.push({ label: res[item], value: res[item] });
       }
     });
 
-    this.ws.call('ups.port_choices', []).subscribe((res) => {
+    this.ws.call('ups.port_choices', []).pipe(untilDestroyed(this)).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
         this.ups_port.options.push({ label: res[i], value: res[i] });
       }
     });
 
-    entityForm.formGroup.controls['driver'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['driver'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.ups_driver_key = this.getKeyByValue(this.ups_drivers_list, res);
       if (this.ups_drivers_list[res]) {
         entityForm.formGroup.controls['driver'].setValue(this.ups_drivers_list[res]);
       }
     });
 
-    entityForm.formGroup.controls['mode'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       generalSet.config.find((conf) => conf.name === 'remotehost').isHidden = res === 'MASTER';
       generalSet.config.find((conf) => conf.name === 'remoteport').isHidden = res === 'MASTER';
       generalSet.config.find((conf) => conf.name === 'driver').isHidden = res === 'SLAVE';

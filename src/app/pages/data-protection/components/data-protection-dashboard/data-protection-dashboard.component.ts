@@ -5,17 +5,38 @@ import {
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import globalHelptext from 'app/helptext/global-helptext';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
 import helptext_replication from 'app/helptext/data-protection/replication/replication';
 import helptext_smart from 'app/helptext/data-protection/smart/smart';
-import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
+import globalHelptext from 'app/helptext/global-helptext';
+import { ApiDirectory } from 'app/interfaces/api-directory.interface';
+import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
+import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
+import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
+import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
+import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
+import { SmartTestUi } from 'app/interfaces/smart-test.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { AppTableAction, InputTableConf } from 'app/pages/common/entity/table/table.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
+import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/rsync-form.component';
+import { ScrubFormComponent } from 'app/pages/data-protection/scrub/scrub-form/scrub-form.component';
+import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/smart-form.component';
+import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
 import {
   DialogService,
   ReplicationService,
@@ -24,34 +45,12 @@ import {
   UserService,
   WebSocketService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { CloudCredentialService } from 'app/services/cloudcredential.service';
 import { JobService } from 'app/services/job.service';
 import { KeychainCredentialService } from 'app/services/keychaincredential.services';
 import { ModalService } from 'app/services/modal.service';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { AppTableAction, InputTableConf } from 'app/pages/common/entity/table/table.component';
-import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
-import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
-import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/rsync-form.component';
-import { ScrubFormComponent } from 'app/pages/data-protection/scrub/scrub-form/scrub-form.component';
-import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/smart-form.component';
-import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import { EntityJob } from 'app/interfaces/entity-job.interface';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
-import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
-import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
-import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
-import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
-import { SmartTestUi } from 'app/interfaces/smart-test.interface';
-import { TransferMode } from 'app/enums/transfer-mode.enum';
-import { ApiDirectory } from 'app/interfaces/api-directory.interface';
+import { T } from 'app/translate-marker';
 
 export interface TaskCard {
   name: string;
@@ -67,6 +66,7 @@ enum TaskCardId {
   Smart = 'smart',
 }
 
+@UntilDestroy()
 @Component({
   selector: 'app-data-protection-dashboard',
   templateUrl: './data-protection-dashboard.component.html',
@@ -119,7 +119,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     this.storage
       .listDisks()
       .pipe(takeUntil(this.onDestroy$))
-      .subscribe((disks) => {
+      .pipe(untilDestroyed(this)).subscribe((disks) => {
         if (disks) {
           this.disks = disks;
         }
@@ -130,19 +130,19 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     this.getCardData();
 
     this.refreshTables();
-    this.modalService.refreshTable$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+    this.modalService.refreshTable$.pipe(takeUntil(this.onDestroy$)).pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
     });
-    this.modalService.onClose$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+    this.modalService.onClose$.pipe(takeUntil(this.onDestroy$)).pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
     });
 
     this.refreshForms();
-    this.modalService.refreshForm$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+    this.modalService.refreshForm$.pipe(takeUntil(this.onDestroy$)).pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshForms();
     });
 
-    this.modalService.message$.pipe(takeUntil(this.onDestroy$)).subscribe((res: any) => {
+    this.modalService.message$.pipe(takeUntil(this.onDestroy$)).pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res['action'] === 'open' && res['component'] === 'replicationForm') {
         this.modalService.open('slide-in-form', this.replicationFormComponent, res['row']);
       }
@@ -497,7 +497,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         task.state = { state: EntityJobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.parent.job.getJobStatus(task.job.id).subscribe((job: EntityJob) => {
+        this.parent.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
           task.state = { state: job.state };
           task.job = job;
         });
@@ -515,7 +515,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
 
       if (task.job !== null) {
         task.state.state = task.job.state;
-        this.parent.job.getJobStatus(task.job.id).subscribe((job: EntityJob) => {
+        this.parent.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
           task.state.state = job.state;
           task.job = job;
         });
@@ -570,7 +570,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         task.state = { state: EntityJobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.parent.job.getJobStatus(task.job.id).subscribe((job: EntityJob) => {
+        this.parent.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
           task.state = { state: job.state };
           task.job = job;
         });
@@ -595,10 +595,10 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               message: this.translate.instant(T('Replicate <i>{name}</i> now?'), { name: row.name }),
               hideCheckBox: true,
             })
-            .subscribe((res: boolean) => {
+            .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
               if (res) {
                 row.state = { state: EntityJobState.Running };
-                this.ws.call('replication.run', [row.id]).subscribe(
+                this.ws.call('replication.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
                   (jobId: number) => {
                     this.dialog.Info(
                       T('Task started'),
@@ -607,7 +607,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                       'info',
                       true,
                     );
-                    this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
+                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
                       row.state = { state: job.state };
                       row.job = job;
                     });
@@ -652,7 +652,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             saveButtonText: helptext_replication.replication_restore_dialog.saveButton,
             customSubmit(entityDialog: EntityDialogComponent) {
               parent.loader.open();
-              parent.ws.call('replication.restore', [row.id, entityDialog.formValue]).subscribe(
+              parent.ws.call('replication.restore', [row.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
                 () => {
                   entityDialog.dialogRef.close(true);
                   parent.loader.close();
@@ -686,10 +686,10 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               message: T('Run this cloud sync now?'),
               hideCheckBox: true,
             })
-            .subscribe((res: boolean) => {
+            .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
               if (res) {
                 row.state = { state: EntityJobState.Running };
-                this.ws.call('cloudsync.sync', [row.id]).subscribe(
+                this.ws.call('cloudsync.sync', [row.id]).pipe(untilDestroyed(this)).subscribe(
                   (jobId: number) => {
                     this.dialog.Info(
                       T('Task Started'),
@@ -698,7 +698,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                       'info',
                       true,
                     );
-                    this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
+                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
                       row.state = { state: job.state };
                       row.job = job;
                     });
@@ -724,9 +724,9 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               message: T('Stop this cloud sync?'),
               hideCheckBox: true,
             })
-            .subscribe((res: boolean) => {
+            .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
               if (res) {
-                this.ws.call('cloudsync.abort', [row.id]).subscribe(
+                this.ws.call('cloudsync.abort', [row.id]).pipe(untilDestroyed(this)).subscribe(
                   () => {
                     this.dialog.Info(
                       T('Task Stopped'),
@@ -757,9 +757,9 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               message: helptext_cloudsync.dry_run_dialog,
               hideCheckBox: true,
             })
-            .subscribe((res: boolean) => {
+            .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
               if (res) {
-                this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).subscribe(
+                this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).pipe(untilDestroyed(this)).subscribe(
                   (jobId: number) => {
                     this.dialog.Info(
                       T('Task Started'),
@@ -768,7 +768,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                       'info',
                       true,
                     );
-                    this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
+                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
                       row.state = { state: job.state };
                       row.job = job;
                     });
@@ -832,7 +832,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             ],
             saveButtonText: 'Restore',
             afterInit(entityDialog: EntityDialogComponent) {
-              entityDialog.formGroup.get('transfer_mode').valueChanges.subscribe((mode: any) => {
+              entityDialog.formGroup.get('transfer_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode: any) => {
                 const paragraph = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
                 switch (mode) {
                   case TransferMode.Sync:
@@ -847,7 +847,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             },
             customSubmit(entityDialog: EntityDialogComponent) {
               parent.loader.open();
-              parent.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).subscribe(
+              parent.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
                 () => {
                   entityDialog.dialogRef.close(true);
                   parent.loader.close();
@@ -881,10 +881,10 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               message: T('Run this rsync now?'),
               hideCheckBox: true,
             })
-            .subscribe((run: boolean) => {
+            .pipe(untilDestroyed(this)).subscribe((run: boolean) => {
               if (run) {
                 row.state = { state: EntityJobState.Running };
-                this.ws.call('rsynctask.run', [row.id]).subscribe(
+                this.ws.call('rsynctask.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
                   (jobId: number) => {
                     this.dialog.Info(
                       T('Task Started'),
@@ -893,7 +893,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                       'info',
                       true,
                     );
-                    this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
+                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
                       row.state = { state: job.state };
                       row.job = job;
                     });
@@ -926,10 +926,10 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
     dialogRef.componentInstance.jobId = jobId;
     dialogRef.componentInstance.wsshow();
-    dialogRef.componentInstance.success.subscribe(() => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
     });
-    dialogRef.componentInstance.failure.subscribe(() => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
     });
   }
@@ -968,7 +968,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         return;
     }
 
-    this.ws.call(updateCall, [row.id, { enabled: row.enabled }]).subscribe(
+    this.ws.call(updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
       (updatedEntity) => {
         row.enabled = updatedEntity.enabled;
         if (!updatedEntity) {

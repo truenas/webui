@@ -1,35 +1,34 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
 import { helptext_system_ca } from 'app/helptext/system/ca';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import * as _ from 'lodash';
-import { SystemGeneralService, WebSocketService } from '../../../../services';
+import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
+import { SystemGeneralService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogService } from '../../../../services/dialog.service';
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 
-import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
-
+@UntilDestroy()
 @Component({
   selector: 'system-ca-add',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [SystemGeneralService],
 })
 
-export class CertificateAuthorityAddComponent {
-  protected addWsCall: 'certificateauthority.create' = 'certificateauthority.create';
-  protected isEntity = true;
+export class CertificateAuthorityAddComponent implements WizardConfiguration {
+  addWsCall: 'certificateauthority.create' = 'certificateauthority.create';
   private title: string;
   hideCancel = true;
 
-  private isLinear = true;
-  private summary: any = {};
-
-  entityWizard: any;
+  isLinear = true;
+  summary: any = {};
+  entityWizard: EntityWizardComponent;
   private currentStep = 0;
 
   wizardConfig: Wizard[] = [
@@ -563,7 +562,7 @@ export class CertificateAuthorityAddComponent {
   identifier: any;
   usageField: FieldConfig;
   private currenProfile: any;
-  private entityForm: any;
+  private entityForm: EntityWizardComponent;
 
   constructor(protected ws: WebSocketService, private modalService: ModalService,
     protected loader: AppLoaderService, private dialogService: DialogService,
@@ -571,7 +570,7 @@ export class CertificateAuthorityAddComponent {
 
   preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
-    this.systemGeneralService.getUnsignedCAs().subscribe((res: any[]) => {
+    this.systemGeneralService.getUnsignedCAs().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       this.signedby = this.getTarget('signedby');
       res.forEach((item) => {
         this.signedby.options.push(
@@ -580,14 +579,14 @@ export class CertificateAuthorityAddComponent {
       });
     });
 
-    this.ws.call('certificate.ec_curve_choices').subscribe((res) => {
+    this.ws.call('certificate.ec_curve_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       const ec_curves_field = this.getTarget('ec_curve');
       for (const key in res) {
         ec_curves_field.options.push({ label: res[key], value: key });
       }
     });
 
-    this.systemGeneralService.getCertificateCountryChoices().subscribe((res) => {
+    this.systemGeneralService.getCertificateCountryChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       this.country = this.getTarget('country');
       for (const item in res) {
         this.country.options.push(
@@ -597,14 +596,14 @@ export class CertificateAuthorityAddComponent {
     });
 
     this.usageField = this.getTarget('ExtendedKeyUsage-usages');
-    this.ws.call('certificate.extended_key_usage_choices').subscribe((res) => {
+    this.ws.call('certificate.extended_key_usage_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       Object.keys(res).forEach((key) => {
         this.usageField.options.push({ label: res[key], value: key });
       });
     });
 
     const profilesField = this.getTarget('profiles');
-    this.ws.call('certificateauthority.profiles').subscribe((res) => {
+    this.ws.call('certificateauthority.profiles').pipe(untilDestroyed(this)).subscribe((res) => {
       Object.keys(res).forEach((item) => {
         profilesField.options.push({ label: item, value: res[item] });
       });
@@ -634,7 +633,7 @@ export class CertificateAuthorityAddComponent {
       if (fieldConfig.value !== undefined) {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, fieldConfig.value);
       }
-      this.getField(fieldName).valueChanges.subscribe((res) => {
+      this.getField(fieldName).valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, res);
       });
     }
@@ -654,7 +653,7 @@ export class CertificateAuthorityAddComponent {
     });
   }
 
-  afterInit(entity: any): void {
+  afterInit(entity: EntityWizardComponent): void {
     this.entityForm = entity;
     this.title = helptext_system_ca.add.title;
 
@@ -669,7 +668,7 @@ export class CertificateAuthorityAddComponent {
     }
     this.hideField(this.internalcaFields[1], true);
 
-    this.getField('create_type').valueChanges.subscribe((res) => {
+    this.getField('create_type').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.wizardConfig[1].skip = false;
       this.wizardConfig[2].skip = false;
 
@@ -730,13 +729,13 @@ export class CertificateAuthorityAddComponent {
       this.setSummary();
     });
 
-    this.getField('name').valueChanges.subscribe((res) => {
+    this.getField('name').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.identifier = res;
       this.summary[this.getTarget('name').placeholder] = res;
       this.setSummary();
     });
 
-    this.getField('name').statusChanges.subscribe((res) => {
+    this.getField('name').statusChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (this.identifier && res === 'INVALID') {
         this.getTarget('name')['hasErrors'] = true;
       } else {
@@ -745,7 +744,7 @@ export class CertificateAuthorityAddComponent {
       this.setSummary();
     });
 
-    this.getField('ExtendedKeyUsage-enabled').valueChanges.subscribe((res) => {
+    this.getField('ExtendedKeyUsage-enabled').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       const usagesRequired = res !== undefined ? res : false;
       this.usageField.required = usagesRequired;
       this.summary[this.getTarget('ExtendedKeyUsage-enabled').placeholder] = usagesRequired;
@@ -758,7 +757,7 @@ export class CertificateAuthorityAddComponent {
       this.setSummary();
     });
 
-    this.getField('profiles').valueChanges.subscribe((res) => {
+    this.getField('profiles').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       // undo revious profile settings
       this.loadProfiels(this.currenProfile, true);
       // load selected profile settings
@@ -768,7 +767,7 @@ export class CertificateAuthorityAddComponent {
     });
 
     for (const i in this.relationFields) {
-      this.getField(this.relationFields[i]).valueChanges.subscribe(() => {
+      this.getField(this.relationFields[i]).valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
         this.setSummary();
       });
     }
@@ -900,7 +899,7 @@ export class CertificateAuthorityAddComponent {
 
   customSubmit(data: any): void {
     this.loader.open();
-    this.ws.call(this.addWsCall, [data]).subscribe(() => {
+    this.ws.call(this.addWsCall, [data]).pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
       this.modalService.refreshTable();
       this.modalService.close('slide-in-form');

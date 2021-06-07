@@ -1,10 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
-import { DialogService } from 'app/services/dialog.service';
 import helptext from 'app/helptext/topbar';
+import { DialogService } from 'app/services/dialog.service';
 
+@UntilDestroy()
 @Component({
   selector: 'truecommand-status',
   templateUrl: './truecommand.component.html',
@@ -27,7 +28,7 @@ export class TruecommandComponent {
       message: helptext.tcDialog.message,
       is_html: true,
       confirmBtnMsg: helptext.tcDialog.confirmBtnMsg,
-    }).subscribe((res) => {
+    }).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         window.open(this.tc.remote_url);
       }

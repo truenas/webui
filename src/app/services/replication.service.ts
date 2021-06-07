@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-
-import { WebSocketService } from './ws.service';
-import { EntityUtils } from '../pages/common/entity/utils';
 import * as _ from 'lodash';
 import { reject } from 'q';
+import { Observable } from 'rxjs';
+import { SshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class ReplicationService {
@@ -14,11 +14,7 @@ export class ReplicationService {
     return this.ws.call('pool.snapshottask.query');
   }
 
-  querySSHConnection(id: string): Observable<any[]> {
-    return this.ws.call('keychaincredential.query', [[['id', '=', id]]]);
-  }
-
-  genSSHKeypair(): Promise<any> {
+  genSSHKeypair(): Promise<SshKeyPair> {
     return this.ws.call('keychaincredential.generate_ssh_key_pair').toPromise();
   }
 

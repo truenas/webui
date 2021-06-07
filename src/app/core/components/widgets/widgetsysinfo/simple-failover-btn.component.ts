@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { helptext_system_failover } from 'app/helptext/system/failover';
 
@@ -10,6 +11,7 @@ interface DialogData {
   agreed: boolean;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'simple-failover-button',
   template: `<button mat-button style="opacity:1; background-color: var(--primary) !important; color: var(--primary-txt) !important;" [color]="color" [disabled]="disabled" (click)="openDialog()"
@@ -32,7 +34,7 @@ export class SimpleFailoverBtnComponent {
       data: { agreed: true },
     });
 
-    dialogRef.afterClosed().subscribe((res) => {
+    dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.router.navigate(['/others/reboot']);
       }
@@ -40,6 +42,7 @@ export class SimpleFailoverBtnComponent {
   }
 }
 
+@UntilDestroy()
 @Component({
   selector: 'simple-failover-btn-dialog',
   template: `

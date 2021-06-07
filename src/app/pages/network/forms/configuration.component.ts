@@ -1,18 +1,20 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Observable } from 'rxjs';
+import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
+import helptext from 'app/helptext/network/configuration/configuration';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { Observable } from 'rxjs';
-import { ProductType } from '../../../enums/product-type.enum';
+import { ipv4Validator, ipv6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
+import { TooltipsService, WebSocketService } from 'app/services';
 
-import { TooltipsService, WebSocketService } from '../../../services';
-import { EntityFormComponent } from '../../common/entity/entity-form';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { ipv4Validator, ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
-import helptext from '../../../helptext/network/configuration/configuration';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-
+@UntilDestroy()
 @Component({
   selector: 'app-networkconfiguration',
   template: `
@@ -21,7 +23,6 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
   providers: [TooltipsService],
 })
 export class ConfigurationComponent implements FormConfiguration {
-  // protected resource_name: string = 'network/globalconfiguration/';
   queryCall: 'network.configuration.config' = 'network.configuration.config';
   updateCall: 'network.configuration.update' = 'network.configuration.update';
   isEntity = false;
@@ -147,13 +148,13 @@ export class ConfigurationComponent implements FormConfiguration {
             // deny type + empty list
             {
               label: helptext.outbound_network_activity.allow.placeholder,
-              value: 'DENY',
+              value: NetworkActivityType.Deny,
               tooltip: helptext.outbound_network_activity.allow.tooltip,
             },
             // allow type + empty list
             {
               label: helptext.outbound_network_activity.deny.placeholder,
-              value: 'ALLOW',
+              value: NetworkActivityType.Allow,
               tooltip: helptext.outbound_network_activity.deny.tooltip,
             },
             {
@@ -176,10 +177,10 @@ export class ConfigurationComponent implements FormConfiguration {
             connective: RelationConnection.Or,
             when: [{
               name: 'outbound_network_activity',
-              value: 'ALLOW',
+              value: NetworkActivityType.Allow,
             }, {
               name: 'outbound_network_activity',
-              value: 'DENY',
+              value: NetworkActivityType.Deny,
             }],
           }],
         },
@@ -239,19 +240,17 @@ export class ConfigurationComponent implements FormConfiguration {
 
   preInit(): void {
     const outbound_network_value_field = this.fieldSets.config('outbound_network_value');
-    this.ws.call('network.configuration.activity_choices').subscribe(
-      (res) => {
-        for (const [value, label] of res) {
-          outbound_network_value_field.options.push({ label, value });
-        }
-      },
-    );
+    this.ws.call('network.configuration.activity_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
+      for (const [value, label] of choices) {
+        outbound_network_value_field.options.push({ label, value });
+      }
+    });
   }
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     if ([ProductType.Enterprise, ProductType.ScaleEnterprise].includes(window.localStorage.getItem('product_type') as ProductType)) {
-      this.ws.call('failover.licensed').subscribe((is_ha) => { // fixme, stupid race condition makes me need to call this again
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => { // fixme, stupid race condition makes me need to call this again
         for (let i = 0; i < this.failover_fields.length; i++) {
           entityEdit.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
         }
@@ -272,7 +271,7 @@ export class ConfigurationComponent implements FormConfiguration {
     if (data['activity']) {
       if (data['activity'].activities.length === 0) {
         data['outbound_network_activity'] = data['activity'].type;
-      } else if (data['activity'].type === 'ALLOW') {
+      } else if (data['activity'].type === NetworkActivityType.Allow) {
         data['outbound_network_activity'] = 'SPECIFIC';
         data['outbound_network_value'] = data['activity'].activities;
       }
@@ -299,10 +298,13 @@ export class ConfigurationComponent implements FormConfiguration {
   }
 
   beforeSubmit(data: any): void {
-    if (data['outbound_network_activity'] === 'ALLOW' || data['outbound_network_activity'] === 'DENY') {
+    if (
+      data['outbound_network_activity'] === NetworkActivityType.Allow
+      || data['outbound_network_activity'] === NetworkActivityType.Deny
+    ) {
       data['activity'] = { type: data['outbound_network_activity'], activities: [] };
     } else {
-      data['activity'] = { type: 'ALLOW', activities: data['outbound_network_value'] };
+      data['activity'] = { type: NetworkActivityType.Allow, activities: data['outbound_network_value'] };
     }
     delete data['outbound_network_activity'];
     delete data['outbound_network_value'];

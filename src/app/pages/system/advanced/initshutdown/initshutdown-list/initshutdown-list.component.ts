@@ -1,9 +1,11 @@
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { InitshutdownFormComponent } from '../initshutdown-form/initshutdown-form.component';
 import { Component } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { ModalService } from 'app/services/modal.service';
-import { T } from '../../../../../translate-marker';
+import { T } from 'app/translate-marker';
+import { InitshutdownFormComponent } from '../initshutdown-form/initshutdown-form.component';
 
+@UntilDestroy()
 @Component({
   selector: 'app-initshutdown-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -41,7 +43,7 @@ export class InitshutdownListComponent implements EntityTableConfig {
   afterInit(entityList: any): void {
     this.entityList = entityList;
 
-    this.modalService.onClose$.subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.loaderOpen = true;
       this.entityList.needRefreshTable = true;
       this.entityList.getData();

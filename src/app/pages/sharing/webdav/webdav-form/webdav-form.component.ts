@@ -1,15 +1,17 @@
 import { Component } from '@angular/core';
-import { ServiceName } from 'app/enums/service-name.enum';
-import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { helptext_sharing_webdav, shared } from '../../../../helptext/sharing';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import * as _ from 'lodash';
-import { AppLoaderService, DialogService, WebSocketService } from '../../../../services';
 import { Router } from '@angular/router';
-import { T } from 'app/translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { ServiceName } from 'app/enums/service-name.enum';
+import { helptext_sharing_webdav, shared } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { T } from 'app/translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'app-user-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -92,25 +94,25 @@ export class WebdavFormComponent implements FormConfiguration {
   ) {}
 
   afterInit(entityForm: EntityFormComponent): void {
-    entityForm.formGroup.controls['perm'].valueChanges.subscribe((value: any) => {
+    entityForm.formGroup.controls['perm'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       value ? this.confirmSubmit = true : this.confirmSubmit = false;
     });
     this.title = entityForm.isNew ? T('Add WebDAV') : T('Edit WebDAV');
   }
 
   afterSave(): void {
-    this.ws.call('service.query', [[]]).subscribe((res) => {
+    this.ws.call('service.query', [[]]).pipe(untilDestroyed(this)).subscribe((res) => {
       const service = _.find(res, { service: ServiceName.WebDav });
       if (!service.enable) {
         this.dialog.confirm(shared.dialog_title, shared.dialog_message,
-          true, shared.dialog_button).subscribe((dialogRes: boolean) => {
+          true, shared.dialog_button).pipe(untilDestroyed(this)).subscribe((dialogRes: boolean) => {
           if (dialogRes) {
             this.loader.open();
-            this.ws.call('service.update', [service.id, { enable: true }]).subscribe(() => {
-              this.ws.call('service.start', [service.service]).subscribe(() => {
+            this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
+              this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
                 this.loader.close();
                 this.dialog.Info(T('WebDAV') + shared.dialog_started_title, T('The WebDAV') + shared.dialog_started_message, '250px')
-                  .subscribe(() => {});
+                  .pipe(untilDestroyed(this)).subscribe(() => {});
               }, (err) => {
                 this.loader.close();
                 this.dialog.errorReport(err.error, err.reason, err.trace.formatted);

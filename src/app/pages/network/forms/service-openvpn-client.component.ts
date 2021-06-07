@@ -1,17 +1,18 @@
 import { Component } from '@angular/core';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { ServicesService } from '../../../services';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { ServicesService } from 'app/services';
+
+@UntilDestroy()
 @Component({
   selector: 'openvpn-client',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-
 export class OpenvpnClientComponent implements FormConfiguration {
   queryCall: 'openvpn.client.config' = 'openvpn.client.config';
   title = helptext.client.formTitle;
@@ -126,7 +127,7 @@ export class OpenvpnClientComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     entityEdit.submitFunction = (body: any) => this.services.updateOpenVPN('openvpn.client.update', body);
 
-    this.services.getOpenVPNClientAuthAlgorithmChoices().subscribe((res) => {
+    this.services.getOpenVPNClientAuthAlgorithmChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       const config = this.fieldConfig.find((c) => c.name === 'authentication_algorithm');
       for (const item in res) {
         config.options.push(
@@ -134,7 +135,7 @@ export class OpenvpnClientComponent implements FormConfiguration {
         );
       }
     });
-    this.services.getOpenVPNClientCipherChoices().subscribe((res) => {
+    this.services.getOpenVPNClientCipherChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       const config = this.fieldConfig.find((c) => c.name === 'cipher');
       for (const item in res) {
         config.options.push(
@@ -142,13 +143,13 @@ export class OpenvpnClientComponent implements FormConfiguration {
         );
       }
     });
-    this.services.getCerts().subscribe((certificates) => {
+    this.services.getCerts().pipe(untilDestroyed(this)).subscribe((certificates) => {
       const config = this.fieldConfig.find((c) => c.name === 'client_certificate');
       certificates.forEach((certificate) => {
         config.options.push({ label: certificate.name, value: certificate.id });
       });
     });
-    this.services.getCAs().subscribe((res: any[]) => {
+    this.services.getCAs().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       const config = this.fieldConfig.find((c) => c.name === 'root_ca');
       res.forEach((item) => {
         config.options.push({ label: item.name, value: item.id });
@@ -157,12 +158,12 @@ export class OpenvpnClientComponent implements FormConfiguration {
     const cert = _.find(entityEdit.fieldConfig, { name: 'client_certificate' });
     const ca = _.find(entityEdit.fieldConfig, { name: 'root_ca' });
 
-    entityEdit.formGroup.controls['client_certificate'].valueChanges.subscribe(() => {
+    entityEdit.formGroup.controls['client_certificate'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       cert['hasErrors'] = false;
       ca['hasErrors'] = false;
     });
 
-    entityEdit.formGroup.controls['root_ca'].valueChanges.subscribe(() => {
+    entityEdit.formGroup.controls['root_ca'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       cert['hasErrors'] = false;
       ca['hasErrors'] = false;
       entityEdit.formGroup.controls['client_certificate'].updateValueAndValidity();

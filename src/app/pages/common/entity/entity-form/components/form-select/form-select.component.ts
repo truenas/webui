@@ -4,16 +4,17 @@ import {
 import { FormGroup } from '@angular/forms';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelect, MatSelectChange } from '@angular/material/select';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
-import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
 import * as _ from 'lodash';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
+import { EntityUtils, NULL_VALUE } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
-import { DialogFormConfiguration } from '../../../entity-dialog/dialog-form-configuration.interface';
 import { T } from 'app/translate-marker';
-import { EntityUtils, NULL_VALUE } from '../../../utils';
 
+@UntilDestroy()
 @Component({
   selector: 'form-select',
   styleUrls: ['form-select.component.scss', '../dynamic-field/dynamic-field.scss'],
@@ -81,7 +82,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
         }
       }
     }
-    this.control.valueChanges.subscribe((evt: any) => {
+    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((evt: any) => {
       // When set the value to null, Change it to 'null_value' string
       if (this.control.value === null) {
         this.control.value = NULL_VALUE;

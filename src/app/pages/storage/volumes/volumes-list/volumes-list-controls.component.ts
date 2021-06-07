@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import {
   Component,
   ElementRef,
@@ -6,22 +7,22 @@ import {
   AfterViewInit,
   OnDestroy,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-
-import { RestService } from '../../../../services/rest.service';
 import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
 import { CoreService } from 'app/core/services/core.service';
-import { ModalService } from 'app/services/modal.service';
-import { VolumeImportWizardComponent } from '../volume-import-wizard';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
-import { MatDialog } from '@angular/material/dialog';
-import { HttpClient } from '@angular/common/http';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { ModalService } from 'app/services/modal.service';
+import { RestService } from 'app/services/rest.service';
+import { VolumeImportWizardComponent } from '../volume-import-wizard';
 
+@UntilDestroy()
 @Component({
   selector: 'app-volumes-list-controls',
   templateUrl: './volumes-list-controls.component.html',
@@ -36,8 +37,6 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
   actions: any[];
 
   private filterSubscription: Subscription;
-  private poolChoicesSubscription: Subscription;
-  private poolConfigSubscription: Subscription;
 
   get totalActions(): number {
     const addAction = this.entity.conf.route_add ? 1 : 0;
@@ -59,8 +58,6 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
 
   ngOnDestroy(): void {
     this.filterSubscription?.unsubscribe();
-    this.poolChoicesSubscription?.unsubscribe();
-    this.poolConfigSubscription?.unsubscribe();
   }
 
   ngAfterViewInit(): void {
@@ -73,7 +70,7 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
       'keyup',
     )
       .pipe(debounceTime(250), distinctUntilChanged())
-      .subscribe(() => {
+      .pipe(untilDestroyed(this)).subscribe(() => {
         this.filterValue = this.filter.nativeElement.value || '';
         this.filterDatasets(this.filterValue);
       });

@@ -1,29 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { CoreEvent } from 'app/interfaces/events';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
-
+import { CoreService } from 'app/core/services/core.service';
+import { AlertLevel } from 'app/enums/alert-level.enum';
+import helptext from 'app/helptext/system/alert-settings';
+import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { T } from 'app/translate-marker';
 import { DialogService, WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import helptext from 'app/helptext/system/alert-settings';
-import { CoreService } from 'app/core/services/core.service';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { AlertLevel } from 'app/enums/alert-level.enum';
+import { T } from 'app/translate-marker';
 
 /**
  * This form is unlike other forms in the app which make use of EntityForm.
  * This component's form config is generated based on a response from the
  * middleware.
  */
+@UntilDestroy()
 @Component({
   selector: 'app-system-alert',
   templateUrl: './alert.component.html',
@@ -64,7 +64,7 @@ export class AlertConfigComponent implements OnInit {
 
   ngOnInit(): void {
     this.loader.open();
-    this.ws.call('alert.list_policies', []).subscribe(
+    this.ws.call('alert.list_policies', []).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         for (let i = 0; i < res.length; i++) {
           let label = res[i];
@@ -138,7 +138,7 @@ export class AlertConfigComponent implements OnInit {
         this.fieldConfig = this.fieldSets.configs();
         this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
-        this.ws.call(this.queryCall).subscribe(
+        this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             this.loader.close();
             for (const k in res.classes) {
@@ -170,7 +170,7 @@ export class AlertConfigComponent implements OnInit {
       options.push({ label: category.title, value: index });
     });
     this.formEvents = new Subject();
-    this.formEvents.subscribe((evt: CoreEvent) => {
+    this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'save') {
         this.onSubmit();
       } else {
@@ -224,7 +224,7 @@ export class AlertConfigComponent implements OnInit {
 
     this.ws
       .call(this.editCall, [payload])
-      .subscribe(
+      .pipe(untilDestroyed(this)).subscribe(
         () => this.dialog.Info(T('Settings saved'), '', '300px', 'info', true),
         (error) => new EntityUtils().handleWSError(this, error, this.dialog),
       )

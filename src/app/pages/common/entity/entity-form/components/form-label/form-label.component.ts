@@ -3,10 +3,9 @@ import {
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-
-import { FieldConfig } from '../../models/field-config.interface';
-import { EntityFormService } from '../../services/entity-form.service';
-import { Field } from '../../models/field.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 
 @Component({
   selector: 'form-label',

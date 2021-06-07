@@ -1,30 +1,31 @@
-import { Component, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { helptext_system_advanced } from 'app/helptext/system/advanced';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
+import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   DialogService, LanguageService, StorageService,
   SystemGeneralService, WebSocketService,
-} from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { ModalService } from '../../../../services/modal.service';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { EntityUtils } from '../../../common/entity/utils';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+} from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-kernel-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class KernelFormComponent implements FormConfiguration, OnDestroy {
+export class KernelFormComponent implements FormConfiguration {
   queryCall: 'system.advanced.config' = 'system.advanced.config';
   updateCall = 'system.advanced.update';
   protected isOneColumnForm = true;
-  private getDataFromDash: Subscription;
   fieldConfig: FieldConfig[] = [];
 
   fieldSets: FieldSet[] = [
@@ -68,7 +69,7 @@ export class KernelFormComponent implements FormConfiguration, OnDestroy {
     private sysGeneralService: SystemGeneralService,
     private modalService: ModalService,
   ) {
-    this.getDataFromDash = this.sysGeneralService.sendConfigData$.subscribe((res) => {
+    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.configData = res;
     });
   }
@@ -91,7 +92,7 @@ export class KernelFormComponent implements FormConfiguration, OnDestroy {
 
   customSubmit(body: any): Subscription {
     this.loader.open();
-    return this.ws.call('system.advanced.update', [body]).subscribe(() => {
+    return this.ws.call('system.advanced.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
       this.entityForm.success = true;
       this.entityForm.formGroup.markAsPristine();
@@ -101,9 +102,5 @@ export class KernelFormComponent implements FormConfiguration, OnDestroy {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
-  }
-
-  ngOnDestroy(): void {
-    this.getDataFromDash.unsubscribe();
   }
 }

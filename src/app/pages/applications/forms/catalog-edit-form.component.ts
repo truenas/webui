@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { ModalService } from '../../../services/modal.service';
-import { DialogService } from '../../../services/index';
-import helptext from '../../../helptext/apps/apps';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import helptext from 'app/helptext/apps/apps';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { DialogService } from 'app/services/index';
+import { ModalService } from 'app/services/modal.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-catalog-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -46,7 +48,7 @@ export class CatalogEditFormComponent implements FormConfiguration {
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService) {
-    this.modalService.getRow$.subscribe((label: string) => {
+    this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((label: string) => {
       this.customFilter = [[['id', '=', label]], { extra: { item_details: true } }];
     });
   }

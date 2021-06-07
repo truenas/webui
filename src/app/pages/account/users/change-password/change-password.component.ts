@@ -1,15 +1,17 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
-import { WebSocketService, DialogService } from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
-import helptext from '../../../../helptext/account/user-change-pw';
-import { EntityUtils } from '../../../common/entity/utils';
+import helptext from 'app/helptext/account/user-change-pw';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService, DialogService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
+@UntilDestroy()
 @Component({
   template: '<entity-form [conf]="this"></entity-form>',
 })
@@ -63,10 +65,10 @@ export class ChangePasswordComponent implements FormConfiguration {
   customSubmit(body: any): Subscription {
     delete body.password_conf;
     this.loader.open();
-    return this.ws.call('auth.check_user', ['root', body.curr_password]).subscribe((check) => {
+    return this.ws.call('auth.check_user', ['root', body.curr_password]).pipe(untilDestroyed(this)).subscribe((check) => {
       if (check) {
         delete body.curr_password;
-        this.ws.call('user.update', [1, body]).subscribe(() => {
+        this.ws.call('user.update', [1, body]).pipe(untilDestroyed(this)).subscribe(() => {
           this.loader.close();
           this.entityForm.success = true;
           this.entityForm.successMessage = helptext.pw_updated;

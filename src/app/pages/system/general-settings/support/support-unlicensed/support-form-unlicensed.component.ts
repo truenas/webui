@@ -1,16 +1,18 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { T } from 'app/translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService } from 'app/services/';
-import { ModalService } from '../../../../../services/modal.service';
-import { helptext_system_support as helptext } from 'app/helptext/system/support';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'app-support-form-unlicensed',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -160,7 +162,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
       }
       if (this.category.options.length === 0 && this.username !== '' && this.password !== '') {
         this.category.isLoading = true;
-        parent.ws.call('support.fetch_categories', [this.username, this.password]).subscribe((res: string[]) => {
+        parent.ws.call('support.fetch_categories', [this.username, this.password]).pipe(untilDestroyed(this)).subscribe((res: string[]) => {
           this.category.isLoading = false;
           parent.entityEdit.setDisabled('category', false);
           const options = [];
@@ -204,7 +206,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     let url: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res.result) {
         url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
       }
@@ -219,10 +221,10 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
           }));
           formData.append('file', item.file, item.apiEndPoint);
           dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
-          dialogRef.componentInstance.success.subscribe(() => {
+          dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.resetForm();
           });
-          dialogRef.componentInstance.failure.subscribe((res: any) => {
+          dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
             dialogRef.componentInstance.setDescription(res.error);
           });
         });
@@ -232,7 +234,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
         this.resetForm();
       }
     });
-    dialogRef.componentInstance.failure.subscribe((res: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }

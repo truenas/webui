@@ -1,20 +1,21 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
-
+import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   IscsiService, WebSocketService, AppLoaderService, ModalService,
-} from '../../../../../services';
-import { EntityUtils } from '../../../../common/entity/utils';
-import { helptext_sharing_iscsi } from 'app/helptext/sharing';
-import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+} from 'app/services';
 import { T } from 'app/translate-marker';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
+@UntilDestroy()
 @Component({
   selector: 'app-iscsi-target-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -155,12 +156,12 @@ export class TargetFormComponent implements FormConfiguration {
     public translate: TranslateService,
     protected ws: WebSocketService,
     private modalService: ModalService) {
-    this.modalService.getRow$.subscribe((rowId: string) => {
+    this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: string) => {
       this.customFilter = [[['id', '=', rowId]]];
       this.pk = rowId;
     });
     const basicFieldset = _.find(this.fieldSets, { class: 'basic' });
-    this.ws.call('system.info').subscribe(
+    this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe(
       (systemInfo) => {
         if (systemInfo.license && systemInfo.license.features.indexOf(LicenseFeature.FibreChannel) > -1) {
           _.find(basicFieldset.config, { name: 'mode' }).isHidden = false;
@@ -238,7 +239,7 @@ export class TargetFormComponent implements FormConfiguration {
 
   customEditCall(value: any): void {
     this.loader.open();
-    this.ws.call(this.editCall, [this.pk, value]).subscribe(
+    this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.modalService.close('slide-in-form');

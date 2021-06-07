@@ -1,41 +1,37 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Option } from 'app/interfaces/option.interface';
-import { AppTableAction } from 'app/pages/common/entity/table/table.component';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-
+import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { helptext_system_ca } from 'app/helptext/system/ca';
+import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { Option } from 'app/interfaces/option.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { AppTableAction } from 'app/pages/common/entity/table/table.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   SystemGeneralService, WebSocketService, AppLoaderService, DialogService, StorageService,
-} from '../../../services';
-import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
-import { ModalService } from '../../../services/modal.service';
-import { T } from '../../../translate-marker';
-import { CertificateAddComponent } from './forms/certificate-add.component';
-import { CertificateEditComponent } from './forms/certificate-edit.component';
+} from 'app/services';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
+import { AcmednsFormComponent } from './forms/acmedns-form.component';
 import { CertificateAuthorityAddComponent } from './forms/ca-add.component';
 import { CertificateAuthorityEditComponent } from './forms/ca-edit.component';
 import { CertificateAcmeAddComponent } from './forms/certificate-acme-add.component';
-import { AcmednsFormComponent } from './forms/acmedns-form.component';
-import { helptext_system_certificates } from 'app/helptext/system/certificates';
-import { helptext_system_ca } from 'app/helptext/system/ca';
-import { EntityUtils } from '../../common/entity/utils';
+import { CertificateAddComponent } from './forms/certificate-add.component';
+import { CertificateEditComponent } from './forms/certificate-edit.component';
 
+@UntilDestroy()
 @Component({
   selector: 'app-certificates-dash',
   templateUrl: './certificates-dash.component.html',
   providers: [EntityFormService],
 })
-export class CertificatesDashComponent implements OnInit, OnDestroy {
+export class CertificatesDashComponent implements OnInit {
   cards: any;
-  refreshTable: Subscription;
-  refreshForm: Subscription;
-  message: Subscription;
 
   protected certificateAddComponent: CertificateAddComponent;
   protected certificateEditComponent: CertificateEditComponent;
@@ -54,19 +50,19 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getCards();
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getCards();
     });
     this.refreshForms();
-    this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
+    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshForms();
     });
-    this.message = this.modalService.message$.subscribe((res: any) => {
+    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res['action'] === 'open' && res['component'] === 'acmeComponent') {
         this.openForm(this.acmeAddComponent, res['row']);
       }
     });
-    this.systemGeneralService.getUnsignedCertificates().subscribe((res: any[]) => {
+    this.systemGeneralService.getUnsignedCertificates().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       res.forEach((item) => {
         this.unsignedCAs.push(
           { label: item.name, value: parseInt(item.id) },
@@ -240,11 +236,11 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
       onClick: (rowinner: any) => {
         const path = rowinner.CSR ? rowinner.csr_path : rowinner.certificate_path;
         const fileName = rowinner.name + '.crt'; // what about for a csr?
-        this.ws.call('core.download', ['filesystem.get', [path], fileName]).subscribe(
+        this.ws.call('core.download', ['filesystem.get', [path], fileName]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             const url = res[1];
             const mimetype = 'application/x-x509-user-cert';
-            this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe((file) => {
+            this.storage.streamDownloadFile(this.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
               this.storage.downloadBlob(file, fileName);
             }, (err) => {
               this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
@@ -256,11 +252,11 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
           },
         );
         const keyName = rowinner.name + '.key';
-        this.ws.call('core.download', ['filesystem.get', [rowinner.privatekey_path], keyName]).subscribe(
+        this.ws.call('core.download', ['filesystem.get', [rowinner.privatekey_path], keyName]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             const url = res[1];
             const mimetype = 'text/plain';
-            this.storage.streamDownloadFile(this.http, url, keyName, mimetype).subscribe((file) => {
+            this.storage.streamDownloadFile(this.http, url, keyName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
               this.storage.downloadBlob(file, keyName);
             }, (err) => {
               this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
@@ -348,7 +344,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
       name: entityDialog.formGroup.controls.name.value,
     };
     entityDialog.loader.open();
-    entityDialog.ws.call('certificateauthority.ca_sign_csr', [payload]).subscribe(() => {
+    entityDialog.ws.call('certificateauthority.ca_sign_csr', [payload]).pipe(untilDestroyed(this)).subscribe(() => {
       entityDialog.loader.close();
       self.dialogService.closeAllDialogs();
       self.getCards();
@@ -356,11 +352,5 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
       entityDialog.loader.close();
       self.dialogService.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
     });
-  }
-
-  ngOnDestroy(): void {
-    this.message.unsubscribe();
-    this.refreshTable.unsubscribe();
-    this.refreshForm.unsubscribe();
   }
 }

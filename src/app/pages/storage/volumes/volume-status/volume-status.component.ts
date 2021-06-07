@@ -1,36 +1,35 @@
 import { Component, OnInit } from '@angular/core';
+import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import * as filesize from 'filesize';
+import * as _ from 'lodash';
+import { TreeNode } from 'primeng/api';
+import { Subject } from 'rxjs';
+import { CoreService } from 'app/core/services/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
+import helptext from 'app/helptext/storage/volumes/volume-status';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { EntityTreeTable } from 'app/pages/common/entity/entity-tree-table/entity-tree-table.model';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DiskFormComponent } from 'app/pages/storage/disks/disk-form';
 import {
   WebSocketService, RestService, AppLoaderService, DialogService,
-} from '../../../../services';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { EntityUtils } from '../../../common/entity/utils';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import * as _ from 'lodash';
-import { TreeNode } from 'primeng/api';
-import { EntityTreeTable } from '../../../common/entity/entity-tree-table/entity-tree-table.model';
-
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { MatDialog } from '@angular/material/dialog';
-import { Validators } from '@angular/forms';
-import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
+} from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
-import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/storage/volumes/volume-status';
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-
-import { CoreService } from 'app/core/services/core.service';
-import { Subject } from 'rxjs';
-import { EntityToolbarComponent } from '../../../common/entity/entity-toolbar/entity-toolbar.component';
-import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { ModalService } from 'app/services/modal.service';
-import { DiskFormComponent } from '../../disks/disk-form';
-import * as filesize from 'filesize';
+import { T } from 'app/translate-marker';
 
 interface PoolDiskInfo {
   name: any;
@@ -43,6 +42,7 @@ interface PoolDiskInfo {
   guid: any;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'volume-status',
   templateUrl: './volume-status.component.html',
@@ -161,7 +161,7 @@ export class VolumeStatusComponent implements OnInit {
     protected modalService: ModalService) {}
 
   getZfsPoolScan(poolName: string): void {
-    this.ws.subscribe('zfs.pool.scan').subscribe(
+    this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe(
       (res) => {
         if (res.fields && res.fields.name == poolName) {
           this.poolScan = res.fields.scan;
@@ -178,7 +178,7 @@ export class VolumeStatusComponent implements OnInit {
   }
 
   getData(): void {
-    this.ws.call('pool.query', [[['id', '=', this.pk]]]).subscribe((pools) => {
+    this.ws.call('pool.query', [[['id', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe((pools) => {
       this.pool = pools[0];
       if (!pools[0]) {
         return;
@@ -208,7 +208,7 @@ export class VolumeStatusComponent implements OnInit {
   getUnusedDisk(): void {
     const availableDisks: Option[] = [];
     const availableDisksForExtend: Option[] = [];
-    this.ws.call('disk.get_unused').subscribe((res) => {
+    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((res) => {
       for (const i in res) {
         availableDisks.push({
           label: res[i].devname,
@@ -228,7 +228,7 @@ export class VolumeStatusComponent implements OnInit {
     // Setup Global Actions
     const actionId = 'refreshBtn';
     this.actionEvents = new Subject();
-    this.actionEvents.subscribe((evt) => {
+    this.actionEvents.pipe(untilDestroyed(this)).subscribe((evt) => {
       if (evt.data[actionId]) {
         this.refresh();
       }
@@ -249,7 +249,7 @@ export class VolumeStatusComponent implements OnInit {
     const actionsConfig = { actionType: EntityToolbarComponent, actionConfig: toolbarConfig };
     this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
 
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = parseInt(params['pk'], 10);
       this.getData();
     });
@@ -276,7 +276,7 @@ export class VolumeStatusComponent implements OnInit {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
 
-        this.ws.call('disk.query', [[['devname', '=', diskName]]]).subscribe((res) => {
+        this.ws.call('disk.query', [[['devname', '=', diskName]]]).pipe(untilDestroyed(this)).subscribe((res) => {
           this.onClickEdit(res[0].identifier);
         });
       },
@@ -296,11 +296,11 @@ export class VolumeStatusComponent implements OnInit {
           helptext.offline_disk.message + name + '?' + (this.pool.encrypt == 0 ? '' : helptext.offline_disk.encryptPoolWarning),
           false,
           helptext.offline_disk.buttonMsg,
-        ).subscribe((res: any) => {
+        ).pipe(untilDestroyed(this)).subscribe((res: any) => {
           if (res) {
             this.loader.open();
             const value = { label: row.guid };
-            this.ws.call('pool.offline', [this.pk, value]).subscribe(
+            this.ws.call('pool.offline', [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
               () => {
                 this.getData();
                 this.loader.close();
@@ -326,11 +326,11 @@ export class VolumeStatusComponent implements OnInit {
           helptext.online_disk.message + diskName + '?',
           false,
           helptext.online_disk.buttonMsg,
-        ).subscribe((res: any) => {
+        ).pipe(untilDestroyed(this)).subscribe((res: any) => {
           if (res) {
             this.loader.open();
             const value = { label: row.guid };
-            this.ws.call('pool.online', [this.pk, value]).subscribe(
+            this.ws.call('pool.online', [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
               () => {
                 this.getData();
                 this.loader.close();
@@ -368,14 +368,14 @@ export class VolumeStatusComponent implements OnInit {
             dialogRef.componentInstance.setDescription(helptext.replace_disk.description);
             dialogRef.componentInstance.setCall('pool.replace', [pk, entityDialog.formValue]);
             dialogRef.componentInstance.submit();
-            dialogRef.componentInstance.success.subscribe(() => {
+            dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
               dialogRef.close(true);
               entityDialog.dialogRef.close(true);
               entityDialog.parent.getData();
               entityDialog.parent.getUnusedDisk();
               entityDialog.parent.dialogService.Info(helptext.replace_disk.title, helptext.replace_disk.info_dialog_content + name + '.', '', 'info', true);
             });
-            dialogRef.componentInstance.failure.subscribe((res: any) => {
+            dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
               dialogRef.close();
               entityDialog.dialogRef.close();
               let err = helptext.replace_disk.err_msg;
@@ -404,10 +404,10 @@ export class VolumeStatusComponent implements OnInit {
           helptext.remove_disk.message + diskName + '?',
           false,
           helptext.remove_disk.buttonMsg,
-        ).subscribe((res: any) => {
+        ).pipe(untilDestroyed(this)).subscribe((res: any) => {
           if (res) {
             this.loader.open();
-            this.ws.call('pool.remove', [this.pk, { label: row.guid }]).subscribe(
+            this.ws.call('pool.remove', [this.pk, { label: row.guid }]).pipe(untilDestroyed(this)).subscribe(
               () => {
                 this.getData();
                 this.loader.close();
@@ -433,10 +433,10 @@ export class VolumeStatusComponent implements OnInit {
           helptext.detach_disk.message + diskName + '?',
           false,
           helptext.detach_disk.buttonMsg,
-        ).subscribe((res: any) => {
+        ).pipe(untilDestroyed(this)).subscribe((res: any) => {
           if (res) {
             this.loader.open();
-            this.ws.call('pool.detach', [this.pk, { label: row.guid }]).subscribe(
+            this.ws.call('pool.detach', [this.pk, { label: row.guid }]).pipe(untilDestroyed(this)).subscribe(
               () => {
                 this.getData();
                 this.getUnusedDisk();
@@ -494,14 +494,14 @@ export class VolumeStatusComponent implements OnInit {
             dialogRef.componentInstance.setDescription(helptext.extend_disk.description);
             dialogRef.componentInstance.setCall('pool.attach', [pk, entityDialog.formValue]);
             dialogRef.componentInstance.submit();
-            dialogRef.componentInstance.success.subscribe(() => {
+            dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
               dialogRef.close(true);
               entityDialog.dialogRef.close(true);
               entityDialog.parent.getData();
               entityDialog.parent.getUnusedDisk();
               entityDialog.parent.dialogService.Info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + name + '.', '', 'info', true);
             });
-            dialogRef.componentInstance.failure.subscribe((res: any) => {
+            dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
               dialogRef.close();
               entityDialog.dialogRef.close();
               let err = helptext.extend_disk.err_msg;
@@ -529,10 +529,10 @@ export class VolumeStatusComponent implements OnInit {
           helptext.remove_disk.message + diskName + '?',
           false,
           helptext.remove_disk.buttonMsg,
-        ).subscribe((res: any) => {
+        ).pipe(untilDestroyed(this)).subscribe((res: any) => {
           if (res) {
             this.loader.open();
-            this.ws.call('pool.remove', [this.pk, { label: row.guid }]).subscribe(
+            this.ws.call('pool.remove', [this.pk, { label: row.guid }]).pipe(untilDestroyed(this)).subscribe(
               () => {
                 this.getData();
                 this.loader.close();

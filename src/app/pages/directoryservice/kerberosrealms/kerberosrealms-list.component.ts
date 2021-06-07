@@ -1,22 +1,22 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import helptext from 'app/helptext/directoryservice/kerberosrealms-form-list';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
-import { T } from '../../../translate-marker';
-import helptext from '../../../helptext/directoryservice/kerberosrealms-form-list';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 import { KerberosRealmsFormComponent } from './kerberosrealms-form.component';
-import { ModalService } from '../../../services/modal.service';
-import { Subscription } from 'rxjs';
+
+@UntilDestroy()
 @Component({
   selector: 'app-user-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class KerberosRealmsListComponent implements EntityTableConfig, OnDestroy {
+export class KerberosRealmsListComponent implements EntityTableConfig {
   title = 'Kerberos Realms';
   queryCall: 'kerberos.realm.query' = 'kerberos.realm.query';
   wsDelete: 'kerberos.realm.delete' = 'kerberos.realm.delete';
   keyList = ['admin_server', 'kdc', 'kpasswd_server'];
   protected entityList: any;
-  private refreshTableSubscription: Subscription;
 
   columns = [
     { name: T('Realm'), prop: 'realm', always_display: true },
@@ -49,15 +49,9 @@ export class KerberosRealmsListComponent implements EntityTableConfig, OnDestroy
 
   afterInit(entityList: any): void {
     this.entityList = entityList;
-    this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
-  }
-
-  ngOnDestroy(): void {
-    if (this.refreshTableSubscription) {
-      this.refreshTableSubscription.unsubscribe();
-    }
   }
 
   getAddActions(): EntityTableAction[] {

@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter, switchMap } from 'rxjs/operators';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { filter, switchMap } from 'rxjs/operators';
-import { DialogService } from '../../../../../services';
-import { TaskService, WebSocketService } from '../../../../../services';
-import { T } from '../../../../../translate-marker';
+import { DialogService, TaskService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
+import { UserService } from 'app/services/user.service';
+import { T } from 'app/translate-marker';
 import { CronFormComponent } from '../cron-form/cron-form.component';
-import { UserService } from '../../../../../services/user.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-cron-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -68,7 +69,7 @@ export class CronListComponent implements EntityTableConfig {
   afterInit(entityList: any): void {
     this.entityList = entityList;
 
-    this.modalService.onClose$.subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.loaderOpen = true;
       this.entityList.needRefreshTable = true;
       this.entityList.getData();
@@ -97,7 +98,7 @@ export class CronListComponent implements EntityTableConfig {
               filter((run) => !!run),
               switchMap(() => this.ws.call('cronjob.run', [row.id])),
             )
-            .subscribe(
+            .pipe(untilDestroyed(this)).subscribe(
               () => {
                 const message = row.enabled == true
                   ? T('This job is scheduled to run again ' + row.next_run + '.')

@@ -7,24 +7,22 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import { CoreEvent } from 'app/interfaces/events';
-import { WebSocketService, SystemGeneralService } from 'app/services/';
-import { Theme } from 'app/services/theme/theme.service';
-import { ProductType } from '../../../../enums/product-type.enum';
-import { ReportsService } from '../../reports.service';
-import { Subject, Subscription } from 'rxjs';
 import { NgForm } from '@angular/forms';
-import { LineChartComponent } from '../lineChart/lineChart.component';
-
 import { Router } from '@angular/router';
-import { UUID } from 'angular2-uuid';
-
-import * as moment from 'moment';
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { UUID } from 'angular2-uuid';
+import * as moment from 'moment';
+import { Subject } from 'rxjs';
+import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { ProductType } from 'app/enums/product-type.enum';
+import { CoreEvent } from 'app/interfaces/events';
+import { ReportsService } from 'app/pages/reportsdashboard/reports.service';
+import { WebSocketService, SystemGeneralService } from 'app/services/';
 import { LocaleService } from 'app/services/locale.service';
-
-import { T } from '../../../../translate-marker';
+import { Theme } from 'app/services/theme/theme.service';
+import { T } from 'app/translate-marker';
+import { LineChartComponent } from '../lineChart/lineChart.component';
 
 interface DateTime {
   dateFormat: string;
@@ -66,6 +64,7 @@ export interface ReportData {
   data: number[][];
 }
 
+@UntilDestroy()
 @Component({
   selector: 'report',
   templateUrl: './report.component.html',
@@ -108,7 +107,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   altSubtitle = '';
   widgetColorCssVar = 'var(--primary)';
   isActive = true;
-  private getGenConfig: Subscription;
 
   currentStartDate: number;// as seconds from Unix Epoch
   currentEndDate: number;// as seconds from Unix Epoch
@@ -173,32 +171,33 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     protected localeService: LocaleService, private sysGeneralService: SystemGeneralService) {
     super(translate);
 
-    this.core.register({ observerClass: this, eventName: 'ReportData-' + this.chartId }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ReportData-' + this.chartId }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.data = evt.data;
     });
 
-    this.core.register({ observerClass: this, eventName: 'LegendEvent-' + this.chartId }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'LegendEvent-' + this.chartId }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const clone = { ...evt.data };
       clone.xHTML = this.formatTime(evt.data.xHTML);
       this.legendData = clone;
     });
 
-    this.core.register({ observerClass: this, eventName: 'ThemeData' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ThemeData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.chartColors = this.processThemeColors(evt.data);
     });
 
-    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.chartColors = this.processThemeColors(evt.data);
     });
 
     this.core.emit({ name: 'ThemeDataRequest', sender: this });
 
-    this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe((res) => this.timezone = res.timezone);
+    this.sysGeneralService.getGeneralConfig.pipe(
+      untilDestroyed(this),
+    ).subscribe((res) => this.timezone = res.timezone);
   }
 
   ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
-    this.getGenConfig.unsubscribe();
   }
 
   ngAfterViewInit(): void {

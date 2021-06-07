@@ -1,16 +1,17 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { Subscription, Observer } from 'rxjs';
 import {
   HttpClient, HttpRequest, HttpEventType, HttpResponse,
 } from '@angular/common/http';
+import { Component, ViewChild, ElementRef } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { FieldConfig } from '../../models/field-config.interface';
-import { WebSocketService } from '../../../../../../services';
-import { AppLoaderService } from '../../../../../../services/app-loader/app-loader.service';
-import { DialogService } from '../../../../../../services';
-import { T } from '../../../../../../translate-marker';
+import { Subscription, Observer } from 'rxjs';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { WebSocketService, DialogService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { T } from 'app/translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'app-form-upload',
   templateUrl: './form-upload.component.html',
@@ -62,7 +63,7 @@ export class FormUploadComponent {
       const req = new HttpRequest('POST', this.apiEndPoint, formData, {
         reportProgress: true,
       });
-      this.http.request(req).subscribe((event) => {
+      this.http.request(req).pipe(untilDestroyed(this)).subscribe((event) => {
         if (event.type === HttpEventType.UploadProgress) {
           const percentDone = Math.round(100 * event.loaded / event.total);
           const upload_msg = `${percentDone}% Uploaded`;

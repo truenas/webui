@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatRadioChange } from '@angular/material/radio/radio';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
-import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
-
+@UntilDestroy()
 @Component({
   selector: 'form-radio',
   styleUrls:
@@ -23,7 +24,7 @@ export class FormRadioComponent implements Field {
   constructor(public translate: TranslateService) {}
 
   ngOnInit(): void {
-    this.valueChangesSubscription = this.group.controls[this.config.name].valueChanges.subscribe((res) => this.radioValue = res);
+    this.valueChangesSubscription = this.group.controls[this.config.name].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => this.radioValue = res);
   }
 
   ngOnDestroy(): void {

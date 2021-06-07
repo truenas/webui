@@ -1,29 +1,31 @@
+import { HttpClient } from '@angular/common/http';
 import {
   Component, ElementRef, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { CoreEvent } from 'app/interfaces/events';
 import * as _ from 'lodash';
-import { DialogService, ShellService, WebSocketService } from '../../../services';
-import helptext from '../../../helptext/apps/apps';
-import { CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { ApplicationsService } from '../applications.service';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { EntityUtils } from '../../common/entity/utils';
-import { StorageService } from 'app/services/storage.service';
-import { HttpClient } from '@angular/common/http';
+import { CoreService } from 'app/core/services/core.service';
+import helptext from 'app/helptext/apps/apps';
+import { CoreEvent } from 'app/interfaces/events';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService, ShellService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { StorageService } from 'app/services/storage.service';
+import { ApplicationsService } from '../applications.service';
 
 interface PodLogEvent {
   data: string;
   timestamp: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'app-pod-logs',
   templateUrl: './pod-logs.component.html',
@@ -63,21 +65,21 @@ export class PodLogsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.chart_release_name = params['rname'];
       this.pod_name = params['pname'];
       this.container_name = params['cname'];
       this.tail_lines = params['tail_lines'];
 
       // Get app list
-      this.appService.getChartReleaseNames().subscribe((charts: any[]) => {
+      this.appService.getChartReleaseNames().pipe(untilDestroyed(this)).subscribe((charts: any[]) => {
         charts.forEach((chart) => {
           this.apps.push(chart.name);
         });
       });
 
       // Get pod list for the selected app
-      this.ws.call('chart.release.pod_logs_choices', [this.chart_release_name]).subscribe((res) => {
+      this.ws.call('chart.release.pod_logs_choices', [this.chart_release_name]).pipe(untilDestroyed(this)).subscribe((res) => {
         this.podDetails = res;
 
         const podDetail = res[this.pod_name];
@@ -106,7 +108,7 @@ export class PodLogsComponent implements OnInit {
 
     const subName = `kubernetes.pod_log_follow:{"release_name":"${this.chart_release_name}", "pod_name":"${this.pod_name}", "container_name":"${this.container_name}", "tail_lines": ${this.tail_lines}}`;
 
-    this.podLogsChangedListener = this.ws.sub(subName).subscribe((res: PodLogEvent) => {
+    this.podLogsChangedListener = this.ws.sub(subName).pipe(untilDestroyed(this)).subscribe((res: PodLogEvent) => {
       if (res) {
         this.podLogs.push(res);
         this.scrollToBottom();
@@ -125,7 +127,7 @@ export class PodLogsComponent implements OnInit {
 
   setupToolbarButtons(): void {
     this.formEvents = new Subject();
-    this.formEvents.subscribe((evt: CoreEvent) => {
+    this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'download') {
         this.showChooseLogsDialog(true);
       } else if (evt.data.event_control == 'reconnect') {
@@ -250,10 +252,10 @@ export class PodLogsComponent implements OnInit {
         [chart_release_name, { pod_name, container_name, tail_lines }],
         fileName,
       ],
-    ).subscribe((res: any) => {
+    ).pipe(untilDestroyed(this)).subscribe((res: any) => {
       self.loader.close();
       const url = res[1];
-      self.storageService.streamDownloadFile(self.http, url, fileName, mimetype).subscribe((file: Blob) => {
+      self.storageService.streamDownloadFile(self.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file: Blob) => {
         if (res !== null && res !== '') {
           self.storageService.downloadBlob(file, fileName);
         }
@@ -283,12 +285,12 @@ export class PodLogsComponent implements OnInit {
     const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' });
 
     // when app selection changed
-    entityDialog.formGroup.controls['apps'].valueChanges.subscribe((value) => {
+    entityDialog.formGroup.controls['apps'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       podFC.options = [];
       containerFC.options = [];
 
       self.loader.open();
-      self.ws.call('chart.release.pod_logs_choices', [value]).subscribe((res: any) => {
+      self.ws.call('chart.release.pod_logs_choices', [value]).pipe(untilDestroyed(this)).subscribe((res: any) => {
         self.loader.close();
         self.tempPodDetails = res;
         let pod_name;
@@ -307,7 +309,7 @@ export class PodLogsComponent implements OnInit {
     });
 
     // when pod selection changed
-    entityDialog.formGroup.controls['pods'].valueChanges.subscribe((value) => {
+    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       if (value) {
         const containers = self.tempPodDetails[value];
 

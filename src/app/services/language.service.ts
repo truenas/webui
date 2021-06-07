@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import * as _ from 'lodash';
+import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from './ws.service';
 
+@UntilDestroy()
 @Injectable()
 export class LanguageService {
   currentLanguage: string = null;
@@ -394,7 +395,7 @@ export class LanguageService {
 
   setMiddlewareLanguage(lang: any): void {
     this.ws.call(this.updateCall,
-      [{ language: lang }]).subscribe(
+      [{ language: lang }]).pipe(untilDestroyed(this)).subscribe(
       () => {},
       (err) => {
         console.error(err);

@@ -3,17 +3,19 @@ import {
 } from '@angular/core';
 import { FormControl, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { T } from 'app/translate-marker';
-import { map } from 'rxjs/operators';
-import helptext from '../../../../helptext/storage/snapshots/snapshots';
-import { DialogService, RestService, WebSocketService } from '../../../../services';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from '../../../common/entity/entity-form/entity-form.component';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
-import { EntityUtils } from '../../../common/entity/utils';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as moment from 'moment';
+import { map } from 'rxjs/operators';
+import helptext from 'app/helptext/storage/snapshots/snapshots';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService, RestService, WebSocketService } from 'app/services';
+import { T } from 'app/translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'app-snapshot-add',
   template: `
@@ -84,7 +86,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
 
   ngAfterViewInit(): void {
     this.ws.call('pool.dataset.query', [[['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']],
-      { extra: { flat: false } }]).subscribe((datasets) => {
+      { extra: { flat: false } }]).pipe(untilDestroyed(this)).subscribe((datasets) => {
       const rows = new EntityUtils().flattenData(datasets);
 
       rows.forEach((dataItem) => {
@@ -102,7 +104,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
     this.ws
       .call('replication.list_naming_schemas', [])
       .pipe(map(new EntityUtils().array1DToLabelValuePair))
-      .subscribe(
+      .pipe(untilDestroyed(this)).subscribe(
         (options) => {
           this.fieldConfig.find((config) => config.name === 'naming_schema').options = [
             { label: '---', value: undefined },

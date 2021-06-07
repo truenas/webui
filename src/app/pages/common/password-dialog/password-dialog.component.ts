@@ -1,11 +1,13 @@
-import { MatDialogRef } from '@angular/material/dialog';
 import { Component, Output, EventEmitter } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { SystemGeneralService } from '../../../services/system-general.service';
-import globalHelptext from '../../../helptext/global-helptext';
-import { T } from '../../../translate-marker';
+import globalHelptext from 'app/helptext/global-helptext';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { T } from 'app/translate-marker';
 import { EntityUtils } from '../entity/utils';
 
+@UntilDestroy()
 @Component({
   selector: 'app-password-dialog',
   templateUrl: './password-dialog.component.html',
@@ -37,7 +39,7 @@ export class PasswordDialog {
   ) {}
 
   submit(): void {
-    this.sysGeneralService.checkRootPW(this.password).subscribe(
+    this.sysGeneralService.checkRootPW(this.password).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         if (res) {
           this.dialogRef.close(true);

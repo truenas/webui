@@ -1,23 +1,25 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import helptext from 'app/helptext/directoryservice/idmap';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { T } from '../../../translate-marker';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   IdmapService, ValidationService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { IdmapFormComponent } from './idmap-form.component';
-import helptext from '../../../helptext/directoryservice/idmap';
-import { ModalService } from '../../../services/modal.service';
-import { MatDialog } from '@angular/material/dialog';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 import { ActiveDirectoryComponent } from '../activedirectory/activedirectory.component';
-import { Subscription } from 'rxjs';
+import { IdmapFormComponent } from './idmap-form.component';
+
+@UntilDestroy()
 @Component({
   selector: 'app-idmap-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class IdmapListComponent implements EntityTableConfig, OnDestroy {
+export class IdmapListComponent implements EntityTableConfig {
   title = 'Idmap';
   queryCall: 'idmap.query' = 'idmap.query';
   wsDelete: 'idmap.delete' = 'idmap.delete';
@@ -50,8 +52,6 @@ export class IdmapListComponent implements EntityTableConfig, OnDestroy {
     },
   };
 
-  private refreshTableSubscription: Subscription;
-
   constructor(
     protected idmapService: IdmapService,
     protected validationService: ValidationService,
@@ -81,27 +81,21 @@ export class IdmapListComponent implements EntityTableConfig, OnDestroy {
 
   afterInit(entityList: any): void {
     this.entityList = entityList;
-    this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
-  }
-
-  ngOnDestroy(): void {
-    if (this.refreshTableSubscription) {
-      this.refreshTableSubscription.unsubscribe();
-    }
   }
 
   getAddActions(): EntityTableAction[] {
     return [{
       label: T('Add'),
       onClick: () => {
-        this.idmapService.getADStatus().subscribe((res) => {
+        this.idmapService.getADStatus().pipe(untilDestroyed(this)).subscribe((res) => {
           if (res.enable) {
             this.doAdd();
           } else {
             this.dialogService.confirm(helptext.idmap.enable_ad_dialog.title, helptext.idmap.enable_ad_dialog.message,
-              true, helptext.idmap.enable_ad_dialog.button).subscribe((res: boolean) => {
+              true, helptext.idmap.enable_ad_dialog.button).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
               if (res) {
                 this.showADForm();
               }
@@ -127,7 +121,7 @@ export class IdmapListComponent implements EntityTableConfig, OnDestroy {
         id: 'delete',
         label: T('Delete'),
         onClick: (row: any) => {
-          this.entityList.doDeleteJob(row).subscribe(
+          this.entityList.doDeleteJob(row).pipe(untilDestroyed(this)).subscribe(
             () => {},
             (err: any) => {
               new EntityUtils().handleWSError(this.entityList, err);

@@ -1,22 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter, switchMap } from 'rxjs/operators';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { IscsiService, SystemGeneralService, WebSocketService } from 'app/services/';
-
 import { DialogService } from 'app/services/dialog.service';
 import { T } from 'app/translate-marker';
-import { Subscription } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
 
 interface ServiceRow extends Service {
   onChanging: boolean;
   name: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'services',
   styleUrls: ['./services.component.scss'],
@@ -26,7 +26,6 @@ interface ServiceRow extends Service {
 export class Services implements EntityTableConfig, OnInit {
   title = 'Services';
   isFooterConsoleOpen: boolean;
-  private getAdvancedConfig: Subscription;
   queryCall: 'service.query' = 'service.query';
   queryCallOption: QueryParams<Service> = [[], { order_by: ['service'] }];
   rowIdentifier = 'name';
@@ -47,7 +46,6 @@ export class Services implements EntityTableConfig, OnInit {
     sorting: { columns: this.columns },
   };
   services: any[];
-  busy: Subscription;
 
   showSpinner = true;
 
@@ -72,10 +70,9 @@ export class Services implements EntityTableConfig, OnInit {
   }
 
   ngOnInit(): void {
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res) => {
+    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.isFooterConsoleOpen = res.consolemsg;
-        this.getAdvancedConfig.unsubscribe();
       }
     });
   }
@@ -126,14 +123,14 @@ export class Services implements EntityTableConfig, OnInit {
             );
           }),
           filter(Boolean),
-        ).subscribe(() => this.updateService(rpc, service));
+        ).pipe(untilDestroyed(this)).subscribe(() => this.updateService(rpc, service));
       } else {
         this.dialog.confirm(
           T('Alert'),
           T('Stop ') + serviceName + '?',
           true,
           T('Stop'),
-        ).subscribe((res: boolean) => {
+        ).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
           if (!res) {
             return;
           }
@@ -149,7 +146,7 @@ export class Services implements EntityTableConfig, OnInit {
   updateService(rpc: 'service.start' | 'service.stop', service: ServiceRow): void {
     service.onChanging = true;
     const serviceName = this.getServiceName(service);
-    this.busy = this.ws.call(rpc, [service.service]).subscribe((res) => {
+    this.ws.call(rpc, [service.service]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
           this.dialog.Info(
@@ -180,9 +177,9 @@ export class Services implements EntityTableConfig, OnInit {
   }
 
   enableToggle(service: ServiceRow): void {
-    this.busy = this.ws
+    this.ws
       .call('service.update', [service.id, { enable: service.enable }])
-      .subscribe((res) => {
+      .pipe(untilDestroyed(this)).subscribe((res) => {
         if (!res) {
           return;
         }

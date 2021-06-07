@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-
-import { Tooltip } from '../pages/common/tooltip';
-import { TOOLTIPS } from '../pages/common/tooltips';
+import { Tooltip } from 'app/pages/common/tooltip';
+import { TOOLTIPS } from 'app/pages/common/tooltips';
 
 @Injectable()
 export class TooltipsService {

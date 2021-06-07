@@ -1,16 +1,18 @@
 import { Component, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { ValidationErrors, FormControl } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import {
   WebSocketService, StorageService, DialogService, AppLoaderService,
 } from 'app/services';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { T } from 'app/translate-marker';
-import globalHelptext from 'app/helptext/global-helptext';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 
+@UntilDestroy()
 @Component({
   selector: 'app-dataset-quotas-userlist',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -77,7 +79,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
       name: 'edit',
       onClick: () => {
         self.loader.open();
-        self.ws.call('pool.dataset.get_quota', [self.pk, 'USER', [['id', '=', row.id]]]).subscribe((res) => {
+        self.ws.call('pool.dataset.get_quota', [self.pk, 'USER', [['id', '=', row.id]]]).pipe(untilDestroyed(this)).subscribe((res) => {
           self.loader.close();
           const conf: DialogFormConfiguration = {
             title: helptext.users.dialog.title,
@@ -144,7 +146,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
                 quota_value: entryData.obj_quota,
               });
               self.loader.open();
-              self.ws.call('pool.dataset.set_quota', [self.pk, payload]).subscribe(() => {
+              self.ws.call('pool.dataset.set_quota', [self.pk, payload]).pipe(untilDestroyed(this)).subscribe(() => {
                 self.loader.close();
                 self.dialogService.closeAllDialogs();
                 self.entityList.getData();
@@ -173,13 +175,13 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
 
   callGetFunction(entityList: any): void {
     const filter = this.useFullFilter ? this.fullFilter : this.emptyFilter;
-    this.ws.call('pool.dataset.get_quota', [this.pk, 'USER', filter]).subscribe((res) => {
+    this.ws.call('pool.dataset.get_quota', [this.pk, 'USER', filter]).pipe(untilDestroyed(this)).subscribe((res) => {
       entityList.handleData(res, true);
     });
   }
 
   dataHandler(data: any): void {
-    this.translate.get(helptext.shared.nameErr).subscribe((msg) => {
+    this.translate.get(helptext.shared.nameErr).pipe(untilDestroyed(this)).subscribe((msg) => {
       data.rows.forEach((row: any) => {
         if (!row.name) {
           row.name = `*ERR* (${msg}), ID: ${row.id}`;
@@ -210,7 +212,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
       message = helptext.users.filter_dialog.message_filter;
       button = helptext.users.filter_dialog.button_filter;
     }
-    this.dialogService.confirm(title, message, true, button).subscribe((res: boolean) => {
+    this.dialogService.confirm(title, message, true, button).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         this.entityList.loader.open();
         this.useFullFilter = !this.useFullFilter;

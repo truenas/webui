@@ -1,28 +1,27 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-
-import { Subscription } from 'rxjs';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Direction } from 'app/enums/direction.enum';
+import { RsyncMode } from 'app/enums/rsync-mode.enum';
+import helptext from 'app/helptext/data-protection/resync/resync-form';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
+import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { TaskService, UserService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import helptext from 'app/helptext/data-protection/resync/resync-form';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { Direction } from 'app/enums/direction.enum';
 import { T } from 'app/translate-marker';
-import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
-import { RsyncMode } from 'app/enums/rsync-mode.enum';
-import { Schedule } from 'app/interfaces/schedule.interface';
-import { Option } from 'app/interfaces/option.interface';
 
+@UntilDestroy()
 @Component({
   selector: 'app-rsync-task-add',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [TaskService, UserService],
 })
-export class RsyncFormComponent implements FormConfiguration, OnDestroy {
+export class RsyncFormComponent implements FormConfiguration {
   addCall: 'rsynctask.create' = 'rsynctask.create';
   editCall: 'rsynctask.update' = 'rsynctask.update';
   queryCall: 'rsynctask.query' = 'rsynctask.query';
@@ -243,7 +242,6 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
   protected rsync_module_field: string[] = ['remotemodule'];
   protected rsync_ssh_field: string[] = ['remoteport', 'remotepath', 'validate_rpath'];
   protected user_field: FieldConfig;
-  protected mode_subscription: Subscription;
 
   constructor(
     protected router: Router,
@@ -259,7 +257,7 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
     this.title = entityForm.isNew ? helptext.rsync_task_add : helptext.rsync_task_edit;
 
     this.user_field = this.fieldSets.config('user');
-    this.userService.userQueryDSCache().subscribe((items) => {
+    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
       for (let i = 0; i < items.length; i++) {
         this.user_field.options.push({
           label: items[i].username,
@@ -269,7 +267,7 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
     });
 
     this.hideFields(entityForm.formGroup.controls['mode'].value);
-    this.mode_subscription = entityForm.formGroup.controls['mode'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.hideFields(res);
     });
   }
@@ -292,7 +290,7 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
   }
 
   updateUserSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
+    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -317,9 +315,5 @@ export class RsyncFormComponent implements FormConfiguration, OnDestroy {
     for (let i = 0; i < show_fields.length; i++) {
       this.entityForm.setDisabled(show_fields[i], false, false);
     }
-  }
-
-  ngOnDestroy(): void {
-    this.mode_subscription?.unsubscribe();
   }
 }

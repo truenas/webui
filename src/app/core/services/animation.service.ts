@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CoreEvent } from 'app/interfaces/events';
-import { CoreService } from './core.service';
-import { DisplayObject } from '../classes/display-object';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   tween,
   value,
@@ -12,6 +10,9 @@ import {
   timeline,
   ColdSubscription,
 } from 'popmotion';
+import { CoreEvent } from 'app/interfaces/events';
+import { DisplayObject } from '../classes/display-object';
+import { CoreService } from './core.service';
 
 export interface AnimationConfig {
   animationTarget: DisplayObject; // Support DisplayObject
@@ -26,16 +27,17 @@ export interface GroupAnimationConfig {
   staggered?: boolean;
 }
 
+@UntilDestroy()
 @Injectable()
 export class AnimationService {
   private activeAnimations: any = {};
 
   constructor(private core: CoreService) {
-    this.core.register({ observerClass: this, eventName: 'ScrollTo' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ScrollTo' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.scrollTo(evt.data);
     });
 
-    core.register({ observerClass: this, eventName: 'Animate' }).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'Animate' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const config: AnimationConfig = evt.data;
       switch (config.animation) {
         case 'Flip':

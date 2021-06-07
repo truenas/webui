@@ -1,36 +1,36 @@
-import { Component, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subscription } from 'rxjs';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { Subscription } from 'rxjs';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   DialogService,
   LanguageService,
   StorageService,
   SystemGeneralService,
   WebSocketService,
-} from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { ModalService } from '../../../../services/modal.service';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { EntityUtils } from '../../../common/entity/utils';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+} from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-syslog-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class SyslogFormComponent implements FormConfiguration, OnDestroy {
+export class SyslogFormComponent implements FormConfiguration {
   queryCall: 'system.advanced.config' = 'system.advanced.config';
   updateCall = 'system.advanced.update';
   protected isOneColumnForm = true;
-  private getDataFromDash: Subscription;
-  private getDatasetConfig: Subscription;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
     {
@@ -112,7 +112,7 @@ export class SyslogFormComponent implements FormConfiguration, OnDestroy {
     private sysGeneralService: SystemGeneralService,
     private modalService: ModalService,
   ) {
-    this.getDataFromDash = this.sysGeneralService.sendConfigData$.subscribe(
+    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.configData = res;
       },
@@ -133,7 +133,7 @@ export class SyslogFormComponent implements FormConfiguration, OnDestroy {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
-    this.getDatasetConfig = this.ws.call('systemdataset.config').subscribe((res) => {
+    this.ws.call('systemdataset.config').pipe(untilDestroyed(this)).subscribe((res) => {
       entityEdit.formGroup.controls.syslog.setValue(res.syslog);
     });
   }
@@ -143,8 +143,8 @@ export class SyslogFormComponent implements FormConfiguration, OnDestroy {
     const syslog_value = body.syslog;
     delete body.syslog;
 
-    return this.ws.call('system.advanced.update', [body]).subscribe(() => {
-      this.ws.job('systemdataset.update', [{ syslog: syslog_value }]).subscribe((res) => {
+    return this.ws.call('system.advanced.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.ws.job('systemdataset.update', [{ syslog: syslog_value }]).pipe(untilDestroyed(this)).subscribe((res) => {
         if (res.error) {
           this.loader.close();
           if (res.exc_info && res.exc_info.extra) {
@@ -169,10 +169,5 @@ export class SyslogFormComponent implements FormConfiguration, OnDestroy {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
-  }
-
-  ngOnDestroy(): void {
-    this.getDatasetConfig.unsubscribe();
-    this.getDataFromDash.unsubscribe();
   }
 }

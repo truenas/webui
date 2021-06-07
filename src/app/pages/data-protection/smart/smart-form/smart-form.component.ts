@@ -1,19 +1,20 @@
 import { Component } from '@angular/core';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { take } from 'rxjs/operators';
+import { SmartTestType } from 'app/enums/smart-test-type.enum';
+import helptext from 'app/helptext/data-protection/smart/smart';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import helptext from 'app/helptext/data-protection/smart/smart';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { take } from 'rxjs/operators';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { SmartTestType } from 'app/enums/smart-test-type.enum';
-import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { T } from 'app/translate-marker';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
+@UntilDestroy()
 @Component({
   selector: 'app-smart-test-add',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -105,14 +106,14 @@ export class SmartFormComponent implements FormConfiguration {
 
   constructor(protected ws: WebSocketService, protected modalService: ModalService) {
     this.disk_field = this.fieldSets.config('disks');
-    this.ws.call('smart.test.disk_choices').subscribe(
+    this.ws.call('smart.test.disk_choices').pipe(untilDestroyed(this)).subscribe(
       (res) => {
         for (const key in res) {
           this.disk_field.options.push({ label: res[key], value: key });
         }
       }, (err) => new EntityUtils().handleWSError(this, err),
     );
-    this.modalService.getRow$.pipe(take(1)).subscribe((id: string) => {
+    this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((id: string) => {
       this.customFilter = [[['id', '=', id]]];
     });
   }

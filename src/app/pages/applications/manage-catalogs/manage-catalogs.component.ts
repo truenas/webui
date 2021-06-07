@@ -1,22 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { PreferencesService } from 'app/core/services/preferences.service';
+import helptext from 'app/helptext/apps/apps';
 import { CoreEvent } from 'app/interfaces/events';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import {
   EntityTableComponent,
 } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { WebSocketService } from '../../../services/ws.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
-import { ModalService } from '../../../services/modal.service';
-import helptext from '../../../helptext/apps/apps';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { ManageCatalogSummaryDialog } from '../dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { CatalogAddFormComponent } from '../forms/catalog-add-form.component';
 import { CatalogEditFormComponent } from '../forms/catalog-edit-form.component';
-import { EntityUtils } from '../../common/entity/utils';
 
+@UntilDestroy()
 @Component({
   selector: 'app-manage-catalogs',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -73,7 +75,7 @@ export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
   ngOnInit(): void {
     this.refreshUserForm();
 
-    this.modalService.refreshForm$.subscribe(() => {
+    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshUserForm();
     });
   }
@@ -179,7 +181,7 @@ export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
     });
     this.dialogRef.componentInstance.setCall('catalog.sync_all');
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.refresh();
     });
@@ -188,7 +190,7 @@ export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
   syncRow(row: any): void {
     const payload = [row.label];
     this.loader.open();
-    this.ws.call('catalog.sync', payload).subscribe(
+    this.ws.call('catalog.sync', payload).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.refresh();

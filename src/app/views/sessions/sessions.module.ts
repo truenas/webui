@@ -1,23 +1,22 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { LockscreenComponent } from './lockscreen/lockscreen.component';
+import { SessionsRoutes } from './sessions.routing';
 import { SigninComponent } from './signin/signin.component';
 import { SignupComponent } from './signup/signup.component';
-import { SessionsRoutes } from './sessions.routing';
 
 @NgModule({
   imports: [

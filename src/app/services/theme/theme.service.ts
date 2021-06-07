@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { CoreEvent } from 'app/interfaces/events';
-import { RestService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/core/services/core.service';
+import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { ApiService } from 'app/core/services/api.service';
-import { Router } from '@angular/router';
+import { CoreService } from 'app/core/services/core.service';
+import { CoreEvent } from 'app/interfaces/events';
+import { RestService, WebSocketService } from 'app/services';
 
 export const DefaultTheme = {
   name: 'ix-dark',
@@ -66,6 +67,7 @@ export interface Theme {
   green: string;
 }
 
+@UntilDestroy()
 @Injectable()
 export class ThemeService {
   readonly freeThemeDefaultIndex = 0;
@@ -284,17 +286,17 @@ export class ThemeService {
     this.allThemes = this.freenasThemes;
     this.themesMenu = this.freenasThemes;
 
-    this.core.register({ observerClass: this, eventName: 'ThemeDataRequest' }).subscribe(() => {
+    this.core.register({ observerClass: this, eventName: 'ThemeDataRequest' }).pipe(untilDestroyed(this)).subscribe(() => {
       this.core.emit({ name: 'ThemeData', data: this.findTheme(this.activeTheme), sender: this });
     });
 
     // Use only for testing
-    this.core.register({ observerClass: this, eventName: 'ThemeChangeRequest' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ThemeChangeRequest' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.changeTheme(evt.data);
       this.core.emit({ name: 'ThemeChanged', data: this.findTheme(this.activeTheme), sender: this });
     });
 
-    this.core.register({ observerClass: this, eventName: 'GlobalPreviewChanged' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'GlobalPreviewChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data) {
         this.globalPreview = true;
       } else {
@@ -309,11 +311,11 @@ export class ThemeService {
       }
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.onPreferences(evt);
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.onPreferences(evt);
     });
   }

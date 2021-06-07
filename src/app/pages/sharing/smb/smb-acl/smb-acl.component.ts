@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { FormGroup, Validators } from '@angular/forms';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
-import { helptext_sharing_smb } from 'app/helptext/sharing/smb/smb';
+import { ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { helptext_sharing_smb } from 'app/helptext/sharing/smb/smb';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 
+@UntilDestroy()
 @Component({
   selector: 'app-smb-acl',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -129,7 +130,7 @@ export class SMBAclComponent implements FormConfiguration {
   constructor(private aroute: ActivatedRoute) { }
 
   preInit(): void {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['pk']) {
         this.customFilter[0][0].push(parseInt(params['pk'], 10));
       }
@@ -140,7 +141,7 @@ export class SMBAclComponent implements FormConfiguration {
     this.entityForm = entityForm;
     this.shareACLField = _.find(entityForm.fieldConfig, { name: 'share_acl' });
 
-    entityForm.formGroup.controls['share_acl'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['share_acl'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
         if (res[i].ae_who_sid !== undefined && res[i].ae_who_sid !== '') {
           const sidField = _.find(this.shareACLField['listFields'][i], { name: 'ae_who_sid' });

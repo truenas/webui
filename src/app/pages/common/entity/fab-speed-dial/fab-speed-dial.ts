@@ -16,6 +16,7 @@ import {
   HostListener,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 const Z_INDEX_ITEM = 23;
 
@@ -44,6 +45,7 @@ export class SmdFabSpeedDialTrigger {
   }
 }
 
+@UntilDestroy()
 @Component({
   selector: 'smd-fab-actions',
   template: `
@@ -57,7 +59,7 @@ export class SmdFabSpeedDialActions implements AfterContentInit {
   }
 
   ngAfterContentInit(): void {
-    this._buttons.changes.subscribe(() => {
+    this._buttons.changes.pipe(untilDestroyed(this)).subscribe(() => {
       this.initButtonStates();
       this._parent.setActionsVisibility();
     });

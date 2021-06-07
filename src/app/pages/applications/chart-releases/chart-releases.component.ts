@@ -2,28 +2,28 @@ import {
   Component, Output, EventEmitter, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
-import { ixChartApp, appImagePlaceholder } from 'app/constants/catalog.constants';
-import { CoreEvent } from 'app/interfaces/events';
-import { Subject, Subscription } from 'rxjs';
-import * as _ from 'lodash';
-
-import { DialogService, SystemGeneralService, WebSocketService } from '../../../services/index';
-import { ApplicationsService } from '../applications.service';
-import { ModalService } from '../../../services/modal.service';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component';
-import { CommonUtils } from 'app/core/classes/common-utils';
-import { ChartFormComponent } from '../forms/chart-form.component';
-import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
-
-import helptext from '../../../helptext/apps/apps';
-import { CoreService } from 'app/core/services/core.service';
 import { Router } from '@angular/router';
-import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
+import { Subject, Subscription } from 'rxjs';
+import { ixChartApp, appImagePlaceholder } from 'app/constants/catalog.constants';
+import { CommonUtils } from 'app/core/classes/common-utils';
+import { CoreService } from 'app/core/services/core.service';
+import helptext from 'app/helptext/apps/apps';
+import { CoreEvent } from 'app/interfaces/events';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services/index';
+import { ModalService } from 'app/services/modal.service';
+import { ApplicationsService } from '../applications.service';
+import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';
+import { ChartFormComponent } from '../forms/chart-form.component';
+import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component';
 
+@UntilDestroy()
 @Component({
   selector: 'app-charts',
   templateUrl: './chart-releases.component.html',
@@ -42,10 +42,8 @@ export class ChartReleasesComponent implements OnInit {
   private dialogRef: any;
   ixIcon = 'assets/images/ix-original.png';
   private rollbackChartName: string;
-  private refreshTable: Subscription;
 
   protected utils: CommonUtils;
-  private refreshForm: Subscription;
   settingsEvent: Subject<CoreEvent>;
   private chartReleaseChangedListener: Subscription;
 
@@ -201,7 +199,7 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   addChartReleaseChangedEventListner(): void {
-    this.chartReleaseChangedListener = this.ws.subscribe('chart.release.query').subscribe((evt) => {
+    this.chartReleaseChangedListener = this.ws.subscribe('chart.release.query').pipe(untilDestroyed(this)).subscribe((evt) => {
       const app = this.chartItems[evt.id];
 
       if (app && evt && evt.fields) {
@@ -241,17 +239,17 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   updateChartReleases(): void {
-    this.appService.getKubernetesConfig().subscribe((res) => {
+    this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((res) => {
       if (!res.pool) {
         this.chartItems = {};
         this.showLoadStatus(EmptyType.first_use);
       } else {
-        this.appService.getKubernetesServiceStarted().subscribe((res) => {
+        this.appService.getKubernetesServiceStarted().pipe(untilDestroyed(this)).subscribe((res) => {
           if (!res) {
             this.chartItems = {};
             this.showLoadStatus(EmptyType.errors);
           } else {
-            this.appService.getChartReleases().subscribe((charts) => {
+            this.appService.getChartReleases().pipe(untilDestroyed(this)).subscribe((charts) => {
               this.chartItems = {};
 
               charts.forEach((chart: any) => {
@@ -298,7 +296,7 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   refreshStatus(name: string): void {
-    this.appService.getChartReleases(name).subscribe((res) => {
+    this.appService.getChartReleases(name).pipe(untilDestroyed(this)).subscribe((res) => {
       const item = this.chartItems[name];
       if (item) {
         item.status = res[0].status;
@@ -312,13 +310,13 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   start(name: string): void {
-    this.appService.setReplicaCount(name, 1).subscribe(() => {
+    this.appService.setReplicaCount(name, 1).pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshStatus(name);
     });
   }
 
   stop(name: string): void {
-    this.appService.setReplicaCount(name, 0).subscribe(() => {
+    this.appService.setReplicaCount(name, 0).pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshStatus(name);
     });
   }
@@ -328,9 +326,9 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   update(name: string): void {
-    this.translate.get(helptext.charts.upgrade_dialog.msg).subscribe((msg) => {
+    this.translate.get(helptext.charts.upgrade_dialog.msg).pipe(untilDestroyed(this)).subscribe((msg) => {
       this.dialogService.confirm(helptext.charts.upgrade_dialog.title, msg + name + '?')
-        .subscribe((res: boolean) => {
+        .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
           if (res) {
             this.dialogRef = this.mdDialog.open(EntityJobComponent, {
               data: {
@@ -341,7 +339,7 @@ export class ChartReleasesComponent implements OnInit {
             });
             this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name]);
             this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.subscribe(() => {
+            this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
               this.dialogService.closeAllDialogs();
             });
           }
@@ -371,7 +369,7 @@ export class ChartReleasesComponent implements OnInit {
     });
     self.dialogRef.componentInstance.setCall('chart.release.rollback', [self.rollbackChartName, payload]);
     self.dialogRef.componentInstance.submit();
-    self.dialogRef.componentInstance.success.subscribe(() => {
+    self.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       self.dialogService.closeAllDialogs();
     });
   }
@@ -431,22 +429,22 @@ export class ChartReleasesComponent implements OnInit {
           }
         });
 
-        this.translate.get(helptext.bulkActions.finished).subscribe((msg) => {
+        this.translate.get(helptext.bulkActions.finished).pipe(untilDestroyed(this)).subscribe((msg) => {
           this.dialogService.Info(helptext.bulkActions.success, msg,
             '500px', 'info', true);
         });
       }
     } else {
-      this.translate.get(helptext.bulkActions.no_selected).subscribe((msg) => {
+      this.translate.get(helptext.bulkActions.no_selected).pipe(untilDestroyed(this)).subscribe((msg) => {
         this.dialogService.errorReport(helptext.bulkActions.error, msg);
       });
     }
   }
 
   delete(name: string): void {
-    this.translate.get(helptext.charts.delete_dialog.msg).subscribe((msg) => {
+    this.translate.get(helptext.charts.delete_dialog.msg).pipe(untilDestroyed(this)).subscribe((msg) => {
       this.dialogService.confirm(helptext.charts.delete_dialog.title, msg + name + '?')
-        .subscribe((res: boolean) => {
+        .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
           if (res) {
             this.dialogRef = this.mdDialog.open(EntityJobComponent, {
               data: {
@@ -457,7 +455,7 @@ export class ChartReleasesComponent implements OnInit {
             });
             this.dialogRef.componentInstance.setCall('chart.release.delete', [name]);
             this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.subscribe(() => {
+            this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
               this.dialogService.closeAllDialogs();
               this.refreshChartReleases();
             });
@@ -468,11 +466,11 @@ export class ChartReleasesComponent implements OnInit {
 
   bulkDelete(names: string[]): void {
     const name = names.join(',');
-    this.translate.get(helptext.charts.delete_dialog.msg).subscribe((msg) => {
+    this.translate.get(helptext.charts.delete_dialog.msg).pipe(untilDestroyed(this)).subscribe((msg) => {
       this.dialogService.confirm({
         title: helptext.charts.delete_dialog.title,
         message: msg + name + '?',
-      }).subscribe((wasConfirmed) => {
+      }).pipe(untilDestroyed(this)).subscribe((wasConfirmed) => {
         if (!wasConfirmed) {
           return;
         }
@@ -528,7 +526,7 @@ export class ChartReleasesComponent implements OnInit {
     this.podDetails = {};
     this.selectedAppName = name;
     this.appLoaderService.open();
-    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).subscribe((res) => {
+    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).pipe(untilDestroyed(this)).subscribe((res) => {
       this.appLoaderService.close();
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
@@ -557,7 +555,7 @@ export class ChartReleasesComponent implements OnInit {
     this.podDetails = {};
     this.selectedAppName = name;
     this.appLoaderService.open();
-    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).subscribe((res) => {
+    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).pipe(untilDestroyed(this)).subscribe((res) => {
       this.appLoaderService.close();
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
@@ -600,7 +598,7 @@ export class ChartReleasesComponent implements OnInit {
 
   afterShellDialogInit(entityDialog: any): void {
     const self = entityDialog.parent;
-    entityDialog.formGroup.controls['pods'].valueChanges.subscribe((value: any) => {
+    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       const containers = self.podDetails[value];
       const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' });
       containerFC.options = containers.map((item: any) => ({
@@ -613,7 +611,7 @@ export class ChartReleasesComponent implements OnInit {
 
   afterLogsDialogInit(entityDialog: any): void {
     const self = entityDialog.parent;
-    entityDialog.formGroup.controls['pods'].valueChanges.subscribe((value: any) => {
+    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       const containers = self.podDetails[value];
       const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' });
       containerFC.options = containers.map((item: any) => ({

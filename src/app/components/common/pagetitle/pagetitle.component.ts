@@ -4,19 +4,21 @@ import {
 import {
   Router, NavigationEnd, ActivatedRoute,
 } from '@angular/router';
-import { CoreEvent } from 'app/interfaces/events';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
-import { ProductType } from '../../../enums/product-type.enum';
-import { RoutePartsService } from '../../../services/route-parts/route-parts.service';
-import { CoreService } from 'app/core/services/core.service';
-import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { ViewButtonComponent } from 'app/core/components/viewbutton/viewbutton.component';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { CoreService } from 'app/core/services/core.service';
+import { ProductType } from 'app/enums/product-type.enum';
+import { CoreEvent } from 'app/interfaces/events';
 import { LocaleService } from 'app/services/locale.service';
+import { RoutePartsService } from 'app/services/route-parts/route-parts.service';
 
 export interface GlobalAction {
   applyConfig(config: any): any;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'pagetitle',
   templateUrl: './pagetitle.component.html',
@@ -63,7 +65,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
     // only execute when routechange
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
-    ).subscribe(() => {
+    ).pipe(untilDestroyed(this)).subscribe(() => {
       this.destroyActions();
 
       this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
@@ -86,7 +88,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     // Pseudo routing events (for reports page)
-    this.core.register({ observerClass: this, eventName: 'PseudoRouteChange' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'PseudoRouteChange' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.routeParts = evt.data;
       // generate url from parts
       this.routeParts.map((item, i) => {
@@ -102,7 +104,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     });
 
-    this.core.register({ observerClass: this, eventName: 'GlobalActions' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'GlobalActions' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       // CONFIG OBJECT EXAMPLE: { actionType: EntityTableAddActionsComponent, actionConfig: this };
       this.globalActionsConfig = evt.data;
 

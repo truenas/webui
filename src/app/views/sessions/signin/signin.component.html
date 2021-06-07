@@ -4,13 +4,8 @@
     <mat-card>
       <mat-card-content>
         <div [hidden]="!(connected() && logo_ready)">
-          <div class="text-center logo-wrapper" *ngIf="logo_ready">
-            <img class="logo-bg" alt="Logo image background of stars and sky at night" src="assets/images/stars-sky-1200w.jpg" srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
-            <mat-icon svgIcon="truenas_core_logo_full" *ngIf="product_type === ProductType.Core; else isTruenas" class="logo" alt="TrueNAS CORE logo"></mat-icon>
-            <ng-template #isTruenas>
-              <mat-icon *ngIf="product_type === ProductType.Enterprise" class="logo" svgIcon="truenas_enterprise_logo_full" alt="TrueNAS ENTERPRISE logo"></mat-icon>
-              <mat-icon *ngIf="product_type === ProductType.Scale || product_type == ProductType.ScaleEnterprise" class="logo" svgIcon="truenas_scale_logo_full" alt="TrueNAS SCALE logo"></mat-icon>
-            </ng-template>
+          <div class="text-center logo-wrapper">
+            <img class="logo-bg" alt="Welcome splash image" src="assets/images/splashes/21-angelfish.png">
           </div>
 
           <div class="card-bottom">

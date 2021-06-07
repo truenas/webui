@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { FormStatusComponent } from './form-status.component';
 
 describe('FormStatusComponent', () => {

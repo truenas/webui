@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import helptext from 'app/helptext/directoryservice/kerberoskeytabs-form-list';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { ModalService } from '../../../services/modal.service';
-import helptext from '../../../helptext/directoryservice/kerberoskeytabs-form-list';
-import { T } from '../../../translate-marker';
-import { Subscription } from 'rxjs';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 import { KerberosKeytabsFormComponent } from './kerberoskeytabs-form.component';
+
+@UntilDestroy()
 @Component({
   selector: 'app-kerberos-keytabs-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -14,7 +16,6 @@ export class KerberosKeytabsListComponent implements EntityTableConfig {
   queryCall: 'kerberos.keytab.query' = 'kerberos.keytab.query';
   wsDelete: 'kerberos.keytab.delete' = 'kerberos.keytab.delete';
   protected entityList: any;
-  private refreshTableSubscription: Subscription;
 
   columns = [
     { name: 'Name', prop: 'name', always_display: true },
@@ -33,15 +34,9 @@ export class KerberosKeytabsListComponent implements EntityTableConfig {
 
   afterInit(entityList: any): void {
     this.entityList = entityList;
-    this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
-  }
-
-  ngOnDestroy(): void {
-    if (this.refreshTableSubscription) {
-      this.refreshTableSubscription.unsubscribe();
-    }
   }
 
   getAddActions(): EntityTableAction[] {

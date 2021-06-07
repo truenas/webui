@@ -1,8 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
-
 import { Subject } from 'rxjs';
+import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
 
 @Component({
   selector: 'toolbar-button',

@@ -3,13 +3,13 @@ import {
   OnInit, Component, EventEmitter, Output, Inject,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-
-import { WebSocketService, RestService } from 'app/services/';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { WebSocketService, RestService } from 'app/services/';
 
+@UntilDestroy()
 @Component({
   selector: 'entity-job',
   templateUrl: 'entity-job.component.html',
@@ -55,7 +55,7 @@ export class EntityJobComponent implements OnInit {
       this.showCloseButton = true;
       this.dialogRef.disableClose = true;
     }
-    this.progress.subscribe((progress: any) => {
+    this.progress.pipe(untilDestroyed(this)).subscribe((progress: any) => {
       if (progress.description) {
         this.description = progress.description;
       }
@@ -69,7 +69,7 @@ export class EntityJobComponent implements OnInit {
       this.disableProgressValue(progress.percent == null);
     });
 
-    this.failure.subscribe((job: any) => {
+    this.failure.pipe(untilDestroyed(this)).subscribe((job: any) => {
       job.error = _.replace(job.error, '<', '< ');
       job.error = _.replace(job.error, '>', ' >');
 
@@ -110,12 +110,12 @@ export class EntityJobComponent implements OnInit {
         ['id', '=', this.jobId],
       ],
     ])
-      .subscribe((res) => {
+      .pipe(untilDestroyed(this)).subscribe((res) => {
         if (res.length > 0) {
           this.jobUpdate(res[0]);
         }
       });
-    this.ws.subscribe('core.get_jobs').subscribe((res) => {
+    this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.id === this.jobId) {
         this.jobUpdate(res);
       }
@@ -137,7 +137,7 @@ export class EntityJobComponent implements OnInit {
 
   submit(): void {
     this.ws.job(this.method, this.args)
-      .subscribe(
+      .pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.job = res;
           this.showAbortButton = this.job.abortable;
@@ -166,7 +166,7 @@ export class EntityJobComponent implements OnInit {
   }
 
   wspost(path: string, options: any): void {
-    this.http.post(path, options).subscribe(
+    this.http.post(path, options).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.job = res;
         if (this.job && this.job.job_id) {
@@ -188,12 +188,12 @@ export class EntityJobComponent implements OnInit {
         ['id', '=', this.jobId],
       ],
     ])
-      .subscribe((res) => {
+      .pipe(untilDestroyed(this)).subscribe((res) => {
         if (res.length > 0) {
           this.wsjobUpdate(res[0]);
         }
       });
-    this.ws.subscribe('core.get_jobs').subscribe((res) => {
+    this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.id === this.jobId) {
         this.wsjobUpdate(res);
       }
@@ -225,13 +225,13 @@ export class EntityJobComponent implements OnInit {
   }
 
   abortJob(): void {
-    this.ws.call('core.job_abort', [this.job.id]).subscribe();
+    this.ws.call('core.job_abort', [this.job.id]).pipe(untilDestroyed(this)).subscribe();
   }
 
   getRealtimeLogs(): void {
     this.realtimeLogsSubscribed = true;
     const subName = 'filesystem.file_tail_follow:' + this.job.logs_path;
-    this.ws.sub(subName).subscribe((res) => {
+    this.ws.sub(subName).pipe(untilDestroyed(this)).subscribe((res) => {
       this.scrollBottom();
       if (res && res.data && typeof res.data === 'string') {
         this.realtimeLogs += res.data;

@@ -1,24 +1,22 @@
+import { Overlay } from '@angular/cdk/overlay';
 import {
   Component, OnInit, ViewChild, ElementRef, Renderer2,
   ChangeDetectorRef, AfterViewInit, AfterViewChecked,
 } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
-
-import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
-import { T } from 'app/translate-marker';
-import { LocaleService } from 'app/services/locale.service';
-
-import { Overlay } from '@angular/cdk/overlay';
 import { MatMonthView } from '@angular/material/datepicker';
-import * as moment from 'moment-timezone';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as parser from 'cron-parser';
-import { WebSocketService } from 'app/services/ws.service';
-import { EntityUtils } from '../../../utils';
-import globalHelptext from '../../../../../../helptext/global-helptext';
+import * as moment from 'moment-timezone';
+import globalHelptext from 'app/helptext/global-helptext';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SystemGeneralService } from 'app/services';
+import { LocaleService } from 'app/services/locale.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { T } from 'app/translate-marker';
 
 interface CronPreset {
   label: string;
@@ -26,6 +24,7 @@ interface CronPreset {
   description?: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'form-scheduler',
   templateUrl: './form-scheduler.component.html',
@@ -41,7 +40,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   helptext = globalHelptext;
   timezone: string;
   offset: string;
-  private getGenConfig: Subscription;
 
   @ViewChild('calendar', { static: false, read: ElementRef }) calendar: ElementRef;
   @ViewChild('calendar', { static: false }) calendarComp: MatMonthView<any>;
@@ -279,7 +277,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     // Set default value
     this._months = '*';
 
-    this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       this.timezone = res.timezone;
       moment.tz.setDefault(res.timezone);
 
@@ -295,7 +293,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   ngOnInit(): void {
     this.control = this.group.controls[this.config.name];
 
-    this.control.valueChanges.subscribe((evt: string) => {
+    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((evt: string) => {
       this.crontab = evt;
 
       const isPreset: boolean = this.presets.filter((preset) => evt == preset.value).length != 0;
@@ -756,9 +754,5 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
 
     return tempOffset;
-  }
-
-  ngOnDestroy(): void {
-    this.getGenConfig.unsubscribe();
   }
 }
