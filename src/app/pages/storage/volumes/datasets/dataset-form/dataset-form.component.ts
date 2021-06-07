@@ -1094,6 +1094,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 encryption_algorithm_fg.setValue(parent_algorithm);
               }
               this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(untilDestroyed(this)).subscribe((algorithms) => {
+                encryption_algorithm_fc.options = [];
                 for (const algorithm in algorithms) {
                   if (algorithms.hasOwnProperty(algorithm)) {
                     encryption_algorithm_fc.options.push({ label: algorithm, value: algorithm });
