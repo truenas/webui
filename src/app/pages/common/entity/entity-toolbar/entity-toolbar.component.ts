@@ -3,17 +3,14 @@ import {
   Input,
   OnChanges, SimpleChanges,
 } from '@angular/core';
-import { CoreEvent } from 'app/interfaces/events';
-
-import { TranslateService } from '@ngx-translate/core';
-
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-
-import { Subject } from 'rxjs';
-import { Control } from './models/control.interface';
-import { ToolbarConfig } from './models/control-config.interface';
-import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
+import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
+import { CoreEvent } from 'app/interfaces/events';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ToolbarConfig } from './models/control-config.interface';
+import { Control } from './models/control.interface';
 
 @UntilDestroy()
 @Component({

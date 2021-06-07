@@ -2,14 +2,13 @@ import {
   Component, OnInit, Input, Output, EventEmitter, TemplateRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { iXObject } from 'app/core/classes/ix-object';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { WebSocketService } from 'app/services/ws.service';
-import { DialogService } from 'app/services/dialog.service';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

@@ -1,22 +1,22 @@
 import { Component } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { helptext_system_email } from 'app/helptext/system/email';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { ProductType } from '../../../enums/product-type.enum';
+import { BehaviorSubject } from 'rxjs';
+import { ProductType } from 'app/enums/product-type.enum';
+import { helptext_system_email } from 'app/helptext/system/email';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   DialogService, WebSocketService, AppLoaderService,
-} from '../../../services';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/services';
 import { T } from 'app/translate-marker';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { BehaviorSubject } from 'rxjs';
-import { FormControl } from '@angular/forms';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface OAuthData {
   client_id?: string;

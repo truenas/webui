@@ -1,22 +1,22 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
+import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloudcredentials';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { Subscription } from 'rxjs';
-import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloudcredentials';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import * as _ from 'lodash';
 import {
   CloudCredentialService, DialogService, WebSocketService, ReplicationService,
-} from '../../../../services';
-import { ModalService } from '../../../../services/modal.service';
-import { T } from '../../../../translate-marker';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+} from 'app/services';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

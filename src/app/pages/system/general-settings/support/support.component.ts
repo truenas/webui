@@ -1,19 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { WebSocketService, AppLoaderService, DialogService } from '../../../../services';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { ModalService } from '../../../../services/modal.service';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
+import { ModalService } from 'app/services/modal.service';
 import { LicenseComponent } from './license/license.component';
+import { ProactiveComponent } from './proactive/proactive.component';
 import { SupportFormLicensedComponent } from './support-licensed/support-form-licensed.component';
 import { SupportFormUnlicensedComponent } from './support-unlicensed/support-form-unlicensed.component';
-import { ProactiveComponent } from './proactive/proactive.component';
-import { TranslateService } from '@ngx-translate/core';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

@@ -1,22 +1,22 @@
 import { Component } from '@angular/core';
 import { AbstractControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Observable } from 'rxjs';
+import helptext from 'app/helptext/account/user-form';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { Observable } from 'rxjs';
-import helptext from '../../../../helptext/account/user-form';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import {
   AppLoaderService, StorageService, UserService, WebSocketService, ValidationService,
-} from '../../../../services';
+} from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

@@ -1,14 +1,13 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { helptext_sharing_webdav } from 'app/helptext/sharing';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
-import { helptext_sharing_webdav } from 'app/helptext/sharing';
+import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form';
 import {
   AppLoaderService, DialogService, ModalService, WebSocketService,
 } from 'app/services';
-import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form';
-import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subscription } from 'rxjs';
 import { helptext } from 'app/helptext/system/reporting';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { Subscription } from 'rxjs';
-import { DialogService, WebSocketService } from '../../../../services';
-import { EntityUtils } from '../../../common/entity/utils';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({

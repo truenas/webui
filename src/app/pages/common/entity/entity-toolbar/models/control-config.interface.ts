@@ -1,5 +1,5 @@
-import { CoreEvent } from 'app/interfaces/events';
 import { Subject } from 'rxjs';
+import { CoreEvent } from 'app/interfaces/events';
 
 export interface ControlConfig {
   name: string;

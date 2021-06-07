@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { IscsiIpChoices } from 'app/interfaces/iscsi.interface';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { IscsiService } from 'app/services';
 import { T } from 'app/translate-marker';
-import { IscsiService } from '../../../../../services';
 
 @Component({
   selector: 'app-iscsi-portal-list',

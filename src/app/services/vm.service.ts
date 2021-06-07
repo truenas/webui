@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { Observable } from 'rxjs';
-
+import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { WebSocketService } from './ws.service';
 
 @Injectable()

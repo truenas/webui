@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { Observable } from 'rxjs';
-import { BootEnvService, WebSocketService } from '../../../../services';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Observable } from 'rxjs';
+import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { BootEnvService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({

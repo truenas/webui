@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { WebSocketService } from '../../services/ws.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { CoreService } from './core.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 export interface ApiCall {
   version: string;

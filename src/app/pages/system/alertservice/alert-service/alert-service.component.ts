@@ -1,23 +1,21 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertServiceType } from 'app/enums/alert-service-type.enum';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
-import { WebSocketService, AppLoaderService, DialogService } from 'app/services/';
+import { AlertLevel } from 'app/enums/alert-level.enum';
+import { AlertServiceType } from 'app/enums/alert-service-type.enum';
+import helptext from 'app/helptext/system/alert-service';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService, AppLoaderService, DialogService } from 'app/services/';
 import { T } from 'app/translate-marker';
-import helptext from 'app/helptext/system/alert-service';
-import { AlertLevel } from 'app/enums/alert-level.enum';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

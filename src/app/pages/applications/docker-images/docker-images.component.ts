@@ -1,19 +1,19 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { latestVersion } from 'app/constants/catalog.constants';
+import { PreferencesService } from 'app/core/services/preferences.service';
+import helptext from 'app/helptext/apps/apps';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from 'app/services';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { WebSocketService } from '../../../services/ws.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
-import { ModalService } from '../../../services/modal.service';
-import helptext from '../../../helptext/apps/apps';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { PullImageFormComponent } from '../forms/pull-image-form.component';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

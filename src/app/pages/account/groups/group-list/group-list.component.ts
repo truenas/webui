@@ -1,20 +1,20 @@
 import { Component, OnDestroy } from '@angular/core';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Router, ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { PreferencesService } from 'app/core/services/preferences.service';
+import helptext from 'app/helptext/account/group-list';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { DialogService } from 'app/services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { WebSocketService } from '../../../../services/ws.service';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import helptext from '../../../../helptext/account/group-list';
-import { PreferencesService } from 'app/core/services/preferences.service';
-import { ModalService } from '../../../../services/modal.service';
-import { T } from '../../../../translate-marker';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { T } from 'app/translate-marker';
 import { GroupFormComponent } from '../group-form/group-form.component';
-import { MatCheckboxChange } from '@angular/material/checkbox';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

@@ -1,6 +1,6 @@
-import { T } from 'app/translate-marker';
 import { Validators } from '@angular/forms';
-import globalHelptext from '../../global-helptext';
+import globalHelptext from 'app/helptext/global-helptext';
+import { T } from 'app/translate-marker';
 
 export const helptext_sharing_iscsi = {
   fieldset_target_basic: T('Basic Info'),

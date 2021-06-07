@@ -1,4 +1,4 @@
-import { T } from '../../translate-marker';
+import { T } from 'app/translate-marker';
 
 export default {
   level_tooltip: T('Customizes the importance of the alert. Each level of \

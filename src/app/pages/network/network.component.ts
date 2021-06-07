@@ -2,20 +2,19 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import * as ipRegex from 'ip-regex';
+import { Subject } from 'rxjs';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { CoreEvent } from 'app/interfaces/events';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AppTableAction } from 'app/pages/common/entity/table/table.component';
-import * as ipRegex from 'ip-regex';
-import { Subject } from 'rxjs';
-import { ProductType } from '../../enums/product-type.enum';
-import helptext from '../../helptext/network/interfaces/interfaces-list';
-
 import {
   AppLoaderService,
   DialogService,
@@ -23,9 +22,9 @@ import {
   ServicesService,
   StorageService,
   WebSocketService,
-} from '../../services';
-import { ModalService } from '../../services/modal.service';
-import { T } from '../../translate-marker';
+} from 'app/services';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 import { EntityUtils } from '../common/entity/utils';
 import { CardWidgetConf } from './card-widget/card-widget.component';
 import { ConfigurationComponent } from './forms/configuration.component';

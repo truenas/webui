@@ -1,34 +1,33 @@
+import { AutofillMonitor } from '@angular/cdk/text-field';
+import { HttpClient } from '@angular/common/http';
 import {
   Component, OnInit, ViewChild, OnDestroy, ElementRef, AfterViewInit,
 } from '@angular/core';
-import { Router } from '@angular/router';
-import { MatProgressBar } from '@angular/material/progress-bar';
-import { MatButton } from '@angular/material/button';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   FormBuilder, FormGroup, Validators, FormControl, AbstractControl,
 } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { MatButton } from '@angular/material/button';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
+import { ApiService } from 'app/core/services/api.service';
+import { CoreService } from 'app/core/services/core.service';
+import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { ProductType } from 'app/enums/product-type.enum';
+import globalHelptext from 'app/helptext/global-helptext';
+import productText from 'app/helptext/product';
+import helptext from 'app/helptext/topbar';
 import { CoreEvent } from 'app/interfaces/events';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { FailoverDisabledReason } from '../../../enums/failover-disabled-reason.enum';
-import { ProductType } from '../../../enums/product-type.enum';
-import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
-import { TranslateService } from '@ngx-translate/core';
-import globalHelptext from '../../../helptext/global-helptext';
-import productText from '../../../helptext/product';
-import helptext from '../../../helptext/topbar';
-import { Subscription } from 'rxjs';
-
-import { T } from '../../../translate-marker';
-import { WebSocketService } from '../../../services/ws.service';
-import { SystemGeneralService } from '../../../services';
-import { DialogService } from '../../../services/dialog.service';
-import { CoreService } from 'app/core/services/core.service';
-import { ApiService } from 'app/core/services/api.service';
-import { AutofillMonitor } from '@angular/cdk/text-field';
+import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
+import { SystemGeneralService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { WebSocketService } from 'app/services/ws.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -45,7 +44,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   product_type: ProductType;
   logo_ready: Boolean = false;
   product = productText.product;
-  showPassword = false;
   ha_info_ready = false;
   checking_status = false;
 

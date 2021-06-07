@@ -7,9 +7,7 @@ import {
   FormGroup,
 } from '@angular/forms';
 import * as _ from 'lodash';
-
-import { WebSocketService } from '../../../../../services/ws.service';
-
+import { WebSocketService } from 'app/services/ws.service';
 import { FieldConfig, UnitType, InputUnitConfig } from '../models/field-config.interface';
 
 @Injectable()

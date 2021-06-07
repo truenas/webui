@@ -1,7 +1,7 @@
+import { Injectable } from '@angular/core';
 import { ProductType } from '../enums/product-type.enum';
 import urls from '../helptext/urls';
 import { WebSocketService } from './ws.service';
-import { Injectable } from '@angular/core';
 
 @Injectable()
 export class DocsService {

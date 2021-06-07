@@ -6,23 +6,23 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
-import { VDev } from 'app/interfaces/storage.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
-import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
-import helptext from '../../../../helptext/storage/volumes/manager/manager';
-import { DialogService, WebSocketService, SystemGeneralService } from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { StorageService } from '../../../../services/storage.service';
-import { T } from '../../../../translate-marker';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityUtils } from '../../../common/entity/utils';
+import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
+import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { VDev } from 'app/interfaces/storage.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { StorageService } from 'app/services/storage.service';
+import { T } from 'app/translate-marker';
 import { DiskComponent } from './disk';
 import { VdevComponent } from './vdev';
-import * as filesize from 'filesize';
 
 @UntilDestroy()
 @Component({

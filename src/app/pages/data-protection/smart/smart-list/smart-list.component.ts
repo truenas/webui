@@ -1,18 +1,17 @@
-import { Router, ActivatedRoute } from '@angular/router';
 import { Component } from '@angular/core';
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
-import { StorageService } from 'app/services/storage.service';
-import helptext from 'app/helptext/data-protection/smart/smart';
-import { T } from 'app/translate-marker';
-import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/smart-form.component';
-import { ModalService } from 'app/services/modal.service';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { TaskService, WebSocketService } from 'app/services';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
-import { TranslateService } from '@ngx-translate/core';
-import { SmartTestUi } from 'app/interfaces/smart-test.interface';
+import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import helptext from 'app/helptext/data-protection/smart/smart';
+import { SmartTestUi } from 'app/interfaces/smart-test.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/smart-form.component';
+import { TaskService, WebSocketService } from 'app/services';
+import { ModalService } from 'app/services/modal.service';
+import { StorageService } from 'app/services/storage.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

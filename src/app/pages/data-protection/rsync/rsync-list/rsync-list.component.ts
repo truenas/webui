@@ -1,22 +1,21 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import globalHelptext from 'app/helptext/global-helptext';
+import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/rsync-form.component';
 import {
   WebSocketService, DialogService, TaskService, JobService, UserService,
 } from 'app/services';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { T } from 'app/translate-marker';
-import globalHelptext from 'app/helptext/global-helptext';
 import { ModalService } from 'app/services/modal.service';
-import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/rsync-form.component';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityJob } from 'app/interfaces/entity-job.interface';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
-import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

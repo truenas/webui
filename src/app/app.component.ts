@@ -1,19 +1,16 @@
 import { Component } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+import { MatIconRegistry } from '@angular/material/icon';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Title, DomSanitizer } from '@angular/platform-browser';
 import {
   Router, NavigationEnd, NavigationCancel,
 } from '@angular/router';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { customSvgIcons } from 'app/core/classes/custom-icons';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import productText from './helptext/product';
 import { SystemGeneralService } from './services';
 import { WebSocketService } from './services/ws.service';
-import { DomSanitizer } from '@angular/platform-browser';
-import { MatIconRegistry } from '@angular/material/icon';
-import { customSvgIcons } from 'app/core/classes/custom-icons';
-
-import productText from './helptext/product';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

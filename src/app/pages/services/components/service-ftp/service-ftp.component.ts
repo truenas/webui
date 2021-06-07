@@ -2,19 +2,19 @@ import {
   ApplicationRef, Component, Injector, OnInit,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { Observable } from 'rxjs';
+import global_helptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/services/components/service-ftp';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { Observable } from 'rxjs';
-import helptext from '../../../../helptext/services/components/service-ftp';
-import global_helptext from '../../../../helptext/global-helptext';
-import * as _ from 'lodash';
 import {
   DialogService, SystemGeneralService, WebSocketService, StorageService,
-} from '../../../../services';
-import { T } from '../../../../translate-marker';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+} from 'app/services';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

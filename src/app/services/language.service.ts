@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
-import { SystemGeneralService } from 'app/services/system-general.service';
-import * as _ from 'lodash';
-import { map, switchMap } from 'rxjs/operators';
-
-import { WebSocketService } from './ws.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
+import { Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { WebSocketService } from './ws.service';
 
 @UntilDestroy()
 @Injectable()

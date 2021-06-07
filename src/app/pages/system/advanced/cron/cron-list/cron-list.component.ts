@@ -1,16 +1,15 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter, switchMap } from 'rxjs/operators';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { filter, switchMap } from 'rxjs/operators';
-import { DialogService } from '../../../../../services';
-import { TaskService, WebSocketService } from '../../../../../services';
-import { T } from '../../../../../translate-marker';
+import { DialogService, TaskService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
+import { UserService } from 'app/services/user.service';
+import { T } from 'app/translate-marker';
 import { CronFormComponent } from '../cron-form/cron-form.component';
-import { UserService } from '../../../../../services/user.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

@@ -2,15 +2,15 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
-import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import * as _ from 'lodash';
-import { WebSocketService, DialogService } from '../../../../services';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as filesize from 'filesize';
+import * as _ from 'lodash';
+import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { WebSocketService, DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({

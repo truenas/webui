@@ -1,7 +1,7 @@
+import * as _ from 'lodash';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import * as _ from 'lodash';
 import { Relation } from './entity-form/models/field-relation.interface';
 
 export const NULL_VALUE = 'null_value';

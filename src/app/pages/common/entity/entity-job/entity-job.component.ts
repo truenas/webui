@@ -3,12 +3,10 @@ import {
   OnInit, Component, EventEmitter, Output, Inject,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-
-import * as _ from 'lodash';
-
-import { WebSocketService } from 'app/services/';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { WebSocketService } from 'app/services/';
 
 @UntilDestroy()
 @Component({

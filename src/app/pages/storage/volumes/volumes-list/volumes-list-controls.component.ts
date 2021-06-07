@@ -6,19 +6,18 @@ import {
   AfterViewInit,
   OnDestroy,
 } from '@angular/core';
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
+import { MatDialog } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-
 import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
 import { CoreService } from 'app/core/services/core.service';
+import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { VolumeImportWizardComponent } from '../volume-import-wizard';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
-import { MatDialog } from '@angular/material/dialog';
-import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

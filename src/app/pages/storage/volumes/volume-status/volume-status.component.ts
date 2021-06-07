@@ -1,37 +1,35 @@
 import { Component, OnInit } from '@angular/core';
+import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import * as filesize from 'filesize';
+import * as _ from 'lodash';
+import { TreeNode } from 'primeng/api';
+import { Subject } from 'rxjs';
+import { CoreService } from 'app/core/services/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
+import helptext from 'app/helptext/storage/volumes/volume-status';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { EntityTreeTable } from 'app/pages/common/entity/entity-tree-table/entity-tree-table.model';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DiskFormComponent } from 'app/pages/storage/disks/disk-form';
 import {
   WebSocketService, AppLoaderService, DialogService,
-} from '../../../../services';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { EntityUtils } from '../../../common/entity/utils';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import * as _ from 'lodash';
-import { TreeNode } from 'primeng/api';
-import { EntityTreeTable } from '../../../common/entity/entity-tree-table/entity-tree-table.model';
-
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { MatDialog } from '@angular/material/dialog';
-import { Validators } from '@angular/forms';
-import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
+} from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
-import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/storage/volumes/volume-status';
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-
-import { CoreService } from 'app/core/services/core.service';
-import { Subject } from 'rxjs';
-import { EntityToolbarComponent } from '../../../common/entity/entity-toolbar/entity-toolbar.component';
-import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { ModalService } from 'app/services/modal.service';
-import { DiskFormComponent } from '../../disks/disk-form';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as filesize from 'filesize';
+import { T } from 'app/translate-marker';
 
 interface PoolDiskInfo {
   name: any;

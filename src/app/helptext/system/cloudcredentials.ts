@@ -1,6 +1,6 @@
 import { Validators } from '@angular/forms';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { T } from 'app/translate-marker';
-import { regexValidator } from '../../pages/common/entity/entity-form/validators/regex-validation';
 
 export const helptext_system_cloudcredentials = {
   fieldset_basic: T('Name and Provider'),

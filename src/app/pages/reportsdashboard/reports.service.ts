@@ -1,8 +1,8 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { CoreEvent } from 'app/interfaces/events';
-import { WebSocketService } from 'app/services/ws.service';
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core.service';
+import { CoreEvent } from 'app/interfaces/events';
+import { WebSocketService } from 'app/services/ws.service';
 
 /*
  * This service acts as a proxy between middleware/web worker

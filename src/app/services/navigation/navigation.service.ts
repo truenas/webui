@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { T } from '../../translate-marker';
+import { T } from 'app/translate-marker';
 
 interface IMenuItem {
   type: string; // Possible values: link/slideOut/icon/separator/extLink

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { WebSocketService } from './ws.service';
 
 @Injectable()

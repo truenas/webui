@@ -1,25 +1,22 @@
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import {
   Component, Input, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { WebSocketService } from '../../../../services';
 import {
   AbstractControl, FormBuilder, FormGroup,
 } from '@angular/forms';
+import { MatStepper } from '@angular/material/stepper';
+import { Router, ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { T } from '../../../../translate-marker';
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import * as _ from 'lodash';
+import { WebSocketService, DialogService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { T } from 'app/translate-marker';
 import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FieldRelationService } from '../entity-form/services/field-relation.service';
-import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-
-import { MatStepper } from '@angular/material/stepper';
-import { DialogService } from '../../../../services';
 import { EntityUtils } from '../utils';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
@@ -35,7 +32,6 @@ export class EntityWizardComponent implements OnInit {
 
   formGroup: FormGroup;
   showSpinner = false;
-  busy: Subscription;
 
   saveSubmitText = T('Submit');
   customNextText = T('Next');
@@ -46,7 +42,7 @@ export class EntityWizardComponent implements OnInit {
     protected ws: WebSocketService,
     private formBuilder: FormBuilder,
     private entityFormService: EntityFormService,
-    protected loader: AppLoaderService,
+    public loader: AppLoaderService,
     protected fieldRelationService: FieldRelationService,
     protected router: Router,
     protected aroute: ActivatedRoute,
@@ -178,7 +174,7 @@ export class EntityWizardComponent implements OnInit {
 
     this.clearErrors();
     if (this.conf.customSubmit) {
-      this.busy = this.conf.customSubmit(value);
+      this.conf.customSubmit(value);
     } else {
       this.loader.open();
 

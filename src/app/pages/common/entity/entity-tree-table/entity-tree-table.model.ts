@@ -1,5 +1,5 @@
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { TreeNode } from 'primeng/api';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 export class EntityTreeTableColumn {
   name: string;

@@ -1,39 +1,41 @@
 import { Component } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { DatasetType } from 'app/enums/dataset-type.enum';
-import { VmBootloader, VmDeviceType, VmTime } from 'app/enums/vm.enum';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { ProductType } from '../../../enums/product-type.enum';
-import {
-  WebSocketService, NetworkService, StorageService, SystemGeneralService,
-} from '../../../services';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import {
   FormGroup, Validators, ValidationErrors, FormControl, ValidatorFn,
 } from '@angular/forms';
-import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
-import { MessageService } from '../../common/entity/entity-form/services/message.service';
-import { ModalService } from 'app/services/modal.service';
-import * as _ from 'lodash';
-
-import { VmService } from '../../../services/vm.service';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material/dialog';
-import { T } from '../../../translate-marker';
-import { DialogService } from '../../../services/dialog.service';
-import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
-import add_edit_helptext from '../../../helptext/vm/devices/device-add-edit';
-import { catchError, map } from 'rxjs/operators';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import globalHelptext from '../../../helptext/global-helptext';
-import { combineLatest, Observable } from 'rxjs';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { MatStepper } from '@angular/material/stepper';
+import {
+  UntilDestroy, untilDestroyed,
+} from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
+import { combineLatest, Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { PreferencesService } from 'app/core/services/preferences.service';
+import { DatasetType } from 'app/enums/dataset-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
+import { VmBootloader, VmDeviceType, VmTime } from 'app/enums/vm.enum';
+import globalHelptext from 'app/helptext/global-helptext';
+import add_edit_helptext from 'app/helptext/vm/devices/device-add-edit';
+import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { GpuDevice } from 'app/interfaces/gpu-device.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
+import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import {
+  WebSocketService, NetworkService, StorageService, SystemGeneralService,
+} from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
+import { ModalService } from 'app/services/modal.service';
+import { VmService } from 'app/services/vm.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -41,8 +43,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [VmService],
 })
-export class VMWizardComponent {
-  protected addWsCall = 'vm.create';
+export class VMWizardComponent implements WizardConfiguration {
+  addWsCall: 'vm.create' = 'vm.create';
   summary: any = {};
   isLinear = true;
   firstFormGroup: FormGroup;
@@ -67,7 +69,7 @@ export class VMWizardComponent {
   res: any;
   private productType = window.localStorage.getItem('product_type') as ProductType;
 
-  protected wizardConfig: Wizard[] = [
+  wizardConfig: Wizard[] = [
     {
       label: helptext.os_label,
       fieldConfig: [

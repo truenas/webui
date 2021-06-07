@@ -1,15 +1,22 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
+import { Router, ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { TransferMode } from 'app/enums/transfer-mode.enum';
+import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import globalHelptext from 'app/helptext/global-helptext';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
+import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import {
   EntityTableComponent,
 } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
   AppLoaderService,
   CloudCredentialService,
@@ -18,17 +25,8 @@ import {
   TaskService,
   WebSocketService,
 } from 'app/services';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { T } from 'app/translate-marker';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import globalHelptext from 'app/helptext/global-helptext';
-import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
-import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { ModalService } from 'app/services/modal.service';
-import { EntityJob } from 'app/interfaces/entity-job.interface';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { TransferMode } from 'app/enums/transfer-mode.enum';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

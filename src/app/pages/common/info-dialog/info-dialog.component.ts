@@ -1,5 +1,5 @@
-import { MatDialogRef } from '@angular/material/dialog';
 import { Component } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
