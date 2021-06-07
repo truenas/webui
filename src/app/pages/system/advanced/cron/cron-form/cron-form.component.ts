@@ -1,15 +1,15 @@
 import { Component, ViewChild } from '@angular/core';
-import { Option } from 'app/interfaces/option.interface';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
-import { EntityFormComponent } from '../../../../common/entity/entity-form';
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import helptext from 'app/helptext/system/cron-form';
+import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { UserService } from '../../../../../services';
-import helptext from '../../../../../helptext/system/cron-form';
-import { ModalService } from '../../../../../services/modal.service';
+import { UserService } from 'app/services';
+import { ModalService } from 'app/services/modal.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-cron-job-add',
   templateUrl: './cron-form.component.html',
@@ -110,7 +110,7 @@ export class CronFormComponent {
   constructor(protected userService: UserService, protected modalService: ModalService) {}
 
   updateUserSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
+    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -127,7 +127,7 @@ export class CronFormComponent {
 
     // Setup user field options
     this.user_field = _.find(this.fieldSets[0].config, { name: 'user' });
-    this.userService.userQueryDSCache().subscribe((items) => {
+    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
       for (let i = 0; i < items.length; i++) {
         this.user_field.options.push({
           label: items[i].username,

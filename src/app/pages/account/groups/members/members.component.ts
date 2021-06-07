@@ -1,13 +1,15 @@
-import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { User } from 'app/interfaces/user.interface';
-import { mergeMap } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { WebSocketService } from '../../../../services/ws.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import helptext from '../../../../helptext/account/members';
+import { mergeMap } from 'rxjs/operators';
+import helptext from 'app/helptext/account/members';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { User } from 'app/interfaces/user.interface';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { WebSocketService } from 'app/services/ws.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-members',
   templateUrl: './members.component.html',
@@ -31,7 +33,7 @@ export class MembersComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.activatedRoute.params.subscribe((params: Params) => this.groupId = params.pk);
+    this.activatedRoute.params.pipe(untilDestroyed(this)).subscribe((params: Params) => this.groupId = params.pk);
     this.getGroupDetails();
   }
 
@@ -43,7 +45,7 @@ export class MembersComponent implements OnInit {
       myFilter = ['id', 'in', group[0].users];
       this.groupName = group[0].group;
       return this.ws.call('user.query', [[myFilter]]);
-    })).subscribe((users) => {
+    })).pipe(untilDestroyed(this)).subscribe((users) => {
       this.users = users;
       this.selectedMembers = users;
       this.getMembers();
@@ -51,7 +53,7 @@ export class MembersComponent implements OnInit {
   }
 
   getMembers(): void {
-    this.ws.call('user.query').subscribe((users) => {
+    this.ws.call('user.query').pipe(untilDestroyed(this)).subscribe((users) => {
       for (const user of users) {
         const idx = this.users.findIndex((x) => user.id === x.id);
         if (idx === -1) {
@@ -71,7 +73,7 @@ export class MembersComponent implements OnInit {
     this.loading.open(this.translate.instant(helptext.update_users_message));
 
     const userIds = this.selectedMembers.map((user) => user.id);
-    this.ws.call('group.update', [this.groupId, { users: userIds }]).subscribe(() => {
+    this.ws.call('group.update', [this.groupId, { users: userIds }]).pipe(untilDestroyed(this)).subscribe(() => {
       this.router.navigate(['/', 'credentials', 'groups']);
       this.loading.close();
     });

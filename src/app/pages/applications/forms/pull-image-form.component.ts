@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { latestVersion } from 'app/constants/catalog.constants';
+import helptext from 'app/helptext/apps/apps';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
-import { ModalService } from '../../../services/modal.service';
-import { DialogService } from '../../../services/index';
-import helptext from '../../../helptext/apps/apps';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { EntityUtils } from '../../common/entity/utils';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService } from 'app/services/index';
+import { ModalService } from 'app/services/modal.service';
 
 interface PullImageFormValues {
   from_image: string;
@@ -19,6 +20,7 @@ interface PullImageFormValues {
   password: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'app-pull-image-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -107,12 +109,12 @@ export class PullImageFormComponent implements FormConfiguration {
     });
     dialogRef.componentInstance.setCall('container.image.pull', [params]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe(() => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
-    dialogRef.componentInstance.failure.subscribe((error: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error: any) => {
       new EntityUtils().handleWSError(this, error, this.dialogService);
     });
   }

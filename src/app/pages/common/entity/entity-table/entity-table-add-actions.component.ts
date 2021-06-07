@@ -1,11 +1,13 @@
 import {
   Component, ElementRef, Input, ViewChild, OnInit, AfterViewInit,
 } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { fromEvent as observableFromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
 import { EntityTableComponent } from './entity-table.component';
 
+@UntilDestroy()
 @Component({
   selector: 'app-entity-table-add-actions',
   templateUrl: './entity-table-add-actions.component.html',
@@ -23,7 +25,7 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit {
   animationMode = 'fling';
 
   get totalActions(): number {
-    const addAction = this.entity.conf.route_add ? 1 : 0;
+    const addAction = this.entity.conf.route_add ? 1 : this.entity.conf.doAdd ? 1 : 0;
     return this.actions.length + addAction;
   }
 
@@ -50,7 +52,7 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit {
         debounceTime(150),
         distinctUntilChanged(),
       )
-        .subscribe(() => {
+        .pipe(untilDestroyed(this)).subscribe(() => {
           this.entity.filter(this.filter.nativeElement.value);
         });
     }

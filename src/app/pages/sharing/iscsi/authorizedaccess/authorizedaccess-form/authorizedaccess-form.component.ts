@@ -1,16 +1,18 @@
 import { Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { helptext_sharing_iscsi } from 'app/helptext/sharing';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { matchOtherValidator, doesNotEqual } from 'app/pages/common/entity/entity-form/validators/password-validation';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
-import { WebSocketService } from '../../../../../services/ws.service';
-import { EntityUtils } from '../../../../common/entity/utils';
-import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { matchOtherValidator, doesNotEqual } from 'app/pages/common/entity/entity-form/validators/password-validation';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { WebSocketService } from 'app/services/ws.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-iscsi-authorizedaccess-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -121,7 +123,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
     protected ws: WebSocketService) {}
 
   preInit(): void {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
         this.customFilter[0][0].push(parseInt(params['pk'], 10));
@@ -135,7 +137,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
     const peeruserFieldset = _.find(this.fieldSets, { class: 'peeruser' });
     const peersecretConfig = _.find(peeruserFieldset.config, { name: 'peersecret' });
 
-    entityForm.formGroup.controls['peeruser'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['peeruser'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res != '') {
         peersecretControl.setValidators([
           Validators.required,
@@ -153,7 +155,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
     });
 
     [secretControl, peersecretControl].forEach((ctrl, index) => {
-      ctrl.valueChanges.subscribe((res) => {
+      ctrl.valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
         let errors = ctrl.errors;
         const compartedCtrlName = index === 0 ? 'peersecret' : 'secret';
         const otherCtrl = entityForm.formGroup.controls[compartedCtrlName];
@@ -191,7 +193,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
 
   customEditCall(value: any): void {
     this.loader.open();
-    this.ws.call(this.editCall, [this.pk, value]).subscribe(
+    this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));

@@ -1,29 +1,29 @@
 import { Component } from '@angular/core';
 import { FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AclType } from 'app/enums/acl-type.enum';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
-import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import { DialogService } from 'app/services/dialog.service';
-import { ModalService } from 'app/services/modal.service';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { ProductType } from '../../../../../enums/product-type.enum';
-import globalHelptext from '../../../../../helptext/global-helptext';
-import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-form';
-import { StorageService, WebSocketService } from '../../../../../services';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
-import { T } from '../../../../../translate-marker';
-import { EntityFormComponent } from '../../../../common/entity/entity-form';
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { EntityUtils } from '../../../../common/entity/utils';
+import { AclType } from 'app/enums/acl-type.enum';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { ProductType } from 'app/enums/product-type.enum';
+import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { Dataset } from 'app/interfaces/dataset.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { StorageService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 
 interface DatasetFormData {
   name: string;
@@ -59,6 +59,7 @@ interface DatasetFormData {
   special_small_block_size: number;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'app-dataset-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -66,7 +67,6 @@ interface DatasetFormData {
 export class DatasetFormComponent implements FormConfiguration {
   title: string;
   volid: string;
-  sub: Subscription;
   isBasicMode = true;
   pk: any;
   customFilter: any[] = [];
@@ -74,7 +74,7 @@ export class DatasetFormComponent implements FormConfiguration {
   isEntity = true;
   isNew = false;
   parent_dataset: Dataset;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   minimum_recommended_dataset_recordsize = '128K';
   protected recordsize_field: any;
   protected recordsize_fg: any;
@@ -97,11 +97,6 @@ export class DatasetFormComponent implements FormConfiguration {
   humanReadable = {
     quota: '', refquota: '', reservation: '', refreservation: '', special_small_block_size: '',
   };
-
-  private inherit_encryption_subscription: Subscription;
-  private encryption_subscription: Subscription;
-  private encryption_type_subscription: Subscription;
-  private generate_key_subscription: Subscription;
 
   private minquota = 1024 * 1024 * 1024; // 1G minimum
   private minrefquota = 1024 * 1024 * 1024;
@@ -925,7 +920,7 @@ export class DatasetFormComponent implements FormConfiguration {
     ///
     this.entityForm = entityForm;
     if (this.productType.includes(ProductType.Enterprise)) {
-      this.ws.call('system.info').subscribe((systemInfo) => {
+      this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
         if (systemInfo.license && systemInfo.license.features.indexOf(LicenseFeature.Dedup) > -1) {
           this.entityForm.setDisabled('deduplication', false, false);
         }
@@ -937,7 +932,7 @@ export class DatasetFormComponent implements FormConfiguration {
     this.dedup_fg = this.entityForm.formGroup.controls['deduplication'];
     this.dedup_field = _.find(this.fieldConfig, { name: 'deduplication' });
     this.dedup_value = this.dedup_fg.value;
-    this.dedup_fg.valueChanges.subscribe((dedup: any) => {
+    this.dedup_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((dedup: any) => {
       if (dedup === 'INHERIT' || dedup === 'OFF') {
         this.dedup_field.warnings = '';
       } else {
@@ -965,7 +960,7 @@ export class DatasetFormComponent implements FormConfiguration {
       entityForm.setDisabled('share_type', false, false);
     }
 
-    entityForm.formGroup.get('share_type').valueChanges.pipe(filter((shareType) => !!shareType && entityForm.isNew)).subscribe((shareType) => {
+    entityForm.formGroup.get('share_type').valueChanges.pipe(filter((shareType) => !!shareType && entityForm.isNew)).pipe(untilDestroyed(this)).subscribe((shareType) => {
       const caseControl = entityForm.formGroup.get('casesensitivity');
       if (!this.productType.includes(ProductType.Scale)) {
         if (shareType === 'SMB') {
@@ -996,7 +991,7 @@ export class DatasetFormComponent implements FormConfiguration {
     this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'];
 
     this.recordsize_field = _.find(this.fieldConfig, { name: 'recordsize' });
-    this.recordsize_fg.valueChanges.subscribe((record_size: string) => {
+    this.recordsize_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((record_size: string) => {
       const record_size_number = parseInt((this.reverseRecordSizeMap as any)[record_size], 10);
       if (this.minimum_recommended_dataset_recordsize && this.recommended_size_number) {
         this.recordsize_warning = helptext.dataset_form_warning_1
@@ -1033,7 +1028,7 @@ export class DatasetFormComponent implements FormConfiguration {
       _.find(this.fieldSets, { class: 'dataset' }).label = false;
       _.find(this.fieldSets, { class: 'refdataset' }).label = false;
     }
-    this.ws.call('pool.dataset.compression_choices').subscribe((res) => {
+    this.ws.call('pool.dataset.compression_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       const compression = _.find(this.fieldConfig, { name: 'compression' });
       for (const key in res) {
         compression.options.push({ label: key, value: res[key] });
@@ -1042,14 +1037,14 @@ export class DatasetFormComponent implements FormConfiguration {
 
     if (this.parent) {
       const root = this.parent.split('/')[0];
-      this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).subscribe((res) => {
+      this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((res) => {
         this.minimum_recommended_dataset_recordsize = res;
         this.recommended_size_number = parseInt((this.reverseRecordSizeMap as any)[this.minimum_recommended_dataset_recordsize], 0);
       });
       combineLatest([
         this.ws.call('pool.query', [[['name', '=', root]]]),
         this.ws.call('pool.dataset.query', [[['id', '=', this.pk]]]),
-      ]).subscribe(
+      ]).pipe(untilDestroyed(this)).subscribe(
         ([pk_pool, pk_dataset]) => {
           if (pk_pool[0].encrypt !== 0) {
             this.legacy_encryption = true;
@@ -1098,7 +1093,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 parent_algorithm = pk_dataset[0].encryption_algorithm.value;
                 encryption_algorithm_fg.setValue(parent_algorithm);
               }
-              this.ws.call('pool.dataset.encryption_algorithm_choices').subscribe((algorithms) => {
+              this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(untilDestroyed(this)).subscribe((algorithms) => {
                 for (const algorithm in algorithms) {
                   if (algorithms.hasOwnProperty(algorithm)) {
                     encryption_algorithm_fc.options.push({ label: algorithm, value: algorithm });
@@ -1116,7 +1111,7 @@ export class DatasetFormComponent implements FormConfiguration {
               for (let i = 0; i < this.encryption_fields.length; i++) {
                 this.entityForm.setDisabled(this.encryption_fields[i], true, true);
               }
-              this.inherit_encryption_subscription = inherit_encryption_fg.valueChanges.subscribe((inherit: any) => {
+              inherit_encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((inherit: any) => {
                 this.inherit_encryption = inherit;
                 if (inherit) {
                   for (let i = 0; i < all_encryption_fields.length; i++) {
@@ -1142,11 +1137,11 @@ export class DatasetFormComponent implements FormConfiguration {
                   }
                 }
               });
-              this.encryption_subscription = encryption_fg.valueChanges.subscribe((encryption: any) => {
+              encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption: any) => {
                 // if on an encrypted parent we should warn the user, otherwise just disable the fields
                 if (this.encrypted_parent && !encryption && !this.non_encrypted_warned) {
                   this.dialogService.confirm(helptext.dataset_form_encryption.non_encrypted_warning_title,
-                    helptext.dataset_form_encryption.non_encrypted_warning_warning).subscribe((confirm: boolean) => {
+                    helptext.dataset_form_encryption.non_encrypted_warning_warning).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
                     if (confirm) {
                       this.non_encrypted_warned = true;
                       for (let i = 0; i < all_encryption_fields.length; i++) {
@@ -1179,7 +1174,7 @@ export class DatasetFormComponent implements FormConfiguration {
                   }
                 }
               });
-              this.encryption_type_subscription = encryption_type_fg.valueChanges.subscribe((type: any) => {
+              encryption_type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((type: any) => {
                 this.encryption_type = type;
                 const key = (type === 'key');
                 this.entityForm.setDisabled('passphrase', key, key);
@@ -1192,7 +1187,7 @@ export class DatasetFormComponent implements FormConfiguration {
                   this.entityForm.setDisabled('key', true, true);
                 }
               });
-              this.generate_key_subscription = this.entityForm.formGroup.controls['generate_key'].valueChanges.subscribe((generate_key: boolean) => {
+              this.entityForm.formGroup.controls['generate_key'].valueChanges.pipe(untilDestroyed(this)).subscribe((generate_key: boolean) => {
                 this.generate_key = generate_key;
                 this.entityForm.setDisabled('key', generate_key, generate_key);
               });
@@ -1241,7 +1236,7 @@ export class DatasetFormComponent implements FormConfiguration {
             entityForm.formGroup.controls['atime'].setValue('INHERIT');
             entityForm.formGroup.controls['recordsize'].setValue('INHERIT');
           } else {
-            this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).subscribe((parent_dataset) => {
+            this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).pipe(untilDestroyed(this)).subscribe((parent_dataset) => {
               this.parent_dataset = parent_dataset[0];
               const current_dataset = _.find(this.parent_dataset.children, { name: this.pk });
               if (current_dataset.hasOwnProperty('recordsize') && current_dataset['recordsize'].value) {
@@ -1540,17 +1535,17 @@ export class DatasetFormComponent implements FormConfiguration {
   customSubmit(body: any): Subscription {
     this.loader.open();
 
-    return ((this.isNew === true) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
+    return ((this.isNew === true) ? this.addSubmit(body) : this.editSubmit(body)).pipe(untilDestroyed(this)).subscribe((restPostResp) => {
       this.loader.close();
       this.modalService.close('slide-in-form');
       const parentPath = `/mnt/${this.parent}`;
-      this.ws.call('filesystem.acl_is_trivial', [parentPath]).subscribe((res) => {
+      this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((res) => {
         if (res === false) {
           this.dialogService.confirm(helptext.afterSubmitDialog.title,
             helptext.afterSubmitDialog.message, true, helptext.afterSubmitDialog.actionBtn, false, '', '', '', '',
-            false, helptext.afterSubmitDialog.cancelBtn).subscribe((res: boolean) => {
+            false, helptext.afterSubmitDialog.cancelBtn).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
             if (res) {
-              this.ws.call('filesystem.getacl', [parentPath]).subscribe(({ acltype }) => {
+              this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe(({ acltype }) => {
                 if (acltype === AclType.Posix1e) {
                   this.router.navigate(new Array('/').concat(
                     ['storage', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name],

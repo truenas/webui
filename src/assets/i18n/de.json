@@ -1246,6 +1246,7 @@
   "Nic to attach:": "",
   "No ": "",
   "No Applications Installed": "",
+  "No Applications are Available": "",
   "No Communication Warning Time": "",
   "No Encryption (less secure, but faster)": "",
   "No Inherit": "",
@@ -1984,6 +1985,7 @@
   "URL": "",
   "UTC": "",
   "UUID": "",
+  "Unable to retrieve Available Applications": "",
   "Unable to terminate processes which are using this pool: ": "",
   "Unhealthy": "",
   "Unique drive identifier. Log in to a Microsoft account and choose  a drive from the <i>Drives List</i> drop-down to add a valid ID.": "",
@@ -2233,7 +2235,6 @@
   "msgqqueued": "",
   "msgqsize": "",
   "nmsgq": "",
-  "no": "",
   "nsemop": "",
   "nshm": "",
   "nthr": "",
@@ -4320,6 +4321,5 @@
   "wallclock": "Wanduhr",
   "warn": "Warnung",
   "was successfully attached.": "wurde erfolgreich hinzugefügt.",
-  "while pool is encrypted": "während der Pool verschlüsselt ist",
-  "yes": "Ja"
+  "while pool is encrypted": "während der Pool verschlüsselt ist"
 }

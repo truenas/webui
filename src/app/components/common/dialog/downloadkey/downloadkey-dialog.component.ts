@@ -1,15 +1,17 @@
-import { MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import helptext from 'app/helptext/storage/volumes/download-key';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   WebSocketService,
   StorageService,
-} from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { TranslateService } from '@ngx-translate/core';
-import { HttpClient } from '@angular/common/http';
-import { EntityUtils } from '../../../../pages/common/entity/utils';
-import helptext from '../../../../helptext/storage/volumes/download-key';
+} from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
+@UntilDestroy()
 @Component({
   selector: 'downloadkey-dialog',
   styleUrls: ['./downloadkey-dialog.component.scss'],
@@ -19,7 +21,7 @@ export class DownloadKeyModalDialog {
   new = false;
   volumeId: any;
   volumeName: any;
-  fileName: any;
+  fileName: string;
   isDownloaded: Boolean = false;
   help = helptext;
 
@@ -42,10 +44,10 @@ export class DownloadKeyModalDialog {
     this.loader.open();
     if (this.new) { // new is ZoL encryption
       mimetype = 'application/json';
-      this.ws.call('core.download', ['pool.dataset.export_keys', [this.volumeName], this.fileName]).subscribe((res) => {
+      this.ws.call('core.download', ['pool.dataset.export_keys', [this.volumeName], this.fileName]).pipe(untilDestroyed(this)).subscribe((res) => {
         this.loader.close();
         const url = res[1];
-        this.storage.streamDownloadFile(this.http, url, this.fileName, mimetype).subscribe((file) => {
+        this.storage.streamDownloadFile(this.http, url, this.fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
           if (res !== null && res !== '') {
             this.storage.downloadBlob(file, this.fileName);
             this.isDownloaded = true;
@@ -57,9 +59,9 @@ export class DownloadKeyModalDialog {
       });
     } else {
       mimetype = 'application/octet-stream';
-      this.ws.call('pool.download_encryption_key', payload).subscribe((res) => {
+      this.ws.call('pool.download_encryption_key', payload).pipe(untilDestroyed(this)).subscribe((res) => {
         this.loader.close();
-        this.storage.streamDownloadFile(this.http, res, this.fileName, mimetype).subscribe((file) => {
+        this.storage.streamDownloadFile(this.http, res, this.fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
           if (res !== null && res !== '') {
             this.storage.downloadBlob(file, this.fileName);
             this.isDownloaded = true;

@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { forkJoin } from 'rxjs';
-
-import { IscsiService } from '../../../../../services';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { forkJoin } from 'rxjs';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { IscsiService } from 'app/services';
 import { T } from 'app/translate-marker';
-import { EntityUtils } from '../../../../common/entity/utils';
 
+@UntilDestroy()
 @Component({
   selector: 'app-iscsi-associated-target-list',
   template: `
@@ -14,15 +16,15 @@ import { EntityUtils } from '../../../../common/entity/utils';
   `,
   providers: [IscsiService],
 })
-export class AssociatedTargetListComponent {
+export class AssociatedTargetListComponent implements EntityTableConfig {
   tableTitle = 'Associated Targets';
-  protected queryCall = 'iscsi.targetextent.query';
-  protected wsDelete = 'iscsi.targetextent.delete';
-  protected route_add: string[] = ['sharing', 'iscsi', 'associatedtarget', 'add'];
+  queryCall: 'iscsi.targetextent.query' = 'iscsi.targetextent.query';
+  wsDelete: 'iscsi.targetextent.delete' = 'iscsi.targetextent.delete';
+  route_add: string[] = ['sharing', 'iscsi', 'associatedtarget', 'add'];
   protected route_add_tooltip = 'Add Target/Extent';
-  protected route_edit: string[] = ['sharing', 'iscsi', 'associatedtarget', 'edit'];
+  route_edit: string[] = ['sharing', 'iscsi', 'associatedtarget', 'edit'];
 
-  columns: any[] = [
+  columns = [
     {
       name: T('Target'),
       prop: 'target',
@@ -58,7 +60,7 @@ export class AssociatedTargetListComponent {
     forkJoin([
       this.iscsiService.getTargets(),
       this.iscsiService.getExtents(),
-    ]).subscribe(([targets, extents]) => {
+    ]).pipe(untilDestroyed(this)).subscribe(([targets, extents]) => {
       for (let i = 0; i < entityList.rows.length; i++) {
         entityList.rows[i].target = _.find(targets, { id: entityList.rows[i].target })['name'];
         entityList.rows[i].extent = _.find(extents, { id: entityList.rows[i].extent })['name'];
@@ -80,7 +82,7 @@ export class AssociatedTargetListComponent {
       label: T('Delete'),
       onClick: (rowinner: any) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
-        this.iscsiService.getGlobalSessions().subscribe(
+        this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
           (res) => {
             let warningMsg = '';
             for (let i = 0; i < res.length; i++) {
@@ -90,11 +92,11 @@ export class AssociatedTargetListComponent {
             }
             deleteMsg = warningMsg + deleteMsg;
 
-            this.entityList.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).subscribe((dialres: boolean) => {
+            this.entityList.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).pipe(untilDestroyed(this)).subscribe((dialres: boolean) => {
               if (dialres) {
                 this.entityList.loader.open();
                 this.entityList.loaderOpen = true;
-                this.entityList.ws.call(this.wsDelete, [rowinner.id, true]).subscribe(
+                this.entityList.ws.call(this.wsDelete, [rowinner.id, true]).pipe(untilDestroyed(this)).subscribe(
                   () => { this.entityList.getData(); },
                   (resinner: any) => {
                     new EntityUtils().handleError(this, resinner);

@@ -1,5 +1,5 @@
-import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { DatasetType } from 'app/enums/dataset-type.enum';
+import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
 export interface Dataset {
   available: ZfsProperty<number>;

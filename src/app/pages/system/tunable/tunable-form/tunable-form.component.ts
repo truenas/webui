@@ -1,14 +1,16 @@
-import { ProductType } from '../../../../enums/product-type.enum';
-import { EntityFormComponent } from '../../../common/entity/entity-form/entity-form.component';
 import { Component } from '@angular/core';
-import { helptext_system_tunable as helptext } from 'app/helptext/system/tunable';
-import { SystemGeneralService, WebSocketService } from '../../../../services';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { T } from 'app/translate-marker';
+import { ProductType } from 'app/enums/product-type.enum';
+import { helptext_system_tunable as helptext } from 'app/helptext/system/tunable';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { SystemGeneralService, WebSocketService } from 'app/services';
+import { T } from 'app/translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'app-system-tunable-edit',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -83,7 +85,7 @@ export class TunableFormComponent implements FormConfiguration {
 
   preInit(): void {
     this.type_fc = _.find(this.fieldSets[0].config, { name: 'type' });
-    this.ws.call('tunable.tunable_type_choices').subscribe((tunables) => {
+    this.ws.call('tunable.tunable_type_choices').pipe(untilDestroyed(this)).subscribe((tunables) => {
       for (const key in tunables) {
         this.type_fc.options.push({ label: tunables[key], value: key });
       }

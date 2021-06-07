@@ -1,10 +1,10 @@
+import { Subject } from 'rxjs';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { Subject } from 'rxjs';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 export interface FormConfiguration {
   fieldSets?: FieldSets | FieldSet[];
@@ -79,7 +79,7 @@ export interface FormConfiguration {
   afterSave?: (entityForm: EntityFormComponent) => void;
   blurEvent?: (entityForm: EntityFormComponent) => void;
   afterSubmit?: (value: any) => void;
-  beforeSubmit?: (entityForm: EntityFormComponent) => void;
+  beforeSubmit?: (value: any) => void;
   customSubmit?: (value: any) => void;
   closeModalForm?(): Promise<boolean>;
   afterModalFormClosed?(): void; // function will called once the modal form closed

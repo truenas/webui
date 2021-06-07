@@ -1,30 +1,32 @@
 import {
-  Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy, AfterViewInit,
+  Component, OnInit, ViewChild, ViewEncapsulation, AfterViewInit,
 } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material/tabs';
+import { ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subject } from 'rxjs';
+import { CommonUtils } from 'app/core/classes/common-utils';
+import { CoreService } from 'app/core/services/core.service';
+import helptext from 'app/helptext/apps/apps';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
-import { ApplicationsService } from './applications.service';
-import { ModalService } from '../../services/modal.service';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
-import { CoreService } from 'app/core/services/core.service';
+import { ModalService } from 'app/services/modal.service';
+import { ApplicationsService } from './applications.service';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
-import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
-import { Subject, Subscription } from 'rxjs';
-import helptext from '../../helptext/apps/apps';
-import { ActivatedRoute } from '@angular/router';
-import { CommonUtils } from 'app/core/classes/common-utils';
-import { MatTabChangeEvent } from '@angular/material/tabs';
 import { DockerImagesComponent } from './docker-images/docker-images.component';
+import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
 
+@UntilDestroy()
 @Component({
   selector: 'app-applications',
   templateUrl: './applications.component.html',
   styleUrls: ['./applications.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class ApplicationsComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ApplicationsComponent implements OnInit, AfterViewInit {
   @ViewChild(CatalogComponent, { static: false }) private catalogTab: CatalogComponent;
   @ViewChild(ChartReleasesComponent, { static: false }) private chartTab: ChartReleasesComponent;
   @ViewChild(ManageCatalogsComponent, { static: false }) private manageCatalogTab: ManageCatalogsComponent;
@@ -39,7 +41,6 @@ export class ApplicationsComponent implements OnInit, AfterViewInit, OnDestroy {
   catalogOptions: Option[] = [];
   selectedCatalogOptions: Option[] = [];
   protected utils: CommonUtils;
-  private refreshTable: Subscription;
 
   constructor(
     private appService: ApplicationsService,
@@ -53,14 +54,14 @@ export class ApplicationsComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.setupToolbar();
 
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTab(true);
     });
   }
 
   ngAfterViewInit(): void {
     // If the route parameter "tabIndex" is 1, switch tab to "Installed applications".
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['tabIndex'] == 1) {
         this.selectedIndex = 1;
         this.refreshTab();
@@ -68,15 +69,9 @@ export class ApplicationsComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    if (this.refreshTable) {
-      this.refreshTable.unsubscribe();
-    }
-  }
-
   setupToolbar(): void {
     this.settingsEvent = new Subject();
-    this.settingsEvent.subscribe((evt: CoreEvent) => {
+    this.settingsEvent.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'filter') {
         this.filterString = evt.data.filter;
       }

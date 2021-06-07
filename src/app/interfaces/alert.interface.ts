@@ -1,5 +1,5 @@
-import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { AlertLevel } from 'app/enums/alert-level.enum';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 
 export interface Alert {
   args: string;

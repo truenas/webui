@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { CoreEvent } from 'app/interfaces/events';
-import { CoreService } from './core.service';
-import { ApiService } from './api.service';
+import { UserDataEvent } from 'app/interfaces/events/user-data-event.interface';
+import { Preferences } from 'app/interfaces/preferences.interface';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
+import { ApiService } from './api.service';
+import { CoreService } from './core.service';
 
 interface PropertyReport {
   middlewareProperties: string[];
@@ -12,38 +15,14 @@ interface PropertyReport {
   newProperties: string[];
 }
 
-export interface UserPreferences {
-  platform?: string; // FreeNAS || TrueNAS
-  retroLogo?: boolean; // Brings back FreeNAS branding
-  timestamp?: Date;
-  userTheme?: string; // Theme name
-  customThemes?: Theme[];
-  favoriteThemes?: string[]; // Deprecate
-  showGuide?: boolean; // Guided Tour on/off
-  showTooltips?: boolean; // Form Tooltips on/off // Deprecated, remove in v12!
-  metaphor?: string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
-  allowPwToggle?: boolean;
-  preferIconsOnly?: boolean;
-  rebootAfterManualUpdate?: boolean;
-  tableDisplayedColumns?: any;
-  hide_builtin_users?: boolean;
-  hide_builtin_groups?: boolean;
-  dateFormat?: string;
-  timeFormat?: string;
-  showWelcomeDialog?: boolean;
-  showUserListMessage?: boolean;
-  showGroupListMessage?: boolean;
-  expandAvailablePlugins?: boolean;
-  storedValues?: any;
-}
-
+@UntilDestroy()
 @Injectable()
 export class PreferencesService {
   private startupComplete = false;
-  defaultPreferences: UserPreferences = {
+  defaultPreferences: Preferences = {
     platform: 'freenas', // Detect platform
     retroLogo: false,
-    timestamp: new Date(),
+    timestamp: new Date() as any,
     userTheme: 'default', // Theme name
     customThemes: [], // Theme Objects
     favoriteThemes: [], // Theme Names
@@ -65,20 +44,20 @@ export class PreferencesService {
     storedValues: {}, // For key/value pairs to save most recent values in form fields, etc
   };
 
-  preferences: UserPreferences;
+  preferences: Preferences;
 
   constructor(protected core: CoreService, protected themeService: ThemeService, private api: ApiService, private router: Router,
     private aroute: ActivatedRoute) {
     this.preferences = this.defaultPreferences;
 
-    this.core.register({ observerClass: this, eventName: 'Authenticated', sender: this.api }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'Authenticated', sender: this.api }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       // evt.data: boolean represents authentication status
       if (evt.data) {
         this.core.emit({ name: 'UserDataRequest', data: [[['id', '=', 1]]] });
       }
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesRequest' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesRequest' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       // Ignore requests until we have UserData
       if (!this.startupComplete) { return; }
 
@@ -87,7 +66,7 @@ export class PreferencesService {
       }
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserData', sender: this.api }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserData', sender: this.api }).pipe(untilDestroyed(this)).subscribe((evt: UserDataEvent) => {
       if (evt.data[0]) {
         const data = evt.data[0].attributes.preferences;
         if (!data) {
@@ -106,17 +85,17 @@ export class PreferencesService {
       }
     });
 
-    this.core.register({ observerClass: this, eventName: 'ChangeThemePreference', sender: this.themeService }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ChangeThemePreference', sender: this.themeService }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.preferences.userTheme = evt.data;
       this.core.emit({ name: 'UserDataUpdate', data: this.preferences });
     });
 
-    this.core.register({ observerClass: this, eventName: 'ChangeCustomThemesPreference' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ChangeCustomThemesPreference' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.preferences.customThemes = evt.data;
       this.core.emit({ name: 'UserDataUpdate', data: this.preferences });
     });
 
-    this.core.register({ observerClass: this, eventName: 'ReplaceCustomThemePreference' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ReplaceCustomThemePreference' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       let oldTheme: Theme;
       const newTheme = evt.data;
       const replaced: boolean = this.replaceCustomTheme(oldTheme, newTheme);
@@ -126,26 +105,26 @@ export class PreferencesService {
     });
 
     // Reset the entire preferences object to default
-    this.core.register({ observerClass: this, eventName: 'ResetPreferences' }).subscribe(() => {
+    this.core.register({ observerClass: this, eventName: 'ResetPreferences' }).pipe(untilDestroyed(this)).subscribe(() => {
       const prefs = Object.assign(this.defaultPreferences, {});
       prefs.customThemes = this.preferences.customThemes;
-      prefs.timestamp = new Date();
+      (prefs.timestamp as any) = new Date();
       this.savePreferences(prefs);
     });
 
     // Change the entire preferences object at once
-    this.core.register({ observerClass: this, eventName: 'ChangePreferences' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ChangePreferences' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const prefs: any = this.preferences;
       Object.keys(evt.data).forEach((key) => {
         prefs[key] = evt.data[key];
       });
       this.setShowGuide(evt.data.showGuide);
-      this.preferences.timestamp = new Date();
+      (this.preferences.timestamp as any) = new Date();
       this.savePreferences(this.preferences);
     });
 
     // Change a single preference item
-    this.core.register({ observerClass: this, eventName: 'ChangePreference' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ChangePreference' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const prefs: any = Object.assign(this.preferences, {});
       prefs[evt.data.key] = evt.data.value;
       prefs.timestamp = new Date();
@@ -156,7 +135,7 @@ export class PreferencesService {
   }
 
   // Update local cache
-  updatePreferences(data: UserPreferences): void {
+  updatePreferences(data: Preferences): void {
     if (data && !this.startupComplete) {
       console.warn('Startup is not complete!');
       console.warn(data);
@@ -182,7 +161,7 @@ export class PreferencesService {
   }
 
   // Save to middleware
-  savePreferences(data?: UserPreferences): void {
+  savePreferences(data?: Preferences): void {
     if (!data) {
       data = this.preferences;
     }
@@ -206,18 +185,15 @@ export class PreferencesService {
     }
   }
 
-  sanityCheck(data: UserPreferences): PropertyReport {
-    let oldKeys = [];
-    let newKeys = [];
-
+  sanityCheck(data: Preferences): PropertyReport {
     const savedKeys = Object.keys(data);
     const currentKeys = Object.keys(this.preferences);
 
     // Find Deprecated
-    oldKeys = savedKeys.filter((key) => currentKeys.indexOf(key) == -1);
+    const oldKeys = savedKeys.filter((key) => currentKeys.indexOf(key) == -1);
 
     // Find New
-    newKeys = currentKeys.filter((key) => savedKeys.indexOf(key) == -1);
+    const newKeys = currentKeys.filter((key) => savedKeys.indexOf(key) == -1);
 
     const report: PropertyReport = {
       middlewareProperties: savedKeys, // Inbound from Middleware

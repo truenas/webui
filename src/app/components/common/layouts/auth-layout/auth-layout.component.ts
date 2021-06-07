@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LanguageService } from '../../../../services/language.service';
+import { LanguageService } from 'app/services/language.service';
 import { Theme, DefaultTheme } from 'app/services/theme/theme.service';
 
 @Component({

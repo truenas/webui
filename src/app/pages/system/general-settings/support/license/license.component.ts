@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { DialogService, WebSocketService } from '../../../../../services';
-import { ModalService } from '../../../../../services/modal.service';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-license',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -36,14 +38,14 @@ export class LicenseComponent implements FormConfiguration {
 
   customSubmit(form: any): void {
     this.loader.open();
-    this.ws.call(this.updateCall, [form.license]).subscribe(() => {
+    this.ws.call(this.updateCall, [form.license]).pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
       // To make sure EULA opens on reload; removed from local storage (in topbar) on acceptance of EULA
       window.localStorage.setItem('upgrading_status', 'upgrading');
       this.dialog.confirm(helptext.update_license.reload_dialog_title,
         helptext.update_license.reload_dialog_message, true, helptext.update_license.reload_dialog_action,
         false, '', '', '', '', true, '', true)
-        .subscribe((res: boolean) => {
+        .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
           if (res) {
             document.location.reload(true);
           }

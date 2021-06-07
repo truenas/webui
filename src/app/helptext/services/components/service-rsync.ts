@@ -1,5 +1,5 @@
-import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
+import { T } from 'app/translate-marker';
 
 export default {
   rsyncd_fieldset_general: T('General'),

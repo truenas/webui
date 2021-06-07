@@ -2,15 +2,17 @@ import {
   Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as FontFaceObserver from 'fontfaceobserver';
 import { Observable } from 'rxjs';
-import { ShellConnectedEvent } from '../../interfaces/shell.interface';
-import { ShellService, WebSocketService } from '../../services';
-import { CopyPasteMessageComponent } from '../shell/copy-paste-message.component';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
-import * as FontFaceObserver from 'fontfaceobserver';
+import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
+import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
+import { ShellService, WebSocketService } from 'app/services';
+import { CopyPasteMessageComponent } from '../shell/copy-paste-message.component';
 
+@UntilDestroy()
 @Component({
   selector: 'app-system-processes',
   templateUrl: './system-processes.component.html',
@@ -36,9 +38,9 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const self = this;
-    this.getAuthToken().subscribe((token) => {
+    this.getAuthToken().pipe(untilDestroyed(this)).subscribe((token) => {
       this.initializeWebShell(token);
-      this.shellSubscription = this.ss.shellOutput.subscribe(() => {
+      this.shellSubscription = this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {
         // this.xterm.write(value);
         if (!this.top_displayed) {
           setTimeout(() => {
@@ -129,7 +131,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
-    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe(() => {
+    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
       this.xterm.focus();
     });
     return true;
@@ -139,7 +141,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     this.ss.token = token;
     this.ss.connect();
 
-    this.ss.shellConnected.subscribe((res: ShellConnectedEvent) => {
+    this.ss.shellConnected.pipe(untilDestroyed(this)).subscribe((res: ShellConnectedEvent) => {
       this.connectionId = res.id;
       this.resizeTerm();
     });

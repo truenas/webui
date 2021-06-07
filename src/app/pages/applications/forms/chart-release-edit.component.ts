@@ -1,20 +1,22 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { latestVersion } from 'app/constants/catalog.constants';
-import { Option } from 'app/interfaces/option.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
-import { ModalService } from '../../../services/modal.service';
-import { DialogService } from '../../../services/index';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { ApplicationsService } from '../applications.service';
-import helptext from '../../../helptext/apps/apps';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { EntityUtils } from '../../common/entity/utils';
+import { latestVersion } from 'app/constants/catalog.constants';
+import helptext from 'app/helptext/apps/apps';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService } from 'app/services/index';
+import { ModalService } from 'app/services/modal.service';
+import { ApplicationsService } from '../applications.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-chart-release-edit',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -388,12 +390,12 @@ export class ChartReleaseEditComponent implements FormConfiguration {
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService, private appService: ApplicationsService) {
-    this.appService.getNICChoices().subscribe((res) => {
+    this.appService.getNICChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       for (const item in res) {
         this.interfaceList.push({ label: item, value: item });
       }
     });
-    this.getRow = this.modalService.getRow$.subscribe((rowName: string) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowName: string) => {
       this.rowName = rowName;
       this.customFilter = [[['id', '=', rowName]], { extra: { include_chart_schema: true } }];
       this.getRow.unsubscribe();
@@ -548,7 +550,7 @@ export class ChartReleaseEditComponent implements FormConfiguration {
     });
     this.dialogRef.componentInstance.setCall(this.editCall, payload);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();

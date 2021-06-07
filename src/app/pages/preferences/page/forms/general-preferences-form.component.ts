@@ -7,15 +7,16 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subject } from 'rxjs';
+import { CoreService } from 'app/core/services/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { EntityFormEmbeddedComponent } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RestService, WebSocketService } from 'app/services/';
 import { ThemeService, Theme, DefaultTheme } from 'app/services/theme/theme.service';
-import { CoreService } from 'app/core/services/core.service';
-import { Subject } from 'rxjs';
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 interface UserPreferences {
   // Preferences Object Structure
@@ -28,6 +29,7 @@ interface UserPreferences {
   metaphor: string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
 }
 
+@UntilDestroy()
 @Component({
   selector: 'general-preferences-form',
   template: '<entity-form-embedded *ngIf="preferences" #embeddedForm fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>',
@@ -66,7 +68,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (this.isWaiting) {
         this.target.next({ name: 'SubmitComplete', sender: this });
         this.isWaiting = false;
@@ -77,7 +79,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
       this.init(true);
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (this.isWaiting) {
         this.target.next({ name: 'SubmitComplete', sender: this });
         this.isWaiting = false;
@@ -103,7 +105,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
   }
 
   startSubscriptions(): void {
-    this.core.register({ observerClass: this, eventName: 'ThemeListsChanged' }).subscribe(() => {
+    this.core.register({ observerClass: this, eventName: 'ThemeListsChanged' }).pipe(untilDestroyed(this)).subscribe(() => {
       this.setThemeOptions();
       if (!this.embeddedForm) { return; }
 
@@ -111,7 +113,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
       this.embeddedForm.setValue('userTheme', theme);
     });
 
-    this.target.subscribe((evt: CoreEvent) => {
+    this.target.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       switch (evt.name) {
         case 'FormSubmitted':
           const prefs = Object.assign(evt.data, {});

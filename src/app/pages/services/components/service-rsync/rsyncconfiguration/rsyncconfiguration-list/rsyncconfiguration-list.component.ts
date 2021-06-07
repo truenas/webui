@@ -1,23 +1,22 @@
 import { Component } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { T } from '../../../../../../translate-marker';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-rsync-module-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class RSYNCconfigurationListComponent {
+export class RSYNCconfigurationListComponent implements EntityTableConfig {
   title = 'RSYNC Modules';
-  protected queryCall = 'rsyncmod.query';
-  protected hasDetails = true;
+  queryCall: 'rsyncmod.query' = 'rsyncmod.query';
+  hasDetails = true;
   protected entityList: any;
-  busy: Subscription;
-  wsDelete = 'rsyncmod.delete';
-  protected route_add: string[] = ['services', 'rsync', 'rsync-module', 'add'];
-  protected route_edit: string[] = ['services', 'rsync', 'rsync-module', 'edit'];
+  wsDelete: 'rsyncmod.delete' = 'rsyncmod.delete';
+  route_add: string[] = ['services', 'rsync', 'rsync-module', 'add'];
+  route_edit: string[] = ['services', 'rsync', 'rsync-module', 'edit'];
   protected route_delete: string[] = ['services', 'rsync', 'rsync-module', 'delete'];
 
-  columns: any[] = [
+  columns = [
     { name: T('Name'), prop: 'name' },
     { name: T('Comment'), prop: 'comment' },
     { name: T('Path'), prop: 'path' },

@@ -1,39 +1,39 @@
-import { Component, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
+import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
+import { PreferencesService } from 'app/core/services/preferences.service';
+import { ProductType } from 'app/enums/product-type.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/vm/vm-list';
+import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { ProductType } from '../../../enums/product-type.enum';
-
+import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   WebSocketService, StorageService, AppLoaderService, DialogService, RestService, VmService, NetworkService, SystemGeneralService,
-} from '../../../services';
+} from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { MessageService } from '../../common/entity/entity-form/services/message.service';
-import { TranslateService } from '@ngx-translate/core';
-import { PreferencesService } from 'app/core/services/preferences.service';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { MatDialog } from '@angular/material/dialog';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { T } from '../../../translate-marker';
-import globalHelptext from '../../../helptext/global-helptext';
-import helptext from '../../../helptext/vm/vm-list';
-import wizardHelptext from '../../../helptext/vm/vm-wizard/vm-wizard';
-import { EntityUtils } from '../../common/entity/utils';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
+import { T } from 'app/translate-marker';
 import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
-import { Validators } from '@angular/forms';
-import { ServiceStatus } from 'app/enums/service-status.enum';
 
 interface DisplayWebUri {
   error: string;
   uri: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'vm-list',
   template: `
@@ -44,19 +44,18 @@ interface DisplayWebUri {
   styleUrls: ['./vm-list.component.scss'],
   providers: [VmService, MessageService],
 })
-export class VMListComponent implements OnDestroy {
+export class VMListComponent implements EntityTableConfig {
   title = 'Virtual Machines';
-  protected queryCall: 'vm.query' = 'vm.query';
-  protected wsDelete: 'vm.delete' = 'vm.delete';
-  protected route_add: string[] = ['vm', 'wizard'];
-  protected route_edit: string[] = ['vm', 'edit'];
+  queryCall: 'vm.query' = 'vm.query';
+  wsDelete: 'vm.delete' = 'vm.delete';
+  route_add: string[] = ['vm', 'wizard'];
+  route_edit: string[] = ['vm', 'edit'];
   protected dialogRef: any;
-  private eventSubscription: Subscription;
   private productType = window.localStorage.getItem('product_type') as ProductType;
-  protected addComponent: VMWizardComponent;
+  addComponent: VMWizardComponent;
 
   entityList: any;
-  columns: any[] = [
+  columns = [
     { name: T('Name'), prop: 'name', always_display: true },
     {
       name: T('State'), prop: 'state', always_display: true, toggle: true,
@@ -113,11 +112,11 @@ export class VMListComponent implements OnDestroy {
 
   ngOnInit(): void {
     this.refreshVMWizard();
-    this.modalService.refreshForm$.subscribe(() => {
+    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshVMWizard();
     });
 
-    this.modalService.onClose$.subscribe(
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(
       () => {
         this.entityList.getData();
       },
@@ -133,7 +132,7 @@ export class VMListComponent implements OnDestroy {
   afterInit(entityList: any): void {
     this.checkMemory();
     this.entityList = entityList;
-    this.eventSubscription = this.ws.subscribe('vm.query').subscribe((event) => {
+    this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
       const changedRow = (this.entityList.rows as any[]).find((o) => o.id === event.id);
       if (event.fields.state === ServiceStatus.Running) {
         changedRow.state = ServiceStatus.Running;
@@ -241,11 +240,11 @@ export class VMListComponent implements OnDestroy {
       helptext.memory_dialog.tooltip,
     );
 
-    memoryDialog.componentInstance.switchSelectionEmitter.subscribe(() => {
+    memoryDialog.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe(() => {
       memoryDialog.componentInstance.isSubmitEnabled = !memoryDialog.componentInstance.isSubmitEnabled;
     });
 
-    memoryDialog.afterClosed().subscribe((dialogRes: boolean) => {
+    memoryDialog.afterClosed().pipe(untilDestroyed(this)).subscribe((dialogRes: boolean) => {
       if (dialogRes) {
         this.doRowAction(row, this.wsMethods.start, [row.id, { overcommit: true }]);
       }
@@ -271,7 +270,7 @@ export class VMListComponent implements OnDestroy {
         { data: { title: T('Stopping ' + row.name) }, disableClose: false });
       this.dialogRef.componentInstance.setCall(method, [params[0], params[1]]);
       this.dialogRef.componentInstance.submit();
-      this.dialogRef.componentInstance.success.subscribe(() => {
+      this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         if (updateTable) {
           this.entityList.getData();
         } else {
@@ -283,12 +282,12 @@ export class VMListComponent implements OnDestroy {
  After Timeout</i> option to stop the VM.')), '450px', 'info', true);
         this.checkMemory();
       });
-      this.dialogRef.componentInstance.failure.subscribe((err: any) => {
+      this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
         new EntityUtils().handleWSError(this, err, this.dialogService);
       });
     } else {
       this.loader.open();
-      this.ws.call(method, params).subscribe(
+      this.ws.call(method, params).pipe(untilDestroyed(this)).subscribe(
         () => {
           if (updateTable) {
             this.entityList.getData();
@@ -316,7 +315,7 @@ export class VMListComponent implements OnDestroy {
 
   updateRows(rows: any[]): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      this.ws.call(this.queryCall).subscribe(
+      this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe(
         (res: any[]) => {
           for (const row of rows) {
             const targetIndex = _.findIndex(res, (o) => o['id'] === row.id);
@@ -481,7 +480,7 @@ export class VMListComponent implements OnDestroy {
       label: T('Display'),
       onClick: (display_vm: any) => {
         this.loader.open();
-        this.ws.call('vm.get_display_devices', [display_vm.id]).subscribe((display_devices_res: any[]) => {
+        this.ws.call('vm.get_display_devices', [display_vm.id]).pipe(untilDestroyed(this)).subscribe((display_devices_res: any[]) => {
           if (display_devices_res.length === 1) {
             if (!display_devices_res[0].attributes.password_configured) {
               this.ws.call(
@@ -490,7 +489,7 @@ export class VMListComponent implements OnDestroy {
                   display_vm.id,
                   this.extractHostname(window.origin),
                 ],
-              ).subscribe((web_uri_res: { [displayId: number]: DisplayWebUri }) => {
+              ).pipe(untilDestroyed(this)).subscribe((web_uri_res: { [displayId: number]: DisplayWebUri }) => {
                 this.loader.close();
                 if (web_uri_res[display_devices_res[0].id].error) {
                   return this.dialogService.Info('Error', web_uri_res[display_devices_res[0].id].error);
@@ -530,7 +529,7 @@ export class VMListComponent implements OnDestroy {
                       display_vm.id,
                       this.extractHostname(window.origin),
                     ],
-                  ).subscribe((web_uris_res: { [displayId: number]: DisplayWebUri }) => {
+                  ).pipe(untilDestroyed(this)).subscribe((web_uris_res: { [displayId: number]: DisplayWebUri }) => {
                     this.loader.close();
                     if (web_uris_res[display_device.id].error) {
                       return this.dialogService.Info('Error', web_uris_res[display_device.id].error);
@@ -567,11 +566,11 @@ export class VMListComponent implements OnDestroy {
       onClick: (vm: any) => {
         const path = `/var/log/libvirt/bhyve/${vm.id}_${vm.name}.log`;
         const filename = `${vm.id}_${vm.name}.log`;
-        this.ws.call('core.download', ['filesystem.get', [path], filename]).subscribe(
+        this.ws.call('core.download', ['filesystem.get', [path], filename]).pipe(untilDestroyed(this)).subscribe(
           (download_res) => {
             const url = download_res[1];
             const mimetype = 'text/plain';
-            this.storageService.streamDownloadFile(this.http, url, filename, mimetype).subscribe((file) => {
+            this.storageService.streamDownloadFile(this.http, url, filename, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
               this.storageService.downloadBlob(file, filename);
             }, (err) => {
               new EntityUtils().handleWSError(this, err, this.dialogService);
@@ -615,7 +614,7 @@ export class VMListComponent implements OnDestroy {
               ],
             },
           ],
-        ).subscribe((pass_res: { [displayId: number]: DisplayWebUri }) => {
+        ).pipe(untilDestroyed(this)).subscribe((pass_res: { [displayId: number]: DisplayWebUri }) => {
           this.loader.close();
           if (pass_res[display_device.id].error) {
             passDialog.formGroup.controls['password'].reset();
@@ -646,13 +645,9 @@ export class VMListComponent implements OnDestroy {
   }
 
   checkMemory(): void {
-    this.ws.call(this.wsMethods.getAvailableMemory).subscribe((res) => {
+    this.ws.call(this.wsMethods.getAvailableMemory).pipe(untilDestroyed(this)).subscribe((res) => {
       this.availMem = this.storageService.convertBytestoHumanReadable(res);
     });
-  }
-
-  ngOnDestroy(): void {
-    this.eventSubscription.unsubscribe();
   }
 
   doAdd(): void {

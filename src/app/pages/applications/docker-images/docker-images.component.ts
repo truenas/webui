@@ -1,35 +1,37 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { latestVersion } from 'app/constants/catalog.constants';
+import { PreferencesService } from 'app/core/services/preferences.service';
+import helptext from 'app/helptext/apps/apps';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { MatDialog } from '@angular/material/dialog';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { WebSocketService } from '../../../services/ws.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
-import { ModalService } from '../../../services/modal.service';
-import helptext from '../../../helptext/apps/apps';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { PullImageFormComponent } from '../forms/pull-image-form.component';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 
+@UntilDestroy()
 @Component({
   selector: 'app-docker-images',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class DockerImagesComponent implements OnInit, OnDestroy {
+export class DockerImagesComponent implements EntityTableConfig, OnInit, OnDestroy {
   title = 'Docker Images';
 
   protected entityList: any;
   protected loaderOpen = false;
-  protected queryCall: 'container.image.query' = 'container.image.query';
-  protected wsDelete = 'container.image.delete';
-  protected disableActionsConfig = true;
+  queryCall: 'container.image.query' = 'container.image.query';
+  wsDelete: 'container.image.delete' = 'container.image.delete';
+  disableActionsConfig = true;
   private refreshTableSubscription: any;
-  protected addComponent: PullImageFormComponent;
+  addComponent: PullImageFormComponent;
 
-  columns: any[] = [
+  columns = [
     { name: helptext.dockerImages.columns.id, prop: 'id', always_display: true },
     { name: helptext.dockerImages.columns.tags, prop: 'repo_tags', always_display: true },
     { name: helptext.dockerImages.columns.state, prop: 'state', always_display: true },
@@ -68,7 +70,7 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.refreshUserForm();
 
-    this.modalService.refreshForm$.subscribe(() => {
+    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshUserForm();
     });
   }
@@ -168,7 +170,7 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     });
     self.dialogRef.componentInstance.setCall('container.image.pull', payload);
     self.dialogRef.componentInstance.submit();
-    self.dialogRef.componentInstance.success.subscribe(() => {
+    self.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       self.dialogService.closeAllDialogs();
       self.modalService.refreshTable();
     });

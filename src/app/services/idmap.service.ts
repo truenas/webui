@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Certificate } from 'app/interfaces/certificate.interface';
 import { Observable } from 'rxjs';
-
+import { Certificate } from 'app/interfaces/certificate.interface';
 import { RestService } from './rest.service';
 import { WebSocketService } from './ws.service';
 

@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import {
+  multicast,
+} from 'popmotion';
 import { CoreEvent } from 'app/interfaces/events';
 import { DisplayObject } from '../classes/display-object';
 import { LayoutObject } from '../classes/layout-object';
 import { CoreService } from './core.service';
-import {
-  multicast,
-} from 'popmotion';
 
 interface DisplayObjectRegistration {
   displayObject: DisplayObject;
@@ -20,6 +21,7 @@ export interface DisplayObjectConfig {
   id: string;
 }
 
+@UntilDestroy()
 @Injectable()
 export class InteractionManagerService {
   private displayList: DisplayObjectRegistration[];
@@ -29,7 +31,7 @@ export class InteractionManagerService {
   constructor(messageBus: CoreService) {
     this.messageBus = messageBus;
 
-    messageBus.register({ observerClass: this, eventName: 'RegisterLayout' }).subscribe((evt: CoreEvent) => {
+    messageBus.register({ observerClass: this, eventName: 'RegisterLayout' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       // Expects LayoutObject and array of CSS selectors
       // let collection: DisplayObject[] = [];
       const collection: any = {};
@@ -42,17 +44,17 @@ export class InteractionManagerService {
       evt.data.layout.initialize();
     });
 
-    messageBus.register({ observerClass: this, eventName: 'RegisterAsDisplayObject' }).subscribe((evt: CoreEvent) => {
+    messageBus.register({ observerClass: this, eventName: 'RegisterAsDisplayObject' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const config: DisplayObjectConfig = evt.data;
       this.registerElement(config); // Expects CSS id selector for element
     });
 
-    messageBus.register({ observerClass: this, eventName: 'RequestDisplayObjectReference' }).subscribe((evt: CoreEvent) => {
+    messageBus.register({ observerClass: this, eventName: 'RequestDisplayObjectReference' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const element = this.getChildById(evt.data);
       messageBus.emit({ name: element.id, data: element });
     });
 
-    messageBus.register({ observerClass: this, eventName: 'InsertIntoLayout' }).subscribe((evt: CoreEvent) => {
+    messageBus.register({ observerClass: this, eventName: 'InsertIntoLayout' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const layout = this.getLayoutById(evt.data.layout);
       let element;
       const elementIsRegistered = this.displayList.some((reg) => reg.displayObject == evt.sender);
@@ -68,7 +70,7 @@ export class InteractionManagerService {
       }
     });
 
-    messageBus.register({ observerClass: this, eventName: 'DisplayObjectSelected' }).subscribe((evt: CoreEvent) => {
+    messageBus.register({ observerClass: this, eventName: 'DisplayObjectSelected' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.sender != this.displayObjectWithFocus || !this.displayObjectWithFocus) {
         this.releaseAll();
         if (this.displayObjectWithFocus) { this.displayObjectWithFocus.hasFocus = false; }
@@ -82,7 +84,7 @@ export class InteractionManagerService {
       }
     });
 
-    messageBus.register({ observerClass: this, eventName: 'DisplayObjectReleased' }).subscribe((evt: CoreEvent) => {
+    messageBus.register({ observerClass: this, eventName: 'DisplayObjectReleased' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       const layout = this.getLayoutParent(evt.sender);
       if (layout) {
         layout.endInteractiveMovement(evt.sender);
@@ -161,7 +163,7 @@ export class InteractionManagerService {
   }
 
   private startCollisionDetection(dragTarget: DisplayObject, targets: any[]): void {
-    dragTarget.updateStream.subscribe(() => {
+    dragTarget.updateStream.pipe(untilDestroyed(this)).subscribe(() => {
       targets.forEach((target) => {
         const found = this.detectCollision(target, dragTarget);
         if (found) {

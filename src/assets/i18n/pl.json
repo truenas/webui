@@ -2188,6 +2188,7 @@
   "Nic to attach:": "",
   "No ": "",
   "No Applications Installed": "",
+  "No Applications are Available": "",
   "No Communication Warning Time": "",
   "No Encryption (less secure, but faster)": "",
   "No Inherit": "",
@@ -3632,6 +3633,7 @@
   "UTC": "",
   "UUID": "",
   "Unable to download key, check network connection.": "",
+  "Unable to retrieve Available Applications": "",
   "Unable to terminate processes which are using this pool: ": "",
   "Unencrypted pools can be imported directly.": "",
   "Unhealthy": "",
@@ -4307,7 +4309,6 @@
   "hostid": "ID hosta",
   "ip_hostname": "ip_nazwahosta",
   "name": "nazwa",
-  "no": "nie",
   "openfiles": "otwórz pliki",
   "overview": "przegląd",
   "owner": "właściciel",
@@ -4320,6 +4321,5 @@
   "users": "użytkownicy",
   "warn": "ostrzeżenie",
   "was successfully attached.": "został pomyślanie powiązany.",
-  "while pool is encrypted": "pula jest szyfrowana",
-  "yes": "tak"
+  "while pool is encrypted": "pula jest szyfrowana"
 }

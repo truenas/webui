@@ -1,20 +1,22 @@
 import { Component } from '@angular/core';
-import * as _ from 'lodash';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { MatDialog } from '@angular/material/dialog';
 import { FormArray } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { WebSocketService, DialogService } from '../../../../services';
-import { ModalService } from 'app/services/modal.service';
-import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { EntityUtils } from '../../../common/entity/utils';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService, DialogService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-certificate-acme-add',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -117,7 +119,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     },
   ];
 
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   protected dialogRef: any;
   queryCallOption: any[];
   initialCount = 1;
@@ -130,7 +132,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     protected entityFormService: EntityFormService, protected dialogService: DialogService,
     private modalService: ModalService,
   ) {
-    this.getRow = this.modalService.getRow$.subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
       this.rowNum = rowId;
       this.queryCallOption = [['id', '=', rowId]];
       this.getRow.unsubscribe();
@@ -138,14 +140,14 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   }
 
   preInit(entityForm: EntityFormComponent): void {
-    this.ws.call('acme.dns.authenticator.query').subscribe((authenticators) => {
+    this.ws.call('acme.dns.authenticator.query').pipe(untilDestroyed(this)).subscribe((authenticators) => {
       this.dns_map = _.find(this.fieldSets[2].config[0].templateListField, { name: 'authenticators' });
       authenticators.forEach((item) => {
         this.dns_map.options.push({ label: item.name, value: item.id });
       });
     });
 
-    this.ws.call('certificate.acme_server_choices').subscribe((choices) => {
+    this.ws.call('certificate.acme_server_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
       const acme_directory_uri = _.find(this.fieldSets[0].config, { name: 'acme_directory_uri' });
       for (const key in choices) {
         acme_directory_uri.options.push({ label: choices[key], value: key });
@@ -154,7 +156,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     this.fieldConfig = entityEdit.fieldConfig;
 
@@ -162,16 +164,16 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     this.domainList_fc = _.find(this.fieldConfig, { name: 'domains' });
     const listFields = this.domainList_fc.listFields;
 
-    this.ws.call(this.queryCall, [this.queryCallOption]).subscribe((res) => {
+    this.ws.call(this.queryCall, [this.queryCallOption]).pipe(untilDestroyed(this)).subscribe((res) => {
       this.commonName = res[0].common;
       this.csrOrg = res[0];
 
-      this.ws.call('certificate.get_domain_names', [this.rowNum]).subscribe((domains) => {
+      this.ws.call('certificate.get_domain_names', [this.rowNum]).pipe(untilDestroyed(this)).subscribe((domains) => {
         if (domains && domains.length > 0) {
           for (let i = 0; i < domains.length; i++) {
             if (this.domainList.controls[i] === undefined) {
               const templateListField = _.cloneDeep(this.domainList_fc.templateListField);
-              const newfg = entityEdit.entityFormService.createFormGroup(templateListField);
+              const newfg = this.entityFormService.createFormGroup(templateListField);
               newfg.setParent(this.domainList);
               this.domainList.controls.push(newfg);
               this.domainList_fc.listFields.push(templateListField);
@@ -211,12 +213,12 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     });
     this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialog.closeAll();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
-    this.dialogRef.componentInstance.failure.subscribe((err: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
       this.dialog.closeAll();
       // Dialog needed b/c handleWSError doesn't open a dialog when rejection comes back from provider
       if (err.error.includes('[EFAULT')) {

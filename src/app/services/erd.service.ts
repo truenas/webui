@@ -27,11 +27,8 @@ export class ErdService {
       }
 
       const elementAny = document.getElementById(elementId);
-      if (typeof (erd) !== 'undefined' && erd !== null
-            && typeof (elementAny) !== 'undefined' && elementAny !== null) {
-        erd.listenTo(() => {
-          (<any>window).dispatchEvent(new Event('resize'));
-        });
+      if (typeof (erd) !== 'undefined' && erd !== null && typeof (elementAny) !== 'undefined' && elementAny !== null) {
+        erd.listenTo(() => window.dispatchEvent(new Event('resize')));
       }
     });
   }

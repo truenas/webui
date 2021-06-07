@@ -1,25 +1,27 @@
 import { Component } from '@angular/core';
+import { FormControl, ValidatorFn } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { FormControl, ValidatorFn } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { WebSocketService } from 'app/services/';
-import { DialogService } from 'app/services/dialog.service';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { helptext_system_support as helptext } from 'app/helptext/system/support';
-import { ModalService } from '../../../../../services/modal.service';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { WebSocketService } from 'app/services/';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
+import { ModalService } from 'app/services/modal.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-support-form-licensed',
   template: '<entity-form [conf]="this"></entity-form>',
-
 })
 export class SupportFormLicensedComponent implements FormConfiguration {
-  entityEdit: any;
+  entityEdit: EntityFormComponent;
   screenshot: any;
   subs: any[];
   saveSubmitText = helptext.submitBtn;
@@ -164,7 +166,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
     public ws: WebSocketService, public dialogService: DialogService, public router: Router,
     private modalService: ModalService) { }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     this.custActions = [
       {
@@ -241,7 +243,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
     let url: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res.result) {
         url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
       }
@@ -254,10 +256,10 @@ export class SupportFormLicensedComponent implements FormConfiguration {
           }));
           formData.append('file', item.file, item.apiEndPoint);
           dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
-          dialogRef.componentInstance.success.subscribe(() => {
+          dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.resetForm();
           });
-          dialogRef.componentInstance.failure.subscribe((res: any) => {
+          dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
             dialogRef.componentInstance.setDescription(res.error);
           });
         });
@@ -267,7 +269,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
         this.resetForm();
       }
     });
-    dialogRef.componentInstance.failure.subscribe((res: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }

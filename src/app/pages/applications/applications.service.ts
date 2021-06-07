@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Observable } from 'rxjs';
-import { WebSocketService } from '../../services/index';
+import { WebSocketService } from 'app/services/index';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {

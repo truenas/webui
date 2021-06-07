@@ -3,22 +3,23 @@ import {
   Component,
   Injector,
 } from '@angular/core';
-
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
-import { WebSocketService, StorageService } from '../../../../services';
-import { EncryptionService } from '../../../../services/encryption.service';
+import helptext from 'app/helptext/storage/volumes/volume-key';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
   FieldConfig,
-} from '../../../common/entity/entity-form/models/field-config.interface';
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { WebSocketService, StorageService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
-import { MatDialog } from '@angular/material/dialog';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/storage/volumes/volume-key';
+import { EncryptionService } from 'app/services/encryption.service';
+import { T } from 'app/translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'app-addkey-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -72,7 +73,7 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
       name: helptext.add_key_invalid_button,
       disabled: this.button_disabled,
       function: () => {
-        this.ws.call('auth.check_user', ['root', this.admin_pw]).subscribe((res) => {
+        this.ws.call('auth.check_user', ['root', this.admin_pw]).pipe(untilDestroyed(this)).subscribe((res) => {
           if (res) {
             this.encryptionService.deleteRecoveryKey(this.pk, this.admin_pw, this.poolName, this.route_return);
           } else {
@@ -112,13 +113,13 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
   ) {}
 
   preInit(): void {
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
     });
   }
 
-  afterInit(entityForm: any): void {
-    entityForm.formGroup.controls['password'].valueChanges.subscribe((res: string) => {
+  afterInit(entityForm: EntityFormComponent): void {
+    entityForm.formGroup.controls['password'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.admin_pw = res;
       const btn = <HTMLInputElement> document.getElementById('cust_button_Invalidate Existing Key');
       this.admin_pw !== '' ? btn.disabled = false : btn.disabled = true;
@@ -126,7 +127,7 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
   }
 
   customSubmit(value: any): void {
-    this.ws.call('auth.check_user', ['root', value.password]).subscribe((res) => {
+    this.ws.call('auth.check_user', ['root', value.password]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.encryptionService.makeRecoveryKey(this.pk, value.name, this.route_return);
       } else {

@@ -2,13 +2,15 @@ import {
   ApplicationRef, Component, Injector, OnInit,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/services/components/service-ssh';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import helptext from '../../../../helptext/services/components/service-ssh';
-import { NetworkService, RestService, WebSocketService } from '../../../../services';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { NetworkService, RestService, WebSocketService } from 'app/services';
 
+@UntilDestroy()
 @Component({
   selector: 'ssh-edit',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -166,7 +168,7 @@ export class ServiceSSHComponent implements FormConfiguration, OnInit {
   }
 
   ngOnInit(): void {
-    this.ws.call('ssh.bindiface_choices').subscribe((res) => {
+    this.ws.call('ssh.bindiface_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       this.ssh_bindiface = this.fieldSets
         .find((set) => set.name === globalHelptext.fieldset_other_options)
         .config.find((config) => config.name === 'bindiface');

@@ -1,32 +1,30 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { TranslateModule } from '@ngx-translate/core';
-import { MaterialModule } from '../../appMaterial.module';
-
+import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
 import { ChartistModule } from 'ng-chartist';
-import { TopbarComponent } from './topbar/topbar.component';
-import { NavigationComponent } from './navigation/navigation.component';
-import { NotificationsComponent } from './notifications/notifications.component';
-import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
-import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
-import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
-import { ThemeService } from '../../services/theme/theme.service';
-import { DialogService } from '../../services/dialog.service';
-import { CustomizerComponent } from './customizer/customizer.component';
-import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
-import { PageTitleComponent } from './pagetitle/pagetitle.component';
-import { ModalComponent } from './modal/modal.component';
-import { LanguageService } from '../../services/language.service';
-import { HttpClientModule } from '@angular/common/http';
-import { LocaleService } from '../../services/locale.service';
-import { EntityModule } from '../../pages/common/entity/entity.module';
+import { MaterialModule } from 'app/appMaterial.module';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-
-import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { EntityModule } from 'app/pages/common/entity/entity.module';
+import { DialogService } from 'app/services/dialog.service';
+import { LanguageService } from 'app/services/language.service';
+import { LocaleService } from 'app/services/locale.service';
+import { ThemeService } from 'app/services/theme/theme.service';
+import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
+import { CustomizerComponent } from './customizer/customizer.component';
+import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
+import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
+import { ModalComponent } from './modal/modal.component';
+import { NavigationComponent } from './navigation/navigation.component';
+import { NotificationsComponent } from './notifications/notifications.component';
+import { PageTitleComponent } from './pagetitle/pagetitle.component';
+import { TopbarComponent } from './topbar/topbar.component';
 
 @NgModule({
   imports: [

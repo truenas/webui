@@ -3,13 +3,14 @@ import {
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatTabGroup } from '@angular/material/tabs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
-import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
-import { EntityFormService } from '../../services/entity-form.service';
 import * as _ from 'lodash';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 
+@UntilDestroy()
 @Component({
   selector: 'form-task',
   templateUrl: './form-task.component.html',
@@ -41,12 +42,12 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
     this.tabFormGroup = this.entityFormService.createFormGroup(this.config.tabs);
     this.control = this.group.controls[this.config.name];
     for (const item in this.tabFormGroup.controls) {
-      this.tabFormGroup.controls[item].valueChanges.subscribe(() => {
+      this.tabFormGroup.controls[item].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
         this.setControlValue();
       });
     }
 
-    this.group.controls[this.config.name].valueChanges.subscribe((res) => {
+    this.group.controls[this.config.name].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (this.init && res) {
         this.init = false;
         if (_.startsWith(this.control.value, '*/')) {

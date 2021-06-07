@@ -2,18 +2,19 @@ import {
   OnInit, Component, ViewEncapsulation, Inject,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ApplicationsService } from '../../applications.service';
-import helptext from '../../../../helptext/apps/apps';
-import { LocaleService } from 'app/services/locale.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import helptext from 'app/helptext/apps/apps';
+import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { LocaleService } from 'app/services/locale.service';
 
+@UntilDestroy()
 @Component({
   selector: 'manage-catalog-summary-dialog',
   styleUrls: ['./manage-catalog-summary-dialog.component.scss'],
   templateUrl: './manage-catalog-summary-dialog.component.html',
   encapsulation: ViewEncapsulation.None,
 })
-
 export class ManageCatalogSummaryDialog implements OnInit {
   catalog: any;
   statusOptions: string[] = ['All', 'Healthy', 'Unhealthy'];
@@ -35,7 +36,7 @@ export class ManageCatalogSummaryDialog implements OnInit {
   }
 
   ngOnInit(): void {
-    this.appService.getCatItems(this.catalog.label).subscribe((evt) => {
+    this.appService.getCatItems(this.catalog.label).pipe(untilDestroyed(this)).subscribe((evt) => {
       this.catalogItems = [];
       this.trainOptions = ['All'];
       Object.keys(evt).forEach((trainKey) => {

@@ -1,19 +1,20 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
-import { Option } from 'app/interfaces/option.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-
+import { Router, ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { IscsiService, WebSocketService, AppLoaderService } from '../../../../../services';
-import { EntityUtils } from '../../../../common/entity/utils';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
-import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
-
-import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
-import { selectedOptionValidator } from 'app/pages/common/entity/entity-form/validators/invalid-option-selected';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { selectedOptionValidator } from 'app/pages/common/entity/entity-form/validators/invalid-option-selected';
+import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { IscsiService, WebSocketService, AppLoaderService } from 'app/services';
 
+@UntilDestroy()
 @Component({
   selector: 'app-iscsi-portal-add',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -129,7 +130,7 @@ export class PortalFormComponent implements FormConfiguration {
   fieldConfig: FieldConfig[];
   pk: any;
   protected authgroup_field: any;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   protected ip: any;
 
   constructor(protected router: Router,
@@ -158,7 +159,7 @@ export class PortalFormComponent implements FormConfiguration {
   }
 
   preInit(): void {
-    this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
         this.customFilter[0][0].push(parseInt(params['pk'], 10));
@@ -166,7 +167,7 @@ export class PortalFormComponent implements FormConfiguration {
     });
     const authgroupFieldset = _.find(this.fieldSets, { class: 'authgroup' });
     this.authgroup_field = _.find(authgroupFieldset.config, { name: 'discovery_authgroup' });
-    this.iscsiService.getAuth().subscribe((accessRecords) => {
+    this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
       for (let i = 0; i < accessRecords.length; i++) {
         if (_.find(this.authgroup_field.options, { value: accessRecords[i].tag }) == undefined) {
           this.authgroup_field.options.push({ label: accessRecords[i].tag, value: accessRecords[i].tag });
@@ -175,18 +176,18 @@ export class PortalFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
-    entityForm.formGroup.controls['listen'].valueChanges.subscribe((res: any) => {
+    entityForm.formGroup.controls['listen'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.genPortalAddress(res);
     });
   }
 
   customEditCall(value: any): void {
     this.loader.open();
-    this.ws.call(this.editCall, [this.pk, value]).subscribe(
+    this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));

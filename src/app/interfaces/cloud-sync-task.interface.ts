@@ -1,7 +1,7 @@
-import { EntityJob } from 'app/interfaces/entity-job.interface';
-import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { Direction } from 'app/enums/direction.enum';
+import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { DataProtectionTaskState } from 'app/interfaces/data-protection-task-state.interface';
+import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 
 export interface CloudCredential {

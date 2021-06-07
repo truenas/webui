@@ -1,15 +1,17 @@
 import { Component } from '@angular/core';
-import { SystemGeneralService, WebSocketService } from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { ModalService } from '../../../../services/modal.service';
-import { EntityUtils } from '../../../common/entity/utils';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { T } from 'app/translate-marker';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { GpuDevice } from 'app/interfaces/gpu-device.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { SystemGeneralService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'app-isolated-pcis-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -59,7 +61,7 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     const gpusFormControl = this.entityForm.formGroup.controls['gpus'];
 
-    this.ws.call('device.get_info', ['GPU']).subscribe((gpus) => {
+    this.ws.call('device.get_info', ['GPU']).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
       const gpusConf = this.fieldSets.config('gpus');
       for (const item of gpus) {
@@ -68,12 +70,12 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
       gpusFormControl.setValue(this.isolatedGpuPciIds);
     });
 
-    this.sysGeneralService.getAdvancedConfig.subscribe((adv_conf: AdvancedConfig) => {
+    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((adv_conf: AdvancedConfig) => {
       this.isolatedGpuPciIds = adv_conf.isolated_gpu_pci_ids;
       this.advancedConfig = adv_conf;
     });
 
-    gpusFormControl.valueChanges.subscribe((gpusValue: string[]) => {
+    gpusFormControl.valueChanges.pipe(untilDestroyed(this)).subscribe((gpusValue: string[]) => {
       const finalIsolatedPciIds = [...gpusValue];
 
       const gpusConf = this.fieldSets.config('gpus');
@@ -97,7 +99,7 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
   customSubmit(body: { gpus: string[] }): void {
     this.loader.open();
     const finalIsolatedPciIds = body.gpus;
-    this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids: finalIsolatedPciIds }]).subscribe(
+    this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids: finalIsolatedPciIds }]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
         this.entityForm.success = true;

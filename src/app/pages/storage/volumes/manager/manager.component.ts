@@ -1,34 +1,37 @@
 import {
-  AfterViewInit, Component, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren,
+  AfterViewInit, Component, OnInit, QueryList, ViewChild, ViewChildren,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
+import * as filesize from 'filesize';
+import * as _ from 'lodash';
+import { of } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
+import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
+import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { VDev } from 'app/interfaces/storage.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
-import * as _ from 'lodash';
-import { of, Subscription } from 'rxjs';
-import { switchMap, take } from 'rxjs/operators';
-import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
-import helptext from '../../../../helptext/storage/volumes/manager/manager';
-import { DialogService, WebSocketService, SystemGeneralService } from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { StorageService } from '../../../../services/storage.service';
-import { T } from '../../../../translate-marker';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityUtils } from '../../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { StorageService } from 'app/services/storage.service';
+import { T } from 'app/translate-marker';
 import { DiskComponent } from './disk';
 import { VdevComponent } from './vdev';
 
+@UntilDestroy()
 @Component({
   selector: 'app-manager',
   templateUrl: 'manager.component.html',
   styleUrls: ['manager.component.scss'],
   providers: [DialogService],
 })
-export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ManagerComponent implements OnInit, AfterViewInit {
   disks: any[] = [];
   suggestable_disks: any[] = [];
   can_suggest = false;
@@ -40,8 +43,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   original_disks: any[];
   orig_suggestable_disks: any[];
   error: string;
-  @ViewChildren(VdevComponent) vdevComponents: QueryList < VdevComponent > ;
-  @ViewChildren(DiskComponent) diskComponents: QueryList < DiskComponent > ;
+  @ViewChildren(VdevComponent) vdevComponents: QueryList<VdevComponent> ;
+  @ViewChildren(DiskComponent) diskComponents: QueryList<DiskComponent> ;
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
   temp: any[] = [];
 
@@ -75,7 +78,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   protected needs_disk = true;
   protected needsDiskMessage = helptext.manager_needsDiskMessage;
   protected extendedNeedsDiskMessage = helptext.manager_extendedNeedsDiskMessage;
-  size: number;
+  size: string;
   protected extendedAvailable: any;
   sizeMessage = helptext.manager_sizeMessage;
   protected extendedSizeMessage = helptext.manager_extendedSizeMessage;
@@ -110,9 +113,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   private duplicable_disks: any[] = [];
 
   canDuplicate = false;
-
-  busy: Subscription;
-  getAdvancedConfig: Subscription;
 
   name_tooltip = helptext.manager_name_tooltip;
 
@@ -210,7 +210,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         const setParatext = function (vdevs: number): void {
           const used = parent.first_data_vdev_disknum * vdevs;
           const remaining = parent.duplicable_disks.length - used;
-          const size = (<any>window).filesize(parent.first_data_vdev_disksize, { standard: 'iec' });
+          const size = filesize(parent.first_data_vdev_disksize, { standard: 'iec' });
           const type = parent.first_data_vdev_disktype;
           const vdev_type = parent.first_data_vdev_type;
           const paraText = 'Create ' + vdevs + ' new ' + vdev_type + ' data vdevs using ' + used
@@ -218,7 +218,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
           copy_desc.paraText = paraText;
         };
         setParatext(entityDialog.formGroup.controls['vdevs'].value);
-        entityDialog.formGroup.controls['vdevs'].valueChanges.subscribe((vdevs) => {
+        entityDialog.formGroup.controls['vdevs'].valueChanges.pipe(untilDestroyed(this)).subscribe((vdevs) => {
           setParatext(vdevs);
         });
       },
@@ -227,32 +227,32 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getDiskNumErrorMsg(disks: number): void {
-    this.translate.get(this.disknumErrorMessage).subscribe((errorMessage) => {
+    this.translate.get(this.disknumErrorMessage).pipe(untilDestroyed(this)).subscribe((errorMessage) => {
       this.disknumError = errorMessage + T(' First vdev has ') + this.first_data_vdev_disknum + T(' disks, new vdev has ') + disks + '.';
     });
   }
 
   getVdevTypeErrorMsg(type: any): void {
-    this.translate.get(this.vdevtypeErrorMessage).subscribe((errorMessage) => {
+    this.translate.get(this.vdevtypeErrorMessage).pipe(untilDestroyed(this)).subscribe((errorMessage) => {
       this.vdevtypeError = errorMessage + T(' First vdev is a ') + this.first_data_vdev_type + T(', new vdev is ') + type + '.';
     });
   }
 
   getStripeVdevTypeErrorMsg(group: any): void {
-    this.translate.get(this.stripeVdevTypeErrorMessage).subscribe((errorMessage) => {
+    this.translate.get(this.stripeVdevTypeErrorMessage).pipe(untilDestroyed(this)).subscribe((errorMessage) => {
       const vdevType = group === 'special' ? 'metadata' : group;
       this.stripeVdevTypeError = `${T('A stripe')} ${vdevType} ${errorMessage}`;
     });
   }
 
   getLogVdevTypeWarningMsg(): void {
-    this.translate.get(this.logVdevTypeWarningMessage).subscribe((errorMessage) => {
+    this.translate.get(this.logVdevTypeWarningMessage).pipe(untilDestroyed(this)).subscribe((errorMessage) => {
       this.logVdevTypeWarning = errorMessage;
     });
   }
 
   getPoolData(): void {
-    this.ws.call(this.queryCall, [[['id', '=', this.pk]]]).subscribe((res) => {
+    this.ws.call(this.queryCall, [[['id', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res[0]) {
         this.first_data_vdev_type = res[0].topology.data[0].type.toLowerCase();
         if (this.first_data_vdev_type === 'raidz1') {
@@ -269,7 +269,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         } else {
           first_disk = res[0].topology.data[0].children[0];
         }
-        this.ws.call('disk.query', [[['name', '=', first_disk.disk]]]).subscribe((disk) => {
+        this.ws.call('disk.query', [[['name', '=', first_disk.disk]]]).pipe(untilDestroyed(this)).subscribe((disk) => {
           if (disk[0]) {
             this.first_data_vdev_disksize = disk[0].size;
             this.first_data_vdev_disktype = disk[0].type;
@@ -281,10 +281,10 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         if (this.vol_encrypt > 0) {
           this.isEncrypted = true;
         }
-        this.ws.call(this.datasetQueryCall, [[['id', '=', res[0].name]]]).subscribe((datasets) => {
+        this.ws.call(this.datasetQueryCall, [[['id', '=', res[0].name]]]).pipe(untilDestroyed(this)).subscribe((datasets) => {
           if (datasets[0]) {
             this.extendedAvailable = datasets[0].available.parsed;
-            this.size = (<any>window).filesize(this.extendedAvailable, { standard: 'iec' });
+            this.size = filesize(this.extendedAvailable, { standard: 'iec' });
           }
         });
       }
@@ -295,17 +295,17 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.ws.call('pool.dataset.encryption_algorithm_choices').subscribe((algorithms) => {
+    this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(untilDestroyed(this)).subscribe((algorithms) => {
       for (const algorithm in algorithms) {
         if (algorithms.hasOwnProperty(algorithm)) {
           this.encryption_algorithm_options.push({ label: algorithm, value: algorithm });
         }
       }
     });
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res) => {
+    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       this.swapondrive = res.swapondrive;
     });
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['pk']) {
         this.pk = parseInt(params['pk'], 10);
         this.isNew = false;
@@ -316,7 +316,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sizeMessage = this.extendedSizeMessage;
       this.getPoolData();
     } else {
-      this.ws.call(this.queryCall, []).subscribe((res) => {
+      this.ws.call(this.queryCall, []).pipe(untilDestroyed(this)).subscribe((res) => {
         if (res) {
           this.existing_pools = res;
         }
@@ -329,13 +329,13 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     this.loader.open();
     this.loaderOpen = true;
-    this.ws.call('disk.get_unused', []).subscribe((res) => {
+    this.ws.call('disk.get_unused', []).pipe(untilDestroyed(this)).subscribe((res) => {
       this.loader.close();
       this.loaderOpen = false;
       this.disks = [];
       for (const i in res) {
         res[i]['real_capacity'] = res[i]['size'];
-        res[i]['capacity'] = (<any>window).filesize(res[i]['size'], { standard: 'iec' });
+        res[i]['capacity'] = filesize(res[i]['size'], { standard: 'iec' });
         const details = [];
         if (res[i]['rotationrate']) {
           details.push({ label: T('Rotation Rate'), value: res[i]['rotationrate'] });
@@ -373,11 +373,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       this.loader.close();
       new EntityUtils().handleWSError(this, err, this.dialog);
     });
-  }
-
-  ngOnDestroy(): void {
-    // this.dragulaService.destroy("pool-vdev");
-    this.getAdvancedConfig.unsubscribe();
   }
 
   addVdev(group: any, initial_values = {}): void {
@@ -488,7 +483,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.needs_disk = true;
     }
-    this.size = (<any>window).filesize(size_estimate, { standard: 'iec' });
+    this.size = filesize(size_estimate, { standard: 'iec' });
 
     this.getDuplicableDisks();
   }
@@ -546,7 +541,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       disknumErr = this.disknumExtendConfirmMessage;
     }
     if (this.disknumError) {
-      this.dialog.confirm(T('Warning'), disknumErr).subscribe((res: boolean) => {
+      this.dialog.confirm(T('Warning'), disknumErr).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
         if (!res) {
           return;
         }
@@ -567,7 +562,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       if (this.stripeVdevTypeError) {
         warnings = warnings + '<br/><br/>' + this.stripeVdevTypeError;
       }
-      this.dialog.confirm(helptext.force_title, warnings).subscribe((res: boolean) => {
+      this.dialog.confirm(helptext.force_title, warnings).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
         this.force = res;
       });
     }
@@ -581,7 +576,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       diskWarning = this.diskExtendWarning;
     }
 
-    this.dialog.confirm(T('Warning'), diskWarning, false, confirmButton).subscribe((res: boolean) => {
+    this.dialog.confirm(T('Warning'), diskWarning, false, confirmButton).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         this.error = null;
 
@@ -641,7 +636,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
             }),
             take(1),
           )
-          .subscribe(
+          .pipe(untilDestroyed(this)).subscribe(
             () => {},
             (e) => new EntityUtils().handleWSError(this, e, this.dialog),
             () => {
@@ -649,7 +644,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
               this.goBack();
             },
           );
-        dialogRef.componentInstance.failure.subscribe((error: any) => {
+        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error: any) => {
           dialogRef.close(false);
           new EntityUtils().handleWSError(self, error, this.dialog);
         });
@@ -664,7 +659,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openDialog(): void {
     if (this.isEncrypted) {
-      this.dialog.confirm(T('Warning'), this.encryption_message, false, T('I Understand')).subscribe((res: boolean) => {
+      this.dialog.confirm(T('Warning'), this.encryption_message, false, T('I Understand')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
         if (res) {
           this.isEncrypted = true;
           this.vol_encrypt = 1;

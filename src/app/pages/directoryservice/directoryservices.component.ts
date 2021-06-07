@@ -1,9 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import helptext from 'app/helptext/directoryservice/dashboard';
+import idmapHelptext from 'app/helptext/directoryservice/idmap';
+import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 import {
   WebSocketService,
   SystemGeneralService,
@@ -11,32 +14,27 @@ import {
   DialogService,
   IdmapService,
   UserService,
-} from '../../services';
-import { ModalService } from '../../services/modal.service';
-import helptext from '../../helptext/directoryservice/dashboard';
-import idmapHelptext from '../../helptext/directoryservice/idmap';
-import { AppLoaderService } from '../../services/app-loader/app-loader.service';
+} from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { EmptyConfig } from '../common/entity/entity-empty/entity-empty.component';
-import { LdapComponent } from './ldap/ldap.component';
 import { ActiveDirectoryComponent } from './activedirectory/activedirectory.component';
 import { IdmapFormComponent } from './idmap/idmap-form.component';
-import { KerberosSettingsComponent } from './kerberossettings/kerberossettings.component';
-import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form.component';
 import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form.component';
+import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form.component';
+import { KerberosSettingsComponent } from './kerberossettings/kerberossettings.component';
+import { LdapComponent } from './ldap/ldap.component';
 
+@UntilDestroy()
 @Component({
   selector: 'directoryservices',
   templateUrl: './directoryservices.component.html',
   providers: [DatePipe, UserService],
 })
-export class DirectoryservicesComponent implements OnInit, OnDestroy {
+export class DirectoryservicesComponent implements OnInit {
   dataCards: any[] = [];
   tableCards: any[] = [];
-
-  refreshOnClose: Subscription;
 
   // Components included in this dashboard
   protected ldapFormComponent: LdapComponent;
@@ -164,7 +162,7 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     ];
 
     this.getDataCardData();
-    this.refreshOnClose = this.modalService.onClose$.subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
     });
 
@@ -289,12 +287,12 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     }
 
     if (name == 'idmap' && !id) {
-      this.idmapService.getADStatus().subscribe((res) => {
+      this.idmapService.getADStatus().pipe(untilDestroyed(this)).subscribe((res) => {
         if (res.enable) {
           this.modalService.open('slide-in-form', addComponent, id);
         } else {
           this.dialog.confirm(idmapHelptext.idmap.enable_ad_dialog.title, idmapHelptext.idmap.enable_ad_dialog.message,
-            true, idmapHelptext.idmap.enable_ad_dialog.button).subscribe((res: boolean) => {
+            true, idmapHelptext.idmap.enable_ad_dialog.button).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
             if (res) {
               addComponent = this.activeDirectoryFormComponent;
               this.modalService.open('slide-in-form', addComponent, id);
@@ -345,9 +343,5 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     this.kerberosSettingFormComponent = new KerberosSettingsComponent();
     this.kerberosRealmsFormComponent = new KerberosRealmsFormComponent(this.modalService);
     this.kerberosKeytabsFormComponent = new KerberosKeytabsFormComponent(this.modalService);
-  }
-
-  ngOnDestroy(): void {
-    this.refreshOnClose.unsubscribe();
   }
 }

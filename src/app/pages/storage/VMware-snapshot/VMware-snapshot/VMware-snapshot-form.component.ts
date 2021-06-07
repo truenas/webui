@@ -5,19 +5,20 @@ import {
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
-import { RestService, WebSocketService } from '../../../../services';
-import { T } from '../../../../translate-marker';
-import { DialogService } from 'app/services/dialog.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import helptext from '../../../../helptext/storage/VMware-snapshot/VMware-snapshot';
-import { EntityUtils } from '../../../common/entity/utils';
+import helptext from 'app/helptext/storage/VMware-snapshot/VMware-snapshot';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { RestService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
+import { T } from 'app/translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'app-vmware-snapshot-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -31,7 +32,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
   pk: any;
   formGroup: FormGroup;
 
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   private datastore: any;
   private datastoreList: any[];
   private dataListComplete: any[];
@@ -127,7 +128,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
 
   preInit(): void {
     const queryPayload: any[] = [];
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       queryPayload.push('id');
       queryPayload.push('=');
       queryPayload.push(parseInt(params['pk'], 10));
@@ -135,7 +136,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.datastoreList = [];
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
@@ -145,7 +146,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
       this.datastore.options.length = 0;
     }
 
-    this.entityForm.formGroup.controls['datastore'].valueChanges.subscribe((res: any) => {
+    this.entityForm.formGroup.controls['datastore'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.datastoreList.forEach((e) => {
         if (res === e.name) {
           this.entityForm.formGroup.controls['filesystem'].setValue(e.filesystems[0]);
@@ -178,10 +179,10 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
       }
       this.dialogService.confirm(T('Are you sure?'), T('The filesystem ') + firstObj.name + T(' is ')
           + firstObj.description + T(' but datastore ') + secondObj.name + T(' is ') + secondObj.description
-          + T('. Is this correct?'), true).subscribe((res: boolean) => {
+          + T('. Is this correct?'), true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
         if (res === true) {
           this.loader.open();
-          this.ws.call(this.addCall, [payload]).subscribe(() => {
+          this.ws.call(this.addCall, [payload]).pipe(untilDestroyed(this)).subscribe(() => {
             this.loader.close();
             this.router.navigate(new Array('/').concat(this.route_success));
           },
@@ -193,7 +194,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
       });
     } else {
       this.loader.open();
-      this.ws.call(this.addCall, [payload]).subscribe(() => {
+      this.ws.call(this.addCall, [payload]).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },
@@ -206,8 +207,8 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
 
   customEditCall(body: any): void {
     if (this.entityForm.pk) {
-      this.entityForm.loader.open();
-      this.ws.call('vmware.update', [this.entityForm.pk, body]).subscribe(() => {
+      this.loader.open();
+      this.ws.call('vmware.update', [this.entityForm.pk, body]).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       }, (error) => {
@@ -215,8 +216,8 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
         this.dialogService.errorReport(error.error, error.reason, error.trace.formatted);
       });
     } else {
-      this.entityForm.loader.open();
-      this.ws.call('vmware.create', [body]).subscribe(() => {
+      this.loader.open();
+      this.ws.call('vmware.create', [body]).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       }, (error) => {
@@ -236,7 +237,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
 
       if (payload['password'] !== '' && typeof (payload['password']) !== 'undefined') {
         parent.loader.open();
-        parent.ws.call('vmware.match_datastores_with_datasets', [payload]).subscribe((res: any) => {
+        parent.ws.call('vmware.match_datastores_with_datasets', [payload]).pipe(untilDestroyed(this)).subscribe((res: any) => {
           res.filesystems.forEach((filesystem_item: any) => {
             _.find(parent.fieldConfig, { name: 'filesystem' })['options'].push(
               {

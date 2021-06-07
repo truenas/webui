@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import * as _ from 'lodash';
-import { ProductType } from '../../../../enums/product-type.enum';
-import { WebSocketService } from '../../../../services/ws.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
+import { ProductType } from 'app/enums/product-type.enum';
+import { WebSocketService } from 'app/services/ws.service';
 
+@UntilDestroy()
 @Component({
   selector: 'entity-dashboard',
   templateUrl: './entity-dashboard.component.html',
@@ -51,12 +53,12 @@ export class EntityDashboardComponent implements OnInit {
     if (!this.productType.includes(ProductType.Enterprise)) {
       exclude = exclude.concat(this.enterpriseOnly);
     }
-    this.ws.call('ipmi.is_loaded').subscribe((isIpmiLoaded) => {
+    this.ws.call('ipmi.is_loaded').pipe(untilDestroyed(this)).subscribe((isIpmiLoaded) => {
       if (!isIpmiLoaded) {
         this.remove('ipmi');
       }
     });
-    this.ws.call('multipath.query').subscribe((res) => {
+    this.ws.call('multipath.query').pipe(untilDestroyed(this)).subscribe((res) => {
       if (!res || res.length === 0) {
         this.remove('multipaths');
       }

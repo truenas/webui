@@ -2,14 +2,14 @@ import {
   Component, ViewChild, ElementRef, ChangeDetectorRef,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { CoreService } from 'app/core/services/core.service';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Point } from 'pixi.js';
 import { MINI } from 'app/core/classes/hardware/mini';
 import { MINIX } from 'app/core/classes/hardware/mini-x';
 import { MINIXLPLUS } from 'app/core/classes/hardware/mini-xl-plus';
-import { DomSanitizer } from '@angular/platform-browser';
-import { EnclosureDisksComponent } from './enclosure-disks.component';
+import { CoreService } from 'app/core/services/core.service';
 import { DialogService } from 'app/services/dialog.service';
+import { EnclosureDisksComponent } from './enclosure-disks.component';
 
 @Component({
   selector: 'enclosure-disks-mini',

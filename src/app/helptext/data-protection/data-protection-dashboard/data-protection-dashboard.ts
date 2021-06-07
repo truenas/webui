@@ -1,4 +1,4 @@
-import { T } from '../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 export default {
   fieldset_cloud_sync_tasks: T('Cloud Sync Tasks'),

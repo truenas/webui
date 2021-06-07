@@ -1,21 +1,23 @@
 import { Component } from '@angular/core';
-import { Option } from 'app/interfaces/option.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { ProductType } from '../../../enums/product-type.enum';
-import { DialogService, WebSocketService } from '../../../services';
-import { ipv4Validator } from '../../common/entity/entity-form/validators/ip-validation';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import helptext from '../../../helptext/network/ipmi/ipmi';
-import globalHelptext from '../../../helptext/global-helptext';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { EntityUtils } from '../../common/entity/utils';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { T } from '../../../translate-marker';
+import { ProductType } from 'app/enums/product-type.enum';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/network/ipmi/ipmi';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { ipv4Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { T } from 'app/translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'app-ipmi',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -24,7 +26,7 @@ export class IPMIFromComponent implements FormConfiguration {
   title = 'IMPI';
   queryCall: 'ipmi.query' = 'ipmi.query';
 
-  protected entityEdit: any;
+  protected entityEdit: EntityFormComponent;
   is_ha = false;
   controllerName = globalHelptext.Ctrlr;
   currentControllerLabel: string;
@@ -213,35 +215,35 @@ export class IPMIFromComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.channelValue = entityEdit.pk;
     this.entityEdit = entityEdit;
 
-    entityEdit.formGroup.controls['password'].statusChanges.subscribe((status: any) => {
+    entityEdit.formGroup.controls['password'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: any) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'password' }));
     });
 
-    entityEdit.formGroup.controls['ipaddress'].statusChanges.subscribe((status: any) => {
+    entityEdit.formGroup.controls['ipaddress'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: any) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'ipaddress' }));
       const ipValue = entityEdit.formGroup.controls['ipaddress'].value;
       const btn = <HTMLInputElement>document.getElementById('cust_button_Manage');
       status === 'INVALID' || ipValue === '0.0.0.0' ? btn.disabled = true : btn.disabled = false;
     });
 
-    entityEdit.formGroup.controls['ipaddress'].valueChanges.subscribe((value: any) => {
+    entityEdit.formGroup.controls['ipaddress'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.managementIP = value;
     });
 
-    entityEdit.formGroup.controls['netmask'].statusChanges.subscribe((status: any) => {
+    entityEdit.formGroup.controls['netmask'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: any) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'netmask' }));
     });
 
-    entityEdit.formGroup.controls['gateway'].statusChanges.subscribe((status: any) => {
+    entityEdit.formGroup.controls['gateway'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: any) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'gateway' }));
     });
 
     if (entityEdit.formGroup.controls['remoteController']) {
-      entityEdit.formGroup.controls['remoteController'].valueChanges.subscribe(() => {
+      entityEdit.formGroup.controls['remoteController'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
         this.loadData();
       });
     }
@@ -258,7 +260,7 @@ export class IPMIFromComponent implements FormConfiguration {
     }
 
     this.loader.open();
-    return call.subscribe(() => {
+    return call.pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
       this.dialog.Info(T('Settings saved.'), '', '300px', 'info', true);
     }, (res) => {
@@ -272,7 +274,7 @@ export class IPMIFromComponent implements FormConfiguration {
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
       query = this.ws.call('failover.call_remote', [this.queryCall, [filter]]);
     }
-    query.subscribe((res) => {
+    query.pipe(untilDestroyed(this)).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
         this.channelValue = res[i].channel;
         this.entityEdit.formGroup.controls['netmask'].setValue(res[i].netmask);

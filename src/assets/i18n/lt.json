@@ -2297,6 +2297,7 @@
   "No": "",
   "No ": "",
   "No Applications Installed": "",
+  "No Applications are Available": "",
   "No Communication Warning Time": "",
   "No Encryption (less secure, but faster)": "",
   "No Inherit": "",
@@ -3744,6 +3745,7 @@
   "UTC": "",
   "UUID": "",
   "Unable to download key, check network connection.": "",
+  "Unable to retrieve Available Applications": "",
   "Unable to terminate processes which are using this pool: ": "",
   "Unencrypted pools can be imported directly.": "",
   "Unhealthy": "",
@@ -4141,7 +4143,6 @@
   "msgqqueued": "",
   "msgqsize": "",
   "nmsgq": "",
-  "no": "",
   "nsemop": "",
   "nshm": "",
   "nthr": "",
@@ -4320,6 +4321,5 @@
   "wallclock": "orologio da parete",
   "warn": "avvisare",
   "was successfully attached.": "è stata collegata correttamente.",
-  "while pool is encrypted": "mentre la pool è crittografata",
-  "yes": "si"
+  "while pool is encrypted": "mentre la pool è crittografata"
 }

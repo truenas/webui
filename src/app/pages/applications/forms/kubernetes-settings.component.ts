@@ -1,18 +1,21 @@
 import { Component } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
-import { ModalService } from 'app/services/modal.service';
-import helptext from '../../../helptext/apps/apps';
-import { ApplicationsService } from '../applications.service';
-import { DialogService } from '../../../services/index';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { WebSocketService } from '../../../services';
-import { EntityUtils } from '../../common/entity/utils';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { forkJoin, of } from 'rxjs';
 import { tap, map, catchError } from 'rxjs/operators';
+import helptext from 'app/helptext/apps/apps';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/index';
+import { ModalService } from 'app/services/modal.service';
+import { ApplicationsService } from '../applications.service';
+
+@UntilDestroy()
 @Component({
   selector: 'app-kubernetes-settings',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -23,7 +26,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
   isEditJob = true;
   private newEnableContainerImageUpdate = true;
   title = helptext.kubForm.title;
-  private entityEdit: any;
+  private entityEdit: EntityFormComponent;
   fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
@@ -136,9 +139,9 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     ).toPromise();
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
-    this.appService.getContainerConfig().subscribe((res) => {
+    this.appService.getContainerConfig().pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.entityEdit.formGroup.controls['enable_container_image_update'].setValue(res.enable_image_updates);
       }

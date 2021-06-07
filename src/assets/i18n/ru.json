@@ -536,6 +536,7 @@
   "Newer Intermediate, Child, and Clone": "",
   "No ": "",
   "No Applications Installed": "",
+  "No Applications are Available": "",
   "No Inherit": "",
   "No Item": "",
   "No Pods Found": "",
@@ -1125,6 +1126,7 @@
   "UPS": "",
   "UTC": "",
   "UUID": "",
+  "Unable to retrieve Available Applications": "",
   "Unable to terminate processes which are using this pool: ": "",
   "Unhealthy": "",
   "Unix NSS Info": "",
@@ -4308,7 +4310,6 @@
   "is already in use.": "уже используется.",
   "mountd(8) bind port": "Порт привязки mountd(8)",
   "name": "имя",
-  "no": "нет",
   "overview": "обзор",
   "owner": "владелец",
   "password": "пароль",
@@ -4320,6 +4321,5 @@
   "service failed to stop.": "служба не остановилась.",
   "template": "шаблон",
   "was successfully attached.": "был успешно подключен.",
-  "while pool is encrypted": "пока пул зашифрован",
-  "yes": "да"
+  "while pool is encrypted": "пока пул зашифрован"
 }

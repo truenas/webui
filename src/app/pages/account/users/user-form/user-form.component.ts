@@ -1,22 +1,24 @@
 import { Component } from '@angular/core';
 import { AbstractControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Observable } from 'rxjs';
+import helptext from 'app/helptext/account/user-form';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { Observable } from 'rxjs';
-import helptext from '../../../../helptext/account/user-form';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import {
   AppLoaderService, StorageService, UserService, WebSocketService, ValidationService,
-} from '../../../../services';
+} from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
+@UntilDestroy()
 @Component({
   selector: 'app-user-form',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -30,7 +32,7 @@ export class UserFormComponent implements FormConfiguration {
   queryKey = 'id';
   isEntity = true;
   isNew: boolean;
-  entityForm: any;
+  entityForm: EntityFormComponent;
   protected namesInUse: string[] = [];
   private homeSharePath: string;
   columnsOnForm = 2;
@@ -310,7 +312,7 @@ export class UserFormComponent implements FormConfiguration {
     private userService: UserService,
     protected validationService: ValidationService,
     private modalService: ModalService) {
-    this.ws.call('user.query').subscribe(
+    this.ws.call('user.query').pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.namesInUse.push(...res.map((user) => user.username));
       },
@@ -329,7 +331,7 @@ export class UserFormComponent implements FormConfiguration {
         .showConfig('password_conf_edit');
       entityForm.setDisabled('password', true, true);
       entityForm.setDisabled('password_conf', true, true);
-      this.password_disabled.valueChanges.subscribe((password_disabled: boolean) => {
+      this.password_disabled.valueChanges.pipe(untilDestroyed(this)).subscribe((password_disabled: boolean) => {
         if (!password_disabled) {
           entityForm.formGroup.controls['sudo'].setValue(false);
           entityForm.formGroup.controls['locked'].setValue(false);
@@ -346,7 +348,7 @@ export class UserFormComponent implements FormConfiguration {
       this.fieldSets
         .showConfig('password')
         .showConfig('password_conf');
-      this.password_disabled.valueChanges.subscribe((password_disabled: boolean) => {
+      this.password_disabled.valueChanges.pipe(untilDestroyed(this)).subscribe((password_disabled: boolean) => {
         if (!password_disabled) {
           entityForm.formGroup.controls['sudo'].setValue(false);
           entityForm.formGroup.controls['locked'].setValue(false);
@@ -359,7 +361,7 @@ export class UserFormComponent implements FormConfiguration {
       });
 
       this.ws.call('sharing.smb.query', [[['enabled', '=', true], ['home', '=', true]]])
-        .subscribe((shares) => {
+        .pipe(untilDestroyed(this)).subscribe((shares) => {
           // On a new form, if there is a home SMB share, populate the 'home' form explorer with it...
           if (!shares.length) {
             return;
@@ -368,7 +370,7 @@ export class UserFormComponent implements FormConfiguration {
           this.homeSharePath = shares[0].path;
           this.entityForm.formGroup.controls['home'].setValue(this.homeSharePath);
           // ...then add on /<username>
-          this.entityForm.formGroup.controls['username'].valueChanges.subscribe((value: string) => {
+          this.entityForm.formGroup.controls['username'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
             this.entityForm.formGroup.controls['home'].setValue(`${this.homeSharePath}/${value}`);
           });
         });
@@ -384,7 +386,7 @@ export class UserFormComponent implements FormConfiguration {
     }
 
     /* list groups */
-    this.ws.call('group.query').subscribe((groups) => {
+    this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
       this.loader.callDone.emit(status);
       this.group = this.fieldSets.config('group');
       this.groups = this.fieldSets.config('groups');
@@ -396,9 +398,9 @@ export class UserFormComponent implements FormConfiguration {
 
     /* list users */
     const filter: QueryFilter<User> = ['id', '=', parseInt(this.pk, 10)];
-    this.ws.call('user.query', [[filter]]).subscribe(async (res) => {
+    this.ws.call('user.query', [[filter]]).pipe(untilDestroyed(this)).subscribe(async (res) => {
       if (res.length !== 0 && res[0].home !== '/nonexistent') {
-        this.storageService.filesystemStat(res[0].home).subscribe((stat) => {
+        this.storageService.filesystemStat(res[0].home).pipe(untilDestroyed(this)).subscribe((stat) => {
           entityForm.formGroup.controls['home_mode'].setValue(stat.mode.toString(8).substring(2, 5));
         });
       } else {
@@ -448,7 +450,7 @@ export class UserFormComponent implements FormConfiguration {
           entityForm.formGroup.controls['shell'].setValue(res[0].shell);
         }
       } else {
-        this.ws.call('user.get_next_uid').subscribe((next_uid) => {
+        this.ws.call('user.get_next_uid').pipe(untilDestroyed(this)).subscribe((next_uid) => {
           entityForm.formGroup.controls['uid'].setValue(next_uid);
         });
       }

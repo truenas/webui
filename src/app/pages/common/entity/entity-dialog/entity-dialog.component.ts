@@ -1,21 +1,22 @@
+import { DatePipe } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Component, Input, OnInit } from '@angular/core';
-
+import * as _ from 'lodash';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { RestService } from 'app/services/rest.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { T } from 'app/translate-marker';
+import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FieldRelationService } from '../entity-form/services/field-relation.service';
-import { FieldConfig } from '../entity-form/models/field-config.interface';
-import { FormGroup } from '@angular/forms';
-import { RestService } from '../../../../services/rest.service';
-import { WebSocketService } from '../../../../services/ws.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../utils';
-import * as _ from 'lodash';
 import { DialogFormConfiguration } from './dialog-form-configuration.interface';
-import { DatePipe } from '@angular/common';
-import { T } from '../../../../translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'app-entity-dialog',
   templateUrl: './entity-dialog.component.html',
@@ -52,7 +53,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
     protected fieldRelationService: FieldRelationService) {}
 
   ngOnInit(): void {
-    this.translate.get(this.conf.title).subscribe((title) => {
+    this.translate.get(this.conf.title).pipe(untilDestroyed(this)).subscribe((title) => {
       this.title = title;
     });
 
@@ -99,7 +100,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
       this.conf.customSubmit(this);
     } else {
       this.loader.open();
-      this.ws.call(this.conf.method_ws, [this.formValue]).subscribe(
+      this.ws.call(this.conf.method_ws, [this.formValue]).pipe(untilDestroyed(this)).subscribe(
         () => {},
         (e) => {
           this.loader.close();

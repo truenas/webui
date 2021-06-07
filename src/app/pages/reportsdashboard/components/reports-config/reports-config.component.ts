@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
-import { helptext } from 'app/helptext/system/reporting';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
-import { DialogService, WebSocketService } from '../../../../services';
-import { EntityUtils } from '../../../common/entity/utils';
+import { helptext } from 'app/helptext/system/reporting';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService, WebSocketService } from 'app/services';
+
+@UntilDestroy()
 @Component({
   selector: 'app-reports-config',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -15,7 +19,7 @@ export class ReportsConfigComponent implements FormConfiguration {
   queryCall: 'reporting.config' = 'reporting.config';
   title: string;
   isOneColumnForm: boolean;
-  entityForm: any;
+  entityForm: EntityFormComponent;
   isCpuCheckboxChecked: boolean;
   graphPoints: any;
   graphAge: any;
@@ -96,7 +100,7 @@ export class ReportsConfigComponent implements FormConfiguration {
     return data;
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
   }
 
@@ -104,7 +108,7 @@ export class ReportsConfigComponent implements FormConfiguration {
     if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints
       || body.cpu_in_percentage !== this.isCpuCheckboxChecked) {
       this.dialog.confirm(helptext.dialog.title, helptext.dialog.message, false,
-        helptext.dialog.action).subscribe((res: any) => {
+        helptext.dialog.action).pipe(untilDestroyed(this)).subscribe((res: any) => {
         if (res) {
           body.confirm_rrd_destroy = true;
           this.doSubmit(body);
@@ -119,7 +123,7 @@ export class ReportsConfigComponent implements FormConfiguration {
     this.graphAge = body.graph_age;
     this.graphPoints = body.graph_points;
     this.isCpuCheckboxChecked = body.cpu_in_percentage;
-    return this.ws.call('reporting.update', [body]).subscribe(() => {
+    return this.ws.call('reporting.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.entityForm.success = true;
       this.entityForm.formGroup.markAsPristine();
       this.afterModalFormSaved();

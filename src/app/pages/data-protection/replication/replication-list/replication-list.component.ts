@@ -1,11 +1,21 @@
-import { Component, OnDestroy } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
+import { Validators } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import helptext from 'app/helptext/data-protection/replication/replication';
+import globalHelptext from 'app/helptext/global-helptext';
+import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { T } from 'app/translate-marker';
+import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
+import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import {
   DialogService,
   JobService,
@@ -15,21 +25,11 @@ import {
   KeychainCredentialService,
   ReplicationService,
 } from 'app/services';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import globalHelptext from 'app/helptext/global-helptext';
-import helptext from 'app/helptext/data-protection/replication/replication';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
-import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
-import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
-import { EntityJob } from 'app/interfaces/entity-job.interface';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { Subscription } from 'rxjs';
-import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { T } from 'app/translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'app-replication-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
@@ -43,7 +43,7 @@ import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-tabl
     DatePipe,
   ],
 })
-export class ReplicationListComponent implements InputTableConf, OnDestroy {
+export class ReplicationListComponent implements EntityTableConfig {
   title = T('Replication Tasks');
   queryCall: 'replication.query' = 'replication.query';
   wsDelete: 'replication.delete' = 'replication.delete';
@@ -53,7 +53,7 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
   entityList: EntityTableComponent;
   asyncView = true;
 
-  columns: any[] = [
+  columns = [
     { name: T('Name'), prop: 'name', always_display: true },
     { name: T('Direction'), prop: 'direction' },
     { name: T('Transport'), prop: 'transport', hidden: true },
@@ -77,7 +77,6 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
       key_props: ['name'],
     },
   };
-  private onModalClose: Subscription;
 
   constructor(
     private ws: WebSocketService,
@@ -96,7 +95,7 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -117,10 +116,10 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
         name: 'run',
         label: T('Run Now'),
         onClick: (row: any) => {
-          this.dialog.confirm(T('Run Now'), T('Replicate <i>') + row.name + T('</i> now?'), true).subscribe((res: boolean) => {
+          this.dialog.confirm(T('Run Now'), T('Replicate <i>') + row.name + T('</i> now?'), true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
             if (res) {
               row.state = { state: EntityJobState.Running };
-              this.ws.call('replication.run', [row.id]).subscribe(
+              this.ws.call('replication.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
                 (jobId: number) => {
                   this.dialog.Info(
                     T('Task started'),
@@ -129,7 +128,7 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
                     'info',
                     true,
                   );
-                  this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
+                  this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
                     row.state = { state: job.state };
                     row.job = job;
                   });
@@ -174,7 +173,7 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
             saveButtonText: helptext.replication_restore_dialog.saveButton,
             customSubmit(entityDialog: EntityDialogComponent) {
               parent.loader.open();
-              parent.ws.call('replication.restore', [row.id, entityDialog.formValue]).subscribe(
+              parent.ws.call('replication.restore', [row.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
                 () => {
                   entityDialog.dialogRef.close(true);
                   parent.entityList.getData();
@@ -229,7 +228,7 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
   }
 
   onCheckboxChange(row: any): void {
-    this.ws.call('replication.update', [row.id, { enabled: row.enabled }]).subscribe(
+    this.ws.call('replication.update', [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         row.enabled = res.enabled;
         if (!res) {
@@ -272,9 +271,5 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
       ),
       id,
     );
-  }
-
-  ngOnDestroy(): void {
-    this.onModalClose?.unsubscribe();
   }
 }

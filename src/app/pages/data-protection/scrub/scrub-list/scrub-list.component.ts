@@ -1,24 +1,23 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
-import { Subscription } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
-import { UserService, WebSocketService, TaskService } from 'app/services';
+import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { ScrubFormComponent } from 'app/pages/data-protection/scrub/scrub-form/scrub-form.component';
+import { UserService, WebSocketService, TaskService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 
+@UntilDestroy()
 @Component({
   selector: 'app-scrub-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, UserService, EntityFormService],
 })
-export class ScrubListComponent implements InputTableConf, OnDestroy {
+export class ScrubListComponent implements EntityTableConfig {
   title = T('Scrub Tasks');
   queryCall: 'pool.scrub.query' = 'pool.scrub.query';
   wsDelete: 'pool.scrub.delete' = 'pool.scrub.delete';
@@ -28,7 +27,7 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
   entityList: EntityTableComponent;
   parent: ScrubListComponent;
 
-  columns: any[] = [
+  columns = [
     { name: T('Pool'), prop: 'pool_name', always_display: true },
     { name: T('Threshold days'), prop: 'threshold' },
     { name: T('Description'), prop: 'description' },
@@ -53,7 +52,6 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
       key_props: ['pool_name'],
     },
   };
-  private onModalClose: Subscription;
 
   constructor(
     protected router: Router,
@@ -68,7 +66,7 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -89,9 +87,5 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
 
   doEdit(id: number): void {
     this.doAdd(id);
-  }
-
-  ngOnDestroy(): void {
-    this.onModalClose?.unsubscribe();
   }
 }

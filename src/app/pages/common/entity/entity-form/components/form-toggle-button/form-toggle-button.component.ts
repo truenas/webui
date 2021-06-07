@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
-import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
 import * as _ from 'lodash';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
+@UntilDestroy()
 @Component({
   selector: 'form-toggle-button',
   templateUrl: './form-toggle-button.component.html',
@@ -25,7 +26,7 @@ export class FormToggleButtonComponent implements Field, OnInit {
     this.init = true;
     this.control = this.group.controls[this.config.name];
 
-    this.control.valueChanges.subscribe((res: any) => {
+    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (this.init && this.config.options && res) {
         this.init = false;
         let all_selected = false;

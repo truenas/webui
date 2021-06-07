@@ -1,42 +1,43 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
+import { PreferencesService } from 'app/core/services/preferences.service';
+import helptext from 'app/helptext/account/user-list';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { T } from '../../../../translate-marker';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   DialogService, StorageService, ValidationService, UserService,
 } from 'app/services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { WebSocketService } from '../../../../services/ws.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
-import { ModalService } from '../../../../services/modal.service';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import * as _ from 'lodash';
-import helptext from '../../../../helptext/account/user-list';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { T } from 'app/translate-marker';
 import { UserFormComponent } from '../user-form/user-form.component';
 
+@UntilDestroy()
 @Component({
   selector: 'app-user-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [UserService],
 })
-export class UserListComponent implements OnDestroy {
+export class UserListComponent implements EntityTableConfig, OnDestroy {
   title = 'Users';
-  protected route_add: string[] = ['account', 'users', 'add'];
+  route_add: string[] = ['account', 'users', 'add'];
   protected route_add_tooltip = 'Add User';
-  protected route_edit: string[] = ['account', 'users', 'edit'];
+  route_edit: string[] = ['account', 'users', 'edit'];
 
   protected entityList: any;
   protected loaderOpen = false;
   protected usr_lst: any[] = [];
   protected grp_lst: any[] = [];
-  protected hasDetails = true;
-  protected queryCall: 'user.query' = 'user.query';
-  protected wsDelete: 'user.delete' = 'user.delete';
-  // protected queryCallOption = [['OR', [['uid', '=', 0], ['builtin', '=', false]]]];
-  protected globalConfig = {
+  hasDetails = true;
+  queryCall: 'user.query' = 'user.query';
+  wsDelete: 'user.delete' = 'user.delete';
+  globalConfig = {
     id: 'config',
     tooltip: helptext.globalConfigTooltip,
     onClick: () => {
@@ -44,10 +45,10 @@ export class UserListComponent implements OnDestroy {
     },
   };
 
-  protected addComponent: UserFormComponent;
+  addComponent: UserFormComponent;
   private refreshTableSubscription: any;
 
-  columns: any[] = [
+  columns = [
     {
       name: 'Username', prop: 'username', always_display: true, minWidth: 150,
     },
@@ -105,7 +106,7 @@ export class UserListComponent implements OnDestroy {
 
   ngOnInit(): void {
     this.refreshUserForm();
-    this.modalService.refreshForm$.subscribe(() => {
+    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshUserForm();
     });
   }
@@ -129,7 +130,7 @@ export class UserListComponent implements OnDestroy {
       }
     }, 2000);
 
-    this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
+    this.refreshTableSubscription = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -172,7 +173,7 @@ export class UserListComponent implements OnDestroy {
             customSubmit(entityDialog: EntityDialogComponent) {
               entityDialog.dialogRef.close(true);
               self.loader.open();
-              self.ws.call(self.wsDelete, [users_edit.id, entityDialog.formValue]).subscribe(() => {
+              self.ws.call(self.wsDelete, [users_edit.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(() => {
                 self.entityList.getData();
                 self.loader.close();
               },
@@ -204,7 +205,7 @@ export class UserListComponent implements OnDestroy {
     this.usr_lst = [];
     this.grp_lst = [];
     this.usr_lst.push(data);
-    this.ws.call('group.query').subscribe((res) => {
+    this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((res) => {
       this.grp_lst.push(res);
       data.forEach((user: any) => {
         const group = _.find(res, { gid: user.group.bsdgrp_gid });
@@ -246,7 +247,7 @@ export class UserListComponent implements OnDestroy {
       message: action + message,
       hideCheckBox: true,
       buttonMsg: action,
-    }).subscribe((result) => {
+    }).pipe(untilDestroyed(this)).subscribe((result) => {
       if (!result) {
         return;
       }

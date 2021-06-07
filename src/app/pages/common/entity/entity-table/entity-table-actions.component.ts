@@ -2,7 +2,6 @@ import {
   Component, Input, OnInit, OnChanges,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-
 import { EntityTableComponent } from './entity-table.component';
 
 @Component({

@@ -1,40 +1,41 @@
 import {
   Component,
-  OnDestroy,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import {
   FormControl,
   FormGroup,
 } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AclItemTag } from 'app/enums/acl-type.enum';
-import { Option } from 'app/interfaces/option.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
-
-import { UserService } from '../../../../../services/user.service';
-import { WebSocketService, StorageService, DialogService } from '../../../../../services';
+import { AclItemTag } from 'app/enums/acl-type.enum';
+import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
   FieldConfig,
-} from '../../../../common/entity/entity-form/models/field-config.interface';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { T } from '../../../../../translate-marker';
-import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-acl';
-import { MatDialog } from '@angular/material/dialog';
-import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
-import { EntityUtils } from '../../../../common/entity/utils';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService, StorageService, DialogService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { UserService } from 'app/services/user.service';
+import { T } from 'app/translate-marker';
 
+@UntilDestroy()
 @Component({
   selector: 'app-dataset-acl',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class DatasetAclComponent implements FormConfiguration, OnDestroy {
+export class DatasetAclComponent implements FormConfiguration {
   queryCall: 'filesystem.getacl' = 'filesystem.getacl';
   updateCall = 'filesystem.setacl';
   isEntity = true;
@@ -48,17 +49,12 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
   protected groupSearchOptions: [];
   protected defaults: Option[] = [];
   protected recursive: any;
-  protected recursive_subscription: any;
   private aces: any;
   private aces_fc: any;
-  private aces_subscription: any;
   private entityForm: any;
-  sub: Subscription;
   formGroup: FormGroup;
   data: Object = {};
   error: string;
-  busy: Subscription;
-  protected fs: any = (<any>window).filesize;
   protected dialogRef: any;
   route_success: string[] = ['storage'];
   save_button_enabled = true;
@@ -307,12 +303,19 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     },
   ];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
     protected aroute: ActivatedRoute,
-    protected ws: WebSocketService, protected userService: UserService,
-    protected storageService: StorageService, protected dialogService: DialogService,
-    protected loader: AppLoaderService, protected dialog: MatDialog,
-    private translate: TranslateService) {}
+    protected ws: WebSocketService,
+    protected userService: UserService,
+    protected storageService: StorageService,
+    protected dialogService: DialogService,
+    protected loader: AppLoaderService,
+    protected dialog: MatDialog,
+    private translate: TranslateService,
+    private entityFormService: EntityFormService,
+  ) {}
 
   isCustActionVisible(actionId: string): boolean {
     if (actionId === 'show_defaults') {
@@ -329,12 +332,12 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     if (urlParams.get('homeShare')) {
       this.homeShare = true;
     }
-    this.sub = this.aroute.params.subscribe((params) => {
+    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.datasetId = params['path'];
       this.path = '/mnt/' + params['path'];
       const path_fc = _.find(this.fieldSets[0].config, { name: 'path' });
       path_fc.value = this.path;
-      this.route.queryParams.subscribe((qparams) => {
+      this.route.queryParams.pipe(untilDestroyed(this)).subscribe((qparams) => {
         if (qparams && qparams.default) {
           this.pk = qparams.default;
         } else {
@@ -343,7 +346,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
       });
     });
 
-    this.userService.userQueryDSCache().subscribe((items) => {
+    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -353,7 +356,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
       this.uid_fc.options = this.userOptions;
     });
 
-    this.userService.groupQueryDSCache().subscribe((groups) => {
+    this.userService.groupQueryDSCache().pipe(untilDestroyed(this)).subscribe((groups) => {
       const groupOptions: Option[] = [];
       for (let i = 0; i < groups.length; i++) {
         groupOptions.push({ label: groups[i].group, value: groups[i].group });
@@ -362,7 +365,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
 
       this.gid_fc.options = this.groupOptions;
     });
-    this.ws.call('filesystem.default_acl_choices').subscribe((res: any[]) => {
+    this.ws.call('filesystem.default_acl_choices').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       res.forEach((item) => {
         this.defaults.push({ label: item, value: item });
       });
@@ -372,11 +375,11 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
   afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
     this.recursive = entityEdit.formGroup.controls['recursive'];
-    this.recursive_subscription = this.recursive.valueChanges.subscribe((value: boolean) => {
+    this.recursive.valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
       if (value === true) {
         this.dialogService.confirm(helptext.dataset_acl_recursive_dialog_warning,
           helptext.dataset_acl_recursive_dialog_warning_message)
-          .subscribe((res: boolean) => {
+          .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
             if (!res) {
               this.recursive.setValue(false);
             }
@@ -384,7 +387,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
       }
     });
 
-    this.ws.call('filesystem.acl_is_trivial', [this.path]).subscribe((aclIsTrivial) => {
+    this.ws.call('filesystem.acl_is_trivial', [this.path]).pipe(untilDestroyed(this)).subscribe((aclIsTrivial) => {
       this.aclIsTrivial = aclIsTrivial;
     }, (err) => {
       new EntityUtils().handleWSError(this.entityForm, err);
@@ -392,7 +395,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
 
     this.aces_fc = _.find(this.fieldConfig, { name: 'aces' });
     this.aces = this.entityForm.formGroup.controls['aces'];
-    this.aces_subscription = this.aces.valueChanges.subscribe((res: any) => {
+    this.aces.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       let controls;
       let user_fc;
       let group_fc;
@@ -474,7 +477,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     while (this.aces.controls.length > num) {
       this.aces.removeAt(num);
     }
-    this.ws.call('filesystem.get_default_acl', [value]).subscribe((res) => {
+    this.ws.call('filesystem.get_default_acl', [value]).pipe(untilDestroyed(this)).subscribe((res) => {
       this.dataHandler(this.entityForm, res);
     });
   }
@@ -496,7 +499,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
       return { aces: [] as any };
     }
     if (this.homeShare) {
-      this.ws.call('filesystem.get_default_acl', ['HOME']).subscribe((res) => {
+      this.ws.call('filesystem.get_default_acl', ['HOME']).pipe(untilDestroyed(this)).subscribe((res) => {
         data.acl = res;
         return { aces: [] as any };
       });
@@ -506,14 +509,14 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
   handleEmptyACL(): void {
     this.loader.close();
     this.dialogService.errorReport(helptext.empty_acl_dialog.title, helptext.empty_acl_dialog.message)
-      .subscribe(() => {
+      .pipe(untilDestroyed(this)).subscribe(() => {
         this.router.navigate(new Array('/').concat(this.route_success));
       });
   }
 
-  async dataHandler(entityForm: any, defaults?: any): Promise<void> {
+  async dataHandler(entityForm: EntityFormComponent, defaults?: any): Promise<void> {
     entityForm.formGroup.controls['aces'].reset();
-    entityForm.formGroup.controls['aces'].controls = [];
+    (entityForm.formGroup.controls['aces'] as FormGroup).controls = {};
     this.aces_fc.listFields = [];
     this.gid_fc = _.find(this.fieldConfig, { name: 'gid' });
     this.uid_fc = _.find(this.fieldConfig, { name: 'uid' });
@@ -591,11 +594,11 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
         }
       }
       const propName = 'aces';
-      const aces_fg = entityForm.formGroup.controls[propName];
+      const aces_fg = entityForm.formGroup.controls[propName] as FormGroup;
       if (aces_fg.controls[i] === undefined) {
         // add controls;
         const templateListField = _.cloneDeep(_.find(this.fieldConfig, { name: propName }).templateListField);
-        aces_fg.push(entityForm.entityFormService.createFormGroup(templateListField));
+        (aces_fg as any).push(this.entityFormService.createFormGroup(templateListField));
         this.aces_fc.listFields.push(templateListField);
       }
 
@@ -616,7 +619,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
             delete (acl['group_not_found']);
             _.find(this.aces_fc.listFields[i], { name: prop })['warnings'] = helptext.group_not_found;
           }
-          aces_fg.controls[i].controls[prop].setValue(acl[prop]);
+          (aces_fg.controls[i] as FormGroup).controls[prop].setValue(acl[prop]);
         }
       }
     }
@@ -629,8 +632,8 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
 
   showChoiceDialog(presetsOnly = false): void {
     let msg1; let msg2;
-    this.translate.get(helptext.type_dialog.radio_preset_tooltip).subscribe((m1) => {
-      this.translate.get(helptext.preset_dialog.message).subscribe((m2) => {
+    this.translate.get(helptext.type_dialog.radio_preset_tooltip).pipe(untilDestroyed(this)).subscribe((m1) => {
+      this.translate.get(helptext.preset_dialog.message).pipe(untilDestroyed(this)).subscribe((m2) => {
         msg1 = m1;
         msg2 = m2;
       });
@@ -688,11 +691,6 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
       },
     };
     this.dialogService.dialogForm(conf);
-  }
-
-  ngOnDestroy(): void {
-    this.recursive_subscription.unsubscribe();
-    this.aces_subscription.unsubscribe();
   }
 
   beforeSubmit(data: any): void {
@@ -800,19 +798,19 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
         },
       }]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityForm.success = true;
       this.dialogRef.close();
       this.router.navigate(new Array('/').concat(
         this.route_success,
       ));
     });
-    this.dialogRef.componentInstance.failure.subscribe(() => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
     });
   }
 
   updateGroupSearchOptions(value = '', parent: any, config: any): void {
-    (parent.userService as UserService).groupQueryDSCache(value).subscribe((groups) => {
+    (parent.userService as UserService).groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
       const groupOptions = [];
       for (let i = 0; i < groups.length; i++) {
         groupOptions.push({ label: groups[i].group, value: groups[i].group });
@@ -822,7 +820,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
   }
 
   updateUserSearchOptions(value = '', parent: any, config: any): void {
-    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
+    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -862,14 +860,14 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
             },
           }]);
         this.dialogRef.componentInstance.submit();
-        this.dialogRef.componentInstance.success.subscribe(() => {
+        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           this.entityForm.success = true;
           this.dialogRef.close();
           this.router.navigate(new Array('/').concat(
             this.route_success,
           ));
         });
-        this.dialogRef.componentInstance.failure.subscribe((err: any) => {
+        this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
           new EntityUtils().handleWSError(this.entityForm, err);
         });
       },
@@ -878,7 +876,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
   }
 
   loadMoreOptions(length: number, parent: any, searchText: string, config: any): void {
-    (parent.userService as UserService).userQueryDSCache(searchText, length).subscribe((items) => {
+    (parent.userService as UserService).userQueryDSCache(searchText, length).pipe(untilDestroyed(this)).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -892,7 +890,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
   }
 
   loadMoreGroupOptions(length: number, parent: any, searchText: string, config: any): void {
-    parent.userService.groupQueryDSCache(searchText, false, length).subscribe((items: any[]) => {
+    parent.userService.groupQueryDSCache(searchText, false, length).pipe(untilDestroyed(this)).subscribe((items: any[]) => {
       const groups: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         groups.push({ label: items[i].group, value: items[i].group });

@@ -1,24 +1,23 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-
-import { Subscription } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
-import { ModalService } from 'app/services/modal.service';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import helptext from 'app/helptext/data-protection/snapshot/snapshot-form';
-import { DialogService, StorageService, TaskService } from 'app/services';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { UnitType } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { DialogService, StorageService, TaskService } from 'app/services';
+import { ModalService } from 'app/services/modal.service';
 
+@UntilDestroy()
 @Component({
   selector: 'app-cron-snapshot-task-add',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [TaskService],
 })
-export class SnapshotFormComponent implements FormConfiguration, OnDestroy {
+export class SnapshotFormComponent implements FormConfiguration {
   queryKey = 'id';
   queryCall: 'pool.snapshottask.query' = 'pool.snapshottask.query';
   addCall: 'pool.snapshottask.create' = 'pool.snapshottask.create';
@@ -28,7 +27,6 @@ export class SnapshotFormComponent implements FormConfiguration, OnDestroy {
   protected dataset: any;
   protected dataset_disabled = false;
   protected datasetFg: any;
-  protected dataset_subscription: Subscription;
   save_button_enabled = true;
   protected entityForm: EntityFormComponent;
   title: string;
@@ -155,7 +153,7 @@ export class SnapshotFormComponent implements FormConfiguration, OnDestroy {
 
     const datasetField = this.fieldSets.config('dataset');
 
-    this.storageService.getDatasetNameOptions().subscribe(
+    this.storageService.getDatasetNameOptions().pipe(untilDestroyed(this)).subscribe(
       (options) => {
         if (this.dataset !== undefined && !_.find(options, { label: this.dataset })) {
           const disabled_dataset = { label: this.dataset, value: this.dataset, disable: true };
@@ -172,14 +170,14 @@ export class SnapshotFormComponent implements FormConfiguration, OnDestroy {
 
     this.datasetFg = entityForm.formGroup.controls['dataset'];
 
-    this.dataset_subscription = this.datasetFg.valueChanges.subscribe((value: any) => {
+    this.datasetFg.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (this.dataset_disabled && this.dataset !== value) {
         this.save_button_enabled = true;
         datasetField.warnings = '';
       }
     });
 
-    entityForm.formGroup.controls['cron_schedule'].valueChanges.subscribe((value) => {
+    entityForm.formGroup.controls['cron_schedule'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
         this.entityForm.setDisabled('begin', true, true);
         this.entityForm.setDisabled('end', true, true);
@@ -188,10 +186,6 @@ export class SnapshotFormComponent implements FormConfiguration, OnDestroy {
         this.entityForm.setDisabled('end', false, false);
       }
     });
-  }
-
-  ngOnDestroy(): void {
-    this.dataset_subscription?.unsubscribe();
   }
 
   resourceTransformIncomingRestData(data: any): any {

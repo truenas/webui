@@ -1,20 +1,22 @@
 import { Component } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
-import { ProductType } from '../../../enums/product-type.enum';
-
-import { EntityUtils } from '../../common/entity/utils';
-import { SystemGeneralService, WebSocketService } from '../../../services';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { DialogService } from '../../../services';
-import helptext from '../../../helptext/directoryservice/activedirectory';
-import global_helptext from '../../../helptext/global-helptext';
-import { ModalService } from '../../../services/modal.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { ProductType } from 'app/enums/product-type.enum';
+import helptext from 'app/helptext/directoryservice/activedirectory';
+import global_helptext from 'app/helptext/global-helptext';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { SystemGeneralService, WebSocketService, DialogService } from 'app/services';
+import { ModalService } from 'app/services/modal.service';
+
+@UntilDestroy()
 @Component({
   selector: 'app-activedirectory',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -30,7 +32,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
   protected kerberos_principal: FieldConfig;
   protected nss_info: FieldConfig;
   adStatus = false;
-  entityEdit: any;
+  entityEdit: EntityFormComponent;
   protected dialogRef: MatDialogRef<EntityJobComponent, void>;
   custActions: any[] = [
     {
@@ -59,7 +61,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       id: helptext.activedirectory_custactions_clearcache_id,
       name: helptext.activedirectory_custactions_clearcache_name,
       function: async () => {
-        this.systemGeneralService.refreshDirServicesCache().subscribe(() => {
+        this.systemGeneralService.refreshDirServicesCache().pipe(untilDestroyed(this)).subscribe(() => {
           this.dialogservice.Info(helptext.activedirectory_custactions_clearcache_dialog_title,
             helptext.activedirectory_custactions_clearcache_dialog_message);
         });
@@ -100,7 +102,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
               const self = entityDialog;
               self.loader.open();
               self.ws.call('activedirectory.leave', [{ username: value.username, password: value.password }])
-                .subscribe(() => {
+                .pipe(untilDestroyed(this)).subscribe(() => {
                   self.loader.close();
                   self.dialogRef.close(true);
                   _.find(that.fieldConfig, { name: 'enable' })['value'] = false;
@@ -310,11 +312,11 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     return data;
   }
 
-  preInit(entityForm: any): void {
+  preInit(entityForm: EntityFormComponent): void {
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-      this.ws.call('failover.licensed').subscribe((is_ha) => {
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
         if (is_ha) {
-          this.ws.call('smb.get_smb_ha_mode').subscribe((ha_mode) => {
+          this.ws.call('smb.get_smb_ha_mode').pipe(untilDestroyed(this)).subscribe((ha_mode) => {
             if (ha_mode === 'LEGACY') {
               entityForm.setDisabled('netbiosname_b', false, false);
             }
@@ -322,14 +324,14 @@ export class ActiveDirectoryComponent implements FormConfiguration {
         }
       });
     }
-    this.ws.call('directoryservices.get_state').subscribe((res) => {
+    this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((res) => {
       res.activedirectory === 'HEALTHY' ? this.adStatus = true : this.adStatus = false;
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
-    this.ws.call('kerberos.realm.query').subscribe((res) => {
+    this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((res) => {
       this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
       res.forEach((item: any) => {
         this.kerberos_realm.options.push(
@@ -338,7 +340,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       });
     });
 
-    this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res) => {
+    this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' });
       res.forEach((item: any) => {
         this.kerberos_principal.options.push(
@@ -347,7 +349,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       });
     });
 
-    this.ws.call('activedirectory.nss_info_choices').subscribe((res) => {
+    this.ws.call('activedirectory.nss_info_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       this.nss_info = _.find(this.fieldConfig, { name: 'nss_info' });
       res.forEach((item: any) => {
         this.nss_info.options.push(
@@ -356,11 +358,11 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       });
     });
 
-    entityEdit.formGroup.controls['enable'].valueChanges.subscribe((res: any) => {
+    entityEdit.formGroup.controls['enable'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       _.find(this.fieldConfig, { name: 'bindpw' })['required'] = res;
     });
 
-    entityEdit.formGroup.controls['kerberos_principal'].valueChanges.subscribe((res: any) => {
+    entityEdit.formGroup.controls['kerberos_principal'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res) {
         entityEdit.setDisabled('bindname', true);
         entityEdit.setDisabled('bindpw', true);
@@ -421,7 +423,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       this.adStatus = true;
     }
 
-    this.ws.call('kerberos.realm.query').subscribe((res: any[]) => {
+    this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
       res.forEach((item) => {
         this.kerberos_realm.options.push(
@@ -430,7 +432,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       });
     });
 
-    this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res: any[]) => {
+    this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' });
       this.kerberos_principal.options.length = 0;
       this.kerberos_principal.options.push({ label: '---', value: null });
@@ -451,10 +453,10 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Start' }, disableClose: true });
     this.dialogRef.componentInstance.jobId = jobId;
     this.dialogRef.componentInstance.wsshow();
-    this.dialogRef.componentInstance.success.subscribe(() => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogRef.close();
     });
-    this.dialogRef.componentInstance.failure.subscribe(() => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogRef.close();
     });
   }

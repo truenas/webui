@@ -1,12 +1,14 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
-
-import { RestService, WebSocketService, ValidationService } from '../../../../services';
-import helptext from '../../../../helptext/services/components/service-dynamic-dns';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import helptext from 'app/helptext/services/components/service-dynamic-dns';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { RestService, WebSocketService, ValidationService } from 'app/services';
 
+@UntilDestroy()
 @Component({
   selector: 'dynamicdns-edit',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -125,8 +127,8 @@ export class ServiceDDNSComponent implements FormConfiguration {
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected validationService: ValidationService) {}
 
-  afterInit(entityForm: any): void {
-    entityForm.ws.call('dyndns.config').subscribe((res: any) => {
+  afterInit(entityForm: EntityFormComponent): void {
+    this.ws.call('dyndns.config').pipe(untilDestroyed(this)).subscribe((res: any) => {
       entityForm.formGroup.controls['provider'].setValue(res.provider);
       entityForm.formGroup.controls['checkip_ssl'].setValue(res.checkip_ssl);
       entityForm.formGroup.controls['checkip_server'].setValue(res.checkip_server);
@@ -144,7 +146,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
     });
     entityForm.submitFunction = this.submitFunction;
 
-    entityForm.formGroup.controls['provider'].valueChanges.subscribe((res: any) => {
+    entityForm.formGroup.controls['provider'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res === 'custom') {
         this.hideField('custom_ddns_server', false, entityForm);
         this.hideField('custom_ddns_path', false, entityForm);
@@ -173,7 +175,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
 
   preInit(): void {
     this.provider = this.fieldSets.config('provider');
-    this.ws.call('dyndns.provider_choices').subscribe((res) => {
+    this.ws.call('dyndns.provider_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       for (const key in res) {
         this.provider.options.push({ label: res[key], value: key });
       }

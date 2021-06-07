@@ -1,19 +1,20 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import * as ipRegex from 'ip-regex';
+import { Subject } from 'rxjs';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { CoreEvent } from 'app/interfaces/events';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { Interval } from 'app/interfaces/timeout.interface';
 import { AppTableAction } from 'app/pages/common/entity/table/table.component';
-import * as ipRegex from 'ip-regex';
-import { Subject, Subscription } from 'rxjs';
-import { ProductType } from '../../enums/product-type.enum';
-import helptext from '../../helptext/network/interfaces/interfaces-list';
-
 import {
   AppLoaderService,
   DialogService,
@@ -21,9 +22,9 @@ import {
   ServicesService,
   StorageService,
   WebSocketService,
-} from '../../services';
-import { ModalService } from '../../services/modal.service';
-import { T } from '../../translate-marker';
+} from 'app/services';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 import { EntityUtils } from '../common/entity/utils';
 import { CardWidgetConf } from './card-widget/card-widget.component';
 import { ConfigurationComponent } from './forms/configuration.component';
@@ -33,6 +34,7 @@ import { OpenvpnClientComponent } from './forms/service-openvpn-client.component
 import { OpenvpnServerComponent } from './forms/service-openvpn-server.component';
 import { StaticRouteFormComponent } from './forms/staticroute-form.component';
 
+@UntilDestroy()
 @Component({
   selector: 'app-interfaces-list',
   templateUrl: './network.component.html',
@@ -41,8 +43,6 @@ import { StaticRouteFormComponent } from './forms/staticroute-form.component';
 export class NetworkComponent extends ViewControllerComponent implements OnInit, OnDestroy {
   protected summayCall: 'network.general.summary' = 'network.general.summary';
   protected configCall: 'network.configuration.config' = 'network.configuration.config';
-
-  protected reportEvent: Subscription;
   formEvents: Subject<CoreEvent>;
 
   ha_enabled = false;
@@ -53,7 +53,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   checkin_remaining: number = null;
   private uniqueIPs: string[] = [];
   private affectedServices: string[] = [];
-  checkin_interval: any;
+  checkin_interval: Interval;
 
   private navigation: any;
   helptext = helptext;
@@ -223,9 +223,9 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   getGlobalSettings(): void {
-    this.ws.call(this.configCall).subscribe(
+    this.ws.call(this.configCall).pipe(untilDestroyed(this)).subscribe(
       (config_res) => {
-        this.ws.call(this.summayCall).subscribe(
+        this.ws.call(this.summayCall).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             this.networkSummary = res;
             this.globalSettingsWidget.data.nameserver = res.nameservers.map((item: any) => {
@@ -274,23 +274,23 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       },
     );
 
-    this.ws.call('ipmi.is_loaded').subscribe((isIpmiLoaded) => {
+    this.ws.call('ipmi.is_loaded').pipe(untilDestroyed(this)).subscribe((isIpmiLoaded) => {
       this.impiEnabled = isIpmiLoaded;
     });
   }
 
   ngOnInit(): void {
     this.refreshNetworkForms();
-    this.modalService.refreshForm$.subscribe(() => {
+    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshNetworkForms();
     });
 
-    this.ws.call('system.advanced.config').subscribe((advancedConfig) => {
+    this.ws.call('system.advanced.config').pipe(untilDestroyed(this)).subscribe((advancedConfig) => {
       this.hasConsoleFooter = advancedConfig.consolemsg;
     });
 
     this.checkInterfacePendingChanges();
-    this.core.register({ observerClass: this, eventName: 'NetworkInterfacesChanged' }).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'NetworkInterfacesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt && evt.data.checkin) {
         this.checkin_remaining = null;
         this.checkinWaiting = false;
@@ -302,9 +302,9 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     });
 
     if (window.localStorage.getItem('product_type') === ProductType.Enterprise) {
-      this.ws.call('failover.licensed').subscribe((is_ha) => {
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
         if (is_ha) {
-          this.ws.call('failover.disabled_reasons').subscribe((failover_disabled) => {
+          this.ws.call('failover.disabled_reasons').pipe(untilDestroyed(this)).subscribe((failover_disabled) => {
             if (failover_disabled.length === 0) {
               this.ha_enabled = true;
             }
@@ -323,13 +323,13 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   checkPendingChanges(): void {
-    this.ws.call('interface.has_pending_changes').subscribe((hasPendingChanges) => {
+    this.ws.call('interface.has_pending_changes').pipe(untilDestroyed(this)).subscribe((hasPendingChanges) => {
       this.hasPendingChanges = hasPendingChanges;
     });
   }
 
   checkWaitingCheckin(): void {
-    this.ws.call('interface.checkin_waiting').subscribe((res) => {
+    this.ws.call('interface.checkin_waiting').pipe(untilDestroyed(this)).subscribe((res) => {
       if (res != null) {
         const seconds = res.toFixed(0);
         if (seconds > 0 && this.checkin_remaining == null) {
@@ -357,7 +357,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   commitPendingChanges(): void {
-    this.ws.call('interface.services_restarted_on_sync').subscribe((res: any[]) => {
+    this.ws.call('interface.services_restarted_on_sync').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       if (res.length > 0) {
         const ips: string[] = [];
         res.forEach((item) => {
@@ -382,10 +382,10 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         helptext.commit_changes_title,
         helptext.commit_changes_warning,
         false, helptext.commit_button,
-      ).subscribe((confirm: boolean) => {
+      ).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
         if (confirm) {
           this.loader.open();
-          this.ws.call('interface.commit', [{ checkin_timeout: this.checkin_timeout }]).subscribe(() => {
+          this.ws.call('interface.commit', [{ checkin_timeout: this.checkin_timeout }]).pipe(untilDestroyed(this)).subscribe(() => {
             this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: false }, sender: this });
             this.interfaceTableConf.tableComponent.getData();
             this.loader.close();
@@ -403,11 +403,11 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
 
   checkInNow(): void {
     if (this.affectedServices.length > 0) {
-      this.translate.get(helptext.services_restarted.message_a).subscribe((msgA) => {
-        this.translate.get(helptext.services_restarted.message_b).subscribe((msgB) => {
+      this.translate.get(helptext.services_restarted.message_a).pipe(untilDestroyed(this)).subscribe((msgA) => {
+        this.translate.get(helptext.services_restarted.message_b).pipe(untilDestroyed(this)).subscribe((msgB) => {
           this.dialog.confirm(helptext.services_restarted.title, msgA + ' '
           + this.uniqueIPs.join(', ') + ' ' + msgB + ' ' + this.affectedServices.join(', '),
-          true, helptext.services_restarted.button).subscribe((res: boolean) => {
+          true, helptext.services_restarted.button).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
             if (res) {
               this.finishCheckin();
             }
@@ -419,7 +419,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         helptext.checkin_title,
         helptext.checkin_message,
         true, helptext.checkin_button,
-      ).subscribe((res: boolean) => {
+      ).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
         if (res) {
           this.finishCheckin();
         }
@@ -429,7 +429,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
 
   finishCheckin(): void {
     this.loader.open();
-    this.ws.call('interface.checkin').subscribe(() => {
+    this.ws.call('interface.checkin').pipe(untilDestroyed(this)).subscribe(() => {
       this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
       this.loader.close();
       this.dialog.Info(
@@ -451,10 +451,10 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       helptext.rollback_changes_title,
       helptext.rollback_changes_warning,
       false, helptext.rollback_button,
-    ).subscribe((confirm: boolean) => {
+    ).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
       if (confirm) {
         this.loader.open();
-        this.ws.call('interface.rollback').subscribe(() => {
+        this.ws.call('interface.rollback').pipe(untilDestroyed(this)).subscribe(() => {
           this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false }, sender: this });
           this.interfaceTableConf.tableComponent.getData();
           this.hasPendingChanges = false;
@@ -493,10 +493,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   ngOnDestroy(): void {
-    if (this.reportEvent) {
-      this.reportEvent.unsubscribe();
-    }
-
     if (this.formEvents) {
       this.formEvents.complete();
     }
@@ -504,7 +500,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   getInterfaceInOutInfo(tableSource: any[]): void {
-    this.reportEvent = this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').subscribe((evt) => {
+    this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((evt) => {
       if (evt.interfaces) {
         tableSource.map((row) => {
           row.received = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].received_bytes);
@@ -615,7 +611,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       onChanging: false,
       onClick: (rowinner: any) => {
         rowinner['onChanging'] = true;
-        this.ws.call('service.stop', [rowinner.service]).subscribe(
+        this.ws.call('service.stop', [rowinner.service]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             if (res) {
               this.dialog.Info(T('Service failed to stop'), T('OpenVPN ') + rowinner.service_label + ' ' + T('service failed to stop.'));
@@ -639,7 +635,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       label: T('Start'),
       onClick: (rowinner: any) => {
         rowinner['onChanging'] = true;
-        this.ws.call('service.start', [rowinner.service]).subscribe(
+        this.ws.call('service.start', [rowinner.service]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             if (res) {
               rowinner.state = ServiceStatus.Running;

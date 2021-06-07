@@ -1,29 +1,31 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
+import { ConfirmDialog } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { ErrorDialog } from 'app/pages/common/error-dialog/error-dialog.component';
+import { GeneralDialogComponent, GeneralDialogConfig } from 'app/pages/common/general-dialog/general-dialog.component';
+import { InfoDialog } from 'app/pages/common/info-dialog/info-dialog.component';
+import { PasswordDialog } from 'app/pages/common/password-dialog/password-dialog.component';
+import { SelectDialogComponent } from 'app/pages/common/select-dialog/select-dialog.component';
 import { T } from 'app/translate-marker';
-import { filter } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { ConfirmDialog } from '../pages/common/confirm-dialog/confirm-dialog.component';
-import { PasswordDialog } from '../pages/common/password-dialog/password-dialog.component';
-import { EntityDialogComponent } from '../pages/common/entity/entity-dialog/entity-dialog.component';
-import { ErrorDialog } from '../pages/common/error-dialog/error-dialog.component';
-import { InfoDialog } from '../pages/common/info-dialog/info-dialog.component';
-import { GeneralDialogComponent, GeneralDialogConfig } from '../pages/common/general-dialog/general-dialog.component';
-import { SelectDialogComponent } from '../pages/common/select-dialog/select-dialog.component';
 import { AppLoaderService } from './app-loader/app-loader.service';
 import { WebSocketService } from './ws.service';
-import * as _ from 'lodash';
 
+@UntilDestroy()
 @Injectable()
 export class DialogService {
   protected loaderOpen = false;
 
   constructor(private dialog: MatDialog, private ws: WebSocketService, protected loader: AppLoaderService) {
     /* Close all open dialogs when websocket connection is dropped */
-    this.ws.onCloseSubject.pipe(filter((didClose) => !!didClose)).subscribe(() => this.closeAllDialogs());
+    this.ws.onCloseSubject.pipe(filter((didClose) => !!didClose)).pipe(untilDestroyed(this)).subscribe(() => this.closeAllDialogs());
   }
 
   confirm(confirmOptions: ConfirmOptions): Observable<boolean>
@@ -86,7 +88,7 @@ export class DialogService {
       dialogRef.componentInstance.secondaryCheckBoxMsg = options.secondaryCheckBoxMsg;
       dialogRef.componentInstance.data = options.data;
       dialogRef.componentInstance.method = options.method;
-      dialogRef.componentInstance.switchSelectionEmitter.subscribe((selection: any) => {
+      dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: any) => {
         const data = (options as ConfirmOptionsWithSecondaryCheckbox).data;
         if (selection) {
           if (data[0] && data[0].hasOwnProperty('reboot')) {
@@ -150,17 +152,17 @@ export class DialogService {
     dialogRef.componentInstance.optionPlaceHolder = optionPlaceHolder;
     dialogRef.componentInstance.method = method;
 
-    dialogRef.componentInstance.switchSelectionEmitter.subscribe((selection: any) => {
+    dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: any) => {
       if (selection === 'force') {
         data = { [selection]: true };
       } else {
         data = { [params]: selection };
       }
-      dialogRef.afterClosed().subscribe((res) => {
+      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((res) => {
         if (res) {
           // TODO: The whole block seems to be doing nothing.
           // eslint-disable-next-line unused-imports/no-unused-vars
-          this.ws.call(method, [data]).subscribe((out) => {
+          this.ws.call(method, [data]).pipe(untilDestroyed(this)).subscribe((out) => {
             // this.snackBar.open(message, 'close', { duration: 5000 });
           });
         }
@@ -204,10 +206,10 @@ export class DialogService {
       ],
       saveButtonText: buttonMsg || T('DELETE'),
       afterInit(entityDialog: EntityDialogComponent) {
-        entityDialog.formGroup.controls['name'].valueChanges.subscribe((res) => {
+        entityDialog.formGroup.controls['name'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
           entityDialog.submitEnabled = res === name && (confirmBox ? entityDialog.formGroup.controls['confirm'].value : true);
         });
-        entityDialog.formGroup.controls['confirm'].valueChanges.subscribe((res) => {
+        entityDialog.formGroup.controls['confirm'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
           entityDialog.submitEnabled = res && (entityDialog.formGroup.controls['name'].value === name);
         });
       },

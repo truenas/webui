@@ -1,18 +1,18 @@
 import {
   ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, TemplateRef,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { RestService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { FieldConfig } from '../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../common/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
-
-import { RestService, WebSocketService } from '../../services';
-import { AppLoaderService } from '../../services/app-loader/app-loader.service';
-import { Subscription } from 'rxjs';
 import { EntityUtils } from '../common/entity/utils';
 
+@UntilDestroy()
 @Component({
   selector: 'dashboard-note-edit',
   templateUrl: './dashboard-note-edit.component.html',
@@ -49,7 +49,6 @@ export class DashboardNoteEditComponent implements OnInit {
   error: any;
   success: any;
   protected formGroup: FormGroup;
-  busy: Subscription;
 
   notes: any[] ;
   protected targetNoteIndex: number;
@@ -123,8 +122,8 @@ export class DashboardNoteEditComponent implements OnInit {
       attribute_key = this.cardNote['id'];
     }
     this.loader.open();
-    this.busy = this.ws.call('user.set_attribute', [1, attribute_key, value['content']])
-      .subscribe(
+    this.ws.call('user.set_attribute', [1, attribute_key, value['content']])
+      .pipe(untilDestroyed(this)).subscribe(
         () => {
           this.loader.close();
           this.success = true;

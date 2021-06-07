@@ -1,9 +1,10 @@
-import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
-import { MatDialogRef } from '@angular/material/dialog';
 import {
   Component, ViewChild, ElementRef, EventEmitter, OnInit,
 } from '@angular/core';
+import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
+import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
+import { Interval } from 'app/interfaces/timeout.interface';
 
 @Component({
   selector: 'consolepanel-dialog',
@@ -12,7 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class ConsolePanelModalDialog implements OnInit {
   refreshMsg: String = 'Check to stop refresh';
-  intervalPing: any;
+  intervalPing: Interval;
   consoleMsg: String = 'Loading...';
   @ViewChild('footerBarScroll', { static: true }) private footerBarScroll: ElementRef;
   onEventEmitter = new EventEmitter();

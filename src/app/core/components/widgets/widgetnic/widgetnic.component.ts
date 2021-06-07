@@ -2,19 +2,16 @@ import {
   Component, AfterViewInit, OnDestroy, Input, ViewChild, ElementRef, OnChanges, SimpleChanges,
 } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
-import { CoreEvent } from 'app/interfaces/events';
-
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
-import { T } from '../../../../translate-marker';
-
 import {
   tween,
   styler,
 } from 'popmotion';
+import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
+import { CoreEvent } from 'app/interfaces/events';
+import { T } from 'app/translate-marker';
 
 interface NetTraffic {
   sent: string;
@@ -33,6 +30,7 @@ interface Slide {
   index?: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'widget-nic',
   templateUrl: './widgetnic.component.html',
@@ -100,7 +98,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   }
 
   ngAfterViewInit(): void {
-    this.stats.subscribe((evt: CoreEvent) => {
+    this.stats.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.name == 'NetTraffic_' + this.nicState.name) {
         const sent: Converted = this.convert(evt.data.sent_bytes_rate);
         const received: Converted = this.convert(evt.data.received_bytes_rate);
@@ -144,7 +142,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     this.title = this.currentSlide == '0' ? 'Interface' : this.nicState.name;
   }
 
-  vlanAliases(vlanIndex: string|number): any[] {
+  vlanAliases(vlanIndex: string | number): any[] {
     if (typeof vlanIndex == 'string') { vlanIndex = parseInt(vlanIndex); }
     const vlan = this.nicState.vlans[vlanIndex];
     return vlan.aliases.filter((item: any) =>

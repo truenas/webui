@@ -6,10 +6,12 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AlertService } from 'app/interfaces/alert-service.interface';
 import { Alert } from 'app/interfaces/alert.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
-import { Certificate } from 'app/interfaces/certificate.interface';
-import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { Catalog } from 'app/interfaces/catalog.interface';
+import { Certificate } from 'app/interfaces/certificate.interface';
+import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
+import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import {
   AuthenticatorSchema,
@@ -17,6 +19,7 @@ import {
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
+import { Group } from 'app/interfaces/group.interface';
 import {
   IscsiAuthAccess, IscsiExtent,
   IscsiInitiatorGroup,
@@ -24,26 +27,29 @@ import {
   IscsiPortal,
   IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
-import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import { NetworkActivityChoice, NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
+import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Group } from 'app/interfaces/group.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { ResizeShellRequest } from 'app/interfaces/shell.interface';
+import { SmartTest } from 'app/interfaces/smart-test.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { Disk, DiskQueryOptions, DiskUpdate } from 'app/interfaces/storage.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
-import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { SystemUpdate } from 'app/interfaces/system-update.interface';
+import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
-import { RsyncTask } from 'app/interfaces/rsync-task.interface';
-import { SmartTest } from 'app/interfaces/smart-test.interface';
-import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
-import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 
 export type ApiDirectory = {
   // Active Directory
@@ -73,12 +79,13 @@ export type ApiDirectory = {
   'alertservice.create': { params: any; response: any };
   'alertservice.query': { params: QueryParams<AlertService>; response: AlertService[] };
   'alertservice.test': { params: any; response: any };
+  'alertservice.delete': { params: any; response: any };
 
   // Api Key
-  'api_key.create': { params: any; response: any };
-  'api_key.update': { params: any; response: any };
-  'api_key.delete': { params: any; response: any };
-  'api_key.query': { params: any; response: any };
+  'api_key.create': { params: CreateApiKeyRequest; response: ApiKey };
+  'api_key.update': { params: UpdateApiKeyRequest; response: ApiKey };
+  'api_key.delete': { params: [/* id */ string]; response: boolean };
+  'api_key.query': { params: QueryParams<ApiKey>; response: ApiKey[] };
 
   // Auth
   'auth.generate_token': { params: [number]; response: string };
@@ -93,7 +100,7 @@ export type ApiDirectory = {
   'auth.twofactor.provisioning_uri': { params: void; response: string };
   'auth.two_factor_auth': { params: any; response: any };
   'auth.twofactor.renew_secret': { params: any; response: any };
-  'auth.twofactor.config': { params: any; response: any };
+  'auth.twofactor.config': { params: void; response: TwoFactorConfig };
 
   // Boot
   'boot.set_scrub_interval': { params: any; response: any };
@@ -150,13 +157,15 @@ export type ApiDirectory = {
 
   // CRON
   'cronjob.run': { params: any; response: any };
+  'cronjob.query': { params: any; response: any };
+  'cronjob.delete': { params: any; response: any };
 
   // Core
   'core.download': { params: any; response: any };
   'core.get_jobs': { params: any; response: any };
   'core.job_abort': { params: any; response: any };
   'core.bulk': { params: any; response: any };
-  'core.resize_shell': { params: any; response: any };
+  'core.resize_shell': { params: ResizeShellRequest; response: void };
 
   // Config
   'config.upload': { params: any; response: any };
@@ -184,6 +193,7 @@ export type ApiDirectory = {
   'container.update': { params: any; response: any };
   'container.image.query': { params: void; response: ContainerImage[] };
   'container.image.pull': { params: [PullContainerImageParams]; response: any };
+  'container.image.delete': { params: any; response: any };
 
   // Docker
   'docker.images.query': { params: any; response: any };
@@ -191,6 +201,7 @@ export type ApiDirectory = {
   // DynDNS
   'dyndns.provider_choices': { params: any; response: any };
   'dyndns.update': { params: any; response: any };
+  'dyndns.config': { params: any; response: any };
 
   // Datastore
   'datastore.delete': { params: any; response: any };
@@ -245,6 +256,7 @@ export type ApiDirectory = {
   'failover.config': { params: any; response: any };
 
   // FCPort
+  'fcport.query': { params: any; response: any };
   'fcport.update': { params: any; response: any };
 
   // DS Cache
@@ -253,9 +265,9 @@ export type ApiDirectory = {
 
   // Keychain Credential
   'keychaincredential.create': { params: any; response: any };
-  'keychaincredential.query': { params: any; response: any };
+  'keychaincredential.query': { params: QueryParams<KeychainCredential>; response: KeychainCredential[] };
   'keychaincredential.update': { params: any; response: any };
-  'keychaincredential.generate_ssh_key_pair': { params: any; response: any };
+  'keychaincredential.generate_ssh_key_pair': { params: void; response: SshKeyPair };
   'keychaincredential.remote_ssh_host_key_scan': { params: any; response: any };
   'keychaincredential.delete': { params: any; response: any };
   'keychaincredential.remote_ssh_semiautomatic_setup': { params: any; response: any };
@@ -277,6 +289,7 @@ export type ApiDirectory = {
   'idmap.query': { params: any; response: any };
   'idmap.create': { params: any; response: any };
   'idmap.update': { params: any; response: any };
+  'idmap.delete': { params: any; response: any };
 
   // Interface
   'interface.websocket_local_ip': { params: any; response: any };
@@ -296,13 +309,14 @@ export type ApiDirectory = {
   'interface.websocket_interface': { params: any; response: any };
 
   // iSCSI
-  'iscsi.portal.listen_ip_choices': { params: void; response: IscsiIpChoices };
-  'iscsi.portal.query': { params: any; response: IscsiPortal[] };
   'iscsi.initiator.query': { params: any; response: IscsiInitiatorGroup[] };
   'iscsi.initiator.delete': { params: any; response: any };
   'iscsi.target.query': { params: any; response: IscsiTarget[] };
   'iscsi.extent.disk_choices': { params: any; response: any };
   'iscsi.extent.query': { params: any; response: IscsiExtent[] };
+  'iscsi.extent.create': { params: any; response: any };
+  'iscsi.extent.update': { params: any; response: any };
+  'iscsi.extent.delete': { params: any; response: any };
   'iscsi.auth.query': { params: any; response: IscsiAuthAccess[] };
   'iscsi.auth.delete': { params: any; response: any };
   'iscsi.global.sessions': { params: any; response: any };
@@ -311,16 +325,19 @@ export type ApiDirectory = {
   'iscsi.targetextent.create': { params: any; response: any };
   'iscsi.targetextent.query': { params: any; response: IscsiTargetExtent[] };
   'iscsi.targetextent.update': { params: any; response: any };
+  'iscsi.targetextent.delete': { params: any; response: any };
   'iscsi.auth.update': { params: any; response: any };
   'iscsi.auth.create': { params: any; response: any };
-  'iscsi.extent.create': { params: any; response: any };
-  'iscsi.extent.update': { params: any; response: any };
   'iscsi.initiator.create': { params: any; response: any };
   'iscsi.initiator.update': { params: any; response: any };
   'iscsi.portal.create': { params: any; response: any };
   'iscsi.portal.update': { params: any; response: any };
+  'iscsi.portal.listen_ip_choices': { params: void; response: IscsiIpChoices };
+  'iscsi.portal.query': { params: any; response: IscsiPortal[] };
+  'iscsi.portal.delete': { params: any; response: any };
   'iscsi.target.update': { params: any; response: any };
   'iscsi.target.create': { params: any; response: any };
+  'iscsi.target.delete': { params: any; response: any };
 
   // IPMI
   'ipmi.is_loaded': { params: void; response: boolean };
@@ -354,15 +371,16 @@ export type ApiDirectory = {
   'notifier.choices': { params: any; response: any };
 
   // Network
-  'network.configuration.activity_choices': { params: any; response: any };
+  'network.configuration.activity_choices': { params: void; response: NetworkActivityChoice[] };
   'network.configuration.update': { params: any; response: any };
   'network.general.summary': { params: any; response: any };
-  'network.configuration.config': { params: any; response: any };
+  'network.configuration.config': { params: void; response: NetworkConfiguration };
 
   // Kerberos
   'kerberos.realm.query': { params: any; response: any };
   'kerberos.realm.create': { params: any; response: any };
   'kerberos.realm.update': { params: any; response: any };
+  'kerberos.realm.delete': { params: any; response: any };
   'kerberos.keytab.has_nfs_principal': { params: any; response: any };
   'kerberos.config': { params: any; response: any };
   'kerberos.update': { params: any; response: any };
@@ -370,6 +388,7 @@ export type ApiDirectory = {
   'kerberos.keytab.create': { params: any; response: any };
   'kerberos.keytab.update': { params: any; response: any };
   'kerberos.keytab.query': { params: any; response: any };
+  'kerberos.keytab.delete': { params: any; response: any };
 
   'kmip.update': { params: any; response: any };
   'kmip.config': { params: any; response: any };
@@ -492,6 +511,7 @@ export type ApiDirectory = {
   'rsyncmod.query': { params: any; response: any };
   'rsyncmod.update': { params: any; response: any };
   'rsyncmod.create': { params: any; response: any };
+  'rsyncmod.delete': { params: any; response: any };
 
   // Reporting
   'reporting.get_data': { params: any; response: any };
@@ -538,6 +558,8 @@ export type ApiDirectory = {
   'system.general.ui_address_choices': { params: any; response: any };
   'system.license_update': { params: any; response: any };
   'system.general.ui_v6address_choices': { params: any; response: any };
+  'system.general.ui_certificate_choices': { params: any; response: any };
+  'system.general.ui_httpsprotocols_choices': { params: any; response: any };
   'system.build_time': { params: void; response: ApiTimestamp };
   'system.product_type': { params: void; response: ProductType };
 
@@ -554,7 +576,9 @@ export type ApiDirectory = {
   'smart.test.manual_test': { params: any; response: any };
   'smart.test.query': { params: QueryParams<SmartTest>; response: SmartTest[] };
   'smart.test.create': { params: any; response: any };
+  'smart.test.results': { params: any; response: any };
   'smart.test.update': { params: any; response: any };
+  'smart.test.delete': { params: any; response: any };
 
   // SystemDataset
   'systemdataset.pool_choices': { params: void; response: { [key: string]: string } };
@@ -599,6 +623,7 @@ export type ApiDirectory = {
   'tunable.query': { params: any; response: any };
   'tunable.update': { params: any; response: any };
   'tunable.create': { params: any; response: any };
+  'tunable.delete': { params: any; response: any };
 
   // TFTP
   'tftp.update': { params: any; response: any };
@@ -652,6 +677,7 @@ export type ApiDirectory = {
   'vmware.query': { params: any; response: any };
   'vmware.create': { params: any; response: any };
   'vmware.update': { params: any; response: any };
+  'vmware.delete': { params: any; response: any };
 
   // User
   'user.update': { params: any; response: any };
@@ -676,7 +702,7 @@ export type ApiDirectory = {
   'update.get_trains': { params: any; response: any };
   'update.set_auto_download': { params: any; response: any };
   'update.get_pending': { params: any; response: any };
-  'update.check_available': { params: any; response: any };
+  'update.check_available': { params: void; response: SystemUpdate };
   'update.set_train': { params: any; response: any };
 
   // ZFS
@@ -704,6 +730,7 @@ export type ApiDirectory = {
   'initshutdownscript.query': { params: any; response: any };
   'initshutdownscript.create': { params: any; response: any };
   'initshutdownscript.update': { params: any; response: any };
+  'initshutdownscript.delete': { params: any; response: any };
 };
 
 /**

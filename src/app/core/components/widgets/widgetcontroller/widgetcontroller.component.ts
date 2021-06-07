@@ -2,17 +2,13 @@ import {
   Component, Input, Output, EventEmitter,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-
 import { Router } from '@angular/router';
-
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
+import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
-
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 export interface DashConfigItem {
   name: string; // Shown in UI fields
@@ -22,6 +18,7 @@ export interface DashConfigItem {
   id?: string;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'widget-controller',
   templateUrl: './widgetcontroller.component.html',
@@ -45,7 +42,7 @@ export class WidgetControllerComponent extends WidgetComponent {
   constructor(public router: Router, public translate: TranslateService, public mediaObserver: MediaObserver) {
     super(translate);
 
-    mediaObserver.media$.subscribe((evt) => {
+    mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
       const st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
       this.screenType = st;
     });

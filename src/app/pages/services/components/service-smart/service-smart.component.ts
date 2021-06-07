@@ -1,12 +1,12 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import helptext from 'app/helptext/services/components/service-smart';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { RestService, WebSocketService } from 'app/services';
 import { T } from 'app/translate-marker';
-import helptext from '../../../../helptext/services/components/service-smart';
-import { RestService, WebSocketService } from '../../../../services';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 enum PowerMode {
   Never = 'NEVER',

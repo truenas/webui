@@ -1,24 +1,24 @@
-import { Component, OnDestroy } from '@angular/core';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.component';
-
-import { T } from '../../../translate-marker';
-import helptext from '../../../helptext/directoryservice/kerberosrealms-form-list';
+import { Component } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import helptext from 'app/helptext/directoryservice/kerberosrealms-form-list';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 import { KerberosRealmsFormComponent } from './kerberosrealms-form.component';
-import { ModalService } from '../../../services/modal.service';
-import { Subscription } from 'rxjs';
+
+@UntilDestroy()
 @Component({
   selector: 'app-user-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class KerberosRealmsListComponent implements OnDestroy {
+export class KerberosRealmsListComponent implements EntityTableConfig {
   title = 'Kerberos Realms';
-  protected queryCall = 'kerberos.realm.query';
-  protected wsDelete = 'kerberos.realm.delete';
+  queryCall: 'kerberos.realm.query' = 'kerberos.realm.query';
+  wsDelete: 'kerberos.realm.delete' = 'kerberos.realm.delete';
   keyList = ['admin_server', 'kdc', 'kpasswd_server'];
   protected entityList: any;
-  private refreshTableSubscription: Subscription;
 
-  columns: any[] = [
+  columns = [
     { name: T('Realm'), prop: 'realm', always_display: true },
     { name: T('KDC'), prop: 'kdc' },
     { name: T('Admin Server'), prop: 'admin_server' },
@@ -49,15 +49,9 @@ export class KerberosRealmsListComponent implements OnDestroy {
 
   afterInit(entityList: any): void {
     this.entityList = entityList;
-    this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
-  }
-
-  ngOnDestroy(): void {
-    if (this.refreshTableSubscription) {
-      this.refreshTableSubscription.unsubscribe();
-    }
   }
 
   getAddActions(): EntityTableAction[] {
