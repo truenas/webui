@@ -1,5 +1,5 @@
-import { T } from 'app/translate-marker';
 import { Validators } from '@angular/forms';
+import { T } from 'app/translate-marker';
 
 export const helptext_sharing_smb = {
   fieldset_basic: T('Basic'),

@@ -1,15 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
-import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
-import { LoginParams } from 'app/interfaces/auth.interface';
 import { LocalStorage } from 'ngx-webstorage';
 import { Observable, Observer, Subject } from 'rxjs';
-
-import { environment } from '../../environments/environment';
 import { filter, map } from 'rxjs/operators';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
+import { LoginParams } from 'app/interfaces/auth.interface';
+import { environment } from '../../environments/environment';
 
 @UntilDestroy()
 @Injectable()

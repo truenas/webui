@@ -1,33 +1,31 @@
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import {
   Component, ElementRef, OnInit, OnDestroy, AfterViewInit, ViewChild,
 } from '@angular/core';
 import {
   Router, ActivatedRoute,
 } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { Subject, BehaviorSubject } from 'rxjs';
+import { CoreService } from 'app/core/services/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { Subject, BehaviorSubject } from 'rxjs';
-import { CoreService } from 'app/core/services/core.service';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
-import { Report } from './components/report/report.component';
-import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-
-import { ErdService } from 'app/services/erd.service';
-import { DialogService } from 'app/services/dialog.service';
-import { ModalService } from 'app/services/modal.service';
-import { TranslateService } from '@ngx-translate/core';
-import { T } from '../../translate-marker';
 import {
   SystemGeneralService,
   WebSocketService,
-} from '../../services';
-
+} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { ErdService } from 'app/services/erd.service';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
+import { Report } from './components/report/report.component';
 import { ReportsConfigComponent } from './components/reports-config/reports-config.component';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
 
 interface Tab {
   label: string;

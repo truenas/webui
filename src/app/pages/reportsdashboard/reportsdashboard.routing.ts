@@ -1,6 +1,5 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { ReportsDashboardComponent } from './reportsdashboard.component';
 
 // noinspection TypeScriptValidateTypes

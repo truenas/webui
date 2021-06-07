@@ -106,27 +106,20 @@ form button {
 
 .logo-wrapper {
   background-color: $bg2; //var(--bg2);
-  /*padding:76px 0;*/
+  height: 254px;
   padding: 20% 0;
   position: relative;
 }
 
 .logo-wrapper img.logo-bg {
-  border-bottom: solid 1px #000;
+  border-bottom: solid 1px #ffffff2e;
+  filter: saturate(1.1);
   height: 100%;
   left: 0;
-  opacity: 0.75;
   position: absolute;
   top: 0;
   width: 100%;
   z-index: 1;
-}
-
-.logo-wrapper .logo {
-  height: auto;
-  position: relative;
-  width: 256px;
-  z-index: 2;
 }
 
 #full-logo {

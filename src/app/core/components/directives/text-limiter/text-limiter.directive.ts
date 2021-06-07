@@ -1,8 +1,8 @@
+import { Overlay, OverlayRef, OverlayPositionBuilder } from '@angular/cdk/overlay';
+import { ComponentPortal } from '@angular/cdk/portal';
 import {
   Directive, Input, AfterViewInit, ElementRef, HostListener, ComponentRef,
 } from '@angular/core';
-import { Overlay, OverlayRef, OverlayPositionBuilder } from '@angular/cdk/overlay';
-import { ComponentPortal } from '@angular/cdk/portal';
 import { TextLimiterTooltipComponent } from './text-limiter-tooltip/text-limiter-tooltip.component';
 
 @Directive({

@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ViewchartpieComponent } from './viewchartpie.component';
 
 describe('ViewchartpieComponent', () => {

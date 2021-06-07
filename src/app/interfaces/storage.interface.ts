@@ -1,5 +1,5 @@
-import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
+import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { ZfsProperty } from './zfs-property.interface';
 
 // As returned by pool.query under topology[<vdevtype>]

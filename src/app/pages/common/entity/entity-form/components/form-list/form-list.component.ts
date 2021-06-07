@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormArray } from '@angular/forms';
 import * as _ from 'lodash';
-
-import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
-import { EntityFormService } from '../../services/entity-form.service';
-import { FieldRelationService } from '../../services/field-relation.service';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
 
 @Component({
   selector: 'entity-form-list',

@@ -1,13 +1,13 @@
-import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { User } from 'app/interfaces/user.interface';
-import { mergeMap } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { WebSocketService } from '../../../../services/ws.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { TranslateService } from '@ngx-translate/core';
-import helptext from '../../../../helptext/account/members';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { mergeMap } from 'rxjs/operators';
+import helptext from 'app/helptext/account/members';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { User } from 'app/interfaces/user.interface';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

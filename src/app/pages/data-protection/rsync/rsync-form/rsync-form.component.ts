@@ -1,20 +1,19 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Direction } from 'app/enums/direction.enum';
+import { RsyncMode } from 'app/enums/rsync-mode.enum';
+import helptext from 'app/helptext/data-protection/resync/resync-form';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
+import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { TaskService, UserService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import helptext from 'app/helptext/data-protection/resync/resync-form';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { Direction } from 'app/enums/direction.enum';
 import { T } from 'app/translate-marker';
-import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
-import { RsyncMode } from 'app/enums/rsync-mode.enum';
-import { Schedule } from 'app/interfaces/schedule.interface';
-import { Option } from 'app/interfaces/option.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

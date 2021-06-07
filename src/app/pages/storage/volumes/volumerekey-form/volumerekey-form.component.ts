@@ -1,16 +1,15 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-
-import * as _ from 'lodash';
-import { WebSocketService, AppLoaderService, DialogService } from '../../../../services';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EncryptionService } from '../../../../services/encryption.service';
-import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/storage/volumes/volume-key';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import helptext from 'app/helptext/storage/volumes/volume-key';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
+import { EncryptionService } from 'app/services/encryption.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

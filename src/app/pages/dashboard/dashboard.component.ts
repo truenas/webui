@@ -1,6 +1,11 @@
 import {
   Component, OnInit, AfterViewInit, OnDestroy, ElementRef,
 } from '@angular/core';
+import { MediaObserver } from '@angular/flex-layout';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { tween, styler } from 'popmotion';
+import { Subject } from 'rxjs';
+import { DashConfigItem } from 'app/core/components/widgets/widgetcontroller/widgetcontroller.component';
 import { CoreService } from 'app/core/services/core.service';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
@@ -13,20 +18,13 @@ import {
 } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingRealtimeUpdate, VirtualMemoryUpdate } from 'app/interfaces/reporting.interface';
-
-import { Subject } from 'rxjs';
-import { MediaObserver } from '@angular/flex-layout';
-
-import { WebSocketService } from '../../services';
-import { ModalService } from 'app/services/modal.service';
-import { DashConfigItem } from 'app/core/components/widgets/widgetcontroller/widgetcontroller.component';
-import { tween, styler } from 'popmotion';
-import { EntityFormConfigurationComponent } from 'app/pages/common/entity/entity-form/entity-form-configuration.component';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityFormConfigurationComponent } from 'app/pages/common/entity/entity-form/entity-form-configuration.component';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { WebSocketService } from 'app/services';
+import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
 type DashboardNetworkInterface = NetworkInterface & {

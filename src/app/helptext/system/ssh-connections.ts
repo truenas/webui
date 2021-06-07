@@ -1,4 +1,4 @@
-import { T } from '../../translate-marker';
+import { T } from 'app/translate-marker';
 
 export default {
   fieldset_basic: T('Name and Method'),

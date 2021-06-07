@@ -1,19 +1,18 @@
 import { Component } from '@angular/core';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { take } from 'rxjs/operators';
+import { SmartTestType } from 'app/enums/smart-test-type.enum';
+import helptext from 'app/helptext/data-protection/smart/smart';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import helptext from 'app/helptext/data-protection/smart/smart';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { take } from 'rxjs/operators';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { SmartTestType } from 'app/enums/smart-test-type.enum';
-import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { T } from 'app/translate-marker';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

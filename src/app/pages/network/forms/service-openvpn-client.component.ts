@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { ServicesService } from '../../../services';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { ServicesService } from 'app/services';
 
 @UntilDestroy()
 @Component({

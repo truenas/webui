@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-
-import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @Component({
   selector: 'form-datepicker',

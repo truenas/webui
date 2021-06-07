@@ -1,16 +1,15 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { Subscription, Observer } from 'rxjs';
 import {
   HttpClient, HttpRequest, HttpEventType, HttpResponse,
 } from '@angular/common/http';
-import { TranslateService } from '@ngx-translate/core';
-import { FieldConfig } from '../../models/field-config.interface';
-import { WebSocketService } from '../../../../../../services';
-import { AppLoaderService } from '../../../../../../services/app-loader/app-loader.service';
-import { DialogService } from '../../../../../../services';
-import { T } from '../../../../../../translate-marker';
+import { Component, ViewChild, ElementRef } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { Subscription, Observer } from 'rxjs';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { WebSocketService, DialogService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

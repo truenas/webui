@@ -1,13 +1,13 @@
 import { Component, Inject } from '@angular/core';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import * as _ from 'lodash';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { WebSocketService, DialogService, AppLoaderService } from 'app/services/';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
 import { helptext } from 'app/helptext/system/2FA';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { WebSocketService, DialogService, AppLoaderService } from 'app/services/';
 
 @UntilDestroy()
 @Component({

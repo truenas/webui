@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
+import { ConfigResetComponent } from './config-reset/config-reset.component';
 import { FailoverComponent } from './failover/failover.component';
 import { RebootComponent } from './reboot/reboot.component';
 import { ShutdownComponent } from './shutdown/shutdown.component';
-import { ConfigResetComponent } from './config-reset/config-reset.component';
 
 export const OthersRoutes: Routes = [
   {

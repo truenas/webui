@@ -1,6 +1,5 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { ServiceDDNSComponent } from './components/service-dynamicdns';
 import { ServiceFTPComponent } from './components/service-ftp';
 import { ServiceLLDPComponent } from './components/service-lldp';

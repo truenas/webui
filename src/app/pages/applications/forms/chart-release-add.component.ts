@@ -1,25 +1,22 @@
 import { Component, OnDestroy } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import {
   chartsTrain, ixChartApp, latestVersion, officialCatalog,
 } from 'app/constants/catalog.constants';
+import helptext from 'app/helptext/apps/apps';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import * as _ from 'lodash';
-import { FormGroup } from '@angular/forms';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-
-import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { ModalService } from 'app/services/modal.service';
-import { DialogService } from '../../../services/index';
-import { ApplicationsService } from '../applications.service';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import helptext from '../../../helptext/apps/apps';
-import { EntityUtils } from '../../common/entity/utils';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService, ModalService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -27,24 +24,19 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-wizard [conf]="this"></entity-wizard>',
 
 })
-export class ChartReleaseAddComponent implements OnDestroy {
-  protected queryCall = 'chart.release.query';
-  protected queryCallOption: any[];
-  protected addCall = 'chart.release.create';
-  protected isEntity = true;
+export class ChartReleaseAddComponent implements OnDestroy, WizardConfiguration {
+  addCall: 'chart.release.create' = 'chart.release.create';
 
   private title = helptext.chartForm.title;
   private dialogRef: any;
   hideCancel = true;
   summary: any = {};
   summaryTitle = 'Chart Release Summary';
-  private entityWizard: any;
+  private entityWizard: EntityWizardComponent;
   private destroy$ = new Subject();
-  // private isLinear = true;
   private interfaceList: Option[] = [];
   private entityUtils = new EntityUtils();
 
-  protected fieldConfig: FieldConfig[];
   wizardConfig: Wizard[] = [
     {
       label: helptext.wizardLabels.image,
@@ -393,7 +385,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
     }
   }
 
-  makeSummary(step: string | number, fieldName: string | number, label: string | number): void {
+  makeSummary(step: string | number, fieldName: string, label: string | number): void {
     (< FormGroup > this.entityWizard.formArray.get([step]).get(fieldName)).valueChanges
       .pipe(
         takeUntil(this.destroy$),
@@ -401,12 +393,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
       .pipe(untilDestroyed(this)).subscribe((res) => {
         this.summary[(label)] = res;
       });
-  }
-
-  hideField(fieldName: any, show: boolean, entity: any): void {
-    const target = _.find(this.fieldConfig, { name: fieldName });
-    target['isHidden'] = show;
-    entity.setDisabled(fieldName, show, show);
   }
 
   customSubmit(data: any): void {

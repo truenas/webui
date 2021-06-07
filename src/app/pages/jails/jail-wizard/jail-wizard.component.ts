@@ -1,23 +1,24 @@
 import { Component } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import helptext from 'app/helptext/jails/jail-configuration';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { RestService, WebSocketService } from '../../../services';
-import { FormGroup } from '@angular/forms';
-import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
-import { MatDialog } from '@angular/material/dialog';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import * as _ from 'lodash';
-import { JailService, NetworkService, DialogService } from '../../../services';
-import { EntityUtils } from '../../common/entity/utils';
-import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
-import { ipv4Validator } from '../../common/entity/entity-form/validators/ip-validation';
-import { ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
-import { forbiddenValues } from '../../common/entity/entity-form/validators/forbidden-values-validation';
-import { T } from '../../../translate-marker';
-import helptext from '../../../helptext/jails/jail-configuration';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { ipv4Validator, ipv6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import {
+  RestService, WebSocketService, JailService, NetworkService, DialogService,
+} from 'app/services';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -25,18 +26,18 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [JailService, NetworkService],
 })
-export class JailWizardComponent {
-  protected addWsCall = 'jail.create';
+export class JailWizardComponent implements WizardConfiguration {
+  addWsCall: 'jail.create' = 'jail.create';
   route_success: string[] = ['jails'];
   summary: any = {};
   summaryTitle = 'Jail Summary';
   objectKeys = Object.keys;
-  entityWizard: any;
+  entityWizard: EntityWizardComponent;
   protected namesInUse: string[] = [];
 
   isLinear = true;
   firstFormGroup: FormGroup;
-  protected custActions: any[] = [
+  custActions: any[] = [
     {
       id: 'advanced_add',
       name: T('Advanced Jail Creation'),
@@ -62,7 +63,7 @@ export class JailWizardComponent {
     ],
   };
 
-  protected wizardConfig: Wizard[] = [{
+  wizardConfig: Wizard[] = [{
     label: helptext.wizard_step1_label,
     fieldConfig: [{
       type: 'input',

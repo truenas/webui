@@ -1,4 +1,4 @@
-import { T } from '../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 export default {
   protocol_placeholder: T('Protocol'),

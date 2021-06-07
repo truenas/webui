@@ -1,20 +1,20 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { latestVersion } from 'app/constants/catalog.constants';
-import { Option } from 'app/interfaces/option.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { Subscription } from 'rxjs';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
-import { ModalService } from '../../../services/modal.service';
-import { DialogService } from '../../../services/index';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { ApplicationsService } from '../applications.service';
-import helptext from '../../../helptext/apps/apps';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { EntityUtils } from '../../common/entity/utils';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subscription } from 'rxjs';
+import { latestVersion } from 'app/constants/catalog.constants';
+import helptext from 'app/helptext/apps/apps';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService } from 'app/services/index';
+import { ModalService } from 'app/services/modal.service';
+import { ApplicationsService } from '../applications.service';
 
 @UntilDestroy()
 @Component({

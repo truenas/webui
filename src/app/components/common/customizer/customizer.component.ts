@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
-import { NavigationService } from '../../../services/navigation/navigation.service';
+import { NavigationService } from 'app/services/navigation/navigation.service';
 
 @Component({
   selector: 'app-customizer',

@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { DocsService } from '../../../../../../services/docs.service';
+import { DocsService } from 'app/services/docs.service';
 
 @Pipe({
   name: 'docreplace',

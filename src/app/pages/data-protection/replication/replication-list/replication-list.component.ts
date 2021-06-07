@@ -1,12 +1,21 @@
-import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
+import { Validators } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import helptext from 'app/helptext/data-protection/replication/replication';
+import globalHelptext from 'app/helptext/global-helptext';
+import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { T } from 'app/translate-marker';
+import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
+import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import {
   DialogService,
   JobService,
@@ -16,19 +25,9 @@ import {
   KeychainCredentialService,
   ReplicationService,
 } from 'app/services';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import globalHelptext from 'app/helptext/global-helptext';
-import helptext from 'app/helptext/data-protection/replication/replication';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
-import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
-import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
-import { EntityJob } from 'app/interfaces/entity-job.interface';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

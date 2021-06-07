@@ -1,15 +1,13 @@
 import { Component, ViewChild } from '@angular/core';
-import { Option } from 'app/interfaces/option.interface';
-
-import * as _ from 'lodash';
-
-import { EntityFormComponent } from '../../../../common/entity/entity-form';
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { UserService } from '../../../../../services';
-import helptext from '../../../../../helptext/system/cron-form';
-import { ModalService } from '../../../../../services/modal.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import helptext from 'app/helptext/system/cron-form';
+import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { UserService } from 'app/services';
+import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({

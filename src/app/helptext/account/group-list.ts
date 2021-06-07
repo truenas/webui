@@ -1,4 +1,4 @@
-import { T } from '../../translate-marker';
+import { T } from 'app/translate-marker';
 
 export default {
   group_list_actions_label_member: T('Members'),

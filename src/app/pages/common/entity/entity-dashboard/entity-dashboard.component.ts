@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import * as _ from 'lodash';
-import { ProductType } from '../../../../enums/product-type.enum';
-import { WebSocketService } from '../../../../services/ws.service';
-import { TranslateService } from '@ngx-translate/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
+import { ProductType } from 'app/enums/product-type.enum';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

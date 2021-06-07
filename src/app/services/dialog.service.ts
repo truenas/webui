@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
+import { ConfirmDialog } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { ErrorDialog } from 'app/pages/common/error-dialog/error-dialog.component';
+import { GeneralDialogComponent, GeneralDialogConfig } from 'app/pages/common/general-dialog/general-dialog.component';
+import { InfoDialog } from 'app/pages/common/info-dialog/info-dialog.component';
+import { PasswordDialog } from 'app/pages/common/password-dialog/password-dialog.component';
+import { SelectDialogComponent } from 'app/pages/common/select-dialog/select-dialog.component';
 import { T } from 'app/translate-marker';
-import { filter } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { ConfirmDialog } from '../pages/common/confirm-dialog/confirm-dialog.component';
-import { PasswordDialog } from '../pages/common/password-dialog/password-dialog.component';
-import { EntityDialogComponent } from '../pages/common/entity/entity-dialog/entity-dialog.component';
-import { ErrorDialog } from '../pages/common/error-dialog/error-dialog.component';
-import { InfoDialog } from '../pages/common/info-dialog/info-dialog.component';
-import { GeneralDialogComponent, GeneralDialogConfig } from '../pages/common/general-dialog/general-dialog.component';
-import { SelectDialogComponent } from '../pages/common/select-dialog/select-dialog.component';
 import { AppLoaderService } from './app-loader/app-loader.service';
 import { WebSocketService } from './ws.service';
-import * as _ from 'lodash';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Injectable()

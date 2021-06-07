@@ -7,6 +7,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import * as filesize from 'filesize';
+import * as _ from 'lodash';
+import * as moment from 'moment';
+import { TreeNode } from 'primeng/api';
+import { combineLatest, Observable, Subscription } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
@@ -15,38 +21,32 @@ import { DatasetType } from 'app/enums/dataset-type.enum';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { ProductType } from 'app/enums/product-type.enum';
+import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableService } from 'app/pages/common/entity/entity-table/entity-table.service';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { JobService, RestService, ValidationService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErdService } from 'app/services/erd.service';
 import { ModalService } from 'app/services/modal.service';
+import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
-import * as _ from 'lodash';
-import * as moment from 'moment';
-import { TreeNode } from 'primeng/api';
-import { combineLatest, Observable, Subscription } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { ProductType } from '../../../../enums/product-type.enum';
-import dataset_helptext from '../../../../helptext/storage/volumes/datasets/dataset-form';
-import helptext from '../../../../helptext/storage/volumes/volume-list';
-import { JobService, RestService, ValidationService } from '../../../../services';
-import { StorageService } from '../../../../services/storage.service';
-import { T } from '../../../../translate-marker';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EmptyConfig, EmptyType } from '../../../common/entity/entity-empty/entity-empty.component';
-import { MessageService } from '../../../common/entity/entity-form/services/message.service';
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { EntityUtils } from '../../../common/entity/utils';
+import { T } from 'app/translate-marker';
 import { DatasetFormComponent } from '../datasets/dataset-form';
 import { ZvolFormComponent } from '../zvol/zvol-form';
 import { VolumesListControlsComponent } from './volumes-list-controls.component';
-import * as filesize from 'filesize';
 
 export interface ZfsPoolData {
   pool: string;
@@ -90,6 +90,7 @@ interface ZfsData {
   source: string;
 }
 
+@UntilDestroy()
 export class VolumesListTableConfig {
   hideTopActions = true;
   flattenedVolData: any;
@@ -1783,7 +1784,6 @@ export class VolumesListTableConfig {
   }
 }
 
-@UntilDestroy()
 @Component({
   selector: 'app-volumes-list',
   styleUrls: ['./volumes-list.component.scss'],

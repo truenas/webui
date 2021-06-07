@@ -1,18 +1,16 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
-import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
-import { MembersComponent } from './groups/members/members.component';
-import { UserListComponent } from './users/user-list';
-import { UserFormComponent } from './users/user-form';
-import { ChangePasswordComponent } from './users/change-password/change-password.component';
-import { TwoFactorComponent } from '../system/two-factor/two-factor.component';
-import { DirectoryservicesComponent } from '../directoryservice/directoryservices.component';
+import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
+import { T } from 'app/translate-marker';
 import { BackupCredentialsComponent } from '../credentials/backup-credentials/backup-credentials.component';
-
-import { T } from '../../translate-marker';
 import { CertificatesDashComponent } from '../credentials/certificates-dash/certificates-dash.component';
+import { DirectoryservicesComponent } from '../directoryservice/directoryservices.component';
+import { TwoFactorComponent } from '../system/two-factor/two-factor.component';
+import { MembersComponent } from './groups/members/members.component';
+import { ChangePasswordComponent } from './users/change-password/change-password.component';
+import { UserFormComponent } from './users/user-form';
+import { UserListComponent } from './users/user-list';
 
 export const routes: Routes = [{
   path: '',

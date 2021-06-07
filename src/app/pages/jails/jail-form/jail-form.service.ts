@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { Observable } from 'rxjs';
-
-import { WebSocketService } from '../../../services';
-import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { FieldRelationService } from '../../common/entity/entity-form/services/field-relation.service';
-import * as _ from 'lodash';
-import { EntityUtils } from '../../common/entity/utils';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { Observable } from 'rxjs';
+import { NetworkInterface } from 'app/interfaces/network-interface.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Injectable()

@@ -1,14 +1,27 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
-
+import { CompressionType } from 'app/enums/compression-type.enum';
+import { Direction } from 'app/enums/direction.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
+import { LoggingLevel } from 'app/enums/logging-level.enum';
+import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
+import { RetentionPolicy } from 'app/enums/retention-policy.enum';
+import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication';
 import repwizardhelptext from 'app/helptext/data-protection/replication/replication-wizard';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Schedule } from 'app/interfaces/schedule.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   WebSocketService,
   TaskService,
@@ -16,23 +29,8 @@ import {
   ReplicationService,
   StorageService,
 } from 'app/services';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { T } from 'app/translate-marker';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { ModalService } from 'app/services/modal.service';
-import { CompressionType } from 'app/enums/compression-type.enum';
-import { Direction } from 'app/enums/direction.enum';
-import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
-import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
-import { LoggingLevel } from 'app/enums/logging-level.enum';
-import { NetcatMode } from 'app/enums/netcat-mode.enum';
-import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
-import { RetentionPolicy } from 'app/enums/retention-policy.enum';
-import { TransportMode } from 'app/enums/transport-mode.enum';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { Schedule } from 'app/interfaces/schedule.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
