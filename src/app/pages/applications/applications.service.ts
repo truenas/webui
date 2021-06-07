@@ -4,7 +4,7 @@ import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Observable } from 'rxjs';
 import { WebSocketService } from '../../services/index';
-
+import { UpgradeSummary } from 'app/interfaces/application.interface';
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
   constructor(private ws: WebSocketService) {}
@@ -83,7 +83,7 @@ export class ApplicationsService {
     return this.ws.call('container.update', [{ enable_image_updates }]);
   }
 
-  getUpgradeSummary(name: string): Observable<any> {
+  getUpgradeSummary(name: string): Observable<UpgradeSummary> {
     return this.ws.call('chart.release.upgrade_summary', [name]);
   }
 }

@@ -24,6 +24,7 @@ import { Router } from '@angular/router';
 import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UpgradeSummary } from 'app/interfaces/application.interface';
 
 @UntilDestroy()
 @Component({
@@ -329,7 +330,7 @@ export class ChartReleasesComponent implements OnInit {
 
   update(name: string): void {
     this.appLoaderService.open();
-    this.appService.getUpgradeSummary(name).pipe(untilDestroyed(this)).subscribe((res) => {
+    this.appService.getUpgradeSummary(name).pipe(untilDestroyed(this)).subscribe((res: UpgradeSummary) => {
       this.appLoaderService.close();
       this.dialogService.confirm({
         title: helptext.charts.upgrade_dialog.title + res.latest_human_version,
