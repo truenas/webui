@@ -6,10 +6,10 @@
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "noImplicitAny": true,
-    "target": "es5",
+    "module": "es2020",
+    "target": "es2015",
     "allowSyntheticDefaultImports": true,
     "lib": [
       "es2016",
@@ -17,23 +17,9 @@
       "es2017.object",
       "es2016.array.include"
     ],
-    "module": "es2015"
   },
   "angularCompilerOptions": {
     "enableIvy": true,
     "allowEmptyCodegenFiles": true
   },
-  "include": [
-    "src/main.ts",
-    "src/polyfills.ts",
-    "src/environments/environment.ts",
-    "src/**/*.component.ts",
-    "src/**/*.module.ts",
-    "src/**/*.routes.ts",
-    "src/**/*.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
-  ]
 }

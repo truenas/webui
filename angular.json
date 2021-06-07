@@ -11,12 +11,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "aot": true,
             "allowedCommonJsDependencies": [
               "lodash",
-              "dom-set",
-              "dom-plane",
-              "@mattlewis92/dom-autoscroller",
-              "rxjs",
               "is-cidr",
               "cidr-regex",
               "dygraphs",
@@ -25,9 +22,9 @@
               "cron-parser",
               "chartist",
               "moment-timezone",
-              "marked",
-              "calendar-utils/date-adapters/date-fns",
-              "what-is-my-ip-address"
+              "calendar-utils",
+              "what-is-my-ip-address",
+              "cronstrue"
             ],
             "outputPath": "dist",
             "index": "src/index.html",

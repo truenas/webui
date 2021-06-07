@@ -1,5 +1,5 @@
 <mat-card #appTable class="expanded-table-container">
-  <mat-expansion-panel class="expanded-table mat-elevation-z0" [ngClass]="{'expanded-height': isExpanded && tableConf.detailsHref}" hideToggle [disabled]="disabled" [collapsed]="expandableTableState === ExpandatbleTableState.Collapsed"
+  <mat-expansion-panel class="expanded-table mat-elevation-z0" [ngClass]="{'expanded-height': isExpanded && tableConf.detailsHref}" hideToggle [disabled]="disabled"
     [expanded]="expandableTableState === ExpandatbleTableState.Expanded" (opened)="isExpanded = true" (closed)="isExpanded = false">
     <mat-expansion-panel-header [class.has-extra-actions]="tableConf?.tableExtraActions">
       <mat-panel-title>
