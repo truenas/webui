@@ -90,6 +90,7 @@ interface ZfsData {
   source: string;
 }
 
+@UntilDestroy()
 export class VolumesListTableConfig {
   hideTopActions = true;
   flattenedVolData: any;
@@ -1783,7 +1784,6 @@ export class VolumesListTableConfig {
   }
 }
 
-@UntilDestroy()
 @Component({
   selector: 'app-volumes-list',
   styleUrls: ['./volumes-list.component.scss'],
