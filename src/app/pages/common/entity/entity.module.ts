@@ -4,7 +4,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
 import { CommonModule } from '@angular/common';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -231,7 +231,6 @@ import { TableComponent } from './table/table.component';
     TaskScheduleListComponent,
     FormDictComponent,
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     EntityTableService,
     AppLoaderService,
