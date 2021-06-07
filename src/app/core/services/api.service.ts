@@ -574,7 +574,7 @@ export class ApiService {
 
   registerDefinitions(): void {
     // DEBUG: console.log("APISERVICE: Registering API Definitions");
-    for (var def in this.apiDefinitions) {
+    for (const def in this.apiDefinitions) {
       // DEBUG: console.log("def = " + def);
       this.core.register({ observerClass: this, eventName: def }).pipe(untilDestroyed(this)).subscribe(
         (evt: CoreEvent) => {

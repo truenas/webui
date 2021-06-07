@@ -7,6 +7,7 @@ import {
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { customSvgIcons } from 'app/core/classes/custom-icons';
+import { DataService } from 'app/core/services/data.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import productText from './helptext/product';
 import { SystemGeneralService } from './services';
@@ -32,6 +33,9 @@ export class AppComponent {
     public domSanitizer: DomSanitizer,
     public matIconRegistry: MatIconRegistry,
     private sysGeneralService: SystemGeneralService,
+
+    // TODO: Keep or do proper refactoring. Currenly our code relies for SysInfo to be emitted by SystemProfileService constructor.
+    private cache: DataService,
   ) {
     this.matIconRegistry.addSvgIconSetInNamespace(
       'mdi',

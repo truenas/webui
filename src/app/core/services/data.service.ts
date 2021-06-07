@@ -24,6 +24,7 @@ export interface MultiCall {
 })
 export class DataService implements OnDestroy {
   constructor(
+    // TODO: Do not remove. Removing will stop SysInfo from being emitted.
     private sysInfo: SystemProfileService,
     private dts: DiskTemperatureService,
     private dss: DiskStateService,
