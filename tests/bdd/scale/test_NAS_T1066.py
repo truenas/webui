@@ -56,9 +56,9 @@ def the_network_page_will_open_click_global_configuration_settings(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__globalSettings"]').click()
 
 
-@then(parsers.parse('Then the global config page will open and input Nameservers "{nameserver1}", "{nameserver2}" and "{nameserver3}"'))
+@then(parsers.parse('the global config page will open and input Nameservers "{nameserver1}", "{nameserver2}" and "{nameserver3}"'))
 def the_global_config_page_will_open_and_input_nameservers(driver, nameserver1, nameserver2, nameserver3):
-    """Then the global config page will open and input Nameservers "{nameserver1}", "{nameserver2}" and "{nameserver3}"."""
+    """the global config page will open and input Nameservers "{nameserver1}", "{nameserver2}" and "{nameserver3}"."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Global Configuration")]')
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Nameserver 1"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').clear()
