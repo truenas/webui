@@ -337,7 +337,9 @@ export class VmFormComponent implements FormConfiguration {
     vmRes['memory'] = this.storageService.convertBytestoHumanReadable(vmRes['memory'] * 1048576, 0);
     this.ws.call('device.get_info', ['GPU']).pipe(untilDestroyed(this)).subscribe((gpus: GpuDevice[]) => {
       this.gpus = gpus;
-      const vmPciSlots: string[] = vmRes.devices.filter((device: any) => device.dtype === VmDeviceType.Pci).map((pciDevice: any) => pciDevice.attributes.pptdev);
+      const vmPciSlots: string[] = vmRes.devices
+        .filter((device: any) => device.dtype === VmDeviceType.Pci)
+        .map((pciDevice: any) => pciDevice.attributes.pptdev);
       const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
       for (const item of gpus) {
         gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
@@ -408,7 +410,9 @@ export class VmFormComponent implements FormConfiguration {
       }
       if (!found) {
         const prevVmGpuPciDevicesPciSlots = prevGpu.devices.map((prevGpuPciDevice) => prevGpuPciDevice.vm_pci_slot);
-        const vmPciDevices = prevVmPciDevices.filter((prevVmPciDevice: any) => prevVmGpuPciDevicesPciSlots.includes(prevVmPciDevice.attributes.pptdev));
+        const vmPciDevices = prevVmPciDevices.filter((prevVmPciDevice: any) => {
+          return prevVmGpuPciDevicesPciSlots.includes(prevVmPciDevice.attributes.pptdev);
+        });
         const vmPciDeviceIds = vmPciDevices.map((prevVmPciDevice: any) => prevVmPciDevice.id);
         vmPciDeviceIdsToRemove.push(...vmPciDeviceIds);
       }

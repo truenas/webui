@@ -149,7 +149,8 @@ export interface ChartConfiguration {
   line?: {
     /**
      * Set if null data point will be connected or not.
-     * If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
+     * If true set, the region of null data will be connected without any data point.
+     * If false set, the region of null data will not be connected and get empty.
      */
     connectNull?: boolean;
     /**

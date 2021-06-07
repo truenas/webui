@@ -1288,29 +1288,31 @@ export class DatasetFormComponent implements FormConfiguration {
               entityForm.formGroup.controls['sync'].setValue(sync_value);
 
               let compression_value = pk_dataset[0].compression.value;
-              if (pk_dataset[0].compression.source === ZfsPropertySource.Inherited || pk_dataset[0].compression.source === ZfsPropertySource.Default) {
+              if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pk_dataset[0].compression.source)) {
                 compression_value = 'INHERIT';
               }
               entityForm.formGroup.controls['compression'].setValue(compression_value);
 
               let deduplication_value = pk_dataset[0].deduplication.value;
-              if (pk_dataset[0].deduplication.source === ZfsPropertySource.Default || pk_dataset[0].deduplication.source === ZfsPropertySource.Inherited) {
+              if (
+                [ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pk_dataset[0].deduplication.source)
+              ) {
                 deduplication_value = 'INHERIT';
               }
               let exec_value = pk_dataset[0].exec.value;
-              if (pk_dataset[0].exec.source === ZfsPropertySource.Default || pk_dataset[0].exec.source === ZfsPropertySource.Inherited) {
+              if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pk_dataset[0].exec.source)) {
                 exec_value = 'INHERIT';
               }
               let readonly_value = pk_dataset[0].readonly.value;
-              if (pk_dataset[0].readonly.source === ZfsPropertySource.Default || pk_dataset[0].readonly.source === ZfsPropertySource.Inherited) {
+              if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pk_dataset[0].readonly.source)) {
                 readonly_value = 'INHERIT';
               }
               let atime_value = pk_dataset[0].atime.value;
-              if (pk_dataset[0].atime.source === ZfsPropertySource.Default || pk_dataset[0].atime.source === ZfsPropertySource.Inherited) {
+              if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pk_dataset[0].atime.source)) {
                 atime_value = 'INHERIT';
               }
               let recordsize_value = pk_dataset[0].recordsize.value;
-              if (pk_dataset[0].recordsize.source === ZfsPropertySource.Default || pk_dataset[0].recordsize.source === ZfsPropertySource.Inherited) {
+              if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pk_dataset[0].recordsize.source)) {
                 recordsize_value = 'INHERIT';
               }
 
@@ -1355,13 +1357,21 @@ export class DatasetFormComponent implements FormConfiguration {
     if (wsResponse.special_small_block_size && wsResponse.special_small_block_size.rawvalue === '0') {
       delete wsResponse.special_small_block_size;
     }
-    const quota_warning = this.getFieldValueOrNone(wsResponse.quota_warning) ? this.getFieldValueOrNone(wsResponse.quota_warning) : this.warning;
+    const quota_warning = this.getFieldValueOrNone(wsResponse.quota_warning)
+      ? this.getFieldValueOrNone(wsResponse.quota_warning)
+      : this.warning;
     const quota_warning_inherit = this.isInherited(wsResponse.quota_warning, quota_warning);
-    const quota_critical = this.getFieldValueOrNone(wsResponse.quota_critical) ? this.getFieldValueOrNone(wsResponse.quota_critical) : this.critical;
+    const quota_critical = this.getFieldValueOrNone(wsResponse.quota_critical)
+      ? this.getFieldValueOrNone(wsResponse.quota_critical)
+      : this.critical;
     const quota_critical_inherit = this.isInherited(wsResponse.quota_critical, quota_critical);
-    const refquota_warning = this.getFieldValueOrNone(wsResponse.refquota_warning) ? this.getFieldValueOrNone(wsResponse.refquota_warning) : this.warning;
+    const refquota_warning = this.getFieldValueOrNone(wsResponse.refquota_warning)
+      ? this.getFieldValueOrNone(wsResponse.refquota_warning)
+      : this.warning;
     const refquota_warning_inherit = this.isInherited(wsResponse.refquota_warning, refquota_warning);
-    const refquota_critical = this.getFieldValueOrNone(wsResponse.refquota_critical) ? this.getFieldValueOrNone(wsResponse.refquota_critical) : this.critical;
+    const refquota_critical = this.getFieldValueOrNone(wsResponse.refquota_critical)
+      ? this.getFieldValueOrNone(wsResponse.refquota_critical)
+      : this.critical;
     const refquota_critical_inherit = this.isInherited(wsResponse.refquota_critical, refquota_critical);
     const sizeValues: any = {};
     for (let i = 0; i < this.size_fields.length; i++) {
@@ -1408,9 +1418,21 @@ export class DatasetFormComponent implements FormConfiguration {
       returnValue.aclmode = this.getFieldValueOrRaw(wsResponse.aclmode);
     }
 
-    if (sizeValues['quota'] || sizeValues['refquota'] || sizeValues['refreservation'] || sizeValues['reservation'] || sizeValues['special_small_block_size']
-      || !quota_warning_inherit || !quota_critical_inherit || !refquota_warning_inherit || !refquota_critical_inherit
-      || quota_warning !== this.warning || quota_critical !== this.critical || refquota_critical !== this.critical || refquota_warning !== this.warning) {
+    if (
+      sizeValues['quota']
+      || sizeValues['refquota']
+      || sizeValues['refreservation']
+      || sizeValues['reservation']
+      || sizeValues['special_small_block_size']
+      || !quota_warning_inherit
+      || !quota_critical_inherit
+      || !refquota_warning_inherit
+      || !refquota_critical_inherit
+      || quota_warning !== this.warning
+      || quota_critical !== this.critical
+      || refquota_critical !== this.critical
+      || refquota_warning !== this.warning
+    ) {
       this.isBasicMode = false;
     }
 

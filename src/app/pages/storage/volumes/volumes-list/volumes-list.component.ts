@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import { TreeNode } from 'primeng/api';
 import { combineLatest, Observable, Subscription } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
@@ -539,7 +539,10 @@ export class VolumesListTableConfig {
                 const payload = [row.id];
                 body['autotrim'] = (formValue.autotrim ? 'ON' : 'OFF');
                 payload.push(body);
-                const dialogRef = self.mdDialog.open(EntityJobComponent, { data: { title: helptext.pool_options_dialog.save_pool_options }, disableClose: true });
+                const dialogRef = self.mdDialog.open(EntityJobComponent, {
+                  data: { title: helptext.pool_options_dialog.save_pool_options },
+                  disableClose: true,
+                });
                 dialogRef.componentInstance.setDescription(helptext.pool_options_dialog.saving_pool_options);
                 dialogRef.componentInstance.setCall(method, payload);
                 dialogRef.componentInstance.submit();
@@ -790,42 +793,34 @@ export class VolumesListTableConfig {
                         if (res.exc_info.extra && res.exc_info.extra['code'] === 'control_services') {
                           entityDialog.dialogRef.close(true);
                           dialogRef.close(true);
-                          let stopMsg: string;
-                          let restartMsg: string;
-                          let continueMsg: string;
-                          self.translate.get(helptext.exportMessages.onfail.stopServices).pipe(untilDestroyed(this)).subscribe((stop) => {
-                            self.translate.get(helptext.exportMessages.onfail.restartServices).pipe(untilDestroyed(this)).subscribe((restart) => {
-                              self.translate.get(helptext.exportMessages.onfail.continueMessage).pipe(untilDestroyed(this)).subscribe((continueRes) => {
-                                stopMsg = stop;
-                                restartMsg = restart;
-                                continueMsg = continueRes;
-                              });
+                          const stopMsg = self.translate.instant(helptext.exportMessages.onfail.stopServices);
+                          const restartMsg = self.translate.instant(helptext.exportMessages.onfail.restartServices);
+                          const continueMsg = self.translate.instant(helptext.exportMessages.onfail.continueMessage);
+
+                          if (res.exc_info.extra.stop_services.length > 0) {
+                            conditionalErrMessage += '<div class="warning-box">' + stopMsg;
+                            res.exc_info.extra.stop_services.forEach((item: string) => {
+                              conditionalErrMessage += `<br>- ${item}`;
                             });
+                          }
+                          if (res.exc_info.extra.restart_services.length > 0) {
                             if (res.exc_info.extra.stop_services.length > 0) {
-                              conditionalErrMessage += '<div class="warning-box">' + stopMsg;
-                              res.exc_info.extra.stop_services.forEach((item: string) => {
-                                conditionalErrMessage += `<br>- ${item}`;
-                              });
+                              conditionalErrMessage += '<br><br>';
                             }
-                            if (res.exc_info.extra.restart_services.length > 0) {
-                              if (res.exc_info.extra.stop_services.length > 0) {
-                                conditionalErrMessage += '<br><br>';
+                            conditionalErrMessage += '<div class="warning-box">' + restartMsg;
+                            res.exc_info.extra.restart_services.forEach((item: string) => {
+                              conditionalErrMessage += `<br>- ${item}`;
+                            });
+                          }
+                          conditionalErrMessage += '<br><br>' + continueMsg + '</div><br />';
+                          self.dialogService.confirm(helptext.exportError,
+                            conditionalErrMessage, true, helptext.exportMessages.onfail.continueAction)
+                            .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
+                              if (res) {
+                                self.restartServices = true;
+                                this.customSubmit(entityDialog);
                               }
-                              conditionalErrMessage += '<div class="warning-box">' + restartMsg;
-                              res.exc_info.extra.restart_services.forEach((item: string) => {
-                                conditionalErrMessage += `<br>- ${item}`;
-                              });
-                            }
-                            conditionalErrMessage += '<br><br>' + continueMsg + '</div><br />';
-                            self.dialogService.confirm(helptext.exportError,
-                              conditionalErrMessage, true, helptext.exportMessages.onfail.continueAction)
-                              .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-                                if (res) {
-                                  self.restartServices = true;
-                                  this.customSubmit(entityDialog);
-                                }
-                              });
-                          });
+                            });
                         } else if (res.extra && res.extra['code'] === 'unstoppable_processes') {
                           entityDialog.dialogRef.close(true);
                           self.translate.get(helptext.exportMessages.onfail.unableToTerminate).pipe(untilDestroyed(this)).subscribe((msg) => {
@@ -1612,29 +1607,32 @@ export class VolumesListTableConfig {
                   ds.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((res: any) => {
                     force_umount = res;
                   });
-                  ds.afterClosed().pipe(untilDestroyed(this)).subscribe((status: any) => {
-                    if (status) {
-                      this.translate.get(helptext.lock_dataset_dialog.locking_dataset_description).pipe(untilDestroyed(this)).subscribe((lock_ds_description) => {
-                        const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: helptext.lock_dataset_dialog.locking_dataset }, disableClose: true });
-                        dialogRef.componentInstance.setDescription(lock_ds_description + rowData.name);
-                        params.push({ force_umount });
-                        dialogRef.componentInstance.setCall(ds.componentInstance.method, params);
-                        dialogRef.componentInstance.submit();
-                        let done = false;
-                        dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-                          if (!done) {
-                            dialogRef.close(false);
-                            done = true;
-                            this.parentVolumesListComponent.repaintMe();
-                          }
-                        });
+                  ds.afterClosed().pipe(
+                    filter(Boolean),
+                    untilDestroyed(this),
+                  ).subscribe(() => {
+                    const lockDescription = this.translate.instant(helptext.lock_dataset_dialog.locking_dataset_description);
+                    const dialogRef = this.mdDialog.open(EntityJobComponent, {
+                      data: { title: helptext.lock_dataset_dialog.locking_dataset },
+                      disableClose: true,
+                    });
+                    dialogRef.componentInstance.setDescription(lockDescription + rowData.name);
+                    params.push({ force_umount });
+                    dialogRef.componentInstance.setCall(ds.componentInstance.method, params);
+                    dialogRef.componentInstance.submit();
+                    let done = false;
+                    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+                      if (!done) {
+                        dialogRef.close(false);
+                        done = true;
+                        this.parentVolumesListComponent.repaintMe();
+                      }
+                    });
 
-                        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
-                          dialogRef.close(false);
-                          new EntityUtils().handleWSError(this, res, this.dialogService);
-                        });
-                      });
-                    }
+                    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+                      dialogRef.close(false);
+                      new EntityUtils().handleWSError(this, res, this.dialogService);
+                    });
                   });
                 });
               });
@@ -2049,7 +2047,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.addZvolComponent = new ZvolFormComponent(this.router, this.aroute, this.ws, this.loader,
       this.dialogService, this.storageService, this.translate, this.modalService);
 
-    this.addDatasetFormComponent = new DatasetFormComponent(this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService);
+    this.addDatasetFormComponent = new DatasetFormComponent(
+      this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService,
+    );
   }
 
   addZvol(id: string, isNew: boolean): void {
@@ -2066,7 +2066,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   }
 
   editDataset(pool: any, id: string): void {
-    this.editDatasetFormComponent = new DatasetFormComponent(this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService);
+    this.editDatasetFormComponent = new DatasetFormComponent(
+      this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService,
+    );
 
     this.editDatasetFormComponent.setPk(id);
     this.editDatasetFormComponent.setVolId(pool);

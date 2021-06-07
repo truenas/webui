@@ -505,7 +505,9 @@ export class ChartReleasesComponent implements OnInit {
 
   filerChartItems(): void {
     if (this.filterString) {
-      this.filteredChartItems = this.getChartItems().filter((chart: any) => chart.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1);
+      this.filteredChartItems = this.getChartItems().filter((chart: any) => {
+        return chart.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1;
+      });
     } else {
       this.filteredChartItems = this.getChartItems();
     }

@@ -365,7 +365,10 @@ export class VolumeStatusComponent implements OnInit {
           customSubmit(entityDialog: any) {
             delete entityDialog.formValue['passphrase2'];
 
-            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, { data: { title: helptext.replace_disk.title }, disableClose: true });
+            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {
+              data: { title: helptext.replace_disk.title },
+              disableClose: true,
+            });
             dialogRef.componentInstance.setDescription(helptext.replace_disk.description);
             dialogRef.componentInstance.setCall('pool.replace', [pk, entityDialog.formValue]);
             dialogRef.componentInstance.submit();
@@ -491,7 +494,10 @@ export class VolumeStatusComponent implements OnInit {
           customSubmit(entityDialog: any) {
             delete entityDialog.formValue['passphrase2'];
 
-            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, { data: { title: helptext.extend_disk.title }, disableClose: true });
+            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {
+              data: { title: helptext.extend_disk.title },
+              disableClose: true,
+            });
             dialogRef.componentInstance.setDescription(helptext.extend_disk.description);
             dialogRef.componentInstance.setCall('pool.attach', [pk, entityDialog.formValue]);
             dialogRef.componentInstance.submit();

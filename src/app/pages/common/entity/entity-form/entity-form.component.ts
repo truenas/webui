@@ -240,7 +240,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
         if (this.pk && !this.conf.isNew) {
           if (this.conf.editCall) {
-            this.submitFunction = this.editCall; // this is strange so I AM NOTING it...  this.editCall internally calls this.conf.editCall with some fluff.
+            // this is strange so I AM NOTING it...  this.editCall internally calls this.conf.editCall with some fluff.
+            this.submitFunction = this.editCall;
             // But to my eyes it almost looks like a bug when I first saw it. FYI
           } else {
             this.resourceName = this.resourceName + this.pk + '/';

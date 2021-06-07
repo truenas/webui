@@ -233,7 +233,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.paginationPageSizeOptions = this.conf.config.pagingOptions.pageSizeOptions;
     }
 
-    this.sortKey = (this.conf.config.deleteMsg && this.conf.config.deleteMsg.key_props) ? this.conf.config.deleteMsg.key_props[0] : this.conf.columns[0].prop;
+    this.sortKey = (this.conf.config.deleteMsg && this.conf.config.deleteMsg.key_props)
+      ? this.conf.config.deleteMsg.key_props[0]
+      : this.conf.columns[0].prop;
     setTimeout(async () => {
       if (this.conf.prerequisite) {
         await this.conf.prerequisite().then(
@@ -650,7 +652,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   isTableOverflow(): boolean {
     let hasHorizontalScrollbar = false;
     if (this.entitytable) {
-      hasHorizontalScrollbar = this.entitytable._elementRef.nativeElement.parentNode.scrollWidth > this.entitytable._elementRef.nativeElement.parentNode.clientWidth;
+      const parentNode = this.entitytable._elementRef.nativeElement.parentNode;
+      hasHorizontalScrollbar = parentNode.scrollWidth > parentNode.clientWidth;
     }
     return hasHorizontalScrollbar;
   }
@@ -849,7 +852,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   delete(id: string): void {
     this.loader.open();
     this.loaderOpen = true;
-    this.busy = this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id])).pipe(untilDestroyed(this)).subscribe(
+    this.busy = this.ws.call(
+      this.conf.wsDelete,
+      this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id],
+    ).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.getData();
         this.excuteDeletion = true;
