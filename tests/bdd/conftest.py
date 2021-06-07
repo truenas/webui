@@ -2,12 +2,23 @@
 
 import os
 import pytest
+import random
+import string
 import time
 from configparser import ConfigParser
 from platform import system
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.common.exceptions import NoSuchElementException
+
+
+# random hostname
+hostname = f'uitest{"".join(random.choices(string.digits, k=3))}'
+
+
+@pytest.fixture
+def nas_hostname():
+    return hostname
 
 
 @pytest.fixture
