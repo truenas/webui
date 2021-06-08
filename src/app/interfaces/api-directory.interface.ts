@@ -119,12 +119,13 @@ export type ApiDirectory = {
   'boot.scrub': { params: any; response: any };
 
   // Catalog
-  'catalog.query': { params: QueryParams<any, { extra: { item_details: boolean } }>; response: Catalog[] };
+  'catalog.query': { params: QueryParams<any, { extra: { item_details: boolean; cache: boolean; retrieve_versions: boolean } }>; response: Catalog[] };
   'catalog.update': { params: any; response: any };
   'catalog.create': { params: any; response: any };
   'catalog.delete': { params: any; response: any };
   'catalog.items': { params: any; response: any };
   'catalog.sync': { params: any; response: any };
+  'catalog.get_item_details': { params: any; response: any };
 
   // Certificate
   'certificate.create': { params: any; response: any };
