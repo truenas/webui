@@ -26,6 +26,7 @@ import { EntityUtils } from '../../../../common/entity/utils';
 
 interface DatasetFormData {
   name: string;
+  acltype?: string;
   comments: string;
   sync: string;
   compression: string;
@@ -651,6 +652,20 @@ export class DatasetFormComponent implements FormConfiguration {
         },
         {
           type: 'select',
+          name: 'acltype',
+          placeholder: T('ACL Type'),
+          options: [
+            { label: 'OFF', value: 'OFF' },
+            { label: 'NOACL', value: 'NOACL' },
+            { label: 'NFSV4', value: 'NFSV4' },
+            { label: 'NFS4ACL', value: 'NFS4ACL' },
+            { label: 'POSIX', value: 'POSIX' },
+            { label: 'POSIXACL', value: 'POSIXACL' },
+          ],
+          required: false,
+        },
+        {
+          type: 'select',
           name: 'casesensitivity',
           placeholder: helptext.dataset_form_casesensitivity_placeholder,
           tooltip: helptext.dataset_form_casesensitivity_tooltip,
@@ -724,6 +739,7 @@ export class DatasetFormComponent implements FormConfiguration {
     'refquota_warning_inherit',
     'refquota_critical_inherit',
     'special_small_block_size',
+    'acltype',
     // 'aclmode' -- not yet available in SCALE
 
   ];
@@ -846,6 +862,7 @@ export class DatasetFormComponent implements FormConfiguration {
       data.reservation = null;
       data.special_small_block_size = null;
       data.copies = (data.copies !== undefined && data.copies !== null && data.name !== undefined) ? '1' : undefined;
+      data.acltype = null;
     }
     // calculate and delete _unit
     for (let i = 0; i < this.size_fields.length; i++) {
@@ -1383,6 +1400,7 @@ export class DatasetFormComponent implements FormConfiguration {
       atime: this.getFieldValueOrRaw(wsResponse.atime),
       share_type: this.getFieldValueOrRaw(wsResponse.share_type),
       // aclmode: this.getFieldValueOrRaw(wsResponse.aclmode), -- not available yet in SCALE
+      acltype: this.getFieldValueOrRaw(wsResponse.acltype),
       casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
       comments: wsResponse.comments === undefined ? wsResponse.comments : (wsResponse.comments.source === 'LOCAL' ? wsResponse.comments.value : undefined),
       compression: this.getFieldValueOrRaw(wsResponse.compression),
