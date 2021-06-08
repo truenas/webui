@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
-import { Moment } from 'moment';
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core.service';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
@@ -577,7 +576,7 @@ export class AdvancedSettingsComponent implements OnInit {
 
       /* Weird type assertions are due to a type definition error in the cron-parser library */
       job.next_run = ((cronParser.parseExpression(job.cron_schedule, { iterator: true }).next() as unknown) as {
-        value: { _date: Moment };
+        value: { _date: any };
       }).value._date.fromNow();
 
       return job;

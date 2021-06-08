@@ -4,16 +4,18 @@ import {
 import { FormControl, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as moment from 'moment';
+import { format, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import { map } from 'rxjs/operators';
-import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { DialogService, WebSocketService } from 'app/services';
 import { T } from 'app/translate-marker';
+import helptext from '../../../../helptext/storage/snapshots/snapshots';
+import {
+  DialogService, SystemGeneralService, WebSocketService,
+} from '../../../../services';
+import { EntityFormComponent } from '../../../common/entity/entity-form/entity-form.component';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
+import { EntityUtils } from '../../../common/entity/utils';
 
 @UntilDestroy()
 @Component({
@@ -55,7 +57,6 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
         placeholder: helptext.snapshot_add_name_placeholder,
         tooltip: helptext.snapshot_add_name_tooltip,
         options: [],
-        value: 'manual-' + moment().format('YYYY-MM-DD_HH-mm'),
         validation: this.nameValidator,
         errors: T('Name or Naming Schema is required. Only one field can be used at a time.'),
         blurStatus: true,
@@ -84,6 +85,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
     protected dialog: DialogService,
+    private sysGeneralService: SystemGeneralService,
   ) {
   }
 
@@ -124,6 +126,22 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
     const nameControl = this.entityForm.formGroup.get('name');
     const nameConfig = this.fieldConfig.find((config) => config.name === 'name');
     const namingSchemaControl = this.entityForm.formGroup.get('naming_schema');
+
+    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+      nameControl.setValue(
+        'manual-' + format(
+          utcToZonedTime(
+            zonedTimeToUtc(
+              new Date(),
+              Intl.DateTimeFormat().resolvedOptions().timeZone,
+            ),
+            res.timezone,
+          ),
+          'yyyy-MM-dd_HH-mm',
+          { timeZone: res.timezone },
+        ),
+      );
+    });
 
     this.nameValidator = (nc: FormControl): { [error_key: string]: string } | null => {
       if (!!nc.value && !!namingSchemaControl.value) {

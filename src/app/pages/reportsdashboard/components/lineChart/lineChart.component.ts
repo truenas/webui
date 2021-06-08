@@ -2,10 +2,10 @@ import {
   Component, Input, AfterViewInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef,
 } from '@angular/core';
 import { UUID } from 'angular2-uuid';
+import { utcToZonedTime } from 'date-fns-tz';
 import Dygraph from 'dygraphs';
 // eslint-disable-next-line
 import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
-import * as moment from 'moment-timezone';
 import { BehaviorSubject } from 'rxjs';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { ViewComponent } from 'app/core/components/view/view.component';
@@ -213,7 +213,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
       for (let i = 0; i < rd.data.length; i++) {
         const item = Object.assign([], rd.data[i]);
-        let dateStr = moment.tz(new Date(rd.start * 1000 + i * rd.step * 1000), this.timezone).format();
+        let dateStr = utcToZonedTime(new Date(rd.start * 1000 + i * rd.step * 1000), this.timezone).toString();
         // UTC: 2020-12-17T16:33:10Z
         // Los Angeles: 2020-12-17T08:36:30-08:00
         // Change dateStr from '2020-12-17T08:36:30-08:00' to '2020-12-17T08:36'

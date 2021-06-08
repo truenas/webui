@@ -1,8 +1,8 @@
 import {
   Component, Input,
 } from '@angular/core';
-import { EntityUtils } from '../../../utils';
 import { FieldConfig } from '../../../entity-form/models/field-config.interface';
+import { EntityUtils } from '../../../utils';
 
 @Component({
   selector: 'wizard-summary',

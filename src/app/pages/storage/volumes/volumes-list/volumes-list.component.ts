@@ -7,9 +7,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { format } from 'date-fns';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
-import * as moment from 'moment';
 import { TreeNode } from 'primeng/api';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
@@ -42,7 +42,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { T } from 'app/translate-marker';
+import { T } from '../../../../translate-marker';
 import { DatasetFormComponent } from '../datasets/dataset-form';
 import { ZvolFormComponent } from '../zvol/zvol-form';
 import { VolumesListControlsComponent } from './volumes-list-controls.component';
@@ -1699,7 +1699,7 @@ export class VolumesListTableConfig {
 
   getTimestamp(): string {
     const dateTime = new Date();
-    return moment(dateTime).format('YYYY-MM-DD_HH-mm');
+    return format(dateTime, 'yyyy-MM-dd_HH-mm');
   }
 
   dataHandler(data: any): TreeNode {

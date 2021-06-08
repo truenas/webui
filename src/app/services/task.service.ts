@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import * as cronParser from 'cron-parser';
 import { Options as CronOptions } from 'cronstrue/dist/options';
 import cronstrue from 'cronstrue/i18n';
-import { Moment } from 'moment';
+import { formatDistanceToNow } from 'date-fns';
 import { Observable } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -132,19 +132,19 @@ export class TaskService {
    * @param scheduleExpression A cron expression such as `0 0 * * mon`
    * @param count The desired number of future runs
    */
-  getTaskNextRuns(scheduleExpression: string, count = 10): Moment[] {
+  getTaskNextRuns(scheduleExpression: string, count = 10): Date[] {
     const schedule = cronParser.parseExpression(scheduleExpression, { iterator: true });
 
     /* Nasty type assertions due to type definition error in cron-parser lib */
     return new Array(count)
       .fill(null)
-      .map(() => ((schedule.next() as unknown) as { value: { _date: Moment } }).value._date);
+      .map(() => ((schedule.next() as unknown) as { value: { _date: any } }).value._date.toDate());
   }
 
   getTaskNextRun(scheduleExpression: string): string {
     const schedule = cronParser.parseExpression(scheduleExpression, { iterator: true });
 
-    return ((schedule.next() as unknown) as { value: { _date: Moment } }).value._date.fromNow();
+    return formatDistanceToNow(((schedule.next() as unknown) as { value: { _date: any } }).value._date.toDate(), { addSuffix: true });
   }
 
   getTaskCronDescription(scheduleExpression: string, options: CronOptions = this.cronOptions): string {
