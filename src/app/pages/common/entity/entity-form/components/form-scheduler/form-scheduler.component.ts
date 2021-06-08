@@ -576,7 +576,12 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   }
 
   formatMonths(): void {
-    const months = [this._jan, this._feb, this._mar, this._apr, this._may, this._jun, this._jul, this._aug, this._sep, this._oct, this._nov, this._dec];
+    const months = [
+      this._jan, this._feb, this._mar,
+      this._apr, this._may, this._jun,
+      this._jul, this._aug, this._sep,
+      this._oct, this._nov, this._dec,
+    ];
     const months_str = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
     let rule = '';
     for (let i = 0; i < months.length; i++) {

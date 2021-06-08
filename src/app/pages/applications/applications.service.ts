@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -85,5 +86,9 @@ export class ApplicationsService {
 
   updateContainerConfig(enable_image_updates: boolean): Observable<any> {
     return this.ws.call('container.update', [{ enable_image_updates }]);
+  }
+
+  getUpgradeSummary(name: string): Observable<UpgradeSummary> {
+    return this.ws.call('chart.release.upgrade_summary', [name]);
   }
 }

@@ -274,16 +274,19 @@ export class GeneralSettingsComponent implements OnInit {
         .pipe(untilDestroyed(this)).subscribe(
           (download: any) => {
             const url = download[1];
-            entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file: Blob) => {
-              entityDialog.loader.close();
-              entityDialog.dialogRef.close();
-              entityDialog.parent.storage.downloadBlob(file, fileName);
-            }, (err: any) => {
-              entityDialog.loader.close();
-              entityDialog.dialogRef.close();
-              entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title,
-                helptext.config_download.failed_message, err.message);
-            });
+            entityDialog.parent.storage
+              .streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)
+              .pipe(untilDestroyed(this))
+              .subscribe((file: Blob) => {
+                entityDialog.loader.close();
+                entityDialog.dialogRef.close();
+                entityDialog.parent.storage.downloadBlob(file, fileName);
+              }, (err: any) => {
+                entityDialog.loader.close();
+                entityDialog.dialogRef.close();
+                entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title,
+                  helptext.config_download.failed_message, err.message);
+              });
           },
           (err: any) => {
             entityDialog.loader.close();

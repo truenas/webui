@@ -1,12 +1,10 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
-import time
-from function import(
+from function import (
     wait_on_element,
     is_element_present,
     attribute_value_exist,
-    wait_for_attribute_value,
     wait_on_element_disappear,
 )
 
@@ -15,6 +13,7 @@ from pytest_bdd import (
     scenario,
     then,
     when,
+    parsers
 )
 
 
@@ -49,7 +48,6 @@ def you_see_the_dashboard_click_network_on_the_side_menu(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
 
 
-
 @when('the Network page will open, click Global Configuration Settings')
 def the_network_page_will_open_click_global_configuration_settings(driver):
     """the Network page will open, click Global Configuration Settings."""
@@ -58,22 +56,29 @@ def the_network_page_will_open_click_global_configuration_settings(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__globalSettings"]').click()
 
 
-@then('the global config page will open and input Nameservers and gateway and hostname and click SAVE')
-def the_global_config_page_will_open_and_input_nameservers_and_gateway_and_hostname_and_click_save(driver):
-    """the global config page will open and input Nameservers and gateway and hostname and click SAVE."""
+@then(parsers.parse('the global config page will open and input Nameservers "{nameserver1}", "{nameserver2}" and "{nameserver3}"'))
+def the_global_config_page_will_open_and_input_nameservers(driver, nameserver1, nameserver2, nameserver3):
+    """the global config page will open and input Nameservers "{nameserver1}", "{nameserver2}" and "{nameserver3}"."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Global Configuration")]')
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Nameserver 1"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Nameserver 1"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').send_keys('10.231.0.2')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').send_keys(nameserver1)
     driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').send_keys('10.231.0.3')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').send_keys(nameserver2)
     driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 3"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 3"]').send_keys('10.242.0.2')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 3"]').send_keys(nameserver3)
+
+
+@then(parsers.parse('input gateway "{gateway}" and an hostname and click SAVE'))
+def input_gateway_and_a_hostname_and_click_save(driver, nas_hostname, gateway):
+    """input gateway "{gateway}" and an hostname and click SAVE."""
     driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').send_keys('10.234.64.1')
+    driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').send_keys(gateway)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').send_keys(nas_hostname)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    
+
 
 @then('"Please wait" should appear, changes should be saved without errors, the network page will reload')
 def please_wait_should_appear_changes_should_be_saved_without_errors_the_network_page_will_reload(driver):
@@ -86,9 +91,9 @@ def please_wait_should_appear_changes_should_be_saved_without_errors_the_network
 def click_the_interface_field_uncheck_dhcp_and_click_add_and_enter_ip_and_click_apply(driver, nas_ip):
     """click the interface field, uncheck dhcp and click add and enter IP and click Apply.."""
     driver.find_element_by_xpath('//mat-icon[@id="enp0s8"]').click()
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__DHCP"]')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__DHCP"]', 'clickable')
     if attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__DHCP"]', 'class', 'mat-checkbox-checked'):
-    	driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__DHCP"]').click()
+        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__DHCP"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__add-box_aliases"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__add-box_aliases"]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"IP Address")]')
@@ -121,8 +126,6 @@ def click_test_changes_check_confirm_click_test_changes_again(driver, nas_ip):
     driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
 
 
-
-
 @then('when "Please wait" goes away, and there are unapplied network changes, click "Save Changes"')
 def when_please_wait_goes_away_and_there_are_unapplied_network_changes_click_save_changes(driver):
     """when "Please wait" goes away, and there are unapplied network changes, click "Save Changes"."""
@@ -132,7 +135,7 @@ def when_please_wait_goes_away_and_there_are_unapplied_network_changes_click_sav
     driver.find_element_by_xpath('//button[@ix-auto="button__keepChange"]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Save Changes")]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    
+
 
 @then('on the Save Changes widget, click Save')
 def on_the_save_changes_widget_click_save(driver):
@@ -140,14 +143,10 @@ def on_the_save_changes_widget_click_save(driver):
     assert wait_on_element(driver, 10, '//h1[contains(.,"Changes Saved")]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    
+
 
 @then('on the Interfaces page, Nameservers do not list (DHCP)')
 def on_the_interfaces_page_nameservers_do_not_list_dhcp(driver):
     """on the Interfaces page, Nameservers do not list (DHCP)."""
     assert wait_on_element(driver, 10, '//h1[contains(.,"Network")]')
     assert wait_on_element(driver, 10, '//span[contains(.,"DHCP")]') is False
-
-
-
-

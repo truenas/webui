@@ -11,6 +11,7 @@ import { ixChartApp, appImagePlaceholder } from 'app/constants/catalog.constants
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core.service';
 import helptext from 'app/helptext/apps/apps';
+import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
@@ -326,24 +327,27 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   update(name: string): void {
-    this.translate.get(helptext.charts.upgrade_dialog.msg).pipe(untilDestroyed(this)).subscribe((msg) => {
-      this.dialogService.confirm(helptext.charts.upgrade_dialog.title, msg + name + '?')
-        .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (res) {
-            this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-              data: {
-                title: (
-                  helptext.charts.upgrade_dialog.job),
-              },
-              disableClose: true,
-            });
-            this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name]);
-            this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-              this.dialogService.closeAllDialogs();
-            });
-          }
-        });
+    this.appLoaderService.open();
+    this.appService.getUpgradeSummary(name).pipe(untilDestroyed(this)).subscribe((res: UpgradeSummary) => {
+      this.appLoaderService.close();
+      this.dialogService.confirm({
+        title: helptext.charts.upgrade_dialog.title + res.latest_human_version,
+        message: res.changelog,
+      }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
+        if (res) {
+          this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+            data: {
+              title: (
+                helptext.charts.upgrade_dialog.job),
+            },
+          });
+          this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name]);
+          this.dialogRef.componentInstance.submit();
+          this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+            this.dialogService.closeAllDialogs();
+          });
+        }
+      });
     });
   }
 
@@ -505,7 +509,9 @@ export class ChartReleasesComponent implements OnInit {
 
   filerChartItems(): void {
     if (this.filterString) {
-      this.filteredChartItems = this.getChartItems().filter((chart: any) => chart.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1);
+      this.filteredChartItems = this.getChartItems().filter((chart: any) => {
+        return chart.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1;
+      });
     } else {
       this.filteredChartItems = this.getChartItems();
     }

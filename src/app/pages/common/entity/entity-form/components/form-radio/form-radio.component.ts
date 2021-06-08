@@ -24,7 +24,9 @@ export class FormRadioComponent implements Field {
   constructor(public translate: TranslateService) {}
 
   ngOnInit(): void {
-    this.valueChangesSubscription = this.group.controls[this.config.name].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => this.radioValue = res);
+    this.valueChangesSubscription = this.group.controls[this.config.name].valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((res) => this.radioValue = res);
   }
 
   ngOnDestroy(): void {

@@ -218,7 +218,7 @@ export class ApiService {
       apiCall: {
         version: '2.0',
         namespace: 'vm.update',
-        args: [] as any[], // eg. [25, {"name": "Fedora", "description": "Linux", "vcpus": 1, "memory": 2048, "bootloader": "UEFI", "autostart": true}]
+        args: [] as any[],
         responseEvent: 'VmProfileRequest',
       },
       postProcessor(res: any) {
