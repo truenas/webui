@@ -737,7 +737,9 @@ export class IscsiWizardComponent implements WizardConfiguration {
         const control: any = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
         control['isHidden'] = disabled;
         control.disabled = disabled;
-        disabled ? this.entityWizard.formArray.get([stepIndex]).get(field).disable() : this.entityWizard.formArray.get([stepIndex]).get(field).enable();
+        disabled
+          ? this.entityWizard.formArray.get([stepIndex]).get(field).disable()
+          : this.entityWizard.formArray.get([stepIndex]).get(field).enable();
         if (disabled) {
           this.summaryObj[field] = null;
         }

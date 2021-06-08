@@ -84,7 +84,8 @@ export class ChartEventsDialog implements OnInit {
       label = helptext.chartEventDialog.statusUpdateAvailableTo + this.catalogApp.human_latest_version;
     } else if (this.catalogApp.container_images_update_available) {
       label = helptext.chartEventDialog.containerImageStatusUpdateAvailableTo;
-      const updateAvailableImages = Object.keys(this.containerImages).filter((imageName) => (this.containerImages as any)[imageName].update_available);
+      const updateAvailableImages = Object.keys(this.containerImages)
+        .filter((imageName) => (this.containerImages as any)[imageName].update_available);
       label += updateAvailableImages.join(',');
     }
 

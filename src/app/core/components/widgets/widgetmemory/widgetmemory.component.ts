@@ -64,7 +64,13 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
 
   private utils: ThemeUtils;
 
-  constructor(public router: Router, public translate: TranslateService, private sanitizer: DomSanitizer, public mediaObserver: MediaObserver, private el: ElementRef) {
+  constructor(
+    public router: Router,
+    public translate: TranslateService,
+    private sanitizer: DomSanitizer,
+    public mediaObserver: MediaObserver,
+    private el: ElementRef,
+  ) {
     super(translate);
 
     this.utils = new ThemeUtils();

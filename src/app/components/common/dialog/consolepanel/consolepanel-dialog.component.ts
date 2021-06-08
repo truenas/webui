@@ -38,7 +38,8 @@ export class ConsolePanelModalDialog implements OnInit {
       let isScrollBottom = false;
       const delta = 3;
 
-      if (this.footerBarScroll.nativeElement.scrollTop + this.footerBarScroll.nativeElement.offsetHeight + delta >= this.footerBarScroll.nativeElement.scrollHeight) {
+      const nativeElement = this.footerBarScroll.nativeElement;
+      if (nativeElement.scrollTop + nativeElement.offsetHeight + delta >= nativeElement.scrollHeight) {
         isScrollBottom = true;
       }
       this.onEventEmitter.emit();

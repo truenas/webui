@@ -287,7 +287,9 @@ export class DiskListComponent implements EntityTableConfig {
   manualTest(selected: any): void {
     const parent = this;
     const disks = Array.isArray(selected) ? selected.map((item) => item.name) : [selected.name];
-    const disksIdentifier = Array.isArray(selected) ? selected.map((item) => ({ identifier: item.identifier })) : [{ identifier: selected.identifier }];
+    const disksIdentifier = Array.isArray(selected)
+      ? selected.map((item) => ({ identifier: item.identifier }))
+      : [{ identifier: selected.identifier }];
     const conf: DialogFormConfiguration = {
       title: helptext.manual_test_dialog.title,
       fieldConfig: [
