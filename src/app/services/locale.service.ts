@@ -26,22 +26,10 @@ export class LocaleService {
       this.timeZone = res.timezone;
     });
     if (window.localStorage.dateFormat) {
-      this.dateFormat = window.localStorage.getItem('dateFormat')
-        .replace('YYYY', 'yyyy')
-        .replace('YY', 'y')
-        .replace('DD', 'dd')
-        .replace('D', 'd')
-        .replace(' a', 'aaaaa\'m\'')
-        .replace(' A', ' aa');
+      this.dateFormat = this.formatDateTimeToDateFns(window.localStorage.getItem('dateFormat'));
     }
     if (window.localStorage.timeFormat) {
-      this.timeFormat = window.localStorage.getItem('timeFormat')
-        .replace('YYYY', 'yyyy')
-        .replace('YY', 'y')
-        .replace('DD', 'dd')
-        .replace('D', 'd')
-        .replace(' a', 'aaaaa\'m\'')
-        .replace(' A', ' aa');
+      this.timeFormat = this.formatDateTimeToDateFns(window.localStorage.getItem('timeFormat'));
     }
     this.getPrefs();
   }
@@ -54,20 +42,8 @@ export class LocaleService {
           this.target.next({ name: 'SubmitComplete', sender: this });
           this.isWaiting = false;
         }
-        this.dateFormat = evt.data.dateFormat
-          .replace('YYYY', 'yyyy')
-          .replace('YY', 'y')
-          .replace('DD', 'dd')
-          .replace('D', 'd')
-          .replace(' a', 'aaaaa\'m\'')
-          .replace(' A', ' aa');
-        this.timeFormat = evt.data.timeFormat
-          .replace('YYYY', 'yyyy')
-          .replace('YY', 'y')
-          .replace('DD', 'dd')
-          .replace('D', 'd')
-          .replace(' a', 'aaaaa\'m\'')
-          .replace(' A', ' aa');
+        this.dateFormat = this.formatDateTimeToDateFns(evt.data.dateFormat);
+        this.timeFormat = this.formatDateTimeToDateFns(evt.data.timeFormat);
         this.storeDateTimeFormat(this.dateFormat, this.timeFormat);
         this.dateTimeFormatChange$.next();
       });
@@ -137,20 +113,8 @@ export class LocaleService {
   }
 
   saveDateTimeFormat(dateFormat: any, timeFormat: any): void {
-    this.dateFormat = dateFormat
-      .replace('YYYY', 'yyyy')
-      .replace('YY', 'y')
-      .replace('DD', 'dd')
-      .replace('D', 'd')
-      .replace(' a', 'aaaaa\'m\'')
-      .replace(' A', ' aa');
-    this.timeFormat = timeFormat
-      .replace('YYYY', 'yyyy')
-      .replace('YY', 'y')
-      .replace('DD', 'dd')
-      .replace('D', 'd')
-      .replace(' a', 'aaaaa\'m\'')
-      .replace(' A', ' aa');
+    this.dateFormat = this.formatDateTimeToDateFns(dateFormat);
+    this.timeFormat = this.formatDateTimeToDateFns(timeFormat);
     this.storeDateTimeFormat(this.dateFormat, this.timeFormat);
     this.dateTimeFormatChange$.next();
 
@@ -214,5 +178,18 @@ export class LocaleService {
 
     const buildTimeInMillis = parseInt(buildTime);
     return new Date(buildTimeInMillis).getFullYear().toString();
+  }
+
+  formatDateTimeToDateFns(format: string): string {
+    let dateFnsFormat = format
+      .replace('YYYY', 'yyyy')
+      .replace('YY', 'y')
+      .replace('DD', 'dd')
+      .replace('D', 'd')
+      .replace(' A', ' aa');
+    if (!dateFnsFormat.includes('aa')) {
+      dateFnsFormat = dateFnsFormat.replace(' a', ' aaaaa\'m\'');
+    }
+    return dateFnsFormat;
   }
 }
