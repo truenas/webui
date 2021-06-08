@@ -1,16 +1,16 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { map } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import {
   EntityAction,
   EntityRowDetails,
 } from 'app/pages/common/entity/entity-table/entity-row-details.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { WebSocketService, StorageService, SystemGeneralService } from 'app/services';
-import { map } from 'rxjs/operators';
-import { SnapshotListComponent } from '../snapshot-list.component';
 import { LocaleService } from 'app/services/locale.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { SnapshotListComponent } from '../snapshot-list.component';
 
 @UntilDestroy()
 @Component({

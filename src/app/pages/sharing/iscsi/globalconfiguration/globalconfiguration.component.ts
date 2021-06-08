@@ -1,17 +1,16 @@
 import { Component } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { shared, helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { ProductType } from '../../../../enums/product-type.enum';
-
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
   DialogService, WebSocketService, AppLoaderService, SystemGeneralService,
-} from '../../../../services';
-import * as _ from 'lodash';
-import { shared, helptext_sharing_iscsi } from 'app/helptext/sharing';
+} from 'app/services';
 import { T } from 'app/translate-marker';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

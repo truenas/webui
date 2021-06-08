@@ -3,13 +3,10 @@ import {
   OnInit, Component, EventEmitter, Output, Inject,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-
-import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
-
-import { WebSocketService, RestService } from 'app/services/';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { WebSocketService } from 'app/services/';
 
 @UntilDestroy()
 @Component({
@@ -41,9 +38,12 @@ export class EntityJobComponent implements OnInit {
   @Output() aborted = new EventEmitter();
   @Output() failure = new EventEmitter();
   @Output() prefailure = new EventEmitter();
-  constructor(public dialogRef: MatDialogRef < EntityJobComponent >,
-    private ws: WebSocketService, public rest: RestService,
-    @Inject(MAT_DIALOG_DATA) public data: any, translate: TranslateService, protected http: HttpClient) {}
+  constructor(
+    public dialogRef: MatDialogRef <EntityJobComponent>,
+    private ws: WebSocketService,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    protected http: HttpClient,
+  ) {}
 
   ngOnInit(): void {
     if (this.data.title) {

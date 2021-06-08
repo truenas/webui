@@ -1,5 +1,5 @@
-import { Schedule } from 'app/interfaces/schedule.interface';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
+import { Schedule } from 'app/interfaces/schedule.interface';
 
 export interface SmartTest {
   all_disks: boolean;

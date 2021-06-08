@@ -9,34 +9,33 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-
-import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
+import { FormTextareaButtonComponent } from 'app/pages/common/entity/entity-form/components/form-textarea-button/form-textarea-button.component';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { FormArrayComponent } from '../form-array/form-array.component';
 import { FormButtonComponent } from '../form-button/form-button.component';
 import { FormCheckboxComponent } from '../form-checkbox/form-checkbox.component';
-import { FormInputComponent } from '../form-input/form-input.component';
-import { FormPermissionsComponent } from '../form-permissions/form-permissions.component';
-import { FormSelectComponent } from '../form-select/form-select.component';
-import { FormTextareaComponent } from '../form-textarea/form-textarea.component';
-import { FormUploadComponent } from '../form-upload/form-upload.component';
-import { FormExplorerComponent } from '../form-explorer/form-explorer.component';
-import { FormRadioComponent } from '../form-radio/form-radio.component';
-import { FormSliderComponent } from '../form-slider/form-slider.component';
-import { FormToggleButtonComponent } from '../form-toggle-button/form-toggle-button.component';
-import { FormTaskComponent } from '../form-task/form-task.component';
-import { FormReadFileComponent } from '../form-readfile/form-readfile.component';
-import { FormTextareaButtonComponent } from 'app/pages/common/entity/entity-form/components/form-textarea-button/form-textarea-button.component';
-import { FormDatepickerComponent } from '../form-datepicker/form-datepicker.component';
+import { FormChipComponent } from '../form-chip/form-chip.component';
 import { FormColorpickerComponent } from '../form-colorpicker/form-colorpicker.component';
 import { FormComboboxComponent } from '../form-combobox/form-combobox.component';
-import { FormParagraphComponent } from '../form-paragraph/form-paragraph.component';
-import { FormSchedulerComponent } from '../form-scheduler/form-scheduler.component';
-import { FormIpWithNetmaskComponent } from '../form-ipwithnetmask/form-ipwithnetmask.component';
-import { FormListComponent } from '../form-list/form-list.component';
-import { FormChipComponent } from '../form-chip/form-chip.component';
-import { FormLabelComponent } from '../form-label/form-label.component';
+import { FormDatepickerComponent } from '../form-datepicker/form-datepicker.component';
 import { FormDictComponent } from '../form-dict/form-dict.component';
+import { FormExplorerComponent } from '../form-explorer/form-explorer.component';
+import { FormInputComponent } from '../form-input/form-input.component';
+import { FormIpWithNetmaskComponent } from '../form-ipwithnetmask/form-ipwithnetmask.component';
+import { FormLabelComponent } from '../form-label/form-label.component';
+import { FormListComponent } from '../form-list/form-list.component';
+import { FormParagraphComponent } from '../form-paragraph/form-paragraph.component';
+import { FormPermissionsComponent } from '../form-permissions/form-permissions.component';
+import { FormRadioComponent } from '../form-radio/form-radio.component';
+import { FormReadFileComponent } from '../form-readfile/form-readfile.component';
+import { FormSchedulerComponent } from '../form-scheduler/form-scheduler.component';
+import { FormSelectComponent } from '../form-select/form-select.component';
+import { FormSliderComponent } from '../form-slider/form-slider.component';
+import { FormTaskComponent } from '../form-task/form-task.component';
+import { FormTextareaComponent } from '../form-textarea/form-textarea.component';
+import { FormToggleButtonComponent } from '../form-toggle-button/form-toggle-button.component';
+import { FormUploadComponent } from '../form-upload/form-upload.component';
 
 const components: { [type: string]: Type<Field> } = {
   button: FormButtonComponent,

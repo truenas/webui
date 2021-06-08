@@ -1,16 +1,16 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { T } from 'app/translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService } from 'app/services/';
-import { ModalService } from '../../../../../services/modal.service';
-import { helptext_system_support as helptext } from 'app/helptext/system/support';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

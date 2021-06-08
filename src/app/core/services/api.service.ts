@@ -1,18 +1,14 @@
 import { Injectable } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { WebSocketService } from '../../services/ws.service';
-import { RestService } from '../../services/rest.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { CoreService } from './core.service';
-import { DialogService } from '../../services';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 export interface ApiCall {
-  protocol: 'websocket' | 'rest'; // TODO: rest is probably deprecated and can be removed
   version: string;
   namespace: ApiMethod; // namespace for ws and path for rest
   args?: any;
-  operation?: string; // DEPRECATED - Used for REST calls only
   responseEvent?: any;// The event name of the response this service will send
   errorResponseEvent?: any;// The event name of the response this service will send in case it fails
 }
@@ -29,7 +25,6 @@ export class ApiService {
   private apiDefinitions: { [eventName: string]: ApiDefinition } = {
     UserAttributesRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         namespace: 'user.query',
         args: [] as any[], // eg. [["id", "=", "foo"]]
@@ -47,7 +42,6 @@ export class ApiService {
     },
     UserDataRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         namespace: 'user.query',
         args: [] as any[], // eg. [["id", "=", "foo"]]
@@ -56,7 +50,6 @@ export class ApiService {
     },
     UserDataUpdate: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         namespace: 'user.set_attribute',
         args: [] as any[],
@@ -77,7 +70,6 @@ export class ApiService {
     },
     VolumeDataRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         namespace: 'pool.dataset.query',
         args: [] as any[],
@@ -93,7 +85,6 @@ export class ApiService {
     },
     DisksRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         args: [] as any[],
         namespace: 'disk.query',
@@ -102,7 +93,6 @@ export class ApiService {
     },
     MultipathRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         args: [] as any[],
         namespace: 'multipath.query',
@@ -111,7 +101,6 @@ export class ApiService {
     },
     EnclosureDataRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         args: [] as any[],
         namespace: 'enclosure.query',
@@ -120,7 +109,6 @@ export class ApiService {
     },
     EnclosureUpdate: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         args: [] as any[],
         namespace: 'enclosure.update',
@@ -129,7 +117,6 @@ export class ApiService {
     },
     SetEnclosureLabel: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         args: [] as any[],
         namespace: 'enclosure.update',
@@ -147,7 +134,6 @@ export class ApiService {
     },
     SetEnclosureSlotStatus: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         args: [] as any[],
         namespace: 'enclosure.set_slot_status',
@@ -156,7 +142,6 @@ export class ApiService {
     },
     PoolDataRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         args: [] as any[],
         namespace: 'pool.query',
@@ -165,7 +150,6 @@ export class ApiService {
     },
     PoolDisksRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         namespace: 'pool.get_disks',
         args: [] as any[],
@@ -184,7 +168,6 @@ export class ApiService {
     },
     PrimaryNicInfoRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         namespace: 'interface.websocket_interface',
         args: [] as any[],
@@ -193,7 +176,6 @@ export class ApiService {
     },
     NicInfoRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         namespace: 'interface.query',
         args: [] as any[],
@@ -202,7 +184,6 @@ export class ApiService {
     },
     NetInfoRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         namespace: 'network.general.summary',
         args: [] as any[],
@@ -211,7 +192,6 @@ export class ApiService {
     },
     UpdateCheck: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         namespace: 'update.check_available',
         args: [] as any[],
@@ -220,7 +200,6 @@ export class ApiService {
     },
     VmProfilesRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0', // Middleware returns device info but no status
         namespace: 'vm.query',
         args: [] as any[],
@@ -229,7 +208,6 @@ export class ApiService {
     },
     VmProfileRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         namespace: 'vm.query',
         args: [] as any[], // eg. [["id", "=", "foo"]]
@@ -238,10 +216,9 @@ export class ApiService {
     },
     VmProfileUpdate: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         namespace: 'vm.update',
-        args: [] as any[], // eg. [25, {"name": "Fedora", "description": "Linux", "vcpus": 1, "memory": 2048, "bootloader": "UEFI", "autostart": true}]
+        args: [] as any[],
         responseEvent: 'VmProfileRequest',
       },
       postProcessor(res: any) {
@@ -253,7 +230,6 @@ export class ApiService {
     },
     VmStatusRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         namespace: 'vm.query',
         args: [] as any[], // eg. [["id", "=", "foo"]]
@@ -269,7 +245,6 @@ export class ApiService {
     },
     VmStart: {
       apiCall: {
-        protocol: 'websocket',
         version: '1',
         namespace: 'vm.start',
         args: [] as any,
@@ -284,7 +259,6 @@ export class ApiService {
     },
     VmRestart: {
       apiCall: {
-        protocol: 'websocket',
         version: '1',
         namespace: 'vm.restart',
         args: [] as any,
@@ -299,7 +273,6 @@ export class ApiService {
     },
     VmStop: {
       apiCall: {
-        protocol: 'websocket',
         version: '1',
         namespace: 'vm.stop',
         args: [] as any,
@@ -314,7 +287,6 @@ export class ApiService {
     },
     VmPowerOff: {
       apiCall: {
-        protocol: 'websocket',
         version: '2',
         namespace: 'vm.stop',
         args: [] as any,
@@ -334,7 +306,6 @@ export class ApiService {
     },
     VmCreate: {
       apiCall: {
-        protocol: 'websocket',
         version: '1',
         namespace: 'vm.create',
         args: [] as any,
@@ -343,7 +314,6 @@ export class ApiService {
     },
     VmClone: {
       apiCall: {
-        protocol: 'websocket',
         version: '2',
         namespace: 'vm.clone',
         args: [] as any,
@@ -358,7 +328,6 @@ export class ApiService {
     },
     VmDelete: {
       apiCall: {
-        protocol: 'websocket',
         version: '1',
         namespace: 'vm.delete',
         args: [] as any,
@@ -369,7 +338,6 @@ export class ApiService {
     // Used by stats service!!
     StatsRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2',
         namespace: 'stats.get_data',
         args: {},
@@ -400,7 +368,6 @@ export class ApiService {
     // Used by stats service!!
     StatsSourcesRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '1',
         namespace: 'stats.get_sources',
         args: [] as any,
@@ -409,7 +376,6 @@ export class ApiService {
     },
     ReportingGraphsRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2',
         namespace: 'reporting.graphs',
         args: [] as any,
@@ -418,7 +384,6 @@ export class ApiService {
     },
     StatsCpuRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '1',
         namespace: 'stats.get_data',
         args: [] as any,
@@ -457,7 +422,6 @@ export class ApiService {
     },
     StatsMemoryRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '1',
         namespace: 'stats.get_data',
         args: [] as any,
@@ -497,7 +461,6 @@ export class ApiService {
     },
     StatsDiskTempRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2',
         namespace: 'stats.get_data',
         args: [] as any,
@@ -536,7 +499,6 @@ export class ApiService {
     },
     StatsLoadAvgRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '1',
         namespace: 'stats.get_data',
         args: [] as any,
@@ -575,7 +537,6 @@ export class ApiService {
     },
     StatsVmemoryUsageRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         namespace: 'vm.get_vmemory_in_use',
         args: [] as any[], // eg. [["id", "=", "foo"]]
@@ -584,7 +545,6 @@ export class ApiService {
     },
     DisksInfoRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         namespace: 'disk.query',
         args: [] as any[],
@@ -593,7 +553,6 @@ export class ApiService {
     },
     SensorDataRequest: {
       apiCall: {
-        protocol: 'websocket',
         version: '2.0',
         namespace: 'sensor.query',
         args: [] as any[],
@@ -605,8 +564,6 @@ export class ApiService {
   constructor(
     protected core: CoreService,
     protected ws: WebSocketService,
-    protected rest: RestService,
-    private dialog: DialogService,
   ) {
     this.ws.authStatus.pipe(untilDestroyed(this)).subscribe((evt: any) => {
       this.core.emit({ name: 'UserDataRequest', data: [[['id', '=', 1]]] });
@@ -617,7 +574,7 @@ export class ApiService {
 
   registerDefinitions(): void {
     // DEBUG: console.log("APISERVICE: Registering API Definitions");
-    for (var def in this.apiDefinitions) {
+    for (const def in this.apiDefinitions) {
       // DEBUG: console.log("def = " + def);
       this.core.register({ observerClass: this, eventName: def }).pipe(untilDestroyed(this)).subscribe(
         (evt: CoreEvent) => {
@@ -629,55 +586,13 @@ export class ApiService {
             const apiDef = this.apiDefinitions[name];
             // DEBUG: console.log(apiDef)
             // let call = this.parseCoreEvent(evt);
-            if (apiDef.apiCall.protocol == 'websocket') {
-              this.callWebsocket(evt, apiDef);
-            } else if (apiDef.apiCall.protocol == 'rest') {
-              this.callRest(evt, apiDef);
-            }
+            this.callWebsocket(evt, apiDef);
           }
         },
         () => {
           // DEBUG: console.log(err)
         },
       );
-    }
-  }
-
-  private callRest(evt: any, def: any): void {
-    const baseUrl = '/api/v' + def.apiCall.version + '/';
-    const cloneDef = { ...def };
-    if (evt.data) {
-      // PreProcessor: ApiDefinition manipulates call to be sent out.
-      if (def.preProcessor) {
-        cloneDef.apiCall = def.preProcessor(def.apiCall);
-      }
-
-      const call = cloneDef.apiCall;// this.parseEventRest(evt);
-      call.args = evt.data;
-      (this.rest as any)[call.operation](baseUrl + call.namespace, evt.data, false).pipe(untilDestroyed(this)).subscribe((res: any) => {
-        // PostProcess
-        if (def.postProcessor) {
-          res = def.postProcessor(res, evt.data, this.core);
-        }
-
-        this.core.emit({ name: call.responseEvent, data: res.data, sender: evt.data });
-      });
-    } else {
-      // PreProcessor: ApiDefinition manipulates call to be sent out.
-      if (def.preProcessor) {
-        cloneDef.apiCall = def.preProcessor(def.apiCall);
-      }
-
-      const call = cloneDef.apiCall;// this.parseEventRest(evt);
-      call.args = evt.data;
-      (this.rest as any)[call.operation](baseUrl + call.namespace, {}, false).pipe(untilDestroyed(this)).subscribe((res: any) => {
-        // PostProcess
-        if (def.postProcessor) {
-          res = def.postProcessor(res, evt.data, this.core);
-        }
-
-        this.core.emit({ name: call.responseEvent, data: res.data, sender: evt.data });
-      });
     }
   }
 

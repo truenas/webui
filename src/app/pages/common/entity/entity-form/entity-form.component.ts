@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import {
   Component,
   ContentChildren,
@@ -17,25 +16,22 @@ import {
   FormBuilder, FormControl, FormGroup, FormArray, AbstractControl,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import * as _ from 'lodash';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
-import { RestService, WebSocketService, SystemGeneralService } from '../../../../services';
+import * as _ from 'lodash';
 import { Observable } from 'rxjs';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { ModalService } from '../../../../services/modal.service';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { WebSocketService, SystemGeneralService, DialogService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 import { EntityTemplateDirective } from '../entity-template.directive';
 import { EntityUtils } from '../utils';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from './models/field-config.interface';
 import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
 import { FieldRelationService } from './services/field-relation.service';
-import { DialogService } from '../../../../services';
-import { T } from '../../../../translate-marker';
-
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
@@ -93,9 +89,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   data: any = {};
   showSpinner = false;
   isFromPending = false;
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected location: Location, private fb: FormBuilder,
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    private fb: FormBuilder,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
@@ -103,7 +101,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     public translate: TranslateService,
     private modalService: ModalService,
     private cdr: ChangeDetectorRef,
-    private sysGeneralService: SystemGeneralService) {
+    private sysGeneralService: SystemGeneralService,
+  ) {
     this.loader.callStarted.pipe(untilDestroyed(this)).subscribe(() => this.showSpinner = true);
     this.loader.callDone.pipe(untilDestroyed(this)).subscribe(() => this.showSpinner = false);
   }
@@ -241,10 +240,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
         if (this.pk && !this.conf.isNew) {
           if (this.conf.editCall) {
-            this.submitFunction = this.editCall; // this is strange so I AM NOTING it...  this.editCall internally calls this.conf.editCall with some fluff.
+            // this is strange so I AM NOTING it...  this.editCall internally calls this.conf.editCall with some fluff.
+            this.submitFunction = this.editCall;
             // But to my eyes it almost looks like a bug when I first saw it. FYI
           } else {
-            // this.submitFunction = this.editSubmit;
             this.resourceName = this.resourceName + this.pk + '/';
           }
         } else {
@@ -253,8 +252,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           }
           if (this.conf.addCall) {
             this.submitFunction = this.addCall;
-          } else {
-            // this.submitFunction = this.addSubmit;
           }
           this.isNew = true;
         }
@@ -290,12 +287,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         } else {
           this.getFunction = this.ws.call(this.conf.queryCall, []);
         }
-      } else {
-        let getQuery = this.resourceName;
-        if (this.conf.custom_get_query) {
-          getQuery = this.conf.custom_get_query;
-        }
-        this.getFunction = this.rest.get(getQuery, {}, this.conf.route_usebaseUrl);
       }
 
       if (!this.isNew && this.conf.queryCall && this.getFunction) {
@@ -427,15 +418,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.ws.call(call, payload);
   }
 
-  editSubmit(body: any): void {
-    let resource = this.resourceName;
-    if (this.conf.custom_edit_query) {
-      resource = this.conf.custom_edit_query;
-    }
-
-    return this.rest.put(resource, { body }, this.conf.route_usebaseUrl);
-  }
-
   editCall(body: any): Observable<any> {
     const payload = [body];
     if (this.pk) {
@@ -446,15 +428,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       return this.ws.job(this.conf.editCall, payload);
     }
     return this.ws.call(this.conf.editCall, payload);
-  }
-
-  addSubmit(body: any): void {
-    let resource = this.resourceName;
-    if (this.conf.custom_add_query) {
-      resource = this.conf.custom_add_query;
-    }
-
-    return this.rest.post(resource, { body }, this.conf.route_usebaseUrl);
   }
 
   onSubmit(event: Event): void {

@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
-import { CoreEvent } from 'app/interfaces/events';
-import { RestService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/core/services/core.service';
-import { ThemeUtils } from 'app/core/classes/theme-utils';
-import { ApiService } from 'app/core/services/api.service';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ThemeUtils } from 'app/core/classes/theme-utils';
+import { CoreService } from 'app/core/services/core.service';
+import { CoreEvent } from 'app/interfaces/events';
+import { WebSocketService } from 'app/services';
 
 export const DefaultTheme = {
   name: 'ix-dark',
@@ -278,8 +276,10 @@ export class ThemeService {
   private utils: ThemeUtils;
 
   userThemeLoaded = false;
-  constructor(private rest: RestService, private ws: WebSocketService, private core: CoreService, private api: ApiService,
-    private route: Router) {
+  constructor(
+    private ws: WebSocketService,
+    private core: CoreService,
+  ) {
     this.utils = new ThemeUtils();
 
     // Set default list

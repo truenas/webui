@@ -1240,10 +1240,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     margin-bottom: 7px;
   }
 
-  jail-wizard .tooltiptext {
-    top: -1px;
-  }
-
   mat-radio-group .radio-option-tooltip {
     left: 5px;
     position: relative;

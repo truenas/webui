@@ -3,9 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
-import { WebSocketService, DialogService } from '../../../../services';
-import { EntityUtils } from '../../../common/entity/utils';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService, DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({

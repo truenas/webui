@@ -1,28 +1,24 @@
-import {
-  ApplicationRef, Component, Injector, OnDestroy,
-} from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import helptext from '../../../helptext/storage/import-disk/import-disk';
-
-import {
-  RestService,
-  WebSocketService,
-  JobService,
-} from '../../../services';
+import { CoreService } from 'app/core/services/core.service';
+import helptext from 'app/helptext/storage/import-disk/import-disk';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
   FieldConfig,
-} from '../../common/entity/entity-form/models/field-config.interface';
-import { MatDialog } from '@angular/material/dialog';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import {
+  WebSocketService,
+  JobService,
+} from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
-import { EntityUtils } from '../../common/entity/utils';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { T } from '../../../translate-marker';
-import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
-import { CoreService } from 'app/core/services/core.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -97,10 +93,14 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
   protected dialogRef: any;
   custActions: any[];
 
-  constructor(protected router: Router, protected rest: RestService,
-    protected ws: WebSocketService, protected dialog: MatDialog,
-    protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService,
-    protected job: JobService, protected core: CoreService) {}
+  constructor(
+    protected router: Router,
+    protected ws: WebSocketService,
+    protected dialog: MatDialog,
+    protected dialogService: DialogService,
+    protected job: JobService,
+    protected core: CoreService,
+  ) {}
 
   preInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;

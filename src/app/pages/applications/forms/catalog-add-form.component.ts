@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
-import { ModalService } from '../../../services/modal.service';
-import { DialogService } from '../../../services/index';
-import helptext from '../../../helptext/apps/apps';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { chartsTrain } from 'app/constants/catalog.constants';
+import helptext from 'app/helptext/apps/apps';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { DialogService } from 'app/services/index';
+import { ModalService } from 'app/services/modal.service';
 
 @Component({
   selector: 'app-catalog-form',

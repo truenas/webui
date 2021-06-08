@@ -3,12 +3,12 @@ import {
   Router, NavigationEnd, ActivatedRoute,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { CoreEvent } from 'app/interfaces/events';
-import { ProductType } from '../../../enums/product-type.enum';
-import { RoutePartsService } from '../../../services/route-parts/route-parts.service';
-import { CoreService } from 'app/core/services/core.service';
 import { filter } from 'rxjs/operators';
+import { CoreService } from 'app/core/services/core.service';
+import { ProductType } from 'app/enums/product-type.enum';
+import { CoreEvent } from 'app/interfaces/events';
 import { LocaleService } from 'app/services/locale.service';
+import { RoutePartsService } from 'app/services/route-parts/route-parts.service';
 
 @UntilDestroy()
 @Component({

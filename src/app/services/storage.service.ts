@@ -1,14 +1,12 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { SortDirection } from '@angular/material/sort';
-import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
-import { Disk } from 'app/interfaces/storage.interface';
-import { WebSocketService } from './ws.service';
-import { RestService } from './rest.service';
-
 import { format } from 'date-fns-tz';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
+import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
+import { Disk } from 'app/interfaces/storage.interface';
+import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class StorageService {
@@ -23,7 +21,7 @@ export class StorageService {
   humanReadable: any;
   IECUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
-  constructor(protected ws: WebSocketService, protected rest: RestService) {}
+  constructor(protected ws: WebSocketService) {}
 
   filesystemStat(path: string): Observable<FileSystemStat> {
     return this.ws.call('filesystem.stat', [path]);

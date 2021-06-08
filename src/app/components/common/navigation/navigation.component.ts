@@ -2,16 +2,15 @@ import {
   Component, EventEmitter, OnInit, Output,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
-import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { ProductType } from 'app/enums/product-type.enum';
-import { WebSocketService } from '../../../services';
-import { DocsService } from '../../../services/docs.service';
-import { NavigationService } from '../../../services/navigation/navigation.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
+import { WebSocketService } from 'app/services';
+import { DocsService } from 'app/services/docs.service';
+import { NavigationService } from 'app/services/navigation/navigation.service';
 
 @UntilDestroy()
 @Component({
@@ -61,24 +60,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         observerClass: this,
         eventName: 'SysInfo',
       }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
-        if (window.localStorage.getItem('product_type') !== ProductType.Core) {
-          // hide jail and plugins section if product type is SCALE or ENTERPRISE with jail unregistered
-          if ((evt.data.license && evt.data.license.features.indexOf(LicenseFeature.Jails) === -1)
-              || window.localStorage.getItem('product_type').includes(ProductType.Scale)) {
-            _.find(menuItem, { state: 'plugins' }).disabled = true;
-            // _.find(_.find(menuItem, {state : "virtualization"}).sub, { state : 'jails' }).disabled = true; TEMPORARILY disabled
-            // while there is no virtualization menu
-          }
-        }
-
-        // set the guide url -- temporarily(?) disabled for menuing project
-        // if (evt.data.version) {
-        //     window.localStorage.setItem('running_version', evt.data['version']);
-        //     const docUrl = this.docsService.docReplace("--docurl--");
-        //     const guide = _.find(menuItem, {name: 'Guide'});
-        //     guide.state = docUrl;
-        // }
-
         if (evt.data.features.enclosure) {
           for (let i = 0; i < this.navService.hardwareFeatures.length; i++) {
             const targetMenu = this.navService.hardwareFeatures[i];

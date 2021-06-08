@@ -1,27 +1,25 @@
 import { Component } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DatasetType } from 'app/enums/dataset-type.enum';
-import { Option } from 'app/interfaces/option.interface';
-import { combineLatest, Observable } from 'rxjs';
-import * as _ from 'lodash';
-
-import { RestService, WebSocketService, StorageService } from '../../../../../services';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
-import { DialogService } from 'app/services/dialog.service';
-import { T } from '../../../../../translate-marker';
-
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityFormComponent } from '../../../../common/entity/entity-form';
-import { EntityUtils } from '../../../../common/entity/utils';
-import helptext from '../../../../../helptext/storage/volumes/zvol-form';
-import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import globalHelptext from '../../../../../helptext/global-helptext';
-import { ModalService } from 'app/services/modal.service';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
+import { combineLatest, Observable } from 'rxjs';
+import { DatasetType } from 'app/enums/dataset-type.enum';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/storage/volumes/zvol-form';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService, StorageService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 
 interface ZvolFormData {
   name: string;
@@ -399,10 +397,13 @@ export class ZvolFormComponent implements FormConfiguration {
   }
 
   constructor(
-    protected router: Router, protected aroute: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected loader: AppLoaderService, protected dialogService: DialogService,
-    protected storageService: StorageService, private translate: TranslateService,
+    protected router: Router,
+    protected aroute: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected loader: AppLoaderService,
+    protected dialogService: DialogService,
+    protected storageService: StorageService,
+    private translate: TranslateService,
     protected modalService: ModalService,
   ) {}
 

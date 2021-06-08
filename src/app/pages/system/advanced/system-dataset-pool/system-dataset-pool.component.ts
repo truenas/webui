@@ -1,19 +1,19 @@
 import { Component } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
+import { of, Observable } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { ModalService } from 'app/services/modal.service';
-import { of, Observable } from 'rxjs';
 import {
   DialogService, WebSocketService, AppLoaderService, SystemGeneralService,
 } from 'app/services';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import _ from 'lodash';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { filter, switchMap } from 'rxjs/operators';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ModalService } from 'app/services/modal.service';
 
 const poolFieldName = 'pool';
 

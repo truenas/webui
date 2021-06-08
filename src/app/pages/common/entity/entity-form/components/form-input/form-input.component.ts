@@ -3,11 +3,10 @@ import {
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-
-import { FieldConfig } from '../../models/field-config.interface';
-import { EntityFormService } from '../../services/entity-form.service';
-import { Field } from '../../models/field.interface';
-import globalHelptext from '../../../../../../helptext/global-helptext';
+import globalHelptext from 'app/helptext/global-helptext';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 
 @Component({
   selector: 'form-input',
@@ -69,7 +68,10 @@ export class FormInputComponent implements Field {
     if (this.config.inputUnit) {
       const phrasedValue = this.formService.phraseInputData(this.group.controls[this.config.name].value, this.config.inputUnit);
       if (isNaN(phrasedValue)) {
-        this.group.controls[this.config.name].setErrors({ manualValidateError: true, manualValidateErrorMsg: globalHelptext.invalidInputValueWithUnit });
+        this.group.controls[this.config.name].setErrors({
+          manualValidateError: true,
+          manualValidateErrorMsg: globalHelptext.invalidInputValueWithUnit,
+        });
       }
       if (phrasedValue) {
         this.group.controls[this.config.name].setValue(phrasedValue);
@@ -80,11 +82,17 @@ export class FormInputComponent implements Field {
       const numberValue = this.group.controls[this.config.name].value * 1;
       this.group.controls[this.config.name].setValue(numberValue);
       if (this.config.min !== undefined && numberValue < this.config.min) {
-        this.group.controls[this.config.name].setErrors({ manualValidateError: true, manualValidateErrorMsg: globalHelptext.invalidInputValueWithMin + this.config.min });
+        this.group.controls[this.config.name].setErrors({
+          manualValidateError: true,
+          manualValidateErrorMsg: globalHelptext.invalidInputValueWithMin + this.config.min,
+        });
       }
 
       if (this.config.max !== undefined && numberValue > this.config.max) {
-        this.group.controls[this.config.name].setErrors({ manualValidateError: true, manualValidateErrorMsg: globalHelptext.invalidInputValueWithMax + this.config.max });
+        this.group.controls[this.config.name].setErrors({
+          manualValidateError: true,
+          manualValidateErrorMsg: globalHelptext.invalidInputValueWithMax + this.config.max,
+        });
       }
     }
   }

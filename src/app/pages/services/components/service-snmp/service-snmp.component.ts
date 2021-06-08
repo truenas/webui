@@ -1,15 +1,14 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { Observable } from 'rxjs';
-
-import {
-  IdmapService, IscsiService, RestService, WebSocketService,
-} from '../../../../services';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import helptext from '../../../../helptext/services/components/service-snmp';
+import helptext from 'app/helptext/services/components/service-snmp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import {
+  IdmapService, IscsiService, WebSocketService,
+} from 'app/services';
 
 @Component({
   selector: 'snmp-edit',
@@ -143,11 +142,15 @@ export class ServiceSNMPComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef,
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected _injector: Injector,
+    protected _appRef: ApplicationRef,
     protected iscsiService: IscsiService,
-    protected idmapService: IdmapService) {}
+    protected idmapService: IdmapService,
+  ) {}
 
   afterInit(entityForm: EntityFormComponent): void {
     entityForm.submitFunction = this.submitFunction;

@@ -1,21 +1,19 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { Validators, FormControl, ValidationErrors } from '@angular/forms';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-
-import * as _ from 'lodash';
-
-import { EntityFormComponent } from '../../../../common/entity/entity-form';
-import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
-import {
-  IscsiService, RestService, WebSocketService, StorageService,
-} from '../../../../../services';
-import { EntityUtils } from '../../../../common/entity/utils';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
-import { helptext_sharing_iscsi } from 'app/helptext/sharing';
-import globalHelptext from 'app/helptext/global-helptext';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import globalHelptext from 'app/helptext/global-helptext';
+import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import {
+  IscsiService, WebSocketService, StorageService,
+} from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 @UntilDestroy()
 @Component({
@@ -261,13 +259,14 @@ export class ExtentFormComponent implements FormConfiguration {
   protected avail_threshold_field: any;
   fieldConfig: FieldConfig[];
 
-  constructor(protected router: Router,
+  constructor(
+    protected router: Router,
     protected aroute: ActivatedRoute,
     protected iscsiService: IscsiService,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
-    protected storageService: StorageService) {}
+    protected storageService: StorageService,
+  ) {}
 
   preInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {

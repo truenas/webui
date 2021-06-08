@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-
-import { WebSocketService } from '../../../../services';
+import { WebSocketService } from 'app/services';
 
 export interface TreeNode {
   children?: TreeNode[];

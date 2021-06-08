@@ -1,9 +1,6 @@
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
-import { SystemUpdate } from 'app/interfaces/system-update.interface';
-import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { Acl } from 'app/interfaces/acl.interface';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AlertService } from 'app/interfaces/alert-service.interface';
@@ -11,9 +8,10 @@ import { Alert } from 'app/interfaces/alert.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
-import { Certificate } from 'app/interfaces/certificate.interface';
-import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { Catalog } from 'app/interfaces/catalog.interface';
+import { Certificate } from 'app/interfaces/certificate.interface';
+import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
+import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import {
   AuthenticatorSchema,
@@ -21,6 +19,7 @@ import {
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
+import { Group } from 'app/interfaces/group.interface';
 import {
   IscsiAuthAccess, IscsiExtent,
   IscsiInitiatorGroup,
@@ -28,28 +27,29 @@ import {
   IscsiPortal,
   IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
+import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { NetworkActivityChoice, NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
-import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
+import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Group } from 'app/interfaces/group.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
+import { SmartTest } from 'app/interfaces/smart-test.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { Disk, DiskQueryOptions, DiskUpdate } from 'app/interfaces/storage.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
-import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { SystemUpdate } from 'app/interfaces/system-update.interface';
+import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
-import { RsyncTask } from 'app/interfaces/rsync-task.interface';
-import { SmartTest } from 'app/interfaces/smart-test.interface';
-import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
-import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 
 export type ApiDirectory = {
   // Active Directory
@@ -154,6 +154,7 @@ export type ApiDirectory = {
   'chart.release.nic_choices': { params: any; response: any };
   'chart.release.events': { params: any; response: any };
   'chart.release.rollback': { params: any; response: any };
+  'chart.release.upgrade_summary': { params: any; response: any };
 
   // CRON
   'cronjob.run': { params: any; response: any };
@@ -352,20 +353,6 @@ export type ApiDirectory = {
   'group.delete': { params: any; response: any };
   'group.get_group_obj': { params: any; response: any };
   'group.get_next_gid': { params: any; response: any };
-
-  // Jail
-  'jail.query': { params: any; response: any };
-  'jail.create': { params: any; response: any };
-  'jail.delete': { params: any; response: any };
-  'jail.get_activated_pool': { params: any; response: any };
-  'jail.activate': { params: any; response: any };
-  'jail.update': { params: any; response: any };
-  'jail.upgrade': { params: any; response: any };
-  'jail.releases_choices': { params: any; response: any };
-  'jail.get_version': { params: any; response: any };
-  'jail.interface_choices': { params: any; response: any };
-  'jail.default_configuration': { params: any; response: any };
-  'jail.fstab': { params: any; response: any };
 
   // Notifier
   'notifier.choices': { params: any; response: any };

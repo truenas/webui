@@ -6,10 +6,10 @@ import {
   ViewChild,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { StorageService } from '../../../../../services/storage.service';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
-import helptext from '../../../../../helptext/storage/volumes/manager/vdev';
 import * as filesize from 'filesize';
+import helptext from 'app/helptext/storage/volumes/manager/vdev';
+import { StorageService } from 'app/services/storage.service';
 
 @Component({
   selector: 'app-vdev',

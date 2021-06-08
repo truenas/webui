@@ -1,25 +1,23 @@
+import { Overlay } from '@angular/cdk/overlay';
 import {
   Component, OnInit, ViewChild, ElementRef, Renderer2,
   ChangeDetectorRef, AfterViewInit, AfterViewChecked,
 } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-
-import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
-import { T } from 'app/translate-marker';
-import { LocaleService } from 'app/services/locale.service';
-
-import { Overlay } from '@angular/cdk/overlay';
 import { MatMonthView } from '@angular/material/datepicker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import * as parser from 'cron-parser';
 import * as dateFns from 'date-fns';
 import * as dateFnsTz from 'date-fns-tz';
-import * as parser from 'cron-parser';
-import { WebSocketService } from 'app/services/ws.service';
-import { EntityUtils } from '../../../utils';
-import globalHelptext from '../../../../../../helptext/global-helptext';
+import globalHelptext from 'app/helptext/global-helptext';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SystemGeneralService } from 'app/services';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { LocaleService } from 'app/services/locale.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { T } from 'app/translate-marker';
 
 interface CronPreset {
   label: string;
@@ -616,7 +614,12 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   }
 
   formatMonths(): void {
-    const months = [this._jan, this._feb, this._mar, this._apr, this._may, this._jun, this._jul, this._aug, this._sep, this._oct, this._nov, this._dec];
+    const months = [
+      this._jan, this._feb, this._mar,
+      this._apr, this._may, this._jun,
+      this._jul, this._aug, this._sep,
+      this._oct, this._nov, this._dec,
+    ];
     const months_str = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
     let rule = '';
     for (let i = 0; i < months.length; i++) {

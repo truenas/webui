@@ -1,24 +1,24 @@
 import {
   ApplicationRef, Component, Injector, Type,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { WebSocketService, StorageService, DialogService } from 'app/services';
-import { PreferencesService } from 'app/core/services/preferences.service';
-import { LocaleService } from 'app/services/locale.service';
-import { T } from '../../../../translate-marker';
-import { EntityUtils } from '../../../common/entity/utils';
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { SnapshotDetailsComponent } from './components/snapshot-details.component';
-import helptext from '../../../../helptext/storage/snapshots/snapshots';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { MatDialog } from '@angular/material/dialog';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { Snapshot } from 'app/interfaces/storage.interface';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
+import { PreferencesService } from 'app/core/services/preferences.service';
+import helptext from 'app/helptext/storage/snapshots/snapshots';
+import { Snapshot } from 'app/interfaces/storage.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService, StorageService, DialogService } from 'app/services';
+import { LocaleService } from 'app/services/locale.service';
+import { T } from 'app/translate-marker';
+import { SnapshotDetailsComponent } from './components/snapshot-details.component';
 
 interface DialogData {
   datasets: string[];

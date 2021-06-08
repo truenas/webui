@@ -2,28 +2,27 @@ import {
   Component, Output, EventEmitter, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
-import { ixChartApp, appImagePlaceholder } from 'app/constants/catalog.constants';
-import { CoreEvent } from 'app/interfaces/events';
-import { Subject, Subscription } from 'rxjs';
-import * as _ from 'lodash';
-
-import { DialogService, SystemGeneralService, WebSocketService } from '../../../services/index';
-import { ApplicationsService } from '../applications.service';
-import { ModalService } from '../../../services/modal.service';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component';
-import { CommonUtils } from 'app/core/classes/common-utils';
-import { ChartFormComponent } from '../forms/chart-form.component';
-import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
-
-import helptext from '../../../helptext/apps/apps';
-import { CoreService } from 'app/core/services/core.service';
 import { Router } from '@angular/router';
-import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
+import { Subject, Subscription } from 'rxjs';
+import { ixChartApp, appImagePlaceholder } from 'app/constants/catalog.constants';
+import { CommonUtils } from 'app/core/classes/common-utils';
+import { CoreService } from 'app/core/services/core.service';
+import helptext from 'app/helptext/apps/apps';
+import { UpgradeSummary } from 'app/interfaces/application.interface';
+import { CoreEvent } from 'app/interfaces/events';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services/index';
+import { ModalService } from 'app/services/modal.service';
+import { ApplicationsService } from '../applications.service';
+import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';
+import { ChartFormComponent } from '../forms/chart-form.component';
+import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component';
 
 @UntilDestroy()
 @Component({
@@ -328,24 +327,27 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   update(name: string): void {
-    this.translate.get(helptext.charts.upgrade_dialog.msg).pipe(untilDestroyed(this)).subscribe((msg) => {
-      this.dialogService.confirm(helptext.charts.upgrade_dialog.title, msg + name + '?')
-        .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (res) {
-            this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-              data: {
-                title: (
-                  helptext.charts.upgrade_dialog.job),
-              },
-              disableClose: true,
-            });
-            this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name]);
-            this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-              this.dialogService.closeAllDialogs();
-            });
-          }
-        });
+    this.appLoaderService.open();
+    this.appService.getUpgradeSummary(name).pipe(untilDestroyed(this)).subscribe((res: UpgradeSummary) => {
+      this.appLoaderService.close();
+      this.dialogService.confirm({
+        title: helptext.charts.upgrade_dialog.title + res.latest_human_version,
+        message: res.changelog,
+      }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
+        if (res) {
+          this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+            data: {
+              title: (
+                helptext.charts.upgrade_dialog.job),
+            },
+          });
+          this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name]);
+          this.dialogRef.componentInstance.submit();
+          this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+            this.dialogService.closeAllDialogs();
+          });
+        }
+      });
     });
   }
 
@@ -507,7 +509,9 @@ export class ChartReleasesComponent implements OnInit {
 
   filerChartItems(): void {
     if (this.filterString) {
-      this.filteredChartItems = this.getChartItems().filter((chart: any) => chart.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1);
+      this.filteredChartItems = this.getChartItems().filter((chart: any) => {
+        return chart.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1;
+      });
     } else {
       this.filteredChartItems = this.getChartItems();
     }

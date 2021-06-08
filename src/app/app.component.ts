@@ -1,28 +1,17 @@
 import { Component } from '@angular/core';
-import { Title } from '@angular/platform-browser';
-import {
-  Router, NavigationEnd, NavigationCancel, ActivatedRoute,
-} from '@angular/router';
-
-import { ThemeService } from 'app/services/theme/theme.service';
-import { RoutePartsService } from './services/route-parts/route-parts.service';
+import { MatIconRegistry } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { RestService } from './services/rest.service';
-import { ApiService } from 'app/core/services/api.service';
-import { AnimationService } from 'app/core/services/animation.service';
-import { InteractionManagerService } from 'app/core/services/interaction-manager.service';
+import { Title, DomSanitizer } from '@angular/platform-browser';
+import {
+  Router, NavigationEnd, NavigationCancel,
+} from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { customSvgIcons } from 'app/core/classes/custom-icons';
 import { DataService } from 'app/core/services/data.service';
-import { CoreService } from 'app/core/services/core.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
+import { ThemeService } from 'app/services/theme/theme.service';
+import productText from './helptext/product';
 import { SystemGeneralService } from './services';
 import { WebSocketService } from './services/ws.service';
-import { DomSanitizer } from '@angular/platform-browser';
-import { MatIconRegistry } from '@angular/material/icon';
-import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service'; // <-- Use this globally so we can run as web worker
-import { customSvgIcons } from 'app/core/classes/custom-icons';
-
-import productText from './helptext/product';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
@@ -35,26 +24,23 @@ export class AppComponent {
   protected user: any;
   product_type = '';
 
-  constructor(public title: Title,
+  constructor(
+    public title: Title,
     private router: Router,
-    private activeRoute: ActivatedRoute,
-    private routePartsService: RoutePartsService,
     public snackBar: MatSnackBar,
     private ws: WebSocketService,
-    private rest: RestService,
-    private api: ApiService,
-    private animations: AnimationService,
-    private ims: InteractionManagerService,
-    private core: CoreService,
-    public preferencesService: PreferencesService,
     public themeservice: ThemeService,
-    public cache: DataService,
     public domSanitizer: DomSanitizer,
     public matIconRegistry: MatIconRegistry,
-    public chartDataUtils: ChartDataUtilsService,
-    private sysGeneralService: SystemGeneralService) {
-    this.matIconRegistry.addSvgIconSetInNamespace('mdi',
-      this.domSanitizer.bypassSecurityTrustResourceUrl('assets/iconfont/mdi/mdi.svg'));
+    private sysGeneralService: SystemGeneralService,
+
+    // TODO: Keep or do proper refactoring. Currenly our code relies for SysInfo to be emitted by SystemProfileService constructor.
+    private cache: DataService,
+  ) {
+    this.matIconRegistry.addSvgIconSetInNamespace(
+      'mdi',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('assets/iconfont/mdi/mdi.svg'),
+    );
 
     for (const [name, path] of Object.entries(customSvgIcons)) {
       this.matIconRegistry.addSvgIcon(name, this.domSanitizer.bypassSecurityTrustResourceUrl(path));

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
-
+import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import {
   combineLatest, of, Observable,
@@ -9,23 +9,21 @@ import {
 import {
   catchError, map, switchMap, take, tap, debounceTime,
 } from 'rxjs/operators';
-
+import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_smb, shared } from 'app/helptext/sharing';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { T } from 'app/translate-marker';
-import { ProductType } from 'app/enums/product-type.enum';
 import {
   AppLoaderService, DialogService, WebSocketService, SystemGeneralService,
 } from 'app/services';
-import globalHelptext from 'app/helptext/global-helptext';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { ModalService } from 'app/services/modal.service';
-import { SmbShare } from 'app/interfaces/smb-share.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

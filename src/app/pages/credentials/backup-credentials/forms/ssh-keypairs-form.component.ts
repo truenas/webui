@@ -1,20 +1,20 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { Subscription } from 'rxjs';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
-import helptext from 'app/helptext/system/ssh-keypairs';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { EntityUtils } from '../../../common/entity/utils';
-import { WebSocketService, DialogService, StorageService } from '../../../../services';
-import { ModalService } from 'app/services/modal.service';
-import { atLeastOne } from 'app/pages/common/entity/entity-form/validators/at-least-one-validation';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subscription } from 'rxjs';
+import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
+import helptext from 'app/helptext/system/ssh-keypairs';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { atLeastOne } from 'app/pages/common/entity/entity-form/validators/at-least-one-validation';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService, DialogService, StorageService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({

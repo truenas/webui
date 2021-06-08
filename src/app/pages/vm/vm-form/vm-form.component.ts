@@ -1,27 +1,26 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { VmDeviceType, VmTime } from 'app/enums/vm.enum';
 import * as _ from 'lodash';
-import { ProductType } from '../../../enums/product-type.enum';
+import { combineLatest, Observable } from 'rxjs';
+import { ProductType } from 'app/enums/product-type.enum';
+import { VmDeviceType, VmTime } from 'app/enums/vm.enum';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { GpuDevice } from 'app/interfaces/gpu-device.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
   FieldConfig,
-} from '../../common/entity/entity-form/models/field-config.interface';
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { T } from '../../../translate-marker';
-import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
-import globalHelptext from '../../../helptext/global-helptext';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   WebSocketService, StorageService, VmService, AppLoaderService, DialogService, SystemGeneralService,
-} from '../../../services';
-import { Validators } from '@angular/forms';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-
-import { GpuDevice } from 'app/interfaces/gpu-device.interface';
-import { combineLatest, Observable } from 'rxjs';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+} from 'app/services';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -338,7 +337,9 @@ export class VmFormComponent implements FormConfiguration {
     vmRes['memory'] = this.storageService.convertBytestoHumanReadable(vmRes['memory'] * 1048576, 0);
     this.ws.call('device.get_info', ['GPU']).pipe(untilDestroyed(this)).subscribe((gpus: GpuDevice[]) => {
       this.gpus = gpus;
-      const vmPciSlots: string[] = vmRes.devices.filter((device: any) => device.dtype === VmDeviceType.Pci).map((pciDevice: any) => pciDevice.attributes.pptdev);
+      const vmPciSlots: string[] = vmRes.devices
+        .filter((device: any) => device.dtype === VmDeviceType.Pci)
+        .map((pciDevice: any) => pciDevice.attributes.pptdev);
       const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
       for (const item of gpus) {
         gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
@@ -409,7 +410,9 @@ export class VmFormComponent implements FormConfiguration {
       }
       if (!found) {
         const prevVmGpuPciDevicesPciSlots = prevGpu.devices.map((prevGpuPciDevice) => prevGpuPciDevice.vm_pci_slot);
-        const vmPciDevices = prevVmPciDevices.filter((prevVmPciDevice: any) => prevVmGpuPciDevicesPciSlots.includes(prevVmPciDevice.attributes.pptdev));
+        const vmPciDevices = prevVmPciDevices.filter((prevVmPciDevice: any) => {
+          return prevVmGpuPciDevicesPciSlots.includes(prevVmPciDevice.attributes.pptdev);
+        });
         const vmPciDeviceIds = vmPciDevices.map((prevVmPciDevice: any) => prevVmPciDevice.id);
         vmPciDeviceIdsToRemove.push(...vmPciDeviceIds);
       }

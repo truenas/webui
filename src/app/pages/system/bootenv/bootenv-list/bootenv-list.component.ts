@@ -2,21 +2,19 @@ import {
   Component, ElementRef, ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { DialogService } from 'app/services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { RestService } from '../../../../services/rest.service';
-import { WebSocketService, SystemGeneralService } from '../../../../services';
-import { StorageService } from '../../../../services/storage.service';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { LocaleService } from 'app/services/locale.service';
-import { EntityUtils } from '../../../common/entity/utils';
-import { T } from '../../../../translate-marker';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { StorageService } from 'app/services/storage.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -45,9 +43,15 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   scrub_msg: string;
   scrub_interval: number;
 
-  constructor(private _rest: RestService, private _router: Router, public ws: WebSocketService,
-    public dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService,
-    protected localeService: LocaleService, private sysGeneralService: SystemGeneralService) {}
+  constructor(
+    private _router: Router,
+    public ws: WebSocketService,
+    public dialog: DialogService,
+    protected loader: AppLoaderService,
+    private storage: StorageService,
+    protected localeService: LocaleService,
+    private sysGeneralService: SystemGeneralService,
+  ) {}
 
   columns = [
     { name: T('Name'), prop: 'name', always_display: true },

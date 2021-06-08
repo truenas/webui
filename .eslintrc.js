@@ -38,7 +38,7 @@ module.exports = {
         "no-return-assign": "off",
         "no-empty": ["error", { "allowEmptyCatch": true }],
         "arrow-body-style": "off",
-        "max-len": ["error", 170, 2, {
+        "max-len": ["error", 150, 2, {
           "ignoreUrls": true,
           "ignoreComments": false,
           "ignoreRegExpLiterals": true,
@@ -46,6 +46,29 @@ module.exports = {
           "ignoreTemplateLiterals": true
         }],
         "no-console": ["error", { allow: ["warn", "error", "info"] }],
+        "import/order": ["error", {
+          "groups": ["builtin", "external", ["internal", "parent", "sibling", "index"]],
+          "pathGroups": [
+            {
+              "pattern": "app/**",
+              "group": "parent",
+              "position": "before",
+            }
+          ],
+          "pathGroupsExcludedImportTypes": ["builtin", "internal"],
+          "newlines-between": "never",
+          "alphabetize": {
+            "order": "asc",
+            "caseInsensitive": false
+          }
+         }],
+        "import/no-duplicates": ["error", {"considerQueryString": true}],
+        "import/extensions": ["error", "ignorePackages", {
+          "js": "never",
+          "jsx": "never",
+          "ts": "never",
+          "tsx": "never"
+        }],
 
         // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically
         "no-underscore-dangle": "off",
@@ -76,7 +99,6 @@ module.exports = {
         "array-callback-return": "off",
         "@typescript-eslint/no-use-before-define": "off",
         "func-names": "off",
-        "import/extensions": "off",
         "no-var": "off",
         "vars-on-top": "off",
         "no-useless-escape": "off",
@@ -86,7 +108,6 @@ module.exports = {
         "no-new-object": "off",
         "no-prototype-builtins": "off",
         "prefer-promise-reject-errors": "off",
-        "import/order": "off",
         "operator-assignment": "off",
         "no-continue": "off",
         "import/no-cycle": "off",
@@ -94,7 +115,6 @@ module.exports = {
         "no-self-assign": "off",
         "no-async-promise-executor": "off",
         "no-bitwise": "off",
-        "import/no-duplicates": "off",
         "no-constant-condition": "off",
         "import/no-mutable-exports": "off",
         "@typescript-eslint/no-redeclare": "off",

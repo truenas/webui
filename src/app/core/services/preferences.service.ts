@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { CoreEvent } from 'app/interfaces/events';
 import { UserDataEvent } from 'app/interfaces/events/user-data-event.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { CoreService } from './core.service';
-import { ApiService } from './api.service';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ApiService } from './api.service';
+import { CoreService } from './core.service';
 
 interface PropertyReport {
   middlewareProperties: string[];

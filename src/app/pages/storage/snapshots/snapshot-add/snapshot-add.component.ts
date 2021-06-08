@@ -1,21 +1,21 @@
 import {
-  AfterViewInit, ApplicationRef, Component, Injector,
+  AfterViewInit, Component,
 } from '@angular/core';
 import { FormControl, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { T } from 'app/translate-marker';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { format, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import { map } from 'rxjs/operators';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { T } from 'app/translate-marker';
 import helptext from '../../../../helptext/storage/snapshots/snapshots';
 import {
-  DialogService, RestService, SystemGeneralService, WebSocketService,
+  DialogService, SystemGeneralService, WebSocketService,
 } from '../../../../services';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from '../../../common/entity/entity-form/entity-form.component';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { format, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
 @UntilDestroy()
 @Component({
@@ -80,10 +80,14 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
     },
   ];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef,
-    protected dialog: DialogService, private sysGeneralService: SystemGeneralService) { }
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected dialog: DialogService,
+    private sysGeneralService: SystemGeneralService,
+  ) {
+  }
 
   ngAfterViewInit(): void {
     this.ws.call('pool.dataset.query', [[['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']],

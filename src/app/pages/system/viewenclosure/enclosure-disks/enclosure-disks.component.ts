@@ -2,35 +2,35 @@ import {
   Component, Input, AfterContentInit, OnChanges, SimpleChanges, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { CoreService } from 'app/core/services/core.service';
-import { ThemeUtils } from 'app/core/classes/theme-utils';
-import { CoreEvent } from 'app/interfaces/events';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { DomSanitizer } from '@angular/platform-browser';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Application, Container,
 } from 'pixi.js';
-import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
-import { DriveTray } from 'app/core/classes/hardware/drivetray';
-import { Chassis } from 'app/core/classes/hardware/chassis';
-import { ChassisView } from 'app/core/classes/hardware/chassis-view';
-import { M50 } from 'app/core/classes/hardware/m50';
-import { M50Rear } from 'app/core/classes/hardware/m50_rear';
-import { ES12 } from 'app/core/classes/hardware/es12';
-import { E16 } from 'app/core/classes/hardware/e16';
-import { E24 } from 'app/core/classes/hardware/e24';
-import { ES24 } from 'app/core/classes/hardware/es24';
-import { E60 } from 'app/core/classes/hardware/e60';
-import { ES60 } from 'app/core/classes/hardware/es60';
-import { SystemProfiler } from 'app/core/classes/system-profiler';
 import {
   tween, styler, value, keyframes,
 } from 'popmotion';
 import { Subject } from 'rxjs';
-import { DomSanitizer } from '@angular/platform-browser';
+import { Chassis } from 'app/core/classes/hardware/chassis';
+import { ChassisView } from 'app/core/classes/hardware/chassis-view';
+import { DriveTray } from 'app/core/classes/hardware/drivetray';
+import { E16 } from 'app/core/classes/hardware/e16';
+import { E24 } from 'app/core/classes/hardware/e24';
+import { E60 } from 'app/core/classes/hardware/e60';
+import { ES12 } from 'app/core/classes/hardware/es12';
+import { ES24 } from 'app/core/classes/hardware/es24';
+import { ES60 } from 'app/core/classes/hardware/es60';
+import { M50 } from 'app/core/classes/hardware/m50';
+import { M50Rear } from 'app/core/classes/hardware/m50_rear';
+import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
+import { SystemProfiler } from 'app/core/classes/system-profiler';
+import { ThemeUtils } from 'app/core/classes/theme-utils';
+import { CoreService } from 'app/core/services/core.service';
 import { Temperature } from 'app/core/services/disk-temperature.service';
+import { CoreEvent } from 'app/interfaces/events';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { DialogService } from 'app/services/dialog.service';
-import { T } from '../../../../translate-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 export enum EnclosureLocation {
   Front = 'front',
@@ -241,7 +241,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
             /* One or more children have been added to and/or removed
                from the tree; see mutation.addedNodes and
                mutation.removedNodes */
-            if (!mutation.addedNodes[0] || !mutation.addedNodes[0].classList || mutation.addedNodes.length == 0 || mutation.addedNodes[0].classList.length == 0) {
+            if (
+              !mutation.addedNodes[0]
+              || !mutation.addedNodes[0].classList
+              || mutation.addedNodes.length == 0
+              || mutation.addedNodes[0].classList.length == 0
+            ) {
               break;
             }
             const fullStage: boolean = mutation.addedNodes[0].classList.contains('full-stage');

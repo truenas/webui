@@ -1,16 +1,16 @@
 import { Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { helptext_sharing_iscsi } from 'app/helptext/sharing';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { matchOtherValidator, doesNotEqual } from 'app/pages/common/entity/entity-form/validators/password-validation';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
-import { WebSocketService } from '../../../../../services/ws.service';
-import { EntityUtils } from '../../../../common/entity/utils';
-import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
-import * as _ from 'lodash';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { matchOtherValidator, doesNotEqual } from 'app/pages/common/entity/entity-form/validators/password-validation';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

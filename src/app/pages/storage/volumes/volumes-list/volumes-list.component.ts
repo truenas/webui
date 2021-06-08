@@ -1,12 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import {
-  Component, ElementRef, OnDestroy, OnInit,
+  Component, OnDestroy, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { format } from 'date-fns';
+import * as filesize from 'filesize';
+import * as _ from 'lodash';
+import { TreeNode } from 'primeng/api';
+import { combineLatest, Observable, Subscription } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
@@ -15,38 +21,31 @@ import { DatasetType } from 'app/enums/dataset-type.enum';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { ProductType } from 'app/enums/product-type.enum';
+import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableService } from 'app/pages/common/entity/entity-table/entity-table.service';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { JobService, ValidationService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
-import { ErdService } from 'app/services/erd.service';
 import { ModalService } from 'app/services/modal.service';
+import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { format } from 'date-fns';
-import * as _ from 'lodash';
-import { TreeNode } from 'primeng/api';
-import { combineLatest, Observable, Subscription } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { ProductType } from '../../../../enums/product-type.enum';
-import dataset_helptext from '../../../../helptext/storage/volumes/datasets/dataset-form';
-import helptext from '../../../../helptext/storage/volumes/volume-list';
-import { JobService, RestService, ValidationService } from '../../../../services';
-import { StorageService } from '../../../../services/storage.service';
 import { T } from '../../../../translate-marker';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EmptyConfig, EmptyType } from '../../../common/entity/entity-empty/entity-empty.component';
-import { MessageService } from '../../../common/entity/entity-form/services/message.service';
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { EntityUtils } from '../../../common/entity/utils';
 import { DatasetFormComponent } from '../datasets/dataset-form';
 import { ZvolFormComponent } from '../zvol/zvol-form';
 import { VolumesListControlsComponent } from './volumes-list-controls.component';
-import * as filesize from 'filesize';
 
 export interface ZfsPoolData {
   pool: string;
@@ -90,6 +89,7 @@ interface ZfsData {
   source: string;
 }
 
+@UntilDestroy()
 export class VolumesListTableConfig {
   hideTopActions = true;
   flattenedVolData: any;
@@ -539,7 +539,10 @@ export class VolumesListTableConfig {
                 const payload = [row.id];
                 body['autotrim'] = (formValue.autotrim ? 'ON' : 'OFF');
                 payload.push(body);
-                const dialogRef = self.mdDialog.open(EntityJobComponent, { data: { title: helptext.pool_options_dialog.save_pool_options }, disableClose: true });
+                const dialogRef = self.mdDialog.open(EntityJobComponent, {
+                  data: { title: helptext.pool_options_dialog.save_pool_options },
+                  disableClose: true,
+                });
                 dialogRef.componentInstance.setDescription(helptext.pool_options_dialog.saving_pool_options);
                 dialogRef.componentInstance.setCall(method, payload);
                 dialogRef.componentInstance.submit();
@@ -790,42 +793,34 @@ export class VolumesListTableConfig {
                         if (res.exc_info.extra && res.exc_info.extra['code'] === 'control_services') {
                           entityDialog.dialogRef.close(true);
                           dialogRef.close(true);
-                          let stopMsg: string;
-                          let restartMsg: string;
-                          let continueMsg: string;
-                          self.translate.get(helptext.exportMessages.onfail.stopServices).pipe(untilDestroyed(this)).subscribe((stop) => {
-                            self.translate.get(helptext.exportMessages.onfail.restartServices).pipe(untilDestroyed(this)).subscribe((restart) => {
-                              self.translate.get(helptext.exportMessages.onfail.continueMessage).pipe(untilDestroyed(this)).subscribe((continueRes) => {
-                                stopMsg = stop;
-                                restartMsg = restart;
-                                continueMsg = continueRes;
-                              });
+                          const stopMsg = self.translate.instant(helptext.exportMessages.onfail.stopServices);
+                          const restartMsg = self.translate.instant(helptext.exportMessages.onfail.restartServices);
+                          const continueMsg = self.translate.instant(helptext.exportMessages.onfail.continueMessage);
+
+                          if (res.exc_info.extra.stop_services.length > 0) {
+                            conditionalErrMessage += '<div class="warning-box">' + stopMsg;
+                            res.exc_info.extra.stop_services.forEach((item: string) => {
+                              conditionalErrMessage += `<br>- ${item}`;
                             });
+                          }
+                          if (res.exc_info.extra.restart_services.length > 0) {
                             if (res.exc_info.extra.stop_services.length > 0) {
-                              conditionalErrMessage += '<div class="warning-box">' + stopMsg;
-                              res.exc_info.extra.stop_services.forEach((item: string) => {
-                                conditionalErrMessage += `<br>- ${item}`;
-                              });
+                              conditionalErrMessage += '<br><br>';
                             }
-                            if (res.exc_info.extra.restart_services.length > 0) {
-                              if (res.exc_info.extra.stop_services.length > 0) {
-                                conditionalErrMessage += '<br><br>';
+                            conditionalErrMessage += '<div class="warning-box">' + restartMsg;
+                            res.exc_info.extra.restart_services.forEach((item: string) => {
+                              conditionalErrMessage += `<br>- ${item}`;
+                            });
+                          }
+                          conditionalErrMessage += '<br><br>' + continueMsg + '</div><br />';
+                          self.dialogService.confirm(helptext.exportError,
+                            conditionalErrMessage, true, helptext.exportMessages.onfail.continueAction)
+                            .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
+                              if (res) {
+                                self.restartServices = true;
+                                this.customSubmit(entityDialog);
                               }
-                              conditionalErrMessage += '<div class="warning-box">' + restartMsg;
-                              res.exc_info.extra.restart_services.forEach((item: string) => {
-                                conditionalErrMessage += `<br>- ${item}`;
-                              });
-                            }
-                            conditionalErrMessage += '<br><br>' + continueMsg + '</div><br />';
-                            self.dialogService.confirm(helptext.exportError,
-                              conditionalErrMessage, true, helptext.exportMessages.onfail.continueAction)
-                              .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-                                if (res) {
-                                  self.restartServices = true;
-                                  this.customSubmit(entityDialog);
-                                }
-                              });
-                          });
+                            });
                         } else if (res.extra && res.extra['code'] === 'unstoppable_processes') {
                           entityDialog.dialogRef.close(true);
                           self.translate.get(helptext.exportMessages.onfail.unableToTerminate).pipe(untilDestroyed(this)).subscribe((msg) => {
@@ -1612,29 +1607,32 @@ export class VolumesListTableConfig {
                   ds.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((res: any) => {
                     force_umount = res;
                   });
-                  ds.afterClosed().pipe(untilDestroyed(this)).subscribe((status: any) => {
-                    if (status) {
-                      this.translate.get(helptext.lock_dataset_dialog.locking_dataset_description).pipe(untilDestroyed(this)).subscribe((lock_ds_description) => {
-                        const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: helptext.lock_dataset_dialog.locking_dataset }, disableClose: true });
-                        dialogRef.componentInstance.setDescription(lock_ds_description + rowData.name);
-                        params.push({ force_umount });
-                        dialogRef.componentInstance.setCall(ds.componentInstance.method, params);
-                        dialogRef.componentInstance.submit();
-                        let done = false;
-                        dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-                          if (!done) {
-                            dialogRef.close(false);
-                            done = true;
-                            this.parentVolumesListComponent.repaintMe();
-                          }
-                        });
+                  ds.afterClosed().pipe(
+                    filter(Boolean),
+                    untilDestroyed(this),
+                  ).subscribe(() => {
+                    const lockDescription = this.translate.instant(helptext.lock_dataset_dialog.locking_dataset_description);
+                    const dialogRef = this.mdDialog.open(EntityJobComponent, {
+                      data: { title: helptext.lock_dataset_dialog.locking_dataset },
+                      disableClose: true,
+                    });
+                    dialogRef.componentInstance.setDescription(lockDescription + rowData.name);
+                    params.push({ force_umount });
+                    dialogRef.componentInstance.setCall(ds.componentInstance.method, params);
+                    dialogRef.componentInstance.submit();
+                    let done = false;
+                    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+                      if (!done) {
+                        dialogRef.close(false);
+                        done = true;
+                        this.parentVolumesListComponent.repaintMe();
+                      }
+                    });
 
-                        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
-                          dialogRef.close(false);
-                          new EntityUtils().handleWSError(this, res, this.dialogService);
-                        });
-                      });
-                    }
+                    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+                      dialogRef.close(false);
+                      new EntityUtils().handleWSError(this, res, this.dialogService);
+                    });
                   });
                 });
               });
@@ -1783,7 +1781,6 @@ export class VolumesListTableConfig {
   }
 }
 
-@UntilDestroy()
 @Component({
   selector: 'app-volumes-list',
   styleUrls: ['./volumes-list.component.scss'],
@@ -1898,14 +1895,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   constructor(
     protected core: CoreService,
-    protected rest: RestService,
     protected router: Router,
     protected ws: WebSocketService,
-    protected _eRef: ElementRef,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected mdDialog: MatDialog,
-    protected erdService: ErdService,
     protected translate: TranslateService,
     public sorter: StorageService,
     protected job: JobService,
@@ -1917,7 +1911,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     public tableService: EntityTableService,
     protected validationService: ValidationService,
   ) {
-    super(core, rest, router, ws, dialogService, loader, translate, sorter, job, pref, mdDialog, modalService);
+    super(core, router, ws, dialogService, loader, translate, sorter, job, pref, mdDialog, modalService);
 
     this.actionsConfig = { actionType: VolumesListControlsComponent, actionConfig: this };
     this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
@@ -2050,10 +2044,12 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.dialogService.errorReport(T('Error getting pool data.'), res.message, res.stack);
     });
 
-    this.addZvolComponent = new ZvolFormComponent(this.router, this.aroute, this.rest, this.ws, this.loader,
+    this.addZvolComponent = new ZvolFormComponent(this.router, this.aroute, this.ws, this.loader,
       this.dialogService, this.storageService, this.translate, this.modalService);
 
-    this.addDatasetFormComponent = new DatasetFormComponent(this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService);
+    this.addDatasetFormComponent = new DatasetFormComponent(
+      this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService,
+    );
   }
 
   addZvol(id: string, isNew: boolean): void {
@@ -2070,7 +2066,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   }
 
   editDataset(pool: any, id: string): void {
-    this.editDatasetFormComponent = new DatasetFormComponent(this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService);
+    this.editDatasetFormComponent = new DatasetFormComponent(
+      this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService,
+    );
 
     this.editDatasetFormComponent.setPk(id);
     this.editDatasetFormComponent.setVolId(pool);

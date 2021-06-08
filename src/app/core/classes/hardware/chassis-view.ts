@@ -1,17 +1,15 @@
-import { CoreEvent } from 'app/interfaces/events';
 import { Container, Sprite } from 'pixi.js';
-import { Subject } from 'rxjs';
-import { ThemeUtils } from 'app/core/classes/theme-utils';
-import { DriveTray } from './drivetray';
-
-// TODO: See if can be removed.
-// eslint-disable-next-line unused-imports/no-unused-imports
-import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
-
 import {
   tween,
   easing,
 } from 'popmotion';
+import { Subject } from 'rxjs';
+import { ThemeUtils } from 'app/core/classes/theme-utils';
+import { CoreEvent } from 'app/interfaces/events';
+import { DriveTray } from './drivetray';
+// TODO: See if can be removed.
+// eslint-disable-next-line
+import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
 
 export interface Range {
   start: number;

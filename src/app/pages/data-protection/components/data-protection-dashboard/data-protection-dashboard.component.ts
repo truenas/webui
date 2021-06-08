@@ -5,17 +5,38 @@ import {
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import globalHelptext from 'app/helptext/global-helptext';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
 import helptext_replication from 'app/helptext/data-protection/replication/replication';
 import helptext_smart from 'app/helptext/data-protection/smart/smart';
-import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
+import globalHelptext from 'app/helptext/global-helptext';
+import { ApiDirectory } from 'app/interfaces/api-directory.interface';
+import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
+import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
+import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
+import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
+import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
+import { SmartTestUi } from 'app/interfaces/smart-test.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { AppTableAction, InputTableConf } from 'app/pages/common/entity/table/table.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
+import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/rsync-form.component';
+import { ScrubFormComponent } from 'app/pages/data-protection/scrub/scrub-form/scrub-form.component';
+import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/smart-form.component';
+import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
 import {
   DialogService,
   ReplicationService,
@@ -24,35 +45,12 @@ import {
   UserService,
   WebSocketService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { CloudCredentialService } from 'app/services/cloudcredential.service';
 import { JobService } from 'app/services/job.service';
 import { KeychainCredentialService } from 'app/services/keychaincredential.services';
 import { ModalService } from 'app/services/modal.service';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { AppTableAction, InputTableConf } from 'app/pages/common/entity/table/table.component';
-import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
-import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
-import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/rsync-form.component';
-import { ScrubFormComponent } from 'app/pages/data-protection/scrub/scrub-form/scrub-form.component';
-import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/smart-form.component';
-import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import { EntityJob } from 'app/interfaces/entity-job.interface';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
-import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
-import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
-import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
-import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
-import { SmartTestUi } from 'app/interfaces/smart-test.interface';
-import { TransferMode } from 'app/enums/transfer-mode.enum';
-import { ApiDirectory } from 'app/interfaces/api-directory.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 export interface TaskCard {
   name: string;

@@ -3,23 +3,25 @@ import {
   Validators, FormControl, ValidationErrors, FormGroup,
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import {
+  UntilDestroy, untilDestroyed,
+} from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
+import { CoreService } from 'app/core/services/core.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
-import globalHelptext from '../../../../../helptext/global-helptext';
-import helptext from '../../../../../helptext/storage/volumes/zvol-form';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/storage/volumes/zvol-form';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { WebSocketService, StorageService } from '../../../../../services';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+import { WebSocketService, StorageService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-
-import { Observable } from 'rxjs';
-import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
-import { CoreService } from 'app/core/services/core.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface ZvolFormData {
   name: string;
@@ -40,14 +42,14 @@ interface ZvolFormData {
   selector: 'app-zvol-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
 })
-export class ZvolWizardComponent {
-  protected addWsCall = 'pool.dataset.create';
+export class ZvolWizardComponent implements WizardConfiguration {
+  addWsCall: 'pool.dataset.create' = 'pool.dataset.create';
   protected pk: any;
   protected path: string;
   queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   protected compression: any;
-  protected advanced_field: any[] = ['volblocksize'];
-  protected isBasicMode = true;
+  advanced_field: any[] = ['volblocksize'];
+  isBasicMode = true;
   protected isNew = true;
   protected isEntity = true;
   parent: string;
@@ -55,7 +57,7 @@ export class ZvolWizardComponent {
   parent_data: any;
   volid: string;
   customFilter: any[] = [];
-  protected entityWizard: any;
+  protected entityWizard: EntityWizardComponent;
   minimum_recommended_zvol_volblocksize: keyof ZvolWizardComponent['reverseZvolBlockSizeMap'];
   namesInUse: string[] = [];
   title: string;
@@ -101,7 +103,7 @@ export class ZvolWizardComponent {
     '1M': '1048576',
   };
 
-  protected wizardConfig: Wizard[] = [
+  wizardConfig: Wizard[] = [
     {
       label: T('Select Path'),
       fieldConfig: [

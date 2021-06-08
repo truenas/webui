@@ -1,15 +1,14 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-
-import { WebSocketService, IscsiService } from '../../../../../services';
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
-import { EntityFormService } from '../../../../common/entity/entity-form/services/entity-form.service';
-import * as _ from 'lodash';
-import { EntityUtils } from '../../../../common/entity/utils';
-import { helptext_sharing_iscsi } from '../../../../../helptext/sharing';
-import { T } from 'app/translate-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService, IscsiService } from 'app/services';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

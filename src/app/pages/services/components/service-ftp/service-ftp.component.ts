@@ -2,19 +2,19 @@ import {
   ApplicationRef, Component, Injector, OnInit,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { Observable } from 'rxjs';
+import global_helptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/services/components/service-ftp';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { Observable } from 'rxjs';
-import helptext from '../../../../helptext/services/components/service-ftp';
-import global_helptext from '../../../../helptext/global-helptext';
-import * as _ from 'lodash';
 import {
-  DialogService, RestService, SystemGeneralService, WebSocketService, StorageService,
-} from '../../../../services';
-import { T } from '../../../../translate-marker';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+  DialogService, SystemGeneralService, WebSocketService, StorageService,
+} from 'app/services';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -405,11 +405,16 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     return true;
   }
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef,
-    protected dialog: DialogService, protected storageService: StorageService,
-    protected systemGeneralService: SystemGeneralService) {}
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected _injector: Injector,
+    protected _appRef: ApplicationRef,
+    protected dialog: DialogService,
+    protected storageService: StorageService,
+    protected systemGeneralService: SystemGeneralService,
+  ) {}
 
   ngOnInit(): void {
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res: any[]) => {

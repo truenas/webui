@@ -1,37 +1,35 @@
 import { Component, OnInit } from '@angular/core';
+import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import * as filesize from 'filesize';
+import * as _ from 'lodash';
+import { TreeNode } from 'primeng/api';
+import { Subject } from 'rxjs';
+import { CoreService } from 'app/core/services/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
+import helptext from 'app/helptext/storage/volumes/volume-status';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
-import {
-  WebSocketService, RestService, AppLoaderService, DialogService,
-} from '../../../../services';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { EntityUtils } from '../../../common/entity/utils';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import * as _ from 'lodash';
-import { TreeNode } from 'primeng/api';
-import { EntityTreeTable } from '../../../common/entity/entity-tree-table/entity-tree-table.model';
-
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { MatDialog } from '@angular/material/dialog';
-import { Validators } from '@angular/forms';
-import { matchOtherValidator } from '../../../common/entity/entity-form/validators/password-validation';
-import { LocaleService } from 'app/services/locale.service';
-import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/storage/volumes/volume-status';
-import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-
-import { CoreService } from 'app/core/services/core.service';
-import { Subject } from 'rxjs';
-import { EntityToolbarComponent } from '../../../common/entity/entity-toolbar/entity-toolbar.component';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { EntityTreeTable } from 'app/pages/common/entity/entity-tree-table/entity-tree-table.model';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DiskFormComponent } from 'app/pages/storage/disks/disk-form';
+import {
+  WebSocketService, AppLoaderService, DialogService,
+} from 'app/services';
+import { LocaleService } from 'app/services/locale.service';
 import { ModalService } from 'app/services/modal.service';
-import { DiskFormComponent } from '../../disks/disk-form';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as filesize from 'filesize';
+import { T } from 'app/translate-marker';
 
 interface PoolDiskInfo {
   name: any;
@@ -150,17 +148,18 @@ export class VolumeStatusComponent implements OnInit {
 
   protected pool: Pool;
 
-  constructor(protected aroute: ActivatedRoute,
+  constructor(
+    protected aroute: ActivatedRoute,
     protected core: CoreService,
     protected ws: WebSocketService,
-    protected rest: RestService,
     protected translate: TranslateService,
     protected router: Router,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected matDialog: MatDialog,
     protected localeService: LocaleService,
-    protected modalService: ModalService) {}
+    protected modalService: ModalService,
+  ) {}
 
   getZfsPoolScan(poolName: string): void {
     this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe(
@@ -366,7 +365,10 @@ export class VolumeStatusComponent implements OnInit {
           customSubmit(entityDialog: any) {
             delete entityDialog.formValue['passphrase2'];
 
-            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, { data: { title: helptext.replace_disk.title }, disableClose: true });
+            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {
+              data: { title: helptext.replace_disk.title },
+              disableClose: true,
+            });
             dialogRef.componentInstance.setDescription(helptext.replace_disk.description);
             dialogRef.componentInstance.setCall('pool.replace', [pk, entityDialog.formValue]);
             dialogRef.componentInstance.submit();
@@ -492,7 +494,10 @@ export class VolumeStatusComponent implements OnInit {
           customSubmit(entityDialog: any) {
             delete entityDialog.formValue['passphrase2'];
 
-            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, { data: { title: helptext.extend_disk.title }, disableClose: true });
+            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {
+              data: { title: helptext.extend_disk.title },
+              disableClose: true,
+            });
             dialogRef.componentInstance.setDescription(helptext.extend_disk.description);
             dialogRef.componentInstance.setCall('pool.attach', [pk, entityDialog.formValue]);
             dialogRef.componentInstance.submit();
@@ -649,7 +654,7 @@ export class VolumeStatusComponent implements OnInit {
   }
 
   onClickEdit(pk: string): void {
-    const diskForm = new DiskFormComponent(this.router, this.rest, this.ws, this.aroute);
+    const diskForm = new DiskFormComponent(this.router, this.ws, this.aroute);
     diskForm.inIt(pk);
     this.modalService.open('slide-in-form', diskForm);
   }

@@ -1,30 +1,28 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-
+import { Router, ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as filesize from 'filesize';
+import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
-import * as _ from 'lodash';
-
+import { Direction } from 'app/enums/direction.enum';
+import { TransferMode } from 'app/enums/transfer-mode.enum';
+import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   WebSocketService, DialogService, CloudCredentialService, AppLoaderService, JobService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
-import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { ModalService } from 'app/services/modal.service';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { TransferMode } from 'app/enums/transfer-mode.enum';
-import { Direction } from 'app/enums/direction.enum';
-import { Schedule } from 'app/interfaces/schedule.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as filesize from 'filesize';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

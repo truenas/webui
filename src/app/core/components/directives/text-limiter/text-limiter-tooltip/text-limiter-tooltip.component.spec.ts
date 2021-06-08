@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { TextLimiterTooltipComponent } from './text-limiter-tooltip.component';
 
 describe('TextLimiterTooltipComponent', () => {

@@ -1,21 +1,19 @@
+import { DatePipe } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Component, Input, OnInit } from '@angular/core';
-
+import * as _ from 'lodash';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { T } from 'app/translate-marker';
+import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FieldRelationService } from '../entity-form/services/field-relation.service';
-import { FieldConfig } from '../entity-form/models/field-config.interface';
-import { FormGroup } from '@angular/forms';
-import { RestService } from '../../../../services/rest.service';
-import { WebSocketService } from '../../../../services/ws.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../utils';
-import * as _ from 'lodash';
 import { DialogFormConfiguration } from './dialog-form-configuration.interface';
-import { DatePipe } from '@angular/common';
-import { T } from '../../../../translate-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
@@ -46,7 +44,6 @@ export class EntityDialogComponent<P = any> implements OnInit {
   constructor(public dialogRef: MatDialogRef < EntityDialogComponent >,
     protected translate: TranslateService,
     protected entityFormService: EntityFormService,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
     public mdDialog: MatDialog,

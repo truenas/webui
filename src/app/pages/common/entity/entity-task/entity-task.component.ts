@@ -1,13 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-
-import * as _ from 'lodash';
-
-import { EntityFormComponent } from '../entity-form';
-import { TaskService, UserService, RestService } from '../../../../services';
-import { EntityFormService } from '../entity-form/services/entity-form.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { TaskService, UserService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { EntityFormComponent } from '../entity-form';
+import { EntityFormService } from '../entity-form/services/entity-form.service';
 
 @UntilDestroy()
 @Component({
@@ -38,13 +36,14 @@ export class EntityTaskComponent implements OnInit {
 
   protected preTaskName = '';
 
-  constructor(protected router: Router,
+  constructor(
+    protected router: Router,
     protected aroute: ActivatedRoute,
     protected taskService: TaskService,
     protected userService: UserService,
     protected entityFormService: EntityFormService,
     protected loader: AppLoaderService,
-    protected rest: RestService) {}
+  ) {}
 
   ngOnInit(): void {
     if (this.conf.preInit) {
@@ -156,63 +155,6 @@ export class EntityTaskComponent implements OnInit {
     });
 
     if (!this.isNew) {
-      // if we want to use this again we will need to convert to websocket
-      /* this.rest.get(query, {}).pipe(untilDestroyed(this)).subscribe((res) => {
-        if (res.data) {
-          this.data = res.data;
-          for (let i in this.data) {
-            let fg = this.formGroup.controls[i];
-            if (fg) {
-              let current_field = this.conf.fieldConfig.find((control) => control.name === i);
-              if (current_field.name == this.preTaskName + "_month" || current_field.name == this.preTaskName + "_dayweek") {
-                // multiple select
-                if (this.data[i] == '*') {
-                  let human_value = [];
-                  for (let i in current_field.options) {
-                    human_value.push(current_field.options[i].value);
-                  }
-                  fg.setValue(human_value);
-                } else {
-                  let human_value = [];
-                  for (let j in this.data[i]) {
-                    if (_.find(current_field.options, { 'value': this.data[i][j] })) {
-                      human_value.push(this.data[i][j]);
-                    }
-                  }
-                  fg.setValue(human_value);
-                }
-              } else {
-                if (current_field.name == "scrub_volume") {
-                  this.taskService.getVolumeList().pipe(untilDestroyed(this)).subscribe((res) => {
-                    let volume = _.find(res.data, { 'vol_name': this.data[i] });
-                    fg.setValue(volume['id']);
-                  });
-                } else {
-                  fg.setValue(this.data[i]);
-                }
-              }
-            }
-          }
-
-          if (_.isEqual(this.formGroup.controls[this.preTaskName + '_month'].value, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'])) {
-            if (_.isEqual(this.formGroup.controls[this.preTaskName + '_dayweek'].value, ['1', '2', '3', '4', '5', '6', '7'])) {
-              if (this.formGroup.controls[this.preTaskName + '_daymonth'].value == '*') {
-                if (this.formGroup.controls[this.preTaskName + '_hour'].value == '*') {
-                  this.formGroup.controls[this.preTaskName + '_repeat'].setValue('hourly');
-                } else {
-                  this.formGroup.controls[this.preTaskName + '_repeat'].setValue('daily');
-                }
-              } else {
-                this.formGroup.controls[this.preTaskName + '_repeat'].setValue('monthly');
-              }
-            } else {
-              if (this.formGroup.controls[this.preTaskName + '_daymonth'].value == '*') {
-                this.formGroup.controls[this.preTaskName + '_repeat'].setValue('weekly');
-              }
-            }
-          }
-        }
-      }); */
       this.showDefaults = true;
     }
 

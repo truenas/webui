@@ -1,6 +1,5 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { NetworkComponent } from './network.component';
 
 export const routes: Routes = [

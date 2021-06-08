@@ -1,15 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TreeNode } from 'primeng/api';
-import { EntityTreeTable } from '../../../common/entity/entity-tree-table/entity-tree-table.model';
-
-import { RestService } from '../../../../services/rest.service';
-import { WebSocketService } from '../../../../services/ws.service';
-import { DialogService } from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { EntityUtils } from '../../../common/entity/utils';
-import { T } from '../../../../translate-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TreeNode } from 'primeng/api';
+import { EntityTreeTable } from 'app/pages/common/entity/entity-tree-table/entity-tree-table.model';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { T } from 'app/translate-marker';
 
 interface PoolDiskInfo {
   name: any;
@@ -45,10 +43,13 @@ export class BootStatusListComponent implements OnInit {
     ],
   };
 
-  constructor(_rest: RestService, private _router: Router, private ws: WebSocketService,
-    private dialog: DialogService, protected loader: AppLoaderService, protected aroute: ActivatedRoute) {
-
-  }
+  constructor(
+    private _router: Router,
+    private ws: WebSocketService,
+    private dialog: DialogService,
+    protected loader: AppLoaderService,
+    protected aroute: ActivatedRoute,
+  ) {}
 
   getData(): void {
     this.ws.call('boot.get_state').pipe(untilDestroyed(this)).subscribe(

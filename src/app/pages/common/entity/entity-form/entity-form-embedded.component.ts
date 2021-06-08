@@ -16,22 +16,19 @@ import {
   FormBuilder, FormControl, FormGroup,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CoreEvent } from 'app/interfaces/events';
-import * as _ from 'lodash';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { T } from '../../../../translate-marker';
-
-import { RestService, WebSocketService } from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import * as _ from 'lodash';
+import { Observable, Subscription, Subject } from 'rxjs';
+import { CoreEvent } from 'app/interfaces/events';
+import { WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { T } from 'app/translate-marker';
 import { EntityTemplateDirective } from '../entity-template.directive';
-
 import { FieldConfig } from './models/field-config.interface';
 import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
 import { FieldRelationService } from './services/field-relation.service';
-import { Subscription, Subject } from 'rxjs';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 export interface FormConfig {
   fieldSets?: any;
@@ -132,13 +129,16 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   error: string;
   success = false;
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
     protected location: Location, private fb: FormBuilder,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
-    public translate: TranslateService) {}
+    public translate: TranslateService,
+  ) {}
 
   ngAfterViewInit(): void {
     this.templates.forEach((item) => {

@@ -1,29 +1,29 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subject } from 'rxjs';
+import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout/admin-layout.component';
+import { CoreService } from 'app/core/services/core.service';
+import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { CoreEvent } from 'app/interfaces/events';
+import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService,
 }
-  from '../../../services';
-import { CoreService } from 'app/core/services/core.service';
-import { LocaleService } from '../../../services/locale.service';
-import { ModalService } from '../../../services/modal.service';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { helptext_system_general as helptext } from 'app/helptext/system/general';
-import { LocalizationFormComponent } from './localization-form/localization-form.component';
+  from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { LocaleService } from 'app/services/locale.service';
+import { ModalService } from 'app/services/modal.service';
 import { GuiFormComponent } from './gui-form/gui-form.component';
+import { LocalizationFormComponent } from './localization-form/localization-form.component';
 import { NTPServerFormComponent } from './ntpservers/ntpserver-form/ntpserver-form.component';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { Subject } from 'rxjs';
-import { EntityUtils } from '../../common/entity/utils';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { AdminLayoutComponent } from '../../../components/common/layouts/admin-layout/admin-layout.component';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
@@ -274,16 +274,19 @@ export class GeneralSettingsComponent implements OnInit {
         .pipe(untilDestroyed(this)).subscribe(
           (download: any) => {
             const url = download[1];
-            entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file: Blob) => {
-              entityDialog.loader.close();
-              entityDialog.dialogRef.close();
-              entityDialog.parent.storage.downloadBlob(file, fileName);
-            }, (err: any) => {
-              entityDialog.loader.close();
-              entityDialog.dialogRef.close();
-              entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title,
-                helptext.config_download.failed_message, err.message);
-            });
+            entityDialog.parent.storage
+              .streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)
+              .pipe(untilDestroyed(this))
+              .subscribe((file: Blob) => {
+                entityDialog.loader.close();
+                entityDialog.dialogRef.close();
+                entityDialog.parent.storage.downloadBlob(file, fileName);
+              }, (err: any) => {
+                entityDialog.loader.close();
+                entityDialog.dialogRef.close();
+                entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title,
+                  helptext.config_download.failed_message, err.message);
+              });
           },
           (err: any) => {
             entityDialog.loader.close();

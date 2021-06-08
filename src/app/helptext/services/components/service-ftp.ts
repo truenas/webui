@@ -1,7 +1,7 @@
-import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
-import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
-import globalHelptext from '../../global-helptext';
+import globalHelptext from 'app/helptext/global-helptext';
+import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
+import { T } from 'app/translate-marker';
 
 export default {
   fieldset_general: T('General Options'),

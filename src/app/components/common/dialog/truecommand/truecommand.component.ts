@@ -1,10 +1,9 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
-
-import { DialogService } from 'app/services/dialog.service';
-import helptext from 'app/helptext/topbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import helptext from 'app/helptext/topbar';
+import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Component({

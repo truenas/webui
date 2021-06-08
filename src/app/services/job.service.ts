@@ -1,15 +1,14 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-
-import { EntityUtils } from '../pages/common/entity/utils';
-import { WebSocketService } from './ws.service';
+import { Injectable } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Observable } from 'rxjs';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import globalHelptext from 'app/helptext/global-helptext';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { T } from 'app/translate-marker';
 import { DialogService } from './dialog.service';
 import { StorageService } from './storage.service';
-import { T } from '../translate-marker';
-import globalHelptext from '../helptext/global-helptext';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { WebSocketService } from './ws.service';
 
 @UntilDestroy()
 @Injectable()

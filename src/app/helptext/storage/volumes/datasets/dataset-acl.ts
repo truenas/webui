@@ -1,5 +1,5 @@
 import { AclItemTag, AclPermission } from 'app/enums/acl-type.enum';
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 export default {
   dataset_acl_title_file: T('File Information'),

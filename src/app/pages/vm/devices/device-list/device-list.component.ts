@@ -1,22 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import {
   EntityTableComponent,
 } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { TranslateService } from '@ngx-translate/core';
-
-import { RestService, WebSocketService } from '../../../../services';
-import { DialogService } from '../../../../services/dialog.service';
-
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { EntityUtils } from '../../../common/entity/utils';
-import { ChangeDetectorRef } from '@angular/core';
-import { T } from '../../../../translate-marker';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import * as _ from 'lodash';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -61,7 +58,6 @@ export class DeviceListComponent implements EntityTableConfig {
   constructor(
     protected router: Router,
     protected aroute: ActivatedRoute,
-    protected rest: RestService,
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
     public dialogService: DialogService,

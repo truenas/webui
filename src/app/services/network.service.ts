@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Option } from 'app/interfaces/option.interface';
-import { Observable } from 'rxjs';
-import { RestService } from './rest.service';
-import { WebSocketService } from './ws.service';
 import * as isCidr from 'is-cidr';
+import { Observable } from 'rxjs';
+import { Option } from 'app/interfaces/option.interface';
+import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class NetworkService {
@@ -22,7 +21,7 @@ export class NetworkService {
 
   hostname_regex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/;
 
-  constructor(protected rest: RestService, protected ws: WebSocketService) {}
+  constructor(protected ws: WebSocketService) {}
 
   getVlanParentInterfaceChoices(): Observable<any[]> {
     return this.ws.call('interface.vlan_parent_interface_choices');

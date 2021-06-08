@@ -6,22 +6,18 @@ import {
   AfterViewInit,
   OnDestroy,
 } from '@angular/core';
-import { Router } from '@angular/router';
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
+import { MatDialog } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-
-import { RestService } from '../../../../services/rest.service';
 import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
 import { CoreService } from 'app/core/services/core.service';
+import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { VolumeImportWizardComponent } from '../volume-import-wizard';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
-import { MatDialog } from '@angular/material/dialog';
-import { HttpClient } from '@angular/common/http';
-import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
@@ -45,15 +41,12 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
   }
 
   constructor(
-    private router: Router,
     private core: CoreService,
     private modalService: ModalService,
-    private rest: RestService,
     private ws: WebSocketService,
     private loader: AppLoaderService,
     private dialog: MatDialog,
     private dialogService: DialogService,
-    private http: HttpClient,
     private messageService: MessageService,
   ) {}
 
@@ -105,13 +98,10 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
     this.modalService.open(
       'slide-in-form',
       new VolumeImportWizardComponent(
-        this.rest,
         this.ws,
-        this.router,
         this.loader,
         this.dialog,
         this.dialogService,
-        this.http,
         this.messageService,
         this.modalService,
       ),

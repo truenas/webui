@@ -1,4 +1,4 @@
-import { T } from '../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 export default {
   tftp_fieldset_path: T('Path'),

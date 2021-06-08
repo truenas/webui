@@ -7,10 +7,7 @@ import {
   FormGroup,
 } from '@angular/forms';
 import * as _ from 'lodash';
-
-import { WebSocketService } from '../../../../../services/ws.service';
-import { RestService } from '../../../../../services/rest.service';
-
+import { WebSocketService } from 'app/services/ws.service';
 import { FieldConfig, UnitType, InputUnitConfig } from '../models/field-config.interface';
 
 @Injectable()
@@ -31,8 +28,10 @@ export class EntityFormService {
     size: 'KIB',
     duration: 'MINUTE',
   };
-  constructor(@Inject(FormBuilder) private formBuilder: FormBuilder,
-    protected ws: WebSocketService, private rest: RestService) {}
+  constructor(
+    @Inject(FormBuilder) private formBuilder: FormBuilder,
+    protected ws: WebSocketService,
+  ) {}
 
   createFormGroup(controls: FieldConfig[]): FormGroup {
     const formGroup: { [id: string]: AbstractControl } = {};

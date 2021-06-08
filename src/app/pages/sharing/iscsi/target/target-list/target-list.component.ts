@@ -1,14 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
-import { IscsiService } from '../../../../../services/iscsi.service';
-import { T } from 'app/translate-marker';
-import { EntityUtils } from '../../../../common/entity/utils';
-import { AppLoaderService, ModalService, WebSocketService } from 'app/services';
-import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
+import { AppLoaderService, ModalService, WebSocketService } from 'app/services';
+import { IscsiService } from 'app/services/iscsi.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

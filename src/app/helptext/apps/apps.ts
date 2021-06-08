@@ -1,5 +1,5 @@
-import { T } from '../../translate-marker';
 import { Validators } from '@angular/forms';
+import { T } from 'app/translate-marker';
 
 export default {
   choosePool: {
@@ -160,7 +160,7 @@ export default {
     },
 
     upgrade_dialog: {
-      title: T('Upgrade'),
+      title: T('Upgrade to '),
       msg: T('Upgrade '),
       job: T('Upgrading...'),
     },

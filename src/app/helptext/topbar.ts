@@ -1,5 +1,5 @@
+import { T } from 'app/translate-marker';
 import { FailoverDisabledReason } from '../enums/failover-disabled-reason.enum';
-import { T } from '../translate-marker';
 import globalHelptext from './global-helptext';
 
 export default {

@@ -4,16 +4,15 @@ import {
 import { FormGroup } from '@angular/forms';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelect, MatSelectChange } from '@angular/material/select';
-import { TranslateService } from '@ngx-translate/core';
-
-import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
-import * as _ from 'lodash';
-import { DialogService } from 'app/services';
-import { DialogFormConfiguration } from '../../../entity-dialog/dialog-form-configuration.interface';
-import { T } from 'app/translate-marker';
-import { EntityUtils, NULL_VALUE } from '../../../utils';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
+import { EntityUtils, NULL_VALUE } from 'app/pages/common/entity/utils';
+import { DialogService } from 'app/services';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -56,7 +55,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   ngAfterViewInit(): void {
     // Change the value of null to 'null_value' string
     this.config.options = this.config.options.map((option) => {
-      if (!option.value) option = { label: option, value: option };
+      if (option.value === undefined) option = { label: option, value: option };
 
       option.value = this.entityUtils.changeNull2String(option.value);
 

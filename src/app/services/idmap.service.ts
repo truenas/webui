@@ -1,27 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Certificate } from 'app/interfaces/certificate.interface';
 import { Observable } from 'rxjs';
-
-import { RestService } from './rest.service';
+import { Certificate } from 'app/interfaces/certificate.interface';
 import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class IdmapService {
-  protected ad_idmap = 'directoryservice/idmap/ad';
-  protected adex_idmap = 'directoryservice/idmap/adex';
-
-  constructor(protected rest: RestService, protected ws: WebSocketService) {}
-
-  getData(resource_name: string): void {
-    return this.rest.get(resource_name, {});
-  }
-
-  getADIdmap(): void {
-    // return this.rest.get(this.ad_idmap, {});
-    return this.getData(this.ad_idmap);
-  }
-
-  getADEXIdmap(): void { return this.getData(this.adex_idmap); }
+  constructor(protected ws: WebSocketService) {}
 
   getCerts(): Observable<Certificate[]> {
     return this.ws.call('certificate.query');

@@ -2,18 +2,18 @@ import {
   ApplicationRef, Component, Injector, OnDestroy,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
-
-import { DialogService } from '../../../../services';
-import { RestService, SystemGeneralService, WebSocketService } from '../../../../services';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import helptext from '../../../../helptext/services/components/service-s3';
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { map } from 'rxjs/operators';
+import helptext from 'app/helptext/services/components/service-s3';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import {
+  DialogService, SystemGeneralService, WebSocketService,
+} from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -113,10 +113,15 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
   protected storage_path: any;
   protected storage_path_subscription: any;
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef,
-    protected systemGeneralService: SystemGeneralService, private dialog: DialogService) {}
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected _injector: Injector,
+    protected _appRef: ApplicationRef,
+    protected systemGeneralService: SystemGeneralService,
+    private dialog: DialogService,
+  ) {}
 
   ngOnDestroy(): void {
     this.storage_path_subscription.unsubscribe();
