@@ -350,6 +350,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
       }
       this.userOptions = users;
 
+      this.uid_fc = _.find(this.fieldConfig, { name: 'uid' });
       this.uid_fc.options = this.userOptions;
     });
 
@@ -360,6 +361,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
       }
       this.groupOptions = groupOptions;
 
+      this.gid_fc = _.find(this.fieldConfig, { name: 'gid' });
       this.gid_fc.options = this.groupOptions;
     });
     this.ws.call('filesystem.default_acl_choices').subscribe((res: any[]) => {
@@ -489,6 +491,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
   }
 
   resourceTransformIncomingRestData(data: any): any {
+    let setToReturnLater = false;
     if (data.acl.length === 0) {
       setTimeout(() => {
         this.handleEmptyACL();
@@ -496,10 +499,14 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
       return { aces: [] as any };
     }
     if (this.homeShare) {
+      setToReturnLater = true;
       this.ws.call('filesystem.get_default_acl', ['HOME']).subscribe((res) => {
         data.acl = res;
         return { aces: [] as any };
       });
+    }
+    if (!setToReturnLater) {
+      return data;
     }
   }
 
