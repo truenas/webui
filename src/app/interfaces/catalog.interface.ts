@@ -35,6 +35,7 @@ export interface CatalogApp {
   name: string;
   latest_version: string;
   latest_app_version: string;
+  latest_human_version: string;
   versions: { [version: string]: CatalogAppVersion };
 }
 
