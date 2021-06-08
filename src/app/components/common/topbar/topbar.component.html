@@ -51,11 +51,11 @@
     <!-- HA Status -->
     <span *ngIf="is_ha && ha_status_text">
       <button *ngIf="ha_disabled_reasons.length === 0" mat-icon-button id="ha" [matTooltip]="ha_status_text | translate"
-        (click)="showHAStatus()" ix-auto ix-auto-type="button" ix-auto-identifier="haStatus">
+        class="topbar-button-right" (click)="showHAStatus()" ix-auto ix-auto-type="button" ix-auto-identifier="haStatus">
         <mat-icon svgIcon="ha_enabled"></mat-icon>
       </button>
       <button *ngIf="ha_disabled_reasons.length > 0" mat-icon-button id="ha" [matTooltip]="ha_status_text | translate"
-        (click)="showHAStatus()" ix-auto ix-auto-type="button" ix-auto-identifier="haStatus">
+        class="topbar-button-right" (click)="showHAStatus()" ix-auto ix-auto-type="button" ix-auto-identifier="haStatus">
         <mat-icon *ngIf="ha_disabled_reasons[0] === FailoverDisabledReason.NoSystemReady; else HADisabled" svgIcon="ha_reconnecting">
         </mat-icon>
         <ng-template #HADisabled>
@@ -66,12 +66,12 @@
     <!-- Directory Services Monitor -->
     <button mat-icon-button *ngIf="showDirServicesIcon" id="dirservices-manager"
       [matTooltip]="mat_tooltips.directory_services_monitor | translate" (click)="onShowDirServicesMonitor()" ix-auto
-      ix-auto-type="button" ix-auto-identifier="dirServices">
+      class="topbar-button-right" ix-auto-type="button" ix-auto-identifier="dirServices">
       <mat-icon>info</mat-icon>
     </button>
     <!-- Task Manager -->
     <button mat-icon-button id="task-manager" [matTooltip]="mat_tooltips.task_manager | translate"
-      (click)="onShowTaskManager()" ix-auto ix-auto-type="button" ix-auto-identifier="taskManager">
+      class="topbar-button-right" (click)="onShowTaskManager()" ix-auto ix-auto-type="button" ix-auto-identifier="taskManager">
       <mat-icon>assignment</mat-icon>
     </button>
     <!-- Notification toggle button -->
