@@ -4,6 +4,8 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import * as _ from 'lodash';
 
 import { WebSocketService, StorageService, DialogService } from '../../../../../services';
@@ -166,7 +168,8 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
     protected aroute: ActivatedRoute, protected messageService: MessageService,
     protected ws: WebSocketService,
     protected storageService: StorageService, protected dialogService: DialogService,
-    protected loader: AppLoaderService, protected dialog: MatDialog) {}
+    protected loader: AppLoaderService, protected dialog: MatDialog,
+    protected entityFormService: EntityFormService) {}
 
   preInit(): void {
     this.aroute.params.subscribe((params) => {
@@ -174,7 +177,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     this.datasets = entityEdit.formGroup.controls['datasets'];
     this.datasets_fc = _.find(this.fieldConfig, { name: 'datasets' });
@@ -191,7 +194,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
           for (let i = 0; i < res.result.length; i++) {
             if (this.datasets.controls[i] === undefined) {
               const templateListField = _.cloneDeep(this.datasets_fc.templateListField);
-              const newfg = entityEdit.entityFormService.createFormGroup(templateListField);
+              const newfg = this.entityFormService.createFormGroup(templateListField);
               newfg.setParent(this.datasets);
               this.datasets.controls.push(newfg);
               this.datasets_fc.listFields.push(templateListField);
