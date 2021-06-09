@@ -1,5 +1,5 @@
 import {
-  Component, ElementRef, Input, OnInit, OnDestroy,
+  Component, ElementRef, Input, OnInit, OnDestroy, ViewEncapsulation,
 } from '@angular/core';
 
 import { ModalService } from '../../../services/modal.service';
@@ -8,6 +8,7 @@ import { ModalService } from '../../../services/modal.service';
   selector: 'jw-modal',
   templateUrl: 'modal.component.html',
   styleUrls: ['./modal.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ModalComponent implements OnInit, OnDestroy {
   @Input() id: string;

@@ -4,7 +4,7 @@
 .jw-modal {
   bottom: 0;
   left: 0;
-        
+
   /* enables scrolling for tall modals */
   overflow: auto;
   /* modal container fixed across whole screen */
@@ -23,7 +23,7 @@
 .slide-in-form {
   bottom: 0;
   min-width: 480px;
-        
+
   /* enables scrolling for tall modals */
   overflow: auto;
   position: fixed;
@@ -98,7 +98,7 @@
   right: 0;
   top: 48px;
   transition: 100ms;
-       
+
   /* z-index must be below .jw-modal and above everything else  */
   z-index: -10;
 }
@@ -109,7 +109,7 @@
 }
 
 body.jw-modal-open .slide-in-form .jw-modal-body {
-  /* body overflow is hidden to hide main scrollbar when modal window is open */
-  overflow: hidden;
+  .mat-vertical-stepper-content[style*='height: 0px; visibility: hidden;'] {
+    display: none;
+  }
 }
-
