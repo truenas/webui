@@ -33,9 +33,11 @@ export class EntityWizardComponent implements OnInit {
   formGroup: FormGroup;
   showSpinner = false;
 
+  summaryValue: any;
+  summaryFieldConfigs: FieldConfig[] = [];
+
   saveSubmitText = T('Submit');
   customNextText = T('Next');
-
   get formArray(): AbstractControl | null { return this.formGroup.get('formArray'); }
 
   constructor(
@@ -109,6 +111,7 @@ export class EntityWizardComponent implements OnInit {
     });
 
     for (const i in this.conf.wizardConfig) {
+      this.summaryFieldConfigs = this.summaryFieldConfigs.concat(this.conf.wizardConfig[i].fieldConfig);
       const formGroup = this.formArray.get(i) as FormGroup;
       for (const j in this.conf.wizardConfig[i].fieldConfig) {
         const config = this.conf.wizardConfig[i].fieldConfig[j];
@@ -197,8 +200,6 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  originalOrder = function (): void {};
-
   isFieldsetAvailabel(fieldset: any): boolean {
     if (fieldset.config) {
       for (let i = 0; i < fieldset.config.length; i++) {
@@ -224,44 +225,13 @@ export class EntityWizardComponent implements OnInit {
   selectionChange(event: StepperSelectionEvent): void {
     if (this.conf.isAutoSummary) {
       if (event.selectedIndex == this.conf.wizardConfig.length) {
-        this.conf.summary = [];
-        for (let step = 0; step < this.conf.wizardConfig.length; step++) {
-          const wizard = this.conf.wizardConfig[step];
-          wizard.fieldConfig.forEach((fieldConfig: any) => {
-            const formControl = this.formArray.get([step]).get(fieldConfig.name);
-            if (formControl) {
-              let summaryName = fieldConfig.placeholder;
-              if (!summaryName) {
-                summaryName = fieldConfig.name;
-              }
-              this.conf.summary[summaryName] = this.getSummaryValue(fieldConfig, formControl);
-            }
-          });
+        let value = {};
+        for (const i in this.formGroup.value.formArray) {
+          value = _.merge(value, _.cloneDeep(this.formGroup.value.formArray[i]));
         }
+        this.summaryValue = value;
       }
     }
-  }
-
-  getSummaryValue(fieldConfig: FieldConfig, formControl: AbstractControl): void {
-    let result = formControl.value;
-
-    if (fieldConfig.type === 'select') {
-      const selectedOption = fieldConfig.options.find((option) => option.value == formControl.value);
-      if (selectedOption) {
-        result = selectedOption.label;
-      }
-    } else if (Array.isArray(formControl.value)) {
-      let arrayValueCount = 0;
-      formControl.value.forEach((item) => {
-        const isNotEmptyArray = new EntityUtils().filterArrayFunction(item);
-        if (isNotEmptyArray) {
-          arrayValueCount++;
-        }
-      });
-      result = arrayValueCount;
-    }
-
-    return result;
   }
 
   clearErrors(): void {

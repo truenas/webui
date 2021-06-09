@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
-import * as moment from 'moment';
+import { add, sub } from 'date-fns';
 import { Subject } from 'rxjs';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -306,7 +306,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
   // Convert timespan to start/end options for RRDTool
   convertTimespan(timespan: any, direction = 'backward', currentDate?: number): TimeData {
-    let units: string;
+    let durationUnit: keyof Duration;
     let value: number;
 
     const now = this.getServerTime();
@@ -325,41 +325,43 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
     switch (timespan) {
       case '5M':
-        units = 'months';
+        durationUnit = 'months';
         value = 5;
         break;
       case '1M':
-        units = 'months';
+        durationUnit = 'months';
         value = 1;
         break;
       case '7d':
-        units = 'days';
+        durationUnit = 'days';
         value = 7;
         break;
       case '24h':
-        units = 'hours';
+        durationUnit = 'hours';
         value = 24;
         break;
       case '60m':
-        units = 'minutes';
+        durationUnit = 'minutes';
         value = 60;
         break;
     }
 
-    let mom: any;
     if (direction == 'backward') {
-      mom = moment(endDate);
-      startDate = mom.subtract(value, units).toDate();
+      const subOptions: Duration = {};
+      subOptions[durationUnit] = value;
+      startDate = sub(endDate, subOptions);
     } else if (direction == 'forward') {
-      mom = moment(startDate);
-      endDate = mom.add(value, units).toDate();
+      const subOptions: Duration = {};
+      subOptions[durationUnit] = value;
+      endDate = add(startDate, subOptions);
     }
 
     // if endDate is in the future, reset with endDate to now
     if (endDate.getTime() >= now.getTime()) {
       endDate = new Date();
-      mom = moment(endDate);
-      startDate = mom.subtract(value, units).toDate();
+      const subOptions: Duration = {};
+      subOptions[durationUnit] = value;
+      startDate = sub(endDate, subOptions);
       this.stepForwardDisabled = true;
     } else {
       this.stepForwardDisabled = false;

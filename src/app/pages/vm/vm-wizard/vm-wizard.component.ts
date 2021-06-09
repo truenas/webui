@@ -962,7 +962,9 @@ export class VMWizardComponent implements WizardConfiguration {
   }
 
   getFormArrayIndexFromFieldName(fieldName: string, parent: VMWizardComponent = this): number {
-    return parent.wizardConfig.findIndex((conf: FormConfiguration) => conf.fieldConfig.findIndex((fieldConf: FieldConfig) => fieldConf.name === fieldName) >= 0);
+    return parent.wizardConfig.findIndex((conf: FormConfiguration) => {
+      return conf.fieldConfig.findIndex((fieldConf: FieldConfig) => fieldConf.name === fieldName) >= 0;
+    });
   }
 
   customSubmit(value: any): void {

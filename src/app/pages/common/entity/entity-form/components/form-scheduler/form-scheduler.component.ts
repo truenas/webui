@@ -8,7 +8,8 @@ import { MatMonthView } from '@angular/material/datepicker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as parser from 'cron-parser';
-import * as moment from 'moment-timezone';
+import * as dateFns from 'date-fns';
+import * as dateFnsTz from 'date-fns-tz';
 import globalHelptext from 'app/helptext/global-helptext';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
@@ -180,14 +181,14 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   get sat(): boolean { return this._sat; }
   set sat(val) { this._sat = val; this.formatDaysOfWeek(); }
 
-  minDate: moment.Moment;
-  maxDate: moment.Moment;
-  currentDate: moment.Moment;
+  minDate: Date;
+  maxDate: Date;
+  currentDate: Date;
   activeDate: string;
   generatedSchedule: any[] = [];
   generatedScheduleSubset = 0;
-  protected beginTime: moment.Moment;
-  protected endTime: moment.Moment;
+  protected beginTime: Date;
+  protected endTime: Date;
   picker = false;
   private _textInput = '';
 
@@ -279,13 +280,11 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
     this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
       this.timezone = res.timezone;
-      moment.tz.setDefault(res.timezone);
+      this.minDate = this.zonedTime;
+      this.maxDate = dateFns.endOfMonth(this.minDate);
+      this.currentDate = this.minDate;
+      this.activeDate = this.formatDateToTz(this.currentDate, this.timezone);
 
-      this.minDate = moment();
-      this.maxDate = moment().endOf('month');
-      this.currentDate = moment();
-
-      this.activeDate = moment(this.currentDate).format();
       this.disablePrevious = true;
     });
   }
@@ -384,44 +383,72 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   private setCalendar(direction: 'next' | 'previous'): void {
     let newDate;
     if (direction == 'next') {
-      newDate = moment(this.minDate).add(1, 'months');
+      newDate = dateFns.addMonths(this.minDate, 1);
     } else if (direction == 'previous' && !this.disablePrevious) {
-      newDate = moment(this.minDate).subtract(1, 'months');
+      newDate = dateFns.subMonths(this.minDate, 1);
     } else {
       const message = 'Your argument is invalid';
       console.warn(message);
       return;
     }
     this.minDate = this.getMinDate(newDate);
-    this.maxDate = moment(newDate).endOf('month');
+    this.maxDate = dateFns.endOfMonth(newDate);
 
-    this.calendarComp.activeDate = moment(newDate).toDate();
+    this.calendarComp.activeDate = newDate;
     this.generateSchedule();
   }
 
-  private getMinDate(d: moment.Moment): moment.Moment {
-    const dt = moment(d).add(1, 'seconds');
-    let newMinDate;
-    const thisMonth = moment().month();
-    const thisYear = moment().year();
-    const dateMonth = moment(dt).month();
-    const dateYear = moment(dt).year();
+  private getMinDate(d: Date): Date {
+    const dt = dateFns.addSeconds(d, 1);
+    const now = this.zonedTime;
+    const thisMonth = dateFns.getMonth(now);
+    const thisYear = dateFns.getYear(now);
+    const dateMonth = dateFns.getMonth(dt);
+    const dateYear = dateFns.getYear(dt);
     if (thisMonth == dateMonth && thisYear == dateYear) {
       this.disablePrevious = true;
-      newMinDate = moment();
-    } else {
-      this.disablePrevious = false;
-      newMinDate = moment(dt).startOf('month');
+      return this.zonedTime;
     }
-    return newMinDate;
+    this.disablePrevious = false;
+    return dateFns.startOfMonth(dt);
+  }
+
+  get zonedTime(): Date {
+    return dateFnsTz.utcToZonedTime(dateFnsTz.zonedTimeToUtc(new Date(), Intl.DateTimeFormat().resolvedOptions().timeZone), this.timezone);
+  }
+
+  formatDateToTz(date: Date, timezone?: string): string {
+    if (!timezone) {
+      if (!this.timezone) {
+        timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      } else {
+        timezone = this.timezone;
+      }
+    }
+    return dateFnsTz.format(
+      dateFnsTz.utcToZonedTime(
+        dateFnsTz.zonedTimeToUtc(
+          date,
+          Intl.DateTimeFormat().resolvedOptions().timeZone,
+        ),
+        timezone,
+      ),
+      'yyyy-MM-dd\'T\'HH:mm:ssXXX',
+      { timeZone: timezone },
+    );
   }
 
   // check if candidate schedule is between the beginTime and endTime
   isValidSchedule(schedule: any): boolean {
     const scheduleArray = schedule.toString().split(' ');
-    const time = moment(scheduleArray[4], 'hh:mm:ss');
+    const now = this.zonedTime;
+    const timeStrArr = scheduleArray[4].split(':');
+    const time = new Date(
+      now.getFullYear(), now.getMonth(), now.getDate(),
+      timeStrArr[0], timeStrArr[1], timeStrArr[2],
+    );
     if (this.beginTime && this.endTime) {
-      return time.isBetween(this.beginTime, this.endTime, null, '[]');
+      return dateFns.isWithinInterval(time, { start: this.beginTime, end: this.endTime });
     }
     return true;
   }
@@ -431,8 +458,17 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     // config should define options with begin prop and end prop
     // e.g. options: ['schedule_begin', 'schedule_end']
     if (this.config.options) {
-      this.beginTime = moment(this.group.controls[this.config.options[0]].value, 'hh:mm');
-      this.endTime = moment(this.group.controls[this.config.options[1]].value, 'hh:mm');
+      const now = this.zonedTime;
+      const beginTimeStrArr = this.group.controls[this.config.options[0]].value.split(':');
+      const endTimeStrArr = this.group.controls[this.config.options[1]].value.split(':');
+      this.beginTime = new Date(
+        now.getFullYear(), now.getMonth(), now.getDate(),
+        beginTimeStrArr[0], beginTimeStrArr[1],
+      );
+      this.endTime = new Date(
+        now.getFullYear(), now.getMonth(), now.getDate(),
+        endTimeStrArr[0], endTimeStrArr[1],
+      );
     }
 
     const newSchedule = [];
@@ -440,13 +476,14 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     if (nextSubset) {
       adjusted = this.generatedSchedule[this.generatedSchedule.length - 1];
     } else {
-      adjusted = moment(this.minDate).subtract(1, 'seconds').toDate();
+      adjusted = dateFns.subSeconds(this.minDate, 1);
     }
 
     const options: any = {
-      currentDate: adjusted,
+      currentDate: this.formatDateToTz(adjusted, this.timezone),
       endDate: this.maxDate, // max
       iterator: true,
+      tz: this.timezone,
     };
 
     const interval = parser.parseExpression(this.crontab, options);
@@ -481,9 +518,10 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
       // Modified crontab so we can find days;
       const crontabDays = '0 0  ' + spl[1] + ' ' + spl[2] + ' ' + spl[3] + ' ' + spl[4];
       const intervalDays = parser.parseExpression(crontabDays, {
-        currentDate: moment(this.minDate).subtract(1, 'seconds').toDate(),
+        currentDate: this.formatDateToTz(dateFns.subSeconds(this.minDate, 1), this.timezone),
         endDate: this.maxDate as any,
         iterator: true,
+        tz: this.timezone,
       });
 
       while (true) {
@@ -576,7 +614,12 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   }
 
   formatMonths(): void {
-    const months = [this._jan, this._feb, this._mar, this._apr, this._may, this._jun, this._jul, this._aug, this._sep, this._oct, this._nov, this._dec];
+    const months = [
+      this._jan, this._feb, this._mar,
+      this._apr, this._may, this._jun,
+      this._jul, this._aug, this._sep,
+      this._oct, this._nov, this._dec,
+    ];
     const months_str = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
     let rule = '';
     for (let i = 0; i < months.length; i++) {

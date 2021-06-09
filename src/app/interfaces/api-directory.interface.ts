@@ -154,6 +154,7 @@ export type ApiDirectory = {
   'chart.release.nic_choices': { params: any; response: any };
   'chart.release.events': { params: any; response: any };
   'chart.release.rollback': { params: any; response: any };
+  'chart.release.upgrade_summary': { params: any; response: any };
 
   // CRON
   'cronjob.run': { params: any; response: any };

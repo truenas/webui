@@ -241,7 +241,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
             /* One or more children have been added to and/or removed
                from the tree; see mutation.addedNodes and
                mutation.removedNodes */
-            if (!mutation.addedNodes[0] || !mutation.addedNodes[0].classList || mutation.addedNodes.length == 0 || mutation.addedNodes[0].classList.length == 0) {
+            if (
+              !mutation.addedNodes[0]
+              || !mutation.addedNodes[0].classList
+              || mutation.addedNodes.length == 0
+              || mutation.addedNodes[0].classList.length == 0
+            ) {
               break;
             }
             const fullStage: boolean = mutation.addedNodes[0].classList.contains('full-stage');
