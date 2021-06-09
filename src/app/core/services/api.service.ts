@@ -598,7 +598,7 @@ export class ApiService {
 
   async callWebsocket(evt: CoreEvent, def: any): Promise<void> {
     const cloneDef = { ...def };
-    const async_calls = [
+    const asyncCalls = [
       'vm.start',
       'vm.delete',
     ];
@@ -606,12 +606,12 @@ export class ApiService {
     if (evt.data) {
       cloneDef.apiCall.args = evt.data;
 
-      if (def.preProcessor && !async_calls.includes(def.apiCall.namespace)) {
+      if (def.preProcessor && !asyncCalls.includes(def.apiCall.namespace)) {
         cloneDef.apiCall = def.preProcessor(def.apiCall, this);
       }
 
       // PreProcessor: ApiDefinition manipulates call to be sent out.
-      if (def.preProcessor && async_calls.includes(def.apiCall.namespace)) {
+      if (def.preProcessor && asyncCalls.includes(def.apiCall.namespace)) {
         cloneDef.apiCall = await def.preProcessor(def.apiCall, this);
         if (!cloneDef.apiCall) {
           this.core.emit({ name: 'VmStopped', data: { id: evt.data[0] } });

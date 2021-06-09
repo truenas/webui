@@ -207,16 +207,16 @@ export class AlertConfigComponent implements OnInit {
     const payload: any = { classes: {} };
 
     for (const key in this.formGroup.value) {
-      const key_values = key.split('_');
-      const alert_class = key_values[0];
-      const class_key = key_values[1];
-      const def = _.find(this.defaults, { id: alert_class });
-      if (def[class_key].toUpperCase() !== this.formGroup.value[key].toUpperCase()) {
+      const keyValues = key.split('_');
+      const alertClass = keyValues[0];
+      const classKey = keyValues[1];
+      const def = _.find(this.defaults, { id: alertClass });
+      if (def[classKey].toUpperCase() !== this.formGroup.value[key].toUpperCase()) {
         // do not submit defaults in the payload
-        if (!payload.classes[alert_class]) {
-          payload.classes[alert_class] = {};
+        if (!payload.classes[alertClass]) {
+          payload.classes[alertClass] = {};
         }
-        payload.classes[alert_class][class_key] = this.formGroup.value[key];
+        payload.classes[alertClass][classKey] = this.formGroup.value[key];
       }
     }
 

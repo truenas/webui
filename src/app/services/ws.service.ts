@@ -102,8 +102,9 @@ export class WebSocketService {
   }
 
   onmessage(msg: { data: string }): void {
+    let data: any;
     try {
-      var data = JSON.parse(msg.data);
+      data = JSON.parse(msg.data);
     } catch (e) {
       console.warn(`Malformed response: "${msg.data}"`);
       return;
