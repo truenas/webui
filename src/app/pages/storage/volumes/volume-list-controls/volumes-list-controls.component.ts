@@ -14,10 +14,10 @@ import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.componen
 import { CoreService } from 'app/core/services/core.service';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { VolumeImportWizardComponent } from 'app/pages/storage/volumes/volume-import-wizard';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { VolumeImportWizardComponent } from '../volume-import-wizard';
 
 @UntilDestroy()
 @Component({

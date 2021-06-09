@@ -9,6 +9,7 @@ import { NgxFilesizeModule } from 'ngx-filesize';
 import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/appMaterial.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form/volumechangekey-form.component';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form/volumecreatekey-form.component';
@@ -43,7 +44,6 @@ import { UnlockDialogComponent } from './volumes/datasets/dataset-unlock/unlock-
 import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager';
 import { VolumeImportWizardComponent } from './volumes/volume-import-wizard';
 import { VolumeStatusComponent } from './volumes/volume-status';
-import { VolumesListControlsComponent } from './volumes/volumes-list/volumes-list-controls.component';
 import { VolumesListComponent } from './volumes/volumes-list/volumes-list.component';
 import { ZvolFormComponent } from './volumes/zvol/zvol-form';
 import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard';
