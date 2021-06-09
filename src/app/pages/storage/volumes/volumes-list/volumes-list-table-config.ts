@@ -4,8 +4,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { format } from 'date-fns';
 import * as _ from 'lodash';
-import * as moment from 'moment';
 import { TreeNode } from 'primeng/api';
 import { Observable } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
@@ -435,8 +435,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
         },
       })),
       switchMap((conf) => this.dialogService.dialogForm(conf)),
-    ).pipe(untilDestroyed(this)).subscribe(() => {
-    });
+    ).pipe(untilDestroyed(this)).subscribe(() => {});
   }
 
   getPoolData(poolId: number): Observable<Pool[]> {
@@ -742,45 +741,36 @@ export class VolumesListTableConfig implements EntityTableConfig {
                         if (res.exc_info.extra && res.exc_info.extra['code'] === 'control_services') {
                           entityDialog.dialogRef.close(true);
                           dialogRef.close(true);
-                          let stopMsg: string;
-                          let restartMsg: string;
-                          let continueMsg: string;
-                          self.translate.get(helptext.exportMessages.onfail.stopServices).pipe(untilDestroyed(this)).subscribe((stop) => {
-                            self.translate.get(helptext.exportMessages.onfail.restartServices).pipe(untilDestroyed(this)).subscribe((restart) => {
-                              self.translate.get(helptext.exportMessages.onfail.continueMessage).pipe(untilDestroyed(this)).subscribe((continueRes) => {
-                                stopMsg = stop;
-                                restartMsg = restart;
-                                continueMsg = continueRes;
-                              });
+                          const stopMsg = self.translate.instant(helptext.exportMessages.onfail.stopServices);
+                          const restartMsg = self.translate.instant(helptext.exportMessages.onfail.restartServices);
+                          const continueMsg = self.translate.instant(helptext.exportMessages.onfail.continueMessage);
+                          if (res.exc_info.extra.stop_services.length > 0) {
+                            conditionalErrMessage += '<div class="warning-box">' + stopMsg;
+                            res.exc_info.extra.stop_services.forEach((item: string) => {
+                              conditionalErrMessage += `<br>- ${item}`;
                             });
+                          }
+                          if (res.exc_info.extra.restart_services.length > 0) {
                             if (res.exc_info.extra.stop_services.length > 0) {
-                              conditionalErrMessage += '<div class="warning-box">' + stopMsg;
-                              res.exc_info.extra.stop_services.forEach((item: string) => {
-                                conditionalErrMessage += `<br>- ${item}`;
-                              });
+                              conditionalErrMessage += '<br><br>';
                             }
-                            if (res.exc_info.extra.restart_services.length > 0) {
-                              if (res.exc_info.extra.stop_services.length > 0) {
-                                conditionalErrMessage += '<br><br>';
-                              }
-                              conditionalErrMessage += '<div class="warning-box">' + restartMsg;
-                              res.exc_info.extra.restart_services.forEach((item: string) => {
-                                conditionalErrMessage += `<br>- ${item}`;
-                              });
-                            }
-                            conditionalErrMessage += '<br><br>' + continueMsg + '</div><br />';
-                            self.dialogService.confirm({
-                              title: helptext.exportError,
-                              message: conditionalErrMessage,
-                              hideCheckBox: true,
-                              buttonMsg: helptext.exportMessages.onfail.continueAction,
-                            }).pipe(
-                              filter(Boolean),
-                              untilDestroyed(this),
-                            ).subscribe(() => {
-                              self.restartServices = true;
-                              this.customSubmit(entityDialog);
+                            conditionalErrMessage += '<div class="warning-box">' + restartMsg;
+                            res.exc_info.extra.restart_services.forEach((item: string) => {
+                              conditionalErrMessage += `<br>- ${item}`;
                             });
+                          }
+                          conditionalErrMessage += '<br><br>' + continueMsg + '</div><br />';
+                          self.dialogService.confirm({
+                            title: helptext.exportError,
+                            message: conditionalErrMessage,
+                            hideCheckBox: true,
+                            buttonMsg: helptext.exportMessages.onfail.continueAction,
+                          }).pipe(
+                            filter(Boolean),
+                            untilDestroyed(this),
+                          ).subscribe(() => {
+                            self.restartServices = true;
+                            this.customSubmit(entityDialog);
                           });
                         } else if (res.extra && res.extra['code'] === 'unstoppable_processes') {
                           entityDialog.dialogRef.close(true);
@@ -1596,28 +1586,28 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 filter(Boolean),
                 untilDestroyed(this),
               ).subscribe(() => {
-                this.translate.get(helptext.lock_dataset_dialog.locking_dataset_description).pipe(untilDestroyed(this)).subscribe((lock_ds_description) => {
-                  const dialogRef = this.mdDialog.open(EntityJobComponent, {
-                    data: { title: helptext.lock_dataset_dialog.locking_dataset },
-                    disableClose: true,
-                  });
-                  dialogRef.componentInstance.setDescription(lock_ds_description + rowData.name);
-                  params.push({ force_umount });
-                  dialogRef.componentInstance.setCall(ds.componentInstance.method, params);
-                  dialogRef.componentInstance.submit();
-                  let done = false;
-                  dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-                    if (!done) {
-                      dialogRef.close(false);
-                      done = true;
-                      this.parentVolumesListComponent.repaintMe();
-                    }
-                  });
-
-                  dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+                const dialogRef = this.mdDialog.open(EntityJobComponent, {
+                  data: { title: helptext.lock_dataset_dialog.locking_dataset },
+                  disableClose: true,
+                });
+                dialogRef.componentInstance.setDescription(
+                  this.translate.instant('Locking dataset {datasetName}', { datasetName: rowData.name }),
+                );
+                params.push({ force_umount });
+                dialogRef.componentInstance.setCall(ds.componentInstance.method, params);
+                dialogRef.componentInstance.submit();
+                let done = false;
+                dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+                  if (!done) {
                     dialogRef.close(false);
-                    new EntityUtils().handleWSError(this, res, this.dialogService);
-                  });
+                    done = true;
+                    this.parentVolumesListComponent.repaintMe();
+                  }
+                });
+
+                dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+                  dialogRef.close(false);
+                  new EntityUtils().handleWSError(this, res, this.dialogService);
                 });
               });
             },
@@ -1693,7 +1683,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
 
   getTimestamp(): string {
     const dateTime = new Date();
-    return moment(dateTime).format('YYYY-MM-DD_HH-mm');
+    return format(dateTime, 'yyyy-MM-dd_HH-mm');
   }
 
   dataHandler(data: any): TreeNode {
