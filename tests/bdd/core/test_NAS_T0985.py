@@ -88,8 +88,9 @@ def click_ada1_checkbox_press_the_right_arrow_under_data_vdevs(driver):
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
     assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]')
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__force-submit-checkbox"]').click()
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
 
 

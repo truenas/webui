@@ -69,7 +69,7 @@ def browser():
     # this is the place to add file type to autosave
     # application/x-tar is use for .tar
     # application/gzip is use for .tgz
-    profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-tar,application/gzip")
+    profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-tar,application/gzip,application/json")
     profile.set_preference("browser.download.manager.showWhenStarting", False)
     profile.set_preference("browser.link.open_newwindow", 3)
     binary = '/usr/bin/firefox' if system() == "Linux" else '/usr/local/bin/firefox'
