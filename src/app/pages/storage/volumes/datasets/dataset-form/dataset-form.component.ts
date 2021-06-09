@@ -23,6 +23,7 @@ import { T } from '../../../../../translate-marker';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../../common/entity/utils';
+import { DatasetAclType } from 'app/enums/dataset-acl-type.enum';
 
 interface DatasetFormData {
   name: string;
@@ -655,10 +656,10 @@ export class DatasetFormComponent implements FormConfiguration {
           name: 'acltype',
           placeholder: T('ACL Type'),
           options: [
-            { label: 'Inherit', value: 'INHERIT' },
-            { label: 'Off', value: 'OFF' },
-            { label: 'NFSv4', value: 'NFSV4' },
-            { label: 'POSIX', value: 'POSIX' },
+            { label: T('Inherit'), value: DatasetAclType.Inherit },
+            { label: T('Off'), value: DatasetAclType.Off },
+            { label: T('NFSv4'), value: DatasetAclType.Nfsv4 },
+            { label: T('POSIX'), value: DatasetAclType.Posix },
           ],
           required: false,
           value: 'INHERIT',

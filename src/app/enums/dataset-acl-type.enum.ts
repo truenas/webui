@@ -1,8 +1,9 @@
 export enum DatasetAclType {
+  Inherit = 'INHERIT',
   Off = 'OFF',
   NoAcl = 'NOACL',
-  NFSv4 = 'NFSV4',
-  NFS4Acl = 'NFS4ACL',
-  POSIX = 'POSIX',
-  POSIXAcl = 'POSIXACL',
+  Nfsv4 = 'NFSV4',
+  Nfs4Acl = 'NFS4ACL',
+  Posix = 'POSIX',
+  PosixAcl = 'POSIXACL',
 }

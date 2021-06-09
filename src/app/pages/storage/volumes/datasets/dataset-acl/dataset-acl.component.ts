@@ -490,6 +490,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     }
   }
 
+  // TODO: Refactor for better readability
   resourceTransformIncomingRestData(data: any): any {
     let setToReturnLater = false;
     if (data.acl.length === 0) {
