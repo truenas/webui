@@ -208,9 +208,25 @@ export class CatalogComponent implements OnInit {
   }
 
   refreshForms(): void {
-    this.kubernetesForm = new KubernetesSettingsComponent(this.ws, this.appLoaderService, this.dialogService, this.modalService, this.appService);
-    this.chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
-    this.chartWizardComponent = new ChartWizardComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
+    this.kubernetesForm = new KubernetesSettingsComponent(
+      this.ws,
+      this.appLoaderService,
+      this.dialogService,
+      this.modalService,
+      this.appService,
+    );
+    this.chartReleaseForm = new ChartReleaseAddComponent(
+      this.mdDialog,
+      this.dialogService,
+      this.modalService,
+      this.appService,
+    );
+    this.chartWizardComponent = new ChartWizardComponent(
+      this.mdDialog,
+      this.dialogService,
+      this.modalService,
+      this.appService,
+    );
   }
 
   checkForConfiguredPool(): void {
@@ -331,7 +347,9 @@ export class CatalogComponent implements OnInit {
 
   filterApps(): void {
     if (this.filterString) {
-      this.filteredCatalogApps = this.catalogApps.filter((app) => app.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1);
+      this.filteredCatalogApps = this.catalogApps.filter((app) => {
+        return app.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1;
+      });
     } else {
       this.filteredCatalogApps = this.catalogApps;
     }

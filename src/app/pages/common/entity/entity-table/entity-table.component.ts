@@ -361,7 +361,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isTableEmpty = false;
     } else {
       this.isTableEmpty = true;
-      this.configureEmptyTable(this.dataSource.filter ? EmptyType.no_search_results : this.firstUse ? EmptyType.first_use : EmptyType.no_page_data);
+      this.configureEmptyTable(
+        this.dataSource.filter
+          ? EmptyType.no_search_results
+          : this.firstUse
+            ? EmptyType.first_use
+            : EmptyType.no_page_data,
+      );
     }
 
     if (this.dataSource.paginator && this.conf.config.paging) {
@@ -632,7 +638,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filter(this.filterValue);
 
     if (this.conf.config.paging) {
-      // On first load, paginator is not rendered because table is empty, so we force render here so that we can get valid paginator instance
+      // On first load, paginator is not rendered because table is empty,
+      // so we force render here so that we can get valid paginator instance
       setTimeout(() => {
         this.dataSource.paginator = this.paginator;
       }, 0);

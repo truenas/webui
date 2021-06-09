@@ -828,7 +828,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
 
       if (failed) {
-        const location = this.subenclosure && disk.enclosure.number == this.system.rearIndex ? EnclosureLocation.Rear : EnclosureLocation.Front;
+        const location = this.subenclosure && disk.enclosure.number == this.system.rearIndex
+          ? EnclosureLocation.Rear
+          : EnclosureLocation.Front;
         const failure: DiskFailure = {
           disk: disk.name, enclosure: disk.enclosure.number, slot: disk.enclosure.slot, location,
         };

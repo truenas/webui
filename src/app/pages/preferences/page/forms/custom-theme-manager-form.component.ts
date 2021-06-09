@@ -86,7 +86,11 @@ export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
   initForm(): void {
     this.loadValues('deselectAll');
 
-    if (!this.customThemeFields || this.customThemeFields.length == 0 || this.customThemeFields.length != this.themeService.customThemes.length) {
+    if (
+      !this.customThemeFields
+      || this.customThemeFields.length == 0
+      || this.customThemeFields.length != this.themeService.customThemes.length
+    ) {
       this.setCustomThemeFields();
     }
     if (!this.fieldConfig || this.fieldConfig.length == 0) {

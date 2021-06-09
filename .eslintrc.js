@@ -38,7 +38,7 @@ module.exports = {
         "no-return-assign": "off",
         "no-empty": ["error", { "allowEmptyCatch": true }],
         "arrow-body-style": "off",
-        "max-len": ["error", 150, 2, {
+        "max-len": ["error", 140, 2, {
           "ignoreUrls": true,
           "ignoreComments": false,
           "ignoreRegExpLiterals": true,

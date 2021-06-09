@@ -131,13 +131,19 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
     this.storage_path = entityForm.formGroup.controls['storage_path'];
     this.storage_path_subscription = this.storage_path.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res && res != this.initial_path && !this.warned) {
-        this.dialog.confirm(helptext.path_warning_title, helptext.path_warning_msg).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
-          if (!confirm) {
-            this.storage_path.setValue(this.initial_path);
-          } else {
-            this.warned = true;
-          }
-        });
+        this.dialog
+          .confirm({
+            title: helptext.path_warning_title,
+            message: helptext.path_warning_msg,
+          })
+          .pipe(untilDestroyed(this))
+          .subscribe(() => {
+            if (!confirm) {
+              this.storage_path.setValue(this.initial_path);
+            } else {
+              this.warned = true;
+            }
+          });
       }
     });
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
