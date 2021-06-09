@@ -655,14 +655,13 @@ export class DatasetFormComponent implements FormConfiguration {
           name: 'acltype',
           placeholder: T('ACL Type'),
           options: [
-            { label: 'OFF', value: 'OFF' },
-            { label: 'NOACL', value: 'NOACL' },
-            { label: 'NFSV4', value: 'NFSV4' },
-            { label: 'NFS4ACL', value: 'NFS4ACL' },
+            { label: 'Inherit', value: 'INHERIT' },
+            { label: 'Off', value: 'OFF' },
+            { label: 'NFSv4', value: 'NFSV4' },
             { label: 'POSIX', value: 'POSIX' },
-            { label: 'POSIXACL', value: 'POSIXACL' },
           ],
           required: false,
+          value: 'INHERIT',
         },
         {
           type: 'select',
@@ -862,7 +861,6 @@ export class DatasetFormComponent implements FormConfiguration {
       data.reservation = null;
       data.special_small_block_size = null;
       data.copies = (data.copies !== undefined && data.copies !== null && data.name !== undefined) ? '1' : undefined;
-      data.acltype = null;
     }
     // calculate and delete _unit
     for (let i = 0; i < this.size_fields.length; i++) {
