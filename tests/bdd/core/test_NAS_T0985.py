@@ -15,7 +15,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T985.feature', 'Create a pool call tank with 2 disk')
+@scenario('features/NAS-T985.feature', 'Create a pool call tank')
 def test_create_a_pool_call_tank_with_2_disk(driver):
     """Create a pool call tank with 2 disk."""
 
@@ -80,13 +80,17 @@ def when_the_pool_manager_appears_enter_the_tank_for_pool_name(driver):
     driver.find_element_by_xpath('//input[@placeholder="Name"]').send_keys('tank')
 
 
-@then('click ada1 and ada2 checkbox, press the right arrow under Data VDevs')
-def click_ada1_and_ada2_checkbox_press_the_right_arrow_under_data_vdevs(driver):
-    """click ada1 and ada2 checkbox, press the right arrow under Data VDevs."""
+@then('click ada1 checkbox, press the right arrow under Data VDevs')
+def click_ada1_checkbox_press_the_right_arrow_under_data_vdevs(driver):
+    """click ada1 checkbox, press the right arrow under Data VDevs."""
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-ada1"]').click()
-    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-ada2"]').click()
     assert wait_on_element(driver, 7, '//button[@id="vdev__add-button"]')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
+    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]')
+    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__force-submit-checkbox"]').click()
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
 
 
 @then('click create, On the Warning widget, click confirm checkbox, click CREATE POOL')
