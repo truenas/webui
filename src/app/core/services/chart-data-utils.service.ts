@@ -23,7 +23,7 @@ export class ChartDataUtilsService {
     const operations = (): void => {
       const context: Worker = self as any; // Required so Typescript doesn't complain
 
-      var callback = (data: any): void => {
+      const callback = (data: any): void => {
         context.postMessage({ name: 'TEST FROM THREAD CALLBACK', data });
       };
 

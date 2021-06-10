@@ -4,13 +4,13 @@ export class CommonUtils {
       return 0;
     }
 
-    var a_components = a.split('.');
-    var b_components = b.split('.');
+    const a_components = a.split('.');
+    const b_components = b.split('.');
 
-    var len = Math.min(a_components.length, b_components.length);
+    const len = Math.min(a_components.length, b_components.length);
 
     // loop while the components are equal
-    for (var i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
       // A bigger than B
       if (parseInt(a_components[i]) > parseInt(b_components[i])) {
         return -1;

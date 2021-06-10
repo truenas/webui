@@ -263,7 +263,7 @@ export class ConfigurationComponent implements FormConfiguration {
     if (data.hosts && data.hosts !== '') {
       data['hosts'] = data.hosts.split('\n');
     } else {
-      data.hosts === [];
+      data.hosts = [];
     }
     data['netbios'] = data['service_announcement']['netbios'];
     data['mdns'] = data['service_announcement']['mdns'];

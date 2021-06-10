@@ -723,12 +723,12 @@ export class AlertServiceComponent implements FormConfiguration {
   dataAttributeHandler(entityForm: EntityFormComponent): void {
     const type = entityForm.formGroup.controls['type'].value;
     for (const i in entityForm.wsResponseIdx) {
-      const field_name = type + '-' + i;
-      if (entityForm.formGroup.controls[field_name]) {
+      const fieldName = type + '-' + i;
+      if (entityForm.formGroup.controls[fieldName]) {
         if ((i === 'v3_authprotocol' || i === 'v3_privprotocol') && entityForm.wsResponseIdx[i] === null) {
           entityForm.wsResponseIdx[i] = '';
         }
-        entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
+        entityForm.formGroup.controls[fieldName].setValue(entityForm.wsResponseIdx[i]);
       }
     }
   }
