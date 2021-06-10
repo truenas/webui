@@ -33,6 +33,7 @@ import { T } from 'app/translate-marker';
 @Component({
   selector: 'app-dataset-posix-acl',
   template: '<entity-form [conf]="this"></entity-form>',
+  providers: [EntityFormService],
 })
 export class DatasetPosixAclComponent implements FormConfiguration {
   queryCall: 'filesystem.getacl' = 'filesystem.getacl';
