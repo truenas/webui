@@ -174,7 +174,7 @@ export class VMListComponent implements EntityTableConfig {
     if (!devices || devices.length === 0) {
       return false;
     }
-    if (this.productType !== ProductType.Scale && (vm.bootloader === VmBootloader.Grub || vm.bootloader === VmBootloader.UefiCsm)) {
+    if (this.productType !== ProductType.Scale && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {
       return false;
     }
     for (let i = 0; i < devices.length; i++) {
@@ -189,7 +189,7 @@ export class VMListComponent implements EntityTableConfig {
     if (!devices || devices.length === 0) {
       return false;
     }
-    if (this.productType !== ProductType.Scale && (vm.bootloader === VmBootloader.Grub || vm.bootloader === VmBootloader.UefiCsm)) {
+    if (this.productType !== ProductType.Scale && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {
       return false;
     }
     for (let i = 0; i < devices.length; i++) {
@@ -575,11 +575,13 @@ export class VMListComponent implements EntityTableConfig {
           (download_res) => {
             const url = download_res[1];
             const mimetype = 'text/plain';
-            this.storageService.streamDownloadFile(this.http, url, filename, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
-              this.storageService.downloadBlob(file, filename);
-            }, (err) => {
-              new EntityUtils().handleWSError(this, err, this.dialogService);
-            });
+            this.storageService.streamDownloadFile(this.http, url, filename, mimetype)
+              .pipe(untilDestroyed(this))
+              .subscribe((file) => {
+                this.storageService.downloadBlob(file, filename);
+              }, (err) => {
+                new EntityUtils().handleWSError(this, err, this.dialogService);
+              });
           },
           (err) => {
             new EntityUtils().handleWSError(this, err, this.dialogService);

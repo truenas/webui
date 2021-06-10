@@ -34,7 +34,8 @@ export class AppComponent {
     public matIconRegistry: MatIconRegistry,
     private sysGeneralService: SystemGeneralService,
 
-    // TODO: Keep or do proper refactoring. Currenly our code relies for SysInfo to be emitted by SystemProfileService constructor.
+    // TODO: Keep or do proper refactoring.
+    // Currently our code relies for SysInfo to be emitted by SystemProfileService constructor.
     private cache: DataService,
   ) {
     this.matIconRegistry.addSvgIconSetInNamespace(

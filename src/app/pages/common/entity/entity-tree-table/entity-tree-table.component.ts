@@ -152,7 +152,9 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     this.treeDataSource = this.treeTableService.editNode('expanded', value, rootNode.indexPath, this.treeDataSource);
 
     if (this.filter.value.length > 0) {
-      this.tableDataSource = this.treeTableService.filteredTable(this.filter.column, this.filter.value, this.treeDataSource, true);
+      this.tableDataSource = this.treeTableService.filteredTable(
+        this.filter.column, this.filter.value, this.treeDataSource, true,
+      );
     } else {
       this.tableDataSource = this.treeTableService.buildTable(this.treeDataSource);
     }

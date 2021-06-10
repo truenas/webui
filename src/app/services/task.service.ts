@@ -144,7 +144,10 @@ export class TaskService {
   getTaskNextRun(scheduleExpression: string): string {
     const schedule = cronParser.parseExpression(scheduleExpression, { iterator: true });
 
-    return formatDistanceToNow(((schedule.next() as unknown) as { value: { _date: any } }).value._date.toDate(), { addSuffix: true });
+    return formatDistanceToNow(
+      ((schedule.next() as unknown) as { value: { _date: any } }).value._date.toDate(),
+      { addSuffix: true },
+    );
   }
 
   getTaskCronDescription(scheduleExpression: string, options: CronOptions = this.cronOptions): string {

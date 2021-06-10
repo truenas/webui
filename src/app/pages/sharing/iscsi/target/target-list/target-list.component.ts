@@ -48,8 +48,15 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
   };
 
   protected entityList: any;
-  constructor(private iscsiService: IscsiService, private modalService: ModalService, private router: Router,
-    private aroute: ActivatedRoute, private loader: AppLoaderService, private translate: TranslateService, private ws: WebSocketService) {}
+  constructor(
+    private iscsiService: IscsiService,
+    private modalService: ModalService,
+    private router: Router,
+    private aroute: ActivatedRoute,
+    private loader: AppLoaderService,
+    private translate: TranslateService,
+    private ws: WebSocketService,
+  ) {}
 
   ngOnInit(): void {
     if (this.fcEnabled) {

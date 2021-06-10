@@ -367,7 +367,9 @@ export class CatalogComponent implements OnInit {
   }
 
   showSummaryDialog(name: string, catalog = officialCatalog, train = chartsTrain): void {
-    const catalogApp = this.catalogApps.find((app) => app.name == name && app.catalog.id == catalog && app.catalog.train == train);
+    const catalogApp = this.catalogApps.find((app) => {
+      return app.name == name && app.catalog.id == catalog && app.catalog.train == train;
+    });
     if (!catalogApp) {
       return;
     }

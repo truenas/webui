@@ -1039,7 +1039,9 @@ export class DatasetFormComponent implements FormConfiguration {
       const root = this.parent.split('/')[0];
       this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((res) => {
         this.minimum_recommended_dataset_recordsize = res;
-        this.recommended_size_number = parseInt((this.reverseRecordSizeMap as any)[this.minimum_recommended_dataset_recordsize], 0);
+        this.recommended_size_number = parseInt(
+          (this.reverseRecordSizeMap as any)[this.minimum_recommended_dataset_recordsize], 0,
+        );
       });
       combineLatest([
         this.ws.call('pool.query', [[['name', '=', root]]]),
@@ -1554,7 +1556,8 @@ export class DatasetFormComponent implements FormConfiguration {
   customSubmit(body: any): Subscription {
     this.loader.open();
 
-    return ((this.isNew === true) ? this.addSubmit(body) : this.editSubmit(body)).pipe(untilDestroyed(this)).subscribe((restPostResp) => {
+    const operation = this.isNew ? this.addSubmit(body) : this.editSubmit(body);
+    return operation.pipe(untilDestroyed(this)).subscribe((restPostResp) => {
       this.loader.close();
       this.modalService.close('slide-in-form');
       const parentPath = `/mnt/${this.parent}`;
