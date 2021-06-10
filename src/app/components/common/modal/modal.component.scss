@@ -109,7 +109,6 @@
 }
 
 body.jw-modal-open .slide-in-form .jw-modal-body {
-  .mat-vertical-stepper-content[style*='height: 0px; visibility: hidden;'] {
-    display: none;
-  }
+  /* body overflow is hidden to hide main scrollbar when modal window is open */
+  overflow: hidden;
 }
