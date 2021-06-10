@@ -1,6 +1,8 @@
 # coding=utf-8
 """Core UI feature tests."""
 
+import glob
+import os
 import time
 from function import (
     wait_on_element,
@@ -19,6 +21,8 @@ from pytest_bdd import (
 @scenario('features/NAS-T1080.feature', 'Verify that a pool can be encrypted, locked and unlocked with a passphrase')
 def test_verify_that_a_pool_can_be_encrypted_locked_and_unlocked_with_a_passphrase(driver):
     """Verify that a pool can be encrypted, locked and unlocked with a passphrase."""
+    for file in glob.glob('/tmp/dataset_encrypted_keys*.json'):
+        os.remove(file)
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
