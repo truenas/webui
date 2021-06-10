@@ -1141,14 +1141,17 @@ export class DatasetFormComponent implements FormConfiguration {
               encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption: any) => {
                 // if on an encrypted parent we should warn the user, otherwise just disable the fields
                 if (this.encrypted_parent && !encryption && !this.non_encrypted_warned) {
-                  this.dialogService.confirm(helptext.dataset_form_encryption.non_encrypted_warning_title,
-                    helptext.dataset_form_encryption.non_encrypted_warning_warning).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
-                    if (confirm) {
-                      this.non_encrypted_warned = true;
-                      for (let i = 0; i < all_encryption_fields.length; i++) {
-                        if (all_encryption_fields[i] !== 'encryption') {
-                          this.entityForm.setDisabled(all_encryption_fields[i], true, true);
-                        }
+                  this.dialogService.confirm({
+                    title: helptext.dataset_form_encryption.non_encrypted_warning_title,
+                    message: helptext.dataset_form_encryption.non_encrypted_warning_warning,
+                  }).pipe(
+                    filter(Boolean),
+                    untilDestroyed(this),
+                  ).subscribe(() => {
+                    this.non_encrypted_warned = true;
+                    for (let i = 0; i < all_encryption_fields.length; i++) {
+                      if (all_encryption_fields[i] !== 'encryption') {
+                        this.entityForm.setDisabled(all_encryption_fields[i], true, true);
                       }
                     }
                   });
@@ -1250,37 +1253,30 @@ export class DatasetFormComponent implements FormConfiguration {
               const edit_readonly = _.find(this.fieldConfig, { name: 'readonly' });
               const edit_atime = _.find(this.fieldConfig, { name: 'atime' });
               const edit_recordsize = _.find(this.fieldConfig, { name: 'recordsize' });
-              let edit_sync_collection = [{ label: pk_dataset[0].sync.value, value: pk_dataset[0].sync.value }];
-              let edit_compression_collection = [{ label: pk_dataset[0].compression.value, value: pk_dataset[0].compression.value }];
-              let edit_deduplication_collection = [{ label: pk_dataset[0].deduplication.value, value: pk_dataset[0].deduplication.value }];
-              let edit_exec_collection = [{ label: pk_dataset[0].exec.value, value: pk_dataset[0].exec.value }];
-              let edit_readonly_collection = [{ label: pk_dataset[0].readonly.value, value: pk_dataset[0].readonly.value }];
-              let edit_atime_collection = [{ label: pk_dataset[0].readonly.value, value: pk_dataset[0].readonly.value }];
-              let edit_recordsize_collection = [{ label: this.parent_dataset.recordsize.value, value: this.parent_dataset.recordsize.value }];
 
-              edit_sync_collection = [{ label: `Inherit (${this.parent_dataset.sync.rawvalue})`, value: 'INHERIT' }];
+              const edit_sync_collection = [{ label: `Inherit (${this.parent_dataset.sync.rawvalue})`, value: 'INHERIT' }];
               edit_sync.options = edit_sync_collection.concat(edit_sync.options);
 
-              edit_compression_collection = [{ label: `Inherit (${this.parent_dataset.compression.rawvalue})`, value: 'INHERIT' }];
+              const edit_compression_collection = [{ label: `Inherit (${this.parent_dataset.compression.rawvalue})`, value: 'INHERIT' }];
               edit_compression.options = edit_compression_collection.concat(edit_compression.options);
 
-              edit_deduplication_collection = [{ label: `Inherit (${this.parent_dataset.deduplication.rawvalue})`, value: 'INHERIT' }];
+              const edit_deduplication_collection = [{ label: `Inherit (${this.parent_dataset.deduplication.rawvalue})`, value: 'INHERIT' }];
               edit_deduplication.options = edit_deduplication_collection.concat(edit_deduplication.options);
 
-              edit_exec_collection = [{ label: `Inherit (${this.parent_dataset.exec.rawvalue})`, value: 'INHERIT' }];
+              const edit_exec_collection = [{ label: `Inherit (${this.parent_dataset.exec.rawvalue})`, value: 'INHERIT' }];
               edit_exec.options = edit_exec_collection.concat(edit_exec.options);
 
-              edit_readonly_collection = [{ label: `Inherit (${this.parent_dataset.readonly.rawvalue})`, value: 'INHERIT' }];
+              const edit_readonly_collection = [{ label: `Inherit (${this.parent_dataset.readonly.rawvalue})`, value: 'INHERIT' }];
               edit_readonly.options = edit_readonly_collection.concat(edit_readonly.options);
 
-              edit_atime_collection = [{ label: `Inherit (${this.parent_dataset.atime.rawvalue})`, value: 'INHERIT' }];
+              const edit_atime_collection = [{ label: `Inherit (${this.parent_dataset.atime.rawvalue})`, value: 'INHERIT' }];
               edit_atime.options = edit_atime_collection.concat(edit_atime.options);
 
               const lastChar = this.parent_dataset.recordsize.value[this.parent_dataset.recordsize.value.length - 1];
               const formattedLabel = lastChar === 'K' || lastChar === 'M'
                 ? `${this.parent_dataset.recordsize.value.slice(0, -1)} ${lastChar}iB`
                 : this.parent_dataset.recordsize.value;
-              edit_recordsize_collection = [{ label: `Inherit (${formattedLabel})`, value: 'INHERIT' }];
+              const edit_recordsize_collection = [{ label: `Inherit (${formattedLabel})`, value: 'INHERIT' }];
               edit_recordsize.options = edit_recordsize_collection.concat(edit_recordsize.options);
               let sync_value = pk_dataset[0].sync.value;
               if (pk_dataset[0].sync.source === ZfsPropertySource.Default) {

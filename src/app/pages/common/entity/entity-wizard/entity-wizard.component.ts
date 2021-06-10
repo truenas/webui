@@ -78,7 +78,9 @@ export class EntityWizardComponent implements OnInit {
       if (this.conf.wizardConfig[i].fieldSets) {
         let fieldConfig: any[] = [];
         /* Temp patch to support both FieldSet approaches */
-        const fieldSets = this.conf.wizardConfig[i].fieldSets.list ? this.conf.wizardConfig[i].fieldSets.list() : this.conf.wizardConfig[i].fieldSets;
+        const fieldSets = this.conf.wizardConfig[i].fieldSets.list
+          ? this.conf.wizardConfig[i].fieldSets.list()
+          : this.conf.wizardConfig[i].fieldSets;
         for (let j = 0; j < fieldSets.length; j++) {
           const fieldset = fieldSets[j];
           if (fieldset.config) {

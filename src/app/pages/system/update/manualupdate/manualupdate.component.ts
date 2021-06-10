@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { take } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -173,15 +173,13 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
           if (ures[0].attributes.preferences['rebootAfterManualUpdate']) {
             this.router.navigate(['/others/reboot']);
           } else {
-            this.translate.get('Restart').pipe(untilDestroyed(this)).subscribe((reboot: string) => {
-              this.translate.get(helptext.rebootAfterManualUpdate.manual_reboot_msg).pipe(untilDestroyed(this)).subscribe((reboot_prompt: string) => {
-                this.dialogService.confirm(reboot, reboot_prompt).pipe(untilDestroyed(this)).subscribe((reboot_res: boolean) => {
-                  if (reboot_res) {
-                    this.router.navigate(['/others/reboot']);
-                  }
-                });
-              });
-            });
+            this.dialogService.confirm({
+              title: this.translate.instant('Restart'),
+              message: this.translate.instant(helptext.rebootAfterManualUpdate.manual_reboot_msg),
+            }).pipe(
+              filter(Boolean),
+              untilDestroyed(this),
+            ).subscribe(() => this.router.navigate(['/others/reboot']));
           }
         } else { // HA System
           this.dialogService.closeAllDialogs();

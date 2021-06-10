@@ -88,7 +88,9 @@ export class CoreService {
     this.dispatchTable = clone;
     if (this.debug && this.debug_show_dispatch_table) {
       console.info('UNREGISTER: DISPATCH = ');
-      const tbl = this.debug_filter_eventName ? this.dispatchTable.filter((r) => r.eventName == this.debug_filter_eventName) : this.dispatchTable;
+      const tbl = this.debug_filter_eventName
+        ? this.dispatchTable.filter((r) => r.eventName == this.debug_filter_eventName)
+        : this.dispatchTable;
       console.info(tbl);
       console.info(this.dispatchTable.length + ' Observers in table.');
     }
@@ -110,7 +112,9 @@ export class CoreService {
       if (this.debug_show_dispatch_table) {
         console.info('CORESERVICE: dispatchTable...');
         console.info(this.dispatchTable.length + ' Observers in table.');
-        const tbl = this.debug_filter_eventName ? this.dispatchTable.filter((r) => r.eventName == this.debug_filter_eventName) : this.dispatchTable;
+        const tbl = this.debug_filter_eventName
+          ? this.dispatchTable.filter((r) => r.eventName == this.debug_filter_eventName)
+          : this.dispatchTable;
         console.info(tbl);
       }
     }
