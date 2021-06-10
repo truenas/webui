@@ -2,6 +2,7 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { MaterialModule } from '../../../appMaterial.module';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { MatSortHeader, MatSort } from '@angular/material/sort';
@@ -243,6 +244,7 @@ import { ExpandableTableComponent } from 'app/pages/common/entity/table/expandab
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
+    EntityFormService,
     EntityTableService,
     AppLoaderService,
     DocsService,
