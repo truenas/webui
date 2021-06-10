@@ -1,6 +1,6 @@
 <div id="{{config.name}}" class="form-element dynamic-field form-select {{config.inlineLabel ? 'inline-label' : 'not'}}" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" [hidden]="config.isHidden">
 
-  <div class="label-container">
+  <div class="label-container" *ngIf="config.placeholder || config.tooltip">
     <ng-container *ngIf="config.inlineLabel">
       <div class="label half-width"></div>
     </ng-container>
