@@ -1567,21 +1567,26 @@ export class DatasetFormComponent implements Formconfiguration {
       data.recordsize = '1024K';
     }
     // encryption values
-    if (data.inherit_encryption) {
-      delete data.encryption;
-    } else if (data.encryption) {
-      data['encryption_options'] = {};
-      if (data.encryption_type === 'key') {
-        data.encryption_options.generate_key = data.generate_key;
-        if (!data.generate_key) {
-          data.encryption_options.key = data.key;
+    if (data.encryption) {
+      if (data.inherit_encryption) {
+        delete data.encryption;
+      } else {
+        data['encryption_options'] = {};
+        if (data.encryption_type === 'key') {
+          data.encryption_options.generate_key = data.generate_key;
+          if (!data.generate_key) {
+            data.encryption_options.key = data.key;
+          }
+        } else if (data.encryption_type === 'passphrase') {
+          data.encryption_options.passphrase = data.passphrase;
+          data.encryption_options.pbkdf2iters = data.pbkdf2iters;
         }
-      } else if (data.encryption_type === 'passphrase') {
-        data.encryption_options.passphrase = data.passphrase;
-        data.encryption_options.pbkdf2iters = data.pbkdf2iters;
+        data.encryption_options.algorithm = data.algorithm;
       }
-      data.encryption_options.algorithm = data.algorithm;
+    } else {
+      data.inherit_encryption = false;
     }
+
     delete data.key;
     delete data.generate_key;
     delete data.passphrase;
