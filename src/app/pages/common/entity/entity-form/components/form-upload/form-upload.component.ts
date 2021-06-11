@@ -38,7 +38,6 @@ export class FormUploadComponent {
       this.config.updater(this, this.config.parent);
       return;
     }
-    this.loader.open();
 
     const fileBrowser = this.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
@@ -51,6 +50,7 @@ export class FormUploadComponent {
       const req = new HttpRequest('POST', this.apiEndPoint, formData, {
         reportProgress: true,
       });
+      this.loader.open();
       this.http.request(req).subscribe((event) => {
         if (event.type === HttpEventType.UploadProgress) {
           const percentDone = Math.round(100 * event.loaded / event.total);
@@ -67,6 +67,8 @@ export class FormUploadComponent {
         this.loader.close();
         this.dialog.errorReport(T('Error'), error.statusText, error.message);
       });
+    } else {
+      this.dialog.Info(T('There is no file'), '', '300px', 'info', true);
     }
   }
   newMessage(message) {
