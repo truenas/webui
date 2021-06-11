@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Validators } from '@angular/forms';
+import { Validators, FormControl } from '@angular/forms';
 
 import * as _ from 'lodash';
 import {
@@ -186,6 +186,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
           placeholder: helptext_sharing_smb.placeholder_afp,
           tooltip: helptext_sharing_smb.tooltip_afp,
           isHidden: true,
+          customEventMethod: ($event) => this.afpConfirm($event),
         },
         {
           type: 'checkbox',
@@ -603,16 +604,20 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
         }
       }
     });
+  }
 
-    entityForm.formGroup.controls['afp'].valueChanges.pipe(debounceTime(100)).subscribe((res) => {
-      if (res) {
-        this.dialog.confirm({
-          title: helptext_sharing_smb.afpDialog_title,
-          message: helptext_sharing_smb.afpDialog_message,
-          hideCheckBox: false,
-          buttonMsg: helptext_sharing_smb.afpDialog_button,
-          hideCancel: true,
-        });
+  afpConfirm(): void {
+    const afpControl: FormControl = this.entityForm.formGroup.controls['afp'];
+
+    this.dialog.confirm({
+      title: helptext_sharing_smb.afpDialog_title,
+      message: helptext_sharing_smb.afpDialog_message,
+      hideCheckBox: false,
+      buttonMsg: helptext_sharing_smb.afpDialog_button,
+      hideCancel: false,
+    }).subscribe((dialogResult: boolean) => {
+      if (dialogResult) {
+        afpControl.setValue(!afpControl.value);
       }
     });
   }
