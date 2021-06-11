@@ -366,7 +366,9 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     });
     this.ws.call('filesystem.default_acl_choices').subscribe((res: any[]) => {
       res.forEach((item) => {
-        this.defaults.push({ label: item, value: item });
+        if (item !== 'POSIX_OPEN' && item !== 'POSIX_RESTRICTED') {
+          this.defaults.push({ label: item, value: item });
+        }
       });
     });
   }
