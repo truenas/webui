@@ -18,3 +18,9 @@ export enum AclPermission {
   Write = 'WRITE',
   Execute = 'EXECUTE',
 }
+
+export enum AclMode {
+  Restricted = 'RESTRICTED',
+  Passthrough = 'PASSTHROUGH',
+  Discard = 'DISCARD',
+}
