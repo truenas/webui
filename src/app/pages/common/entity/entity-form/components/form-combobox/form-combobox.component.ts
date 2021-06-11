@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import { TranslateService } from '@ngx-translate/core';
@@ -10,27 +10,47 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
 
 import * as _ from 'lodash';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { fromEvent } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { fromEvent, Subscription } from 'rxjs';
+import {
+  map, takeUntil, debounceTime, distinctUntilChanged, mergeMap,
+} from 'rxjs/operators';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'form-combobox',
   styleUrls: ['form-combobox.component.scss', '../dynamic-field/dynamic-field.scss'],
   templateUrl: './form-combobox.component.html',
 })
-export class FormComboboxComponent implements Field {
+export class FormComboboxComponent implements Field, OnDestroy {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
   searchText: string;
+  searchTextChanged = new Subject<string>();
+  searchSubscription: Subscription;
 
   @ViewChild('autoComplete') autoCompleteRef: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
   @ViewChild('options') menuRef: MatMenu;
   @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
 
-  constructor(public translate: TranslateService) {}
+  constructor(public translate: TranslateService) {
+    this.searchSubscription = this.searchTextChanged.pipe(
+      debounceTime(250),
+      distinctUntilChanged(),
+    ).subscribe((query) => {
+      this.updateSearchOptions(query);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.searchSubscription?.unsubscribe();
+  }
+
+  search(query: string): void {
+    this.searchTextChanged.next(query);
+  }
 
   onChangeOption(value: any): void {
     this.group.controls[this.config.name].setValue(value);
@@ -45,13 +65,7 @@ export class FormComboboxComponent implements Field {
       }
     } else {
       value = value.toLowerCase();
-      const searchOptions: Option[] = [];
-      for (let i = 0; i < this.config.options.length; i++) {
-        if (this.config.options[i].label.toLowerCase().includes(value)) {
-          searchOptions.push(this.config.options[i]);
-        }
-      }
-      this.config.searchOptions = searchOptions;
+      this.config.searchOptions = this.config.options.filter((option) => option.label.toLowerCase().includes(value));
     }
   }
 
