@@ -629,13 +629,8 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
   }
 
   showChoiceDialog(presetsOnly = false): void {
-    let msg1; let msg2;
-    this.translate.get(helptext.type_dialog.radio_preset_tooltip).subscribe((m1) => {
-      this.translate.get(helptext.preset_dialog.message).subscribe((m2) => {
-        msg1 = m1;
-        msg2 = m2;
-      });
-    });
+    const msg1 = this.translate.instant(helptext.type_dialog.radio_preset_tooltip);
+    const msg2 = this.translate.instant(helptext.preset_dialog.message);
     const conf: DialogFormConfiguration = {
       title: presetsOnly ? helptext.type_dialog.radio_preset : helptext.type_dialog.title,
       message: presetsOnly ? `${msg1} ${msg2}` : null,
@@ -741,10 +736,12 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
   async customSubmit(body: any): Promise<void> {
     body.uid = body.apply_user ? body.uid : null;
     body.gid = body.apply_group ? body.gid : null;
-    const doesNotWantToEditDataset = this.storageService.isDatasetTopLevel(body.path.replace('mnt/', ''))
-      && !(await this.dialogService
-        .confirm(helptext.dataset_acl_dialog_warning, helptext.dataset_acl_toplevel_dialog_message)
-        .toPromise());
+
+    const doesNotWantToEditDataset = this.storageService.isDatasetTopLevel(this.path.replace('mnt/', ''))
+      && !(await this.dialogService.confirm({
+        title: helptext.dataset_acl_dialog_warning,
+        message: helptext.dataset_acl_toplevel_dialog_message,
+      }).toPromise());
 
     if (doesNotWantToEditDataset) {
       return;
