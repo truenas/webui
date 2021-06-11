@@ -186,7 +186,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
           placeholder: helptext_sharing_smb.placeholder_afp,
           tooltip: helptext_sharing_smb.tooltip_afp,
           isHidden: true,
-          customEventMethod: ($event) => this.afpConfirm($event),
+          customEventMethod: () => this.afpConfirm(),
         },
         {
           type: 'checkbox',
@@ -607,7 +607,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
   }
 
   afpConfirm(): void {
-    const afpControl: FormControl = this.entityForm.formGroup.controls['afp'];
+    const afpControl: any = this.entityForm.formGroup.controls['afp'];
 
     this.dialog.confirm({
       title: helptext_sharing_smb.afpDialog_title,

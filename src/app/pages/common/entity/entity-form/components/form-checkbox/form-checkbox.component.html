@@ -7,7 +7,7 @@
 	<mat-checkbox color="primary" *ngIf="config.updater" class="updater" [formControlName]="config.name" (change)="onChangeCheckbox($event)" [required]="config.required" (click)="((config.readonly && preventClick($event)) || checkboxUpdate())">
 	</mat-checkbox>
 
-	<mat-checkbox color="primary" *ngIf="config.customEventMethod" class="custom-handler" [formControlName]="config.name" (change)="onChangeCheckbox($event)" [required]="config.required" (click)="( preventClick($event) && config.customEventMethod($event))">
+	<mat-checkbox color="primary" *ngIf="config.customEventMethod" class="custom-handler" [formControlName]="config.name" (change)="onChangeCheckbox($event)" [required]="config.required" (click)="( preventClick($event) && config.customEventMethod())">
 		{{ config.placeholder | translate }}
 	</mat-checkbox>
 
