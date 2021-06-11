@@ -210,6 +210,7 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
       entityEdit.formGroup.controls['user'].setValue(stat.user);
       entityEdit.formGroup.controls['group'].setValue(stat.group);
     });
+    entityEdit.formGroup.controls['id'].setValue(this.datasetPath);
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value: any) => {
       if (value === true) {

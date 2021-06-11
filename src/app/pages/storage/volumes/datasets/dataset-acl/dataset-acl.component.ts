@@ -371,6 +371,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
 
   afterInit(entityEdit: any): void {
     this.entityForm = entityEdit;
+    this.entityForm.formGroup.controls['path'].setValue(this.path);
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value: boolean) => {
       if (value === true) {
