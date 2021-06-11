@@ -265,6 +265,16 @@ export class ZvolFormComponent implements Formconfiguration {
           ],
           isHidden: false,
         },
+        {
+          type: 'select',
+          name: 'readonly',
+          placeholder: helptext.zvol_readonly_placeholder,
+          tooltip: helptext.zvol_readonly_tooltip,
+          options: [
+            { label: 'On', value: 'ON' },
+            { label: 'Off', value: 'OFF' },
+          ],
+        },
       ],
     },
     { name: 'encryption_divider', divider: true },
@@ -574,6 +584,7 @@ export class ZvolFormComponent implements Formconfiguration {
           }
         }
 
+        entityForm.formGroup.controls['readonly'].setValue(pk_dataset[0].readonly.value);
         this.translate.get('Inherit').subscribe((inheritTr) => {
           if (pk_dataset && pk_dataset[0].type === 'FILESYSTEM') {
             this.sync_inherit = [{ label: `${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];
