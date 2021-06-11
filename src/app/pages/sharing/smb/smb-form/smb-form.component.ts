@@ -182,6 +182,13 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
         },
         {
           type: 'checkbox',
+          name: 'afp',
+          placeholder: helptext_sharing_smb.placeholder_afp,
+          tooltip: helptext_sharing_smb.tooltip_afp,
+          isHidden: true,
+        },
+        {
+          type: 'checkbox',
           name: 'shadowcopy',
           placeholder: helptext_sharing_smb.placeholder_shadowcopy,
           tooltip: helptext_sharing_smb.tooltip_shadowcopy,
@@ -594,6 +601,18 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
           ctrl.setValue(this.presets[res].params[item]);
           ctrl.disable();
         }
+      }
+    });
+
+    entityForm.formGroup.controls['afp'].valueChanges.pipe(debounceTime(100)).subscribe((res) => {
+      if (res) {
+        this.dialog.confirm({
+          title: helptext_sharing_smb.afpDialog_title,
+          message: helptext_sharing_smb.afpDialog_message,
+          hideCheckBox: false,
+          buttonMsg: helptext_sharing_smb.afpDialog_button,
+          hideCancel: true,
+        });
       }
     });
   }
