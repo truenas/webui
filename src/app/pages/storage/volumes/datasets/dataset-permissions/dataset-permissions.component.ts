@@ -20,7 +20,7 @@ import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy {
-  protected updateCall = 'pool.dataset.permission';
+  protected updateCall: 'pool.dataset.permission' = 'pool.dataset.permission';
   protected datasetPath: string;
   protected datasetId: string;
   protected recursive: any;

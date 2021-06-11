@@ -35,7 +35,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 })
 export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
   queryCall: 'filesystem.getacl' = 'filesystem.getacl';
-  updateCall = 'filesystem.setacl';
+  updateCall: 'filesystem.setacl' = 'filesystem.setacl';
   isEntity = true;
   pk: string;
   protected path: string;
