@@ -828,7 +828,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
 
       if (failed) {
-        const location = this.subenclosure && disk.enclosure.number == this.system.rearIndex ? EnclosureLocation.Rear : EnclosureLocation.Front;
+        const location = this.subenclosure && disk.enclosure.number == this.system.rearIndex
+          ? EnclosureLocation.Rear
+          : EnclosureLocation.Front;
         const failure: DiskFailure = {
           disk: disk.name, enclosure: disk.enclosure.number, slot: disk.enclosure.slot, location,
         };
@@ -983,14 +985,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   hexToRGB(str: string): { hex: string; rgb: number[] } {
-    var spl = str.split('#');
-    var hex = spl[1];
+    const spl = str.split('#');
+    let hex = spl[1];
     if (hex.length == 3) {
       hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
     }
 
-    var value = '';
-    var rgb = [];
+    let value = '';
+    const rgb = [];
     for (let i = 0; i < 6; i++) {
       const mod = i % 2;
       const even = 0;

@@ -18,7 +18,12 @@ export class JobService {
   protected accountAllUsersResource = 'account/all_users/';
   protected accountAllGroupsResource = 'account/all_groups/';
 
-  constructor(protected ws: WebSocketService, protected dialog: DialogService, protected storage: StorageService, protected http: HttpClient) {}
+  constructor(
+    protected ws: WebSocketService,
+    protected dialog: DialogService,
+    protected storage: StorageService,
+    protected http: HttpClient,
+  ) {}
 
   getJobStatus(jobId: any): Observable<any> {
     const source = Observable.create((observer: any) => {

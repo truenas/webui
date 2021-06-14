@@ -9,9 +9,9 @@ import * as filesize from 'filesize';
   <span>
   <i class="material-icons">local_laundry_service
   </i>
-	<br>
-	{{ data.devname }} ({{ capacity }})
-	<br>
+  <br>
+  {{ data.devname }} ({{ capacity }})
+  <br>
   </span>
   `,
   styles: [

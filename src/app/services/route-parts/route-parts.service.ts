@@ -13,7 +13,7 @@ export class RoutePartsService {
   routeParts: RoutePart[];
 
   generateRouteParts(snapshot: ActivatedRouteSnapshot): RoutePart[] {
-    var routeParts = <any[]>[];
+    let routeParts = <any[]>[];
     if (snapshot) {
       if (snapshot.firstChild) {
         routeParts = routeParts.concat(this.generateRouteParts(snapshot.firstChild));

@@ -132,7 +132,8 @@ export class VDevLabelsSVG {
   }
 
   createVdevLabels(vdev: any): void {
-    const disks = vdev.disks ? Object.keys(vdev.disks) : [this.selectedDisk.devname]; // NOTE: vdev.slots only has values for current enclosure
+    // NOTE: vdev.slots only has values for current enclosure
+    const disks = vdev.disks ? Object.keys(vdev.disks) : [this.selectedDisk.devname];
 
     disks.forEach((disk) => {
       const slot = typeof vdev.slots !== 'undefined' ? vdev.slots[disk] : this.selectedDisk.enclosure.slot;

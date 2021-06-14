@@ -67,28 +67,30 @@ export class CoreService {
     }
     const clone = [];// New Dispatch Table
     if (!reg.eventName) {
-      for (var i = 0; i < this.dispatchTable.length; i++) {
+      for (let i = 0; i < this.dispatchTable.length; i++) {
         const registration = this.dispatchTable[i];
         if (registration.observerClass == reg.observerClass) {
-	        continue;
+          continue;
         } else {
           clone.push(registration);
         }
       }
     } else {
-      for (var i = 0; i < this.dispatchTable.length; i++) {
+      for (let i = 0; i < this.dispatchTable.length; i++) {
         const registration = this.dispatchTable[i];
         if (registration.observerClass == reg.observerClass && registration.eventName == reg.eventName) {
           continue;
         } else {
-	  clone.push(registration);
+          clone.push(registration);
         }
       }
     }
     this.dispatchTable = clone;
     if (this.debug && this.debug_show_dispatch_table) {
       console.info('UNREGISTER: DISPATCH = ');
-      const tbl = this.debug_filter_eventName ? this.dispatchTable.filter((r) => r.eventName == this.debug_filter_eventName) : this.dispatchTable;
+      const tbl = this.debug_filter_eventName
+        ? this.dispatchTable.filter((r) => r.eventName == this.debug_filter_eventName)
+        : this.dispatchTable;
       console.info(tbl);
       console.info(this.dispatchTable.length + ' Observers in table.');
     }
@@ -110,7 +112,9 @@ export class CoreService {
       if (this.debug_show_dispatch_table) {
         console.info('CORESERVICE: dispatchTable...');
         console.info(this.dispatchTable.length + ' Observers in table.');
-        const tbl = this.debug_filter_eventName ? this.dispatchTable.filter((r) => r.eventName == this.debug_filter_eventName) : this.dispatchTable;
+        const tbl = this.debug_filter_eventName
+          ? this.dispatchTable.filter((r) => r.eventName == this.debug_filter_eventName)
+          : this.dispatchTable;
         console.info(tbl);
       }
     }
@@ -123,7 +127,7 @@ export class CoreService {
       evt.sender = 'null';
     }
 
-    for (var i = 0; i < this.dispatchTable.length; i++) {
+    for (let i = 0; i < this.dispatchTable.length; i++) {
       const reg = this.dispatchTable[i]; // subscription
 
       let subscriptionType = 'any';

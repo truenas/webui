@@ -65,14 +65,14 @@ export class ThemeUtils {
     const valueType = this.getValueType(str); // cssVar || hex || rgb || rgba
     if (valueType != 'hex') console.error('This method takes a hex value as a parameter but was given a value of type ' + valueType);
 
-    var spl = str.split('#');
-    var hex = spl[1];
+    const spl = str.split('#');
+    let hex = spl[1];
     if (hex.length == 3) {
       hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
     }
 
-    var value = '';
-    var rgb = [];
+    let value = '';
+    const rgb = [];
     for (let i = 0; i < 6; i++) {
       const mod = i % 2;
       const even = 0;

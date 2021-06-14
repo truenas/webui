@@ -9,7 +9,6 @@ import { ViewControllerComponent } from 'app/core/components/viewcontroller/view
 import { ProductType } from 'app/enums/product-type.enum';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { WebSocketService } from 'app/services';
-import { DocsService } from 'app/services/docs.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 
 @UntilDestroy()
@@ -28,7 +27,9 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
   @Output('onToggleMenu') onToggleMenu: EventEmitter<any> = new EventEmitter();
   @Output('onCloseMenu') onCloseMenu: EventEmitter<any> = new EventEmitter();
 
-  constructor(private navService: NavigationService, private router: Router, private ws: WebSocketService, private docsService: DocsService) {
+  constructor(
+    private navService: NavigationService, private router: Router, private ws: WebSocketService,
+  ) {
     super();
   }
 

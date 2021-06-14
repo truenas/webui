@@ -207,18 +207,18 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     if (this.conf.values) {
       // We are no longer responsible for API calls.
       for (const i in this.data) {
-	  const fg = this.formGroup.controls[i];
-	  if (fg) {
-	    const current_field = this.fieldConfig.find((control) => control.name === i);
-	    if (current_field.type === 'array') {
-	      this.setArrayValue(this.data[i], fg, i);
-	    } else {
-	      fg.setValue(this.data[i]);
-	    }
-	  }
+        const fg = this.formGroup.controls[i];
+        if (fg) {
+          const current_field = this.fieldConfig.find((control) => control.name === i);
+          if (current_field.type === 'array') {
+            this.setArrayValue(this.data[i], fg, i);
+          } else {
+            fg.setValue(this.data[i]);
+          }
+        }
       }
       if (this.conf.initial) {
-	  this.conf.initial.bind(this.conf)(this);
+        this.conf.initial.bind(this.conf)(this);
       }
     }
   }
@@ -278,7 +278,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     for (const i in value) {
       if (value.hasOwnProperty(i)) {
         if ((this.conf as any)['clean_' + i]) {
-	  value = (this.conf as any)['clean_' + i](value, i);
+          value = (this.conf as any)['clean_' + i](value, i);
         }
       }
     }
@@ -391,12 +391,11 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
       );
       this.setDisabled(config.name, tobeDisabled);
 
-      this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
-        .forEach((control) => {
-	  control.valueChanges.pipe(untilDestroyed(this)).subscribe(
-	    () => { this.relationUpdate(config, activations); },
-          );
-        });
+      this.fieldRelationService.getRelatedFormControls(config, this.formGroup).forEach((control) => {
+        control.valueChanges.pipe(untilDestroyed(this)).subscribe(
+          () => { this.relationUpdate(config, activations); },
+        );
+      });
     }
   }
 

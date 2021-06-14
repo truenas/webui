@@ -175,7 +175,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected dialog: MatDialog,
-    private entityFormService: EntityFormService,
+    protected entityFormService: EntityFormService,
   ) {}
 
   preInit(): void {
@@ -190,7 +190,10 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
     this.datasets_fc = _.find(this.fieldConfig, { name: 'datasets' });
     this.key_file_fc = _.find(this.fieldConfig, { name: 'key_file' });
     const listFields = this.datasets_fc.listFields;
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: helptext.fetching_encryption_summary_title }, disableClose: true });
+    const dialogRef = this.dialog.open(EntityJobComponent, {
+      data: { title: helptext.fetching_encryption_summary_title },
+      disableClose: true,
+    });
     dialogRef.componentInstance.setDescription(helptext.fetching_encryption_summary_message + this.pk);
     dialogRef.componentInstance.setCall(this.queryCall, [this.pk]);
     dialogRef.componentInstance.submit();
@@ -258,29 +261,31 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
         }
       }
     });
-    this.unlock_children_subscription = this.unlock_children_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((unlock_children: any) => {
-      for (let i = 0; i < this.datasets.controls.length; i++) {
-        const controls = listFields[i];
-        const dataset_controls = this.datasets.controls[i].controls;
-        if (dataset_controls['name'].value !== this.pk) {
-          const key_fc = _.find(controls, { name: 'key' });
-          const passphrase_fc = _.find(controls, { name: 'passphrase' });
-          const name_text_fc = _.find(controls, { name: 'name_text' });
-          const is_passphrase = dataset_controls['is_passphrase'].value;
-          const hide_key_datasets = this.key_file_fg.value;
-          if (is_passphrase) {
-            name_text_fc.isHidden = !unlock_children;
-            this.setDisabled(passphrase_fc, dataset_controls['passphrase'], !unlock_children, !unlock_children);
-          } else if (hide_key_datasets) {
-            name_text_fc.isHidden = true;
-            this.setDisabled(key_fc, dataset_controls['key'], true, true);
-          } else {
-            name_text_fc.isHidden = !unlock_children;
-            this.setDisabled(key_fc, dataset_controls['key'], !unlock_children, !unlock_children);
+    this.unlock_children_subscription = this.unlock_children_fg.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((unlock_children: any) => {
+        for (let i = 0; i < this.datasets.controls.length; i++) {
+          const controls = listFields[i];
+          const dataset_controls = this.datasets.controls[i].controls;
+          if (dataset_controls['name'].value !== this.pk) {
+            const key_fc = _.find(controls, { name: 'key' });
+            const passphrase_fc = _.find(controls, { name: 'passphrase' });
+            const name_text_fc = _.find(controls, { name: 'name_text' });
+            const is_passphrase = dataset_controls['is_passphrase'].value;
+            const hide_key_datasets = this.key_file_fg.value;
+            if (is_passphrase) {
+              name_text_fc.isHidden = !unlock_children;
+              this.setDisabled(passphrase_fc, dataset_controls['passphrase'], !unlock_children, !unlock_children);
+            } else if (hide_key_datasets) {
+              name_text_fc.isHidden = true;
+              this.setDisabled(key_fc, dataset_controls['key'], true, true);
+            } else {
+              name_text_fc.isHidden = !unlock_children;
+              this.setDisabled(key_fc, dataset_controls['key'], !unlock_children, !unlock_children);
+            }
           }
         }
-      }
-    });
+      });
   }
 
   setDisabled(fieldConfig: FieldConfig, formControl: FormControl, disable: boolean, hide: boolean): void {
@@ -324,7 +329,10 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
       }
     }
     const payload = { key_file: body.key_file, datasets };
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: helptext.fetching_encryption_summary_title }, disableClose: true });
+    const dialogRef = this.dialog.open(EntityJobComponent, {
+      data: { title: helptext.fetching_encryption_summary_title },
+      disableClose: true,
+    });
     dialogRef.componentInstance.setDescription(helptext.fetching_encryption_summary_message + this.pk);
     if (body.key_file && this.subs) {
       const formData: FormData = new FormData();

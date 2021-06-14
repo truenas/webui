@@ -128,7 +128,7 @@ export class AnimationService {
     if (finishState == 'In') {
       startOpacity = 0;
       finishOpacity = 1;
-    } else if (finishState = 'Out') {
+    } else if (finishState == 'Out') {
       startOpacity = 1;
       finishOpacity = 0;
     }
@@ -146,7 +146,7 @@ export class AnimationService {
     if (finishState == 'In') {
       startScale = 0;
       finishScale = 1;
-    } else if (finishState = 'Out') {
+    } else if (finishState == 'Out') {
       startScale = 1;
       finishScale = 0;
     }
@@ -170,7 +170,7 @@ export class AnimationService {
     if (finishState == 'In') {
       startScale = 0;
       finishScale = 1;
-    } else if (finishState = 'Out') {
+    } else if (finishState == 'Out') {
       startScale = 1;
       finishScale = 0;
     }
