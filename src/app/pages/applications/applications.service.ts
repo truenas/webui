@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
-import { Catalog } from 'app/interfaces/catalog.interface';
+import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { WebSocketService } from 'app/services/index';
@@ -23,7 +23,11 @@ export class ApplicationsService {
   }
 
   getAllCatalogItems(): Observable<Catalog[]> {
-    return this.ws.call('catalog.query', [[], { extra: { item_details: true } }]);
+    return this.ws.call('catalog.query', [[], { extra: { cache: true, retrieve_versions: false, item_details: true } }]);
+  }
+
+  getCatalogItem(name: string, catalog: string, train: string): Observable<CatalogApp> {
+    return this.ws.call('catalog.get_item_details', [name, { cache: true, catalog, train }]);
   }
 
   getBindIPChoices(): Observable<any[]> {
