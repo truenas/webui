@@ -68,7 +68,7 @@ export class FormUploadComponent {
         this.dialog.errorReport(T('Error'), error.statusText, error.message);
       });
     } else {
-      this.dialog.Info(T('There is no file'), '', '300px', 'info', true);
+      this.dialog.Info(T('Please make sure to select a file'), '', '300px', 'info', true);
     }
   }
   newMessage(message) {
