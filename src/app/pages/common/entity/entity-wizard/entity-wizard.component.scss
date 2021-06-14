@@ -31,6 +31,6 @@ ul.wizard-ul li {
   overflow: hidden;
 }
 
-.mat-vertical-stepper-content[style*='visibility: visible'] {
+::ng-deep .mat-vertical-stepper-content[style*='visibility: visible'] {
   overflow: visible !important;
 }

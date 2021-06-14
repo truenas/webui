@@ -175,7 +175,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected dialog: MatDialog,
-    private entityFormService: EntityFormService,
+    protected entityFormService: EntityFormService,
   ) {}
 
   preInit(): void {
