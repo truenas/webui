@@ -665,7 +665,7 @@ export class DatasetFormComponent implements FormConfiguration {
             { label: T('POSIX'), value: DatasetAclType.Posix },
           ],
           required: false,
-          value: 'INHERIT',
+          value: DatasetAclType.Inherit,
         },
         {
           type: 'select',
