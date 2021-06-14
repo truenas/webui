@@ -23,6 +23,25 @@ def test_verify_that_a_pool_can_be_encrypted_locked_and_unlocked_with_a_passphra
     """Verify that a pool can be encrypted, locked and unlocked with a passphrase."""
     for file in glob.glob('/tmp/dataset_encrypted_keys*.json'):
         os.remove(file)
+    assert wait_on_element(driver, 5, '//mat-icon[@id="actions_menu_button__encrypted"]', 'clickable')
+    driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__encrypted"]').click()
+    assert wait_on_element(driver, 5, '//button[@ix-auto="action__encrypted_Encryption Options"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="action__encrypted_Encryption Options"]').click()
+    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Encryption Type"]', 'clickable')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Encryption Type"]').click()
+    assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Encryption Type_Key"]', 'clickable')
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Encryption Type_Key"]').click()
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Generate Key"]', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Generate Key"]').click()
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Confirm"]', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Confirm"]').click()
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 10, '//h1[contains(.,"Encryption Options Saved")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 10, '//div[contains(.,"Pools")]')
+    assert wait_on_element(driver, 7, '//mat-panel-title[contains(.,"encrypted")]')
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
@@ -288,7 +307,7 @@ def click_the_power_button_and_click_restart_to_reboot_truenas(driver):
 def wait_for_the_login_ui_to_comeback_then_login(driver):
     """wait for the login UI to comeback then login."""
     assert wait_on_element_disappear(driver, 300, '//mat-card-content[contains(.,"System is restarting")]')
-    assert wait_on_element(driver, 20, '//input[@placeholder="Username"]', 'clickable')
+    assert wait_on_element(driver, 300, '//input[@placeholder="Username"]', 'clickable')
     time.sleep(5)
     assert wait_on_element(driver, 20, '//input[@placeholder="Password"]', 'clickable')
     assert wait_on_element(driver, 7, '//input[@placeholder="Username"]', 'clickable')
