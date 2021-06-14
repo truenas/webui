@@ -28,6 +28,7 @@ import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-
 import { EntityUtils } from '../../../../common/entity/utils';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 @Component({
   selector: 'app-dataset-posix-acl',
@@ -283,6 +284,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
       }
       this.userOptions = userOptions;
 
+      this.uid_fc = _.find(this.fieldConfig, { name: 'uid' });
       this.uid_fc.options = this.userOptions;
     });
 
@@ -293,12 +295,14 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
       }
       this.groupOptions = groupOptions;
 
+      this.gid_fc = _.find(this.fieldConfig, { name: 'gid' });
       this.gid_fc.options = this.groupOptions;
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
+    this.entityForm.formGroup.get('path').setValue(this.path);
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value: any) => {
       if (value === true) {
