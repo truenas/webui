@@ -3,7 +3,7 @@ import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloudcredentials';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -36,7 +36,6 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   protected keyID: number;
   protected isOneColumnForm = true;
   private rowNum: any;
-  private getRow = new Subscription();
   title = helptext.formTitle;
 
   protected selectedProvider = 'S3';
@@ -373,6 +372,24 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               when: [{
                 name: 'provider',
                 value: 'GOOGLE_DRIVE',
+              }],
+            },
+          ],
+        },
+        // google photos
+        {
+          type: 'input',
+          name: 'token-GOOGLE_PHOTOS',
+          placeholder: helptext.token_google_photos.placeholder,
+          tooltip: helptext.token_google_photos.tooltip,
+          required: true,
+          isHidden: true,
+          relation: [
+            {
+              action: RelationAction.Show,
+              when: [{
+                name: 'provider',
+                value: 'GOOGLE_PHOTOS',
               }],
             },
           ],
@@ -1228,17 +1245,20 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
   ];
 
-  constructor(protected router: Router,
+  constructor(
+    protected router: Router,
     protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
     protected cloudcredentialService: CloudCredentialService,
     protected dialog: DialogService,
     protected replicationService: ReplicationService,
-    private modalService: ModalService) {
-    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((row) => {
-      this.rowNum = row;
-      this.getRow.unsubscribe();
-    });
+    private modalService: ModalService,
+  ) {
+    this.modalService.getRow$
+      .pipe(take(1), untilDestroyed(this))
+      .subscribe((row) => {
+        this.rowNum = row;
+      });
     const basicFieldset = _.find(this.fieldSets, { class: 'basic' });
     this.providerField = _.find(basicFieldset.config, { name: 'provider' });
     this.cloudcredentialService.getProviders().pipe(untilDestroyed(this)).subscribe(
