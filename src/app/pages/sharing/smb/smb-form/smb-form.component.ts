@@ -607,7 +607,7 @@ export class SMBFormComponent implements FormConfiguration, OnDestroy {
   }
 
   afpConfirm(): void {
-    const afpControl: any = this.entityForm.formGroup.controls['afp'];
+    const afpControl = this.entityForm.formGroup.controls['afp'];
 
     this.dialog.confirm({
       title: helptext_sharing_smb.afpDialog_title,

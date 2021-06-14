@@ -44,7 +44,7 @@ export const helptext_sharing_smb = {
   placeholder_timemachine: T('Time Machine'),
   tooltip_timemachine: T('Enable Time Machine backups on this share.'),
 
-  placeholder_afp: T('AFP'),
+  placeholder_afp: T('AFP Compatibility'),
   tooltip_afp: T('This controls how the SMB share reads and writes data. Leave unset for the share to behave like a normal SMB share and set for the share to behave like the deprecated Apple Filing Protocol (AFP). This should only be set when this share originated as an AFP sharing configuration. This is not required for pure SMB shares or MacOS SMB clients.'),
   afpDialog_title: T('Warning'),
   afpDialog_message: T('This option controls how metadata and alternate data streams read write to disks. Only enable this when the share configuration was migrated from the deprecated Apple Filing Protocol (AFP). Do not attempt to force a previous AFP share to behave like a pure SMB share or file corruption can occur'),
