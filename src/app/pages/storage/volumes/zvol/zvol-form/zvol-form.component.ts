@@ -584,8 +584,20 @@ export class ZvolFormComponent implements Formconfiguration {
           }
         }
 
-        entityForm.formGroup.controls['readonly'].setValue(pk_dataset[0].readonly.value);
         this.translate.get('Inherit').subscribe((inheritTr) => {
+          const readonly_inherit = [{ label: `${inheritTr} (${pk_dataset[0].readonly.rawvalue})`, value: 'INHERIT' }];
+          const readonly = _.find(this.fieldConfig, { name: 'readonly' });
+          readonly.options = readonly_inherit.concat(readonly.options);
+          if (this.isNew) {
+            entityForm.formGroup.controls['readonly'].setValue('INHERIT');
+          } else {
+            let readonly_value = pk_dataset[0].readonly.value;
+            if (pk_dataset[0].readonly.source === 'DEFAULT' || pk_dataset[0].readonly.source === 'INHERITED') {
+              readonly_value = 'INHERIT';
+            }
+            entityForm.formGroup.controls['readonly'].setValue(readonly_value);
+          }
+
           if (pk_dataset && pk_dataset[0].type === 'FILESYSTEM') {
             this.sync_inherit = [{ label: `${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];
             this.compression_inherit = [{ label: `${inheritTr} (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT' }];
@@ -773,6 +785,9 @@ export class ZvolFormComponent implements Formconfiguration {
     }
     if (data.compression === 'INHERIT') {
       delete (data.compression);
+    }
+    if (data.readonly === 'INHERIT') {
+      delete (data.readonly);
     }
     if (data.deduplication === 'INHERIT') {
       delete (data.deduplication);
