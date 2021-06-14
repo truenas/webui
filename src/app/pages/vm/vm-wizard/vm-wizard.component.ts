@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
 import {
-  FormGroup, Validators, ValidationErrors, FormControl, ValidatorFn,
+  FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import {
-  UntilDestroy, untilDestroyed,
-} from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
@@ -14,7 +12,9 @@ import { catchError, map } from 'rxjs/operators';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { VmBootloader, VmDeviceType, VmTime } from 'app/enums/vm.enum';
+import {
+  VmBootloader, VmCpuMode, VmDeviceType, VmTime,
+} from 'app/enums/vm.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import add_edit_helptext from 'app/helptext/vm/devices/device-add-edit';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
@@ -29,7 +29,7 @@ import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  WebSocketService, NetworkService, StorageService, SystemGeneralService,
+  NetworkService, StorageService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -56,7 +56,7 @@ export class VMWizardComponent implements WizardConfiguration {
   vcpus = 1;
   cores = 1;
   threads = 1;
-  mode: string;
+  mode: VmCpuMode;
   model: string | null;
   private currentStep = 0;
   title = helptext.formTitle;
@@ -226,6 +226,17 @@ export class VMWizardComponent implements WizardConfiguration {
           ],
           value: '',
           isHidden: true,
+          relation: [
+            {
+              action: RelationAction.Show,
+              when: [
+                {
+                  name: 'cpu_mode',
+                  value: VmCpuMode.Custom,
+                },
+              ],
+            },
+          ],
         },
         {
           type: 'input',
@@ -623,6 +634,10 @@ export class VMWizardComponent implements WizardConfiguration {
         this.getFormControlFromFieldName('cpu_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
           this.mode = mode;
           this.summary[T('CPU Mode')] = mode;
+
+          if (mode !== VmCpuMode.Custom) {
+            delete this.summary[T('CPU Model')];
+          }
         });
         this.getFormControlFromFieldName('cpu_model').valueChanges.pipe(untilDestroyed(this)).subscribe((model) => {
           this.model = model;
@@ -985,7 +1000,7 @@ export class VMWizardComponent implements WizardConfiguration {
 
     if (this.productType.includes(ProductType.Scale)) {
       vmPayload['cpu_mode'] = value.cpu_mode;
-      vmPayload['cpu_model'] = value.cpu_model === '' ? null : value.cpu_model;
+      vmPayload['cpu_model'] = (value.cpu_model === '' || value.cpu_mode !== VmCpuMode.Custom) ? null : value.cpu_model;
     }
 
     vmPayload['memory'] = value.memory;

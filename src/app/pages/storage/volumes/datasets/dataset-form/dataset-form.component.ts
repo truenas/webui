@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { AclType } from 'app/enums/acl-type.enum';
+import { AclMode, AclType } from 'app/enums/acl-type.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -32,7 +32,7 @@ interface DatasetFormData {
   compression: string;
   atime: string;
   share_type: string;
-  aclmode?: string; // -- not available yet in SCALE
+  aclmode?: string;
   refquota: number;
   refquota_unit?: string;
   quota: number;
@@ -641,9 +641,12 @@ export class DatasetFormComponent implements FormConfiguration {
           name: 'aclmode',
           placeholder: helptext.dataset_form_aclmode_placeholder,
           tooltip: helptext.dataset_form_aclmode_tooltip,
-          options: [{ label: 'Passthrough', value: 'PASSTHROUGH' },
-            { label: 'Restricted', value: 'RESTRICTED' }],
-          value: 'PASSTHROUGH',
+          options: [
+            { label: T('Passthrough'), value: AclMode.Passthrough },
+            { label: T('Restricted'), value: AclMode.Restricted },
+            { label: T('Discard'), value: AclMode.Discard },
+          ],
+          value: AclMode.Passthrough,
         },
         {
           type: 'select',
@@ -720,7 +723,7 @@ export class DatasetFormComponent implements FormConfiguration {
     'refquota_warning_inherit',
     'refquota_critical_inherit',
     'special_small_block_size',
-    // 'aclmode' -- not yet available in SCALE
+    'aclmode',
 
   ];
 
@@ -908,16 +911,8 @@ export class DatasetFormComponent implements FormConfiguration {
   ) { }
 
   afterInit(entityForm: EntityFormComponent): void {
-    // aclmode not yet available in SCALE
     this.productType = window.localStorage.getItem('product_type') as ProductType;
     const aclControl = entityForm.formGroup.get('aclmode');
-    if (!this.productType.includes(ProductType.Scale)) {
-      this.advanced_field.push('aclmode');
-    } else {
-      aclControl.disable();
-      _.find(this.fieldConfig, { name: 'aclmode' }).isHidden = true;
-    }
-    ///
     this.entityForm = entityForm;
     if (this.productType.includes(ProductType.Enterprise)) {
       this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
@@ -962,30 +957,19 @@ export class DatasetFormComponent implements FormConfiguration {
 
     entityForm.formGroup.get('share_type').valueChanges.pipe(filter((shareType) => !!shareType && entityForm.isNew)).pipe(untilDestroyed(this)).subscribe((shareType) => {
       const caseControl = entityForm.formGroup.get('casesensitivity');
-      if (!this.productType.includes(ProductType.Scale)) {
-        if (shareType === 'SMB') {
-          aclControl.setValue('RESTRICTED');
-          caseControl.setValue('INSENSITIVE');
-          aclControl.disable();
-          caseControl.disable();
-        } else {
-          aclControl.setValue('PASSTHROUGH');
-          caseControl.setValue('SENSITIVE');
-          aclControl.enable();
-          caseControl.enable();
-        }
-        aclControl.updateValueAndValidity();
-        caseControl.updateValueAndValidity();
+      if (shareType === 'SMB') {
+        aclControl.setValue(AclMode.Restricted);
+        caseControl.setValue('INSENSITIVE');
+        aclControl.disable();
+        caseControl.disable();
       } else {
-        if (shareType === 'SMB') {
-          caseControl.setValue('INSENSITIVE');
-          caseControl.disable();
-        } else {
-          caseControl.setValue('SENSITIVE');
-          caseControl.enable();
-        }
-        caseControl.updateValueAndValidity();
+        aclControl.setValue(AclMode.Passthrough);
+        caseControl.setValue('SENSITIVE');
+        aclControl.enable();
+        caseControl.enable();
       }
+      aclControl.updateValueAndValidity();
+      caseControl.updateValueAndValidity();
     });
 
     this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'];
@@ -1385,7 +1369,7 @@ export class DatasetFormComponent implements FormConfiguration {
       name: this.getFieldValueOrRaw(wsResponse.name),
       atime: this.getFieldValueOrRaw(wsResponse.atime),
       share_type: this.getFieldValueOrRaw(wsResponse.share_type),
-      // aclmode: this.getFieldValueOrRaw(wsResponse.aclmode), -- not available yet in SCALE
+      aclmode: this.getFieldValueOrRaw(wsResponse.aclmode),
       casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
       comments: wsResponse.comments === undefined ? wsResponse.comments : (wsResponse.comments.source === 'LOCAL' ? wsResponse.comments.value : undefined),
       compression: this.getFieldValueOrRaw(wsResponse.compression),
@@ -1410,10 +1394,6 @@ export class DatasetFormComponent implements FormConfiguration {
       sync: this.getFieldValueOrRaw(wsResponse.sync),
       special_small_block_size: this.OrigHuman['special_small_block_size'],
     };
-
-    if (!this.productType.includes(ProductType.Scale)) {
-      returnValue.aclmode = this.getFieldValueOrRaw(wsResponse.aclmode);
-    }
 
     if (
       sizeValues['quota']
@@ -1560,9 +1540,13 @@ export class DatasetFormComponent implements FormConfiguration {
       const parentPath = `/mnt/${this.parent}`;
       this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((res) => {
         if (res === false) {
-          this.dialogService.confirm(helptext.afterSubmitDialog.title,
-            helptext.afterSubmitDialog.message, true, helptext.afterSubmitDialog.actionBtn, false, '', '', '', '',
-            false, helptext.afterSubmitDialog.cancelBtn).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
+          this.dialogService.confirm({
+            title: helptext.afterSubmitDialog.title,
+            message: helptext.afterSubmitDialog.message,
+            hideCheckBox: true,
+            buttonMsg: helptext.afterSubmitDialog.actionBtn,
+            cancelMsg: helptext.afterSubmitDialog.cancelBtn,
+          }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
             if (res) {
               this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe(({ acltype }) => {
                 if (acltype === AclType.Posix1e) {
