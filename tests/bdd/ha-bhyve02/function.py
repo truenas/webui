@@ -32,7 +32,14 @@ def wait_on_element(driver, wait, xpath, condition=None):
             return True
         except TimeoutException:
             return False
-    if condition == 'presence':
+    elif condition == 'inputable':
+        time.sleep(0.5)
+        try:
+            WebDriverWait(driver, wait).until(ec.element_to_be_clickable((By.XPATH, xpath)))
+            return True
+        except TimeoutException:
+            return False
+    elif condition == 'presence':
         try:
             WebDriverWait(driver, wait).until(ec.presence_of_element_located((By.XPATH, xpath)))
             return True
