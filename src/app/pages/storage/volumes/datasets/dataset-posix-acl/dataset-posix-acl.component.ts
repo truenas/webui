@@ -2,6 +2,7 @@ import {
   Component,
 } from '@angular/core';
 import {
+  FormArray,
   FormControl,
   FormGroup,
 } from '@angular/forms';
@@ -379,7 +380,7 @@ export class DatasetPosixAclComponent implements FormConfiguration {
         this.handleEmptyACL();
       }, 1000);
     }
-    return { aces: [] as any };
+    return { aces: data.acl as any };
   }
 
   handleEmptyACL(): void {
@@ -450,11 +451,15 @@ export class DatasetPosixAclComponent implements FormConfiguration {
         }
       }
       const propName = 'aces';
-      const aces_fg = entityForm.formGroup.controls[propName] as FormGroup;
-      if (aces_fg.controls[i] === undefined) {
+      const aces_fg = entityForm.formGroup.get(propName) as FormArray;
+      if (aces_fg.controls.constructor.name === 'Object' || !aces_fg.controls.length) {
+        aces_fg.controls = [];
+      }
+      if (!aces_fg.controls[i]) {
         // add controls;
         const templateListField = _.cloneDeep(_.find(this.fieldConfig, { name: propName }).templateListField);
-        (aces_fg as any).push(this.entityFormService.createFormGroup(templateListField));
+        const formGroup = this.entityFormService.createFormGroup(templateListField);
+        aces_fg.push(formGroup);
         this.aces_fc.listFields.push(templateListField);
       }
 
