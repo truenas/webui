@@ -1347,56 +1347,13 @@ export class DatasetFormComponent implements Formconfiguration {
   }
 
   encryptionEnabledConf(enabled: boolean, generate_key: boolean, inherit: boolean, passphrase_parent: boolean) {
-    const disable = !enabled;
-    if (enabled && inherit) {
-      _.find(this.fieldConfig, { name: 'inherit_encryption' }).isHidden = false;
-      _.find(this.fieldConfig, { name: 'inherit_encryption' }).disabled = false;
-
-      _.find(this.fieldConfig, { name: 'encryption_type' }).isHidden = false;
-      _.find(this.fieldConfig, { name: 'encryption_type' }).disabled = false;
-
-      _.find(this.fieldConfig, { name: 'key' }).isHidden = false;
-      _.find(this.fieldConfig, { name: 'key' }).disabled = false;
-
-      _.find(this.fieldConfig, { name: 'generate_key' }).isHidden = false;
-      _.find(this.fieldConfig, { name: 'generate_key' }).disabled = false;
-
-      _.find(this.fieldConfig, { name: 'algorithm' }).isHidden = false;
-      _.find(this.fieldConfig, { name: 'algorithm' }).disabled = false;
-
-      _.find(this.fieldConfig, { name: 'passphrase' }).isHidden = false;
-      _.find(this.fieldConfig, { name: 'passphrase' }).disabled = false;
-
-      _.find(this.fieldConfig, { name: 'confirm_passphrase' }).isHidden = false;
-      _.find(this.fieldConfig, { name: 'confirm_passphrase' }).disabled = false;
-
-      _.find(this.fieldConfig, { name: 'pbkdf2iters' }).isHidden = false;
-      _.find(this.fieldConfig, { name: 'pbkdf2iters' }).disabled = false;
+    if (enabled) {
+      this.entityForm.setDisabled('inherit_encryption', false, false);
     } else {
-      _.find(this.fieldConfig, { name: 'inherit_encryption' }).isHidden = disable;
-      _.find(this.fieldConfig, { name: 'inherit_encryption' }).disabled = disable;
-
-      _.find(this.fieldConfig, { name: 'encryption_type' }).isHidden = disable;
-      _.find(this.fieldConfig, { name: 'encryption_type' }).disabled = disable;
-
-      _.find(this.fieldConfig, { name: 'algorithm' }).isHidden = disable;
-      _.find(this.fieldConfig, { name: 'algorithm' }).disabled = disable;
-
-      if (this.encryption_type === 'key') {
-        _.find(this.fieldConfig, { name: 'key' }).isHidden = !(enabled && !generate_key);
-        _.find(this.fieldConfig, { name: 'key' }).disabled = !(enabled && !generate_key);
-
-        _.find(this.fieldConfig, { name: 'generate_key' }).isHidden = disable;
-        _.find(this.fieldConfig, { name: 'generate_key' }).disabled = disable;
-      } else {
-        _.find(this.fieldConfig, { name: 'passphrase' }).isHidden = disable;
-        _.find(this.fieldConfig, { name: 'passphrase' }).disabled = disable;
-
-        _.find(this.fieldConfig, { name: 'confirm_passphrase' }).isHidden = disable;
-        _.find(this.fieldConfig, { name: 'confirm_passphrase' }).disabled = disable;
-
-        _.find(this.fieldConfig, { name: 'pbkdf2iters' }).isHidden = disable;
-        _.find(this.fieldConfig, { name: 'pbkdf2iters' }).disabled = disable;
+      this.entityForm.setDisabled('inherit_encryption', true, true);
+      const all_encryption_fields = this.encryption_fields.concat(this.key_fields, this.passphrase_fields);
+      for (let i = 0; i < all_encryption_fields.length; i++) {
+        this.entityForm.setDisabled(all_encryption_fields[i], true, true);
       }
     }
 
