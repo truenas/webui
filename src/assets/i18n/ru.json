@@ -615,6 +615,7 @@
   "Overview": "",
   "PASSPHRASE": "",
   "PCI Passthru Device": "",
+  "POSIX": "",
   "PULL": "",
   "PUSH": "",
   "Pair this certificate's public key with the Certificate Authority private key used to sign this certificate.": "",

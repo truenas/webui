@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AclType } from 'app/enums/acl-type.enum';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
@@ -202,8 +203,9 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
+    entityEdit.formGroup.get('id').setValue(this.datasetPath);
     this.storageService.filesystemStat(this.datasetPath).subscribe((stat) => {
       this.datasetMode = stat.mode.toString(8).substring(2, 5);
       entityEdit.formGroup.controls['mode'].setValue(this.datasetMode);

@@ -23,9 +23,11 @@ import { T } from '../../../../../translate-marker';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../../common/entity/utils';
+import { DatasetAclType } from 'app/enums/dataset-acl-type.enum';
 
 interface DatasetFormData {
   name: string;
+  acltype?: string;
   comments: string;
   sync: string;
   compression: string;
@@ -654,6 +656,19 @@ export class DatasetFormComponent implements FormConfiguration {
         },
         {
           type: 'select',
+          name: 'acltype',
+          placeholder: T('ACL Type'),
+          options: [
+            { label: T('Inherit'), value: DatasetAclType.Inherit },
+            { label: T('Off'), value: DatasetAclType.Off },
+            { label: T('NFSv4'), value: DatasetAclType.Nfsv4 },
+            { label: T('POSIX'), value: DatasetAclType.Posix },
+          ],
+          required: false,
+          value: DatasetAclType.Inherit,
+        },
+        {
+          type: 'select',
           name: 'casesensitivity',
           placeholder: helptext.dataset_form_casesensitivity_placeholder,
           tooltip: helptext.dataset_form_casesensitivity_tooltip,
@@ -727,8 +742,8 @@ export class DatasetFormComponent implements FormConfiguration {
     'refquota_warning_inherit',
     'refquota_critical_inherit',
     'special_small_block_size',
+    'acltype',
     'aclmode',
-
   ];
 
   encryption_fields: any[] = [
@@ -1366,6 +1381,8 @@ export class DatasetFormComponent implements FormConfiguration {
       name: this.getFieldValueOrRaw(wsResponse.name),
       atime: this.getFieldValueOrRaw(wsResponse.atime),
       share_type: this.getFieldValueOrRaw(wsResponse.share_type),
+      // aclmode: this.getFieldValueOrRaw(wsResponse.aclmode), -- not available yet in SCALE
+      acltype: this.getFieldValueOrRaw(wsResponse.acltype),
       aclmode: this.getFieldValueOrRaw(wsResponse.aclmode),
       casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
       comments: wsResponse.comments === undefined ? wsResponse.comments : (wsResponse.comments.source === 'LOCAL' ? wsResponse.comments.value : undefined),
