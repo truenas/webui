@@ -884,30 +884,34 @@ export class DatasetAclComponent implements FormConfiguration {
   }
 
   loadMoreOptions(length: number, parent: any, searchText: string, config: any): void {
-    (parent.userService as UserService).userQueryDSCache(searchText, length).pipe(untilDestroyed(this)).subscribe((items) => {
-      const users: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
-      if (searchText == '') {
-        config.options = config.options.concat(users);
-      } else {
-        config.searchOptions = config.searchOptions.concat(users);
-      }
-    });
+    (parent.userService as UserService).userQueryDSCache(searchText, length)
+      .pipe(untilDestroyed(this))
+      .subscribe((items) => {
+        const users: Option[] = [];
+        for (let i = 0; i < items.length; i++) {
+          users.push({ label: items[i].username, value: items[i].username });
+        }
+        if (searchText == '') {
+          config.options = config.options.concat(users);
+        } else {
+          config.searchOptions = config.searchOptions.concat(users);
+        }
+      });
   }
 
   loadMoreGroupOptions(length: number, parent: any, searchText: string, config: any): void {
-    parent.userService.groupQueryDSCache(searchText, false, length).pipe(untilDestroyed(this)).subscribe((items: any[]) => {
-      const groups: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        groups.push({ label: items[i].group, value: items[i].group });
-      }
-      if (searchText == '') {
-        config.options = config.options.concat(groups);
-      } else {
-        config.searchOptions = config.searchOptions.concat(groups);
-      }
-    });
+    parent.userService.groupQueryDSCache(searchText, false, length)
+      .pipe(untilDestroyed(this))
+      .subscribe((items) => {
+        const groups: Option[] = [];
+        for (let i = 0; i < items.length; i++) {
+          groups.push({ label: items[i].group, value: items[i].group });
+        }
+        if (searchText == '') {
+          config.options = config.options.concat(groups);
+        } else {
+          config.searchOptions = config.searchOptions.concat(groups);
+        }
+      });
   }
 }

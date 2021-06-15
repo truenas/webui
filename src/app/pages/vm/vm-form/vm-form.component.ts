@@ -397,7 +397,9 @@ export class VmFormComponent implements FormConfiguration {
         }
       }
       if (!found) {
-        const gpuPciDevices = currentGpu.devices.filter((gpuPciDevice) => !prevVmPciSlots.includes(gpuPciDevice.vm_pci_slot));
+        const gpuPciDevices = currentGpu.devices.filter((gpuPciDevice) => {
+          return !prevVmPciSlots.includes(gpuPciDevice.vm_pci_slot);
+        });
         const gpuPciDevicesConverted = gpuPciDevices.map((pptDev) => ({
           dtype: VmDeviceType.Pci,
           vm: this.rawVmData.id,

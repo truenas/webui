@@ -430,7 +430,10 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               const address = alias['address'];
               const failover_address = alias['failover_address'];
               const virtual_address = alias['failover_virtual_address'];
-              if (!(address && failover_address && virtual_address) && !(!address && !failover_address && !virtual_address)) {
+              if (
+                !(address && failover_address && virtual_address)
+                && !(!address && !failover_address && !virtual_address)
+              ) {
                 mismatch_found = true;
               }
               if (isCidr.v6(address)

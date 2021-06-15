@@ -688,9 +688,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
             message: helptext.tcDeregisterDialog.message,
             confirmBtnMsg: helptext.tcDeregisterDialog.confirmBtnMsg,
           }).pipe(untilDestroyed(this)).subscribe((res) => {
-            if (res) {
-              self.loader.open();
-              self.ws.call(self.tc_updateCall, [{ api_key: null, enabled: false }]).pipe(untilDestroyed(this)).subscribe(
+            if (!res) {
+              return;
+            }
+
+            self.loader.open();
+            self.ws.call(self.tc_updateCall, [{ api_key: null, enabled: false }])
+              .pipe(untilDestroyed(this))
+              .subscribe(
                 () => {
                   self.loader.close();
                   updateDialog.dialogRef.close();
@@ -706,7 +711,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
                   new EntityUtils().handleWSError(updateDialog.parent, err, updateDialog.parent.dialogService);
                 },
               );
-            }
           });
         },
       }],

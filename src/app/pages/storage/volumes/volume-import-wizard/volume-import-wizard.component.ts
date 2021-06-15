@@ -223,7 +223,10 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
     }));
     formData.append('file', this.subs.file);
 
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: helptext.decrypt_disks_title }, disableClose: true });
+    const dialogRef = this.dialog.open(
+      EntityJobComponent,
+      { data: { title: helptext.decrypt_disks_title }, disableClose: true },
+    );
     dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close(false);
@@ -237,7 +240,10 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   }
 
   getImportableDisks(): void {
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: helptext.find_pools_title }, disableClose: true });
+    const dialogRef = this.dialog.open(
+      EntityJobComponent,
+      { data: { title: helptext.find_pools_title }, disableClose: true },
+    );
     dialogRef.componentInstance.setDescription(helptext.find_pools_msg);
     dialogRef.componentInstance.setCall('pool.import_find', []);
     dialogRef.componentInstance.submit();

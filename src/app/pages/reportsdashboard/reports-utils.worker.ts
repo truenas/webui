@@ -319,7 +319,9 @@ function processCommands(list: any[]): any {
   let output: any;
   list.forEach((item) => {
     const input = item.input == '--pipe' || item.input == '|' ? output : item.input;
-    output = item.options ? (commands as any)[item.command](input, item.options) : (commands as any)[item.command](input);
+    output = item.options
+      ? (commands as any)[item.command](input, item.options)
+      : (commands as any)[item.command](input);
   });
 
   return output;

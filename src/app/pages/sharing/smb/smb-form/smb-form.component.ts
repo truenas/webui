@@ -451,7 +451,7 @@ export class SMBFormComponent implements FormConfiguration {
             this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
               switchMap((isTrivialACL) => {
                 let nextStep;
-                /* If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations */
+                // If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations
                 if (!isTrivialACL || !datasetId.includes('/') || this.productType.includes(ProductType.Scale)) {
                   nextStep = combineLatest([of(false), of({})]);
                 } else {

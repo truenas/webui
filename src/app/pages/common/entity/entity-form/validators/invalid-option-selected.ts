@@ -9,6 +9,8 @@ export function selectedOptionValidator(validOptions: Promise<Option[]>): AsyncV
         return v;
       }
     });
-    return selectedInvalidOptions.length > 0 ? { invalidOptionSelected: true, invalidOptins: selectedInvalidOptions } : null;
+    return selectedInvalidOptions.length > 0
+      ? { invalidOptionSelected: true, invalidOptins: selectedInvalidOptions }
+      : null;
   });
 }

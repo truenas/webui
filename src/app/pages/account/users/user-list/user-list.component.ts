@@ -173,14 +173,16 @@ export class UserListComponent implements EntityTableConfig, OnDestroy {
             customSubmit(entityDialog: EntityDialogComponent) {
               entityDialog.dialogRef.close(true);
               self.loader.open();
-              self.ws.call(self.wsDelete, [users_edit.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(() => {
-                self.entityList.getData();
-                self.loader.close();
-              },
-              (err) => {
-                new EntityUtils().handleWSError(self, err, self.dialogService);
-                self.loader.close();
-              });
+              self.ws.call(self.wsDelete, [users_edit.id, entityDialog.formValue])
+                .pipe(untilDestroyed(this))
+                .subscribe(() => {
+                  self.entityList.getData();
+                  self.loader.close();
+                },
+                (err) => {
+                  new EntityUtils().handleWSError(self, err, self.dialogService);
+                  self.loader.close();
+                });
             },
           };
           this.dialogService.dialogForm(conf);

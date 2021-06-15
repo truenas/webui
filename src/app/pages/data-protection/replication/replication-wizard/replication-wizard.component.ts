@@ -856,40 +856,47 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       const credentialName = 'ssh_credentials_' + i;
       const datasetName = i === 'source' ? 'source_datasets' : 'target_dataset';
       const datasetFrom = datasetName + '_from';
-      this.entityWizard.formArray.get([0]).get(datasetFrom).valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
-        if (value === DatasetSource.Remote) {
-          if (datasetFrom === 'source_datasets_from') {
-            this.entityWizard.formArray.get([0]).get('target_dataset_from').setValue(DatasetSource.Local);
-            this.setDisable('target_dataset_from', true, false, 0);
+      this.entityWizard.formArray.get([0]).get(datasetFrom).valueChanges
+        .pipe(untilDestroyed(this))
+        .subscribe((value: any) => {
+          if (value === DatasetSource.Remote) {
+            if (datasetFrom === 'source_datasets_from') {
+              this.entityWizard.formArray.get([0]).get('target_dataset_from').setValue(DatasetSource.Local);
+              this.setDisable('target_dataset_from', true, false, 0);
+            }
+            const disabled = !this.entityWizard.formArray.get([0]).get(credentialName).value;
+            this.setDisable(datasetName, disabled, false, 0);
+          } else {
+            if (datasetFrom === 'source_datasets_from' && this.entityWizard.formArray.get([0]).get('target_dataset_from').disabled) {
+              this.setDisable('target_dataset_from', false, false, 0);
+            }
+            this.setDisable(datasetName, false, false, 0);
           }
-          const disabled = !this.entityWizard.formArray.get([0]).get(credentialName).value;
-          this.setDisable(datasetName, disabled, false, 0);
-        } else {
-          if (datasetFrom === 'source_datasets_from' && this.entityWizard.formArray.get([0]).get('target_dataset_from').disabled) {
-            this.setDisable('target_dataset_from', false, false, 0);
-          }
-          this.setDisable(datasetName, false, false, 0);
-        }
-      });
+        });
 
-      this.entityWizard.formArray.get([0]).get(credentialName).valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
-        if (value === 'NEW' && this.entityWizard.formArray.get([0]).get(datasetFrom).value === DatasetSource.Remote) {
-          this.createSSHConnection(credentialName);
-          this.setDisable(datasetName, false, false, 0);
-        } else {
-          const fieldConfig = i === 'source' ? this.source_fieldSet.config : this.target_fieldSet.config;
-          const explorerComponent = _.find(fieldConfig, { name: datasetName }).customTemplateStringOptions.explorerComponent;
-          if (explorerComponent) {
-            explorerComponent.nodes = [{
-              mountpoint: explorerComponent.config.initial,
-              name: explorerComponent.config.initial,
-              hasChildren: true,
-            }];
-            this.entityWizard.formArray.get([0]).get(datasetName).setValue('');
+      this.entityWizard.formArray.get([0]).get(credentialName).valueChanges
+        .pipe(untilDestroyed(this))
+        .subscribe((value: any) => {
+          if (value === 'NEW' && this.entityWizard.formArray.get([0]).get(datasetFrom).value === DatasetSource.Remote) {
+            this.createSSHConnection(credentialName);
+            this.setDisable(datasetName, false, false, 0);
+          } else {
+            const fieldConfig = i === 'source' ? this.source_fieldSet.config : this.target_fieldSet.config;
+            const explorerComponent = _.find(
+              fieldConfig,
+              { name: datasetName },
+            ).customTemplateStringOptions.explorerComponent;
+            if (explorerComponent) {
+              explorerComponent.nodes = [{
+                mountpoint: explorerComponent.config.initial,
+                name: explorerComponent.config.initial,
+                hasChildren: true,
+              }];
+              this.entityWizard.formArray.get([0]).get(datasetName).setValue('');
+            }
+            this.setDisable(datasetName, false, false, 0);
           }
-          this.setDisable(datasetName, false, false, 0);
-        }
-      });
+        });
     }
 
     this.entityWizard.formArray.get([0]).get('recursive').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
