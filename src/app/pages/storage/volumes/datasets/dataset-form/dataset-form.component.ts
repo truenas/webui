@@ -1133,7 +1133,7 @@ export class DatasetFormComponent implements Formconfiguration {
                     this.entityForm.setDisabled(all_encryption_fields[i], inherit, inherit);
                   }
                 }
-                if (!inherit) {
+                if (encryption_fg.value && !inherit) {
                   this.entityForm.setDisabled('encryption_type', inherit, inherit);
                   this.entityForm.setDisabled('algorithm', inherit, inherit);
                   if (this.passphrase_parent) { // keep it hidden if it passphrase
@@ -1158,6 +1158,8 @@ export class DatasetFormComponent implements Formconfiguration {
                         this.encryptionEnabledConf(false, this.generate_key, this.inherit_encryption, this.passphrase_parent);
                       }
                     });
+                  } else {
+                    this.encryptionEnabledConf(false, this.generate_key, this.inherit_encryption, this.passphrase_parent);
                   }
                 } else {
                   this.encryptionEnabledConf(encryption, this.generate_key, this.inherit_encryption, this.passphrase_parent);
