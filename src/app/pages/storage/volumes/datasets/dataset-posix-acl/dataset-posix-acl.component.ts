@@ -452,7 +452,7 @@ export class DatasetPosixAclComponent implements FormConfiguration {
       }
       const propName = 'aces';
       const aces_fg = entityForm.formGroup.get(propName) as FormArray;
-      if (aces_fg.controls.constructor.name === 'Object' || !aces_fg.controls.length) {
+      if (!Array.isArray(aces_fg.controls) || !aces_fg.controls.length) {
         aces_fg.controls = [];
       }
       if (!aces_fg.controls[i]) {
