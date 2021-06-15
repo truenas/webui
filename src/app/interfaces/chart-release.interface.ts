@@ -30,12 +30,12 @@ export interface Resources {
 }
 
 export interface ChartReleaseCreate {
-  'values': { [key: string]: string };
-  'catalog': string;
-  'item': string;
-  'release_name': string;
-  'train': string;
-  'version': string;
+  values: { [key: string]: string };
+  catalog: string;
+  item: string;
+  release_name: string;
+  train: string;
+  version: string;
 }
 
 export interface ChartReleaseCreateResponse {
