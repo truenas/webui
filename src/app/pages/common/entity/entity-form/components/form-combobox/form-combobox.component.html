@@ -19,9 +19,8 @@ ix-auto ix-auto-type="combobox" ix-auto-identifier="{{config.placeholder}}">
 		  	[formControlName]="config.name"
 		  	[readonly]="config.readonly"
         [required]="config.required"
-        (keyup)="updateSearchOptions($event.target.value)"
+        (keyup)="search($event.target.value)"
         [matAutocomplete]="autoComplete"
-        [(ngModel)]="searchText"
       >
         <span *ngIf="hasValue() && !config.readonly" class="reset-input">
 					<mat-icon (click)="resetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
@@ -41,8 +40,8 @@ ix-auto ix-auto-type="combobox" ix-auto-identifier="{{config.placeholder}}">
     <mat-menu #options [class]="'combo-box-menu'">
       <ng-container *ngFor="let option of config.options">
         <button mat-menu-item (click)="onChangeOption(option.value)"
-          ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}" 
-          [class.text-wrap]="config.enableTextWrapForOptions" 
+          ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}"
+          [class.text-wrap]="config.enableTextWrapForOptions"
           class="{{option.sticky ? 'sticky-' + option.sticky : ''}}">
           <span>{{ option.label }}</span>
         </button>

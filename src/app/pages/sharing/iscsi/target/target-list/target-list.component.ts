@@ -74,7 +74,15 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
   doAdd(rowId: string = null): void {
     this.modalService.open(
       'slide-in-form',
-      new TargetFormComponent(this.router, this.aroute, this.iscsiService, this.loader, this.translate, this.ws, this.modalService),
+      new TargetFormComponent(
+        this.router,
+        this.aroute,
+        this.iscsiService,
+        this.loader,
+        this.translate,
+        this.ws,
+        this.modalService,
+      ),
       rowId,
     );
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
