@@ -26,6 +26,7 @@ export class FormComboboxComponent implements Field, OnDestroy {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
+  searchText = '';
   searchTextChanged = new Subject<string>();
   searchSubscription: Subscription;
 
@@ -39,6 +40,7 @@ export class FormComboboxComponent implements Field, OnDestroy {
       debounceTime(250),
       distinctUntilChanged(),
     ).subscribe((query) => {
+      this.searchText = query;
       this.updateSearchOptions(query);
     });
   }
