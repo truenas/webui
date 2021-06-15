@@ -163,7 +163,10 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
         if (res === otherCtrl.value) {
           if (!ctrl.hasError('manualValidateError')) {
             if (errors === null) {
-              errors = { manualValidateError: true, manualValidateErrorMsg: helptext_sharing_iscsi.authaccess_error_duplicate_secrets };
+              errors = {
+                manualValidateError: true,
+                manualValidateErrorMsg: helptext_sharing_iscsi.authaccess_error_duplicate_secrets,
+              };
             } else {
               errors['manualValidateError'] = true;
               errors['manualValidateErrorMsg'] = helptext_sharing_iscsi.authaccess_error_duplicate_secrets;

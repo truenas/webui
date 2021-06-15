@@ -381,11 +381,21 @@ export class ChartReleasesComponent implements OnInit {
   edit(name: string): void {
     const catalogApp = this.chartItems[name];
     if (catalogApp && catalogApp.chart_name != ixChartApp) {
-      const chartFormComponent = new ChartFormComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
+      const chartFormComponent = new ChartFormComponent(
+        this.mdDialog,
+        this.dialogService,
+        this.modalService,
+        this.appService,
+      );
       chartFormComponent.setTitle(catalogApp.chart_name);
       this.modalService.open('slide-in-form', chartFormComponent, name);
     } else {
-      const chartReleaseForm = new ChartReleaseEditComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
+      const chartReleaseForm = new ChartReleaseEditComponent(
+        this.mdDialog,
+        this.dialogService,
+        this.modalService,
+        this.appService,
+      );
       this.modalService.open('slide-in-form', chartReleaseForm, name);
     }
   }

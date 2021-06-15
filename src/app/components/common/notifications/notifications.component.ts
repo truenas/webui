@@ -21,8 +21,11 @@ export class NotificationsComponent implements OnInit {
   dismissedNotifications: NotificationAlert[] = [];
   ngDateFormat = 'yyyy-MM-dd HH:mm:ss';
 
-  constructor(private router: Router, private notificationsService: NotificationsService, protected localeService: LocaleService) {
-  }
+  constructor(
+    private router: Router,
+    private notificationsService: NotificationsService,
+    protected localeService: LocaleService,
+  ) {}
 
   ngOnInit(): void {
     this.initData();

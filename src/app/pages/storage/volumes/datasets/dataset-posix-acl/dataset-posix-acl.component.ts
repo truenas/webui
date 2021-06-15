@@ -660,16 +660,18 @@ export class DatasetPosixAclComponent implements FormConfiguration {
   }
 
   loadMoreGroupOptions(length: number, parent: any, searchText: string, config: FieldConfig): void {
-    (parent.userService as UserService).groupQueryDSCache(searchText, false, length).pipe(untilDestroyed(this)).subscribe((groups) => {
-      const groupOptions: Option[] = [];
-      for (let i = 0; i < groups.length; i++) {
-        groupOptions.push({ label: groups[i].group, value: groups[i].group });
-      }
-      if (searchText == '') {
-        config.options = config.options.concat(groupOptions);
-      } else {
-        config.searchOptions = config.searchOptions.concat(groupOptions);
-      }
-    });
+    (parent.userService as UserService).groupQueryDSCache(searchText, false, length)
+      .pipe(untilDestroyed(this))
+      .subscribe((groups) => {
+        const groupOptions: Option[] = [];
+        for (let i = 0; i < groups.length; i++) {
+          groupOptions.push({ label: groups[i].group, value: groups[i].group });
+        }
+        if (searchText == '') {
+          config.options = config.options.concat(groupOptions);
+        } else {
+          config.searchOptions = config.searchOptions.concat(groupOptions);
+        }
+      });
   }
 }

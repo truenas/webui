@@ -83,7 +83,8 @@ export class FieldRelationService {
           if (index > 0 && relGroup.connective === RelationConnection.Or && toBeDisabled) {
             return true;
           }
-          return this.checkValueConditionIsTrue(rel.value, controlValue, rel.operator) || this.checkStatusConditionIsTrue(rel, control);
+          return this.checkValueConditionIsTrue(rel.value, controlValue, rel.operator)
+            || this.checkStatusConditionIsTrue(rel, control);
         }
 
         if (hasControlValue && relGroup.action === enable_action) {
@@ -93,7 +94,8 @@ export class FieldRelationService {
           if (index > 0 && relGroup.connective === RelationConnection.Or && !toBeDisabled) {
             return false;
           }
-          return !(this.checkValueConditionIsTrue(rel.value, controlValue, rel.operator) || this.checkStatusConditionIsTrue(rel, control));
+          return !(this.checkValueConditionIsTrue(rel.value, controlValue, rel.operator)
+            || this.checkStatusConditionIsTrue(rel, control));
         }
 
         return false;

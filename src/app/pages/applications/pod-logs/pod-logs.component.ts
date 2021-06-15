@@ -255,11 +255,13 @@ export class PodLogsComponent implements OnInit {
     ).pipe(untilDestroyed(this)).subscribe((res: any) => {
       self.loader.close();
       const url = res[1];
-      self.storageService.streamDownloadFile(self.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file: Blob) => {
-        if (res !== null && res !== '') {
-          self.storageService.downloadBlob(file, fileName);
-        }
-      });
+      self.storageService.streamDownloadFile(self.http, url, fileName, mimetype)
+        .pipe(untilDestroyed(this))
+        .subscribe((file: Blob) => {
+          if (res !== null && res !== '') {
+            self.storageService.downloadBlob(file, fileName);
+          }
+        });
     }, (e: any) => {
       self.loader.close();
       new EntityUtils().handleWSError(self, e, self.dialogService);

@@ -414,7 +414,10 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   }
 
   get zonedTime(): Date {
-    return dateFnsTz.utcToZonedTime(dateFnsTz.zonedTimeToUtc(new Date(), Intl.DateTimeFormat().resolvedOptions().timeZone), this.timezone);
+    return dateFnsTz.utcToZonedTime(
+      dateFnsTz.zonedTimeToUtc(new Date(), Intl.DateTimeFormat().resolvedOptions().timeZone),
+      this.timezone,
+    );
   }
 
   formatDateToTz(date: Date, timezone?: string): string {

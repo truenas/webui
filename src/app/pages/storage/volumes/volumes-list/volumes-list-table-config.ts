@@ -258,7 +258,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
           },
         });
       }
-    } else if (rowData.encrypt === 1 && rowData.is_decrypted && self.parentVolumesListComponent.systemdatasetPool != rowData.name) {
+    } else if (
+      rowData.encrypt === 1 && rowData.is_decrypted && self.parentVolumesListComponent.systemdatasetPool != rowData.name
+    ) {
       actions.push({
         label: T('Encryption Key'),
         onClick: (row1: any) => {
@@ -303,11 +305,13 @@ export class VolumesListTableConfig implements EntityTableConfig {
               this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).pipe(untilDestroyed(this)).subscribe((res) => {
                 this.loader.close();
                 const url = res[1];
-                this.storageService.streamDownloadFile(this.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
-                  if (res !== null && res !== '') {
-                    this.storageService.downloadBlob(file, fileName);
-                  }
-                });
+                this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
+                  .pipe(untilDestroyed(this))
+                  .subscribe((file) => {
+                    if (res !== null && res !== '') {
+                      this.storageService.downloadBlob(file, fileName);
+                    }
+                  });
               }, (e) => {
                 this.loader.close();
                 new EntityUtils().handleWSError(this, e, this.dialogService);
@@ -568,17 +572,13 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     });
                   }
                   if (running_unknown_processes.length > 0) {
-                    self.translate.get(helptext.exportMessages.unknown).pipe(untilDestroyed(this)).subscribe((unknownMsg) => {
-                      self.translate.get(helptext.exportMessages.terminated).pipe(untilDestroyed(this)).subscribe((terminatedMsg) => {
-                        p1 += '<br><br>' + unknownMsg;
-                        running_unknown_processes.forEach((process) => {
-                          if (process.pid) {
-                            p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0, 40)}`;
-                          }
-                        });
-                        p1 += '<br><br>' + terminatedMsg;
-                      });
+                    p1 += '<br><br>' + self.translate.instant(helptext.exportMessages.unknown);
+                    running_unknown_processes.forEach((process) => {
+                      if (process.pid) {
+                        p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0, 40)}`;
+                      }
                     });
+                    p1 += '<br><br>' + self.translate.instant(helptext.exportMessages.terminated);
                   }
                 }
                 this.loader.close();
@@ -946,14 +946,12 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     if (entityDialog) {
                       entityDialog.dialogRef.close(true);
                     }
-                    self.translate.get(helptext.expand_pool_success_dialog.message).pipe(untilDestroyed(this)).subscribe((msg) => {
-                      parent.dialogService.generalDialog({
-                        title: helptext.expand_pool_success_dialog.title,
-                        icon: 'info',
-                        is_html: true,
-                        message: `${msg} <i>${row1.name}</i>`,
-                        hideCancel: true,
-                      });
+                    parent.dialogService.generalDialog({
+                      title: helptext.expand_pool_success_dialog.title,
+                      icon: 'info',
+                      is_html: true,
+                      message: self.translate.instant('Successfully expanded pool <i>{poolName}</i>', { poolName: row1.name }),
+                      hideCancel: true,
                     });
                   }
                 },
