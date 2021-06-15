@@ -115,7 +115,7 @@ def enter_a_name_unset_inherit_nonencrypted(driver):
     assert wait_on_element(driver, 5, '//h4[contains(.,"Name and Options")]')
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys('encrypteddataset')
-    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Inherit (non-encrypted)"]', 'inputable')
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Inherit (non-encrypted)"]', 'clickable')
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Inherit (non-encrypted)"]', 'class', 'mat-checkbox-checked')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Inherit (non-encrypted)"]').click()
 
@@ -123,9 +123,9 @@ def enter_a_name_unset_inherit_nonencrypted(driver):
 @then('confirm Encryption and Generate Key is set and click the SUBMIT button')
 def confirm_encryption_and_generate_key_is_set_and_click_the_submit_button(driver):
     """confirm Encryption and Generate Key is set and click the SUBMIT button."""
-    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Encryption"]', 'inputable')
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Encryption"]', 'clickable')
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Encryption"]', 'class', 'mat-checkbox-checked')
-    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Generate Key"]', 'inputable')
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Generate Key"]', 'clickable')
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Generate Key"]', 'class', 'mat-checkbox-checked')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
