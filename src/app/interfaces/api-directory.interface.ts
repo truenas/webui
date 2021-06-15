@@ -13,6 +13,7 @@ import { LoginParams } from 'app/interfaces/auth.interface';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import { CertificateAuthorityCreate, CertificateAuthorityUpdate } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
+import { ChartReleaseCreate, ChartReleaseCreateResponse } from 'app/interfaces/chart-release.interface';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
@@ -153,7 +154,7 @@ export type ApiDirectory = {
   // Chart
   'chart.release.pod_logs_choices': { params: any; response: any };
   'chart.release.query': { params: any; response: any };
-  'chart.release.create': { params: any; response: any };
+  'chart.release.create': { params: ChartReleaseCreate; response: ChartReleaseCreateResponse };
   'chart.release.update': { params: any; response: any };
   'chart.release.scale': { params: any; response: any };
   'chart.release.pod_console_choices': { params: any; response: any };
