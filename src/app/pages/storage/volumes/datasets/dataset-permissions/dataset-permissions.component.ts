@@ -22,7 +22,7 @@ import { T } from 'app/translate-marker';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy {
-  protected updateCall = 'pool.dataset.permission';
+  protected updateCall: 'pool.dataset.permission' = 'pool.dataset.permission';
   protected datasetPath: string;
   protected datasetId: string;
   protected recursive: any;
@@ -204,23 +204,27 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
+    entityEdit.formGroup.get('id').setValue(this.datasetPath);
     this.storageService.filesystemStat(this.datasetPath).pipe(untilDestroyed(this)).subscribe((stat) => {
       this.datasetMode = stat.mode.toString(8).substring(2, 5);
       entityEdit.formGroup.controls['mode'].setValue(this.datasetMode);
       entityEdit.formGroup.controls['user'].setValue(stat.user);
       entityEdit.formGroup.controls['group'].setValue(stat.group);
     });
+    entityEdit.formGroup.controls['id'].setValue(this.datasetPath);
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value === true) {
-        this.dialog.confirm(T('Warning'), T('Setting permissions recursively will affect this directory and any others below it. This might make data inaccessible.'))
-          .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-            if (!res) {
-              this.recursive.setValue(false);
-            }
-          });
+        this.dialog.confirm({
+          title: T('Warning'),
+          message: T('Setting permissions recursively will affect this directory and any others below it. This might make data inaccessible.'),
+        }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
+          if (!res) {
+            this.recursive.setValue(false);
+          }
+        });
       }
     });
   }

@@ -20,7 +20,8 @@ import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form';
 import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form';
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form';
 import {
-  AppLoaderService, DialogService, IscsiService, ModalService, NetworkService, SystemGeneralService, UserService, WebSocketService,
+  AppLoaderService, DialogService, IscsiService, ModalService, NetworkService, SystemGeneralService, UserService,
+  WebSocketService,
 } from 'app/services';
 import { T } from 'app/translate-marker';
 
