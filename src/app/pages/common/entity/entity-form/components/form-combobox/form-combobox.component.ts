@@ -26,7 +26,6 @@ export class FormComboboxComponent implements Field, OnDestroy {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
-  searchText: string;
   searchTextChanged = new Subject<string>();
   searchSubscription: Subscription;
 

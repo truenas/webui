@@ -21,7 +21,6 @@ ix-auto ix-auto-type="combobox" ix-auto-identifier="{{config.placeholder}}">
         [required]="config.required"
         (keyup)="search($event.target.value)"
         [matAutocomplete]="autoComplete"
-        [(ngModel)]="searchText"
       >
         <span *ngIf="hasValue() && !config.readonly" class="reset-input">
 					<mat-icon (click)="resetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
