@@ -219,8 +219,13 @@ export class CertificatesDashComponent implements OnInit {
     this.certificateEditComponent = new CertificateEditComponent(
       this.ws, this.dialog, this.loader, this.dialogService, this.modalService, this.storage, this.http,
     );
-    this.certificateAuthorityAddComponent = new CertificateAuthorityAddComponent(this.ws, this.modalService, this.loader, this.dialogService,
-      this.systemGeneralService);
+    this.certificateAuthorityAddComponent = new CertificateAuthorityAddComponent(
+      this.ws,
+      this.modalService,
+      this.loader,
+      this.dialogService,
+      this.systemGeneralService,
+    );
     this.certificateAuthorityEditComponent = new CertificateAuthorityEditComponent(this.ws, this.loader,
       this.modalService, this.storage, this.http, this.dialogService, this.systemGeneralService);
     this.acmeAddComponent = new CertificateAcmeAddComponent(this.ws, this.loader, this.dialog,

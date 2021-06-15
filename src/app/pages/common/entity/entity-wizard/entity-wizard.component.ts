@@ -1,6 +1,6 @@
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import {
-  Component, Input, OnInit, ViewChild, ViewEncapsulation,
+  Component, Input, OnInit, ViewChild,
 } from '@angular/core';
 import {
   AbstractControl, FormBuilder, FormGroup,
@@ -24,7 +24,6 @@ import { EntityUtils } from '../utils';
   templateUrl: './entity-wizard.component.html',
   styleUrls: ['./entity-wizard.component.scss', '../entity-form/entity-form.component.scss'],
   providers: [EntityFormService, FieldRelationService],
-  encapsulation: ViewEncapsulation.None,
 })
 export class EntityWizardComponent implements OnInit {
   @Input('conf') conf: any;
@@ -78,7 +77,9 @@ export class EntityWizardComponent implements OnInit {
       if (this.conf.wizardConfig[i].fieldSets) {
         let fieldConfig: any[] = [];
         /* Temp patch to support both FieldSet approaches */
-        const fieldSets = this.conf.wizardConfig[i].fieldSets.list ? this.conf.wizardConfig[i].fieldSets.list() : this.conf.wizardConfig[i].fieldSets;
+        const fieldSets = this.conf.wizardConfig[i].fieldSets.list
+          ? this.conf.wizardConfig[i].fieldSets.list()
+          : this.conf.wizardConfig[i].fieldSets;
         for (let j = 0; j < fieldSets.length; j++) {
           const fieldset = fieldSets[j];
           if (fieldset.config) {

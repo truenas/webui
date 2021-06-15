@@ -143,7 +143,9 @@ export class ChassisView {
     for (let i = 0; i < this.totalDriveTrays; i++) {
       const slot: number = this.slotRange.start + i;
 
-      const dt = this.altDriveTraySlots.length > 0 && this.altDriveTraySlots.indexOf(slot) != -1 ? this.makeDriveTray(true) : this.makeDriveTray();
+      const dt = this.altDriveTraySlots.length > 0 && this.altDriveTraySlots.indexOf(slot) != -1
+        ? this.makeDriveTray(true)
+        : this.makeDriveTray();
       dt.id = slot.toString(); // Slot
 
       if (this.autoPosition) {

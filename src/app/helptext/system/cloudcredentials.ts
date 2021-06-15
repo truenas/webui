@@ -198,6 +198,15 @@ a new application key, log in to the Backblaze account, go to the \
     ),
   },
 
+  token_google_photos: {
+    placeholder: T('Access Token'),
+    tooltip: T(
+      'Token created with \
+ <a href="https://developers.google.com/drive/api/v3/about-auth"\
+ target="_blank">Google Drive</a>.',
+    ),
+  },
+
   team_drive_google_drive: {
     placeholder: T('Team Drive ID'),
     tooltip: T(

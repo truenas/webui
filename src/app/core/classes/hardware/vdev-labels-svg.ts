@@ -132,7 +132,8 @@ export class VDevLabelsSVG {
   }
 
   createVdevLabels(vdev: any): void {
-    const disks = vdev.disks ? Object.keys(vdev.disks) : [this.selectedDisk.devname]; // NOTE: vdev.slots only has values for current enclosure
+    // NOTE: vdev.slots only has values for current enclosure
+    const disks = vdev.disks ? Object.keys(vdev.disks) : [this.selectedDisk.devname];
 
     disks.forEach((disk) => {
       const slot = typeof vdev.slots !== 'undefined' ? vdev.slots[disk] : this.selectedDisk.enclosure.slot;
@@ -153,7 +154,10 @@ export class VDevLabelsSVG {
           disk,
         );
         this.trays[disk] = {
-          x: tray.x, y: tray.y, width: src.width * this.chassis.container.scale.x, height: src.height * this.chassis.container.scale.y,
+          x: tray.x,
+          y: tray.y,
+          width: src.width * this.chassis.container.scale.x,
+          height: src.height * this.chassis.container.scale.y,
         };
       }
     });

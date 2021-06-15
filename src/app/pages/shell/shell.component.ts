@@ -39,7 +39,6 @@ export class ShellComponent implements OnInit, OnDestroy {
   xterm: any;
   resize_terminal = true;
   private shellSubscription: any;
-  private shellConnectedSubscription: any;
   private fitAddon: any;
   formEvents: Subject<CoreEvent>;
 
@@ -64,10 +63,6 @@ export class ShellComponent implements OnInit, OnDestroy {
     }
     if (this.shellSubscription) {
       this.shellSubscription.unsubscribe();
-    }
-
-    if (this.shellConnectedSubscription) {
-      this.shellConnectedSubscription.unsubscribe();
     }
 
     this.core.unregister({ observerClass: this });
@@ -171,7 +166,7 @@ export class ShellComponent implements OnInit, OnDestroy {
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
 
-    var font = new FontFaceObserver(this.font_name);
+    const font = new FontFaceObserver(this.font_name);
 
     font.load().then(() => {
       this.xterm.open(this.container.nativeElement);
@@ -185,7 +180,7 @@ export class ShellComponent implements OnInit, OnDestroy {
   getSize(): { rows: number; cols: number } {
     const domWidth = this.container.nativeElement.offsetWidth;
     const domHeight = this.container.nativeElement.offsetHeight;
-    var span = document.createElement('span');
+    const span = document.createElement('span');
     this.container.nativeElement.appendChild(span);
     span.style.whiteSpace = 'nowrap';
     span.style.fontFamily = this.font_name;
@@ -230,7 +225,7 @@ export class ShellComponent implements OnInit, OnDestroy {
 
     this.refreshToolbarButtons();
 
-    this.shellConnectedSubscription = this.ss.shellConnected.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
+    this.ss.shellConnected.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
       this.shellConnected = event.connected;
       this.connectionId = event.id;
 

@@ -178,14 +178,16 @@ export class GroupListComponent implements EntityTableConfig, OnDestroy {
                 customSubmit(entityDialog: EntityDialogComponent) {
                   entityDialog.dialogRef.close(true);
                   self.loader.open();
-                  self.ws.call(self.wsDelete, [members_delete.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(() => {
-                    self.entityList.getData();
-                    self.loader.close();
-                  },
-                  (err) => {
-                    new EntityUtils().handleWSError(self, err, self.dialogService);
-                    self.loader.close();
-                  });
+                  self.ws.call(self.wsDelete, [members_delete.id, entityDialog.formValue])
+                    .pipe(untilDestroyed(this))
+                    .subscribe(() => {
+                      self.entityList.getData();
+                      self.loader.close();
+                    },
+                    (err) => {
+                      new EntityUtils().handleWSError(self, err, self.dialogService);
+                      self.loader.close();
+                    });
                 },
               };
               this.dialogService.dialogForm(conf);

@@ -366,7 +366,9 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
     this.ws.call('vm.get_display_devices', [this.vmid]).pipe(untilDestroyed(this)).subscribe((devices) => {
       if (devices.length > 1) {
-        this.fieldConfig[0].options.splice(this.fieldConfig[0].options.findIndex((option) => option.value === VmDeviceType.Display));
+        this.fieldConfig[0].options.splice(
+          this.fieldConfig[0].options.findIndex((option) => option.value === VmDeviceType.Display),
+        );
       }
     }, (err) => {
       new EntityUtils().handleWSError(this, err, this.dialogService);

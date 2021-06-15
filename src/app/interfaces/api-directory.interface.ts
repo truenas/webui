@@ -119,12 +119,13 @@ export type ApiDirectory = {
   'boot.scrub': { params: any; response: any };
 
   // Catalog
-  'catalog.query': { params: QueryParams<any, { extra: { item_details: boolean } }>; response: Catalog[] };
+  'catalog.query': { params: QueryParams<any, { extra: { item_details: boolean; cache: boolean; retrieve_versions: boolean } }>; response: Catalog[] };
   'catalog.update': { params: any; response: any };
   'catalog.create': { params: any; response: any };
   'catalog.delete': { params: any; response: any };
   'catalog.items': { params: any; response: any };
   'catalog.sync': { params: any; response: any };
+  'catalog.get_item_details': { params: any; response: any };
 
   // Certificate
   'certificate.create': { params: any; response: any };
@@ -242,6 +243,7 @@ export type ApiDirectory = {
   'filesystem.get_default_acl': { params: any; response: any };
   'filesystem.statfs': { params: any; response: any };
   'filesystem.getacl': { params: [/* path */ string]; response: Acl };
+  'filesystem.setacl': { params: any; response: any };
 
   // Failover
   'failover.licensed': { params: void; response: boolean };
@@ -449,6 +451,7 @@ export type ApiDirectory = {
   'pool.scrub.create': { params: any; response: any };
   'pool.dataset.compression_choices': { params: any; response: any };
   'pool.dataset.encryption_algorithm_choices': { params: any; response: any };
+  'pool.dataset.permission': { params: any; response: any };
   'pool.offline': { params: any; response: any };
   'pool.online': { params: any; response: any };
   'pool.remove': { params: any; response: any };

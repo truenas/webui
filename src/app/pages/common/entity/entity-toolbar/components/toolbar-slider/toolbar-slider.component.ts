@@ -12,7 +12,7 @@ import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
       class="toolbar-slider">
       {{ config.label | translate}}:
       <mat-slider [min]="config.min" [max]="config.max" [value]="config.value" [step]="config.step" (change)="onChange($event)"
-			  ix-auto ix-auto-type="slider" [ix-auto-identifier]="config.label">
+                  ix-auto ix-auto-type="slider" [ix-auto-identifier]="config.label">
       </mat-slider>
     </div>
   `,

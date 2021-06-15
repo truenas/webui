@@ -53,8 +53,8 @@ export class FormTextareaComponent implements Field {
   }
 
   readFile(inputValue: any): void {
-    var file: File = inputValue.files[0];
-    var fReader: FileReader = new FileReader();
+    const file: File = inputValue.files[0];
+    const fReader: FileReader = new FileReader();
 
     fReader.onloadend = () => {
       this.fileString = fReader.result;

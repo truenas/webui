@@ -20,10 +20,15 @@ export class ShutdownComponent implements OnInit {
 
   readonly ProductType = ProductType;
 
-  constructor(protected ws: WebSocketService, protected router: Router,
-    protected loader: AppLoaderService, public translate: TranslateService,
-    protected dialogService: DialogService, private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
-    this.ws = ws;
+  constructor(
+    protected ws: WebSocketService,
+    protected router: Router,
+    protected loader: AppLoaderService,
+    public translate: TranslateService,
+    protected dialogService: DialogService,
+    private sysGeneralService: SystemGeneralService,
+    private localeService: LocaleService,
+  ) {
     this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
       this.product_type = res as ProductType;
     });

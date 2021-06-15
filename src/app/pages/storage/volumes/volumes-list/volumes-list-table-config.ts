@@ -258,7 +258,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
           },
         });
       }
-    } else if (rowData.encrypt === 1 && rowData.is_decrypted && self.parentVolumesListComponent.systemdatasetPool != rowData.name) {
+    } else if (
+      rowData.encrypt === 1 && rowData.is_decrypted && self.parentVolumesListComponent.systemdatasetPool != rowData.name
+    ) {
       actions.push({
         label: T('Encryption Key'),
         onClick: (row1: any) => {
@@ -303,11 +305,13 @@ export class VolumesListTableConfig implements EntityTableConfig {
               this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).pipe(untilDestroyed(this)).subscribe((res) => {
                 this.loader.close();
                 const url = res[1];
-                this.storageService.streamDownloadFile(this.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
-                  if (res !== null && res !== '') {
-                    this.storageService.downloadBlob(file, fileName);
-                  }
-                });
+                this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
+                  .pipe(untilDestroyed(this))
+                  .subscribe((file) => {
+                    if (res !== null && res !== '') {
+                      this.storageService.downloadBlob(file, fileName);
+                    }
+                  });
               }, (e) => {
                 this.loader.close();
                 new EntityUtils().handleWSError(this, e, this.dialogService);
@@ -495,13 +499,11 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   if (res) {
                     dialogRef.close();
                     entityDialog.dialogRef.close();
-                    self.translate.get(helptext.pool_options_dialog.dialog_saved_message1).pipe(untilDestroyed(this)).subscribe((msg1) => {
-                      self.translate.get(helptext.pool_options_dialog.dialog_saved_message2).pipe(untilDestroyed(this)).subscribe((msg2) => {
-                        self.dialogService.Info(helptext.pool_options_dialog.dialog_saved_title,
-                          msg1 + row.name + msg2);
-                        self.parentVolumesListComponent.repaintMe();
-                      });
-                    });
+                    self.dialogService.Info(
+                      helptext.pool_options_dialog.dialog_saved_title,
+                      self.translate.instant('Pool options for {poolName} successfully saved.', { poolName: row.name }),
+                    );
+                    self.parentVolumesListComponent.repaintMe();
                   }
                 });
                 dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
@@ -570,17 +572,13 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     });
                   }
                   if (running_unknown_processes.length > 0) {
-                    self.translate.get(helptext.exportMessages.unknown).pipe(untilDestroyed(this)).subscribe((unknownMsg) => {
-                      self.translate.get(helptext.exportMessages.terminated).pipe(untilDestroyed(this)).subscribe((terminatedMsg) => {
-                        p1 += '<br><br>' + unknownMsg;
-                        running_unknown_processes.forEach((process) => {
-                          if (process.pid) {
-                            p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0, 40)}`;
-                          }
-                        });
-                        p1 += '<br><br>' + terminatedMsg;
-                      });
+                    p1 += '<br><br>' + self.translate.instant(helptext.exportMessages.unknown);
+                    running_unknown_processes.forEach((process) => {
+                      if (process.pid) {
+                        p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0, 40)}`;
+                      }
                     });
+                    p1 += '<br><br>' + self.translate.instant(helptext.exportMessages.terminated);
                   }
                 }
                 this.loader.close();
@@ -774,11 +772,13 @@ export class VolumesListTableConfig implements EntityTableConfig {
                           });
                         } else if (res.extra && res.extra['code'] === 'unstoppable_processes') {
                           entityDialog.dialogRef.close(true);
-                          self.translate.get(helptext.exportMessages.onfail.unableToTerminate).pipe(untilDestroyed(this)).subscribe((msg) => {
-                            conditionalErrMessage = msg + res.extra['processes'];
-                            dialogRef.close(true);
-                            self.dialogService.errorReport(helptext.exportError, conditionalErrMessage, res.exception);
-                          });
+                          self.translate.get(helptext.exportMessages.onfail.unableToTerminate)
+                            .pipe(untilDestroyed(this))
+                            .subscribe((msg) => {
+                              conditionalErrMessage = msg + res.extra['processes'];
+                              dialogRef.close(true);
+                              self.dialogService.errorReport(helptext.exportError, conditionalErrMessage, res.exception);
+                            });
                         } else {
                           entityDialog.dialogRef.close(true);
                           dialogRef.close(true);
@@ -946,14 +946,12 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     if (entityDialog) {
                       entityDialog.dialogRef.close(true);
                     }
-                    self.translate.get(helptext.expand_pool_success_dialog.message).pipe(untilDestroyed(this)).subscribe((msg) => {
-                      parent.dialogService.generalDialog({
-                        title: helptext.expand_pool_success_dialog.title,
-                        icon: 'info',
-                        is_html: true,
-                        message: `${msg} <i>${row1.name}</i>`,
-                        hideCancel: true,
-                      });
+                    parent.dialogService.generalDialog({
+                      title: helptext.expand_pool_success_dialog.title,
+                      icon: 'info',
+                      is_html: true,
+                      message: self.translate.instant('Successfully expanded pool <i>{poolName}</i>', { poolName: row1.name }),
+                      hideCancel: true,
                     });
                   }
                 },
@@ -1506,8 +1504,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     entityDialog.loader.open();
                     entityDialog.ws.call(method, payload).pipe(untilDestroyed(this)).subscribe(() => {
                       entityDialog.loader.close();
-                      self.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title,
-                        helptext.encryption_options_dialog.dialog_saved_message1 + row.id + helptext.encryption_options_dialog.dialog_saved_message2);
+                      self.dialogService.Info(
+                        helptext.encryption_options_dialog.dialog_saved_title,
+                        self.translate.instant('Encryption options for {id} successfully saved.', { id: row.id }),
+                      );
                       entityDialog.dialogRef.close();
                       self.parentVolumesListComponent.repaintMe();
                     }, (err: any) => {
@@ -1539,13 +1539,11 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     if (res) {
                       dialogRef.close();
                       entityDialog.dialogRef.close();
-                      self.translate.get(helptext.encryption_options_dialog.dialog_saved_message1).pipe(untilDestroyed(this)).subscribe((msg1) => {
-                        self.translate.get(helptext.encryption_options_dialog.dialog_saved_message2).pipe(untilDestroyed(this)).subscribe((msg2) => {
-                          self.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title,
-                            msg1 + row.id + msg2);
-                          self.parentVolumesListComponent.repaintMe();
-                        });
-                      });
+                      self.dialogService.Info(
+                        helptext.encryption_options_dialog.dialog_saved_title,
+                        self.translate.instant('Encryption options for {id} successfully saved.', { id: row.id }),
+                      );
+                      self.parentVolumesListComponent.repaintMe();
                     }
                   });
                   dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
@@ -1648,11 +1646,13 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     this.ws.call('core.download', ['pool.dataset.export_key', [rowData.id, true], fileName]).pipe(untilDestroyed(this)).subscribe((res: any) => {
                       this.loader.close();
                       const url = res[1];
-                      this.storageService.streamDownloadFile(this.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
-                        if (res !== null && res !== '') {
-                          this.storageService.downloadBlob(file, fileName);
-                        }
-                      });
+                      this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
+                        .pipe(untilDestroyed(this))
+                        .subscribe((file) => {
+                          if (res !== null && res !== '') {
+                            this.storageService.downloadBlob(file, fileName);
+                          }
+                        });
                     }, (e) => {
                       this.loader.close();
                       new EntityUtils().handleWSError(this, e, this.dialogService);

@@ -414,7 +414,10 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   }
 
   get zonedTime(): Date {
-    return dateFnsTz.utcToZonedTime(dateFnsTz.zonedTimeToUtc(new Date(), Intl.DateTimeFormat().resolvedOptions().timeZone), this.timezone);
+    return dateFnsTz.utcToZonedTime(
+      dateFnsTz.zonedTimeToUtc(new Date(), Intl.DateTimeFormat().resolvedOptions().timeZone),
+      this.timezone,
+    );
   }
 
   formatDateToTz(date: Date, timezone?: string): string {
@@ -492,6 +495,8 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
     const subsetEnd = this.generatedScheduleSubset + 128;
     let parseCounter = 0;
+
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
         if (parseCounter == subsetEnd) {
@@ -524,6 +529,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
         tz: this.timezone,
       });
 
+      // eslint-disable-next-line no-constant-condition
       while (true) {
         try {
           const obj: any = intervalDays.next();

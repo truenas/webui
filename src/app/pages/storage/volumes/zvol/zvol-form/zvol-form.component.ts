@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
@@ -507,14 +508,17 @@ export class ZvolFormComponent implements FormConfiguration {
           encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption: any) => {
             // if on an encrypted parent we should warn the user, otherwise just disable the fields
             if (this.encrypted_parent && !encryption && !this.non_encrypted_warned) {
-              this.dialogService.confirm(helptext.dataset_form_encryption.non_encrypted_warning_title,
-                helptext.dataset_form_encryption.non_encrypted_warning_warning).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
-                if (confirm) {
-                  this.non_encrypted_warned = true;
-                  for (let i = 0; i < all_encryption_fields.length; i++) {
-                    if (all_encryption_fields[i] !== 'encryption') {
-                      this.entityForm.setDisabled(all_encryption_fields[i], true, true);
-                    }
+              this.dialogService.confirm({
+                title: helptext.dataset_form_encryption.non_encrypted_warning_title,
+                message: helptext.dataset_form_encryption.non_encrypted_warning_warning,
+              }).pipe(
+                filter(Boolean),
+                untilDestroyed(this),
+              ).subscribe(() => {
+                this.non_encrypted_warned = true;
+                for (let i = 0; i < all_encryption_fields.length; i++) {
+                  if (all_encryption_fields[i] !== 'encryption') {
+                    this.entityForm.setDisabled(all_encryption_fields[i], true, true);
                   }
                 }
               });
@@ -591,8 +595,14 @@ export class ZvolFormComponent implements FormConfiguration {
             _.find(this.fieldConfig, { name: 'sparse' })['isHidden'] = true;
             this.customFilter = [[['id', '=', this.parent]]];
             this.sync_collection = [{ label: pk_dataset[0].sync.value, value: pk_dataset[0].sync.value }];
-            this.compression_collection = [{ label: pk_dataset[0].compression.value, value: pk_dataset[0].compression.value }];
-            this.deduplication_collection = [{ label: pk_dataset[0].deduplication.value, value: pk_dataset[0].deduplication.value }];
+            this.compression_collection = [{
+              label: pk_dataset[0].compression.value,
+              value: pk_dataset[0].compression.value,
+            }];
+            this.deduplication_collection = [{
+              label: pk_dataset[0].deduplication.value,
+              value: pk_dataset[0].deduplication.value,
+            }];
 
             const volumesize = pk_dataset[0].volsize.parsed;
 
@@ -705,7 +715,9 @@ export class ZvolFormComponent implements FormConfiguration {
     this.entityForm.formGroup.controls['volblocksize'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       const res_number = parseInt((this.reverseZvolBlockSizeMap as any)[res], 10);
       if (this.minimum_recommended_zvol_volblocksize) {
-        const recommended_size_number = parseInt((this.reverseZvolBlockSizeMap as any)[this.minimum_recommended_zvol_volblocksize], 0);
+        const recommended_size_number = parseInt(
+          (this.reverseZvolBlockSizeMap as any)[this.minimum_recommended_zvol_volblocksize], 0,
+        );
         if (res_number < recommended_size_number) {
           this.translate.get(helptext.blocksize_warning.a).pipe(untilDestroyed(this)).subscribe((blockMsgA) => (
             this.translate.get(helptext.blocksize_warning.b).pipe(untilDestroyed(this)).subscribe((blockMsgB) => {
@@ -816,12 +828,14 @@ export class ZvolFormComponent implements FormConfiguration {
         volblocksize_integer_value = volblocksize_integer_value * 1024;
       }
       if (this.edit_data.volsize && this.edit_data.volsize % volblocksize_integer_value !== 0) {
-        this.edit_data.volsize = this.edit_data.volsize + (volblocksize_integer_value - this.edit_data.volsize % volblocksize_integer_value);
+        this.edit_data.volsize = this.edit_data.volsize
+          + (volblocksize_integer_value - this.edit_data.volsize % volblocksize_integer_value);
       }
       let rounded_vol_size = datasets[0].volsize.parsed;
 
       if (datasets[0].volsize.parsed % volblocksize_integer_value !== 0) {
-        rounded_vol_size = datasets[0].volsize.parsed + (volblocksize_integer_value - datasets[0].volsize.parsed % volblocksize_integer_value);
+        rounded_vol_size = datasets[0].volsize.parsed
+          + (volblocksize_integer_value - datasets[0].volsize.parsed % volblocksize_integer_value);
       }
 
       if (!this.edit_data.volsize || this.edit_data.volsize >= rounded_vol_size) {

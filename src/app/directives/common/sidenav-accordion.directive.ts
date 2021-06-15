@@ -13,7 +13,7 @@ export class SideNavAccordionDirective implements OnInit {
 
   ngOnInit(): void {
     const self = this;
-    var subMenu = this.el.nativeElement.querySelector('.mat-list-item-content > mat-nav-list');
+    const subMenu = this.el.nativeElement.querySelector('.mat-list-item-content > mat-nav-list');
     const isCollapsed = this.layoutService.isMenuCollapsed;
     if (subMenu) this.el.nativeElement.className += ' has-submenu';
 
@@ -28,7 +28,7 @@ export class SideNavAccordionDirective implements OnInit {
   @HostListener('click', ['$event'])
   onClick($event: MouseEvent): void {
     const target = $event.target as HTMLElement;
-    var parentLi = domHelper.findClosest(target, 'mat-list-item');
+    const parentLi = domHelper.findClosest(target, 'mat-list-item');
     domHelper.addClass(target.parentElement, 'highlight');
     setTimeout(() => { domHelper.removeClass(target.parentElement, 'highlight'); }, 100);
     if (!domHelper.hasClass(parentLi, 'has-submenu')) {
@@ -56,8 +56,8 @@ export class SideNavAccordionDirective implements OnInit {
   }
 
   private toggleOpen(): void {
-    var elem = this.el.nativeElement;
-    var parenMenuItems = document.getElementsByClassName('has-submenu');
+    const elem = this.el.nativeElement;
+    const parenMenuItems = document.getElementsByClassName('has-submenu');
 
     if (domHelper.hasClass(elem, 'open')) {
       domHelper.removeClass(parenMenuItems, 'open');

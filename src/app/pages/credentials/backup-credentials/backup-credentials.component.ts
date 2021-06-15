@@ -148,9 +148,9 @@ export class BackupCredentialsComponent implements OnInit {
       name: 'download',
       onClick: (rowinner: any) => {
         const name = rowinner.name;
-        for (const key_type in rowinner.attributes) {
-          const key = rowinner.attributes[key_type];
-          const filename = name + '_' + key_type + '_rsa';
+        for (const keyType in rowinner.attributes) {
+          const key = rowinner.attributes[keyType];
+          const filename = name + '_' + keyType + '_rsa';
           const blob = new Blob([key], { type: 'text/plain' });
           this.storage.downloadBlob(blob, filename);
         }

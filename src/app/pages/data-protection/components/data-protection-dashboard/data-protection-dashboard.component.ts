@@ -946,7 +946,10 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  onCheckboxStateToggle(card: TaskCardId, row: ScrubTaskUi | PeriodicSnapshotTaskUi | ReplicationTaskUi | CloudSyncTaskUi | RsyncTaskUi): void {
+  onCheckboxStateToggle(
+    card: TaskCardId,
+    row: ScrubTaskUi | PeriodicSnapshotTaskUi | ReplicationTaskUi | CloudSyncTaskUi | RsyncTaskUi,
+  ): void {
     let updateCall: keyof ApiDirectory;
     switch (card) {
       case TaskCardId.Scrub:

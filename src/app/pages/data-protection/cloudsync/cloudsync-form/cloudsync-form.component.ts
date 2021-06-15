@@ -392,7 +392,10 @@ export class CloudsyncFormComponent implements FormConfiguration {
       name: helptext.action_button_dry_run,
       function: () => {
         const payload = this.submitDataHandler(this.formGroup.value);
-        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: helptext.job_dialog_title_dry_run }, disableClose: true });
+        const dialogRef = this.matDialog.open(EntityJobComponent, {
+          data: { title: helptext.job_dialog_title_dry_run },
+          disableClose: true,
+        });
         dialogRef.componentInstance.setCall('cloudsync.sync_onetime', [payload, { dry_run: true }]);
         dialogRef.componentInstance.showAbortButton = true;
         dialogRef.componentInstance.showRealtimeLogs = true;
