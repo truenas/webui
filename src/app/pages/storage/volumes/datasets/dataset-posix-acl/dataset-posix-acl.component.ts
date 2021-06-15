@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { take } from 'rxjs/operators';
 import { AclItemTag, AclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -36,7 +37,7 @@ import { T } from 'app/translate-marker';
 })
 export class DatasetPosixAclComponent implements FormConfiguration {
   queryCall: 'filesystem.getacl' = 'filesystem.getacl';
-  updateCall = 'filesystem.setacl';
+  updateCall: 'filesystem.setacl' = 'filesystem.setacl';
   isEntity = true;
   pk: string;
   protected path: string;
@@ -286,6 +287,7 @@ export class DatasetPosixAclComponent implements FormConfiguration {
       }
       this.userOptions = userOptions;
 
+      this.uid_fc = _.find(this.fieldConfig, { name: 'uid' });
       this.uid_fc.options = this.userOptions;
     });
 
@@ -296,29 +298,34 @@ export class DatasetPosixAclComponent implements FormConfiguration {
       }
       this.groupOptions = groupOptions;
 
+      this.gid_fc = _.find(this.fieldConfig, { name: 'gid' });
       this.gid_fc.options = this.groupOptions;
     });
   }
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
+    this.entityForm.formGroup.get('path').setValue(this.path);
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value === true) {
-        this.dialogService.confirm(helptext.dataset_acl_recursive_dialog_warning,
-          helptext.dataset_acl_recursive_dialog_warning_message)
-          .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-            if (!res) {
-              this.recursive.setValue(false);
-            }
-          });
+        this.dialogService.confirm({
+          title: helptext.dataset_acl_recursive_dialog_warning,
+          message: helptext.dataset_acl_recursive_dialog_warning_message,
+        }).pipe(take(1)).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
+          if (!res) {
+            this.recursive.setValue(false);
+          }
+        });
       }
     });
-    this.ws.call('filesystem.acl_is_trivial', [this.path]).pipe(untilDestroyed(this)).subscribe((acl_is_trivial) => {
-      this.aclIsTrivial = acl_is_trivial;
-    }, (err) => {
-      new EntityUtils().handleWSError(this.entityForm, err);
-    });
+    this.ws.call('filesystem.acl_is_trivial', [this.path])
+      .pipe(take(1), untilDestroyed(this))
+      .subscribe((acl_is_trivial) => {
+        this.aclIsTrivial = acl_is_trivial;
+      }, (err) => {
+        new EntityUtils().handleWSError(this.entityForm, err);
+      });
 
     this.aces_fc = _.find(this.fieldConfig, { name: 'aces' });
     this.aces = this.entityForm.formGroup.controls['aces'];
@@ -507,9 +514,10 @@ export class DatasetPosixAclComponent implements FormConfiguration {
     body.gid = body.apply_group ? body.gid : null;
 
     const doesNotWantToEditDataset = this.storageService.isDatasetTopLevel(this.path.replace('mnt/', ''))
-      && !(await this.dialogService
-        .confirm(helptext.dataset_acl_dialog_warning, helptext.dataset_acl_toplevel_dialog_message)
-        .toPromise());
+      && !(await this.dialogService.confirm({
+        title: helptext.dataset_acl_dialog_warning,
+        message: helptext.dataset_acl_toplevel_dialog_message,
+      }).toPromise());
 
     if (doesNotWantToEditDataset) {
       return;
@@ -580,23 +588,27 @@ export class DatasetPosixAclComponent implements FormConfiguration {
   }
 
   updateGroupSearchOptions(value = '', parent: any, config: FieldConfig): void {
-    (parent.userService as UserService).groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
-      const groupOptions: Option[] = [];
-      for (let i = 0; i < groups.length; i++) {
-        groupOptions.push({ label: groups[i].group, value: groups[i].group });
-      }
-      config.searchOptions = groupOptions;
-    });
+    (parent.userService as UserService).groupQueryDSCache(value)
+      .pipe(take(1), untilDestroyed(this))
+      .subscribe((groups) => {
+        const groupOptions: Option[] = [];
+        for (let i = 0; i < groups.length; i++) {
+          groupOptions.push({ label: groups[i].group, value: groups[i].group });
+        }
+        config.searchOptions = groupOptions;
+      });
   }
 
   updateUserSearchOptions(value = '', parent: any, config: FieldConfig): void {
-    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
-      const users: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
-      config.searchOptions = users;
-    });
+    (parent.userService as UserService).userQueryDSCache(value)
+      .pipe(take(1), untilDestroyed(this))
+      .subscribe((items) => {
+        const users: Option[] = [];
+        for (let i = 0; i < items.length; i++) {
+          users.push({ label: items[i].username, value: items[i].username });
+        }
+        config.searchOptions = users;
+      });
   }
 
   doStripACL(): void {
@@ -646,22 +658,24 @@ export class DatasetPosixAclComponent implements FormConfiguration {
   }
 
   loadMoreOptions(length: number, parent: any, searchText: string, config: FieldConfig): void {
-    (parent.userService as UserService).userQueryDSCache(searchText, length).pipe(untilDestroyed(this)).subscribe((items) => {
-      const users: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
-      if (searchText == '') {
-        config.options = config.options.concat(users);
-      } else {
-        config.searchOptions = config.searchOptions.concat(users);
-      }
-    });
+    (parent.userService as UserService).userQueryDSCache(searchText, length)
+      .pipe(take(1), untilDestroyed(this))
+      .subscribe((items) => {
+        const users: Option[] = [];
+        for (let i = 0; i < items.length; i++) {
+          users.push({ label: items[i].username, value: items[i].username });
+        }
+        if (searchText == '') {
+          config.options = config.options.concat(users);
+        } else {
+          config.searchOptions = config.searchOptions.concat(users);
+        }
+      });
   }
 
   loadMoreGroupOptions(length: number, parent: any, searchText: string, config: FieldConfig): void {
     (parent.userService as UserService).groupQueryDSCache(searchText, false, length)
-      .pipe(untilDestroyed(this))
+      .pipe(take(1), untilDestroyed(this))
       .subscribe((groups) => {
         const groupOptions: Option[] = [];
         for (let i = 0; i < groups.length; i++) {
