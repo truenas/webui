@@ -21,7 +21,7 @@ import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy {
-  protected updateCall = 'pool.dataset.permission';
+  protected updateCall: 'pool.dataset.permission' = 'pool.dataset.permission';
   protected datasetPath: string;
   protected datasetId: string;
   protected recursive: any;
@@ -212,15 +212,18 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
       entityEdit.formGroup.controls['user'].setValue(stat.user);
       entityEdit.formGroup.controls['group'].setValue(stat.group);
     });
+    entityEdit.formGroup.controls['id'].setValue(this.datasetPath);
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value: any) => {
       if (value === true) {
-        this.dialog.confirm(T('Warning'), T('Setting permissions recursively will affect this directory and any others below it. This might make data inaccessible.'))
-          .subscribe((res: boolean) => {
-            if (!res) {
-              this.recursive.setValue(false);
-            }
-          });
+        this.dialog.confirm({
+          title: T('Warning'),
+          message: T('Setting permissions recursively will affect this directory and any others below it. This might make data inaccessible.'),
+        }).subscribe((res: boolean) => {
+          if (!res) {
+            this.recursive.setValue(false);
+          }
+        });
       }
     });
   }

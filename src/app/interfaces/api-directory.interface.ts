@@ -229,6 +229,7 @@ export type ApiDirectory = {
   'filesystem.get_default_acl': { params: any; response: any };
   'filesystem.statfs': { params: any; response: any };
   'filesystem.getacl': { params: [/* path */ string]; response: Acl };
+  'filesystem.setacl': { params: any; response: any };
 
   // Failover
   'failover.licensed': { params: void; response: boolean };
@@ -442,6 +443,7 @@ export type ApiDirectory = {
   'pool.scrub.create': { params: any; response: any };
   'pool.dataset.compression_choices': { params: any; response: any };
   'pool.dataset.encryption_algorithm_choices': { params: any; response: any };
+  'pool.dataset.permission': { params: any; response: any };
   'pool.offline': { params: any; response: any };
   'pool.online': { params: any; response: any };
   'pool.remove': { params: any; response: any };

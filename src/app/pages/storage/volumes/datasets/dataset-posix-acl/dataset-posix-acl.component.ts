@@ -28,6 +28,7 @@ import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-
 import { EntityUtils } from '../../../../common/entity/utils';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { take } from 'rxjs/operators';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 @Component({
@@ -36,7 +37,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 })
 export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
   queryCall: 'filesystem.getacl' = 'filesystem.getacl';
-  updateCall = 'filesystem.setacl';
+  updateCall: 'filesystem.setacl' = 'filesystem.setacl';
   isEntity = true;
   pk: string;
   protected path: string;
@@ -306,16 +307,17 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value: any) => {
       if (value === true) {
-        this.dialogService.confirm(helptext.dataset_acl_recursive_dialog_warning,
-          helptext.dataset_acl_recursive_dialog_warning_message)
-          .subscribe((res: boolean) => {
-            if (!res) {
-              this.recursive.setValue(false);
-            }
-          });
+        this.dialogService.confirm({
+          title: helptext.dataset_acl_recursive_dialog_warning,
+          message: helptext.dataset_acl_recursive_dialog_warning_message,
+        }).pipe(take(1)).subscribe((res: boolean) => {
+          if (!res) {
+            this.recursive.setValue(false);
+          }
+        });
       }
     });
-    this.ws.call('filesystem.acl_is_trivial', [this.path]).subscribe((acl_is_trivial) => {
+    this.ws.call('filesystem.acl_is_trivial', [this.path]).pipe(take(1)).subscribe((acl_is_trivial) => {
       this.aclIsTrivial = acl_is_trivial;
     }, (err) => {
       new EntityUtils().handleWSError(this.entityForm, err);
@@ -476,6 +478,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.sub?.unsubscribe();
     this.recursive_subscription.unsubscribe();
     this.aces_subscription.unsubscribe();
   }
@@ -513,9 +516,10 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
     body.gid = body.apply_group ? body.gid : null;
 
     const doesNotWantToEditDataset = this.storageService.isDatasetTopLevel(this.path.replace('mnt/', ''))
-      && !(await this.dialogService
-        .confirm(helptext.dataset_acl_dialog_warning, helptext.dataset_acl_toplevel_dialog_message)
-        .toPromise());
+      && !(await this.dialogService.confirm({
+        title: helptext.dataset_acl_dialog_warning,
+        message: helptext.dataset_acl_toplevel_dialog_message,
+      }).toPromise());
 
     if (doesNotWantToEditDataset) {
       return;
@@ -586,7 +590,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
   }
 
   updateGroupSearchOptions(value = '', parent: any, config: FieldConfig): void {
-    (parent.userService as UserService).groupQueryDSCache(value).subscribe((groups) => {
+    (parent.userService as UserService).groupQueryDSCache(value).pipe(take(1)).subscribe((groups) => {
       const groupOptions: Option[] = [];
       for (let i = 0; i < groups.length; i++) {
         groupOptions.push({ label: groups[i].group, value: groups[i].group });
@@ -596,7 +600,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
   }
 
   updateUserSearchOptions(value = '', parent: any, config: FieldConfig): void {
-    (parent.userService as UserService).userQueryDSCache(value).subscribe((items) => {
+    (parent.userService as UserService).userQueryDSCache(value).pipe(take(1)).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -652,7 +656,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
   }
 
   loadMoreOptions(length: number, parent: any, searchText: string, config: FieldConfig): void {
-    (parent.userService as UserService).userQueryDSCache(searchText, length).subscribe((items) => {
+    (parent.userService as UserService).userQueryDSCache(searchText, length).pipe(take(1)).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -666,7 +670,7 @@ export class DatasetPosixAclComponent implements FormConfiguration, OnDestroy {
   }
 
   loadMoreGroupOptions(length: number, parent: any, searchText: string, config: FieldConfig): void {
-    (parent.userService as UserService).groupQueryDSCache(searchText, false, length).subscribe((groups) => {
+    (parent.userService as UserService).groupQueryDSCache(searchText, false, length).pipe(take(1)).subscribe((groups) => {
       const groupOptions: Option[] = [];
       for (let i = 0; i < groups.length; i++) {
         groupOptions.push({ label: groups[i].group, value: groups[i].group });
