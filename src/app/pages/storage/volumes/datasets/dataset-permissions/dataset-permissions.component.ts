@@ -307,16 +307,18 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
   }
 
   loadMoreGroupOptions(length: number, parent: any, searchText: string): void {
-    (parent.userService as UserService).groupQueryDSCache(searchText, false, length).pipe(untilDestroyed(this)).subscribe((groups) => {
-      const groupOptions: Option[] = [];
-      for (let i = 0; i < groups.length; i++) {
-        groupOptions.push({ label: groups[i].group, value: groups[i].group });
-      }
-      if (searchText == '') {
-        parent.groupField.options = parent.groupField.options.concat(groupOptions);
-      } else {
-        parent.groupField.searchOptions = parent.groupField.searchOptions.concat(groupOptions);
-      }
-    });
+    (parent.userService as UserService).groupQueryDSCache(searchText, false, length)
+      .pipe(untilDestroyed(this))
+      .subscribe((groups) => {
+        const groupOptions: Option[] = [];
+        for (let i = 0; i < groups.length; i++) {
+          groupOptions.push({ label: groups[i].group, value: groups[i].group });
+        }
+        if (searchText == '') {
+          parent.groupField.options = parent.groupField.options.concat(groupOptions);
+        } else {
+          parent.groupField.searchOptions = parent.groupField.searchOptions.concat(groupOptions);
+        }
+      });
   }
 }

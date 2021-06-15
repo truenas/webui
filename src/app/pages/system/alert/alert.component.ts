@@ -93,7 +93,8 @@ export class AlertConfigComponent implements OnInit {
             const c = category.classes[i];
             const warningOptions = [];
             for (let j = 0; j < this.warningOptions.length; j++) {
-              const option = JSON.parse(JSON.stringify(this.warningOptions[j])); // apparently this is the proper way to clone an object
+              // apparently this is the proper way to clone an object
+              const option = JSON.parse(JSON.stringify(this.warningOptions[j]));
               if (option.value === c.level) {
                 option.label = option.label + ' (Default)';
               }

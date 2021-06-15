@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as filesize from 'filesize';
+import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core.service';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import helptext from 'app/helptext/storage/disks/disks';
@@ -218,34 +219,40 @@ export class DiskListComponent implements EntityTableConfig {
               entityDialogForm.formGroup.controls['disk_name'].setValue(row.name);
             },
             customSubmit(entityDialogForm: EntityDialogComponent) {
-              self.dialogService.confirm(
-                helptext.diskWipeDialogForm.title + row.name,
-                helptext.diskWipeDialogForm.confirmContent,
-              ).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-                if (res) {
-                  const dialogRef = self.dialog.open(EntityJobComponent, { data: { title: helptext.diskWipeDialogForm.title + row.name } });
-                  dialogRef.componentInstance.setDescription(helptext.diskWipeDialogForm.startDescription);
-                  dialogRef.componentInstance.setCall('disk.wipe', [entityDialogForm.formValue.disk_name, entityDialogForm.formValue.wipe_method]);
-                  dialogRef.componentInstance.submit();
+              self.dialogService.confirm({
+                title: helptext.diskWipeDialogForm.title + row.name,
+                message: helptext.diskWipeDialogForm.confirmContent,
+              }).pipe(
+                filter(Boolean),
+                untilDestroyed(this),
+              ).subscribe(() => {
+                const dialogRef = self.dialog.open(EntityJobComponent, {
+                  data: { title: helptext.diskWipeDialogForm.title + row.name },
+                });
+                dialogRef.componentInstance.setDescription(helptext.diskWipeDialogForm.startDescription);
+                dialogRef.componentInstance.setCall(
+                  'disk.wipe',
+                  [entityDialogForm.formValue.disk_name, entityDialogForm.formValue.wipe_method],
+                );
+                dialogRef.componentInstance.submit();
 
-                  dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-                    if (dialogRef.componentInstance) {
-                      dialogRef.close(true);
-                      self.dialogService.generalDialog({
-                        title: helptext.diskWipeDialogForm.title + row.name,
-                        message: helptext.diskWipeDialogForm.infoContent,
-                        hideCancel: true,
-                      });
-                    }
-                  });
-                  dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((wipeRes: any) => {
-                    dialogRef.componentInstance.setDescription(wipeRes.error);
-                  });
-                  dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
+                dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+                  if (dialogRef.componentInstance) {
                     dialogRef.close(true);
-                  });
-                  entityDialogForm.dialogRef.close(true);
-                }
+                    self.dialogService.generalDialog({
+                      title: helptext.diskWipeDialogForm.title + row.name,
+                      message: helptext.diskWipeDialogForm.infoContent,
+                      hideCancel: true,
+                    });
+                  }
+                });
+                dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((wipeRes: any) => {
+                  dialogRef.componentInstance.setDescription(wipeRes.error);
+                });
+                dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
+                  dialogRef.close(true);
+                });
+                entityDialogForm.dialogRef.close(true);
               });
             },
           };

@@ -39,7 +39,6 @@ export class ShellComponent implements OnInit, OnDestroy {
   xterm: any;
   resize_terminal = true;
   private shellSubscription: any;
-  private shellConnectedSubscription: any;
   private fitAddon: any;
   formEvents: Subject<CoreEvent>;
 
@@ -64,10 +63,6 @@ export class ShellComponent implements OnInit, OnDestroy {
     }
     if (this.shellSubscription) {
       this.shellSubscription.unsubscribe();
-    }
-
-    if (this.shellConnectedSubscription) {
-      this.shellConnectedSubscription.unsubscribe();
     }
 
     this.core.unregister({ observerClass: this });
@@ -230,7 +225,7 @@ export class ShellComponent implements OnInit, OnDestroy {
 
     this.refreshToolbarButtons();
 
-    this.shellConnectedSubscription = this.ss.shellConnected.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
+    this.ss.shellConnected.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
       this.shellConnected = event.connected;
       this.connectionId = event.id;
 

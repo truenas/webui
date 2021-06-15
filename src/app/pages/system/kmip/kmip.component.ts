@@ -185,7 +185,10 @@ export class KmipComponent {
     if (data['server'] === null) {
       data['server'] = '';
     }
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: helptext_system_kmip.jobDialog.title }, disableClose: true });
+    const dialogRef = this.dialog.open(EntityJobComponent, {
+      data: { title: helptext_system_kmip.jobDialog.title },
+      disableClose: true,
+    });
     dialogRef.componentInstance.setCall(this.editCall, [data]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {

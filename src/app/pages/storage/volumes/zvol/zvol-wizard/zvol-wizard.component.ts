@@ -13,6 +13,7 @@ import { DatasetType } from 'app/enums/dataset-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
@@ -367,10 +368,6 @@ export class ZvolWizardComponent implements WizardConfiguration {
             this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sparse')['isHidden'] = true;
             this.customFilter = [[['id', '=', this.parent]]];
 
-            let sync_collection = [{ label: pk_dataset[0].sync.value, value: pk_dataset[0].sync.value }];
-            let compression_collection = [{ label: pk_dataset[0].compression.value, value: pk_dataset[0].compression.value }];
-            let deduplication_collection = [{ label: pk_dataset[0].deduplication.value, value: pk_dataset[0].deduplication.value }];
-
             const volumesize = pk_dataset[0].volsize.parsed;
 
             this.isNew = false;
@@ -392,6 +389,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
 
             zvolEntityForm.controls['volsize'].setValue(humansize);
 
+            let sync_collection: Option[];
             if (pk_dataset[0].sync.source === 'INHERITED' || pk_dataset[0].sync.source === 'DEFAULT') {
               sync_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].sync.rawvalue})`, value: parent_dataset_res[0].sync.value }];
             } else {
@@ -401,6 +399,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
 
             sync.options = sync_collection.concat(sync.options);
 
+            let compression_collection: Option[];
             if (pk_dataset[0].compression.source === 'INHERITED' || pk_dataset[0].compression.source === 'DEFAULT') {
               compression_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].compression.rawvalue})`, value: parent_dataset_res[0].compression.value }];
             } else {
@@ -410,6 +409,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
 
             compression.options = compression_collection.concat(compression.options);
 
+            let deduplication_collection: Option[];
             if (pk_dataset[0].deduplication.source === 'INHERITED' || pk_dataset[0].deduplication.source === 'DEFAULT') {
               deduplication_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].deduplication.rawvalue})`, value: parent_dataset_res[0].deduplication.value }];
             } else {
