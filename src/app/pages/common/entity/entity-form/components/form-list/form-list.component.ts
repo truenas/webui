@@ -22,7 +22,7 @@ export class FormListComponent implements Field {
 
   ngOnInit(): void {
     this.listsFromArray = this.group.get(this.config.name) as FormArray;
-    if (this.listsFromArray.constructor.name === 'Object' || !this.listsFromArray.controls.length) {
+    if (this.listsFromArray.controls.constructor.name === 'Object' || !this.listsFromArray.controls.length) {
       this.listsFromArray.controls = [];
     }
     if (this.config.addInitialList && this.listsFromArray.length === 0) {
