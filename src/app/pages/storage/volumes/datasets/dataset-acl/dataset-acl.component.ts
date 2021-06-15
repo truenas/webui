@@ -350,6 +350,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
       }
       this.userOptions = users;
 
+      this.uid_fc = _.find(this.fieldConfig, { name: 'uid' });
       this.uid_fc.options = this.userOptions;
     });
 
@@ -360,18 +361,21 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
       }
       this.groupOptions = groupOptions;
 
+      this.gid_fc = _.find(this.fieldConfig, { name: 'gid' });
       this.gid_fc.options = this.groupOptions;
     });
     this.ws.call('filesystem.default_acl_choices').subscribe((res: any[]) => {
       res.forEach((item) => {
-        this.defaults.push({ label: item, value: item });
+        if (item !== 'POSIX_OPEN' && item !== 'POSIX_RESTRICTED') {
+          this.defaults.push({ label: item, value: item });
+        }
       });
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
-    this.entityForm.formGroup.controls['path'].setValue(this.path);
+    this.entityForm.formGroup.get('path').setValue(this.path);
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value: boolean) => {
       if (value === true) {
@@ -489,7 +493,9 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     }
   }
 
+  // TODO: Refactor for better readability
   resourceTransformIncomingRestData(data: any): any {
+    let setToReturnLater = false;
     if (data.acl.length === 0) {
       setTimeout(() => {
         this.handleEmptyACL();
@@ -497,10 +503,14 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
       return { aces: [] as any };
     }
     if (this.homeShare) {
+      setToReturnLater = true;
       this.ws.call('filesystem.get_default_acl', ['HOME']).subscribe((res) => {
         data.acl = res;
         return { aces: [] as any };
       });
+    }
+    if (!setToReturnLater) {
+      return data;
     }
   }
 
@@ -788,7 +798,7 @@ export class DatasetAclComponent implements FormConfiguration, OnDestroy {
     }
     this.dialogRef.componentInstance.setCall(this.updateCall,
       [{
-        path: body.path,
+        path: this.path,
         dacl,
         uid: body.uid,
         gid: body.gid,

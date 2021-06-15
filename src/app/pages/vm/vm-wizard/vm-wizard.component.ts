@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DatasetType } from 'app/enums/dataset-type.enum';
-import { VmBootloader, VmDeviceType, VmTime } from 'app/enums/vm.enum';
+import {
+  VmBootloader, VmCpuMode, VmDeviceType, VmTime,
+} from 'app/enums/vm.enum';
 import { ProductType } from '../../../enums/product-type.enum';
 import {
   RestService, WebSocketService, NetworkService, StorageService, SystemGeneralService,
@@ -52,7 +54,7 @@ export class VMWizardComponent {
   vcpus = 1;
   cores = 1;
   threads = 1;
-  mode: string;
+  mode: VmCpuMode;
   model: string | null;
   private currentStep = 0;
   title = helptext.formTitle;
@@ -222,6 +224,17 @@ export class VMWizardComponent {
           ],
           value: '',
           isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [
+                {
+                  name: 'cpu_mode',
+                  value: VmCpuMode.Custom,
+                },
+              ],
+            },
+          ],
         },
         {
           type: 'input',
@@ -616,6 +629,10 @@ export class VMWizardComponent {
         this.getFormControlFromFieldName('cpu_mode').valueChanges.subscribe((mode) => {
           this.mode = mode;
           this.summary[T('CPU Mode')] = mode;
+
+          if (mode !== VmCpuMode.Custom) {
+            delete this.summary[T('CPU Model')];
+          }
         });
         this.getFormControlFromFieldName('cpu_model').valueChanges.subscribe((model) => {
           this.model = model;
@@ -975,7 +992,7 @@ export class VMWizardComponent {
 
     if (this.productType.includes(ProductType.Scale)) {
       vmPayload['cpu_mode'] = value.cpu_mode;
-      vmPayload['cpu_model'] = value.cpu_model === '' ? null : value.cpu_model;
+      vmPayload['cpu_model'] = (value.cpu_model === '' || value.cpu_mode !== VmCpuMode.Custom) ? null : value.cpu_model;
     }
 
     vmPayload['memory'] = value.memory;
