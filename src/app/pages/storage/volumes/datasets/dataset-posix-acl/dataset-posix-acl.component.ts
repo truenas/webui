@@ -393,7 +393,7 @@ export class DatasetPosixAclComponent implements FormConfiguration {
 
   async dataHandler(entityForm: EntityFormComponent, defaults?: any): Promise<void> {
     entityForm.formGroup.controls['aces'].reset();
-    (entityForm.formGroup.controls['aces'] as FormGroup).controls = {};
+    (entityForm.formGroup.controls['aces'] as FormArray).controls = [];
     this.aces_fc.listFields = [];
     this.gid_fc = _.find(this.fieldConfig, { name: 'gid' });
     this.uid_fc = _.find(this.fieldConfig, { name: 'uid' });
@@ -452,9 +452,6 @@ export class DatasetPosixAclComponent implements FormConfiguration {
       }
       const propName = 'aces';
       const aces_fg = entityForm.formGroup.get(propName) as FormArray;
-      if (!Array.isArray(aces_fg.controls) || !aces_fg.controls.length) {
-        aces_fg.controls = [];
-      }
       if (!aces_fg.controls[i]) {
         // add controls;
         const templateListField = _.cloneDeep(_.find(this.fieldConfig, { name: propName }).templateListField);
