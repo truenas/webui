@@ -3,7 +3,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { WebSocketService } from 'app/services/ws.service';
 import { ApiCall } from './api.service';
 import { CoreService } from './core.service';
-import { DiskStateService } from './disk-state.service';
+import { DiskStateService } from './disk-state/disk-state.service';
 import { DiskTemperatureService } from './disk-temperature.service';
 import { StatsService } from './stats.service';
 import { SystemProfileService } from './system-profile.service';

@@ -16,10 +16,10 @@
       "dom",
       "es2017.object",
       "es2016.array.include"
-    ],
+    ]
   },
   "angularCompilerOptions": {
     "enableIvy": true,
     "allowEmptyCodegenFiles": true
-  },
+  }
 }
