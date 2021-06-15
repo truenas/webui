@@ -68,7 +68,7 @@ export class EmailComponent implements FormConfiguration {
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.dialogRef.close(false);
-            this.dialogservice.Info(T('Email'), T('Test email sent!'));
+            this.dialogservice.Info(T('Email'), T('Test email sent!'), '500px', 'info');
           });
           this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((e_res: any) => {
             this.dialogRef.componentInstance.setDescription(e_res.error);
