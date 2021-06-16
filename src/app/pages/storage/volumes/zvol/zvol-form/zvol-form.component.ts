@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset-type.enum';
+import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -82,6 +83,7 @@ export class ZvolFormComponent implements FormConfiguration {
   private sync_collection: Option[];
   private compression_collection: Option[];
   private deduplication_collection: Option[];
+  private readonly_value: string;
 
   custActions: any[] = [
     {
@@ -237,6 +239,16 @@ export class ZvolFormComponent implements FormConfiguration {
         placeholder: helptext.zvol_sparse_placeholder,
         tooltip: helptext.zvol_sparse_tooltip,
         isHidden: false,
+      },
+      {
+        type: 'select',
+        name: 'readonly',
+        placeholder: helptext.zvol_readonly_placeholder,
+        tooltip: helptext.zvol_readonly_tooltip,
+        options: [
+          { label: 'On', value: 'ON' },
+          { label: 'Off', value: 'OFF' },
+        ],
       },
       {
         type: 'select',
@@ -568,6 +580,19 @@ export class ZvolFormComponent implements FormConfiguration {
       }
 
       this.translate.get('Inherit').pipe(untilDestroyed(this)).subscribe((inheritTr) => {
+        const readonly_inherit = [{ label: `${inheritTr} (${pk_dataset[0].readonly.rawvalue})`, value: 'INHERIT' }];
+        const readonly = _.find(this.fieldConfig, { name: 'readonly' });
+        readonly.options = readonly_inherit.concat(readonly.options);
+        if (this.isNew) {
+          this.readonly_value = 'INHERIT';
+        } else {
+          this.readonly_value = pk_dataset[0].readonly.value;
+          if (pk_dataset[0].readonly.source === 'DEFAULT' || pk_dataset[0].readonly.source === 'INHERITED') {
+            this.readonly_value = 'INHERIT';
+          }
+        }
+        entityForm.formGroup.controls['readonly'].setValue(this.readonly_value);
+
         if (pk_dataset && pk_dataset[0].type === DatasetType.Filesystem) {
           this.sync_inherit = [{ label: `${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];
           this.compression_inherit = [{ label: `${inheritTr} (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT' }];
@@ -577,6 +602,7 @@ export class ZvolFormComponent implements FormConfiguration {
           entityForm.formGroup.controls['sync'].setValue('INHERIT');
           entityForm.formGroup.controls['compression'].setValue('INHERIT');
           entityForm.formGroup.controls['deduplication'].setValue('INHERIT');
+          entityForm.formGroup.controls['readonly'].setValue('INHERIT');
           const root = this.parent.split('/')[0];
           this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((res) => {
             this.entityForm.formGroup.controls['volblocksize'].setValue(res);
@@ -658,6 +684,12 @@ export class ZvolFormComponent implements FormConfiguration {
               entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value + '-6');
             }
             entityForm.formGroup.controls['deduplication'].setValue(pk_dataset[0].deduplication.value);
+
+            let readonly_value = pk_dataset[0].readonly.value;
+            if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pk_dataset[0].readonly.source)) {
+              readonly_value = 'INHERIT';
+            }
+            entityForm.formGroup.controls['readonly'].setValue(readonly_value);
           });
         }
       });
@@ -748,6 +780,9 @@ export class ZvolFormComponent implements FormConfiguration {
     }
     if (data.deduplication === 'INHERIT') {
       delete (data.deduplication);
+    }
+    if (data.readonly === 'INHERIT') {
+      delete (data.readonly);
     }
     if (data.volblocksize !== 'INHERIT') {
       let volblocksize_integer_value = data.volblocksize.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
