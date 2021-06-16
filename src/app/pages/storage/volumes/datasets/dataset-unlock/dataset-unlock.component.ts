@@ -3,7 +3,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -175,7 +175,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected dialog: MatDialog,
-    private entityFormService: EntityFormService,
+    protected entityFormService: EntityFormService,
   ) {}
 
   preInit(): void {
@@ -364,7 +364,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
       }
       if (!this.dialogOpen) { // prevent dialog from opening more than once
         this.dialogOpen = true;
-        const unlockDialogRef: MatDialogRef<UnlockDialogComponent> = this.dialog.open(UnlockDialogComponent, { disableClose: true });
+        const unlockDialogRef = this.dialog.open(UnlockDialogComponent, { disableClose: true });
         unlockDialogRef.componentInstance.parent = this;
         unlockDialogRef.componentInstance.unlock_datasets = unlock;
         unlockDialogRef.componentInstance.error_datasets = errors;
@@ -379,7 +379,10 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
 
   unlockSubmit(payload: any): void {
     payload['recursive'] = this.unlock_children_fg.value;
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: helptext.unlocking_datasets_title }, disableClose: true });
+    const dialogRef = this.dialog.open(EntityJobComponent, {
+      data: { title: helptext.unlocking_datasets_title },
+      disableClose: true,
+    });
     if (payload.key_file && this.subs) {
       const formData: FormData = new FormData();
       formData.append('data', JSON.stringify({
@@ -417,7 +420,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
         }
         if (!this.dialogOpen) { // prevent dialog from opening more than once
           this.dialogOpen = true;
-          const unlockDialogRef: MatDialogRef<UnlockDialogComponent> = this.dialog.open(UnlockDialogComponent, { disableClose: true });
+          const unlockDialogRef = this.dialog.open(UnlockDialogComponent, { disableClose: true });
           unlockDialogRef.componentInstance.parent = this;
           unlockDialogRef.componentInstance.show_final_results();
           unlockDialogRef.componentInstance.unlock_datasets = unlock;

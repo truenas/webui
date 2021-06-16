@@ -4,7 +4,7 @@
         <span class="status active" *ngIf="catalogApp.healthy">{{ 'Healthy' | translate }}</span>
         <span class="status other" *ngIf="!catalogApp.healthy">{{ 'Unhealthy' | translate }}</span>
     </div>
-    <div class="description" [innerHTML]="catalogApp.info">
+    <div class="description" [innerHTML]="catalogApp.app_readme">
     </div>
     <div class="categories" fxLayout="row" fxLayoutAlign="space-between center">
         <div><span>{{ 'Catalog' | translate }}:</span><div class="value capitalized-text" textLimiter threshold="20">{{ catalogApp.catalog.label }}</div></div>
@@ -27,7 +27,7 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            
+
         </div>
     </div>
     <div class="version-list">
@@ -51,7 +51,7 @@
         <ng-template #noVersions>
             <div fxLayout="row" fxLayoutAlign="start start" class="detail-row row-dark version-number">
                 {{ 'No Version' | translate }}
-            </div> 
+            </div>
         </ng-template>
 
       </div>

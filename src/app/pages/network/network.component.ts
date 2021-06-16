@@ -488,7 +488,13 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       this.staticRouteFormComponent.afterModalFormClosed = this.staticRoutesTableConf.tableComponent.getData();
     }
     this.openvpnClientComponent = new OpenvpnClientComponent(this.servicesService);
-    this.openvpnServerComponent = new OpenvpnServerComponent(this.servicesService, this.dialog, this.loader, this.ws, this.storageService);
+    this.openvpnServerComponent = new OpenvpnServerComponent(
+      this.servicesService,
+      this.dialog,
+      this.loader,
+      this.ws,
+      this.storageService,
+    );
     this.impiFormComponent = new IPMIFromComponent(this.ws, this.dialog, this.loader);
   }
 

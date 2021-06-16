@@ -109,42 +109,6 @@
             "browserTarget": "truenas-scale-ui:build"
           }
         },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "src/test.ts",
-            "karmaConfig": "./karma.conf.js",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "src/tsconfig.spec.json",
-            "scripts": [
-              "node_modules/hopscotch/dist/js/hopscotch.min.js",
-              "node_modules/hammerjs/hammer.js",
-              "src/vendor/Chart.min.js",
-              "node_modules/element-resize-detector/dist/element-resize-detector.min.js",
-              "node_modules/filesize/lib/filesize.js"
-            ],
-            "styles": [
-              "node_modules/dragula/dist/dragula.css",
-              "node_modules/angular-calendar/css/angular-calendar.css",
-              "node_modules/hopscotch/dist/css/hopscotch.min.css",
-              "node_modules/chartist/dist/chartist.min.css",
-              "node_modules/@swimlane/ngx-datatable/assets/icons.css",
-              "node_modules/angular-tree-component/dist/angular-tree-component.css",
-              "node_modules/primeicons/primeicons.css",
-              "node_modules/primeng/resources/primeng.min.css",
-              "src/assets/styles/tn-styles.scss",
-              "src/assets/styles/fn-styles.css",
-              "src/assets/styles/charts.css",
-              "src/assets/styles/egret_overrides.css"
-            ],
-            "assets": [
-              "src/assets",
-              "src/favicon.ico",
-              "src/icons",
-              "src/assets/images"
-            ]
-          }
-        },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {

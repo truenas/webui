@@ -114,27 +114,12 @@ export class CatalogComponent implements OnInit {
           catalog.preferred_trains.forEach((train) => {
             for (const i in catalog.trains[train]) {
               const item = catalog.trains[train][i];
-              const versions = item.versions;
-              const versionKeys = Object.keys(versions).filter((versionKey) => versions[versionKey].healthy);
 
-              const latest = versionKeys.sort(this.utils.versionCompare)[0];
-              const latestDetails = versions[latest];
-
-              const catalogItem = {
-                name: item.name,
-                catalog: {
-                  id: catalog.id,
-                  label: catalog.label,
-                  train,
-                },
-                icon_url: item.icon_url ? item.icon_url : '/assets/images/ix-original.png',
-                latest_version: latestDetails?.human_version,
-                info: latestDetails?.app_readme,
-                categories: item.categories,
-                healthy: item.healthy,
-                healthy_error: item.healthy_error,
-                versions: item.versions,
-                schema: latestDetails?.schema,
+              const catalogItem = { ...item } as any;
+              catalogItem.catalog = {
+                id: catalog.id,
+                label: catalog.label,
+                train,
               };
               this.catalogApps.push(catalogItem);
             }
@@ -332,17 +317,23 @@ export class CatalogComponent implements OnInit {
   }
 
   doInstall(name: string, catalog = officialCatalog, train = chartsTrain): void {
-    const catalogApp = this.catalogApps.find((app) => {
-      return app.name == name && app.catalog.id == catalog && app.catalog.train == train;
-    });
+    this.appLoaderService.open();
+    this.appService.getCatalogItem(name, catalog, train).pipe(untilDestroyed(this)).subscribe((catalogApp) => {
+      this.appLoaderService.close();
 
-    if (catalogApp && catalogApp.name != ixChartApp) {
-      this.chartWizardComponent.setCatalogApp(catalogApp);
-      this.modalService.open('slide-in-form', this.chartWizardComponent);
-    } else {
-      this.chartReleaseForm.setGpuConfiguration(catalogApp);
-      this.modalService.open('slide-in-form', this.chartReleaseForm);
-    }
+      if (catalogApp) {
+        const catalogAppInfo = { ...catalogApp } as any;
+        catalogAppInfo.schema = catalogApp.versions[catalogApp.latest_version].schema;
+
+        if (catalogApp.name != ixChartApp) {
+          this.chartWizardComponent.setCatalogApp(catalogAppInfo);
+          this.modalService.open('slide-in-form', this.chartWizardComponent);
+        } else {
+          this.chartReleaseForm.setGpuConfiguration(catalogAppInfo);
+          this.modalService.open('slide-in-form', this.chartReleaseForm);
+        }
+      }
+    });
   }
 
   filterApps(): void {
@@ -367,15 +358,21 @@ export class CatalogComponent implements OnInit {
   }
 
   showSummaryDialog(name: string, catalog = officialCatalog, train = chartsTrain): void {
-    const catalogApp = this.catalogApps.find((app) => app.name == name && app.catalog.id == catalog && app.catalog.train == train);
-    if (!catalogApp) {
-      return;
-    }
-
-    this.mdDialog.open(CatalogSummaryDialog, {
-      width: '470px',
-      data: catalogApp,
-      disableClose: false,
+    this.appLoaderService.open();
+    this.appService.getCatalogItem(name, catalog, train).pipe(untilDestroyed(this)).subscribe((catalogApp) => {
+      this.appLoaderService.close();
+      if (catalogApp) {
+        const catalogAppInfo = { ...catalogApp } as any;
+        catalogAppInfo.catalog = {
+          label: catalog,
+          train,
+        };
+        this.mdDialog.open(CatalogSummaryDialog, {
+          width: '470px',
+          data: catalogAppInfo,
+          disableClose: false,
+        });
+      }
     });
   }
 

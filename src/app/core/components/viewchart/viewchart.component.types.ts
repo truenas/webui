@@ -773,7 +773,8 @@ export interface TooltipOptions {
   };
 
   /**
-   * Set custom position for the tooltip. This option can be used to modify the tooltip position by returning object that has top and left.
+   * Set custom position for the tooltip.
+   * This option can be used to modify the tooltip position by returning object that has top and left.
    */
   position?(data: any, width: number, height: number, element: any): { top: number; left: number };
 

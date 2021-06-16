@@ -17,6 +17,7 @@ import { NgxUploaderModule } from 'ngx-uploader';
 import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/appMaterial.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { WizardSummaryComponent } from 'app/pages/common/entity/entity-wizard/components/wizard-summary/wizard-summary.component';
 import { ExpandableTableComponent } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
 import { TaskScheduleListComponent } from 'app/pages/data-protection/components/task-schedule-list/task-schedule-list.component';
@@ -235,6 +236,7 @@ import { TableComponent } from './table/table.component';
     FormDictComponent,
   ],
   providers: [
+    EntityFormService,
     EntityTableService,
     AppLoaderService,
     DocsService,

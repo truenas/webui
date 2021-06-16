@@ -13,8 +13,11 @@ export class Display {
   @ViewChild('wrapper', { static: true }) wrapper: ViewContainerRef;
   @ViewChild('test', { static: true, read: ViewContainerRef }) test: ViewContainerRef;
 
-  constructor(private resolver: ComponentFactoryResolver, private viewContainerRef: ViewContainerRef, private renderer: Renderer2) {
-  }
+  constructor(
+    private resolver: ComponentFactoryResolver,
+    private viewContainerRef: ViewContainerRef,
+    private renderer: Renderer2,
+  ) {}
 
   create(component: any): any {
     const compRef = <any> this.resolver.resolveComponentFactory(component).create(this.viewContainerRef.injector);
