@@ -51,6 +51,9 @@ export default {
  target="_blank">thin provisioning</a>.\
  <b>Caution:</b> writes can fail when the pool is low on space.'),
 
+  zvol_readonly_placeholder: T('Read-only'),
+  zvol_readonly_tooltip: T('Set to prevent the zvol from being modified.'),
+
   zvol_volblocksize_placeholder: T('Block size'),
   zvol_volblocksize_tooltip: T('The zvol default block size is automatically chosen\
  based on the number of the disks in the pool for a\
