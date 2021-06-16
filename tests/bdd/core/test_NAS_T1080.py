@@ -185,7 +185,7 @@ def switch_the_encryption_type_from_key_to_passphrase_enter_your_passphrase(driv
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Encryption Type"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Encryption Type_Passphrase"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Encryption Type_Passphrase"]').click()
-    assert wait_on_element(driver, 5, '//input[@placeholder="Passphrase"]')
+    assert wait_on_element(driver, 5, '//input[@placeholder="Passphrase"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Passphrase"]').send_keys('jfads7uop89tw5j')
     driver.find_element_by_xpath('//input[@placeholder="Confirm Passphrase"]').send_keys('jfads7uop89tw5j')
 

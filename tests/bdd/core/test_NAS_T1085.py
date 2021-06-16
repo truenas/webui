@@ -1,6 +1,8 @@
 # coding=utf-8
 """Core UI feature tests."""
 
+import glob
+import os
 import time
 from function import (
     wait_on_element,
@@ -19,6 +21,8 @@ from pytest_bdd import (
 @scenario('features/NAS-T1085.feature', 'Verify that changing an encryption key format to PASSPHRASE functions')
 def test_core_ui_verify_that_changing_an_encryption_key_format_to_passphrase_functions(driver):
     """Core UI: Verify that changing an encryption key format to PASSPHRASE functions."""
+    for file in glob.glob('/tmp/dataset_encrypted_keys*.json'):
+        os.remove(file)
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
