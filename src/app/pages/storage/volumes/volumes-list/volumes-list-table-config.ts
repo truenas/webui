@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import * as _ from 'lodash';
@@ -31,7 +31,6 @@ import {
 } from 'app/services';
 import { T } from 'app/translate-marker';
 
-@UntilDestroy()
 export class VolumesListTableConfig implements EntityTableConfig {
   hideTopActions = true;
   tableData: TreeNode[] = [];
@@ -97,6 +96,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
     }
   }
 
+  destroy(): void {
+    console.info(`The ${this.constructor.name} has been destroyed`);
+  }
+
   isCustActionVisible(actionname: string): boolean {
     if (actionname === 'download_key' && this.encryptedStatus > 0) {
       return true;
@@ -116,10 +119,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
               let p1 = '';
               const self = this;
               this.loader.open();
-              this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+              this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res: any[]) => {
                 if (res.length > 0) {
-                  self.translate.get(helptext.encryptMsgA).pipe(untilDestroyed(this)).subscribe((servicesMsgA) => {
-                    self.translate.get(helptext.encryptMsgB).pipe(untilDestroyed(this)).subscribe((servicesMsgB) => {
+                  self.translate.get(helptext.encryptMsgA).pipe(untilDestroyed(this, 'destroy')).subscribe((servicesMsgA) => {
+                    self.translate.get(helptext.encryptMsgB).pipe(untilDestroyed(this, 'destroy')).subscribe((servicesMsgB) => {
                       p1 = servicesMsgA + `<i>${row1.name}</i>` + servicesMsgB;
                       res.forEach((item) => {
                         p1 += `<br><br>${item.type}:`;
@@ -133,7 +136,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     });
                   });
                 }
-                this.ws.call('pool.processes', [row1.id]).pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+                this.ws.call('pool.processes', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res: any[]) => {
                   const running_processes: any[] = [];
                   const running_unknown_processes: any[] = [];
                   if (res.length > 0) {
@@ -147,7 +150,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       }
                     });
                     if (running_processes.length > 0) {
-                      self.translate.get(helptext.runningMsg).pipe(untilDestroyed(this)).subscribe((servicesMsg) => {
+                      self.translate.get(helptext.runningMsg).pipe(untilDestroyed(self, 'destroy')).subscribe((servicesMsg) => {
                         p1 += `<br><br>${servicesMsg} <b>${row1.name}</b>:`;
                         running_processes.forEach((process) => {
                           if (process.name) {
@@ -211,7 +214,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   customSubmit(entityDialog: EntityDialogComponent) {
                     const value = entityDialog.formValue;
                     self.loader.open();
-                    self.ws.job('pool.lock', [row1.id, value.passphrase]).pipe(untilDestroyed(this)).subscribe(
+                    self.ws.job('pool.lock', [row1.id, value.passphrase]).pipe(untilDestroyed(self, 'destroy')).subscribe(
                       (res) => {
                         if (res.error) {
                           self.loader.close();
@@ -296,15 +299,15 @@ export class VolumesListTableConfig implements EntityTableConfig {
         onClick: (row1: any) => {
           const message = helptext.export_keys_message + row1.name;
           const fileName = 'dataset_' + row1.name + '_keys.json';
-          this.dialogService.passwordConfirm(message).pipe(untilDestroyed(this)).subscribe((export_keys) => {
+          this.dialogService.passwordConfirm(message).pipe(untilDestroyed(this, 'destroy')).subscribe((export_keys) => {
             if (export_keys) {
               this.loader.open();
               const mimetype = 'application/json';
-              this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).pipe(untilDestroyed(this)).subscribe((res) => {
+              this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
                 this.loader.close();
                 const url = res[1];
                 this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
-                  .pipe(untilDestroyed(this))
+                  .pipe(untilDestroyed(this, 'destroy'))
                   .subscribe((file) => {
                     if (res !== null && res !== '') {
                       this.storageService.downloadBlob(file, fileName);
@@ -371,13 +374,13 @@ export class VolumesListTableConfig implements EntityTableConfig {
           },
         ],
         afterInit(entityDialog: EntityDialogComponent) {
-          self.messageService.messageSourceHasNewMessage$.pipe(untilDestroyed(this)).subscribe((message) => {
+          self.messageService.messageSourceHasNewMessage$.pipe(untilDestroyed(self, 'destroy')).subscribe((message) => {
             entityDialog.formGroup.controls['key'].setValue(message);
           });
           // these disabled booleans are here to prevent recursion errors, disabling only needs to happen once
           let keyDisabled = false;
           let passphraseDisabled = false;
-          entityDialog.formGroup.controls['passphrase'].valueChanges.pipe(untilDestroyed(this)).subscribe((passphrase) => {
+          entityDialog.formGroup.controls['passphrase'].valueChanges.pipe(untilDestroyed(self, 'destroy')).subscribe((passphrase) => {
             if (!passphraseDisabled) {
               if (passphrase && passphrase !== '') {
                 keyDisabled = true;
@@ -388,7 +391,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
               }
             }
           });
-          entityDialog.formGroup.controls['key'].valueChanges.pipe(untilDestroyed(this)).subscribe((key) => {
+          entityDialog.formGroup.controls['key'].valueChanges.pipe(untilDestroyed(self, 'destroy')).subscribe((key) => {
             if (!keyDisabled) {
               if (key && !passphraseDisabled) {
                 passphraseDisabled = true;
@@ -419,25 +422,25 @@ export class VolumesListTableConfig implements EntityTableConfig {
             dialogRef.componentInstance.setCall('pool.unlock', params);
             dialogRef.componentInstance.submit();
           }
-          dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
             if (!done) {
               dialogRef.close(false);
               entityDialog.dialogRef.close(true);
               self.parentVolumesListComponent.repaintMe();
-              self.translate.get(' has been unlocked.').pipe(untilDestroyed(this)).subscribe((unlockTr) => {
+              self.translate.get(' has been unlocked.').pipe(untilDestroyed(this, 'destroy')).subscribe((unlockTr) => {
                 self.dialogService.Info(T('Unlock'), row1.name + unlockTr, '300px', 'info', true);
                 done = true;
               });
             }
           });
-          dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+          dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((res: any) => {
             dialogRef.close(false);
             new EntityUtils().handleWSError(self, res, self.dialogService);
           });
         },
       })),
       switchMap((conf) => this.dialogService.dialogForm(conf)),
-    ).pipe(untilDestroyed(this)).subscribe(() => {});
+    ).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {});
   }
 
   getPoolData(poolId: number): Observable<Pool[]> {
@@ -493,7 +496,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 dialogRef.componentInstance.setDescription(helptext.pool_options_dialog.saving_pool_options);
                 dialogRef.componentInstance.setCall(method, payload);
                 dialogRef.componentInstance.submit();
-                dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
+                dialogRef.componentInstance.success.pipe(untilDestroyed(self, 'destroy')).subscribe((res: any) => {
                   if (res) {
                     dialogRef.close();
                     entityDialog.dialogRef.close();
@@ -504,7 +507,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     self.parentVolumesListComponent.repaintMe();
                   }
                 });
-                dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+                dialogRef.componentInstance.failure.pipe(untilDestroyed(self, 'destroy')).subscribe((err: any) => {
                   if (err) {
                     dialogRef.close();
                     new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
@@ -512,7 +515,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 });
               },
             };
-            this.dialogService.dialogForm(this.dialogConf).pipe(untilDestroyed(this)).subscribe(() => {
+            this.dialogService.dialogForm(this.dialogConf).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
             });
           },
         });
@@ -528,10 +531,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
 
           if (rowData.is_decrypted && rowData.status !== 'UNKNOWN') {
             this.loader.open();
-            this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+            this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res: any[]) => {
               if (res.length > 0) {
-                self.translate.get(helptext.exportMessages.servicesA).pipe(untilDestroyed(this)).subscribe((a) => {
-                  self.translate.get(helptext.exportMessages.servicesB).pipe(untilDestroyed(this)).subscribe((b) => {
+                self.translate.get(helptext.exportMessages.servicesA).pipe(untilDestroyed(self, 'destroy')).subscribe((a) => {
+                  self.translate.get(helptext.exportMessages.servicesB).pipe(untilDestroyed(self, 'destroy')).subscribe((b) => {
                     p1 = a + `<i>${row1.name}</i>` + b;
                     res.forEach((item) => {
                       p1 += `<br><b>${item.type}:</b>`;
@@ -546,7 +549,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 });
                 p1 += '<br /><br />';
               }
-              this.ws.call('pool.processes', [row1.id]).pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+              this.ws.call('pool.processes', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res: any[]) => {
                 const running_processes: any[] = [];
                 const running_unknown_processes: any[] = [];
                 if (res.length > 0) {
@@ -791,7 +794,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
           name: 'Scrub Pool',
           label: T('Scrub Pool'),
           onClick: (row1: any) => {
-            this.getPoolData(row1.id).pipe(untilDestroyed(this)).subscribe((pools) => {
+            this.getPoolData(row1.id).pipe(untilDestroyed(this, 'destroy')).subscribe((pools) => {
               if (!pools[0]) {
                 return;
               }
@@ -804,13 +807,13 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   buttonMsg: self.translate.instant('Stop Scrub'),
                 }).pipe(
                   filter(Boolean),
-                  untilDestroyed(this),
+                  untilDestroyed(this, 'destroy'),
                 ).subscribe(() => {
                   this.loader.open();
-                  this.ws.call('pool.scrub', [row1.id, 'STOP']).pipe(untilDestroyed(this)).subscribe(
+                  this.ws.call('pool.scrub', [row1.id, 'STOP']).pipe(untilDestroyed(this, 'destroy')).subscribe(
                     () => {
                       this.loader.close();
-                      self.translate.get('Stopping scrub on pool').pipe(untilDestroyed(this)).subscribe((msg) => {
+                      self.translate.get('Stopping scrub on pool').pipe(untilDestroyed(this, 'destroy')).subscribe((msg) => {
                         this.dialogService.Info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>`, '300px', 'info', true);
                       });
                     },
@@ -828,7 +831,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   buttonMsg: self.translate.instant('Start Scrub'),
                 }).pipe(
                   filter(Boolean),
-                  untilDestroyed(this),
+                  untilDestroyed(this, 'destroy'),
                 ).subscribe(() => {
                   this.dialogRef = this.mdDialog.open(EntityJobComponent, {
                     data: { title: T('Scrub Pool') },
@@ -836,7 +839,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   });
                   this.dialogRef.componentInstance.setCall('pool.scrub', [row1.id, 'START']);
                   this.dialogRef.componentInstance.submit();
-                  this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((jobres: any) => {
+                  this.dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe((jobres: any) => {
                     this.dialogRef.close(false);
                     if (jobres.progress.percent == 100 && jobres.progress.description === 'Scrub finished') {
                       this.dialogService.Info(
@@ -856,7 +859,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       );
                     }
                   });
-                  this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+                  this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((err: any) => {
                     this.dialogRef.componentInstance.setDescription(err.error);
                   });
                 });
@@ -909,7 +912,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
               if (entityDialog) {
                 payload.push({ geli: { passphrase: entityDialog.formValue['passphrase'] } });
               }
-              parent.ws.job('pool.expand', payload).pipe(untilDestroyed(this)).subscribe(
+              parent.ws.job('pool.expand', payload).pipe(untilDestroyed(parent, 'destroy')).subscribe(
                 (res) => {
                   parent.loader.close();
                   if (res.error) {
@@ -945,7 +948,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 confirmBtnMsg: helptext.expand_pool_dialog.save_button,
               }).pipe(
                 filter(Boolean),
-                untilDestroyed(this),
+                untilDestroyed(this, 'destroy'),
               ).subscribe(() => doExpand());
             } else {
               self.dialogService.dialogForm(conf);
@@ -964,15 +967,15 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 message: this.translate.instant(helptext.upgradePoolDialog_warning) + row1.name,
               }).pipe(
                 filter(Boolean),
-                untilDestroyed(this),
+                untilDestroyed(this, 'destroy'),
               ).subscribe(() => {
                 this.loader.open();
-                this.ws.call('pool.upgrade', [rowData.id]).pipe(untilDestroyed(this)).subscribe(
+                this.ws.call('pool.upgrade', [rowData.id]).pipe(untilDestroyed(this, 'destroy')).subscribe(
                   () => {
                     this.dialogService.Info(
                       this.translate.instant('Upgraded'),
                       this.translate.instant('Successfully Upgraded {poolName}.', { poolName: row1.name }),
-                    ).pipe(untilDestroyed(this)).subscribe(() => {
+                    ).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
                       this.parentVolumesListComponent.repaintMe();
                     });
                   },
@@ -1026,13 +1029,13 @@ export class VolumesListTableConfig implements EntityTableConfig {
           label: T('Edit Permissions'),
           ttposition: 'left',
           onClick: () => {
-            this.ws.call('filesystem.acl_is_trivial', [rowData.mountpoint]).pipe(untilDestroyed(this)).subscribe((acl_is_trivial) => {
+            this.ws.call('filesystem.acl_is_trivial', [rowData.mountpoint]).pipe(untilDestroyed(this, 'destroy')).subscribe((acl_is_trivial) => {
               if (acl_is_trivial) {
                 this.router.navigate(new Array('/').concat([
                   'storage', 'permissions', rowData.id,
                 ]));
               } else {
-                this.ws.call('filesystem.getacl', [rowData.mountpoint]).pipe(untilDestroyed(this)).subscribe((acl) => {
+                this.ws.call('filesystem.getacl', [rowData.mountpoint]).pipe(untilDestroyed(this, 'destroy')).subscribe((acl) => {
                   if (acl.acltype === AclType.Posix1e) {
                     this.router.navigate(new Array('/').concat([
                       'storage', 'id', rowData.pool, 'dataset',
@@ -1089,10 +1092,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
               this.translate.instant('DELETE DATASET'),
             ).pipe(
               filter(Boolean),
-              untilDestroyed(this),
+              untilDestroyed(this, 'destroy'),
             ).subscribe(() => {
               this.loader.open();
-              this.ws.call('pool.dataset.delete', [rowData.id, { recursive: true }]).pipe(untilDestroyed(this)).subscribe(
+              this.ws.call('pool.dataset.delete', [rowData.id, { recursive: true }]).pipe(untilDestroyed(this, 'destroy')).subscribe(
                 () => {
                   this.loader.close();
                   this.parentVolumesListComponent.repaintMe();
@@ -1106,13 +1109,13 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       buttonMsg: this.translate.instant('Force Delete'),
                     }).pipe(
                       filter(Boolean),
-                      untilDestroyed(this),
+                      untilDestroyed(this, 'destroy'),
                     ).subscribe(() => {
                       this.loader.open();
                       this.ws.call('pool.dataset.delete', [rowData.id, {
                         recursive: true,
                         force: true,
-                      }]).pipe(untilDestroyed(this)).subscribe(
+                      }]).pipe(untilDestroyed(this, 'destroy')).subscribe(
                         () => {
                           this.loader.close();
                           this.parentVolumesListComponent.repaintMe();
@@ -1160,11 +1163,11 @@ export class VolumesListTableConfig implements EntityTableConfig {
             this.translate.instant('Delete Zvol'),
           ).pipe(
             filter(Boolean),
-            untilDestroyed(this),
+            untilDestroyed(this, 'destroy'),
           ).subscribe(() => {
             this.loader.open();
 
-            this.ws.call('pool.dataset.delete', [rowData.id, { recursive: true }]).pipe(untilDestroyed(this)).subscribe(() => {
+            this.ws.call('pool.dataset.delete', [rowData.id, { recursive: true }]).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
               this.loader.close();
               this.parentVolumesListComponent.repaintMe();
             }, (res) => {
@@ -1195,7 +1198,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
         name: T('Create Snapshot'),
         label: T('Create Snapshot'),
         onClick: (row: any) => {
-          this.ws.call('vmware.dataset_has_vms', [row.id, false]).pipe(untilDestroyed(this)).subscribe((vmware_res) => {
+          this.ws.call('vmware.dataset_has_vms', [row.id, false]).pipe(untilDestroyed(this, 'destroy')).subscribe((vmware_res) => {
             this.vmware_res_status = vmware_res;
           });
           this.dialogConf = {
@@ -1226,7 +1229,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 parent: this,
                 updater: (parent: any) => {
                   parent.recursiveIsChecked = !parent.recursiveIsChecked;
-                  parent.ws.call('vmware.dataset_has_vms', [row.id, parent.recursiveIsChecked]).pipe(untilDestroyed(this)).subscribe((vmware_res: any) => {
+                  parent.ws.call('vmware.dataset_has_vms', [row.id, parent.recursiveIsChecked]).pipe(untilDestroyed(parent, 'destroy')).subscribe((vmware_res: any) => {
                     parent.vmware_res_status = vmware_res;
                     _.find(parent.dialogConf.fieldConfig, { name: 'vmware_sync' })['isHidden'] = !parent.vmware_res_status;
                   });
@@ -1243,7 +1246,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
             method_ws: 'zfs.snapshot.create',
             saveButtonText: T('Create Snapshot'),
           };
-          this.dialogService.dialogForm(this.dialogConf).pipe(untilDestroyed(this)).subscribe((res) => {
+          this.dialogService.dialogForm(this.dialogConf).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
             if (res) {
               this.dialogService.Info(T('Create Snapshot'), T('Snapshot successfully taken.'));
             }
@@ -1260,15 +1263,15 @@ export class VolumesListTableConfig implements EntityTableConfig {
           onClick: (row1: any) => {
             this.loader.open();
 
-            this.ws.call('pool.dataset.promote', [row1.id]).pipe(untilDestroyed(this)).subscribe(() => {
+            this.ws.call('pool.dataset.promote', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
               this.loader.close();
               // Showing info here because there is no feedback on list parent for this if promoted.
-              this.dialogService.Info(T('Promote Dataset'), T('Successfully Promoted ') + row1.id).pipe(untilDestroyed(this)).subscribe(() => {
+              this.dialogService.Info(T('Promote Dataset'), T('Successfully Promoted ') + row1.id).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
                 this.parentVolumesListComponent.repaintMe();
               });
             }, (res) => {
               this.loader.close();
-              self.translate.get('Error Promoting dataset ').pipe(untilDestroyed(this)).subscribe((msg) => {
+              self.translate.get('Error Promoting dataset ').pipe(untilDestroyed(this, 'destroy')).subscribe((msg) => {
                 this.dialogService.errorReport(msg + row1.id, res.reason, res.stack);
               });
             });
@@ -1425,7 +1428,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     entityDialog.setDisabled(all_encryption_fields[i], true, true);
                   }
                 }
-                inherit_encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((inherit) => {
+                inherit_encryption_fg.valueChanges.pipe(untilDestroyed(self, 'destroy')).subscribe((inherit) => {
                   if (inherit) {
                     for (let i = 0; i < all_encryption_fields.length; i++) {
                       entityDialog.setDisabled(all_encryption_fields[i], inherit, inherit);
@@ -1449,7 +1452,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   }
                 });
 
-                encryption_type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((enc_type) => {
+                encryption_type_fg.valueChanges.pipe(untilDestroyed(self, 'destroy')).subscribe((enc_type) => {
                   const key = (enc_type === 'key');
                   entityDialog.setDisabled('generate_key', !key, !key);
                   if (key) {
@@ -1463,7 +1466,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   entityDialog.setDisabled('pbkdf2iters', key, key);
                 });
 
-                generate_key_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((gen_key) => {
+                generate_key_fg.valueChanges.pipe(untilDestroyed(self, 'destroy')).subscribe((gen_key) => {
                   if (!inherit_encryption_fg.value && encryption_type_fg.value === 'key') {
                     entityDialog.setDisabled('key', gen_key, gen_key);
                   }
@@ -1478,7 +1481,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   if (row.is_encrypted_root) { // only try to change to inherit if not currently inheriting
                     method = 'pool.dataset.inherit_parent_encryption_properties';
                     entityDialog.loader.open();
-                    entityDialog.ws.call(method, payload).pipe(untilDestroyed(this)).subscribe(() => {
+                    entityDialog.ws.call(method, payload).pipe(untilDestroyed(self, 'destroy')).subscribe(() => {
                       entityDialog.loader.close();
                       self.dialogService.Info(
                         helptext.encryption_options_dialog.dialog_saved_title,
@@ -1513,7 +1516,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   );
                   dialogRef.componentInstance.setCall(method, payload);
                   dialogRef.componentInstance.submit();
-                  dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
+                  dialogRef.componentInstance.success.pipe(untilDestroyed(self, 'destroy')).subscribe((res: any) => {
                     if (res) {
                       dialogRef.close();
                       entityDialog.dialogRef.close();
@@ -1524,7 +1527,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       self.parentVolumesListComponent.repaintMe();
                     }
                   });
-                  dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+                  dialogRef.componentInstance.failure.pipe(untilDestroyed(self, 'destroy')).subscribe((err: any) => {
                     if (err) {
                       dialogRef.close();
                       new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
@@ -1533,7 +1536,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 }
               },
             };
-            this.dialogService.dialogForm(this.dialogConf).pipe(untilDestroyed(this)).subscribe(() => {
+            this.dialogService.dialogForm(this.dialogConf).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
             });
           },
         });
@@ -1555,12 +1558,12 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 method: 'pool.dataset.lock',
                 data: params,
               });
-              ds.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((res: any) => {
+              ds.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this, 'destroy')).subscribe((res: any) => {
                 force_umount = res;
               });
               ds.afterClosed().pipe(
                 filter(Boolean),
-                untilDestroyed(this),
+                untilDestroyed(this, 'destroy'),
               ).subscribe(() => {
                 const dialogRef = this.mdDialog.open(EntityJobComponent, {
                   data: { title: helptext.lock_dataset_dialog.locking_dataset },
@@ -1573,7 +1576,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 dialogRef.componentInstance.setCall(ds.componentInstance.method, params);
                 dialogRef.componentInstance.submit();
                 let done = false;
-                dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+                dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
                   if (!done) {
                     dialogRef.close(false);
                     done = true;
@@ -1581,7 +1584,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   }
                 });
 
-                dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+                dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((res: any) => {
                   dialogRef.close(false);
                   new EntityUtils().handleWSError(this, res, this.dialogService);
                 });
@@ -1605,7 +1608,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
             onClick: () => {
               this.dialogService.passwordConfirm(message).pipe(
                 filter(Boolean),
-                untilDestroyed(this),
+                untilDestroyed(this, 'destroy'),
               ).subscribe(() => {
                 const dialogRef = this.mdDialog.open(EntityJobComponent, {
                   data: { title: T('Retrieving Key') },
@@ -1613,7 +1616,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 });
                 dialogRef.componentInstance.setCall('pool.dataset.export_key', [rowData.id]);
                 dialogRef.componentInstance.submit();
-                dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
+                dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe((res: any) => {
                   dialogRef.close();
                   this.dialogService.confirm({
                     title: this.translate.instant('Key for {id}', { id: rowData.id }),
@@ -1623,14 +1626,14 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     cancelMsg: this.translate.instant('Close'),
                   }).pipe(
                     filter(Boolean),
-                    untilDestroyed(this),
+                    untilDestroyed(this, 'destroy'),
                   ).subscribe(() => {
                     this.loader.open();
-                    this.ws.call('core.download', ['pool.dataset.export_key', [rowData.id, true], fileName]).pipe(untilDestroyed(this)).subscribe((res: any) => {
+                    this.ws.call('core.download', ['pool.dataset.export_key', [rowData.id, true], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res: any) => {
                       this.loader.close();
                       const url = res[1];
                       this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
-                        .pipe(untilDestroyed(this))
+                        .pipe(untilDestroyed(this, 'destroy'))
                         .subscribe((file) => {
                           if (res !== null && res !== '') {
                             this.storageService.downloadBlob(file, fileName);
@@ -1705,7 +1708,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
 
   getMoreDatasetInfo(dataObj: any, parent: any): void {
     const dataset_data2 = this.datasetData;
-    this.translate.get(T('Inherits')).pipe(untilDestroyed(this)).subscribe((inherits) => {
+    this.translate.get(T('Inherits')).pipe(untilDestroyed(this, 'destroy')).subscribe((inherits) => {
       for (const k in dataset_data2) {
         if (dataset_data2[k].id === dataObj.id) {
           if (dataset_data2[k].compression) {

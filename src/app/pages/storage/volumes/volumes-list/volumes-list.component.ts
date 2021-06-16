@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import { combineLatest, Subscription } from 'rxjs';
@@ -31,6 +31,7 @@ import { T } from '../../../../translate-marker';
 import { DatasetFormComponent } from '../datasets/dataset-form';
 import { ZvolFormComponent } from '../zvol/zvol-form';
 
+@UntilDestroy()
 @Component({
   selector: 'app-volumes-list',
   styleUrls: ['./volumes-list.component.scss'],
