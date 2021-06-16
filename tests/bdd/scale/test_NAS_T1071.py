@@ -17,8 +17,8 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1071.feature', 'Create pool with 2 disks')
-def test_create_pool_with_2_disks():
+@scenario('features/NAS-T1071.feature', 'Create pool with 1 disk')
+def test_create_pool_with_1_disk():
     """Create pool with 2 disks."""
 
 
@@ -64,9 +64,9 @@ def the_pool_manager_appears_enter_the_tank_for_pool_name(driver):
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys('tank')
 
 
-@then('click sdb1 and sdb22 checkbox, press the right arrow under Data VDevs')
-def click_sdb1_and_sdb22_checkbox_press_the_right_arrow_under_data_vdevs(driver):
-    """click sdb1 and sdb22 checkbox, press the right arrow under Data VDevs."""
+@then('click sdb checkbox, press the right arrow under Data VDevs')
+def click_sdb_checkbox_press_the_right_arrow_under_data_vdevs(driver):
+    """click sdb checkbox, press the right arrow under Data VDevs."""
     assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__disks-sdb"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-sdb"]').click()
     assert wait_on_element(driver, 5, '//button[@id="vdev__add-button"]', 'clickable')
