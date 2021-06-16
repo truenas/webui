@@ -96,13 +96,13 @@ export class ZvolFormComponent implements FormConfiguration {
     },
   ];
 
-  protected byteMap: Object = {
+  protected byteMap = {
     T: 1099511627776,
     G: 1073741824,
     M: 1048576,
     K: 1024,
   };
-  protected reverseZvolBlockSizeMap: Object = {
+  protected reverseZvolBlockSizeMap = {
     512: '512',
     '1K': '1024',
     '2K': '2048',

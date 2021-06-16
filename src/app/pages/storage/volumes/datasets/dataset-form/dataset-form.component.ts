@@ -758,14 +758,14 @@ export class DatasetFormComponent implements FormConfiguration {
     'pbkdf2iters',
   ];
 
-  protected byteMap: Object = {
+  protected byteMap = {
     T: 1099511627776,
     G: 1073741824,
     M: 1048576,
     K: 1024,
     B: 1,
   };
-  protected recordSizeMap: Object = {
+  protected recordSizeMap = {
     512: '512',
     1024: '1K',
     2048: '2K',
@@ -779,7 +779,7 @@ export class DatasetFormComponent implements FormConfiguration {
     524288: '512K',
     1048576: '1024K',
   };
-  protected reverseRecordSizeMap: Object = {
+  protected reverseRecordSizeMap = {
     512: '512',
     '1K': '1024',
     '2K': '2048',

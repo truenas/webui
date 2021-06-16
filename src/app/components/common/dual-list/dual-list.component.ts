@@ -13,7 +13,7 @@ export class DualListboxComponent implements OnInit {
   @Input() key = 'id';
   @Input() items: any[];
   @Input('selectedItems') _selectedItems: any[];
-  @Output() selectedItemsChange = new EventEmitter<Object>();
+  @Output() selectedItemsChange = new EventEmitter<any[]>();
 
   @Input() minHeight = '200px';
   @Input() maxHeight = '300px';

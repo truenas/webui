@@ -447,7 +447,7 @@ export class SMBFormComponent implements FormConfiguration {
            * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
            * nav to SMB shares list view.
            */
-          const promptUserACLEdit = (): Observable<[boolean, {}] | [boolean]> =>
+          const promptUserACLEdit = (): Observable<[boolean, Record<string, unknown>] | [boolean]> =>
             this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
               switchMap((isTrivialACL) => {
                 let nextStep;

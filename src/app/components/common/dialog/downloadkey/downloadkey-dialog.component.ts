@@ -22,7 +22,7 @@ export class DownloadKeyModalDialog {
   volumeId: any;
   volumeName: any;
   fileName: string;
-  isDownloaded: Boolean = false;
+  isDownloaded = false;
   help = helptext;
 
   constructor(
