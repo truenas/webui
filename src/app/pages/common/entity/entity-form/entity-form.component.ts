@@ -415,6 +415,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     const payload = [];
     const call = this.conf.addCall;
     payload.push(body);
+
+    if (this.conf.isCreateJob) {
+      return this.ws.job(call, payload);
+    }
     return this.ws.call(call, payload);
   }
 
@@ -495,7 +499,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.loader.close();
             this.loaderOpen = false;
 
-            if (this.conf.isEditJob && res.error) {
+            if ((this.conf.isEditJob || this.conf.isCreateJob) && res.error) {
               if (res.exc_info && res.exc_info.extra) {
                 new EntityUtils().handleWSError(this, res);
               } else {
