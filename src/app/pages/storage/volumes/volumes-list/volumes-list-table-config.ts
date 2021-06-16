@@ -121,17 +121,15 @@ export class VolumesListTableConfig implements EntityTableConfig {
               this.loader.open();
               this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res: any[]) => {
                 if (res.length > 0) {
-                  self.translate.get(helptext.encryptMsgA).pipe(untilDestroyed(this, 'destroy')).subscribe((servicesMsgA) => {
-                    self.translate.get(helptext.encryptMsgB).pipe(untilDestroyed(this, 'destroy')).subscribe((servicesMsgB) => {
-                      p1 = servicesMsgA + `<i>${row1.name}</i>` + servicesMsgB;
-                      res.forEach((item) => {
-                        p1 += `<br><br>${item.type}:`;
-                        item.attachments.forEach((i: string) => {
-                          const tempArr = i.split(',');
-                          tempArr.forEach((i) => {
-                            p1 += `<br> - ${i}`;
-                          });
-                        });
+                  const servicesMsgA = self.translate.instant(helptext.encryptMsgA);
+                  const servicesMsgB = self.translate.instant(helptext.encryptMsgB);
+                  p1 = servicesMsgA + `<i>${row1.name}</i>` + servicesMsgB;
+                  res.forEach((item) => {
+                    p1 += `<br><br>${item.type}:`;
+                    item.attachments.forEach((i: string) => {
+                      const tempArr = i.split(',');
+                      tempArr.forEach((i) => {
+                        p1 += `<br> - ${i}`;
                       });
                     });
                   });
@@ -150,13 +148,12 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       }
                     });
                     if (running_processes.length > 0) {
-                      self.translate.get(helptext.runningMsg).pipe(untilDestroyed(self, 'destroy')).subscribe((servicesMsg) => {
-                        p1 += `<br><br>${servicesMsg} <b>${row1.name}</b>:`;
-                        running_processes.forEach((process) => {
-                          if (process.name) {
-                            p1 += `<br> - ${process.name}`;
-                          }
-                        });
+                      const servicesMsg = self.translate.instant(helptext.runningMsg);
+                      p1 += `<br><br>${servicesMsg} <b>${row1.name}</b>:`;
+                      running_processes.forEach((process) => {
+                        if (process.name) {
+                          p1 += `<br> - ${process.name}`;
+                        }
                       });
                     }
                     if (running_unknown_processes.length > 0) {
@@ -427,10 +424,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
               dialogRef.close(false);
               entityDialog.dialogRef.close(true);
               self.parentVolumesListComponent.repaintMe();
-              self.translate.get(' has been unlocked.').pipe(untilDestroyed(this, 'destroy')).subscribe((unlockTr) => {
-                self.dialogService.Info(T('Unlock'), row1.name + unlockTr, '300px', 'info', true);
-                done = true;
-              });
+              const unlockTr = self.translate.instant(' has been unlocked.');
+              self.dialogService.Info(T('Unlock'), row1.name + unlockTr, '300px', 'info', true);
+              done = true;
             }
           });
           dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((res: any) => {
@@ -533,17 +529,15 @@ export class VolumesListTableConfig implements EntityTableConfig {
             this.loader.open();
             this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res: any[]) => {
               if (res.length > 0) {
-                self.translate.get(helptext.exportMessages.servicesA).pipe(untilDestroyed(self, 'destroy')).subscribe((a) => {
-                  self.translate.get(helptext.exportMessages.servicesB).pipe(untilDestroyed(self, 'destroy')).subscribe((b) => {
-                    p1 = a + `<i>${row1.name}</i>` + b;
-                    res.forEach((item) => {
-                      p1 += `<br><b>${item.type}:</b>`;
-                      item.attachments.forEach((i: any) => {
-                        const tempArr = i.split(',');
-                        tempArr.forEach((i: any) => {
-                          p1 += `<br> - ${i}`;
-                        });
-                      });
+                const a = self.translate.instant(helptext.exportMessages.servicesA);
+                const b = self.translate.instant(helptext.exportMessages.servicesB);
+                p1 = a + `<i>${row1.name}</i>` + b;
+                res.forEach((item) => {
+                  p1 += `<br><b>${item.type}:</b>`;
+                  item.attachments.forEach((i: any) => {
+                    const tempArr = i.split(',');
+                    tempArr.forEach((i: any) => {
+                      p1 += `<br> - ${i}`;
                     });
                   });
                 });
@@ -616,8 +610,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
               }, {
                 type: 'paragraph',
                 name: 'pool_detach_warning',
-                paraText: warningA + row1.name
-                  + warningB,
+                paraText: warningA + row1.name + warningB,
                 isHidden: rowData.status === 'UNKNOWN',
               }, {
                 type: 'paragraph',
@@ -700,21 +693,19 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   restart_services: self.restartServices,
                 }]);
                 dialogRef.componentInstance.submit();
-                dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+                dialogRef.componentInstance.success.pipe(untilDestroyed(self, 'destroy')).subscribe(() => {
                   entityDialog.dialogRef.close(true);
-                  self.translate.get(helptext.exportSuccess).pipe(untilDestroyed(this)).subscribe((msg) => {
-                    self.translate.get(helptext.destroyed).pipe(untilDestroyed(this)).subscribe((destroyed) => {
-                      if (!value.destroy) {
-                        self.dialogService.Info(helptext.exportDisconnect, msg + row1.name + "'");
-                      } else {
-                        self.dialogService.Info(helptext.exportDisconnect, msg + row1.name + destroyed);
-                      }
-                      dialogRef.close(true);
-                      self.parentVolumesListComponent.repaintMe();
-                    });
-                  });
+                  const msg = self.translate.instant(helptext.exportSuccess);
+                  const destroyed = self.translate.instant(helptext.destroyed);
+                  if (!value.destroy) {
+                    self.dialogService.Info(helptext.exportDisconnect, msg + row1.name + "'");
+                  } else {
+                    self.dialogService.Info(helptext.exportDisconnect, msg + row1.name + destroyed);
+                  }
+                  dialogRef.close(true);
+                  self.parentVolumesListComponent.repaintMe();
                 });
-                dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+                dialogRef.componentInstance.failure.pipe(untilDestroyed(self, 'destroy')).subscribe((res: any) => {
                   let conditionalErrMessage = '';
                   if (res.error) {
                     if (res.exc_info.extra && res.exc_info.extra['code'] === 'control_services') {
@@ -746,20 +737,17 @@ export class VolumesListTableConfig implements EntityTableConfig {
                         buttonMsg: helptext.exportMessages.onfail.continueAction,
                       }).pipe(
                         filter(Boolean),
-                        untilDestroyed(this),
+                        untilDestroyed(self, 'destroy'),
                       ).subscribe(() => {
                         self.restartServices = true;
                         this.customSubmit(entityDialog);
                       });
                     } else if (res.extra && res.extra['code'] === 'unstoppable_processes') {
                       entityDialog.dialogRef.close(true);
-                      self.translate.get(helptext.exportMessages.onfail.unableToTerminate)
-                        .pipe(untilDestroyed(this))
-                        .subscribe((msg) => {
-                          conditionalErrMessage = msg + res.extra['processes'];
-                          dialogRef.close(true);
-                          self.dialogService.errorReport(helptext.exportError, conditionalErrMessage, res.exception);
-                        });
+                      const msg = self.translate.instant(helptext.exportMessages.onfail.unableToTerminate);
+                      conditionalErrMessage = msg + res.extra['processes'];
+                      dialogRef.close(true);
+                      self.dialogService.errorReport(helptext.exportError, conditionalErrMessage, res.exception);
                     } else {
                       entityDialog.dialogRef.close(true);
                       dialogRef.close(true);
@@ -813,9 +801,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   this.ws.call('pool.scrub', [row1.id, 'STOP']).pipe(untilDestroyed(this, 'destroy')).subscribe(
                     () => {
                       this.loader.close();
-                      self.translate.get('Stopping scrub on pool').pipe(untilDestroyed(this, 'destroy')).subscribe((msg) => {
-                        this.dialogService.Info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>`, '300px', 'info', true);
-                      });
+                      const msg = self.translate.instant('Stopping scrub on pool');
+                      this.dialogService.Info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>`, '300px', 'info', true);
                     },
                     (err) => {
                       this.loader.close();
@@ -1271,9 +1258,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
               });
             }, (res) => {
               this.loader.close();
-              self.translate.get('Error Promoting dataset ').pipe(untilDestroyed(this, 'destroy')).subscribe((msg) => {
-                this.dialogService.errorReport(msg + row1.id, res.reason, res.stack);
-              });
+              const msg = self.translate.instant('Error Promoting dataset ');
+              this.dialogService.errorReport(msg + row1.id, res.reason, res.stack);
             });
           },
         });
@@ -1708,45 +1694,44 @@ export class VolumesListTableConfig implements EntityTableConfig {
 
   getMoreDatasetInfo(dataObj: any, parent: any): void {
     const dataset_data2 = this.datasetData;
-    this.translate.get(T('Inherits')).pipe(untilDestroyed(this, 'destroy')).subscribe((inherits) => {
-      for (const k in dataset_data2) {
-        if (dataset_data2[k].id === dataObj.id) {
-          if (dataset_data2[k].compression) {
-            dataset_data2[k].compression.source !== 'INHERITED'
-              ? dataObj.compression = (dataset_data2[k].compression.parsed)
-              : dataObj.compression = (inherits + ' (' + dataset_data2[k].compression.parsed + ')');
-          }
-          if (dataset_data2[k].compressratio) {
-            dataset_data2[k].compressratio.source !== 'INHERITED'
-              ? dataObj.compressratio = (dataset_data2[k].compressratio.parsed)
-              : dataObj.compressratio = (inherits + ' (' + dataset_data2[k].compressratio.parsed + ')');
-          }
-          if (dataset_data2[k].readonly) {
-            dataset_data2[k].readonly.source !== 'INHERITED'
-              ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
-              : dataObj.readonly = (inherits + ' (' + dataset_data2[k].readonly.parsed + ')');
-          }
-          if (dataset_data2[k].deduplication) {
-            dataset_data2[k].deduplication.source !== 'INHERITED'
-              ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
-              : dataObj.dedup = (inherits + ' (' + dataset_data2[k].deduplication.parsed + ')');
-          }
-          if (dataset_data2[k].comments) {
-            dataset_data2[k].comments.source !== 'INHERITED'
-              ? dataObj.comments = (dataset_data2[k].comments.parsed)
-              : dataObj.comments = ('');
-          }
+    const inherits = this.translate.instant(T('Inherits'));
+    for (const k in dataset_data2) {
+      if (dataset_data2[k].id === dataObj.id) {
+        if (dataset_data2[k].compression) {
+          dataset_data2[k].compression.source !== 'INHERITED'
+            ? dataObj.compression = (dataset_data2[k].compression.parsed)
+            : dataObj.compression = (inherits + ' (' + dataset_data2[k].compression.parsed + ')');
         }
-        // add name, available and used into the data object
-        dataObj.name = dataObj.name.split('/').pop();
-        dataObj.available_parsed = this.storageService.convertBytestoHumanReadable(dataObj.available.parsed || 0);
-        dataObj.used_parsed = this.storageService.convertBytestoHumanReadable(dataObj.used.parsed || 0);
-        dataObj.is_encrypted_root = (dataObj.id === dataObj.encryption_root);
-        if (dataObj.is_encrypted_root) {
-          this.parentVolumesListComponent.has_encrypted_root[parent.pool] = true;
+        if (dataset_data2[k].compressratio) {
+          dataset_data2[k].compressratio.source !== 'INHERITED'
+            ? dataObj.compressratio = (dataset_data2[k].compressratio.parsed)
+            : dataObj.compressratio = (inherits + ' (' + dataset_data2[k].compressratio.parsed + ')');
         }
-        dataObj.non_encrypted_on_encrypted = (!dataObj.encrypted && parent.encrypted);
+        if (dataset_data2[k].readonly) {
+          dataset_data2[k].readonly.source !== 'INHERITED'
+            ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
+            : dataObj.readonly = (inherits + ' (' + dataset_data2[k].readonly.parsed + ')');
+        }
+        if (dataset_data2[k].deduplication) {
+          dataset_data2[k].deduplication.source !== 'INHERITED'
+            ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
+            : dataObj.dedup = (inherits + ' (' + dataset_data2[k].deduplication.parsed + ')');
+        }
+        if (dataset_data2[k].comments) {
+          dataset_data2[k].comments.source !== 'INHERITED'
+            ? dataObj.comments = (dataset_data2[k].comments.parsed)
+            : dataObj.comments = ('');
+        }
       }
-    });
+      // add name, available and used into the data object
+      dataObj.name = dataObj.name.split('/').pop();
+      dataObj.available_parsed = this.storageService.convertBytestoHumanReadable(dataObj.available.parsed || 0);
+      dataObj.used_parsed = this.storageService.convertBytestoHumanReadable(dataObj.used.parsed || 0);
+      dataObj.is_encrypted_root = (dataObj.id === dataObj.encryption_root);
+      if (dataObj.is_encrypted_root) {
+        this.parentVolumesListComponent.has_encrypted_root[parent.pool] = true;
+      }
+      dataObj.non_encrypted_on_encrypted = (!dataObj.encrypted && parent.encrypted);
+    }
   }
 }
