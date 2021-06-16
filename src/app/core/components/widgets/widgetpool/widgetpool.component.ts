@@ -1,5 +1,6 @@
 import {
-  Component, AfterViewInit, OnDestroy, Input, ViewChild, ElementRef, TemplateRef, ChangeDetectorRef, OnChanges, SimpleChanges,
+  Component, AfterViewInit, OnDestroy, Input, ViewChild, ElementRef, TemplateRef, ChangeDetectorRef, OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';

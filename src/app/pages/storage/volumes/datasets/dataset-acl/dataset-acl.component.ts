@@ -13,6 +13,7 @@ import * as _ from 'lodash';
 import { AclItemTag } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -884,30 +885,34 @@ export class DatasetAclComponent implements FormConfiguration {
   }
 
   loadMoreOptions(length: number, parent: any, searchText: string, config: any): void {
-    (parent.userService as UserService).userQueryDSCache(searchText, length).pipe(untilDestroyed(this)).subscribe((items) => {
-      const users: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
-      if (searchText == '') {
-        config.options = config.options.concat(users);
-      } else {
-        config.searchOptions = config.searchOptions.concat(users);
-      }
-    });
+    (parent.userService as UserService).userQueryDSCache(searchText, length)
+      .pipe(untilDestroyed(this))
+      .subscribe((items) => {
+        const users: Option[] = [];
+        for (let i = 0; i < items.length; i++) {
+          users.push({ label: items[i].username, value: items[i].username });
+        }
+        if (searchText == '') {
+          config.options = config.options.concat(users);
+        } else {
+          config.searchOptions = config.searchOptions.concat(users);
+        }
+      });
   }
 
   loadMoreGroupOptions(length: number, parent: any, searchText: string, config: any): void {
-    parent.userService.groupQueryDSCache(searchText, false, length).pipe(untilDestroyed(this)).subscribe((items: any[]) => {
-      const groups: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        groups.push({ label: items[i].group, value: items[i].group });
-      }
-      if (searchText == '') {
-        config.options = config.options.concat(groups);
-      } else {
-        config.searchOptions = config.searchOptions.concat(groups);
-      }
-    });
+    parent.userService.groupQueryDSCache(searchText, false, length)
+      .pipe(untilDestroyed(this))
+      .subscribe((items: Group[]) => {
+        const groups: Option[] = [];
+        for (let i = 0; i < items.length; i++) {
+          groups.push({ label: items[i].group, value: items[i].group });
+        }
+        if (searchText == '') {
+          config.options = config.options.concat(groups);
+        } else {
+          config.searchOptions = config.searchOptions.concat(groups);
+        }
+      });
   }
 }

@@ -63,7 +63,13 @@ export class NFSListComponent implements EntityTableConfig {
   };
 
   doAdd(id?: number): void {
-    const formComponent = new NFSFormComponent(this.userService, this.modalService, this.ws, this.dialog, this.networkService);
+    const formComponent = new NFSFormComponent(
+      this.userService,
+      this.modalService,
+      this.ws,
+      this.dialog,
+      this.networkService,
+    );
     this.modalService.open('slide-in-form', formComponent, id);
   }
 

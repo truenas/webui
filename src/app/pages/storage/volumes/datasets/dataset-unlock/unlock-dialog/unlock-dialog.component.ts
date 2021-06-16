@@ -56,7 +56,10 @@ export class UnlockDialogComponent {
 
   showError(dataset: any): void {
     if (this.parent.dialogService && dataset.unlock_error) {
-      this.parent.dialogService.Info(helptext.unlock_dataset_dialog.error_dialog_title + dataset.name, dataset.unlock_error);
+      this.parent.dialogService.Info(
+        helptext.unlock_dataset_dialog.error_dialog_title + dataset.name,
+        dataset.unlock_error,
+      );
     }
   }
 }

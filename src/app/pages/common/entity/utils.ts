@@ -82,7 +82,8 @@ export class EntityUtils {
         const error = res.extra[i][1];
 
         field = field[1];
-        let fc = _.find(entity.fieldConfig, { name: field }) || (entity.getErrorField ? entity.getErrorField(field) : undefined);
+        let fc = _.find(entity.fieldConfig, { name: field })
+          || (entity.getErrorField ? entity.getErrorField(field) : undefined);
         let stepIndex;
         if (entity.wizardConfig) {
           _.find(entity.wizardConfig, (step, index) => {
@@ -92,7 +93,8 @@ export class EntityUtils {
           });
         }
         if (targetFieldConfig) {
-          fc = _.find(targetFieldConfig, { name: field }) || (entity.getErrorField ? entity.getErrorField(field) : undefined);
+          fc = _.find(targetFieldConfig, { name: field })
+            || (entity.getErrorField ? entity.getErrorField(field) : undefined);
         }
 
         if (fc && !fc['isHidden']) {
