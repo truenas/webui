@@ -54,7 +54,7 @@ export class DatasetAclComponent implements FormConfiguration {
   private aces_fc: any;
   private entityForm: any;
   formGroup: FormGroup;
-  data: Object = {};
+  data: Record<string, unknown> = {};
   error: string;
   protected dialogRef: any;
   route_success: string[] = ['storage'];
@@ -65,7 +65,7 @@ export class DatasetAclComponent implements FormConfiguration {
   protected uid_fc: any;
   protected gid_fc: any;
 
-  fieldSetDisplay = 'default';// default | carousel | stepper
+  fieldSetDisplay = 'default'; // default | carousel | stepper
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
     {

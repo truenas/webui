@@ -53,7 +53,7 @@ export class DatasetPosixAclComponent implements FormConfiguration {
   private aces_fc: any;
   private entityForm: EntityFormComponent;
   formGroup: FormGroup;
-  data: Object = {};
+  data: Record<string, unknown> = {};
   error: string;
   protected dialogRef: any;
   route_success: string[] = ['storage'];
