@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -21,7 +21,7 @@ import { GroupFormComponent } from '../group-form/group-form.component';
   selector: 'app-group-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class GroupListComponent implements EntityTableConfig, OnDestroy {
+export class GroupListComponent implements EntityTableConfig, OnInit, OnDestroy {
   title = 'Groups';
   queryCall: 'group.query' = 'group.query';
   wsDelete: 'group.delete' = 'group.delete';

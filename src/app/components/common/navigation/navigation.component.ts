@@ -23,9 +23,9 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
   menuList = document.getElementsByClassName('top-level');
   isHighlighted: string;
 
-  @Output('onStateChange') onStateChange: EventEmitter<any> = new EventEmitter();
-  @Output('onToggleMenu') onToggleMenu: EventEmitter<any> = new EventEmitter();
-  @Output('onCloseMenu') onCloseMenu: EventEmitter<any> = new EventEmitter();
+  @Output() stateChange: EventEmitter<any> = new EventEmitter();
+  @Output() menuToggled: EventEmitter<any> = new EventEmitter();
+  @Output() menuClosed: EventEmitter<any> = new EventEmitter();
 
   constructor(
     private navService: NavigationService, private router: Router, private ws: WebSocketService,
@@ -79,11 +79,11 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
   }
 
   toggleMenu(state: any, sub: any): void {
-    this.onToggleMenu.emit([state, sub]);
+    this.menuToggled.emit([state, sub]);
   }
 
   closeMenu(): void {
-    this.onCloseMenu.emit();
+    this.menuClosed.emit();
   }
 
   updateHighlightedClass(state: any): void {

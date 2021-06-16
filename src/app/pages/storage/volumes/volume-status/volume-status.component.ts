@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -48,7 +48,7 @@ interface PoolDiskInfo {
   templateUrl: './volume-status.component.html',
   styleUrls: ['./volume-status.component.scss'],
 })
-export class VolumeStatusComponent implements OnInit {
+export class VolumeStatusComponent implements OnInit, OnDestroy {
   actionEvents: Subject<CoreEvent>;
   poolScan: PoolScan;
   timeRemaining = {

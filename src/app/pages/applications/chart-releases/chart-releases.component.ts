@@ -1,5 +1,5 @@
 import {
-  Component, Output, EventEmitter, OnInit,
+  Component, Output, EventEmitter, OnInit, OnDestroy,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -31,7 +31,7 @@ import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component
   styleUrls: ['../applications.component.scss'],
 })
 
-export class ChartReleasesComponent implements OnInit {
+export class ChartReleasesComponent implements OnInit, OnDestroy {
   @Output() updateTab = new EventEmitter();
 
   filteredChartItems: any[] = [];

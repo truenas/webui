@@ -1,5 +1,5 @@
 import {
-  Component, Input, Output, EventEmitter,
+  Component, Input, Output, EventEmitter, OnDestroy,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
@@ -24,7 +24,7 @@ export interface DashConfigItem {
   templateUrl: './widgetcontroller.component.html',
   styleUrls: ['./widgetcontroller.component.scss'],
 })
-export class WidgetControllerComponent extends WidgetComponent {
+export class WidgetControllerComponent extends WidgetComponent implements OnDestroy {
   @Input() dashState: DashConfigItem[] = [];
   @Input() renderedWidgets?: number[] = [];
   @Input() hiddenWidgets?: number[] = [];

@@ -1,5 +1,5 @@
 import {
-  ApplicationRef, Component, Injector, OnInit,
+  ApplicationRef, Component, Injector, OnDestroy, OnInit,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -22,7 +22,7 @@ import { T } from 'app/translate-marker';
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [SystemGeneralService],
 })
-export class ServiceFTPComponent implements FormConfiguration, OnInit {
+export class ServiceFTPComponent implements FormConfiguration, OnInit, OnDestroy {
   editCall: 'ftp.update' = 'ftp.update';
   queryCall: 'ftp.config' = 'ftp.config';
   route_success: string[] = ['services'];

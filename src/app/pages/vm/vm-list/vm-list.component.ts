@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -44,7 +44,7 @@ interface DisplayWebUri {
   styleUrls: ['./vm-list.component.scss'],
   providers: [VmService, MessageService],
 })
-export class VMListComponent implements EntityTableConfig {
+export class VMListComponent implements EntityTableConfig, OnInit {
   title = 'Virtual Machines';
   queryCall: 'vm.query' = 'vm.query';
   wsDelete: 'vm.delete' = 'vm.delete';
