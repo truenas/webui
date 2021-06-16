@@ -111,7 +111,7 @@ export class WebdavFormComponent implements FormConfiguration {
             this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
               this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
                 this.loader.close();
-                this.dialog.Info(T('WebDAV') + shared.dialog_started_title, T('The WebDAV') + shared.dialog_started_message, '250px')
+                this.dialog.Info(T('WebDAV') + shared.dialog_started_title, T('The WebDAV') + shared.dialog_started_message, '250px', 'info')
                   .pipe(untilDestroyed(this)).subscribe(() => {});
               }, (err) => {
                 this.loader.close();

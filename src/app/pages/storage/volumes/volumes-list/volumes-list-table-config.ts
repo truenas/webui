@@ -500,6 +500,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     self.dialogService.Info(
                       helptext.pool_options_dialog.dialog_saved_title,
                       self.translate.instant('Pool options for {poolName} successfully saved.', { poolName: row.name }),
+                      '500px', 'info',
                     );
                     self.parentVolumesListComponent.repaintMe();
                   }
@@ -702,9 +703,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   self.translate.get(helptext.exportSuccess).pipe(untilDestroyed(this)).subscribe((msg) => {
                     self.translate.get(helptext.destroyed).pipe(untilDestroyed(this)).subscribe((destroyed) => {
                       if (!value.destroy) {
-                        self.dialogService.Info(helptext.exportDisconnect, msg + row1.name + "'");
+                        self.dialogService.Info(helptext.exportDisconnect, msg + row1.name + "'", '500px', 'info');
                       } else {
-                        self.dialogService.Info(helptext.exportDisconnect, msg + row1.name + destroyed);
+                        self.dialogService.Info(helptext.exportDisconnect, msg + row1.name + destroyed, '500px', 'info');
                       }
                       dialogRef.close(true);
                       self.parentVolumesListComponent.repaintMe();
@@ -972,6 +973,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     this.dialogService.Info(
                       this.translate.instant('Upgraded'),
                       this.translate.instant('Successfully Upgraded {poolName}.', { poolName: row1.name }),
+                      '500px',
+                      'info',
                     ).pipe(untilDestroyed(this)).subscribe(() => {
                       this.parentVolumesListComponent.repaintMe();
                     });
@@ -1245,7 +1248,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
           };
           this.dialogService.dialogForm(this.dialogConf).pipe(untilDestroyed(this)).subscribe((res) => {
             if (res) {
-              this.dialogService.Info(T('Create Snapshot'), T('Snapshot successfully taken.'));
+              this.dialogService.Info(T('Create Snapshot'), T('Snapshot successfully taken.'), '500px', 'info');
             }
           });
         },
@@ -1263,7 +1266,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
             this.ws.call('pool.dataset.promote', [row1.id]).pipe(untilDestroyed(this)).subscribe(() => {
               this.loader.close();
               // Showing info here because there is no feedback on list parent for this if promoted.
-              this.dialogService.Info(T('Promote Dataset'), T('Successfully Promoted ') + row1.id).pipe(untilDestroyed(this)).subscribe(() => {
+              this.dialogService.Info(T('Promote Dataset'), T('Successfully Promoted ') + row1.id, '500px', 'info').pipe(untilDestroyed(this)).subscribe(() => {
                 this.parentVolumesListComponent.repaintMe();
               });
             }, (res) => {
@@ -1483,6 +1486,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       self.dialogService.Info(
                         helptext.encryption_options_dialog.dialog_saved_title,
                         self.translate.instant('Encryption options for {id} successfully saved.', { id: row.id }),
+                        '500px',
+                        'info',
                       );
                       entityDialog.dialogRef.close();
                       self.parentVolumesListComponent.repaintMe();
@@ -1520,6 +1525,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       self.dialogService.Info(
                         helptext.encryption_options_dialog.dialog_saved_title,
                         self.translate.instant('Encryption options for {id} successfully saved.', { id: row.id }),
+                        '500px',
+                        'info',
                       );
                       self.parentVolumesListComponent.repaintMe();
                     }
