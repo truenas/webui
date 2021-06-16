@@ -157,7 +157,9 @@ export class GuiFormComponent implements FormConfiguration {
   IPValidator(name: 'ui_address' | 'ui_v6address', wildcard: string): ValidatorFn {
     const self = this;
     return function validIPs(control: FormControl) {
-      const config = self.fieldSets.find((set) => set.name === helptext.stg_fieldset_gui).config.find((c) => c.name === name);
+      const config = self.fieldSets
+        .find((set) => set.name === helptext.stg_fieldset_gui)
+        .config.find((c) => c.name === name);
 
       const errors = control.value && control.value.length > 1 && _.indexOf(control.value, wildcard) !== -1
         ? { validIPs: true }

@@ -66,7 +66,10 @@ export class FormInputComponent implements Field {
 
   valueChange(): void {
     if (this.config.inputUnit) {
-      const phrasedValue = this.formService.phraseInputData(this.group.controls[this.config.name].value, this.config.inputUnit);
+      const phrasedValue = this.formService.phraseInputData(
+        this.group.controls[this.config.name].value,
+        this.config.inputUnit,
+      );
       if (isNaN(phrasedValue)) {
         this.group.controls[this.config.name].setErrors({
           manualValidateError: true,

@@ -269,12 +269,14 @@ export class CertificateEditComponent implements FormConfiguration {
       (res) => {
         const url = res[1];
         const mimetype = 'application/x-x509-user-cert';
-        this.storage.streamDownloadFile(this.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
-          this.storage.downloadBlob(file, fileName);
-        }, (err) => {
-          this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
-            helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
-        });
+        this.storage.streamDownloadFile(this.http, url, fileName, mimetype)
+          .pipe(untilDestroyed(this))
+          .subscribe((file) => {
+            this.storage.downloadBlob(file, fileName);
+          }, (err) => {
+            this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
+              helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
+          });
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialog);
@@ -288,12 +290,14 @@ export class CertificateEditComponent implements FormConfiguration {
       (res) => {
         const url = res[1];
         const mimetype = 'text/plain';
-        this.storage.streamDownloadFile(this.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
-          this.storage.downloadBlob(file, fileName);
-        }, (err) => {
-          this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
-            helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
-        });
+        this.storage.streamDownloadFile(this.http, url, fileName, mimetype)
+          .pipe(untilDestroyed(this))
+          .subscribe((file) => {
+            this.storage.downloadBlob(file, fileName);
+          }, (err) => {
+            this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
+              helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
+          });
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialog);

@@ -38,11 +38,11 @@ module.exports = {
         "no-return-assign": "off",
         "no-empty": ["error", { "allowEmptyCatch": true }],
         "arrow-body-style": "off",
-        "max-len": ["error", 130, 2, {
+        "max-len": ["error", 120, 2, {
           "ignoreUrls": true,
           "ignoreComments": false,
           "ignoreRegExpLiterals": true,
-          "ignoreStrings": true,
+          "ignoreStrings": true, // TODO: Consider enabling later.
           "ignoreTemplateLiterals": true
         }],
         "no-console": ["error", { allow: ["warn", "error", "info"] }],

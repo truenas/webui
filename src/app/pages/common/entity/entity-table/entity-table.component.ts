@@ -835,12 +835,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {
       // double confirm: input delete item's name to confirm deletion
-      this.conf.config.deleteMsg.doubleConfirm(item).pipe(untilDestroyed(this)).subscribe((doubleConfirmDialog: boolean) => {
-        if (doubleConfirmDialog) {
-          this.toDeleteRow = item;
-          this.delete(id);
-        }
-      });
+      this.conf.config.deleteMsg.doubleConfirm(item)
+        .pipe(untilDestroyed(this))
+        .subscribe((doubleConfirmDialog: boolean) => {
+          if (doubleConfirmDialog) {
+            this.toDeleteRow = item;
+            this.delete(id);
+          }
+        });
     } else {
       this.dialogService.confirm({
         title: dialog.hasOwnProperty('title') ? dialog['title'] : T('Delete'),
@@ -903,16 +905,17 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.loader.open();
           this.loaderOpen = true;
         }),
-        switchMap(() =>
-          (this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id]))
-          ).pipe(
+        switchMap(() => {
+          const params = this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id];
+          return this.ws.call(this.conf.wsDelete, params).pipe(
             take(1),
             catchError((error) => {
               new EntityUtils().handleWSError(this, error, this.dialogService);
               this.loader.close();
               return of(false);
             }),
-          )),
+          );
+        }),
         switchMap((jobId: string) => (jobId ? this.job.getJobStatus(jobId) : of(false))),
       );
   }

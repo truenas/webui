@@ -140,7 +140,7 @@ export class InteractionManagerService {
   // Find the related Layout object for the displayObject if one exists
   getLayoutParent(displayObject: DisplayObject): LayoutObject {
     // let index = this.displayList.indexOf(displayObject);
-    const registration: DisplayObjectRegistration[] = this.displayList.filter((item) => item.displayObject == displayObject);
+    const registration = this.displayList.filter((item) => item.displayObject == displayObject);
     if (registration.length == 0) {
       console.warn('DEBUG: The DisplayObject has not been registered');
     } else if (registration.length > 1) {

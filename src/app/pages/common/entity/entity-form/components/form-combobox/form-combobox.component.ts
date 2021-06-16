@@ -1,12 +1,13 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { fromEvent } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
-import { Option } from 'app/interfaces/option.interface';
+import { fromEvent, Subscription, Subject } from 'rxjs';
+import {
+  map, takeUntil, debounceTime, distinctUntilChanged,
+} from 'rxjs/operators';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
@@ -16,18 +17,37 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   styleUrls: ['form-combobox.component.scss', '../dynamic-field/dynamic-field.scss'],
   templateUrl: './form-combobox.component.html',
 })
-export class FormComboboxComponent implements Field {
+export class FormComboboxComponent implements Field, OnDestroy {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
-  searchText: string;
+  searchText = '';
+  searchTextChanged = new Subject<string>();
+  searchSubscription: Subscription;
 
   @ViewChild('autoComplete') autoCompleteRef: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
   @ViewChild('options') menuRef: MatMenu;
   @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
 
-  constructor(public translate: TranslateService) {}
+  constructor(public translate: TranslateService) {
+    this.searchSubscription = this.searchTextChanged.pipe(
+      debounceTime(250),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((query) => {
+      this.searchText = query;
+      this.updateSearchOptions(query);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.searchSubscription?.unsubscribe();
+  }
+
+  search(query: string): void {
+    this.searchTextChanged.next(query);
+  }
 
   onChangeOption(value: any): void {
     this.group.controls[this.config.name].setValue(value);
@@ -42,13 +62,7 @@ export class FormComboboxComponent implements Field {
       }
     } else {
       value = value.toLowerCase();
-      const searchOptions: Option[] = [];
-      for (let i = 0; i < this.config.options.length; i++) {
-        if (this.config.options[i].label.toLowerCase().includes(value)) {
-          searchOptions.push(this.config.options[i]);
-        }
-      }
-      this.config.searchOptions = searchOptions;
+      this.config.searchOptions = this.config.options.filter((option) => option.label.toLowerCase().includes(value));
     }
   }
 

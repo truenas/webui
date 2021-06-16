@@ -715,7 +715,8 @@ export interface LegendOptions {
   /**
    * Change inset legend attributes.
    * This option accepts object that has the keys anchor, x, y and step.
-   * anchor decides the position of the legend. These anchors are available: top-left, top-right, bottom-left, bottom-right
+   * anchor decides the position of the legend.
+   * These anchors are available: top-left, top-right, bottom-left, bottom-right
    * x and y set the position of the legend based on the anchor.
    * step defines the max step the lagend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
    */

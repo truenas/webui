@@ -39,8 +39,11 @@ export class HtmlTooltipDirective implements AfterViewInit {
     this.overlayRef.detach();
   }
 
-  constructor(private el: ElementRef, private overlayPositionBuilder: OverlayPositionBuilder, private overlay: Overlay) {
-  }
+  constructor(
+    private el: ElementRef,
+    private overlayPositionBuilder: OverlayPositionBuilder,
+    private overlay: Overlay,
+  ) {}
 
   ngAfterViewInit(): void {
     this.overlayRef = this.overlay.create({});
