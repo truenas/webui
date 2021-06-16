@@ -1,5 +1,5 @@
 import {
-  AclItemTag, AclPermission, AclType, DAclFlagsBasic, DAclNfs4Tag, DAclPermissionsBasic, DAclPosix1eTag, DAclType,
+  AclItemTag, AclPermission, AclType, DAclFlagsBasic, DAclNfs4Tag, DAclPermissionsBasic, DAclType,
 } from 'app/enums/acl-type.enum';
 
 export interface Acl {
@@ -70,7 +70,7 @@ export interface DAclPosix1ePermissions {
 
 export interface DAclPosix1e {
   default: boolean;
-  tag: DAclPosix1eTag;
+  tag: AclItemTag;
   id: number;
   perms: DAclPosix1ePermissions;
 }

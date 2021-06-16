@@ -61,12 +61,3 @@ export enum DAclFlagsBasic {
   Inherit = 'INHERIT',
   NoInherit = 'NOINHERIT',
 }
-
-export enum DAclPosix1eTag {
-  UserObj = 'USER_OBJ',
-  GroupObj = 'GROUP_OBJ',
-  User = 'USER',
-  Group = 'GROUP',
-  Other = 'OTHER',
-  Mask = 'MASK',
-}
