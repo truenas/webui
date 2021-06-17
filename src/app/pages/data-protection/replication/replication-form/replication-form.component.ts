@@ -11,6 +11,7 @@ import { LoggingLevel } from 'app/enums/logging-level.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
+import { SnapshotNamingOption } from 'app/enums/replication.interface';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication';
@@ -646,6 +647,16 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: '23:59',
         },
         {
+          type: 'radio',
+          name: 'schema_or_regex',
+          placeholder: helptext.name_schema_or_regex_placeholder,
+          options: [
+            { label: helptext.naming_schema_placeholder, value: SnapshotNamingOption.NamingSchema },
+            { label: helptext.name_regex_placeholder, value: SnapshotNamingOption.NameRegex },
+          ],
+          value: SnapshotNamingOption.NamingSchema,
+        },
+        {
           type: 'chip',
           name: 'naming_schema',
           placeholder: helptext.naming_schema_placeholder,
@@ -681,6 +692,14 @@ export class ReplicationFormComponent implements FormConfiguration {
           blurStatus: true,
           blurEvent: this.blurEventNamingSchema,
           parent: this,
+        },
+        {
+          type: 'input',
+          name: 'name_regex',
+          placeholder: helptext.name_regex_placeholder,
+          tooltip: helptext.name_regex_tooltip,
+          parent: this,
+          isHidden: true,
         },
         {
           type: 'checkbox',
@@ -1186,6 +1205,19 @@ export class ReplicationFormComponent implements FormConfiguration {
       const presetSpeed = this.entityForm.formGroup.controls['speed_limit'].value.toString();
       this.storageService.humanReadable = presetSpeed;
     }
+
+    this.entityForm.formGroup.controls['schema_or_regex'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: SnapshotNamingOption) => {
+      if (value === SnapshotNamingOption.NamingSchema) {
+        entityForm.setDisabled('name_regex', true, true);
+        entityForm.setDisabled('naming_schema', false, false);
+        entityForm.setDisabled('also_include_naming_schema', false, false);
+      } else {
+        entityForm.setDisabled('name_regex', false, false);
+        entityForm.setDisabled('naming_schema', true, true);
+        entityForm.setDisabled('also_include_naming_schema', true, true);
+      }
+    });
+
     this.entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       if (
         entityForm.formGroup.controls['direction'].value === Direction.Push
@@ -1384,6 +1416,14 @@ export class ReplicationFormComponent implements FormConfiguration {
   }
 
   beforeSubmit(data: any): void {
+    if (data['schema_or_regex'] === SnapshotNamingOption.NameRegex) {
+      delete data['naming_schema'];
+      delete data['also_include_naming_schema'];
+    } else {
+      delete data['name_regex'];
+    }
+    delete data['schema_or_regex'];
+
     if (data['replicate']) {
       data['recursive'] = true;
       data['properties'] = true;

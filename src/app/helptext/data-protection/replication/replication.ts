@@ -119,6 +119,8 @@ from the source dataset.'),
  as the chosen periodic snapshot task. Selecting a periodic snapshot \
  schedule removes the <b>Schedule</b> field.'),
 
+  name_schema_or_regex_placeholder: T('Naming Schema or Snapshot Name Regular Expression'),
+
   naming_schema_placeholder: T('Naming Schema'),
   naming_schema_tooltip: T('Pattern of naming custom snapshots to be \
  replicated. Enter the name and \
@@ -126,6 +128,13 @@ from the source dataset.'),
  target="_blank">strftime(3)</a> <i>&percnt;Y</i>, <i>&percnt;m</i>, <i>&percnt;d</i>, \
  <i>&percnt;H</i>, and <i>&percnt;M</i> strings that match the snapshots to include in \
  the replication. Separate entries by pressing <code>Enter</code>.'),
+
+  name_regex_placeholder: T('Snapshot Name Regular Expression'),
+  name_regex_tooltip: T('Using this option will replicate all snapshots \
+ which names match specified regular expression. The \
+ performance on the systems with large number of snapshots \
+ will be lower, as snapshots metadata needs to be read in order \
+ to determine snapshots creation order.'),
 
   also_include_naming_schema_placeholder: T('Also Include Naming Schema'),
   also_include_naming_schema_tooltip: T('Pattern of naming custom \
