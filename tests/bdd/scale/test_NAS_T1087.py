@@ -73,13 +73,13 @@ def the_user_field_should_expand_down_click_the_edit_button(driver):
 def the_user_edit_page_should_open_change_the_user_email_eturgeonixsystemscom_and_click_save(driver):
     """the User Edit Page should open, change the user email "eturgeon@ixsystems.com" and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(5)
+    time.sleep(2)
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys("eturgeon@ixsystems.com")
-    time.sleep(1)
+    time.sleep(3)
+    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
     wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
