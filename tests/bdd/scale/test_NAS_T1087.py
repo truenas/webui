@@ -93,3 +93,7 @@ def change_should_be_saved_open_the_user_dropdown_the_email_value_should_be_visi
     assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
     driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
     driver.find_element_by_xpath('//h4[contains(.,"Email:")]')
+        ## return to dashboard
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    time.sleep(1)
