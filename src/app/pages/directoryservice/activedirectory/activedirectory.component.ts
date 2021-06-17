@@ -361,7 +361,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       });
     });
 
-    entityEdit.formGroup.controls['enable'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityEdit.formGroup.controls['enable'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       _.find(this.fieldConfig, { name: 'bindpw' })['required'] = res;
     });
 

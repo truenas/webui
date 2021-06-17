@@ -78,7 +78,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     });
   }
 
-  dataHandler(entityList: any): void {
+  dataHandler(entityList: EntityTableComponent): void {
     entityList.rows.forEach((row: any) => {
       if (row.active !== '-' && row.active !== '') {
         row.hideCheckbox = true;
@@ -104,7 +104,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     return row[attr];
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
   }
 

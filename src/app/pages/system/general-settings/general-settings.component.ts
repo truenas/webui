@@ -14,6 +14,7 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
   WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService,
 }
@@ -31,10 +32,10 @@ import { NTPServerFormComponent } from './ntpservers/ntpserver-form/ntpserver-fo
   templateUrl: './general-settings.component.html',
 })
 export class GeneralSettingsComponent implements OnInit {
-  dataCards: any[] = [];
+  dataCards: DataCard[] = [];
   supportTitle = helptext.supportTitle;
   ntpTitle = helptext.ntpTitle;
-  localeData: any;
+  localeData: DataCard;
   configData: any;
   displayedColumns: any;
   dataSource: any;
@@ -277,7 +278,7 @@ export class GeneralSettingsComponent implements OnInit {
 
       entityDialog.ws.call('core.download', ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName])
         .pipe(untilDestroyed(this)).subscribe(
-          (download: any) => {
+          (download) => {
             const url = download[1];
             entityDialog.parent.storage
               .streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)

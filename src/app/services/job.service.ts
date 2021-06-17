@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable } from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
+import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
 import { DialogService } from './dialog.service';
@@ -25,8 +26,8 @@ export class JobService {
     protected http: HttpClient,
   ) {}
 
-  getJobStatus(jobId: any): Observable<any> {
-    const source = Observable.create((observer: any) => {
+  getJobStatus(jobId: number): Observable<EntityJob> {
+    const source = Observable.create((observer: Observer<EntityJob>) => {
       this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((res) => {
         if (res.id == jobId) {
           observer.next(res.fields);

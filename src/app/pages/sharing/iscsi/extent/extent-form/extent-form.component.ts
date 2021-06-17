@@ -256,7 +256,7 @@ export class ExtentFormComponent implements FormConfiguration {
   protected extent_type_control: any;
   protected extent_disk_control: any;
   pk: string;
-  protected avail_threshold_field: any;
+  protected avail_threshold_field: FieldConfig;
   fieldConfig: FieldConfig[];
 
   constructor(

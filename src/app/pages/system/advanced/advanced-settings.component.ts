@@ -25,6 +25,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { InitshutdownFormComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-form/initshutdown-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
+import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
   WebSocketService,
   SystemGeneralService,
@@ -60,7 +61,7 @@ enum CardId {
   providers: [DatePipe, UserService],
 })
 export class AdvancedSettingsComponent implements OnInit {
-  dataCards: any[] = [];
+  dataCards: DataCard[] = [];
   configData: AdvancedConfig;
   syslog: boolean;
   systemDatasetPool: string;

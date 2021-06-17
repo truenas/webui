@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
@@ -17,7 +18,7 @@ export class InitshutdownListComponent implements EntityTableConfig {
   route_add: string[] = ['tasks', 'initshutdown', 'add'];
   protected route_add_tooltip = 'Add Init/Shutdown Scripts';
   route_edit: string[] = ['tasks', 'initshutdown', 'edit'];
-  protected entityList: any;
+  protected entityList: EntityTableComponent;
 
   columns = [
     { name: T('Type'), prop: 'type' },
@@ -40,7 +41,7 @@ export class InitshutdownListComponent implements EntityTableConfig {
 
   constructor(public modalService: ModalService) {}
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
 
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {

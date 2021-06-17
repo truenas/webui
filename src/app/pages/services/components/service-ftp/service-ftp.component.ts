@@ -1,6 +1,7 @@
 import {
   ApplicationRef, Component, Injector, OnInit,
 } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -30,8 +31,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
   isBasicMode = true;
   protected entityForm: EntityFormComponent;
 
-  protected rootlogin_fg: any;
-  protected rootloginSubscription: any;
+  protected rootlogin_fg: FormControl;
   protected warned = false;
   protected rootlogin: boolean;
   fieldConfig: any;
@@ -427,8 +427,8 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     entityEdit.submitFunction = this.submitFunction;
-    this.rootlogin_fg = entityEdit.formGroup.controls['rootlogin'];
-    this.rootloginSubscription = this.rootlogin_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.rootlogin_fg = entityEdit.formGroup.controls['rootlogin'] as FormControl;
+    this.rootlogin_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res && !this.warned && !this.rootlogin) {
         this.dialog.confirm({
           title: helptext.rootlogin_dialog_title,
@@ -514,10 +514,6 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
 
   submitFunction(body: any): Observable<any> {
     return this.ws.call('ftp.update', [body]);
-  }
-
-  ngOnDestroy(): void {
-    this.rootloginSubscription.unsubscribe();
   }
 
   blurEvent(parent: any): void {

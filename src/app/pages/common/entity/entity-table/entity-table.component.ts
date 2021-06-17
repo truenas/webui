@@ -139,11 +139,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly EntityJobState = EntityJobState;
   // Global Actions in Page Title
   protected actionsConfig: any;
-  protected loaderOpen = false;
+  loaderOpen = false;
   protected toDeleteRow: any;
   private interval: Interval;
-  private excuteDeletion = false;
-  private needRefreshTable = false;
+  excuteDeletion = false;
+  needRefreshTable = false;
   private routeSub: Subscription;
   multiActionsIconsOnly = false;
 
@@ -177,9 +177,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     protected core: CoreService,
     protected router: Router,
-    protected ws: WebSocketService,
-    protected dialogService: DialogService,
-    protected loader: AppLoaderService,
+    public ws: WebSocketService,
+    public dialogService: DialogService,
+    public loader: AppLoaderService,
     protected translate: TranslateService,
     public storageService: StorageService,
     protected job: JobService,
@@ -870,7 +870,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  doDeleteJob(item: any): Observable<{ state: EntityJobState } | false> {
+  doDeleteJob(item: any): Observable<{ state: EntityJobState } | boolean> {
     const deleteMsg = this.getDeleteMessage(item);
     let id: string;
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
@@ -907,7 +907,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
             }),
           );
         }),
-        switchMap((jobId: string) => (jobId ? this.job.getJobStatus(jobId) : of(false))),
+        switchMap((jobId: number) => (jobId ? this.job.getJobStatus(jobId) : of(false))),
       );
   }
 

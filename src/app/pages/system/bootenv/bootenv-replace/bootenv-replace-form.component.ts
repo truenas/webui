@@ -32,7 +32,7 @@ export class BootEnvReplaceFormComponent implements FormConfiguration {
     },
 
   ];
-  protected diskChoice: any;
+  protected diskChoice: FieldConfig;
 
   constructor(
     protected router: Router,

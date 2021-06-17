@@ -49,7 +49,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   protected path: string;
   queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   protected compression: any;
-  advanced_field: any[] = ['volblocksize'];
+  advanced_field = ['volblocksize'];
   isBasicMode = true;
   protected isNew = true;
   protected isEntity = true;

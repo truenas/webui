@@ -21,7 +21,7 @@ export interface FieldConfig {
   alert?: { message: string; forValues: any[] };
   asyncValidation?: AsyncValidatorFn | AsyncValidatorFn[];
   autocomplete?: boolean;
-  blurEvent?: any;
+  blurEvent?: (parent: any) => void;
   blurStatus?: boolean;
   box?: boolean;
   buttonClass?: string;
@@ -42,7 +42,7 @@ export interface FieldConfig {
   formarray?: any;
   hasErrors?: boolean;
   hideButton?: boolean;
-  hideDirs?: any;
+  hideDirs?: string;
   hideErrMsg?: boolean;
   hideOthersPermissions?: boolean;
   hint?: string;
