@@ -79,7 +79,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
     },
   ];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'download_encrypt_key',
       name: T('Download Encryption Key'),

@@ -23,7 +23,7 @@ import {
 export class NISComponent implements FormConfiguration {
   queryCall: 'nis.config' = 'nis.config';
   addCall: 'nis.update' = 'nis.update';
-  custActions: any[] = [
+  custActions = [
     {
       id: helptext.nis_custactions_clearcache_id,
       name: helptext.nis_custactions_clearcache_name,

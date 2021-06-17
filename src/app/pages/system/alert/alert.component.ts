@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core.service';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import helptext from 'app/helptext/system/alert-settings';
+import { AlertCategory } from 'app/interfaces/alert.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
@@ -87,8 +88,8 @@ export class AlertConfigComponent implements OnInit {
       .toPromise()
       .then((categories) => {
         this.addButtons(categories);
-        categories.forEach((category: any) => {
-          const config: any[] = [];
+        categories.forEach((category) => {
+          const config: FieldConfig[] = [];
           for (let i = 0; i < category.classes.length; i++) {
             const c = category.classes[i];
             const warningOptions = [];
@@ -165,7 +166,7 @@ export class AlertConfigComponent implements OnInit {
       });
   }
 
-  addButtons(categories: any[]): void {
+  addButtons(categories: AlertCategory[]): void {
     const options: Option[] = [];
     categories.forEach((category, index) => {
       options.push({ label: category.title, value: index });

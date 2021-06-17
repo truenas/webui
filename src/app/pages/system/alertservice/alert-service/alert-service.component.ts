@@ -672,7 +672,7 @@ export class AlertServiceComponent implements FormConfiguration {
     },
   ];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'authenticate',
       name: T('SEND TEST ALERT'),
@@ -682,9 +682,9 @@ export class AlertServiceComponent implements FormConfiguration {
 
         this.loader.open();
         this.ws.call(this.testCall, [testPayload]).pipe(untilDestroyed(this)).subscribe(
-          (res: any) => {
+          (wasAlertSent) => {
             this.loader.close();
-            if (res) {
+            if (wasAlertSent) {
               this.dialogService.Info(T('Succeeded'), T('Test alert sent!'), '500px', 'info');
             } else {
               this.dialogService.Info(T('Failed'), T('Failed sending test alert!'));

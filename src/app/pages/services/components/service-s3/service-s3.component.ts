@@ -197,7 +197,7 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
     return data;
   }
 
-  submitFunction(this: any, entityForm: any): Observable<any> {
+  submitFunction(entityForm: any): Observable<any> {
     return this.ws.call('s3.update', [entityForm]);
   }
 

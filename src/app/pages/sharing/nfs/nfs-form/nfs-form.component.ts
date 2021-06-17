@@ -226,7 +226,7 @@ export class NFSFormComponent implements FormConfiguration {
   protected advanced_sets = ['access', 'networks', 'hosts'];
   protected advanced_dividers = ['divider_access'];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,

@@ -42,7 +42,7 @@ export class IPMIFromComponent implements FormConfiguration {
     { label: '4 minute', value: 240 },
     { label: 'Turn OFF', value: 0 },
   ];
-  custActions: any[] = [
+  custActions = [
     {
       id: 'ipmi_identify',
       name: T('Identify Light'),

@@ -3,10 +3,11 @@ import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum'
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Acl, SetAcl } from 'app/interfaces/acl.interface';
+import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AlertService, AlertServiceCreate } from 'app/interfaces/alert-service.interface';
-import { Alert } from 'app/interfaces/alert.interface';
+import { Alert, AlertCategory } from 'app/interfaces/alert.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
@@ -16,6 +17,7 @@ import { Certificate } from 'app/interfaces/certificate.interface';
 import { ChartReleaseCreate, ChartReleaseCreateResponse } from 'app/interfaces/chart-release.interface';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
+import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import {
   AuthenticatorSchema,
@@ -33,6 +35,7 @@ import {
   IscsiPortal,
   IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
+import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { NetworkActivityChoice, NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
@@ -59,9 +62,10 @@ import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 
 export type ApiDirectory = {
   // Active Directory
-  'activedirectory.config': { params: any; response: any };
-  'activedirectory.update': { params: [ActiveDirectoryUpdate]; response: any };
-  'activedirectory.nss_info_choices': { params: any; response: any };
+  'activedirectory.config': { params: void; response: ActiveDirectoryConfig };
+  'activedirectory.update': { params: [ActiveDirectoryUpdate]; response: ActiveDirectoryConfig };
+  'activedirectory.nss_info_choices': { params: void; response: string[] };
+  'activedirectory.leave': { params: any; response: any };
 
   // Acme
   'acme.dns.authenticator.query': { params: void; response: DnsAuthenticator[] };
@@ -74,7 +78,7 @@ export type ApiDirectory = {
   'alert.dismiss': { params: string[]; response: void };
   'alert.restore': { params: string[]; response: void };
   'alert.list_policies': { params: any; response: any };
-  'alert.list_categories': { params: any; response: any };
+  'alert.list_categories': { params: void; response: AlertCategory[] };
 
   // Alert Classes
   'alertclasses.config': { params: any; response: any };
@@ -84,11 +88,11 @@ export type ApiDirectory = {
   'alertservice.update': { params: any; response: any };
   'alertservice.create': { params: [AlertServiceCreate]; response: any };
   'alertservice.query': { params: QueryParams<AlertService>; response: AlertService[] };
-  'alertservice.test': { params: any; response: any };
+  'alertservice.test': { params: any; response: boolean };
   'alertservice.delete': { params: any; response: any };
 
   // Api Key
-  'api_key.create': { params: CreateApiKeyRequest; response: ApiKey };
+  'api_key.create': { params: [CreateApiKeyRequest]; response: ApiKey };
   'api_key.update': { params: UpdateApiKeyRequest; response: ApiKey };
   'api_key.delete': { params: [/* id */ string]; response: boolean };
   'api_key.query': { params: QueryParams<ApiKey>; response: ApiKey[] };
@@ -169,7 +173,7 @@ export type ApiDirectory = {
   'cronjob.delete': { params: any; response: any };
 
   // Core
-  'core.download': { params: any; response: any };
+  'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };
   'core.get_jobs': { params: any; response: any };
   'core.job_abort': { params: any; response: any };
   'core.bulk': { params: any; response: any };
@@ -372,7 +376,7 @@ export type ApiDirectory = {
   'network.configuration.config': { params: void; response: NetworkConfiguration };
 
   // Kerberos
-  'kerberos.realm.query': { params: any; response: any };
+  'kerberos.realm.query': { params: QueryParams<KerberosRealm>; response: KerberosRealm[] };
   'kerberos.realm.create': { params: any; response: any };
   'kerberos.realm.update': { params: any; response: any };
   'kerberos.realm.delete': { params: any; response: any };
@@ -408,6 +412,7 @@ export type ApiDirectory = {
 
   // NFS
   'nfs.bindip_choices': { params: any; response: any };
+  'nfs.add_principal': { params: any; response: any };
   'nfs.config': { params: any; response: any };
   'nfs.update': { params: any; response: any };
 
@@ -437,8 +442,10 @@ export type ApiDirectory = {
   'pool.filesystem_choices': { params: any; response: any };
   'pool.dataset.set_quota': { params: any; response: any };
   'pool.dataset.recommended_zvol_blocksize': { params: any; response: any };
+  'pool.dataset.inherit_parent_encryption_properties': { params: any; response: any };
   'pool.unlock_services_restart_choices': { params: any; response: any };
   'pool.dataset.get_quota': { params: any; response: any };
+  'pool.dataset.change_key': { params: any; response: any };
   'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
   'pool.import_disk_autodetect_fs_type': { params: any; response: any };
   'pool.download_encryption_key': { params: any; response: any };

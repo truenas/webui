@@ -228,7 +228,7 @@ export class DatasetPosixAclComponent implements FormConfiguration {
     },
   ];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'use_perm_editor',
       name: helptext.permissions_editor_button,

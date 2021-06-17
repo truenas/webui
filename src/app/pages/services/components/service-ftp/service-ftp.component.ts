@@ -375,7 +375,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
 
   advanced_field = this.fieldSets.advancedFields;
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'basic_mode',
       name: global_helptext.basic_options,
@@ -512,7 +512,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     data['dirmask'] = dirmask;
   }
 
-  submitFunction(this: any, body: any): Observable<any> {
+  submitFunction(body: any): Observable<any> {
     return this.ws.call('ftp.update', [body]);
   }
 

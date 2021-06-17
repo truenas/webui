@@ -83,7 +83,7 @@ export class ZvolFormComponent implements FormConfiguration {
   private compression_collection: Option[];
   private deduplication_collection: Option[];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,

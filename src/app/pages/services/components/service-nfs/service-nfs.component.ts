@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/services/components/service-nfs';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -298,7 +299,7 @@ export class ServiceNFSComponent implements FormConfiguration {
                 },
               ],
               saveButtonText: helptext.add_principal_form.action,
-              customSubmit(entityDialog: any) {
+              customSubmit(entityDialog: EntityDialogComponent) {
                 const value = entityDialog.formValue;
                 const self = entityDialog;
                 self.loader.open();

@@ -1,3 +1,5 @@
+import { TooltipPosition } from '@angular/material/tooltip';
+import { Observable } from 'rxjs';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 
@@ -10,18 +12,18 @@ export interface EntityTableConfig {
   hideTopActions?: boolean;
   queryCall?: ApiMethod;
   queryCallOption?: any;
-  queryCallJob?: any;
+  queryCallJob?: boolean;
   resource_name?: string;
   route_edit?: string | string[];
   route_add?: string[];
   queryRes?: any [];
   showActions?: boolean;
-  isActionVisible?: any;
+  isActionVisible?: (actionId: string, row: any) => boolean;
   custActions?: any[];
-  multiActions?: any[];
+  multiActions?: EntityTableMultiAction[];
   multiActionsIconsOnly?: boolean;
   noActions?: boolean;
-  config?: any;
+  config?: EntityTableConfigConfig;
   confirmDeleteDialog?: any;
   hasDetails?: boolean;
   rowDetailComponent?: any;
@@ -79,6 +81,38 @@ export interface EntityTableAction {
   label: string;
   onClick: (row?: any) => void;
   disabled?: boolean;
+}
+
+export interface EntityTableMultiAction {
+  id: string;
+  onClick: (selection: any) => void;
+  icon: string;
+  label: string;
+  enable: boolean;
+  ttpos: TooltipPosition;
+}
+
+// The name is not smart, but it reflects the reality.
+export interface EntityTableConfigConfig {
+  name?: string; // TODO: Unclear if this field actually exists
+  paging?: boolean;
+  multiSelect?: boolean;
+  deleteMsg?: {
+    doubleConfirm?: (item: any) => Observable<boolean>;
+    id_prop?: string;
+    title?: string;
+    key_props: string[];
+  };
+  pagingOptions?: {
+    pageSize?: number;
+    pageSizeOptions?: number[];
+  };
+  sorting?: {
+    columns: {
+      name: string;
+      sort?: 'asc' | 'desc';
+    }[];
+  };
 }
 
 export interface EntityTableColumn {

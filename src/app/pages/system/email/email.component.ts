@@ -38,7 +38,7 @@ export class EmailComponent implements FormConfiguration {
   rootEmail: string;
   private oauthCreds: BehaviorSubject<OAuthData> = new BehaviorSubject({});
   customSubmit = this.saveConfigSubmit;
-  custActions: any[] = [{
+  custActions = [{
     id: 'send_mail',
     name: T('Send Test Mail'),
     function: () => {

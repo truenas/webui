@@ -7,6 +7,7 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
@@ -188,7 +189,7 @@ export class SupportComponent implements OnInit {
     message: helptext.updateProd.message,
   };
 
-  doProdUpdate(entityDialog: any): void {
+  doProdUpdate(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog;
     self.loader.open();
     const dialogRef = entityDialog.mdDialog.open(EntityJobComponent,
@@ -204,7 +205,7 @@ export class SupportComponent implements OnInit {
     (err: any) => {
       self.loader.close();
       self.dialogRef.close();
-      self.dialog.errorReport(helptext.is_production_error_dialog.title,
+      this.dialog.errorReport(helptext.is_production_error_dialog.title,
         err.error.message, err.error.traceback);
     });
   }

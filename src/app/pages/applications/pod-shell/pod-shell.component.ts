@@ -15,6 +15,7 @@ import { CoreService } from 'app/core/services/core.service';
 import helptext from 'app/helptext/shell/shell';
 import { CoreEvent } from 'app/interfaces/events';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
@@ -345,7 +346,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
     this.dialogService.dialogForm(this.choosePod, true);
   }
 
-  onChooseShell(entityDialog: any): void {
+  onChooseShell(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     self.pod_name = entityDialog.formGroup.controls['pods'].value;
     self.conatiner_name = entityDialog.formGroup.controls['containers'].value;

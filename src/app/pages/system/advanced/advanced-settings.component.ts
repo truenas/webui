@@ -456,7 +456,7 @@ export class AdvancedSettingsComponent implements OnInit {
           untilDestroyed(this),
         ).subscribe(() => {
           this.ws.call('core.download', ['system.debug', [], fileName]).pipe(untilDestroyed(this)).subscribe(
-            (res: any) => {
+            (res) => {
               const url = res[1];
               let failed = false;
               this.storage.streamDownloadFile(this.http, url, fileName, mimeType).pipe(untilDestroyed(this)).subscribe(

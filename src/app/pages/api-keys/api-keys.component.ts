@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/api-keys';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
@@ -31,7 +32,7 @@ export class ApiKeysComponent implements EntityTableConfig {
     { name: helptext.col_name, prop: 'name', always_display: true },
     { name: helptext.col_created_at, prop: 'created_time' },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -110,7 +111,7 @@ export class ApiKeysComponent implements EntityTableConfig {
     });
   }
 
-  doSubmit(entityDialogForm: any): void {
+  doSubmit(entityDialogForm: EntityDialogComponent<this>): void {
     const that = entityDialogForm.parent;
     if (that.currItem) {
       that.ws.call(that.editCall, [that.currItem.id, entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(

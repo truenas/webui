@@ -44,8 +44,8 @@ export class EntityDialogComponent<P = any> implements OnInit {
   constructor(public dialogRef: MatDialogRef < EntityDialogComponent >,
     protected translate: TranslateService,
     protected entityFormService: EntityFormService,
-    protected ws: WebSocketService,
-    protected loader: AppLoaderService,
+    public ws: WebSocketService,
+    public loader: AppLoaderService,
     public mdDialog: MatDialog,
     public datePipe: DatePipe,
     protected fieldRelationService: FieldRelationService) {}

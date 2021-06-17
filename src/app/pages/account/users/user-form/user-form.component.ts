@@ -506,7 +506,7 @@ export class UserFormComponent implements FormConfiguration {
     }
   }
 
-  submitFunction(this: any, entityForm: any): Observable<any> {
+  submitFunction(entityForm: any): Observable<any> {
     delete entityForm['password_conf'];
     return this.ws.call('user.update', [this.pk, entityForm]);
   }
