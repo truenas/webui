@@ -48,7 +48,7 @@ export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
   ];
 
   rowIdentifier = 'id';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

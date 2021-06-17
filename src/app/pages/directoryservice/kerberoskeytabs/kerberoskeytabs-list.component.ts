@@ -21,7 +21,7 @@ export class KerberosKeytabsListComponent implements EntityTableConfig {
     { name: 'Name', prop: 'name', always_display: true },
   ];
   rowIdentifier = 'name';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

@@ -7,6 +7,7 @@ import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -272,7 +273,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     this.title = helptext_system_ca.edit.title;
   }
 
-  doSignCSR(entityDialog: any): void {
+  doSignCSR(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     const payload = {
       ca_id: self.rowNum,

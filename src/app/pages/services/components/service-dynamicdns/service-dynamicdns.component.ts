@@ -167,7 +167,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
     return value;
   }
 
-  submitFunction(this: any, entityForm: any): Observable<any> {
+  submitFunction(entityForm: any): Observable<any> {
     if (entityForm.domain.length === 0) {
       entityForm.domain = [];
     }

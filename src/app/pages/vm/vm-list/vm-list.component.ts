@@ -71,7 +71,7 @@ export class VMListComponent implements EntityTableConfig {
     { name: T('Description'), prop: 'description', hidden: true },
     { name: T('Shutdown Timeout'), prop: 'shutdown_timeout', hidden: true },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

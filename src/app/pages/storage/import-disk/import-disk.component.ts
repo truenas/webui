@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { CoreService } from 'app/core/services/core.service';
 import helptext from 'app/helptext/storage/import-disk/import-disk';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
   FieldConfig,
@@ -91,7 +91,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
   msdosfs_locale: any;
   private entityForm: EntityFormComponent;
   protected dialogRef: any;
-  custActions: any[];
+  custActions: FormCustomAction[];
 
   constructor(
     protected router: Router,

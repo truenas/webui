@@ -7,6 +7,7 @@ import helptext from 'app/helptext/apps/apps';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
@@ -38,7 +39,7 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit, OnDestr
   ];
 
   rowIdentifier = 'id';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -153,7 +154,7 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit, OnDestr
     }
   }
 
-  updateImage(entityDialog: any): void {
+  updateImage(entityDialog: EntityDialogComponent): void {
     const self = entityDialog.parent;
     const tag = entityDialog.formGroup.controls['tag'].value;
     const params = tag.split(':');
