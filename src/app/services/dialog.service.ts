@@ -25,7 +25,10 @@ export class DialogService {
 
   constructor(private dialog: MatDialog, private ws: WebSocketService, protected loader: AppLoaderService) {
     /* Close all open dialogs when websocket connection is dropped */
-    this.ws.onCloseSubject.pipe(filter((didClose) => !!didClose)).pipe(untilDestroyed(this)).subscribe(() => this.closeAllDialogs());
+    this.ws.onCloseSubject.pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => this.closeAllDialogs());
   }
 
   confirm(confirmOptions: ConfirmOptions): Observable<boolean>

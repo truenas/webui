@@ -835,12 +835,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {
       // double confirm: input delete item's name to confirm deletion
-      this.conf.config.deleteMsg.doubleConfirm(item).pipe(untilDestroyed(this)).subscribe((doubleConfirmDialog: boolean) => {
-        if (doubleConfirmDialog) {
-          this.toDeleteRow = item;
-          this.delete(id);
-        }
-      });
+      this.conf.config.deleteMsg.doubleConfirm(item)
+        .pipe(untilDestroyed(this))
+        .subscribe((doubleConfirmDialog: boolean) => {
+          if (doubleConfirmDialog) {
+            this.toDeleteRow = item;
+            this.delete(id);
+          }
+        });
     } else {
       this.dialogService.confirm({
         title: dialog.hasOwnProperty('title') ? dialog['title'] : T('Delete'),
@@ -903,16 +905,17 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.loader.open();
           this.loaderOpen = true;
         }),
-        switchMap(() =>
-          (this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id]))
-          ).pipe(
+        switchMap(() => {
+          const params = this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id];
+          return this.ws.call(this.conf.wsDelete, params).pipe(
             take(1),
             catchError((error) => {
               new EntityUtils().handleWSError(this, error, this.dialogService);
               this.loader.close();
               return of(false);
             }),
-          )),
+          );
+        }),
         switchMap((jobId: string) => (jobId ? this.job.getJobStatus(jobId) : of(false))),
       );
   }
@@ -978,36 +981,38 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.conf.wsMultiDelete) {
         // ws to do multi-delete
         if (this.conf.wsMultiDeleteParams) {
-          this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected)).pipe(untilDestroyed(this)).subscribe(
-            (res1) => {
-              if (res1.state === EntityJobState.Success) {
-                this.loader.close();
-                this.loaderOpen = false;
-                this.getData();
-                // this.selected = [];
-                this.selection.clear();
+          this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected))
+            .pipe(untilDestroyed(this))
+            .subscribe(
+              (res1) => {
+                if (res1.state === EntityJobState.Success) {
+                  this.loader.close();
+                  this.loaderOpen = false;
+                  this.getData();
+                  // this.selected = [];
+                  this.selection.clear();
 
-                const selectedName = this.conf.wsMultiDeleteParams(selected)[1];
-                let message = '';
-                for (let i = 0; i < res1.result.length; i++) {
-                  if (res1.result[i].error != null) {
-                    message = message + '<li>' + selectedName[i] + ': ' + res1.result[i].error + '</li>';
+                  const selectedName = this.conf.wsMultiDeleteParams(selected)[1];
+                  let message = '';
+                  for (let i = 0; i < res1.result.length; i++) {
+                    if (res1.result[i].error != null) {
+                      message = message + '<li>' + selectedName[i] + ': ' + res1.result[i].error + '</li>';
+                    }
+                  }
+                  if (message === '') {
+                    this.dialogService.Info(T('Items deleted'), '', '300px', 'info', true);
+                  } else {
+                    message = '<ul>' + message + '</ul>';
+                    this.dialogService.errorReport(T('Items Delete Failed'), message);
                   }
                 }
-                if (message === '') {
-                  this.dialogService.Info(T('Items deleted'), '', '300px', 'info', true);
-                } else {
-                  message = '<ul>' + message + '</ul>';
-                  this.dialogService.errorReport(T('Items Delete Failed'), message);
-                }
-              }
-            },
-            (res1) => {
-              new EntityUtils().handleWSError(this, res1, this.dialogService);
-              this.loader.close();
-              this.loaderOpen = false;
-            },
-          );
+              },
+              (res1) => {
+                new EntityUtils().handleWSError(this, res1, this.dialogService);
+                this.loader.close();
+                this.loaderOpen = false;
+              },
+            );
         }
       } else {
         // rest to do multi-delete

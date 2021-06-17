@@ -40,7 +40,9 @@ export class WizardSummaryComponent {
     if (fieldConfig.type == 'list') {
       result = fieldValue.length;
     } else if (fieldConfig.type == 'select') {
-      const selectedOption = fieldConfig.options.find((option) => option.value == new EntityUtils().changeNull2String(fieldValue));
+      const selectedOption = fieldConfig.options.find((option) => {
+        return option.value == new EntityUtils().changeNull2String(fieldValue);
+      });
       if (selectedOption) {
         result = selectedOption.label;
       }

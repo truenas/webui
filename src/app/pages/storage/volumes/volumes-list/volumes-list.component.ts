@@ -247,8 +247,12 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
               if (pool.children[0].is_encrypted_root) {
                 this.has_encrypted_root[pool.name] = true;
               }
-              pool.children[0].available_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].available.parsed || 0);
-              pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].used.parsed || 0);
+              pool.children[0].available_parsed = this.storage.convertBytestoHumanReadable(
+                pool.children[0].available.parsed || 0,
+              );
+              pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(
+                pool.children[0].used.parsed || 0,
+              );
               pool.availStr = filesize(pool.children[0].available.parsed, { standard: 'iec' });
               pool.children[0].has_encrypted_children = false;
               for (let i = 0; i < datasets.length; i++) {
@@ -265,7 +269,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
             }
 
             try {
-              const used_pct = pool.children[0].used.parsed / (pool.children[0].used.parsed + pool.children[0].available.parsed);
+              const used_pct = pool.children[0].used.parsed
+                / (pool.children[0].used.parsed + pool.children[0].available.parsed);
               pool.usedStr = '' + filesize(pool.children[0].used.parsed, { standard: 'iec' }) + ' (' + Math.round(used_pct * 100) + '%)';
             } catch (error) {
               pool.usedStr = '' + pool.children[0].used.parsed;

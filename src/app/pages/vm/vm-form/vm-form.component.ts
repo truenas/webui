@@ -198,11 +198,19 @@ export class VmFormComponent implements FormConfiguration {
   ];
   private bootloader: FieldConfig;
 
-  constructor(protected router: Router, private loader: AppLoaderService,
-    protected ws: WebSocketService, protected storageService: StorageService,
-    protected _injector: Injector, protected _appRef: ApplicationRef,
-    protected vmService: VmService, protected route: ActivatedRoute,
-    private translate: TranslateService, private dialogService: DialogService, private systemGeneralService: SystemGeneralService) {}
+  constructor(
+    protected router: Router,
+    private loader: AppLoaderService,
+    protected ws: WebSocketService,
+    protected storageService: StorageService,
+    protected _injector: Injector,
+    protected _appRef: ApplicationRef,
+    protected vmService: VmService,
+    protected route: ActivatedRoute,
+    private translate: TranslateService,
+    private dialogService: DialogService,
+    private systemGeneralService: SystemGeneralService,
+  ) {}
 
   preInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
@@ -389,7 +397,9 @@ export class VmFormComponent implements FormConfiguration {
         }
       }
       if (!found) {
-        const gpuPciDevices = currentGpu.devices.filter((gpuPciDevice) => !prevVmPciSlots.includes(gpuPciDevice.vm_pci_slot));
+        const gpuPciDevices = currentGpu.devices.filter((gpuPciDevice) => {
+          return !prevVmPciSlots.includes(gpuPciDevice.vm_pci_slot);
+        });
         const gpuPciDevicesConverted = gpuPciDevices.map((pptDev) => ({
           dtype: VmDeviceType.Pci,
           vm: this.rawVmData.id,

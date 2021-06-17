@@ -172,7 +172,10 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
     };
     // Looks for a mismatch and raises a confirm dialog if there is one; otherwise saves w/o the dialog
     const dataStoreMatch = this.datastoreList.find((item) => item.name === entityForm.datastore);
-    if (!dataStoreMatch || (dataStoreMatch.name === entityForm.datastore && dataStoreMatch.filesystems[0] !== entityForm.filesystem)) {
+    if (
+      !dataStoreMatch
+      || (dataStoreMatch.name === entityForm.datastore && dataStoreMatch.filesystems[0] !== entityForm.filesystem)
+    ) {
       const firstObj = this.fileSystemList.find((item) => item.name === entityForm.filesystem);
       const secondObj = this.dataListComplete.find((item) => item.name === entityForm.datastore);
       if (secondObj.description === '') {

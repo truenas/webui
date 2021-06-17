@@ -1017,7 +1017,10 @@ export class VMWizardComponent implements WizardConfiguration {
     vmPayload['autostart'] = value.autostart;
     if (value.iso_path && value.iso_path !== undefined) {
       vmPayload['devices'] = [
-        { dtype: VmDeviceType.Nic, attributes: { type: value.NIC_type, mac: value.NIC_mac, nic_attach: value.nic_attach } },
+        {
+          dtype: VmDeviceType.Nic,
+          attributes: { type: value.NIC_type, mac: value.NIC_mac, nic_attach: value.nic_attach },
+        },
         {
           dtype: VmDeviceType.Disk,
           attributes: {
@@ -1028,7 +1031,10 @@ export class VMWizardComponent implements WizardConfiguration {
       ];
     } else {
       vmPayload['devices'] = [
-        { dtype: VmDeviceType.Nic, attributes: { type: value.NIC_type, mac: value.NIC_mac, nic_attach: value.nic_attach } },
+        {
+          dtype: VmDeviceType.Nic,
+          attributes: { type: value.NIC_type, mac: value.NIC_mac, nic_attach: value.nic_attach },
+        },
         {
           dtype: VmDeviceType.Disk,
           attributes: {

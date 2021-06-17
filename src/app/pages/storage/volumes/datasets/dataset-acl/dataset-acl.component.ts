@@ -13,6 +13,7 @@ import * as _ from 'lodash';
 import { AclItemTag, DefaultAclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -53,7 +54,7 @@ export class DatasetAclComponent implements FormConfiguration {
   private aces_fc: any;
   private entityForm: any;
   formGroup: FormGroup;
-  data: Object = {};
+  data: Record<string, unknown> = {};
   error: string;
   protected dialogRef: any;
   route_success: string[] = ['storage'];
@@ -64,7 +65,7 @@ export class DatasetAclComponent implements FormConfiguration {
   protected uid_fc: any;
   protected gid_fc: any;
 
-  fieldSetDisplay = 'default';// default | carousel | stepper
+  fieldSetDisplay = 'default'; // default | carousel | stepper
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
     {
@@ -353,6 +354,7 @@ export class DatasetAclComponent implements FormConfiguration {
       }
       this.userOptions = users;
 
+      this.uid_fc = _.find(this.fieldConfig, { name: 'uid' });
       this.uid_fc.options = this.userOptions;
     });
 
@@ -363,17 +365,21 @@ export class DatasetAclComponent implements FormConfiguration {
       }
       this.groupOptions = groupOptions;
 
+      this.gid_fc = _.find(this.fieldConfig, { name: 'gid' });
       this.gid_fc.options = this.groupOptions;
     });
     this.ws.call('filesystem.default_acl_choices').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       res.forEach((item) => {
-        this.defaults.push({ label: item, value: item });
+        if (item !== 'POSIX_OPEN' && item !== 'POSIX_RESTRICTED') {
+          this.defaults.push({ label: item, value: item });
+        }
       });
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
+    this.entityForm.formGroup.get('path').setValue(this.path);
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive.valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
       if (value === true) {
@@ -491,7 +497,9 @@ export class DatasetAclComponent implements FormConfiguration {
     }
   }
 
+  // TODO: Refactor for better readability
   resourceTransformIncomingRestData(data: any): any {
+    let setToReturnLater = false;
     if (data.acl.length === 0) {
       setTimeout(() => {
         this.handleEmptyACL();
@@ -499,10 +507,14 @@ export class DatasetAclComponent implements FormConfiguration {
       return { aces: [] as any };
     }
     if (this.homeShare) {
+      setToReturnLater = true;
       this.ws.call('filesystem.get_default_acl', [DefaultAclType.Home]).pipe(untilDestroyed(this)).subscribe((res: any) => {
         data.acl = res;
         return { aces: [] as any };
       });
+    }
+    if (!setToReturnLater) {
+      return data;
     }
   }
 
@@ -631,13 +643,8 @@ export class DatasetAclComponent implements FormConfiguration {
   }
 
   showChoiceDialog(presetsOnly = false): void {
-    let msg1; let msg2;
-    this.translate.get(helptext.type_dialog.radio_preset_tooltip).pipe(untilDestroyed(this)).subscribe((m1) => {
-      this.translate.get(helptext.preset_dialog.message).pipe(untilDestroyed(this)).subscribe((m2) => {
-        msg1 = m1;
-        msg2 = m2;
-      });
-    });
+    const msg1 = this.translate.instant(helptext.type_dialog.radio_preset_tooltip);
+    const msg2 = this.translate.instant(helptext.preset_dialog.message);
     const conf: DialogFormConfiguration = {
       title: presetsOnly ? helptext.type_dialog.radio_preset : helptext.type_dialog.title,
       message: presetsOnly ? `${msg1} ${msg2}` : null,
@@ -738,10 +745,12 @@ export class DatasetAclComponent implements FormConfiguration {
   async customSubmit(body: any): Promise<void> {
     body.uid = body.apply_user ? body.uid : null;
     body.gid = body.apply_group ? body.gid : null;
-    const doesNotWantToEditDataset = this.storageService.isDatasetTopLevel(body.path.replace('mnt/', ''))
-      && !(await this.dialogService
-        .confirm(helptext.dataset_acl_dialog_warning, helptext.dataset_acl_toplevel_dialog_message)
-        .toPromise());
+
+    const doesNotWantToEditDataset = this.storageService.isDatasetTopLevel(this.path.replace('mnt/', ''))
+      && !(await this.dialogService.confirm({
+        title: helptext.dataset_acl_dialog_warning,
+        message: helptext.dataset_acl_toplevel_dialog_message,
+      }).toPromise());
 
     if (doesNotWantToEditDataset) {
       return;
@@ -788,7 +797,7 @@ export class DatasetAclComponent implements FormConfiguration {
     }
     this.dialogRef.componentInstance.setCall(this.updateCall,
       [{
-        path: body.path,
+        path: this.path,
         dacl,
         uid: body.uid,
         gid: body.gid,
@@ -876,30 +885,34 @@ export class DatasetAclComponent implements FormConfiguration {
   }
 
   loadMoreOptions(length: number, parent: any, searchText: string, config: any): void {
-    (parent.userService as UserService).userQueryDSCache(searchText, length).pipe(untilDestroyed(this)).subscribe((items: any) => {
-      const users: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
-      if (searchText == '') {
-        config.options = config.options.concat(users);
-      } else {
-        config.searchOptions = config.searchOptions.concat(users);
-      }
-    });
+    (parent.userService as UserService).userQueryDSCache(searchText, length)
+      .pipe(untilDestroyed(this))
+      .subscribe((items: any) => {
+        const users: Option[] = [];
+        for (let i = 0; i < items.length; i++) {
+          users.push({ label: items[i].username, value: items[i].username });
+        }
+        if (searchText == '') {
+          config.options = config.options.concat(users);
+        } else {
+          config.searchOptions = config.searchOptions.concat(users);
+        }
+      });
   }
 
   loadMoreGroupOptions(length: number, parent: any, searchText: string, config: any): void {
-    parent.userService.groupQueryDSCache(searchText, false, length).pipe(untilDestroyed(this)).subscribe((items: any[]) => {
-      const groups: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        groups.push({ label: items[i].group, value: items[i].group });
-      }
-      if (searchText == '') {
-        config.options = config.options.concat(groups);
-      } else {
-        config.searchOptions = config.searchOptions.concat(groups);
-      }
-    });
+    parent.userService.groupQueryDSCache(searchText, false, length)
+      .pipe(untilDestroyed(this))
+      .subscribe((items: Group[]) => {
+        const groups: Option[] = [];
+        for (let i = 0; i < items.length; i++) {
+          groups.push({ label: items[i].group, value: items[i].group });
+        }
+        if (searchText == '') {
+          config.options = config.options.concat(groups);
+        } else {
+          config.searchOptions = config.searchOptions.concat(groups);
+        }
+      });
   }
 }

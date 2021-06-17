@@ -452,57 +452,64 @@ export class DeviceEditComponent implements OnInit {
     this.displayFormGroup = this.entityFormService.createFormGroup(this.displayFieldConfig);
 
     this.activeFormGroup = this.cdromFormGroup;
-    await this.ws.call('vm.device.query', [[['id', '=', this.deviceid]]]).pipe(untilDestroyed(this)).subscribe((device) => {
-      if (device[0].attributes.physical_sectorsize !== undefined && device[0].attributes.logical_sectorsize !== undefined) {
-        device[0].attributes['sectorsize'] = device[0].attributes.logical_sectorsize === null ? 0 : device[0].attributes.logical_sectorsize;
-      }
-      const deviceInformation = { ...device[0].attributes, ...{ order: device[0].order } };
-      this.vminfo = device[0];
-      const deviceType = device[0].dtype;
-      this.selectedType = deviceType;
-      switch (deviceType) {
-        case VmDeviceType.Cdrom:
-          this.activeFormGroup = this.cdromFormGroup;
-          this.isCustActionVisible = false;
-          break;
-        case VmDeviceType.Nic:
-          this.activeFormGroup = this.nicFormGroup;
-          this.isCustActionVisible = true;
-          break;
-        case VmDeviceType.Disk:
-          this.activeFormGroup = this.diskFormGroup;
-          this.isCustActionVisible = false;
-          break;
-        case VmDeviceType.Raw:
-          this.activeFormGroup = this.rawfileFormGroup;
-          this.isCustActionVisible = false;
-          // special case where RAW file device is used as a BOOT device.
-          if (this.vminfo.attributes.boot && this.vminfo.attributes.rootpwd) {
-            this.rootpwd = _.find(this.rawfileFieldConfig, { name: 'rootpwd' });
-            this.rootpwd['isHidden'] = false;
-            this.boot = _.find(this.rawfileFieldConfig, { name: 'boot' });
-            this.boot['isHidden'] = false;
-          }
-          break;
-        case VmDeviceType.Pci:
-          this.activeFormGroup = this.pciFormGroup;
-          this.isCustActionVisible = false;
-          break;
-        case VmDeviceType.Display:
-          this.activeFormGroup = this.displayFormGroup;
-          this.isCustActionVisible = false;
-          this.ws.call('vm.get_display_devices', [this.vmId]).pipe(untilDestroyed(this)).subscribe((devices: Device[]) => {
-            if (devices.length > 1) {
-              _.find(this.displayFieldConfig, { name: 'type' }).isHidden = true;
+    await this.ws.call('vm.device.query', [[['id', '=', this.deviceid]]])
+      .pipe(untilDestroyed(this))
+      .subscribe((device) => {
+        if (
+          device[0].attributes.physical_sectorsize !== undefined
+          && device[0].attributes.logical_sectorsize !== undefined
+        ) {
+          device[0].attributes['sectorsize'] = device[0].attributes.logical_sectorsize === null
+            ? 0
+            : device[0].attributes.logical_sectorsize;
+        }
+        const deviceInformation = { ...device[0].attributes, ...{ order: device[0].order } };
+        this.vminfo = device[0];
+        const deviceType = device[0].dtype;
+        this.selectedType = deviceType;
+        switch (deviceType) {
+          case VmDeviceType.Cdrom:
+            this.activeFormGroup = this.cdromFormGroup;
+            this.isCustActionVisible = false;
+            break;
+          case VmDeviceType.Nic:
+            this.activeFormGroup = this.nicFormGroup;
+            this.isCustActionVisible = true;
+            break;
+          case VmDeviceType.Disk:
+            this.activeFormGroup = this.diskFormGroup;
+            this.isCustActionVisible = false;
+            break;
+          case VmDeviceType.Raw:
+            this.activeFormGroup = this.rawfileFormGroup;
+            this.isCustActionVisible = false;
+            // special case where RAW file device is used as a BOOT device.
+            if (this.vminfo.attributes.boot && this.vminfo.attributes.rootpwd) {
+              this.rootpwd = _.find(this.rawfileFieldConfig, { name: 'rootpwd' });
+              this.rootpwd['isHidden'] = false;
+              this.boot = _.find(this.rawfileFieldConfig, { name: 'boot' });
+              this.boot['isHidden'] = false;
             }
-          }, (err) => {
-            new EntityUtils().handleWSError(this, err, this.dialogService);
-          });
-          break;
-      }
+            break;
+          case VmDeviceType.Pci:
+            this.activeFormGroup = this.pciFormGroup;
+            this.isCustActionVisible = false;
+            break;
+          case VmDeviceType.Display:
+            this.activeFormGroup = this.displayFormGroup;
+            this.isCustActionVisible = false;
+            this.ws.call('vm.get_display_devices', [this.vmId]).pipe(untilDestroyed(this)).subscribe((devices: Device[]) => {
+              if (devices.length > 1) {
+                _.find(this.displayFieldConfig, { name: 'type' }).isHidden = true;
+              }
+            }, (err) => {
+              new EntityUtils().handleWSError(this, err, this.dialogService);
+            });
+            break;
+        }
 
-      this.setgetValues(this.activeFormGroup, deviceInformation);
-    });
+        this.setgetValues(this.activeFormGroup, deviceInformation);
+      });
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.ws.call('vm.query', [[['id', '=', parseInt(params['vmid'], 10)]]]).pipe(untilDestroyed(this)).subscribe((vms) => {
         if (vms[0].status.state === ServiceStatus.Running) {

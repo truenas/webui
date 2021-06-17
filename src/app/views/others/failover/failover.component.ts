@@ -49,9 +49,11 @@ export class FailoverComponent implements OnInit {
     this.dialog.closeAll();
     this.ws.call('failover.force_master', {}).pipe(untilDestroyed(this)).subscribe(
       (res) => { // error on reboot
-        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted).pipe(untilDestroyed(this)).subscribe(() => {
-          this.router.navigate(['/session/signin']);
-        });
+        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted)
+          .pipe(untilDestroyed(this))
+          .subscribe(() => {
+            this.router.navigate(['/session/signin']);
+          });
       },
       () => { // show reboot screen
         this.ws.prepare_shutdown();

@@ -46,7 +46,7 @@ export interface ReplicationTask {
   periodic_snapshot_tasks?: number[] | PeriodicSnapshotTask[];
   properties?: boolean;
   properties_exclude?: string[];
-  properties_override?: {};
+  properties_override?: Record<string, unknown>;
   readonly?: ReadOnlyMode;
   recursive: boolean;
   replicate?: boolean;

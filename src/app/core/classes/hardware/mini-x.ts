@@ -56,7 +56,12 @@ export class MINIX extends Chassis {
         offsetY += 180;
         // SSD
         // dt.container.setTransform(0, 121 - backY, 0.73, 0.73);
-        dt.container.setTransform(155, offsetY + dt.container.y + (index * dt.container.height * scaleDT), scaleDT, scaleDT);
+        dt.container.setTransform(
+          155,
+          offsetY + dt.container.y + (index * dt.container.height * scaleDT),
+          scaleDT,
+          scaleDT,
+        );
       }
     });
   }

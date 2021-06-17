@@ -161,7 +161,10 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     this.save_button_enabled = false;
     this.systemService.updateRunningNoticeSent.emit();
     this.ws.call('user.query', [[['id', '=', 1]]]).pipe(untilDestroyed(this)).subscribe((ures) => {
-      this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: helptext.manual_update_action }, disableClose: true });
+      this.dialogRef = this.dialog.open(EntityJobComponent, {
+        data: { title: helptext.manual_update_action },
+        disableClose: true,
+      });
       if (this.isHA) {
         this.dialogRef.componentInstance.disableProgressValue(true);
       }

@@ -154,7 +154,10 @@ export class VDevLabelsSVG {
           disk,
         );
         this.trays[disk] = {
-          x: tray.x, y: tray.y, width: src.width * this.chassis.container.scale.x, height: src.height * this.chassis.container.scale.y,
+          x: tray.x,
+          y: tray.y,
+          width: src.width * this.chassis.container.scale.x,
+          height: src.height * this.chassis.container.scale.y,
         };
       }
     });

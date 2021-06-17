@@ -22,7 +22,7 @@ export class DownloadKeyModalDialog {
   volumeId: any;
   volumeName: any;
   fileName: string;
-  isDownloaded: Boolean = false;
+  isDownloaded = false;
   help = helptext;
 
   constructor(
@@ -47,12 +47,14 @@ export class DownloadKeyModalDialog {
       this.ws.call('core.download', ['pool.dataset.export_keys', [this.volumeName], this.fileName]).pipe(untilDestroyed(this)).subscribe((res) => {
         this.loader.close();
         const url = res[1];
-        this.storage.streamDownloadFile(this.http, url, this.fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
-          if (res !== null && res !== '') {
-            this.storage.downloadBlob(file, this.fileName);
-            this.isDownloaded = true;
-          }
-        });
+        this.storage.streamDownloadFile(this.http, url, this.fileName, mimetype)
+          .pipe(untilDestroyed(this))
+          .subscribe((file) => {
+            if (res !== null && res !== '') {
+              this.storage.downloadBlob(file, this.fileName);
+              this.isDownloaded = true;
+            }
+          });
       }, (e) => {
         this.loader.close();
         new EntityUtils().handleWSError(this, e, this.dialog);
@@ -61,12 +63,14 @@ export class DownloadKeyModalDialog {
       mimetype = 'application/octet-stream';
       this.ws.call('pool.download_encryption_key', payload).pipe(untilDestroyed(this)).subscribe((res) => {
         this.loader.close();
-        this.storage.streamDownloadFile(this.http, res, this.fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
-          if (res !== null && res !== '') {
-            this.storage.downloadBlob(file, this.fileName);
-            this.isDownloaded = true;
-          }
-        });
+        this.storage.streamDownloadFile(this.http, res, this.fileName, mimetype)
+          .pipe(untilDestroyed(this))
+          .subscribe((file) => {
+            if (res !== null && res !== '') {
+              this.storage.downloadBlob(file, this.fileName);
+              this.isDownloaded = true;
+            }
+          });
       }, () => {
         this.isDownloaded = true;
         this.loader.close();

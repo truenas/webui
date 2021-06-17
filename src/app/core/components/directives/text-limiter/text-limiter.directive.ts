@@ -38,8 +38,11 @@ export class TextLimiterDirective implements AfterViewInit {
     this.overlayRef.detach();
   }
 
-  constructor(private el: ElementRef, private overlayPositionBuilder: OverlayPositionBuilder, private overlay: Overlay) {
-  }
+  constructor(
+    private el: ElementRef,
+    private overlayPositionBuilder: OverlayPositionBuilder,
+    private overlay: Overlay,
+  ) {}
 
   ngAfterViewInit(): void {
     this.rawText = this.el.nativeElement.innerText;

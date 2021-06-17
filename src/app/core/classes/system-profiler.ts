@@ -318,7 +318,9 @@ export class SystemProfiler {
   }
 
   getEnclosureLabel(key: number): string {
-    return this.enclosures[key].label == this.enclosures[key].name ? this.enclosures[key].label : this.enclosures[key].model;
+    return this.enclosures[key].label == this.enclosures[key].name
+      ? this.enclosures[key].label
+      : this.enclosures[key].model;
   }
 
   getDiskByID(id: string): any {

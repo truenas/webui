@@ -389,8 +389,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
             this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: false }, sender: this });
             this.interfaceTableConf.tableComponent.getData();
             this.loader.close();
-            // can't decide if this is worth keeping since the checkin happens intantaneously
-            // this.dialog.Info(helptext.commit_changes_title, helptext.changes_saved_successfully, '300px', "info", true);
             this.checkWaitingCheckin();
           }, (err) => {
             this.loader.close();
@@ -435,6 +433,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       this.dialog.Info(
         helptext.checkin_complete_title,
         helptext.checkin_complete_message,
+        '500px',
+        'info',
       );
       this.hasPendingChanges = false;
       this.checkinWaiting = false;
@@ -481,14 +481,26 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   refreshNetworkForms(): void {
     this.addComponent = new ConfigurationComponent(this.router, this.ws);
     this.addComponent.afterModalFormClosed = this.getGlobalSettings.bind(this); // update global config card
-    this.interfaceComponent = new InterfacesFormComponent(this.router, this.aroute, this.networkService, this.dialog, this.ws);
+    this.interfaceComponent = new InterfacesFormComponent(
+      this.router,
+      this.aroute,
+      this.networkService,
+      this.dialog,
+      this.ws,
+    );
     this.interfaceComponent.afterModalFormClosed = this.checkInterfacePendingChanges.bind(this);
     this.staticRouteFormComponent = new StaticRouteFormComponent(this.aroute, this.ws, this.networkService);
     if (this.staticRoutesTableConf.tableComponent) {
       this.staticRouteFormComponent.afterModalFormClosed = this.staticRoutesTableConf.tableComponent.getData();
     }
     this.openvpnClientComponent = new OpenvpnClientComponent(this.servicesService);
-    this.openvpnServerComponent = new OpenvpnServerComponent(this.servicesService, this.dialog, this.loader, this.ws, this.storageService);
+    this.openvpnServerComponent = new OpenvpnServerComponent(
+      this.servicesService,
+      this.dialog,
+      this.loader,
+      this.ws,
+      this.storageService,
+    );
     this.impiFormComponent = new IPMIFromComponent(this.ws, this.dialog, this.loader);
   }
 

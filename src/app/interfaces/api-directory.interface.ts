@@ -457,6 +457,7 @@ export type ApiDirectory = {
   'pool.scrub.create': { params: any; response: any };
   'pool.dataset.compression_choices': { params: any; response: any };
   'pool.dataset.encryption_algorithm_choices': { params: any; response: any };
+  'pool.dataset.permission': { params: any; response: any };
   'pool.offline': { params: any; response: any };
   'pool.online': { params: any; response: any };
   'pool.remove': { params: any; response: any };

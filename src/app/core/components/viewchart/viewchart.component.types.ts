@@ -298,7 +298,7 @@ export interface Data {
   /**
    * Parse a JSON object for data.
    */
-  json?: {};
+  json?: Record<string, unknown>;
   /**
    * Load data from a multidimensional array, with the first element containing the data names,
    * the following containing related data in that order.
@@ -715,7 +715,8 @@ export interface LegendOptions {
   /**
    * Change inset legend attributes.
    * This option accepts object that has the keys anchor, x, y and step.
-   * anchor decides the position of the legend. These anchors are available: top-left, top-right, bottom-left, bottom-right
+   * anchor decides the position of the legend.
+   * These anchors are available: top-left, top-right, bottom-left, bottom-right
    * x and y set the position of the legend based on the anchor.
    * step defines the max step the lagend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
    */
@@ -773,7 +774,8 @@ export interface TooltipOptions {
   };
 
   /**
-   * Set custom position for the tooltip. This option can be used to modify the tooltip position by returning object that has top and left.
+   * Set custom position for the tooltip.
+   * This option can be used to modify the tooltip position by returning object that has top and left.
    */
   position?(data: any, width: number, height: number, element: any): { top: number; left: number };
 

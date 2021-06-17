@@ -323,6 +323,10 @@ export class CatalogComponent implements OnInit {
 
       if (catalogApp) {
         const catalogAppInfo = { ...catalogApp } as any;
+        catalogAppInfo.catalog = {
+          id: catalog,
+          train,
+        };
         catalogAppInfo.schema = catalogApp.versions[catalogApp.latest_version].schema;
 
         if (catalogApp.name != ixChartApp) {
