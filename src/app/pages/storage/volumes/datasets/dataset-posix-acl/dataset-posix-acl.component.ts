@@ -2,6 +2,7 @@ import {
   Component,
 } from '@angular/core';
 import {
+  FormArray,
   FormControl,
   FormGroup,
 } from '@angular/forms';
@@ -34,6 +35,7 @@ import { T } from 'app/translate-marker';
 @Component({
   selector: 'app-dataset-posix-acl',
   template: '<entity-form [conf]="this"></entity-form>',
+  providers: [EntityFormService],
 })
 export class DatasetPosixAclComponent implements FormConfiguration {
   queryCall: 'filesystem.getacl' = 'filesystem.getacl';
@@ -385,7 +387,7 @@ export class DatasetPosixAclComponent implements FormConfiguration {
         this.handleEmptyACL();
       }, 1000);
     }
-    return { aces: [] as any };
+    return { aces: data.acl as any };
   }
 
   handleEmptyACL(): void {
@@ -398,7 +400,7 @@ export class DatasetPosixAclComponent implements FormConfiguration {
 
   async dataHandler(entityForm: EntityFormComponent, defaults?: any): Promise<void> {
     entityForm.formGroup.controls['aces'].reset();
-    (entityForm.formGroup.controls['aces'] as FormGroup).controls = {};
+    (entityForm.formGroup.controls['aces'] as FormArray).controls = [];
     this.aces_fc.listFields = [];
     this.gid_fc = _.find(this.fieldConfig, { name: 'gid' });
     this.uid_fc = _.find(this.fieldConfig, { name: 'uid' });
@@ -456,11 +458,12 @@ export class DatasetPosixAclComponent implements FormConfiguration {
         }
       }
       const propName = 'aces';
-      const aces_fg = entityForm.formGroup.controls[propName] as FormGroup;
-      if (aces_fg.controls[i] === undefined) {
+      const aces_fg = entityForm.formGroup.get(propName) as FormArray;
+      if (!aces_fg.controls[i]) {
         // add controls;
         const templateListField = _.cloneDeep(_.find(this.fieldConfig, { name: propName }).templateListField);
-        (aces_fg as any).push(this.entityFormService.createFormGroup(templateListField));
+        const formGroup = this.entityFormService.createFormGroup(templateListField);
+        aces_fg.push(formGroup);
         this.aces_fc.listFields.push(templateListField);
       }
 

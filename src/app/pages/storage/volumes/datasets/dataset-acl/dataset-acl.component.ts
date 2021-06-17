@@ -2,6 +2,7 @@ import {
   Component,
 } from '@angular/core';
 import {
+  FormArray,
   FormControl,
   FormGroup,
 } from '@angular/forms';
@@ -35,6 +36,7 @@ import { T } from 'app/translate-marker';
 @Component({
   selector: 'app-dataset-acl',
   template: '<entity-form [conf]="this"></entity-form>',
+  providers: [EntityFormService],
 })
 export class DatasetAclComponent implements FormConfiguration {
   queryCall: 'filesystem.getacl' = 'filesystem.getacl';
@@ -499,7 +501,7 @@ export class DatasetAclComponent implements FormConfiguration {
 
   // TODO: Refactor for better readability
   resourceTransformIncomingRestData(data: any): any {
-    let setToReturnLater = false;
+    let returnLater = false;
     if (data.acl.length === 0) {
       setTimeout(() => {
         this.handleEmptyACL();
@@ -507,14 +509,14 @@ export class DatasetAclComponent implements FormConfiguration {
       return { aces: [] as any };
     }
     if (this.homeShare) {
-      setToReturnLater = true;
+      returnLater = true;
       this.ws.call('filesystem.get_default_acl', [DefaultAclType.Home]).pipe(untilDestroyed(this)).subscribe((res: any) => {
         data.acl = res;
-        return { aces: [] as any };
+        return { aces: data.acl as any };
       });
     }
-    if (!setToReturnLater) {
-      return data;
+    if (!returnLater) {
+      return { aces: data.acl as any };
     }
   }
 
@@ -528,7 +530,7 @@ export class DatasetAclComponent implements FormConfiguration {
 
   async dataHandler(entityForm: EntityFormComponent, defaults?: any): Promise<void> {
     entityForm.formGroup.controls['aces'].reset();
-    (entityForm.formGroup.controls['aces'] as FormGroup).controls = {};
+    (entityForm.formGroup.controls['aces'] as FormArray).controls = [];
     this.aces_fc.listFields = [];
     this.gid_fc = _.find(this.fieldConfig, { name: 'gid' });
     this.uid_fc = _.find(this.fieldConfig, { name: 'uid' });
@@ -606,11 +608,12 @@ export class DatasetAclComponent implements FormConfiguration {
         }
       }
       const propName = 'aces';
-      const aces_fg = entityForm.formGroup.controls[propName] as FormGroup;
-      if (aces_fg.controls[i] === undefined) {
+      const aces_fg = entityForm.formGroup.get(propName) as FormArray;
+      if (!aces_fg.controls[i]) {
         // add controls;
         const templateListField = _.cloneDeep(_.find(this.fieldConfig, { name: propName }).templateListField);
-        (aces_fg as any).push(this.entityFormService.createFormGroup(templateListField));
+        const formGroup = this.entityFormService.createFormGroup(templateListField);
+        aces_fg.push(formGroup);
         this.aces_fc.listFields.push(templateListField);
       }
 
