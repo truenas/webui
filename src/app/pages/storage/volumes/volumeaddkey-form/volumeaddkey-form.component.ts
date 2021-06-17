@@ -67,7 +67,7 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
     },
   ];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'delete_recovery_key',
       name: helptext.add_key_invalid_button,

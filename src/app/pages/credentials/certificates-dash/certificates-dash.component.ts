@@ -7,6 +7,7 @@ import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { AppTableAction } from 'app/pages/common/entity/table/table.component';
@@ -356,7 +357,7 @@ export class CertificatesDashComponent implements OnInit {
     parent: this,
   };
 
-  doSignCSR(entityDialog: any): void {
+  doSignCSR(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     const payload = {
       ca_id: self.caId,

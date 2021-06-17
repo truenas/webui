@@ -233,7 +233,7 @@ export class PodLogsComponent implements OnInit {
   }
 
   // download log
-  download(entityDialog: EntityDialogComponent): void {
+  download(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     const chart_release_name = entityDialog.formGroup.controls['apps'].value;
     const pod_name = entityDialog.formGroup.controls['pods'].value;
@@ -268,7 +268,7 @@ export class PodLogsComponent implements OnInit {
     });
   }
 
-  onChooseLogs(entityDialog: EntityDialogComponent): void {
+  onChooseLogs(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     self.chart_release_name = entityDialog.formGroup.controls['apps'].value;
     self.pod_name = entityDialog.formGroup.controls['pods'].value;

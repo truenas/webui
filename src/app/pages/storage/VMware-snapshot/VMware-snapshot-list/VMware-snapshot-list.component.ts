@@ -20,7 +20,7 @@ export class VMwareSnapshotListComponent implements EntityTableConfig {
     { name: 'filesystem', prop: 'filesystem' }, { name: 'datastore', prop: 'datastore' },
   ];
   rowIdentifier = 'hostname';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

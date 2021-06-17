@@ -115,7 +115,7 @@ export class DatasetFormComponent implements FormConfiguration {
   protected warning = 80;
   protected critical = 95;
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,

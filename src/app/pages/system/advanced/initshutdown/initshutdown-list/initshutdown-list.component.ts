@@ -29,7 +29,7 @@ export class InitshutdownListComponent implements EntityTableConfig {
     { name: T('Timeout'), prop: 'timeout', hidden: true },
   ];
   rowIdentifier = 'type';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

@@ -43,7 +43,7 @@ export class IdmapListComponent implements EntityTableConfig {
   ];
 
   rowIdentifier = 'name';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -90,8 +90,8 @@ export class IdmapListComponent implements EntityTableConfig {
     return [{
       label: T('Add'),
       onClick: () => {
-        this.idmapService.getADStatus().pipe(untilDestroyed(this)).subscribe((res) => {
-          if (res.enable) {
+        this.idmapService.getADStatus().pipe(untilDestroyed(this)).subscribe((adConfig) => {
+          if (adConfig.enable) {
             this.doAdd();
           } else {
             this.dialogService.confirm(helptext.idmap.enable_ad_dialog.title, helptext.idmap.enable_ad_dialog.message,

@@ -294,7 +294,7 @@ export class SMBFormComponent implements FormConfiguration {
   protected accessFieldsets = _.find(this.fieldSets, { class: 'access' });
   protected otherFieldsets = _.find(this.fieldSets, { class: 'other' });
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -507,6 +507,7 @@ export class SMBFormComponent implements FormConfiguration {
                               T('SMB') + shared.dialog_started_title,
                               T('The SMB') + shared.dialog_started_message,
                               '250px',
+                              'info',
                             )),
                           catchError((error) =>
                             this.dialog.errorReport(error.error, error.reason, error.trace.formatted)),

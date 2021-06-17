@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormGroup, FormArray } from '@angular/forms';
 import * as _ from 'lodash';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -11,7 +11,7 @@ import { FieldRelationService } from 'app/pages/common/entity/entity-form/servic
   templateUrl: './form-list.component.html',
   styleUrls: ['./form-list.component.scss', '../dynamic-field/dynamic-field.scss'],
 })
-export class FormListComponent implements Field, OnInit {
+export class FormListComponent implements Field {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
@@ -21,12 +21,10 @@ export class FormListComponent implements Field, OnInit {
   constructor(private entityFormService: EntityFormService, protected fieldRelationService: FieldRelationService) {}
 
   ngOnInit(): void {
-    setTimeout(() => {
-      this.listsFromArray = this.group.controls[this.config.name] as FormArray;
-      if (this.config.addInitialList && this.listsFromArray.length === 0) {
-        this.add();
-      }
-    }, 0);
+    this.listsFromArray = this.group.get(this.config.name) as FormArray;
+    if (this.config.addInitialList && this.listsFromArray.length === 0) {
+      this.add();
+    }
   }
 
   add(): void {

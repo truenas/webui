@@ -1201,7 +1201,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   protected providerField: any;
   protected entityForm: any;
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'validCredential',
       name: T('Verify Credential'),

@@ -25,7 +25,7 @@ export class ReportsConfigComponent implements FormConfiguration {
   graphAge: any;
   graphite_separateinstances: any;
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'reset',
       name: helptext.reset_button,
