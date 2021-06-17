@@ -1,0 +1,28 @@
+<div class="sidebar-header">
+  <h3>{{ 'Dataset Permissions' | translate }}</h3>
+
+  <a href="" class="action" [attr.title]="'Edit permissions' | translate">
+    <mat-icon>edit</mat-icon>
+  </a>
+
+  <span class="action" [attr.title]="'Close' | translate" (click)="onCloseClicked()">
+    <mat-icon>clear</mat-icon>
+  </span>
+</div>
+
+<div class="file-information">
+  <div class="owner">
+    <div class="item-label">{{ 'Owner' | translate }}</div>
+    <div class="item-value">John Smith</div>
+  </div>
+  <div class="group">
+    <div class="item-label">{{ 'Group' | translate }}</div>
+    <div class="item-value">users</div>
+  </div>
+  <div class="path">
+    <div class="item-label">{{ 'Path' | translate }}</div>
+    <div class="item-value">/something/dir/file</div>
+  </div>
+</div>
+
+
