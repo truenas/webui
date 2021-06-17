@@ -263,17 +263,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               placeholder: helptext.name_regex_placeholder,
               tooltip: helptext.name_regex_tooltip,
               parent: this,
-              relation: [{
-                action: RelationAction.Show,
-                connective: RelationConnection.Or,
-                when: [{
-                  name: 'custom_snapshots',
-                  value: true,
-                }, {
-                  name: 'source_datasets_from',
-                  value: DatasetSource.Remote,
-                }],
-              }],
+              isHidden: true,
             },
           ],
         },
