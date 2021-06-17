@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
+import { WebSocketService } from 'app/services';
 import { BaseService } from './base.service';
+import { CoreService } from './core.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +14,10 @@ export class StatsService extends BaseService {
   protected subscribers = 0;
   protected realtimeEvents: Subscription;
   protected diskQueryEvents: Subscription;
+
+  constructor(protected core: CoreService, protected websocket: WebSocketService) {
+    super(core, websocket);
+  }
 
   protected onAuthenticated(): void {
     this.authenticated = true;
