@@ -107,6 +107,10 @@ def updated_value_should_be_visible(driver):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]', 'class', 'mat-checkbox-checked')
+    ##return to dashboard before ending test
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    time.sleep(1)
 
 @then('open a shell and run su user to become that user')
 def open_a_shell_and_run_su_user_to_become_that_user(driver, nas_ip):
