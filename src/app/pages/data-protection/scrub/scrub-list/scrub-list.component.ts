@@ -44,7 +44,7 @@ export class ScrubListComponent implements EntityTableConfig {
     { name: T('Enabled'), prop: 'enabled' },
   ];
   rowIdentifier = 'id';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

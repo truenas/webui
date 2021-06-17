@@ -38,7 +38,7 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
       prop: 'alias',
     },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

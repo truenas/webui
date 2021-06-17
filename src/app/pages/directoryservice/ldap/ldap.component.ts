@@ -243,11 +243,11 @@ export class LdapComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
 
-    this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+    this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((realms) => {
       this.ldap_kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
-      res.forEach((item) => {
+      realms.forEach((realm) => {
         this.ldap_kerberos_realm.options.push(
-          { label: item.realm, value: item.id },
+          { label: realm.realm, value: realm.id },
         );
       });
     });

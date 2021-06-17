@@ -25,7 +25,7 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
     { name: T('Password Server'), prop: 'kpasswd_server' },
   ];
   rowIdentifier = 'realm';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

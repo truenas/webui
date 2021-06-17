@@ -67,7 +67,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       value: RetentionPolicy.None,
     },
   ];
-  custActions: any[] = [{
+  custActions = [{
     id: 'wizard_add',
     name: T('Switch to Wizard'),
     function: () => {

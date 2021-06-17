@@ -38,7 +38,7 @@ export class FailoverComponent implements FormConfiguration, OnDestroy {
   master_fg: any;
   warned = false;
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'sync_to_peer',
       name: T('Sync to Peer'),

@@ -48,7 +48,7 @@ export class GroupListComponent implements EntityTableConfig, OnDestroy {
     { name: 'Samba Authentication', prop: 'smb', hidden: true },
   ];
   rowIdentifier = 'group';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

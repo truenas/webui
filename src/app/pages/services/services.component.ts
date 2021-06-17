@@ -41,7 +41,7 @@ export class Services implements EntityTableConfig, OnInit {
     },
   ];
 
-  config: any = {
+  config = {
     paging: false,
     sorting: { columns: this.columns },
   };

@@ -33,7 +33,7 @@ export class AuthorizedAccessListComponent implements EntityTableConfig {
     },
   ];
   rowIdentifier = 'tag';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

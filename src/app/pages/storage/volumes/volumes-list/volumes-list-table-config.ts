@@ -17,6 +17,7 @@ import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import helptext from 'app/helptext/storage/volumes/volume-list';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -52,7 +53,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
     { name: T('Actions'), prop: 'actions', hidden: false },
   ];
 
-  config: any = {
+  config = {
     deleteMsg: {
       key_props: ['name'],
     },
@@ -64,7 +65,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
   showDefaults = false;
   showSpinner: boolean;
   encryptedStatus: any;
-  custActions: any[] = [];
   private vmware_res_status: boolean;
   dialogConf: DialogFormConfiguration;
   restartServices = false;
@@ -306,7 +306,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
                   .pipe(untilDestroyed(this))
                   .subscribe((file) => {
-                    if (res !== null && res !== '') {
+                    if (res !== null && (res as any) !== '') {
                       this.storageService.downloadBlob(file, fileName);
                     }
                   });
@@ -1472,9 +1472,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   }
                 });
               },
-              customSubmit(entityDialog: any) {
+              customSubmit(entityDialog: EntityDialogComponent) {
                 const formValue = entityDialog.formValue;
-                let method = 'pool.dataset.change_key';
+                let method: ApiMethod = 'pool.dataset.change_key';
                 const body: any = {};
                 const payload = [row.id];
                 if (formValue.inherit_encryption) {

@@ -46,7 +46,7 @@ export class ExtentListComponent implements EntityTableConfig {
       prop: 'enabled',
     },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

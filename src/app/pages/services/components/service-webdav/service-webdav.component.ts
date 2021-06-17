@@ -179,7 +179,7 @@ export class ServiceWebdavComponent implements FormConfiguration, OnDestroy {
     this.webdav_htauth_subscription.unsubscribe();
   }
 
-  submitFunction(this: any, body: any): Observable<any> {
+  submitFunction(body: any): Observable<any> {
     delete body['password2'];
     return this.ws.call('webdav.update', [body]);
   }

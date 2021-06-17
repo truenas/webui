@@ -257,8 +257,7 @@ export class GeneralSettingsComponent implements OnInit {
     });
   }
 
-  saveConfigSubmit(entityDialog: any): void {
-    parent = entityDialog.parent;
+  saveConfigSubmit(entityDialog: EntityDialogComponent): void {
     entityDialog.loader.open();
     (entityDialog.ws as WebSocketService).call('system.info', []).pipe(untilDestroyed(this)).subscribe((systemInfo) => {
       let fileName = '';
@@ -297,14 +296,14 @@ export class GeneralSettingsComponent implements OnInit {
           (err: any) => {
             entityDialog.loader.close();
             entityDialog.dialogRef.close();
-            new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
+            new EntityUtils().handleWSError(entityDialog, err, this.dialog);
           },
         );
     },
     (err: any) => {
       entityDialog.loader.close();
       entityDialog.dialogRef.close();
-      new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
+      new EntityUtils().handleWSError(entityDialog, err, this.dialog);
     });
   }
 
@@ -315,7 +314,7 @@ export class GeneralSettingsComponent implements OnInit {
     }
   }
 
-  uploadConfigSubmit(entityDialog: EntityDialogComponent): void {
+  uploadConfigSubmit(entityDialog: EntityDialogComponent<this>): void {
     const parent = entityDialog.conf.fieldConfig[0].parent;
     const formData: FormData = new FormData();
 
@@ -337,7 +336,7 @@ export class GeneralSettingsComponent implements OnInit {
     });
   }
 
-  resetConfigSubmit(entityDialog: EntityDialogComponent): void {
+  resetConfigSubmit(entityDialog: EntityDialogComponent<this>): void {
     const parent = entityDialog.parent;
     parent.router.navigate(new Array('').concat(['others', 'config-reset']));
   }

@@ -40,7 +40,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
     },
   ];
   rowIdentifier = 'target';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

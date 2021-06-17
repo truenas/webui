@@ -142,7 +142,7 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
     },
   ];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'use_acl',
       name: helptext.acl_manager_button,

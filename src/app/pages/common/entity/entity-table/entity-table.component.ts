@@ -27,7 +27,7 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import {
   EntityTableAction,
   EntityTableColumn,
-  EntityTableConfig,
+  EntityTableConfig, EntityTableConfigConfig,
 } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService, JobService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -39,15 +39,6 @@ import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
 import { EntityUtils } from '../utils';
 import { EntityTableAddActionsComponent } from './entity-table-add-actions.component';
-
-export interface SortingConfig {
-  columns: any[];
-}
-
-export interface TableConfig {
-  paging: boolean;
-  sorting: SortingConfig;
-}
 
 export interface Command {
   command: string; // Use '|' or '--pipe' to use the output of previous command as input
@@ -133,7 +124,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   rows: any[] = [];
   currentRows: any[] = []; // Rows applying filter
   getFunction: Observable<any>;
-  config: TableConfig = {
+  config: EntityTableConfigConfig = {
     paging: true,
     sorting: { columns: this.columns },
   };
