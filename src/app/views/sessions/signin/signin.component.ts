@@ -40,9 +40,9 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatButton, { static: false }) submitButton: MatButton;
   @ViewChild('username', { read: ElementRef }) usernameInput: ElementRef<HTMLElement>;
 
-  private failed: Boolean = false;
+  private failed = false;
   product_type: ProductType;
-  logo_ready: Boolean = false;
+  logo_ready = false;
   product = productText.product;
   ha_info_ready = false;
   checking_status = false;
@@ -65,7 +65,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     otp: '',
   };
   setPasswordFormGroup: FormGroup;
-  has_root_password: Boolean = true;
+  has_root_password = true;
   failover_status = '';
   failover_statuses = {
     SINGLE: '',

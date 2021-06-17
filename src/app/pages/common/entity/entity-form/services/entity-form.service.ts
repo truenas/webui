@@ -96,7 +96,12 @@ export class EntityFormService {
     formArray.removeAt(index);
   }
 
-  getFilesystemListdirChildren(node: any, explorerType?: string, hideDirs?: any, showHiddenFiles = false): Promise<any[]> {
+  getFilesystemListdirChildren(
+    node: any,
+    explorerType?: string,
+    hideDirs?: any,
+    showHiddenFiles = false,
+  ): Promise<any[]> {
     const children: any[] = [];
     let typeFilter: any;
     explorerType && explorerType === 'directory' ? typeFilter = [['type', '=', 'DIRECTORY']] : typeFilter = [];
@@ -220,7 +225,11 @@ export class EntityFormService {
     // get unit and return phrased string
     unit = value.replace(num, '');
     if (unit === '') {
-      unit = config.default ? config.default : (config.allowUnits ? config.allowUnits[0] : this.defaultUnit[config.type]);
+      unit = config.default
+        ? config.default
+        : (config.allowUnits
+          ? config.allowUnits[0]
+          : this.defaultUnit[config.type]);
     }
     if (config.allowUnits !== undefined) {
       config.allowUnits.forEach((item) => item.toUpperCase());

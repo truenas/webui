@@ -43,7 +43,7 @@ export class PodLogsComponent implements OnInit {
   container_name: string;
   protected tail_lines = 500;
   protected podDetails: any;
-  protected tempPodDetails: object;
+  protected tempPodDetails: Record<string, unknown>;
   protected apps: string[] = [];
   protected route_success: string[] = ['apps'];
 

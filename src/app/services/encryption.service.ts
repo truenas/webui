@@ -74,7 +74,11 @@ export class EncryptionService {
             route_success,
           ));
         }, (err) => {
-          this.dialogService.errorReport(helptext.addkey_download_failed_title, helptext.addkey_download_failed_message, err);
+          this.dialogService.errorReport(
+            helptext.addkey_download_failed_title,
+            helptext.addkey_download_failed_message,
+            err,
+          );
         });
       });
     }, (err) => {

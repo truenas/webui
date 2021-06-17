@@ -48,7 +48,7 @@ export class ChartReleasesComponent implements OnInit {
   settingsEvent: Subject<CoreEvent>;
   private chartReleaseChangedListener: Subscription;
 
-  private selectedAppName: String;
+  private selectedAppName: string;
   private podList: any[] = [];
   private podDetails: any = {};
   imagePlaceholder = appImagePlaceholder;

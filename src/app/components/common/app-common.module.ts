@@ -49,7 +49,7 @@ import { TopbarComponent } from './topbar/topbar.component';
     ModalComponent,
     NotificationsComponent, CustomizerComponent, BreadcrumbComponent, PageTitleComponent,
   ],
-  providers: [ThemeService, DialogService, /* LineChartService, */ LanguageService, LocaleService, SvgIconRegistryService],
+  providers: [ThemeService, DialogService, LanguageService, LocaleService, SvgIconRegistryService],
   exports: [PageTitleComponent, ViewControllerComponent],
 })
 export class AppCommonModule {}

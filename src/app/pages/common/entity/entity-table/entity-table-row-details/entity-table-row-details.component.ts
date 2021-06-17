@@ -37,7 +37,9 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   }
 
   buildColumns(): void {
-    this.columns = this.parent.allColumns.filter((col) => !this.parent.conf.columns.some((c: any) => c.prop === col.prop));
+    this.columns = this.parent.allColumns.filter((col) => {
+      return !this.parent.conf.columns.some((c: any) => c.prop === col.prop);
+    });
   }
 
   getActions(): EntityTableAction[] {

@@ -1,6 +1,5 @@
 import {
   Component,
-  OnDestroy,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -28,7 +27,7 @@ import { UnlockDialogComponent } from './unlock-dialog/unlock-dialog.component';
   selector: 'app-dataset-unlock',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
+export class DatasetUnlockComponent implements FormConfiguration {
   queryCall: 'pool.dataset.encryption_summary' = 'pool.dataset.encryption_summary';
   updateCall = 'pool.dataset.unlock';
   route_success: string[] = ['storage'];
@@ -44,9 +43,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
 
   protected key_file_fc: any;
   protected key_file_fg: any;
-  protected key_file_subscription: any;
   protected unlock_children_fg: any;
-  protected unlock_children_subscription: any;
 
   subs: any;
 
@@ -219,7 +216,8 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
             const is_passphrase = (result.key_format === 'PASSPHRASE');
             if (!is_passphrase) { // hide key datasets by default
               name_text_fc.isHidden = true;
-              if (this.key_file_fg.value === false) { // only show key_file checkbox and upload if keys encrypted datasets exist
+              // only show key_file checkbox and upload if keys encrypted datasets exist
+              if (this.key_file_fg.value === false) {
                 this.key_file_fg.setValue(true);
                 this.key_file_fc.isHidden = false;
                 this.key_file_fc.width = '50%';
@@ -241,7 +239,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
     this.key_file_fg = entityEdit.formGroup.controls['key_file'];
     this.unlock_children_fg = entityEdit.formGroup.controls['unlock_children'];
 
-    this.key_file_subscription = this.key_file_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((hide_key_datasets: any) => {
+    this.key_file_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((hide_key_datasets: boolean) => {
       for (let i = 0; i < this.datasets.controls.length; i++) {
         const dataset_controls = this.datasets.controls[i].controls;
         const controls = listFields[i];
@@ -261,7 +259,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
         }
       }
     });
-    this.unlock_children_subscription = this.unlock_children_fg.valueChanges
+    this.unlock_children_fg.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((unlock_children: any) => {
         for (let i = 0; i < this.datasets.controls.length; i++) {
@@ -300,11 +298,6 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
       const method = disable ? 'disable' : 'enable';
       formControl[method]();
     }
-  }
-
-  ngOnDestroy(): void {
-    this.key_file_subscription.unsubscribe();
-    this.unlock_children_subscription.unsubscribe();
   }
 
   customSubmit(body: any): void {

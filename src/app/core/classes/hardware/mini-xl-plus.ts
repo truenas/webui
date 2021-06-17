@@ -50,7 +50,12 @@ export class MINIXLPLUS extends Chassis {
         const offsetY: number = 176 - backY;
 
         // x, y, scaleX, scaleY
-        dt.container.setTransform(49, offsetY + dt.container.y + (index * dt.container.height * 0.905) + gap, 0.9, 0.905);
+        dt.container.setTransform(
+          49,
+          offsetY + dt.container.y + (index * dt.container.height * 0.905) + gap,
+          0.9,
+          0.905,
+        );
       } else if (i == 0) {
         // SSD
         dt.container.setTransform(0, 121 - backY, 0.73, 0.73);
