@@ -1,15 +1,19 @@
+import { DefaultAclType } from 'app/enums/acl-type.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { Acl } from 'app/interfaces/acl.interface';
+import { Acl, SetAcl } from 'app/interfaces/acl.interface';
+import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { AlertService } from 'app/interfaces/alert-service.interface';
+import { AlertService, AlertServiceCreate } from 'app/interfaces/alert-service.interface';
 import { Alert } from 'app/interfaces/alert.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
 import { Catalog } from 'app/interfaces/catalog.interface';
+import { CertificateAuthorityCreate, CertificateAuthorityUpdate } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
+import { ChartReleaseCreate, ChartReleaseCreateResponse } from 'app/interfaces/chart-release.interface';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
@@ -18,6 +22,8 @@ import {
   CreateDnsAuthenticator,
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
+import { DynamicDnsUpdate } from 'app/interfaces/dynamic-dns.interface';
+import { FailoverUpdate } from 'app/interfaces/failover.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Group } from 'app/interfaces/group.interface';
 import {
@@ -54,7 +60,7 @@ import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 export type ApiDirectory = {
   // Active Directory
   'activedirectory.config': { params: any; response: any };
-  'activedirectory.update': { params: any; response: any };
+  'activedirectory.update': { params: [ActiveDirectoryUpdate]; response: any };
   'activedirectory.nss_info_choices': { params: any; response: any };
 
   // Acme
@@ -76,7 +82,7 @@ export type ApiDirectory = {
 
   // Alert Service
   'alertservice.update': { params: any; response: any };
-  'alertservice.create': { params: any; response: any };
+  'alertservice.create': { params: [AlertServiceCreate]; response: any };
   'alertservice.query': { params: QueryParams<AlertService>; response: AlertService[] };
   'alertservice.test': { params: any; response: any };
   'alertservice.delete': { params: any; response: any };
@@ -139,16 +145,16 @@ export type ApiDirectory = {
   'certificate.get_domain_names': { params: any; response: any };
 
   // Certificate Authority
-  'certificateauthority.create': { params: any; response: any };
+  'certificateauthority.create': { params: [CertificateAuthorityCreate]; response: any };
   'certificateauthority.query': { params: any; response: any };
-  'certificateauthority.update': { params: any; response: any };
+  'certificateauthority.update': { params: [number, CertificateAuthorityUpdate]; response: any };
   'certificateauthority.profiles': { params: any; response: any };
   'certificateauthority.ca_sign_csr': { params: any; response: any };
 
   // Chart
   'chart.release.pod_logs_choices': { params: any; response: any };
   'chart.release.query': { params: any; response: any };
-  'chart.release.create': { params: any; response: any };
+  'chart.release.create': { params: ChartReleaseCreate; response: ChartReleaseCreateResponse };
   'chart.release.update': { params: any; response: any };
   'chart.release.scale': { params: any; response: any };
   'chart.release.pod_console_choices': { params: any; response: any };
@@ -202,7 +208,7 @@ export type ApiDirectory = {
 
   // DynDNS
   'dyndns.provider_choices': { params: any; response: any };
-  'dyndns.update': { params: any; response: any };
+  'dyndns.update': { params: [DynamicDnsUpdate]; response: any };
   'dyndns.config': { params: any; response: any };
 
   // Datastore
@@ -240,17 +246,17 @@ export type ApiDirectory = {
   'filesystem.listdir': { params: any; response: any };
   'filesystem.stat': { params: [/* path */ string]; response: FileSystemStat };
   'filesystem.default_acl_choices': { params: any; response: any };
-  'filesystem.get_default_acl': { params: any; response: any };
+  'filesystem.get_default_acl': { params: [DefaultAclType]; response: any };
   'filesystem.statfs': { params: any; response: any };
   'filesystem.getacl': { params: [/* path */ string]; response: Acl };
-  'filesystem.setacl': { params: any; response: any };
+  'filesystem.setacl': { params: [SetAcl]; response: any };
 
   // Failover
   'failover.licensed': { params: void; response: boolean };
   'failover.upgrade_pending': { params: any; response: any };
   'failover.sync_from_peer': { params: any; response: any };
   'failover.status': { params: any; response: any };
-  'failover.update': { params: any; response: any };
+  'failover.update': { params: [FailoverUpdate]; response: any };
   'failover.force_master': { params: any; response: any };
   'failover.call_remote': { params: any; response: any };
   'failover.get_ips': { params: any; response: string[] };
