@@ -263,6 +263,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               placeholder: helptext.name_regex_placeholder,
               tooltip: helptext.name_regex_tooltip,
               parent: this,
+              required: true,
               isHidden: true,
             },
           ],

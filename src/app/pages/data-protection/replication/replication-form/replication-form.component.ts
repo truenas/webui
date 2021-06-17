@@ -700,6 +700,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.name_regex_tooltip,
           parent: this,
           isHidden: true,
+          required: true,
         },
         {
           type: 'checkbox',
