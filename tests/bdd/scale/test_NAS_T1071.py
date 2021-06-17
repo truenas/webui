@@ -55,6 +55,7 @@ def you_should_be_on_the_dashboard_click_storage_on_the_side_menu(driver):
 @when('the pools page appears click create pool')
 def the_pools_page_appears_click_create_pool(driver):
     """the pools page appears click create pool."""
+    time.sleep(1)
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
     assert wait_on_element(driver, 10, '//a[@ix-auto="button___POOL_CREATE"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="button___POOL_CREATE"]').click()
