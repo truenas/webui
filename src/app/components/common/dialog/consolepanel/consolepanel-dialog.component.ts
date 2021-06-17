@@ -12,9 +12,9 @@ import { Interval } from 'app/interfaces/timeout.interface';
   templateUrl: './consolepanel-dialog.component.html',
 })
 export class ConsolePanelModalDialog implements OnInit {
-  refreshMsg: String = 'Check to stop refresh';
+  refreshMsg = 'Check to stop refresh';
   intervalPing: Interval;
-  consoleMsg: String = 'Loading...';
+  consoleMsg = 'Loading...';
   @ViewChild('footerBarScroll', { static: true }) private footerBarScroll: ElementRef;
   onEventEmitter = new EventEmitter();
 

@@ -221,23 +221,7 @@ export class DisplayObject {
       if (!this.moveHandle) {
         this.moveHandle = this.rawElement.parentNode as Element;
       }
-      // listen(this.rawElement, 'mousedown touchstart').while((v) => this._moveable).start(this.start.bind(this));
       listen(this.moveHandle, 'mousedown touchstart').while(() => this._moveable).start(this.start.bind(this));
-
-      // let broadcast = this.inputStream.next()
-      // listen(document, 'mousemove ').while((v) => this.broadcastInputPosition).start((e) => console.log(e)/*broadcast(e)*/);
-
-      // listen(document, 'mouseup touchend').while((v) => this._moveable).start(this.stop.bind(this));
-      // listen(this.rawElement, 'mouseup touchend').while((v) => this._moveable).start(this.stopDrag.bind(this));
-
-      /*
-      if(this.constrainX || this.constrainY){
-        listen(document, 'mouseup touchend').while((v) => this._moveable).start(this.stopDrag.bind(this));
-      } else {
-        listen(this.rawElement, 'mouseup touchend').while((v) => this._moveable).start(this.stopDrag.bind(this));
-        listen(document, 'mouseleave').while((v) => this._moveable).start(this.mouseExit.bind(this))
-      }
-      */
     }
 
     this._moveable = value;
@@ -262,10 +246,6 @@ export class DisplayObject {
       listen(this.resizeHandleRight, 'mousedown touchstart').while(() => this._resizeable).start(this.startResizeRight.bind(this));
 
       listen(document, 'mouseup touchend').while(() => this._moveable).start(this.stopResize.bind(this));
-      /* listen(this.resizeHandleTop, 'mouseup touchend').while((v) => this._resizeable).start(this.stopResize.bind(this));
-      listen(this.resizeHandleBottom, 'mouseup touchend').while((v) => this._resizeable).start(this.stopResize.bind(this));
-      listen(this.resizeHandleLeft, 'mouseup touchend').while((v) => this._resizeable).start(this.stopResize.bind(this));
-      listen(this.resizeHandleRight, 'mouseup touchend').while((v) => this._resizeable).start(this.stopResize.bind(this)); */
     } else if (!value) {
       this.rawTarget.classList.remove('resizeable');
     }

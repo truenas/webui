@@ -27,7 +27,7 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import {
   EntityTableAction,
   EntityTableColumn,
-  EntityTableConfig,
+  EntityTableConfig, EntityTableConfigConfig,
 } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService, JobService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -39,15 +39,6 @@ import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
 import { EntityUtils } from '../utils';
 import { EntityTableAddActionsComponent } from './entity-table-add-actions.component';
-
-export interface SortingConfig {
-  columns: any[];
-}
-
-export interface TableConfig {
-  paging: boolean;
-  sorting: SortingConfig;
-}
 
 export interface Command {
   command: string; // Use '|' or '--pipe' to use the output of previous command as input
@@ -133,7 +124,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   rows: any[] = [];
   currentRows: any[] = []; // Rows applying filter
   getFunction: Observable<any>;
-  config: TableConfig = {
+  config: EntityTableConfigConfig = {
     paging: true,
     sorting: { columns: this.columns },
   };
@@ -835,12 +826,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {
       // double confirm: input delete item's name to confirm deletion
-      this.conf.config.deleteMsg.doubleConfirm(item).pipe(untilDestroyed(this)).subscribe((doubleConfirmDialog: boolean) => {
-        if (doubleConfirmDialog) {
-          this.toDeleteRow = item;
-          this.delete(id);
-        }
-      });
+      this.conf.config.deleteMsg.doubleConfirm(item)
+        .pipe(untilDestroyed(this))
+        .subscribe((doubleConfirmDialog: boolean) => {
+          if (doubleConfirmDialog) {
+            this.toDeleteRow = item;
+            this.delete(id);
+          }
+        });
     } else {
       this.dialogService.confirm({
         title: dialog.hasOwnProperty('title') ? dialog['title'] : T('Delete'),
@@ -903,16 +896,17 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.loader.open();
           this.loaderOpen = true;
         }),
-        switchMap(() =>
-          (this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id]))
-          ).pipe(
+        switchMap(() => {
+          const params = this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id];
+          return this.ws.call(this.conf.wsDelete, params).pipe(
             take(1),
             catchError((error) => {
               new EntityUtils().handleWSError(this, error, this.dialogService);
               this.loader.close();
               return of(false);
             }),
-          )),
+          );
+        }),
         switchMap((jobId: string) => (jobId ? this.job.getJobStatus(jobId) : of(false))),
       );
   }

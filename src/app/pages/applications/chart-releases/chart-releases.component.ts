@@ -14,6 +14,7 @@ import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -48,7 +49,7 @@ export class ChartReleasesComponent implements OnInit {
   settingsEvent: Subject<CoreEvent>;
   private chartReleaseChangedListener: Subscription;
 
-  private selectedAppName: String;
+  private selectedAppName: string;
   private podList: any[] = [];
   private podDetails: any = {};
   imagePlaceholder = appImagePlaceholder;
@@ -356,7 +357,7 @@ export class ChartReleasesComponent implements OnInit {
     this.dialogService.dialogForm(this.rollBackChart, true);
   }
 
-  doRollback(entityDialog: any): void {
+  doRollback(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     const form = entityDialog.formGroup.controls;
     const payload = {
@@ -595,7 +596,7 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  doPodSelect(entityDialog: any): void {
+  doPodSelect(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     const pod = entityDialog.formGroup.controls['pods'].value;
     const command = entityDialog.formGroup.controls['command'].value;
@@ -603,7 +604,7 @@ export class ChartReleasesComponent implements OnInit {
     self.dialogService.closeAllDialogs();
   }
 
-  doPodSelectForLogs(entityDialog: any): void {
+  doPodSelectForLogs(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     const pod = entityDialog.formGroup.controls['pods'].value;
     const container = entityDialog.formGroup.controls['containers'].value;

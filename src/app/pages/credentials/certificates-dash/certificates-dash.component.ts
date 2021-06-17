@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { AppTableAction } from 'app/pages/common/entity/table/table.component';
@@ -43,10 +43,17 @@ export class CertificatesDashComponent implements OnInit {
   private unsignedCAs: Option[] = [];
   private caId: any;
 
-  constructor(private modalService: ModalService, private router: Router, private route: ActivatedRoute,
-    private ws: WebSocketService, private dialog: MatDialog, private systemGeneralService: SystemGeneralService,
-    private loader: AppLoaderService, private dialogService: DialogService, private entityFormService: EntityFormService,
-    private storage: StorageService, private http: HttpClient) { }
+  constructor(
+    private modalService: ModalService,
+    private ws: WebSocketService,
+    private dialog: MatDialog,
+    private systemGeneralService: SystemGeneralService,
+    private loader: AppLoaderService,
+    private dialogService: DialogService,
+    private entityFormService: EntityFormService,
+    private storage: StorageService,
+    private http: HttpClient,
+  ) { }
 
   ngOnInit(): void {
     this.getCards();
@@ -159,8 +166,13 @@ export class CertificatesDashComponent implements OnInit {
           },
           delete(row: any, table: any) {
             if (row.signed_certificates > 0) {
-              this.parent.dialogService.confirm(helptext_system_ca.delete_error.title, helptext_system_ca.delete_error.message,
-                true, helptext_system_ca.delete_error.button, false, '', '', '', '', true);
+              (this.parent.dialogService as DialogService).confirm({
+                title: helptext_system_ca.delete_error.title,
+                message: helptext_system_ca.delete_error.message,
+                hideCheckBox: true,
+                buttonMsg: helptext_system_ca.delete_error.button,
+                hideCancel: true,
+              });
             } else {
               table.tableService.delete(table, row);
             }
@@ -245,12 +257,14 @@ export class CertificatesDashComponent implements OnInit {
           (res) => {
             const url = res[1];
             const mimetype = 'application/x-x509-user-cert';
-            this.storage.streamDownloadFile(this.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
-              this.storage.downloadBlob(file, fileName);
-            }, (err) => {
-              this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
-                helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
-            });
+            this.storage.streamDownloadFile(this.http, url, fileName, mimetype)
+              .pipe(untilDestroyed(this))
+              .subscribe((file) => {
+                this.storage.downloadBlob(file, fileName);
+              }, (err) => {
+                this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
+                  helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
+              });
           },
           (err) => {
             new EntityUtils().handleWSError(this, err, this.dialog);
@@ -261,12 +275,14 @@ export class CertificatesDashComponent implements OnInit {
           (res) => {
             const url = res[1];
             const mimetype = 'text/plain';
-            this.storage.streamDownloadFile(this.http, url, keyName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
-              this.storage.downloadBlob(file, keyName);
-            }, (err) => {
-              this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
-                helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
-            });
+            this.storage.streamDownloadFile(this.http, url, keyName, mimetype)
+              .pipe(untilDestroyed(this))
+              .subscribe((file) => {
+                this.storage.downloadBlob(file, keyName);
+              }, (err) => {
+                this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
+                  helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
+              });
           },
           (err) => {
             new EntityUtils().handleWSError(this, err, this.dialog);
@@ -341,7 +357,7 @@ export class CertificatesDashComponent implements OnInit {
     parent: this,
   };
 
-  doSignCSR(entityDialog: any): void {
+  doSignCSR(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     const payload = {
       ca_id: self.caId,

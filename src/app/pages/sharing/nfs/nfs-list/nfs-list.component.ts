@@ -30,7 +30,7 @@ export class NFSListComponent implements EntityTableConfig {
     { name: helptext_sharing_nfs.column_enabled, prop: 'enabled' },
   ];
   rowIdentifier = 'nfs_paths';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -63,7 +63,13 @@ export class NFSListComponent implements EntityTableConfig {
   };
 
   doAdd(id?: number): void {
-    const formComponent = new NFSFormComponent(this.userService, this.modalService, this.ws, this.dialog, this.networkService);
+    const formComponent = new NFSFormComponent(
+      this.userService,
+      this.modalService,
+      this.ws,
+      this.dialog,
+      this.networkService,
+    );
     this.modalService.open('slide-in-form', formComponent, id);
   }
 

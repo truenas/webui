@@ -9,6 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core.service';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
@@ -444,67 +445,68 @@ export class AdvancedSettingsComponent implements OnInit {
         }
       }
       this.dialog
-        .confirm(
-          helptext_system_advanced.dialog_generate_debug_title,
-          helptext_system_advanced.dialog_generate_debug_message,
-          true,
-          helptext_system_advanced.dialog_button_ok,
-        )
-        .pipe(untilDestroyed(this)).subscribe((ires: boolean) => {
-          if (ires) {
-            this.ws.call('core.download', ['system.debug', [], fileName]).pipe(untilDestroyed(this)).subscribe(
-              (res: any) => {
-                const url = res[1];
-                let failed = false;
-                this.storage.streamDownloadFile(this.http, url, fileName, mimeType).pipe(untilDestroyed(this)).subscribe(
-                  (file) => {
-                    this.storage.downloadBlob(file, fileName);
-                  },
-                  (err) => {
-                    failed = true;
-                    if (this.dialogRef) {
-                      this.dialogRef.close();
-                    }
-                    if (err instanceof HttpErrorResponse) {
-                      this.dialog.errorReport(
-                        helptext_system_advanced.debug_download_failed_title,
-                        helptext_system_advanced.debug_download_failed_message,
-                        err.message,
-                      );
-                    } else {
-                      this.dialog.errorReport(
-                        helptext_system_advanced.debug_download_failed_title,
-                        helptext_system_advanced.debug_download_failed_message,
-                        err,
-                      );
-                    }
-                  },
-                );
-                if (!failed) {
-                  let reported = false; // prevent error from popping up multiple times
-                  this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-                    data: { title: T('Saving Debug') },
-                    disableClose: true,
-                  });
-                  this.dialogRef.componentInstance.jobId = res[0];
-                  this.dialogRef.componentInstance.wsshow();
-                  this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+        .confirm({
+          title: helptext_system_advanced.dialog_generate_debug_title,
+          message: helptext_system_advanced.dialog_generate_debug_message,
+          hideCheckBox: true,
+          buttonMsg: helptext_system_advanced.dialog_button_ok,
+        })
+        .pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe(() => {
+          this.ws.call('core.download', ['system.debug', [], fileName]).pipe(untilDestroyed(this)).subscribe(
+            (res) => {
+              const url = res[1];
+              let failed = false;
+              this.storage.streamDownloadFile(this.http, url, fileName, mimeType).pipe(untilDestroyed(this)).subscribe(
+                (file) => {
+                  this.storage.downloadBlob(file, fileName);
+                },
+                (err) => {
+                  failed = true;
+                  if (this.dialogRef) {
                     this.dialogRef.close();
-                  });
-                  this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((save_debug_err: any) => {
-                    this.dialogRef.close();
-                    if (!reported) {
-                      new EntityUtils().handleWSError(this, save_debug_err, this.dialog);
-                      reported = true;
-                    }
-                  });
-                }
-              },
-              (err) => {
-                new EntityUtils().handleWSError(this, err, this.dialog);
-              },
-            );
-          }
+                  }
+                  if (err instanceof HttpErrorResponse) {
+                    this.dialog.errorReport(
+                      helptext_system_advanced.debug_download_failed_title,
+                      helptext_system_advanced.debug_download_failed_message,
+                      err.message,
+                    );
+                  } else {
+                    this.dialog.errorReport(
+                      helptext_system_advanced.debug_download_failed_title,
+                      helptext_system_advanced.debug_download_failed_message,
+                      err,
+                    );
+                  }
+                },
+              );
+              if (!failed) {
+                let reported = false; // prevent error from popping up multiple times
+                this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+                  data: { title: T('Saving Debug') },
+                  disableClose: true,
+                });
+                this.dialogRef.componentInstance.jobId = res[0];
+                this.dialogRef.componentInstance.wsshow();
+                this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+                  this.dialogRef.close();
+                });
+                this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((saveDebugErr: any) => {
+                  this.dialogRef.close();
+                  if (!reported) {
+                    new EntityUtils().handleWSError(this, saveDebugErr, this.dialog);
+                    reported = true;
+                  }
+                });
+              }
+            },
+            (err) => {
+              new EntityUtils().handleWSError(this, err, this.dialog);
+            },
+          );
         });
     });
   }

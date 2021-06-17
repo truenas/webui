@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { CoreEvent } from 'app/interfaces/events';
 import { UserDataEvent } from 'app/interfaces/events/user-data-event.interface';
@@ -46,8 +46,12 @@ export class PreferencesService {
 
   preferences: Preferences;
 
-  constructor(protected core: CoreService, protected themeService: ThemeService, private api: ApiService, private router: Router,
-    private aroute: ActivatedRoute) {
+  constructor(
+    protected core: CoreService,
+    protected themeService: ThemeService,
+    private api: ApiService,
+    private router: Router,
+  ) {
     this.preferences = this.defaultPreferences;
 
     this.core.register({ observerClass: this, eventName: 'Authenticated', sender: this.api }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {

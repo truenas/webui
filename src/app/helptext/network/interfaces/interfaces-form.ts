@@ -30,7 +30,7 @@ export default {
 
   int_name_placeholder: T('Name'),
   int_name_tooltip: T('Enter a name for the interface.\
- Use the format <samp>lagg<i>X</i></samp>,\
+ Use the format <samp>bond<i>X</i></samp>,\
  <samp>vlan<i>X</i></samp>, or <samp>bridge<i>X</i></samp> where\
  <i>X</i> is a number representing a non-parent interface. Read-only\
  when editing an interface.'),
@@ -145,13 +145,11 @@ export default {
     { value: 7, label: T('Network control (highest)') },
   ],
 
-  lagg_protocol_placeholder: T('Lagg Protocol'),
+  lagg_protocol_placeholder: T('Link Aggregation Protocol'),
   lagg_protocol_tooltip: T('Determines the outgoing and incoming traffic ports.<br> \
  <i>LACP</i> is the recommended protocol if the network switch is capable of \
  active LACP.<br><i>Failover</i> is the default protocol choice and \
- should only be used if the network switch does not support active LACP.<br> \
- See <a href="https://www.freebsd.org/cgi/man.cgi?query=lagg" target="_blank">lagg(4)</a> \
- for more details.'),
+ should only be used if the network switch does not support active LACP.'),
   lagg_protocol_validation: [Validators.required],
   lagg_protocol_options: [
     { label: 'None', value: LinkAggregationProtocol.None },
@@ -161,9 +159,9 @@ export default {
     { label: 'Round Robin', value: LinkAggregationProtocol.RoundRobin },
   ],
 
-  lagg_interfaces_placeholder: T('Lagg Interfaces'),
+  lagg_interfaces_placeholder: T('Link Aggregation Interfaces'),
   lagg_interfaces_tooltip: T('Select the interfaces to use in the aggregation.<br>\
- Warning: Lagg creation fails if any of the selected\
+ Warning: Link Aggregation creation fails if any of the selected\
  interfaces have been manually configured.'),
   lagg_interfaces_validation: [Validators.required],
 
@@ -183,7 +181,7 @@ export default {
   interface_settings: T('Interface Settings'),
   vlan_settings: T('VLAN Settings'),
   bridge_settings: T('Bridge Settings'),
-  lag_settings: T('LAGG Settings'),
+  lag_settings: T('Link Aggregation Settings'),
   failover_settings: T('Failover Settings'),
   other_settings: T('Other Settings'),
   ip_addresses: T('IP Addresses'),

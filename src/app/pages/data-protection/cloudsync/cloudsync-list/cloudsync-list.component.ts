@@ -70,7 +70,7 @@ export class CloudsyncListComponent implements EntityTableConfig {
     { name: T('Enabled'), prop: 'enabled' },
   ];
   rowIdentifier = 'description';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

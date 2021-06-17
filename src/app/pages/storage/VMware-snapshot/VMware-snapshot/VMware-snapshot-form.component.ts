@@ -95,7 +95,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
     },
   ];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'FetchDataStores',
       name: T('Fetch DataStores'),

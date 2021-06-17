@@ -29,7 +29,7 @@ export class RSYNCconfigurationListComponent implements EntityTableConfig {
     { name: T('Host Deny'), prop: 'hostsdeny', hidden: true },
     { name: T('Auxiliary parameters'), prop: 'auxiliary', hidden: true },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
   };

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as filesize from 'filesize';
@@ -66,12 +67,12 @@ export class DiskListComponent implements EntityTableConfig {
   SMARToptions: any[] = [];
   private SMARTdiskChoices: any = {};
 
-  multiActions: any[] = [{
+  multiActions = [{
     id: 'medit',
     label: T('Edit Disk(s)'),
     icon: 'edit',
     enable: true,
-    ttpos: 'above',
+    ttpos: 'above' as TooltipPosition,
     onClick: (selected: any) => {
       if (selected.length > 1) {
         for (const i of selected) {
@@ -115,7 +116,7 @@ export class DiskListComponent implements EntityTableConfig {
     label: T('Manual Test'),
     icon: 'play_arrow',
     enable: true,
-    ttpos: 'above',
+    ttpos: 'above' as TooltipPosition,
     onClick: (selected: any) => {
       this.manualTest(selected);
     },

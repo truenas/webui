@@ -22,10 +22,10 @@ import { CoreEvent } from 'app/interfaces/events';
  * */
 
 interface Registration {
-  observerClass: object; // The component/service listening for the event
+  observerClass: any; // The component/service listening for the event
   observable?: Subject<CoreEvent>; // The Subject that provides the Observable to the observerClass
   eventName?: string; // If undefined, your class will react to everything
-  sender?: object; // Only listen for events from a specific sender
+  sender?: any; // Only listen for events from a specific sender
 }
 
 @Injectable()

@@ -1,8 +1,8 @@
 import {
   Component,
-  OnDestroy,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -28,7 +28,7 @@ import { UnlockDialogComponent } from './unlock-dialog/unlock-dialog.component';
   selector: 'app-dataset-unlock',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
+export class DatasetUnlockComponent implements FormConfiguration {
   queryCall: 'pool.dataset.encryption_summary' = 'pool.dataset.encryption_summary';
   updateCall = 'pool.dataset.unlock';
   route_success: string[] = ['storage'];
@@ -40,13 +40,13 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
   protected dialogOpen = false;
 
   protected datasets: any;
-  protected datasets_fc: any;
-
-  protected key_file_fc: any;
+  protected datasets_fc: FieldConfig;
+  protected key_file_fc: FieldConfig;
   protected key_file_fg: any;
-  protected key_file_subscription: any;
   protected unlock_children_fg: any;
-  protected unlock_children_subscription: any;
+  protected master_checkbox_fc: any;
+  protected restart_services_fc: any;
+  protected restart_services_checked: any[] = [];
 
   subs: any;
 
@@ -140,6 +140,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
               disabled: true,
               isHidden: true,
               width: '0%',
+              required: true,
             },
             {
               type: 'input',
@@ -162,6 +163,31 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
     {
       name: 'encrypted_roots_divider',
       divider: true,
+    },
+    {
+      name: helptext.restart_services_placeholder,
+      label: false,
+      config: [{
+        type: 'checkbox',
+        name: 'master_checkbox',
+        placeholder: helptext.check_all,
+        tooltip: helptext.restart_services_tooltip,
+        isHidden: true,
+        value: false,
+        onChange: (changes: { event: MatCheckboxChange }) => {
+          this.master_checkbox_fc.placeholder = changes.event.checked ? helptext.uncheck_all : helptext.check_all;
+          this.restart_services_fc.config
+            .filter((cfg: FieldConfig) => cfg.name !== 'master_checkbox')
+            .forEach((service: FieldConfig) => {
+              this.entityForm.formGroup.get(service.name).setValue(changes.event.checked);
+              if (changes.event.checked) {
+                this.restart_services_checked.push(service.name);
+              } else {
+                this.restart_services_checked = [];
+              }
+            });
+        },
+      }],
     },
   ];
 
@@ -219,7 +245,8 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
             const is_passphrase = (result.key_format === 'PASSPHRASE');
             if (!is_passphrase) { // hide key datasets by default
               name_text_fc.isHidden = true;
-              if (this.key_file_fg.value === false) { // only show key_file checkbox and upload if keys encrypted datasets exist
+              // only show key_file checkbox and upload if keys encrypted datasets exist
+              if (this.key_file_fg.value === false) {
                 this.key_file_fg.setValue(true);
                 this.key_file_fc.isHidden = false;
                 this.key_file_fc.width = '50%';
@@ -241,7 +268,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
     this.key_file_fg = entityEdit.formGroup.controls['key_file'];
     this.unlock_children_fg = entityEdit.formGroup.controls['unlock_children'];
 
-    this.key_file_subscription = this.key_file_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((hide_key_datasets: any) => {
+    this.key_file_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((hide_key_datasets: boolean) => {
       for (let i = 0; i < this.datasets.controls.length; i++) {
         const dataset_controls = this.datasets.controls[i].controls;
         const controls = listFields[i];
@@ -261,7 +288,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
         }
       }
     });
-    this.unlock_children_subscription = this.unlock_children_fg.valueChanges
+    this.unlock_children_fg.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((unlock_children: any) => {
         for (let i = 0; i < this.datasets.controls.length; i++) {
@@ -286,6 +313,37 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
           }
         }
       });
+
+    this.restart_services_fc = _.find(this.fieldSets, { name: helptext.restart_services_placeholder });
+    this.master_checkbox_fc = _.find(this.fieldConfig, { name: 'master_checkbox' });
+
+    this.ws.call('pool.dataset.unlock_services_restart_choices', [this.pk])
+      .pipe(untilDestroyed(this))
+      .subscribe((choices) => {
+        if (Object.keys(choices).length) {
+          this.restart_services_fc.label = true;
+          this.master_checkbox_fc.isHidden = false;
+        }
+        for (const key in choices) {
+          const config: FieldConfig = {
+            type: 'checkbox',
+            name: key,
+            placeholder: choices[key],
+            onChange: (changes: { event: MatCheckboxChange }) => {
+              if (changes.event.checked) {
+                this.restart_services_checked.push(key);
+              } else {
+                this.restart_services_checked = this.restart_services_checked.filter((item) => item !== key);
+              }
+              const isAllChecked = this.restart_services_checked.length === Object.keys(choices).length;
+              this.master_checkbox_fc.placeholder = isAllChecked ? helptext.uncheck_all : helptext.check_all;
+              this.entityForm.formGroup.get('master_checkbox').setValue(isAllChecked);
+            },
+          };
+          this.entityForm.formGroup.addControl(key, this.entityFormService.createFormControl(config));
+          this.restart_services_fc.config.push(config);
+        }
+      });
   }
 
   setDisabled(fieldConfig: FieldConfig, formControl: FormControl, disable: boolean, hide: boolean): void {
@@ -300,11 +358,6 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
       const method = disable ? 'disable' : 'enable';
       formControl[method]();
     }
-  }
-
-  ngOnDestroy(): void {
-    this.key_file_subscription.unsubscribe();
-    this.unlock_children_subscription.unsubscribe();
   }
 
   customSubmit(body: any): void {
@@ -392,6 +445,7 @@ export class DatasetUnlockComponent implements FormConfiguration, OnDestroy {
       formData.append('file', this.subs.file);
       dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
     } else {
+      payload.services_restart = this.restart_services_checked;
       dialogRef.componentInstance.setCall(this.updateCall, [this.pk, payload]);
       dialogRef.componentInstance.submit();
     }

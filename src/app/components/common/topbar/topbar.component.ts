@@ -422,6 +422,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
             this.dialogService.Info(
               network_interfaces_helptext.checkin_complete_title,
               network_interfaces_helptext.checkin_complete_message,
+              '500px', 'info',
             );
             this.waitingNetworkCheckin = false;
           }, (err) => {
@@ -688,9 +689,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
             message: helptext.tcDeregisterDialog.message,
             confirmBtnMsg: helptext.tcDeregisterDialog.confirmBtnMsg,
           }).pipe(untilDestroyed(this)).subscribe((res) => {
-            if (res) {
-              self.loader.open();
-              self.ws.call(self.tc_updateCall, [{ api_key: null, enabled: false }]).pipe(untilDestroyed(this)).subscribe(
+            if (!res) {
+              return;
+            }
+
+            self.loader.open();
+            self.ws.call(self.tc_updateCall, [{ api_key: null, enabled: false }])
+              .pipe(untilDestroyed(this))
+              .subscribe(
                 () => {
                   self.loader.close();
                   updateDialog.dialogRef.close();
@@ -706,7 +712,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
                   new EntityUtils().handleWSError(updateDialog.parent, err, updateDialog.parent.dialogService);
                 },
               );
-            }
           });
         },
       }],
@@ -735,7 +740,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
             entityDialog.dialogRef.close();
             // only show this for connecting TC
             if (!self.tcConnected) {
-              self.dialogService.Info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message);
+              self.dialogService.Info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message, '500px', 'info');
             }
           },
           (err) => {

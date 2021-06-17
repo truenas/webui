@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core.service';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -11,6 +12,7 @@ import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -32,7 +34,7 @@ export class UpdateComponent implements OnInit {
   changeLog: any = '';
   updating = false;
   updated = false;
-  progress: Object = {};
+  progress: Record<string, unknown> = {};
   job: any = {};
   error: string;
   autoCheck = false;
@@ -573,8 +575,7 @@ export class UpdateComponent implements OnInit {
   }
 
   // Save Config dialog
-  saveConfigSubmit(entityDialog: any): void {
-    parent = entityDialog.parent;
+  saveConfigSubmit(entityDialog: EntityDialogComponent<this>): void {
     let fileName = '';
     let mimetype: string;
     if (entityDialog.parent.sysInfo) {
@@ -601,11 +602,15 @@ export class UpdateComponent implements OnInit {
               entityDialog.parent.continueUpdate();
             }, () => {
               entityDialog.dialogRef.close();
-              entityDialog.parent.dialogService.confirm(helptext.save_config_err.title, helptext.save_config_err.message,
-                false, helptext.save_config_err.button_text).pipe(untilDestroyed(this)).subscribe((res: any) => {
-                if (res) {
-                  entityDialog.parent.continueUpdate();
-                }
+              (entityDialog.parent.dialogService as DialogService).confirm({
+                title: helptext.save_config_err.title,
+                message: helptext.save_config_err.message,
+                buttonMsg: helptext.save_config_err.button_text,
+              }).pipe(
+                filter(Boolean),
+                untilDestroyed(this),
+              ).subscribe(() => {
+                entityDialog.parent.continueUpdate();
               });
             });
           entityDialog.dialogRef.close();

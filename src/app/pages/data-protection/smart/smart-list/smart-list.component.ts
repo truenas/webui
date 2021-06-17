@@ -48,7 +48,7 @@ export class SmartListComponent implements EntityTableConfig {
     },
   ];
   rowIdentifier = 'type';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -89,7 +89,9 @@ export class SmartListComponent implements EntityTableConfig {
       if (test.all_disks) {
         test.disks = [this.translate.instant(helptext.smarttest_all_disks_placeholder)];
       } else if (test.disks.length) {
-        const readableDisks = test.disks.map((disk: any) => this.listDisks.find((item) => item.identifier === disk).devname);
+        const readableDisks = test.disks.map((disk: any) => {
+          return this.listDisks.find((item) => item.identifier === disk).devname;
+        });
         test.disks = readableDisks;
       }
       return test;

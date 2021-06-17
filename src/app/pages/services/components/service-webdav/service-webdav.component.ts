@@ -125,12 +125,16 @@ export class ServiceWebdavComponent implements FormConfiguration, OnDestroy {
     this.webdav_protocol = entityForm.formGroup.controls['protocol'];
     this.handleProtocol(this.webdav_protocol.value);
     this.handleAuth(this.webdav_htauth.value);
-    this.webdav_protocol_subscription = this.webdav_protocol.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
-      this.handleProtocol(value);
-    });
-    this.webdav_htauth_subscription = this.webdav_htauth.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
-      this.handleAuth(value);
-    });
+    this.webdav_protocol_subscription = this.webdav_protocol.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((value: any) => {
+        this.handleProtocol(value);
+      });
+    this.webdav_htauth_subscription = this.webdav_htauth.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((value: any) => {
+        this.handleAuth(value);
+      });
 
     this.webdav_certssl = _.find(this.fieldConfig, { name: 'certssl' });
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
@@ -175,7 +179,7 @@ export class ServiceWebdavComponent implements FormConfiguration, OnDestroy {
     this.webdav_htauth_subscription.unsubscribe();
   }
 
-  submitFunction(this: any, body: any): Observable<any> {
+  submitFunction(body: any): Observable<any> {
     delete body['password2'];
     return this.ws.call('webdav.update', [body]);
   }

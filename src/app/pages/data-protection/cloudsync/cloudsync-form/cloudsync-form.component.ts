@@ -386,7 +386,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
   protected providers: any;
   protected taskSchemas = ['encryption', 'fast_list', 'chunk_size', 'storage_class'];
-  custActions: any[] = [
+  custActions = [
     {
       id: 'dry_run',
       name: helptext.action_button_dry_run,

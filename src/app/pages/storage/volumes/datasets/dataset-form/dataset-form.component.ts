@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { AclMode, AclType } from 'app/enums/acl-type.enum';
+import { DatasetAclType } from 'app/enums/dataset-acl-type.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -27,6 +28,7 @@ import { T } from 'app/translate-marker';
 
 interface DatasetFormData {
   name: string;
+  acltype?: string;
   comments: string;
   sync: string;
   compression: string;
@@ -113,7 +115,7 @@ export class DatasetFormComponent implements FormConfiguration {
   protected warning = 80;
   protected critical = 95;
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -650,6 +652,19 @@ export class DatasetFormComponent implements FormConfiguration {
         },
         {
           type: 'select',
+          name: 'acltype',
+          placeholder: T('ACL Type'),
+          options: [
+            { label: T('Inherit'), value: DatasetAclType.Inherit },
+            { label: T('Off'), value: DatasetAclType.Off },
+            { label: T('NFSv4'), value: DatasetAclType.Nfsv4 },
+            { label: T('POSIX'), value: DatasetAclType.Posix },
+          ],
+          required: false,
+          value: DatasetAclType.Inherit,
+        },
+        {
+          type: 'select',
           name: 'casesensitivity',
           placeholder: helptext.dataset_form_casesensitivity_placeholder,
           tooltip: helptext.dataset_form_casesensitivity_tooltip,
@@ -723,8 +738,8 @@ export class DatasetFormComponent implements FormConfiguration {
     'refquota_warning_inherit',
     'refquota_critical_inherit',
     'special_small_block_size',
+    'acltype',
     'aclmode',
-
   ];
 
   encryption_fields: any[] = [
@@ -743,14 +758,14 @@ export class DatasetFormComponent implements FormConfiguration {
     'pbkdf2iters',
   ];
 
-  protected byteMap: Object = {
+  protected byteMap = {
     T: 1099511627776,
     G: 1073741824,
     M: 1048576,
     K: 1024,
     B: 1,
   };
-  protected recordSizeMap: Object = {
+  protected recordSizeMap = {
     512: '512',
     1024: '1K',
     2048: '2K',
@@ -764,7 +779,7 @@ export class DatasetFormComponent implements FormConfiguration {
     524288: '512K',
     1048576: '1024K',
   };
-  protected reverseRecordSizeMap: Object = {
+  protected reverseRecordSizeMap = {
     512: '512',
     '1K': '1024',
     '2K': '2048',
@@ -1371,6 +1386,7 @@ export class DatasetFormComponent implements FormConfiguration {
       name: this.getFieldValueOrRaw(wsResponse.name),
       atime: this.getFieldValueOrRaw(wsResponse.atime),
       share_type: this.getFieldValueOrRaw(wsResponse.share_type),
+      acltype: this.getFieldValueOrRaw(wsResponse.acltype),
       aclmode: this.getFieldValueOrRaw(wsResponse.aclmode),
       casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
       comments: wsResponse.comments === undefined ? wsResponse.comments : (wsResponse.comments.source === 'LOCAL' ? wsResponse.comments.value : undefined),
@@ -1549,7 +1565,7 @@ export class DatasetFormComponent implements FormConfiguration {
             hideCheckBox: true,
             buttonMsg: helptext.afterSubmitDialog.actionBtn,
             cancelMsg: helptext.afterSubmitDialog.cancelBtn,
-          }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
+          }).pipe(untilDestroyed(this)).subscribe((res) => {
             if (res) {
               this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe(({ acltype }) => {
                 if (acltype === AclType.Posix1e) {

@@ -9,7 +9,7 @@ export class DocsService {
 
   docReplace(message: string): string {
     if (message != undefined && typeof message === 'string') {
-      // I really hate this but for some reason # markers are getting a "\" appended to them by the translate service now
+      // For some reason # markers are getting a "\" appended to them by the translate service now
       message = message.replace(/\\#/g, '#');
 
       for (const url in urls) {
