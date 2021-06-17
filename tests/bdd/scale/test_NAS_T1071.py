@@ -109,3 +109,7 @@ def create_pool_should_appear_while_pool_is_being_created(driver):
 def you_should_be_returned_to_the_list_of_pools_and_tank_should_appear_in_the_list(driver):
     """you should be returned to the list of pools and tank should appear in the list."""
     assert wait_on_element(driver, 7, '//div[contains(.,"tank")]')
+    ## return to dashboard
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    time.sleep(1)
