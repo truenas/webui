@@ -33,7 +33,7 @@ export class UpdateComponent implements OnInit {
   changeLog: any = '';
   updating = false;
   updated = false;
-  progress: Object = {};
+  progress: Record<string, unknown> = {};
   job: any = {};
   error: string;
   autoCheck = false;

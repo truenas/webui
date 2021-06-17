@@ -434,7 +434,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
 
   afterInit(entityWizard: EntityWizardComponent): void {
     const zvolEntityForm = (< FormGroup > this.entityWizard.formArray.get([1]));
-    (< FormGroup > entityWizard.formArray.get([0])).get('path').valueChanges.pipe(untilDestroyed(this)).subscribe((pool: String) => {
+    (<FormGroup> entityWizard.formArray.get([0])).get('path').valueChanges.pipe(untilDestroyed(this)).subscribe((pool: string) => {
       if (pool.includes('mnt')) {
         const split = pool.split('/');
         this.parent = '';
