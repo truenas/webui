@@ -107,6 +107,8 @@ def updated_value_should_be_visible(driver):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]', 'class', 'mat-checkbox-checked')
+    assert wait_on_element(driver, 10, '//*[@id="close-icon"]', 'clickable')
+    driver.find_element_by_xpath('//*[@id="close-icon"]').click()
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     time.sleep(1)
