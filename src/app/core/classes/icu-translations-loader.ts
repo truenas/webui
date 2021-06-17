@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { Observable } from 'rxjs';
-import { TranslatedMessages } from 'app/interfaces/translated-messages.interface';
 import { map } from 'rxjs/operators';
+import { TranslatedMessages } from 'app/interfaces/translated-messages.interface';
 
 /**
  * Message format compiler treats empty strings in json as valid translations.

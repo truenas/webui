@@ -1,6 +1,6 @@
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { T } from 'app/translate-marker';
 
 export default {
   location_placeholder: T('Location'),

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
-
+import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import {
   combineLatest, of, Observable,
@@ -9,23 +9,21 @@ import {
 import {
   catchError, map, switchMap, take, tap, debounceTime,
 } from 'rxjs/operators';
-
+import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_smb, shared } from 'app/helptext/sharing';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { T } from 'app/translate-marker';
-import { ProductType } from 'app/enums/product-type.enum';
 import {
   AppLoaderService, DialogService, WebSocketService, SystemGeneralService,
 } from 'app/services';
-import globalHelptext from 'app/helptext/global-helptext';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { ModalService } from 'app/services/modal.service';
-import { SmbShare } from 'app/interfaces/smb-share.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -65,6 +63,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'path',
           placeholder: helptext_sharing_smb.placeholder_path,
           tooltip: helptext_sharing_smb.tooltip_path,
+          tooltipPosition: 'center',
           required: true,
           validation: helptext_sharing_smb.validators_path,
         },
@@ -73,6 +72,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'name',
           placeholder: helptext_sharing_smb.placeholder_name,
           tooltip: helptext_sharing_smb.tooltip_name,
+          tooltipPosition: 'center',
           validation: [forbiddenValues(this.namesInUse), Validators.required],
           hasErrors: false,
           errors: helptext_sharing_smb.errormsg_name,
@@ -85,6 +85,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'purpose',
           placeholder: helptext_sharing_smb.placeholder_purpose,
           tooltip: helptext_sharing_smb.tooltip_purpose,
+          tooltipPosition: 'center',
           options: [],
           width: '100%',
         },
@@ -93,6 +94,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'comment',
           placeholder: helptext_sharing_smb.placeholder_comment,
           tooltip: helptext_sharing_smb.tooltip_comment,
+          tooltipPosition: 'center',
           width: '100%',
         },
         {
@@ -100,6 +102,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'enabled',
           placeholder: helptext_sharing_smb.placeholder_enabled,
           tooltip: helptext_sharing_smb.tooltip_enabled,
+          tooltipPosition: 'center',
           value: true,
         },
       ],
@@ -115,6 +118,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'acl',
           placeholder: helptext_sharing_smb.placeholder_acl,
           tooltip: helptext_sharing_smb.tooltip_acl,
+          tooltipPosition: 'center',
           isHidden: true,
         },
         {
@@ -122,6 +126,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'ro',
           placeholder: helptext_sharing_smb.placeholder_ro,
           tooltip: helptext_sharing_smb.tooltip_ro,
+          tooltipPosition: 'center',
           isHidden: true,
         },
         {
@@ -129,6 +134,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'browsable',
           placeholder: helptext_sharing_smb.placeholder_browsable,
           tooltip: helptext_sharing_smb.tooltip_browsable,
+          tooltipPosition: 'center',
           isHidden: true,
         },
         {
@@ -136,6 +142,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'guestok',
           placeholder: helptext_sharing_smb.placeholder_guestok,
           tooltip: helptext_sharing_smb.tooltip_guestok,
+          tooltipPosition: 'center',
           isHidden: true,
         },
         {
@@ -143,6 +150,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'abe',
           placeholder: helptext_sharing_smb.placeholder_abe,
           tooltip: helptext_sharing_smb.tooltip_abe,
+          tooltipPosition: 'center',
           isHidden: true,
         },
         {
@@ -150,6 +158,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'hostsallow',
           placeholder: helptext_sharing_smb.placeholder_hostsallow,
           tooltip: helptext_sharing_smb.tooltip_hostsallow,
+          tooltipPosition: 'center',
           isHidden: true,
         },
         {
@@ -157,6 +166,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'hostsdeny',
           placeholder: helptext_sharing_smb.placeholder_hostsdeny,
           tooltip: helptext_sharing_smb.tooltip_hostsdeny,
+          tooltipPosition: 'center',
           isHidden: true,
         },
       ],
@@ -172,6 +182,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'home',
           placeholder: helptext_sharing_smb.placeholder_home,
           tooltip: helptext_sharing_smb.tooltip_home,
+          tooltipPosition: 'center',
           isHidden: true,
         },
         {
@@ -179,13 +190,24 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'timemachine',
           placeholder: helptext_sharing_smb.placeholder_timemachine,
           tooltip: helptext_sharing_smb.tooltip_timemachine,
+          tooltipPosition: 'center',
           isHidden: true,
+        },
+        {
+          type: 'checkbox',
+          name: 'afp',
+          placeholder: helptext_sharing_smb.placeholder_afp,
+          tooltip: helptext_sharing_smb.tooltip_afp,
+          tooltipPosition: 'center',
+          isHidden: true,
+          customEventMethod: () => this.afpConfirm(),
         },
         {
           type: 'checkbox',
           name: 'shadowcopy',
           placeholder: helptext_sharing_smb.placeholder_shadowcopy,
           tooltip: helptext_sharing_smb.tooltip_shadowcopy,
+          tooltipPosition: 'center',
           isHidden: true,
         },
         {
@@ -193,6 +215,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'recyclebin',
           placeholder: helptext_sharing_smb.placeholder_recyclebin,
           tooltip: helptext_sharing_smb.tooltip_recyclebin,
+          tooltipPosition: 'center',
           isHidden: true,
         },
         {
@@ -200,6 +223,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'aapl_name_mangling',
           placeholder: helptext_sharing_smb.placeholder_aapl_name_mangling,
           tooltip: helptext_sharing_smb.tooltip_aapl_name_mangling,
+          tooltipPosition: 'center',
           isHidden: true,
         },
         {
@@ -207,6 +231,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'streams',
           placeholder: helptext_sharing_smb.placeholder_streams,
           tooltip: helptext_sharing_smb.tooltip_streams,
+          tooltipPosition: 'center',
           isHidden: true,
         },
         {
@@ -214,6 +239,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'durablehandle',
           placeholder: helptext_sharing_smb.placeholder_durablehandle,
           tooltip: helptext_sharing_smb.tooltip_durablehandle,
+          tooltipPosition: 'center',
           isHidden: true,
         },
         {
@@ -221,6 +247,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'fsrvp',
           placeholder: helptext_sharing_smb.placeholder_fsrvp,
           tooltip: helptext_sharing_smb.tooltip_fsrvp,
+          tooltipPosition: 'center',
           isHidden: true,
         },
         {
@@ -228,6 +255,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'path_suffix',
           placeholder: helptext_sharing_smb.placeholder_path_suffix,
           tooltip: helptext_sharing_smb.tooltip_path_suffix,
+          tooltipPosition: 'center',
           isHidden: true,
         },
         {
@@ -235,6 +263,7 @@ export class SMBFormComponent implements FormConfiguration {
           name: 'auxsmbconf',
           placeholder: helptext_sharing_smb.placeholder_auxsmbconf,
           tooltip: helptext_sharing_smb.tooltip_auxsmbconf,
+          tooltipPosition: 'center',
           isHidden: true,
         },
       ],
@@ -265,7 +294,7 @@ export class SMBFormComponent implements FormConfiguration {
   protected accessFieldsets = _.find(this.fieldSets, { class: 'access' });
   protected otherFieldsets = _.find(this.fieldSets, { class: 'other' });
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -418,11 +447,11 @@ export class SMBFormComponent implements FormConfiguration {
            * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
            * nav to SMB shares list view.
            */
-          const promptUserACLEdit = (): Observable<[boolean, {}] | [boolean]> =>
+          const promptUserACLEdit = (): Observable<[boolean, Record<string, unknown>] | [boolean]> =>
             this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
               switchMap((isTrivialACL) => {
                 let nextStep;
-                /* If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations */
+                // If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations
                 if (!isTrivialACL || !datasetId.includes('/') || this.productType.includes(ProductType.Scale)) {
                   nextStep = combineLatest([of(false), of({})]);
                 } else {
@@ -478,6 +507,7 @@ export class SMBFormComponent implements FormConfiguration {
                               T('SMB') + shared.dialog_started_title,
                               T('The SMB') + shared.dialog_started_message,
                               '250px',
+                              'info',
                             )),
                           catchError((error) =>
                             this.dialog.errorReport(error.error, error.reason, error.trace.formatted)),
@@ -595,6 +625,22 @@ export class SMBFormComponent implements FormConfiguration {
           ctrl.setValue(this.presets[res].params[item]);
           ctrl.disable();
         }
+      }
+    });
+  }
+
+  afpConfirm(): void {
+    const afpControl = this.entityForm.formGroup.controls['afp'];
+
+    this.dialog.confirm({
+      title: helptext_sharing_smb.afpDialog_title,
+      message: helptext_sharing_smb.afpDialog_message,
+      hideCheckBox: false,
+      buttonMsg: helptext_sharing_smb.afpDialog_button,
+      hideCancel: false,
+    }).pipe(untilDestroyed(this)).subscribe((dialogResult: boolean) => {
+      if (dialogResult) {
+        afpControl.setValue(!afpControl.value);
       }
     });
   }

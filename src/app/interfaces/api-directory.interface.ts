@@ -1,26 +1,33 @@
+import { DefaultAclType } from 'app/enums/acl-type.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
-import { SystemUpdate } from 'app/interfaces/system-update.interface';
-import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
-import { Acl } from 'app/interfaces/acl.interface';
+import { Acl, SetAcl } from 'app/interfaces/acl.interface';
+import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
+import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { AlertService } from 'app/interfaces/alert-service.interface';
-import { Alert } from 'app/interfaces/alert.interface';
+import { AlertService, AlertServiceCreate } from 'app/interfaces/alert-service.interface';
+import { Alert, AlertCategory } from 'app/interfaces/alert.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
-import { Certificate } from 'app/interfaces/certificate.interface';
-import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { Catalog } from 'app/interfaces/catalog.interface';
+import { CertificateAuthorityCreate, CertificateAuthorityUpdate } from 'app/interfaces/certificate-authority.interface';
+import { Certificate } from 'app/interfaces/certificate.interface';
+import { ChartReleaseCreate, ChartReleaseCreateResponse } from 'app/interfaces/chart-release.interface';
+import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
+import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
+import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import {
   AuthenticatorSchema,
   CreateDnsAuthenticator,
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
+import { DynamicDnsUpdate } from 'app/interfaces/dynamic-dns.interface';
+import { FailoverUpdate } from 'app/interfaces/failover.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
+import { Group } from 'app/interfaces/group.interface';
 import {
   IscsiAuthAccess, IscsiExtent,
   IscsiInitiatorGroup,
@@ -28,34 +35,37 @@ import {
   IscsiPortal,
   IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
+import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
+import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { NetworkActivityChoice, NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
-import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
+import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Group } from 'app/interfaces/group.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
+import { SmartTest } from 'app/interfaces/smart-test.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { Disk, DiskQueryOptions, DiskUpdate } from 'app/interfaces/storage.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
-import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { SystemUpdate } from 'app/interfaces/system-update.interface';
+import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
-import { RsyncTask } from 'app/interfaces/rsync-task.interface';
-import { SmartTest } from 'app/interfaces/smart-test.interface';
-import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
-import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 
 export type ApiDirectory = {
   // Active Directory
-  'activedirectory.config': { params: any; response: any };
-  'activedirectory.update': { params: any; response: any };
-  'activedirectory.nss_info_choices': { params: any; response: any };
+  'activedirectory.config': { params: void; response: ActiveDirectoryConfig };
+  'activedirectory.update': { params: [ActiveDirectoryUpdate]; response: ActiveDirectoryConfig };
+  'activedirectory.nss_info_choices': { params: void; response: string[] };
+  'activedirectory.leave': { params: any; response: any };
 
   // Acme
   'acme.dns.authenticator.query': { params: void; response: DnsAuthenticator[] };
@@ -68,7 +78,7 @@ export type ApiDirectory = {
   'alert.dismiss': { params: string[]; response: void };
   'alert.restore': { params: string[]; response: void };
   'alert.list_policies': { params: any; response: any };
-  'alert.list_categories': { params: any; response: any };
+  'alert.list_categories': { params: void; response: AlertCategory[] };
 
   // Alert Classes
   'alertclasses.config': { params: any; response: any };
@@ -76,13 +86,13 @@ export type ApiDirectory = {
 
   // Alert Service
   'alertservice.update': { params: any; response: any };
-  'alertservice.create': { params: any; response: any };
+  'alertservice.create': { params: [AlertServiceCreate]; response: any };
   'alertservice.query': { params: QueryParams<AlertService>; response: AlertService[] };
-  'alertservice.test': { params: any; response: any };
+  'alertservice.test': { params: any; response: boolean };
   'alertservice.delete': { params: any; response: any };
 
   // Api Key
-  'api_key.create': { params: CreateApiKeyRequest; response: ApiKey };
+  'api_key.create': { params: [CreateApiKeyRequest]; response: ApiKey };
   'api_key.update': { params: UpdateApiKeyRequest; response: ApiKey };
   'api_key.delete': { params: [/* id */ string]; response: boolean };
   'api_key.query': { params: QueryParams<ApiKey>; response: ApiKey[] };
@@ -119,12 +129,13 @@ export type ApiDirectory = {
   'boot.scrub': { params: any; response: any };
 
   // Catalog
-  'catalog.query': { params: QueryParams<any, { extra: { item_details: boolean } }>; response: Catalog[] };
+  'catalog.query': { params: QueryParams<any, { extra: { item_details: boolean; cache: boolean; retrieve_versions: boolean } }>; response: Catalog[] };
   'catalog.update': { params: any; response: any };
   'catalog.create': { params: any; response: any };
   'catalog.delete': { params: any; response: any };
   'catalog.items': { params: any; response: any };
   'catalog.sync': { params: any; response: any };
+  'catalog.get_item_details': { params: any; response: any };
 
   // Certificate
   'certificate.create': { params: any; response: any };
@@ -138,22 +149,23 @@ export type ApiDirectory = {
   'certificate.get_domain_names': { params: any; response: any };
 
   // Certificate Authority
-  'certificateauthority.create': { params: any; response: any };
+  'certificateauthority.create': { params: [CertificateAuthorityCreate]; response: any };
   'certificateauthority.query': { params: any; response: any };
-  'certificateauthority.update': { params: any; response: any };
+  'certificateauthority.update': { params: [number, CertificateAuthorityUpdate]; response: any };
   'certificateauthority.profiles': { params: any; response: any };
   'certificateauthority.ca_sign_csr': { params: any; response: any };
 
   // Chart
   'chart.release.pod_logs_choices': { params: any; response: any };
   'chart.release.query': { params: any; response: any };
-  'chart.release.create': { params: any; response: any };
+  'chart.release.create': { params: ChartReleaseCreate; response: ChartReleaseCreateResponse };
   'chart.release.update': { params: any; response: any };
   'chart.release.scale': { params: any; response: any };
   'chart.release.pod_console_choices': { params: any; response: any };
   'chart.release.nic_choices': { params: any; response: any };
   'chart.release.events': { params: any; response: any };
   'chart.release.rollback': { params: any; response: any };
+  'chart.release.upgrade_summary': { params: any; response: any };
 
   // CRON
   'cronjob.run': { params: any; response: any };
@@ -161,7 +173,7 @@ export type ApiDirectory = {
   'cronjob.delete': { params: any; response: any };
 
   // Core
-  'core.download': { params: any; response: any };
+  'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };
   'core.get_jobs': { params: any; response: any };
   'core.job_abort': { params: any; response: any };
   'core.bulk': { params: any; response: any };
@@ -200,7 +212,7 @@ export type ApiDirectory = {
 
   // DynDNS
   'dyndns.provider_choices': { params: any; response: any };
-  'dyndns.update': { params: any; response: any };
+  'dyndns.update': { params: [DynamicDnsUpdate]; response: any };
   'dyndns.config': { params: any; response: any };
 
   // Datastore
@@ -238,16 +250,17 @@ export type ApiDirectory = {
   'filesystem.listdir': { params: any; response: any };
   'filesystem.stat': { params: [/* path */ string]; response: FileSystemStat };
   'filesystem.default_acl_choices': { params: any; response: any };
-  'filesystem.get_default_acl': { params: any; response: any };
+  'filesystem.get_default_acl': { params: [DefaultAclType]; response: any };
   'filesystem.statfs': { params: any; response: any };
   'filesystem.getacl': { params: [/* path */ string]; response: Acl };
+  'filesystem.setacl': { params: [SetAcl]; response: any };
 
   // Failover
   'failover.licensed': { params: void; response: boolean };
   'failover.upgrade_pending': { params: any; response: any };
   'failover.sync_from_peer': { params: any; response: any };
   'failover.status': { params: any; response: any };
-  'failover.update': { params: any; response: any };
+  'failover.update': { params: [FailoverUpdate]; response: any };
   'failover.force_master': { params: any; response: any };
   'failover.call_remote': { params: any; response: any };
   'failover.get_ips': { params: any; response: string[] };
@@ -353,20 +366,6 @@ export type ApiDirectory = {
   'group.get_group_obj': { params: any; response: any };
   'group.get_next_gid': { params: any; response: any };
 
-  // Jail
-  'jail.query': { params: any; response: any };
-  'jail.create': { params: any; response: any };
-  'jail.delete': { params: any; response: any };
-  'jail.get_activated_pool': { params: any; response: any };
-  'jail.activate': { params: any; response: any };
-  'jail.update': { params: any; response: any };
-  'jail.upgrade': { params: any; response: any };
-  'jail.releases_choices': { params: any; response: any };
-  'jail.get_version': { params: any; response: any };
-  'jail.interface_choices': { params: any; response: any };
-  'jail.default_configuration': { params: any; response: any };
-  'jail.fstab': { params: any; response: any };
-
   // Notifier
   'notifier.choices': { params: any; response: any };
 
@@ -377,7 +376,7 @@ export type ApiDirectory = {
   'network.configuration.config': { params: void; response: NetworkConfiguration };
 
   // Kerberos
-  'kerberos.realm.query': { params: any; response: any };
+  'kerberos.realm.query': { params: QueryParams<KerberosRealm>; response: KerberosRealm[] };
   'kerberos.realm.create': { params: any; response: any };
   'kerberos.realm.update': { params: any; response: any };
   'kerberos.realm.delete': { params: any; response: any };
@@ -413,6 +412,7 @@ export type ApiDirectory = {
 
   // NFS
   'nfs.bindip_choices': { params: any; response: any };
+  'nfs.add_principal': { params: any; response: any };
   'nfs.config': { params: any; response: any };
   'nfs.update': { params: any; response: any };
 
@@ -442,8 +442,10 @@ export type ApiDirectory = {
   'pool.filesystem_choices': { params: any; response: any };
   'pool.dataset.set_quota': { params: any; response: any };
   'pool.dataset.recommended_zvol_blocksize': { params: any; response: any };
+  'pool.dataset.inherit_parent_encryption_properties': { params: any; response: any };
   'pool.unlock_services_restart_choices': { params: any; response: any };
   'pool.dataset.get_quota': { params: any; response: any };
+  'pool.dataset.change_key': { params: any; response: any };
   'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
   'pool.import_disk_autodetect_fs_type': { params: any; response: any };
   'pool.download_encryption_key': { params: any; response: any };
@@ -462,6 +464,7 @@ export type ApiDirectory = {
   'pool.scrub.create': { params: any; response: any };
   'pool.dataset.compression_choices': { params: any; response: any };
   'pool.dataset.encryption_algorithm_choices': { params: any; response: any };
+  'pool.dataset.permission': { params: any; response: any };
   'pool.offline': { params: any; response: any };
   'pool.online': { params: any; response: any };
   'pool.remove': { params: any; response: any };
@@ -480,6 +483,7 @@ export type ApiDirectory = {
   'pool.dataset.create': { params: any; response: any };
   'pool.is_upgraded': { params: [/* pool id */ number]; response: boolean };
   'pool.dataset.encryption_summary': { params: any; response: any };
+  'pool.dataset.unlock_services_restart_choices': { params: any; response: any };
   'pool.dataset.unlock': { params: any; response: any };
   'pool.resilver.config': { params: any; response: any };
   'pool.resilver.update': { params: any; response: any };

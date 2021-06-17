@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CoreEvent } from 'app/interfaces/events';
-import { CoreService } from './core.service';
-import { DisplayObject } from '../classes/display-object';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   tween,
   value,
@@ -12,7 +10,10 @@ import {
   timeline,
   ColdSubscription,
 } from 'popmotion';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { CoreEvent } from 'app/interfaces/events';
+import { Timeout } from 'app/interfaces/timeout.interface';
+import { DisplayObject } from '../classes/display-object';
+import { CoreService } from './core.service';
 
 export interface AnimationConfig {
   animationTarget: DisplayObject; // Support DisplayObject
@@ -30,7 +31,7 @@ export interface GroupAnimationConfig {
 @UntilDestroy()
 @Injectable()
 export class AnimationService {
-  private activeAnimations: any = {};
+  private activeAnimations: { [targetId: string]: { animation: Timeout; originalState: any } } = {};
 
   constructor(private core: CoreService) {
     this.core.register({ observerClass: this, eventName: 'ScrollTo' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
@@ -128,7 +129,7 @@ export class AnimationService {
     if (finishState == 'In') {
       startOpacity = 0;
       finishOpacity = 1;
-    } else if (finishState = 'Out') {
+    } else if (finishState == 'Out') {
       startOpacity = 1;
       finishOpacity = 0;
     }
@@ -146,7 +147,7 @@ export class AnimationService {
     if (finishState == 'In') {
       startScale = 0;
       finishScale = 1;
-    } else if (finishState = 'Out') {
+    } else if (finishState == 'Out') {
       startScale = 1;
       finishScale = 0;
     }
@@ -170,7 +171,7 @@ export class AnimationService {
     if (finishState == 'In') {
       startScale = 0;
       finishScale = 1;
-    } else if (finishState = 'Out') {
+    } else if (finishState == 'Out') {
       startScale = 1;
       finishScale = 0;
     }

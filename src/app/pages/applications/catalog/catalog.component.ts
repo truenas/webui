@@ -2,32 +2,31 @@ import {
   Component, OnInit, Output, EventEmitter,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
 import {
   chartsTrain, ixChartApp, officialCatalog, appImagePlaceholder,
 } from 'app/constants/catalog.constants';
+import { CommonUtils } from 'app/core/classes/common-utils';
+import { CoreService } from 'app/core/services/core.service';
+import helptext from 'app/helptext/apps/apps';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core.service';
-
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { EntityUtils } from '../../common/entity/utils';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { DialogService, WebSocketService } from '../../../services/index';
-import { ModalService } from '../../../services/modal.service';
+import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService, WebSocketService } from 'app/services/index';
+import { ModalService } from 'app/services/modal.service';
 import { ApplicationsService } from '../applications.service';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
+import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
 import { ChartReleaseAddComponent } from '../forms/chart-release-add.component';
 import { ChartWizardComponent } from '../forms/chart-wizard.component';
-import { CommonUtils } from 'app/core/classes/common-utils';
-import helptext from '../../../helptext/apps/apps';
-import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
+import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
 
 @UntilDestroy()
 @Component({
@@ -115,27 +114,12 @@ export class CatalogComponent implements OnInit {
           catalog.preferred_trains.forEach((train) => {
             for (const i in catalog.trains[train]) {
               const item = catalog.trains[train][i];
-              const versions = item.versions;
-              const versionKeys = Object.keys(versions).filter((versionKey) => versions[versionKey].healthy);
 
-              const latest = versionKeys.sort(this.utils.versionCompare)[0];
-              const latestDetails = versions[latest];
-
-              const catalogItem = {
-                name: item.name,
-                catalog: {
-                  id: catalog.id,
-                  label: catalog.label,
-                  train,
-                },
-                icon_url: item.icon_url ? item.icon_url : '/assets/images/ix-original.png',
-                latest_version: latestDetails?.human_version,
-                info: latestDetails?.app_readme,
-                categories: item.categories,
-                healthy: item.healthy,
-                healthy_error: item.healthy_error,
-                versions: item.versions,
-                schema: latestDetails?.schema,
+              const catalogItem = { ...item } as any;
+              catalogItem.catalog = {
+                id: catalog.id,
+                label: catalog.label,
+                train,
               };
               this.catalogApps.push(catalogItem);
             }
@@ -209,9 +193,25 @@ export class CatalogComponent implements OnInit {
   }
 
   refreshForms(): void {
-    this.kubernetesForm = new KubernetesSettingsComponent(this.ws, this.appLoaderService, this.dialogService, this.modalService, this.appService);
-    this.chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
-    this.chartWizardComponent = new ChartWizardComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
+    this.kubernetesForm = new KubernetesSettingsComponent(
+      this.ws,
+      this.appLoaderService,
+      this.dialogService,
+      this.modalService,
+      this.appService,
+    );
+    this.chartReleaseForm = new ChartReleaseAddComponent(
+      this.mdDialog,
+      this.dialogService,
+      this.modalService,
+      this.appService,
+    );
+    this.chartWizardComponent = new ChartWizardComponent(
+      this.mdDialog,
+      this.dialogService,
+      this.modalService,
+      this.appService,
+    );
   }
 
   checkForConfiguredPool(): void {
@@ -317,22 +317,34 @@ export class CatalogComponent implements OnInit {
   }
 
   doInstall(name: string, catalog = officialCatalog, train = chartsTrain): void {
-    const catalogApp = this.catalogApps.find((app) => {
-      return app.name == name && app.catalog.id == catalog && app.catalog.train == train;
-    });
+    this.appLoaderService.open();
+    this.appService.getCatalogItem(name, catalog, train).pipe(untilDestroyed(this)).subscribe((catalogApp) => {
+      this.appLoaderService.close();
 
-    if (catalogApp && catalogApp.name != ixChartApp) {
-      this.chartWizardComponent.setCatalogApp(catalogApp);
-      this.modalService.open('slide-in-form', this.chartWizardComponent);
-    } else {
-      this.chartReleaseForm.setGpuConfiguration(catalogApp);
-      this.modalService.open('slide-in-form', this.chartReleaseForm);
-    }
+      if (catalogApp) {
+        const catalogAppInfo = { ...catalogApp } as any;
+        catalogAppInfo.catalog = {
+          id: catalog,
+          train,
+        };
+        catalogAppInfo.schema = catalogApp.versions[catalogApp.latest_version].schema;
+
+        if (catalogApp.name != ixChartApp) {
+          this.chartWizardComponent.setCatalogApp(catalogAppInfo);
+          this.modalService.open('slide-in-form', this.chartWizardComponent);
+        } else {
+          this.chartReleaseForm.setGpuConfiguration(catalogAppInfo);
+          this.modalService.open('slide-in-form', this.chartReleaseForm);
+        }
+      }
+    });
   }
 
   filterApps(): void {
     if (this.filterString) {
-      this.filteredCatalogApps = this.catalogApps.filter((app) => app.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1);
+      this.filteredCatalogApps = this.catalogApps.filter((app) => {
+        return app.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1;
+      });
     } else {
       this.filteredCatalogApps = this.catalogApps;
     }
@@ -350,15 +362,21 @@ export class CatalogComponent implements OnInit {
   }
 
   showSummaryDialog(name: string, catalog = officialCatalog, train = chartsTrain): void {
-    const catalogApp = this.catalogApps.find((app) => app.name == name && app.catalog.id == catalog && app.catalog.train == train);
-    if (!catalogApp) {
-      return;
-    }
-
-    this.mdDialog.open(CatalogSummaryDialog, {
-      width: '470px',
-      data: catalogApp,
-      disableClose: false,
+    this.appLoaderService.open();
+    this.appService.getCatalogItem(name, catalog, train).pipe(untilDestroyed(this)).subscribe((catalogApp) => {
+      this.appLoaderService.close();
+      if (catalogApp) {
+        const catalogAppInfo = { ...catalogApp } as any;
+        catalogAppInfo.catalog = {
+          label: catalog,
+          train,
+        };
+        this.mdDialog.open(CatalogSummaryDialog, {
+          width: '470px',
+          data: catalogAppInfo,
+          disableClose: false,
+        });
+      }
     });
   }
 

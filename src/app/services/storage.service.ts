@@ -1,14 +1,12 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { SortDirection } from '@angular/material/sort';
+import { format } from 'date-fns-tz';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { WebSocketService } from './ws.service';
-import { RestService } from './rest.service';
-
-import * as moment from 'moment';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class StorageService {
@@ -23,7 +21,7 @@ export class StorageService {
   humanReadable: any;
   IECUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
-  constructor(protected ws: WebSocketService, protected rest: RestService) {}
+  constructor(protected ws: WebSocketService) {}
 
   filesystemStat(path: string): Observable<FileSystemStat> {
     return this.ws.call('filesystem.stat', [path]);
@@ -57,7 +55,7 @@ export class StorageService {
     dlink.href = window.URL.createObjectURL(blob);
     dlink.onclick = function () {
       // revokeObjectURL needs a delay to work properly
-      var that: any = this;
+      const that: any = this;
       setTimeout(() => {
         window.URL.revokeObjectURL(that.href);
       }, 1500);
@@ -183,7 +181,7 @@ export class StorageService {
 
       sorter = [];
       for (const elem of timeArr) {
-        sorter.push(moment(elem).format('YYYY-MM-DD HH:mm:ss')); // formate should matched locale service
+        sorter.push(format(elem, 'yyyy-MM-dd HH:mm:ss')); // formate should matched locale service
       }
     } else {
       sorter = tempArr.sort(myCollator.compare);

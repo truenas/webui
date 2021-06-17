@@ -1,19 +1,20 @@
-import { Component } from '@angular/core';
-import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import {
-  WebSocketService, AppLoaderService, StorageService, DialogService, SystemGeneralService,
-} from '../../../../services';
+import { Component } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { ModalService } from 'app/services/modal.service';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
-import { EntityUtils } from '../../../common/entity/utils';
+import { Subscription } from 'rxjs';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import {
+  WebSocketService, AppLoaderService, StorageService, DialogService, SystemGeneralService,
+} from 'app/services';
+import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
@@ -272,7 +273,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     this.title = helptext_system_ca.edit.title;
   }
 
-  doSignCSR(entityDialog: any): void {
+  doSignCSR(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     const payload = {
       ca_id: self.rowNum,
@@ -306,12 +307,14 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
       (res) => {
         const url = res[1];
         const mimetype = 'application/x-x509-ca-cert';
-        this.storage.streamDownloadFile(this.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
-          this.storage.downloadBlob(file, fileName);
-        }, (err) => {
-          this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
-            helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
-        });
+        this.storage.streamDownloadFile(this.http, url, fileName, mimetype)
+          .pipe(untilDestroyed(this))
+          .subscribe((file) => {
+            this.storage.downloadBlob(file, fileName);
+          }, (err) => {
+            this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
+              helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
+          });
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialog);
@@ -335,12 +338,14 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
       (res) => {
         const url = res[1];
         const mimetype = 'text/plain';
-        this.storage.streamDownloadFile(this.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file) => {
-          this.storage.downloadBlob(file, fileName);
-        }, (err) => {
-          this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
-            helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
-        });
+        this.storage.streamDownloadFile(this.http, url, fileName, mimetype)
+          .pipe(untilDestroyed(this))
+          .subscribe((file) => {
+            this.storage.downloadBlob(file, fileName);
+          }, (err) => {
+            this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
+              helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
+          });
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialog);

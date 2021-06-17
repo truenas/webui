@@ -1,11 +1,9 @@
 import { Routes } from '@angular/router';
 import { TranslationsLoadedGuard } from 'app/core/guards/translations-loaded.guard';
-
+import { ApplicationsComponent } from 'app/pages/applications//applications.component';
 import { AdminLayoutComponent } from './components/common/layouts/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from './components/common/layouts/auth-layout/auth-layout.component';
-
 import { AuthService } from './services/auth/auth.service';
-import { ApplicationsComponent } from 'app/pages/applications//applications.component';
 
 export const rootRouterConfig: Routes = [{
   path: '',
@@ -18,12 +16,12 @@ export const rootRouterConfig: Routes = [{
   canActivate: [TranslationsLoadedGuard],
   children: [{
     path: 'sessions',
-    loadChildren: './views/sessions/sessions.module#SessionsModule',
+    loadChildren: () => import('./views/sessions/sessions.module').then((module) => module.SessionsModule),
     data: { title: 'Session' },
   },
   {
     path: 'others',
-    loadChildren: './views/others/others.module#OthersModule',
+    loadChildren: () => import('./views/others/others.module').then((module) => module.OthersModule),
     data: { title: 'Others', breadcrumb: 'Others' },
   }],
 },
@@ -33,17 +31,17 @@ export const rootRouterConfig: Routes = [{
   canActivate: [AuthService, TranslationsLoadedGuard],
   children: [{
     path: 'dashboard',
-    loadChildren: './pages/dashboard/dashboard.module#DashboardModule',
+    loadChildren: () => import('./pages/dashboard/dashboard.module').then((module) => module.DashboardModule),
     data: { title: 'Dashboard', breadcrumb: 'Dashboard' },
   },
   {
     path: 'credentials',
-    loadChildren: './pages/account/account.module#AccountModule',
+    loadChildren: () => import('./pages/account/account.module').then((module) => module.AccountModule),
     data: { title: 'Credentials', breadcrumb: 'Credentials' },
   },
   {
     path: 'system',
-    loadChildren: './pages/system/system.module#SystemModule',
+    loadChildren: () => import('./pages/system/system.module').then((module) => module.SystemModule),
     data: { title: 'System', breadcrumb: 'System' },
   },
   {
@@ -52,22 +50,22 @@ export const rootRouterConfig: Routes = [{
   },
   {
     path: 'network',
-    loadChildren: 'app/pages/network/network.module#NetworkModule',
+    loadChildren: () => import('./pages/network/network.module').then((module) => module.NetworkModule),
     data: { title: 'Network', breadcrumb: 'Network' },
   },
   {
     path: 'services',
-    loadChildren: 'app/pages/services/services.module#ServicesModule',
+    loadChildren: () => import('./pages/services/services.module').then((module) => module.ServicesModule),
     data: { title: 'Services', breadcrumb: 'Services', toplevel: true },
   },
   {
     path: 'directoryservice',
-    loadChildren: 'app/pages/directoryservice/directoryservice.module#DirectoryServiceModule',
+    loadChildren: () => import('./pages/directoryservice/directoryservice.module').then((module) => module.DirectoryServiceModule),
     data: { title: 'Directory Services', breadcrumb: 'Directory Services' },
   },
   {
     path: 'vm',
-    loadChildren: 'app/pages/vm/vm.module#VmModule',
+    loadChildren: () => import('./pages/vm/vm.module').then((module) => module.VmModule),
     data: { title: 'Virtual Machines', breadcrumb: 'Virtual Machines', toplevel: true },
   },
   {
@@ -77,77 +75,67 @@ export const rootRouterConfig: Routes = [{
   },
   {
     path: 'apps/:tabIndex',
-    loadChildren: 'app/pages/applications/applications.module#ApplicationsModule',
+    loadChildren: () => import('./pages/applications/applications.module').then((module) => module.ApplicationsModule),
     data: { title: 'Applications', breadcrumb: 'Applications', toplevel: true },
   },
   {
     path: 'containers',
-    loadChildren: 'app/pages/containers/containers.module#ContainersModule',
+    loadChildren: () => import('./pages/containers/containers.module').then((module) => module.ContainersModule),
     data: { title: 'Containers', breadcrumb: 'Containers' },
   },
   {
     path: 'clustering',
-    loadChildren: 'app/pages/clustering/clustering.module#ClusteringModule',
+    loadChildren: () => import('./pages/clustering/clustering.module').then((module) => module.ClusteringModule),
     data: { title: 'Clustering', breadcrumb: 'Clustering' },
   },
   {
     path: 'sharing',
-    loadChildren: 'app/pages/sharing/sharing.module#SharingModule',
+    loadChildren: () => import('./pages/sharing/sharing.module').then((module) => module.SharingModule),
     data: { title: 'Sharing', breadcrumb: 'Sharing' },
   },
   {
     path: 'storage',
-    loadChildren: './pages/storage/storage.module#StorageModule',
+    loadChildren: () => import('./pages/storage/storage.module').then((module) => module.StorageModule),
     data: { title: 'Storage', breadcrumb: 'Storage', toplevel: true },
   },
   {
-    path: 'plugins',
-    loadChildren: './pages/plugins/plugins.module#PluginsModule',
-    data: { title: 'Plugins', breadcrumb: 'Plugins', toplevel: true },
-  },
-  { // Listing partially updated for new 12.1 menu - TODO Move components, finish update ////////////////
-    path: 'virtualization',
-    loadChildren: './pages/jails/jails.module#JailsModule',
-    data: { title: 'Jails', breadcrumb: 'Jails', toplevel: true },
-  },
-  {
     path: 'reportsdashboard',
-    loadChildren: './pages/reportsdashboard/reportsdashboard.module#ReportsDashboardModule',
+    loadChildren: () => import('./pages/reportsdashboard/reportsdashboard.module').then((module) => module.ReportsDashboardModule),
     data: { title: 'Reporting', breadcrumb: 'Reporting' },
   },
   {
     path: 'systemprocesses',
-    loadChildren: 'app/pages/systemprocesses/system-processes.module#SystemProcessesModule',
+    loadChildren: () => import('./pages/systemprocesses/system-processes.module').then((module) => module.SystemProcessesModule),
     data: { title: 'System Processes', breadcrumb: 'System Processes' },
   },
   {
     path: 'shell',
-    loadChildren: './pages/shell/shell.module#ShellModule',
+    loadChildren: () => import('./pages/shell/shell.module').then((module) => module.ShellModule),
     data: { title: 'Shell', breadcrumb: 'Shell' },
   },
   {
     path: 'guide',
-    loadChildren: './pages/guide/guide.module#GuideModule',
+    loadChildren: () => import('./pages/guide/guide.module').then((module) => module.GuideModule),
     data: { title: 'Guide', breadcrumb: 'Guide' },
   },
   {
     path: 'ui-preferences',
-    loadChildren: './pages/preferences/preferences.module#PreferencesModule',
+    loadChildren: () => import('./pages/preferences/preferences.module').then((module) => module.PreferencesModule),
     data: { title: 'Web Interface Preferences', breadcrumb: 'Preferences' },
   },
   {
     path: 'apikeys',
-    loadChildren: './pages/api-keys/api-keys.module#ApiKeysModule',
+    loadChildren: () => import('./pages/api-keys/api-keys.module').then((module) => module.ApiKeysModule),
     data: { title: 'API Keys', breadcrumb: 'API Keys' },
   },
   {
     path: 'data-protection',
-    loadChildren: './pages/data-protection/data-protection.module#DataProtectionModule',
+    loadChildren: () => import('./pages/data-protection/data-protection.module').then((module) => module.DataProtectionModule),
     data: { title: 'Data Protection', breadcrumb: 'Data Protection' },
   },
   {
     path: 'credentials',
-    loadChildren: './pages/credentials/credentials.module#CredentialsModule',
+    loadChildren: () => import('./pages/credentials/credentials.module').then((module) => module.CredentialsModule),
     data: { title: 'Credentials', breadcrumb: 'Credentials' },
   },
   ],

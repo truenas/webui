@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { CoreEvent } from 'app/interfaces/events';
-import { Option } from 'app/interfaces/option.interface';
-import * as moment from 'moment-timezone';
-import { PreferencesService } from 'app/core/services/preferences.service';
-import { SystemGeneralService } from '.';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { format, utcToZonedTime } from 'date-fns-tz';
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core.service';
+import { PreferencesService } from 'app/core/services/preferences.service';
+import { CoreEvent } from 'app/interfaces/events';
+import { Option } from 'app/interfaces/option.interface';
 import { T } from 'app/translate-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { SystemGeneralService } from '.';
 
 @UntilDestroy()
 @Injectable()
@@ -15,7 +15,7 @@ export class LocaleService {
   t24 = T('(24 Hours)');
   timeZone: string;
   isWaiting = false;
-  dateFormat = 'YYYY-MM-DD';
+  dateFormat = 'yyyy-MM-dd';
   timeFormat = 'HH:mm:ss';
   dateTimeFormatChange$ = new Subject();
   target: Subject<CoreEvent> = new Subject();
@@ -26,10 +26,10 @@ export class LocaleService {
       this.timeZone = res.timezone;
     });
     if (window.localStorage.dateFormat) {
-      this.dateFormat = window.localStorage.getItem('dateFormat');
+      this.dateFormat = this.formatDateTimeToDateFns(window.localStorage.getItem('dateFormat'));
     }
     if (window.localStorage.timeFormat) {
-      this.timeFormat = window.localStorage.getItem('timeFormat');
+      this.timeFormat = this.formatDateTimeToDateFns(window.localStorage.getItem('timeFormat'));
     }
     this.getPrefs();
   }
@@ -42,76 +42,79 @@ export class LocaleService {
           this.target.next({ name: 'SubmitComplete', sender: this });
           this.isWaiting = false;
         }
-        this.dateFormat = evt.data.dateFormat;
-        this.timeFormat = evt.data.timeFormat;
+        this.dateFormat = this.formatDateTimeToDateFns(evt.data.dateFormat);
+        this.timeFormat = this.formatDateTimeToDateFns(evt.data.timeFormat);
         this.storeDateTimeFormat(this.dateFormat, this.timeFormat);
         this.dateTimeFormatChange$.next();
       });
   }
 
   getDateFormatOptions(tz?: string): Option[] {
+    let date = new Date();
     if (tz) {
-      moment.tz.setDefault(tz);
+      date = utcToZonedTime(new Date().valueOf(), tz);
     }
+
     return [
-      { label: moment().format('YYYY-MM-DD'), value: 'YYYY-MM-DD' },
-      { label: moment().format('MMMM D, YYYY'), value: 'MMMM D, YYYY' },
-      { label: moment().format('D MMMM, YYYY'), value: 'D MMMM, YYYY' },
-      { label: moment().format('MMM D, YYYY'), value: 'MMM D, YYYY' },
-      { label: moment().format('D MMM YYYY'), value: 'D MMM YYYY' },
-      { label: moment().format('MM/DD/YYYY'), value: 'MM/DD/YYYY' },
-      { label: moment().format('DD/MM/YYYY'), value: 'DD/MM/YYYY' },
-      { label: moment().format('DD.MM.YYYY'), value: 'DD.MM.YYYY' },
+      { label: format(date, 'yyyy-MM-dd'), value: 'yyyy-MM-dd' },
+      { label: format(date, 'MMMM d, yyyy'), value: 'MMMM d, yyyy' },
+      { label: format(date, 'd MMMM, yyyy'), value: 'd MMMM, yyyy' },
+      { label: format(date, 'MMM d, yyyy'), value: 'MMM d, yyyy' },
+      { label: format(date, 'd MMM yyyy'), value: 'd MMM yyyy' },
+      { label: format(date, 'MM/dd/yyyy'), value: 'MM/dd/yyyy' },
+      { label: format(date, 'dd/MM/yyyy'), value: 'dd/MM/yyyy' },
+      { label: format(date, 'dd.MM.yyyy'), value: 'dd.MM.yyyy' },
     ];
   }
 
   getTimeFormatOptions(tz?: string): Option[] {
+    let date = new Date();
     if (tz) {
-      moment.tz.setDefault(tz);
+      date = utcToZonedTime(new Date().valueOf(), tz);
     }
     return [
-      { label: `${moment().format('HH:mm:ss')} ${this.t24}`, value: 'HH:mm:ss' },
-      { label: moment().format('hh:mm:ss a'), value: 'hh:mm:ss a' },
-      { label: moment().format('hh:mm:ss A'), value: 'hh:mm:ss A' },
+      { label: `${format(date, 'HH:mm:ss')} ${this.t24}`, value: 'HH:mm:ss' },
+      { label: format(date, 'hh:mm:ss aaaaa\'m\''), value: 'hh:mm:ss aaaaa\'m\'' },
+      { label: format(date, 'hh:mm:ss aa'), value: 'hh:mm:ss aa' },
     ];
   }
 
   formatDateTime(date: Date, tz?: string): string {
-    tz ? moment.tz.setDefault(tz) : moment.tz.setDefault(this.timeZone);
-    return moment(date).format(`${this.dateFormat} ${this.timeFormat}`);
+    if (tz) {
+      date = utcToZonedTime(date.valueOf(), tz);
+    } else if (this.timeZone) {
+      date = utcToZonedTime(date.valueOf(), this.timeZone);
+    }
+
+    return format(date, `${this.dateFormat} ${this.timeFormat}`);
   }
 
   formatDateTimeWithNoTz(date: Date): string {
-    moment.tz.setDefault('');
-    return moment(date).format(`${this.dateFormat} ${this.timeFormat}`);
+    try {
+      return format(date.valueOf(), `${this.dateFormat} ${this.timeFormat}`);
+    } catch (e) {
+      return 'Invalid date';
+    }
   }
 
   getTimeOnly(date: Date, seconds = true, tz?: string): string {
-    tz ? moment.tz.setDefault(tz) : moment.tz.setDefault(this.timeZone);
-    let format: string;
-    if (!seconds) {
-      switch (this.timeFormat) {
-        case 'HH:mm:ss':
-          format = 'HH:mm';
-          break;
-        case 'hh:mm:ss a':
-          format = 'hh:mm a';
-          break;
-        case 'hh:mm:ss A':
-          format = 'hh:mm A';
-          break;
-        default:
-          format = this.timeFormat;
-      }
-    } else {
-      format = this.timeFormat;
+    if (tz) {
+      date = utcToZonedTime(date.valueOf(), tz);
+    } else if (this.timeZone) {
+      date = utcToZonedTime(date.valueOf(), this.timeZone);
     }
-    return moment(date).format(format);
+    let formatStr: string;
+    formatStr = this.timeFormat;
+    if (!seconds) {
+      formatStr = formatStr.replace(':ss', '');
+    }
+
+    return format(date, formatStr);
   }
 
   saveDateTimeFormat(dateFormat: any, timeFormat: any): void {
-    this.dateFormat = dateFormat;
-    this.timeFormat = timeFormat;
+    this.dateFormat = this.formatDateTimeToDateFns(dateFormat);
+    this.timeFormat = this.formatDateTimeToDateFns(timeFormat);
     this.storeDateTimeFormat(this.dateFormat, this.timeFormat);
     this.dateTimeFormatChange$.next();
 
@@ -145,10 +148,13 @@ export class LocaleService {
   }
 
   getDateAndTime(tz?: string): [string, string] {
+    let date = new Date();
     if (tz) {
-      moment.tz.setDefault(tz);
+      date = utcToZonedTime(new Date().valueOf(), tz);
+    } else if (this.timeZone) {
+      date = utcToZonedTime(new Date().valueOf(), this.timeZone);
     }
-    return [moment().format(this.dateFormat), moment().format(this.timeFormat)];
+    return [format(date, `${this.dateFormat}`), format(date, `${this.timeFormat}`)];
   }
 
   // Translates moment.js format to angular template format for use in special cases such as form-scheduler
@@ -172,5 +178,18 @@ export class LocaleService {
 
     const buildTimeInMillis = parseInt(buildTime);
     return new Date(buildTimeInMillis).getFullYear().toString();
+  }
+
+  formatDateTimeToDateFns(format: string): string {
+    let dateFnsFormat = format
+      .replace('YYYY', 'yyyy')
+      .replace('YY', 'y')
+      .replace('DD', 'dd')
+      .replace('D', 'd')
+      .replace(' A', ' aa');
+    if (!dateFnsFormat.includes('aa')) {
+      dateFnsFormat = dateFnsFormat.replace(' a', ' aaaaa\'m\'');
+    }
+    return dateFnsFormat;
   }
 }

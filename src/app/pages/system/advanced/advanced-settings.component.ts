@@ -1,18 +1,30 @@
+import { DatePipe } from '@angular/common';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {
   Component, OnInit,
 } from '@angular/core';
-import { Router } from '@angular/router';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { DatePipe } from '@angular/common';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { CoreEvent } from 'app/interfaces/events';
+import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
-import { Subject } from 'rxjs';
-
 import * as cronParser from 'cron-parser';
-import { Moment } from 'moment';
-
+import { Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { CoreService } from 'app/core/services/core.service';
+import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { CoreEvent } from 'app/interfaces/events';
+import { GpuDevice } from 'app/interfaces/gpu-device.interface';
+import { EmptyType, EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { InputTableConf } from 'app/pages/common/entity/table/table.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
+import { InitshutdownFormComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-form/initshutdown-form.component';
+import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import {
   WebSocketService,
   SystemGeneralService,
@@ -20,30 +32,15 @@ import {
   LanguageService,
   StorageService,
   UserService,
-} from '../../../services';
-import { CoreService } from 'app/core/services/core.service';
-import { ModalService } from '../../../services/modal.service';
-import { helptext_system_general as helptext } from 'app/helptext/system/general';
-import { helptext_system_advanced } from 'app/helptext/system/advanced';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+} from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
+import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.component';
+import { ConsoleFormComponent } from './console-form/console-form.component';
+import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { KernelFormComponent } from './kernel-form/kernel-form.component';
 import { SyslogFormComponent } from './syslog-form/syslog-form.component';
-import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
-import { InitshutdownFormComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-form/initshutdown-form.component';
-import { InputTableConf } from 'app/pages/common/entity/table/table.component';
-import { EmptyConfig } from '../../common/entity/entity-empty/entity-empty.component';
-import { ConsoleFormComponent } from './console-form/console-form.component';
-import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.component';
-import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { GpuDevice } from 'app/interfaces/gpu-device.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 enum CardId {
   Console = 'console',
@@ -448,67 +445,68 @@ export class AdvancedSettingsComponent implements OnInit {
         }
       }
       this.dialog
-        .confirm(
-          helptext_system_advanced.dialog_generate_debug_title,
-          helptext_system_advanced.dialog_generate_debug_message,
-          true,
-          helptext_system_advanced.dialog_button_ok,
-        )
-        .pipe(untilDestroyed(this)).subscribe((ires: boolean) => {
-          if (ires) {
-            this.ws.call('core.download', ['system.debug', [], fileName]).pipe(untilDestroyed(this)).subscribe(
-              (res: any) => {
-                const url = res[1];
-                let failed = false;
-                this.storage.streamDownloadFile(this.http, url, fileName, mimeType).pipe(untilDestroyed(this)).subscribe(
-                  (file) => {
-                    this.storage.downloadBlob(file, fileName);
-                  },
-                  (err) => {
-                    failed = true;
-                    if (this.dialogRef) {
-                      this.dialogRef.close();
-                    }
-                    if (err instanceof HttpErrorResponse) {
-                      this.dialog.errorReport(
-                        helptext_system_advanced.debug_download_failed_title,
-                        helptext_system_advanced.debug_download_failed_message,
-                        err.message,
-                      );
-                    } else {
-                      this.dialog.errorReport(
-                        helptext_system_advanced.debug_download_failed_title,
-                        helptext_system_advanced.debug_download_failed_message,
-                        err,
-                      );
-                    }
-                  },
-                );
-                if (!failed) {
-                  let reported = false; // prevent error from popping up multiple times
-                  this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-                    data: { title: T('Saving Debug') },
-                    disableClose: true,
-                  });
-                  this.dialogRef.componentInstance.jobId = res[0];
-                  this.dialogRef.componentInstance.wsshow();
-                  this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+        .confirm({
+          title: helptext_system_advanced.dialog_generate_debug_title,
+          message: helptext_system_advanced.dialog_generate_debug_message,
+          hideCheckBox: true,
+          buttonMsg: helptext_system_advanced.dialog_button_ok,
+        })
+        .pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe(() => {
+          this.ws.call('core.download', ['system.debug', [], fileName]).pipe(untilDestroyed(this)).subscribe(
+            (res) => {
+              const url = res[1];
+              let failed = false;
+              this.storage.streamDownloadFile(this.http, url, fileName, mimeType).pipe(untilDestroyed(this)).subscribe(
+                (file) => {
+                  this.storage.downloadBlob(file, fileName);
+                },
+                (err) => {
+                  failed = true;
+                  if (this.dialogRef) {
                     this.dialogRef.close();
-                  });
-                  this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((save_debug_err: any) => {
-                    this.dialogRef.close();
-                    if (!reported) {
-                      new EntityUtils().handleWSError(this, save_debug_err, this.dialog);
-                      reported = true;
-                    }
-                  });
-                }
-              },
-              (err) => {
-                new EntityUtils().handleWSError(this, err, this.dialog);
-              },
-            );
-          }
+                  }
+                  if (err instanceof HttpErrorResponse) {
+                    this.dialog.errorReport(
+                      helptext_system_advanced.debug_download_failed_title,
+                      helptext_system_advanced.debug_download_failed_message,
+                      err.message,
+                    );
+                  } else {
+                    this.dialog.errorReport(
+                      helptext_system_advanced.debug_download_failed_title,
+                      helptext_system_advanced.debug_download_failed_message,
+                      err,
+                    );
+                  }
+                },
+              );
+              if (!failed) {
+                let reported = false; // prevent error from popping up multiple times
+                this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+                  data: { title: T('Saving Debug') },
+                  disableClose: true,
+                });
+                this.dialogRef.componentInstance.jobId = res[0];
+                this.dialogRef.componentInstance.wsshow();
+                this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+                  this.dialogRef.close();
+                });
+                this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((saveDebugErr: any) => {
+                  this.dialogRef.close();
+                  if (!reported) {
+                    new EntityUtils().handleWSError(this, saveDebugErr, this.dialog);
+                    reported = true;
+                  }
+                });
+              }
+            },
+            (err) => {
+              new EntityUtils().handleWSError(this, err, this.dialog);
+            },
+          );
         });
     });
   }
@@ -580,7 +578,7 @@ export class AdvancedSettingsComponent implements OnInit {
 
       /* Weird type assertions are due to a type definition error in the cron-parser library */
       job.next_run = ((cronParser.parseExpression(job.cron_schedule, { iterator: true }).next() as unknown) as {
-        value: { _date: Moment };
+        value: { _date: any };
       }).value._date.fromNow();
 
       return job;

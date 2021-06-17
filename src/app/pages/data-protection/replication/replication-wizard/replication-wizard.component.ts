@@ -1,23 +1,16 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
-import { Option } from 'app/interfaces/option.interface';
-import { Schedule } from 'app/interfaces/schedule.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-
+import { Validators, FormArray, FormGroup } from '@angular/forms';
+import {
+  UntilDestroy, untilDestroyed,
+} from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
-
 import { CipherType } from 'app/enums/cipher-type.enum';
 import { DatasetSource } from 'app/enums/dataset-source.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
@@ -25,8 +18,17 @@ import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication-wizard';
 import sshConnectionsHelptex from 'app/helptext/system/ssh-connections';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { Schedule } from 'app/interfaces/schedule.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
@@ -42,7 +44,6 @@ import {
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
@@ -50,15 +51,15 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [KeychainCredentialService, ReplicationService, TaskService, DatePipe, EntityFormService],
 })
-export class ReplicationWizardComponent {
+export class ReplicationWizardComponent implements WizardConfiguration {
   title = T('Replication Task Wizard');
   isLinear = true;
   summaryTitle = T('Replication Summary');
   pk: number;
   saveSubmitText = T('START REPLICATION');
 
-  protected entityWizard: any;
-  protected custActions: any[] = [{
+  protected entityWizard: EntityWizardComponent;
+  custActions: any[] = [{
     id: 'advanced_add',
     name: T('Advanced Replication Creation'),
     function: () => {
@@ -69,7 +70,7 @@ export class ReplicationWizardComponent {
   }];
   protected namesInUse: string[] = [];
   protected defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
-  protected wizardConfig: Wizard[] = [
+  wizardConfig: Wizard[] = [
     {
       label: helptext.step1_label,
       fieldSets: [
@@ -838,16 +839,16 @@ export class ReplicationWizardComponent {
       ssh_credentials_target_field.options.push({ label: T('Create New'), value: 'NEW' });
     });
 
-    this.entityWizard.formArray.controls[0].controls['exist_replication'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([0]).get('exist_replication').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value !== null) {
         this.loadOrClearReplicationTask(value);
       }
     });
-    this.entityWizard.formArray.controls[0].controls['source_datasets'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.entityWizard.formArray.get([0]).get('source_datasets').valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.genTaskName();
       this.getSnapshots();
     });
-    this.entityWizard.formArray.controls[0].controls['target_dataset'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.entityWizard.formArray.get([0]).get('target_dataset').valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.genTaskName();
     });
 
@@ -855,50 +856,57 @@ export class ReplicationWizardComponent {
       const credentialName = 'ssh_credentials_' + i;
       const datasetName = i === 'source' ? 'source_datasets' : 'target_dataset';
       const datasetFrom = datasetName + '_from';
-      this.entityWizard.formArray.controls[0].controls[datasetFrom].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
-        if (value === DatasetSource.Remote) {
-          if (datasetFrom === 'source_datasets_from') {
-            this.entityWizard.formArray.controls[0].controls['target_dataset_from'].setValue(DatasetSource.Local);
-            this.setDisable('target_dataset_from', true, false, 0);
+      this.entityWizard.formArray.get([0]).get(datasetFrom).valueChanges
+        .pipe(untilDestroyed(this))
+        .subscribe((value: any) => {
+          if (value === DatasetSource.Remote) {
+            if (datasetFrom === 'source_datasets_from') {
+              this.entityWizard.formArray.get([0]).get('target_dataset_from').setValue(DatasetSource.Local);
+              this.setDisable('target_dataset_from', true, false, 0);
+            }
+            const disabled = !this.entityWizard.formArray.get([0]).get(credentialName).value;
+            this.setDisable(datasetName, disabled, false, 0);
+          } else {
+            if (datasetFrom === 'source_datasets_from' && this.entityWizard.formArray.get([0]).get('target_dataset_from').disabled) {
+              this.setDisable('target_dataset_from', false, false, 0);
+            }
+            this.setDisable(datasetName, false, false, 0);
           }
-          const disabled = !this.entityWizard.formArray.controls[0].controls[credentialName].value;
-          this.setDisable(datasetName, disabled, false, 0);
-        } else {
-          if (datasetFrom === 'source_datasets_from' && this.entityWizard.formArray.controls[0].controls['target_dataset_from'].disabled) {
-            this.setDisable('target_dataset_from', false, false, 0);
-          }
-          this.setDisable(datasetName, false, false, 0);
-        }
-      });
+        });
 
-      this.entityWizard.formArray.controls[0].controls[credentialName].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
-        if (value === 'NEW' && this.entityWizard.formArray.controls[0].controls[datasetFrom].value === DatasetSource.Remote) {
-          this.createSSHConnection(credentialName);
-          this.setDisable(datasetName, false, false, 0);
-        } else {
-          const fieldConfig = i === 'source' ? this.source_fieldSet.config : this.target_fieldSet.config;
-          const explorerComponent = _.find(fieldConfig, { name: datasetName }).customTemplateStringOptions.explorerComponent;
-          if (explorerComponent) {
-            explorerComponent.nodes = [{
-              mountpoint: explorerComponent.config.initial,
-              name: explorerComponent.config.initial,
-              hasChildren: true,
-            }];
-            this.entityWizard.formArray.controls[0].controls[datasetName].setValue('');
+      this.entityWizard.formArray.get([0]).get(credentialName).valueChanges
+        .pipe(untilDestroyed(this))
+        .subscribe((value: any) => {
+          if (value === 'NEW' && this.entityWizard.formArray.get([0]).get(datasetFrom).value === DatasetSource.Remote) {
+            this.createSSHConnection(credentialName);
+            this.setDisable(datasetName, false, false, 0);
+          } else {
+            const fieldConfig = i === 'source' ? this.source_fieldSet.config : this.target_fieldSet.config;
+            const explorerComponent = _.find(
+              fieldConfig,
+              { name: datasetName },
+            ).customTemplateStringOptions.explorerComponent;
+            if (explorerComponent) {
+              explorerComponent.nodes = [{
+                mountpoint: explorerComponent.config.initial,
+                name: explorerComponent.config.initial,
+                hasChildren: true,
+              }];
+              this.entityWizard.formArray.get([0]).get(datasetName).setValue('');
+            }
+            this.setDisable(datasetName, false, false, 0);
           }
-          this.setDisable(datasetName, false, false, 0);
-        }
-      });
+        });
     }
 
-    this.entityWizard.formArray.controls[0].controls['recursive'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([0]).get('recursive').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       const explorerComponent = _.find(this.source_fieldSet.config, { name: 'source_datasets' }).customTemplateStringOptions;
       if (explorerComponent) {
         explorerComponent.useTriState = value;
       }
     });
 
-    this.entityWizard.formArray.controls[0].controls['custom_snapshots'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([0]).get('custom_snapshots').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.setDisable('naming_schema', !value, !value, 0);
       if (!value) {
         this.getSnapshots();
@@ -916,21 +924,21 @@ export class ReplicationWizardComponent {
   }
 
   step1Init(): void {
-    this.entityWizard.formArray.controls[1].controls['retention_policy'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([1]).get('retention_policy').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       const disable = value === RetentionPolicy.Source;
       if (disable) {
-        this.entityWizard.formArray.controls[1].controls['lifetime_value'].disable();
-        this.entityWizard.formArray.controls[1].controls['lifetime_unit'].disable();
+        this.entityWizard.formArray.get([1]).get('lifetime_value').disable();
+        this.entityWizard.formArray.get([1]).get('lifetime_unit').disable();
       } else {
-        this.entityWizard.formArray.controls[1].controls['lifetime_value'].enable();
-        this.entityWizard.formArray.controls[1].controls['lifetime_unit'].enable();
+        this.entityWizard.formArray.get([1]).get('lifetime_value').enable();
+        this.entityWizard.formArray.get([1]).get('lifetime_unit').enable();
       }
     });
   }
 
   getSourceChildren(node: any): Promise<any> {
-    const fromLocal = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === DatasetSource.Local;
-    const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value;
+    const fromLocal = this.entityWizard.formArray.get([0]).get('source_datasets_from').value === DatasetSource.Local;
+    const sshCredentials = this.entityWizard.formArray.get([0]).get('ssh_credentials_source').value;
 
     if (fromLocal) {
       return new Promise((resolve) => {
@@ -938,7 +946,9 @@ export class ReplicationWizardComponent {
       });
     }
     if (sshCredentials === 'NEW') {
-      return this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].setErrors({});
+      return new Promise((resolve) => {
+        resolve(this.entityWizard.formArray.get([0]).get('ssh_credentials_source').setErrors({}));
+      });
     }
     return new Promise((resolve) => {
       this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
@@ -953,15 +963,17 @@ export class ReplicationWizardComponent {
   }
 
   getTargetChildren(node: any): Promise<any> {
-    const fromLocal = this.entityWizard.formArray.controls[0].controls['target_dataset_from'].value === DatasetSource.Local;
-    const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].value;
+    const fromLocal = this.entityWizard.formArray.get([0]).get('target_dataset_from').value === DatasetSource.Local;
+    const sshCredentials = this.entityWizard.formArray.get([0]).get('ssh_credentials_target').value;
     if (fromLocal) {
       return new Promise((resolve) => {
         resolve(this.entityFormService.getPoolDatasets());
       });
     }
     if (sshCredentials === 'NEW') {
-      return this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].setErrors({});
+      return new Promise((resolve) => {
+        resolve(this.entityWizard.formArray.get([0]).get('ssh_credentials_target').setErrors({}));
+      });
     }
     return new Promise((resolve) => {
       this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
@@ -979,7 +991,9 @@ export class ReplicationWizardComponent {
     const control: any = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
     control['isHidden'] = isHidden;
     control.disabled = disabled;
-    disabled ? this.entityWizard.formArray.controls[stepIndex].controls[field].disable() : this.entityWizard.formArray.controls[stepIndex].controls[field].enable();
+    disabled
+      ? this.entityWizard.formArray.get([stepIndex]).get(field).disable()
+      : this.entityWizard.formArray.get([stepIndex]).get(field).enable();
   }
 
   loadReplicationTask(task: any): void {
@@ -1009,7 +1023,7 @@ export class ReplicationWizardComponent {
       'target_dataset',
     ];
     for (const i of controls) {
-      const ctrl = this.entityWizard.formArray.controls[0].controls[i];
+      const ctrl = this.entityWizard.formArray.get([0]).get(i);
       if (ctrl && !ctrl.disabled) {
         ctrl.setValue(task[i]);
       }
@@ -1032,7 +1046,7 @@ export class ReplicationWizardComponent {
     }
     // periodic_snapshot_tasks
     for (const i of ['schedule_method', 'schedule_picker', 'retention_policy', 'lifetime_value', 'lifetime_unit']) {
-      const ctrl = this.entityWizard.formArray.controls[1].controls[i];
+      const ctrl = this.entityWizard.formArray.get([1]).get(i);
       if (ctrl && !ctrl.disabled) {
         ctrl.setValue(task[i]);
       }
@@ -1041,11 +1055,11 @@ export class ReplicationWizardComponent {
 
   clearReplicationTask(): void {
     this.entityWizard.formArray.reset();
-    for (let i = 0; i < this.entityWizard.formArray.controls.length; i++) {
-      for (const item in this.entityWizard.formArray.controls[i].controls) {
+    for (let i = 0; i < (this.entityWizard.formArray as FormArray).length; i++) {
+      for (const item in (this.entityWizard.formArray.get([i]) as FormGroup).controls) {
         const itemConf = _.find(this.wizardConfig[i].fieldConfig, { name: item });
         if (itemConf.value !== undefined && item !== 'exist_replication') {
-          this.entityWizard.formArray.controls[i].controls[item].setValue(itemConf.value);
+          this.entityWizard.formArray.get([i]).get(item).setValue(itemConf.value);
         }
       }
     }
@@ -1350,7 +1364,7 @@ export class ReplicationWizardComponent {
                   const ssh_credentials_target_field = _.find(self.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' });
                   ssh_credentials_source_field.options.push({ label: res.name + ' (New Created)', value: res.id });
                   ssh_credentials_target_field.options.push({ label: res.name + ' (New Created)', value: res.id });
-                  self.entityWizard.formArray.controls[0].controls[activedField].setValue(res.id);
+                  self.entityWizard.formArray.get([0]).get([activedField]).setValue(res.id);
                 }
               },
               (err) => {
@@ -1379,39 +1393,39 @@ export class ReplicationWizardComponent {
   }
 
   genTaskName(): void {
-    const source = this.entityWizard.formArray.controls[0].controls['source_datasets'].value || [];
-    const target = this.entityWizard.formArray.controls[0].controls['target_dataset'].value;
+    const source = this.entityWizard.formArray.get([0]).get('source_datasets').value || [];
+    const target = this.entityWizard.formArray.get([0]).get('target_dataset').value;
     let suggestName = '';
     if (source.length > 3) {
       suggestName = source[0] + ',...,' + source[source.length - 1] + ' - ' + target;
     } else {
       suggestName = source.join(',') + ' - ' + target;
     }
-    this.entityWizard.formArray.controls[0].controls['name'].setValue(suggestName);
+    this.entityWizard.formArray.get([0]).get('name').setValue(suggestName);
   }
 
   getSnapshots(): void {
-    let transport = this.entityWizard.formArray.controls[0].controls['transport'].enabled
-      ? this.entityWizard.formArray.controls[0].controls['transport'].value
+    let transport = this.entityWizard.formArray.get([0]).get('transport').enabled
+      ? this.entityWizard.formArray.get([0]).get('transport').value
       : TransportMode.Local;
     // count local snapshots if transport is SSH/SSH-NETCAT, and direction is PUSH
-    if (this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].value) {
+    if (this.entityWizard.formArray.get([0]).get('ssh_credentials_target').value) {
       transport = TransportMode.Local;
     }
     const payload = [
-      this.entityWizard.formArray.controls[0].controls['source_datasets'].value || [],
-      (this.entityWizard.formArray.controls[0].controls['naming_schema'].enabled && this.entityWizard.formArray.controls[0].controls['naming_schema'].value)
-        ? this.entityWizard.formArray.controls[0].controls['naming_schema'].value.split(' ')
+      this.entityWizard.formArray.get([0]).get('source_datasets').value || [],
+      (this.entityWizard.formArray.get([0]).get('naming_schema').enabled && this.entityWizard.formArray.get([0]).get('naming_schema').value)
+        ? this.entityWizard.formArray.get([0]).get('naming_schema').value.split(' ')
         : [this.defaultNamingSchema],
       transport,
-      transport === TransportMode.Local ? null : this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value,
+      transport === TransportMode.Local ? null : this.entityWizard.formArray.get([0]).get('ssh_credentials_source').value,
     ];
 
     if (payload[0].length > 0) {
       this.ws.call('replication.count_eligible_manual_snapshots', payload).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.eligibleSnapshots = res.eligible;
-          const isPush = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === DatasetSource.Local;
+          const isPush = this.entityWizard.formArray.get([0]).get('source_datasets_from').value === DatasetSource.Local;
           let spanClass = 'info-paragraph';
           let snapexpl = '';
           if (res.eligible === 0) {

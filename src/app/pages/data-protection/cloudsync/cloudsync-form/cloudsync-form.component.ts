@@ -1,30 +1,28 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-
+import { Router, ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as filesize from 'filesize';
+import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
-import * as _ from 'lodash';
-
+import { Direction } from 'app/enums/direction.enum';
+import { TransferMode } from 'app/enums/transfer-mode.enum';
+import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   WebSocketService, DialogService, CloudCredentialService, AppLoaderService, JobService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
-import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { ModalService } from 'app/services/modal.service';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { TransferMode } from 'app/enums/transfer-mode.enum';
-import { Direction } from 'app/enums/direction.enum';
-import { Schedule } from 'app/interfaces/schedule.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as filesize from 'filesize';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -388,13 +386,16 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
   protected providers: any;
   protected taskSchemas = ['encryption', 'fast_list', 'chunk_size', 'storage_class'];
-  custActions: any[] = [
+  custActions = [
     {
       id: 'dry_run',
       name: helptext.action_button_dry_run,
       function: () => {
         const payload = this.submitDataHandler(this.formGroup.value);
-        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: helptext.job_dialog_title_dry_run }, disableClose: true });
+        const dialogRef = this.matDialog.open(EntityJobComponent, {
+          data: { title: helptext.job_dialog_title_dry_run },
+          disableClose: true,
+        });
         dialogRef.componentInstance.setCall('cloudsync.sync_onetime', [payload, { dry_run: true }]);
         dialogRef.componentInstance.showAbortButton = true;
         dialogRef.componentInstance.showRealtimeLogs = true;

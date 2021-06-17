@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
-import { ServiceName } from 'app/enums/service-name.enum';
-import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { helptext_sharing_webdav, shared } from '../../../../helptext/sharing';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import * as _ from 'lodash';
-import { AppLoaderService, DialogService, WebSocketService } from '../../../../services';
 import { Router } from '@angular/router';
-import { T } from 'app/translate-marker';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { ServiceName } from 'app/enums/service-name.enum';
+import { helptext_sharing_webdav, shared } from 'app/helptext/sharing';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -111,7 +111,7 @@ export class WebdavFormComponent implements FormConfiguration {
             this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
               this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
                 this.loader.close();
-                this.dialog.Info(T('WebDAV') + shared.dialog_started_title, T('The WebDAV') + shared.dialog_started_message, '250px')
+                this.dialog.Info(T('WebDAV') + shared.dialog_started_title, T('The WebDAV') + shared.dialog_started_message, '250px', 'info')
                   .pipe(untilDestroyed(this)).subscribe(() => {});
               }, (err) => {
                 this.loader.close();

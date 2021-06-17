@@ -1,17 +1,15 @@
-import { CoreEvent } from 'app/interfaces/events';
 import { Container, Sprite } from 'pixi.js';
-import { Subject } from 'rxjs';
-import { ThemeUtils } from 'app/core/classes/theme-utils';
-import { DriveTray } from './drivetray';
-
-// TODO: See if can be removed.
-// eslint-disable-next-line unused-imports/no-unused-imports
-import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
-
 import {
   tween,
   easing,
 } from 'popmotion';
+import { Subject } from 'rxjs';
+import { ThemeUtils } from 'app/core/classes/theme-utils';
+import { CoreEvent } from 'app/interfaces/events';
+import { DriveTray } from './drivetray';
+// TODO: See if can be removed.
+// eslint-disable-next-line
+import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
 
 export interface Range {
   start: number;
@@ -145,7 +143,9 @@ export class ChassisView {
     for (let i = 0; i < this.totalDriveTrays; i++) {
       const slot: number = this.slotRange.start + i;
 
-      const dt = this.altDriveTraySlots.length > 0 && this.altDriveTraySlots.indexOf(slot) != -1 ? this.makeDriveTray(true) : this.makeDriveTray();
+      const dt = this.altDriveTraySlots.length > 0 && this.altDriveTraySlots.indexOf(slot) != -1
+        ? this.makeDriveTray(true)
+        : this.makeDriveTray();
       dt.id = slot.toString(); // Slot
 
       if (this.autoPosition) {

@@ -1,7 +1,7 @@
-import { DisplayObject } from './display-object';
-import { CoreService } from '../services/core.service';
-import { debounceTime } from 'rxjs/operators';
 import { tween } from 'popmotion';
+import { debounceTime } from 'rxjs/operators';
+import { CoreService } from '../services/core.service';
+import { DisplayObject } from './display-object';
 
 /*
    * Layout Object: A base class for
@@ -62,7 +62,6 @@ export class LayoutObject {
   contentSize: ElementDimensions;
 
   constructor(selector: string, messageBus: CoreService) {
-    // this.collection = []; //start with empty collection; ViewController creates the Layout but IMS creates the displayObjects
     this.collection = {};
     this.containerSelector = selector;
     this.margin = 15;
@@ -197,7 +196,10 @@ export class LayoutObject {
     }
   }
 
-  moveToScreenPosition(dragTarget: DisplayObject, index: number): void { // Move an existing DisplayObject to a new position.
+  /**
+   * Move an existing DisplayObject to a new position.
+   */
+  moveToScreenPosition(dragTarget: DisplayObject, index: number): void {
     const startX = dragTarget.x;
     const startY = dragTarget.y;
     const newX = this.screenPositions[index].left;
@@ -295,7 +297,10 @@ export class LayoutObject {
     this.reorderedCollection = newCollection;
   }
 
-  endInteractiveMovement(dragTarget: DisplayObject): void { // Complete and cleanup after item has been dropped to new location
+  /**
+   * Complete and cleanup after item has been dropped to new location.
+   */
+  endInteractiveMovement(dragTarget: DisplayObject): void {
     const index = this.reorderedCollection.indexOf(dragTarget.id);
     this.moveToScreenPosition(dragTarget, index);
     this.orderedCollection = this.reorderedCollection;

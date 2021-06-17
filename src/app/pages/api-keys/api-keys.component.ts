@@ -1,15 +1,15 @@
-import { Component } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
-import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { DialogService, WebSocketService } from '../../services';
-import { LocaleService } from '../../services/locale.service';
-import helptext from '../../helptext/api-keys';
-import { ConfirmDialog } from '../common/confirm-dialog/confirm-dialog.component';
-import { EntityUtils } from '../common/entity/utils';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import helptext from 'app/helptext/api-keys';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { DialogService, WebSocketService } from 'app/services';
+import { LocaleService } from 'app/services/locale.service';
+import { ConfirmDialog } from '../common/confirm-dialog/confirm-dialog.component';
+import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityUtils } from '../common/entity/utils';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +32,7 @@ export class ApiKeysComponent implements EntityTableConfig {
     { name: helptext.col_name, prop: 'name', always_display: true },
     { name: helptext.col_created_at, prop: 'created_time' },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -111,7 +111,7 @@ export class ApiKeysComponent implements EntityTableConfig {
     });
   }
 
-  doSubmit(entityDialogForm: any): void {
+  doSubmit(entityDialogForm: EntityDialogComponent<this>): void {
     const that = entityDialogForm.parent;
     if (that.currItem) {
       that.ws.call(that.editCall, [that.currItem.id, entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(

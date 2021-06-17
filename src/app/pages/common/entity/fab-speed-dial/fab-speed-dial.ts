@@ -1,4 +1,3 @@
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Component,
   Input,
@@ -17,6 +16,7 @@ import {
   HostListener,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 const Z_INDEX_ITEM = 23;
 
@@ -55,8 +55,10 @@ export class SmdFabSpeedDialTrigger {
 export class SmdFabSpeedDialActions implements AfterContentInit {
   @ContentChildren(MatButton) _buttons: QueryList<MatButton>;
 
-  constructor(@Inject(forwardRef(() => SmdFabSpeedDialComponent)) private _parent: SmdFabSpeedDialComponent, private renderer: Renderer2) {
-  }
+  constructor(
+    @Inject(forwardRef(() => SmdFabSpeedDialComponent)) private _parent: SmdFabSpeedDialComponent,
+    private renderer: Renderer2,
+  ) {}
 
   ngAfterContentInit(): void {
     this._buttons.changes.pipe(untilDestroyed(this)).subscribe(() => {
@@ -121,7 +123,8 @@ export class SmdFabSpeedDialActions implements AfterContentInit {
   }
 
   private changeElementStyle(elem: any, style: string, value: string): void {
-    // FIXME - Find a way to create a "wrapper" around the action button(s) provided by the user, so we don't change it's style tag
+    // FIXME - Find a way to create a "wrapper" around the action button(s) provided by the user,
+    // FIXME - so we don't change it's style tag
     this.renderer.setStyle(elem, style, value);
   }
 }

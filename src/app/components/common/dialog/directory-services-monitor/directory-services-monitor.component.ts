@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import {
   animate, state, style, transition, trigger,
 } from '@angular/animations';
-import { WebSocketService } from '../../../../services';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({

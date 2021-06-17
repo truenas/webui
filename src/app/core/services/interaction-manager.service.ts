@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import {
+  multicast,
+} from 'popmotion';
 import { CoreEvent } from 'app/interfaces/events';
 import { DisplayObject } from '../classes/display-object';
 import { LayoutObject } from '../classes/layout-object';
 import { CoreService } from './core.service';
-import {
-  multicast,
-} from 'popmotion';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface DisplayObjectRegistration {
   displayObject: DisplayObject;
@@ -140,7 +140,7 @@ export class InteractionManagerService {
   // Find the related Layout object for the displayObject if one exists
   getLayoutParent(displayObject: DisplayObject): LayoutObject {
     // let index = this.displayList.indexOf(displayObject);
-    const registration: DisplayObjectRegistration[] = this.displayList.filter((item) => item.displayObject == displayObject);
+    const registration = this.displayList.filter((item) => item.displayObject == displayObject);
     if (registration.length == 0) {
       console.warn('DEBUG: The DisplayObject has not been registered');
     } else if (registration.length > 1) {

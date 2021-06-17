@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { EntityFormService } from '../../services/entity-form.service';
+import { TranslateService } from '@ngx-translate/core';
 import {
   TREE_ACTIONS, KEYS, IActionMapping,
 } from 'angular-tree-component';
-import { TranslateService } from '@ngx-translate/core';
-
-import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
-import { T } from '../../../../../../translate-marker';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'form-explorer',
@@ -111,16 +110,23 @@ export class FormExplorerComponent implements Field, OnInit {
 
   getChildren(node: any): Promise<any> {
     return new Promise((resolve) => {
-      if (this.config.explorerType === 'zvol') {
-        resolve(this.entityFormService.getDatasetsAndZvolsListChildren());
-      } else if (this.config.explorerType === 'directory') {
-        resolve(this.entityFormService.getFilesystemListdirChildren(node, this.config.explorerType, this.config.hideDirs));
-      } else if (this.config.explorerType === 'file') {
-        resolve(this.entityFormService.getFilesystemListdirChildren(node));
-      } else if (this.config.explorerType === 'dataset') {
-        resolve(this.entityFormService.getPoolDatasets(this.config.explorerParam ? this.config.explorerParam : []));
-      } else {
-        resolve(this.entityFormService.getFilesystemListdirChildren(node));
+      switch (this.config.explorerType) {
+        case 'zvol':
+          resolve(this.entityFormService.getDatasetsAndZvolsListChildren());
+          break;
+        case 'directory':
+          resolve(
+            this.entityFormService.getFilesystemListdirChildren(node, this.config.explorerType, this.config.hideDirs),
+          );
+          break;
+        case 'file':
+          resolve(this.entityFormService.getFilesystemListdirChildren(node));
+          break;
+        case 'dataset':
+          resolve(this.entityFormService.getPoolDatasets(this.config.explorerParam ? this.config.explorerParam : []));
+          break;
+        default:
+          resolve(this.entityFormService.getFilesystemListdirChildren(node));
       }
     });
   }
@@ -158,7 +164,10 @@ export class FormExplorerComponent implements Field, OnInit {
       }
       if (selectedTreeNodes[i].parent.isAllSelected && this.config.tristate) {
         let parent = selectedTreeNodes[i];
-        while (parent && parent.isRoot != true && parent.parent && !parent.parent.isRoot && parent.parent.isAllSelected) {
+        while (
+          parent && parent.isRoot != true
+          && parent.parent && !parent.parent.isRoot && parent.parent.isAllSelected
+        ) {
           parent = parent.parent;
         }
         if (res.indexOf(parent.data.name) === -1) {
@@ -185,7 +194,11 @@ export class FormExplorerComponent implements Field, OnInit {
   }
 
   onToggle(event: any): void {
-    if (event.isExpanded && this.customTemplateStringOptions.useCheckbox && this.group.controls[this.config.name].value) {
+    if (
+      event.isExpanded
+      && this.customTemplateStringOptions.useCheckbox
+      && this.group.controls[this.config.name].value
+    ) {
       for (const item of (event.node.data.children || [])) {
         if (this.group.controls[this.config.name].value.indexOf(item.name) > -1) {
           const target = event.treeModel.getNodeById(item.uuid);

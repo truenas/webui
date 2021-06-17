@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { T } from '../../translate-marker';
+import { T } from 'app/translate-marker';
 
 interface IMenuItem {
   type: string; // Possible values: link/slideOut/icon/separator/extLink
@@ -81,24 +81,6 @@ export class NavigationService {
       // { name: T('KMIP'), state: 'kmip', disabled: true },
     ],
   },
-  {
-    name: T('Applications'),
-    type: 'link',
-    tooltip: T('Applications'),
-    icon: 'apps',
-    state: 'plugins', // rename to applications?
-  },
-  // {
-  //   name: T('Virtualization'),
-  //   type: 'slideOut',
-  //   tooltip: T('Virtualization'),
-  //   icon: 'computer',
-  //   state: 'virtualization',
-  //   sub: [
-  //     { name: T('Jails'), state: 'jails' },
-  //     { name: T('Virtual Machines'), state: 'vm' },
-  //   ]
-  // },
   {
     name: T('Virtualization'),
     type: 'link',

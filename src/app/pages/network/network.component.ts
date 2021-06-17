@@ -2,20 +2,19 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import * as ipRegex from 'ip-regex';
+import { Subject } from 'rxjs';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { CoreEvent } from 'app/interfaces/events';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AppTableAction } from 'app/pages/common/entity/table/table.component';
-import * as ipRegex from 'ip-regex';
-import { Subject } from 'rxjs';
-import { ProductType } from '../../enums/product-type.enum';
-import helptext from '../../helptext/network/interfaces/interfaces-list';
-
 import {
   AppLoaderService,
   DialogService,
@@ -23,9 +22,9 @@ import {
   ServicesService,
   StorageService,
   WebSocketService,
-} from '../../services';
-import { ModalService } from '../../services/modal.service';
-import { T } from '../../translate-marker';
+} from 'app/services';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 import { EntityUtils } from '../common/entity/utils';
 import { CardWidgetConf } from './card-widget/card-widget.component';
 import { ConfigurationComponent } from './forms/configuration.component';
@@ -390,8 +389,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
             this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: false }, sender: this });
             this.interfaceTableConf.tableComponent.getData();
             this.loader.close();
-            // can't decide if this is worth keeping since the checkin happens intantaneously
-            // this.dialog.Info(helptext.commit_changes_title, helptext.changes_saved_successfully, '300px', "info", true);
             this.checkWaitingCheckin();
           }, (err) => {
             this.loader.close();
@@ -436,6 +433,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       this.dialog.Info(
         helptext.checkin_complete_title,
         helptext.checkin_complete_message,
+        '500px',
+        'info',
       );
       this.hasPendingChanges = false;
       this.checkinWaiting = false;
@@ -482,14 +481,26 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   refreshNetworkForms(): void {
     this.addComponent = new ConfigurationComponent(this.router, this.ws);
     this.addComponent.afterModalFormClosed = this.getGlobalSettings.bind(this); // update global config card
-    this.interfaceComponent = new InterfacesFormComponent(this.router, this.aroute, this.networkService, this.dialog, this.ws);
+    this.interfaceComponent = new InterfacesFormComponent(
+      this.router,
+      this.aroute,
+      this.networkService,
+      this.dialog,
+      this.ws,
+    );
     this.interfaceComponent.afterModalFormClosed = this.checkInterfacePendingChanges.bind(this);
     this.staticRouteFormComponent = new StaticRouteFormComponent(this.aroute, this.ws, this.networkService);
     if (this.staticRoutesTableConf.tableComponent) {
       this.staticRouteFormComponent.afterModalFormClosed = this.staticRoutesTableConf.tableComponent.getData();
     }
     this.openvpnClientComponent = new OpenvpnClientComponent(this.servicesService);
-    this.openvpnServerComponent = new OpenvpnServerComponent(this.servicesService, this.dialog, this.loader, this.ws, this.storageService);
+    this.openvpnServerComponent = new OpenvpnServerComponent(
+      this.servicesService,
+      this.dialog,
+      this.loader,
+      this.ws,
+      this.storageService,
+    );
     this.impiFormComponent = new IPMIFromComponent(this.ws, this.dialog, this.loader);
   }
 

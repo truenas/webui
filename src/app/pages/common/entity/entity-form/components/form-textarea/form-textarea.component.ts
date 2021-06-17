@@ -3,10 +3,9 @@ import {
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-
-import { FieldConfig } from '../../models/field-config.interface';
-import { Field } from '../../models/field.interface';
-import globalHelptext from '../../../../../../helptext/global-helptext';
+import globalHelptext from 'app/helptext/global-helptext';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @Component({
   selector: 'form-textarea',
@@ -54,8 +53,8 @@ export class FormTextareaComponent implements Field {
   }
 
   readFile(inputValue: any): void {
-    var file: File = inputValue.files[0];
-    var fReader: FileReader = new FileReader();
+    const file: File = inputValue.files[0];
+    const fReader: FileReader = new FileReader();
 
     fReader.onloadend = () => {
       this.fileString = fReader.result;

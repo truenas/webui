@@ -1,6 +1,6 @@
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
-import { Schedule } from 'app/interfaces/schedule.interface';
 import { DataProtectionTaskState } from 'app/interfaces/data-protection-task-state.interface';
+import { Schedule } from 'app/interfaces/schedule.interface';
 
 export interface PeriodicSnapshotTask {
   schedule: Schedule;

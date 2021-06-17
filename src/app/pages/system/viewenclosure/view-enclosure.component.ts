@@ -2,15 +2,14 @@ import {
   Component, AfterContentInit, OnDestroy, ViewChild, ElementRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subject } from 'rxjs';
+import { ErrorMessage } from 'app/core/classes/ix-interfaces';
+import { SystemProfiler } from 'app/core/classes/system-profiler';
+import { CoreService } from 'app/core/services/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
-
-import { CoreService } from 'app/core/services/core.service';
-import { Subject } from 'rxjs';
-import { SystemProfiler } from 'app/core/classes/system-profiler';
-import { ErrorMessage } from 'app/core/classes/ix-interfaces';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface ViewConfig {
   name: string;

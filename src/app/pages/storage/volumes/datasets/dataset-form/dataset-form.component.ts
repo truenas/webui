@@ -2,38 +2,39 @@ import { Component } from '@angular/core';
 import { FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { AclType } from 'app/enums/acl-type.enum';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
-import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import { DialogService } from 'app/services/dialog.service';
-import { ModalService } from 'app/services/modal.service';
-
 import * as _ from 'lodash';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { ProductType } from '../../../../../enums/product-type.enum';
-import globalHelptext from '../../../../../helptext/global-helptext';
-import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-form';
-import { StorageService, WebSocketService } from '../../../../../services';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
-import { T } from '../../../../../translate-marker';
-import { EntityFormComponent } from '../../../../common/entity/entity-form';
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { EntityUtils } from '../../../../common/entity/utils';
+import { AclMode, AclType } from 'app/enums/acl-type.enum';
+import { DatasetAclType } from 'app/enums/dataset-acl-type.enum';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { ProductType } from 'app/enums/product-type.enum';
+import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { Dataset } from 'app/interfaces/dataset.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { StorageService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 
 interface DatasetFormData {
   name: string;
+  acltype?: string;
   comments: string;
   sync: string;
   compression: string;
   atime: string;
   share_type: string;
-  aclmode?: string; // -- not available yet in SCALE
+  aclmode?: string;
   refquota: number;
   refquota_unit?: string;
   quota: number;
@@ -114,7 +115,7 @@ export class DatasetFormComponent implements FormConfiguration {
   protected warning = 80;
   protected critical = 95;
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -642,9 +643,25 @@ export class DatasetFormComponent implements FormConfiguration {
           name: 'aclmode',
           placeholder: helptext.dataset_form_aclmode_placeholder,
           tooltip: helptext.dataset_form_aclmode_tooltip,
-          options: [{ label: 'Passthrough', value: 'PASSTHROUGH' },
-            { label: 'Restricted', value: 'RESTRICTED' }],
-          value: 'PASSTHROUGH',
+          options: [
+            { label: T('Passthrough'), value: AclMode.Passthrough },
+            { label: T('Restricted'), value: AclMode.Restricted },
+            { label: T('Discard'), value: AclMode.Discard },
+          ],
+          value: AclMode.Passthrough,
+        },
+        {
+          type: 'select',
+          name: 'acltype',
+          placeholder: T('ACL Type'),
+          options: [
+            { label: T('Inherit'), value: DatasetAclType.Inherit },
+            { label: T('Off'), value: DatasetAclType.Off },
+            { label: T('NFSv4'), value: DatasetAclType.Nfsv4 },
+            { label: T('POSIX'), value: DatasetAclType.Posix },
+          ],
+          required: false,
+          value: DatasetAclType.Inherit,
         },
         {
           type: 'select',
@@ -721,8 +738,8 @@ export class DatasetFormComponent implements FormConfiguration {
     'refquota_warning_inherit',
     'refquota_critical_inherit',
     'special_small_block_size',
-    // 'aclmode' -- not yet available in SCALE
-
+    'acltype',
+    'aclmode',
   ];
 
   encryption_fields: any[] = [
@@ -741,14 +758,14 @@ export class DatasetFormComponent implements FormConfiguration {
     'pbkdf2iters',
   ];
 
-  protected byteMap: Object = {
+  protected byteMap = {
     T: 1099511627776,
     G: 1073741824,
     M: 1048576,
     K: 1024,
     B: 1,
   };
-  protected recordSizeMap: Object = {
+  protected recordSizeMap = {
     512: '512',
     1024: '1K',
     2048: '2K',
@@ -762,7 +779,7 @@ export class DatasetFormComponent implements FormConfiguration {
     524288: '512K',
     1048576: '1024K',
   };
-  protected reverseRecordSizeMap: Object = {
+  protected reverseRecordSizeMap = {
     512: '512',
     '1K': '1024',
     '2K': '2048',
@@ -909,16 +926,8 @@ export class DatasetFormComponent implements FormConfiguration {
   ) { }
 
   afterInit(entityForm: EntityFormComponent): void {
-    // aclmode not yet available in SCALE
     this.productType = window.localStorage.getItem('product_type') as ProductType;
     const aclControl = entityForm.formGroup.get('aclmode');
-    if (!this.productType.includes(ProductType.Scale)) {
-      this.advanced_field.push('aclmode');
-    } else {
-      aclControl.disable();
-      _.find(this.fieldConfig, { name: 'aclmode' }).isHidden = true;
-    }
-    ///
     this.entityForm = entityForm;
     if (this.productType.includes(ProductType.Enterprise)) {
       this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
@@ -963,30 +972,19 @@ export class DatasetFormComponent implements FormConfiguration {
 
     entityForm.formGroup.get('share_type').valueChanges.pipe(filter((shareType) => !!shareType && entityForm.isNew)).pipe(untilDestroyed(this)).subscribe((shareType) => {
       const caseControl = entityForm.formGroup.get('casesensitivity');
-      if (!this.productType.includes(ProductType.Scale)) {
-        if (shareType === 'SMB') {
-          aclControl.setValue('RESTRICTED');
-          caseControl.setValue('INSENSITIVE');
-          aclControl.disable();
-          caseControl.disable();
-        } else {
-          aclControl.setValue('PASSTHROUGH');
-          caseControl.setValue('SENSITIVE');
-          aclControl.enable();
-          caseControl.enable();
-        }
-        aclControl.updateValueAndValidity();
-        caseControl.updateValueAndValidity();
+      if (shareType === 'SMB') {
+        aclControl.setValue(AclMode.Restricted);
+        caseControl.setValue('INSENSITIVE');
+        aclControl.disable();
+        caseControl.disable();
       } else {
-        if (shareType === 'SMB') {
-          caseControl.setValue('INSENSITIVE');
-          caseControl.disable();
-        } else {
-          caseControl.setValue('SENSITIVE');
-          caseControl.enable();
-        }
-        caseControl.updateValueAndValidity();
+        aclControl.setValue(AclMode.Passthrough);
+        caseControl.setValue('SENSITIVE');
+        aclControl.enable();
+        caseControl.enable();
       }
+      aclControl.updateValueAndValidity();
+      caseControl.updateValueAndValidity();
     });
 
     this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'];
@@ -1040,7 +1038,9 @@ export class DatasetFormComponent implements FormConfiguration {
       const root = this.parent.split('/')[0];
       this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((res) => {
         this.minimum_recommended_dataset_recordsize = res;
-        this.recommended_size_number = parseInt((this.reverseRecordSizeMap as any)[this.minimum_recommended_dataset_recordsize], 0);
+        this.recommended_size_number = parseInt(
+          (this.reverseRecordSizeMap as any)[this.minimum_recommended_dataset_recordsize], 0,
+        );
       });
       combineLatest([
         this.ws.call('pool.query', [[['name', '=', root]]]),
@@ -1095,6 +1095,7 @@ export class DatasetFormComponent implements FormConfiguration {
                 encryption_algorithm_fg.setValue(parent_algorithm);
               }
               this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(untilDestroyed(this)).subscribe((algorithms) => {
+                encryption_algorithm_fc.options = [];
                 for (const algorithm in algorithms) {
                   if (algorithms.hasOwnProperty(algorithm)) {
                     encryption_algorithm_fc.options.push({ label: algorithm, value: algorithm });
@@ -1141,14 +1142,17 @@ export class DatasetFormComponent implements FormConfiguration {
               encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption: any) => {
                 // if on an encrypted parent we should warn the user, otherwise just disable the fields
                 if (this.encrypted_parent && !encryption && !this.non_encrypted_warned) {
-                  this.dialogService.confirm(helptext.dataset_form_encryption.non_encrypted_warning_title,
-                    helptext.dataset_form_encryption.non_encrypted_warning_warning).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
-                    if (confirm) {
-                      this.non_encrypted_warned = true;
-                      for (let i = 0; i < all_encryption_fields.length; i++) {
-                        if (all_encryption_fields[i] !== 'encryption') {
-                          this.entityForm.setDisabled(all_encryption_fields[i], true, true);
-                        }
+                  this.dialogService.confirm({
+                    title: helptext.dataset_form_encryption.non_encrypted_warning_title,
+                    message: helptext.dataset_form_encryption.non_encrypted_warning_warning,
+                  }).pipe(
+                    filter(Boolean),
+                    untilDestroyed(this),
+                  ).subscribe(() => {
+                    this.non_encrypted_warned = true;
+                    for (let i = 0; i < all_encryption_fields.length; i++) {
+                      if (all_encryption_fields[i] !== 'encryption') {
+                        this.entityForm.setDisabled(all_encryption_fields[i], true, true);
                       }
                     }
                   });
@@ -1250,37 +1254,30 @@ export class DatasetFormComponent implements FormConfiguration {
               const edit_readonly = _.find(this.fieldConfig, { name: 'readonly' });
               const edit_atime = _.find(this.fieldConfig, { name: 'atime' });
               const edit_recordsize = _.find(this.fieldConfig, { name: 'recordsize' });
-              let edit_sync_collection = [{ label: pk_dataset[0].sync.value, value: pk_dataset[0].sync.value }];
-              let edit_compression_collection = [{ label: pk_dataset[0].compression.value, value: pk_dataset[0].compression.value }];
-              let edit_deduplication_collection = [{ label: pk_dataset[0].deduplication.value, value: pk_dataset[0].deduplication.value }];
-              let edit_exec_collection = [{ label: pk_dataset[0].exec.value, value: pk_dataset[0].exec.value }];
-              let edit_readonly_collection = [{ label: pk_dataset[0].readonly.value, value: pk_dataset[0].readonly.value }];
-              let edit_atime_collection = [{ label: pk_dataset[0].readonly.value, value: pk_dataset[0].readonly.value }];
-              let edit_recordsize_collection = [{ label: this.parent_dataset.recordsize.value, value: this.parent_dataset.recordsize.value }];
 
-              edit_sync_collection = [{ label: `Inherit (${this.parent_dataset.sync.rawvalue})`, value: 'INHERIT' }];
+              const edit_sync_collection = [{ label: `Inherit (${this.parent_dataset.sync.rawvalue})`, value: 'INHERIT' }];
               edit_sync.options = edit_sync_collection.concat(edit_sync.options);
 
-              edit_compression_collection = [{ label: `Inherit (${this.parent_dataset.compression.rawvalue})`, value: 'INHERIT' }];
+              const edit_compression_collection = [{ label: `Inherit (${this.parent_dataset.compression.rawvalue})`, value: 'INHERIT' }];
               edit_compression.options = edit_compression_collection.concat(edit_compression.options);
 
-              edit_deduplication_collection = [{ label: `Inherit (${this.parent_dataset.deduplication.rawvalue})`, value: 'INHERIT' }];
+              const edit_deduplication_collection = [{ label: `Inherit (${this.parent_dataset.deduplication.rawvalue})`, value: 'INHERIT' }];
               edit_deduplication.options = edit_deduplication_collection.concat(edit_deduplication.options);
 
-              edit_exec_collection = [{ label: `Inherit (${this.parent_dataset.exec.rawvalue})`, value: 'INHERIT' }];
+              const edit_exec_collection = [{ label: `Inherit (${this.parent_dataset.exec.rawvalue})`, value: 'INHERIT' }];
               edit_exec.options = edit_exec_collection.concat(edit_exec.options);
 
-              edit_readonly_collection = [{ label: `Inherit (${this.parent_dataset.readonly.rawvalue})`, value: 'INHERIT' }];
+              const edit_readonly_collection = [{ label: `Inherit (${this.parent_dataset.readonly.rawvalue})`, value: 'INHERIT' }];
               edit_readonly.options = edit_readonly_collection.concat(edit_readonly.options);
 
-              edit_atime_collection = [{ label: `Inherit (${this.parent_dataset.atime.rawvalue})`, value: 'INHERIT' }];
+              const edit_atime_collection = [{ label: `Inherit (${this.parent_dataset.atime.rawvalue})`, value: 'INHERIT' }];
               edit_atime.options = edit_atime_collection.concat(edit_atime.options);
 
               const lastChar = this.parent_dataset.recordsize.value[this.parent_dataset.recordsize.value.length - 1];
               const formattedLabel = lastChar === 'K' || lastChar === 'M'
                 ? `${this.parent_dataset.recordsize.value.slice(0, -1)} ${lastChar}iB`
                 : this.parent_dataset.recordsize.value;
-              edit_recordsize_collection = [{ label: `Inherit (${formattedLabel})`, value: 'INHERIT' }];
+              const edit_recordsize_collection = [{ label: `Inherit (${formattedLabel})`, value: 'INHERIT' }];
               edit_recordsize.options = edit_recordsize_collection.concat(edit_recordsize.options);
               let sync_value = pk_dataset[0].sync.value;
               if (pk_dataset[0].sync.source === ZfsPropertySource.Default) {
@@ -1289,29 +1286,31 @@ export class DatasetFormComponent implements FormConfiguration {
               entityForm.formGroup.controls['sync'].setValue(sync_value);
 
               let compression_value = pk_dataset[0].compression.value;
-              if (pk_dataset[0].compression.source === ZfsPropertySource.Inherited || pk_dataset[0].compression.source === ZfsPropertySource.Default) {
+              if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pk_dataset[0].compression.source)) {
                 compression_value = 'INHERIT';
               }
               entityForm.formGroup.controls['compression'].setValue(compression_value);
 
               let deduplication_value = pk_dataset[0].deduplication.value;
-              if (pk_dataset[0].deduplication.source === ZfsPropertySource.Default || pk_dataset[0].deduplication.source === ZfsPropertySource.Inherited) {
+              if (
+                [ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pk_dataset[0].deduplication.source)
+              ) {
                 deduplication_value = 'INHERIT';
               }
               let exec_value = pk_dataset[0].exec.value;
-              if (pk_dataset[0].exec.source === ZfsPropertySource.Default || pk_dataset[0].exec.source === ZfsPropertySource.Inherited) {
+              if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pk_dataset[0].exec.source)) {
                 exec_value = 'INHERIT';
               }
               let readonly_value = pk_dataset[0].readonly.value;
-              if (pk_dataset[0].readonly.source === ZfsPropertySource.Default || pk_dataset[0].readonly.source === ZfsPropertySource.Inherited) {
+              if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pk_dataset[0].readonly.source)) {
                 readonly_value = 'INHERIT';
               }
               let atime_value = pk_dataset[0].atime.value;
-              if (pk_dataset[0].atime.source === ZfsPropertySource.Default || pk_dataset[0].atime.source === ZfsPropertySource.Inherited) {
+              if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pk_dataset[0].atime.source)) {
                 atime_value = 'INHERIT';
               }
               let recordsize_value = pk_dataset[0].recordsize.value;
-              if (pk_dataset[0].recordsize.source === ZfsPropertySource.Default || pk_dataset[0].recordsize.source === ZfsPropertySource.Inherited) {
+              if ([ZfsPropertySource.Inherited, ZfsPropertySource.Default].includes(pk_dataset[0].recordsize.source)) {
                 recordsize_value = 'INHERIT';
               }
 
@@ -1356,13 +1355,21 @@ export class DatasetFormComponent implements FormConfiguration {
     if (wsResponse.special_small_block_size && wsResponse.special_small_block_size.rawvalue === '0') {
       delete wsResponse.special_small_block_size;
     }
-    const quota_warning = this.getFieldValueOrNone(wsResponse.quota_warning) ? this.getFieldValueOrNone(wsResponse.quota_warning) : this.warning;
+    const quota_warning = this.getFieldValueOrNone(wsResponse.quota_warning)
+      ? this.getFieldValueOrNone(wsResponse.quota_warning)
+      : this.warning;
     const quota_warning_inherit = this.isInherited(wsResponse.quota_warning, quota_warning);
-    const quota_critical = this.getFieldValueOrNone(wsResponse.quota_critical) ? this.getFieldValueOrNone(wsResponse.quota_critical) : this.critical;
+    const quota_critical = this.getFieldValueOrNone(wsResponse.quota_critical)
+      ? this.getFieldValueOrNone(wsResponse.quota_critical)
+      : this.critical;
     const quota_critical_inherit = this.isInherited(wsResponse.quota_critical, quota_critical);
-    const refquota_warning = this.getFieldValueOrNone(wsResponse.refquota_warning) ? this.getFieldValueOrNone(wsResponse.refquota_warning) : this.warning;
+    const refquota_warning = this.getFieldValueOrNone(wsResponse.refquota_warning)
+      ? this.getFieldValueOrNone(wsResponse.refquota_warning)
+      : this.warning;
     const refquota_warning_inherit = this.isInherited(wsResponse.refquota_warning, refquota_warning);
-    const refquota_critical = this.getFieldValueOrNone(wsResponse.refquota_critical) ? this.getFieldValueOrNone(wsResponse.refquota_critical) : this.critical;
+    const refquota_critical = this.getFieldValueOrNone(wsResponse.refquota_critical)
+      ? this.getFieldValueOrNone(wsResponse.refquota_critical)
+      : this.critical;
     const refquota_critical_inherit = this.isInherited(wsResponse.refquota_critical, refquota_critical);
     const sizeValues: any = {};
     for (let i = 0; i < this.size_fields.length; i++) {
@@ -1379,7 +1386,8 @@ export class DatasetFormComponent implements FormConfiguration {
       name: this.getFieldValueOrRaw(wsResponse.name),
       atime: this.getFieldValueOrRaw(wsResponse.atime),
       share_type: this.getFieldValueOrRaw(wsResponse.share_type),
-      // aclmode: this.getFieldValueOrRaw(wsResponse.aclmode), -- not available yet in SCALE
+      acltype: this.getFieldValueOrRaw(wsResponse.acltype),
+      aclmode: this.getFieldValueOrRaw(wsResponse.aclmode),
       casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
       comments: wsResponse.comments === undefined ? wsResponse.comments : (wsResponse.comments.source === 'LOCAL' ? wsResponse.comments.value : undefined),
       compression: this.getFieldValueOrRaw(wsResponse.compression),
@@ -1405,13 +1413,21 @@ export class DatasetFormComponent implements FormConfiguration {
       special_small_block_size: this.OrigHuman['special_small_block_size'],
     };
 
-    if (!this.productType.includes(ProductType.Scale)) {
-      returnValue.aclmode = this.getFieldValueOrRaw(wsResponse.aclmode);
-    }
-
-    if (sizeValues['quota'] || sizeValues['refquota'] || sizeValues['refreservation'] || sizeValues['reservation'] || sizeValues['special_small_block_size']
-      || !quota_warning_inherit || !quota_critical_inherit || !refquota_warning_inherit || !refquota_critical_inherit
-      || quota_warning !== this.warning || quota_critical !== this.critical || refquota_critical !== this.critical || refquota_warning !== this.warning) {
+    if (
+      sizeValues['quota']
+      || sizeValues['refquota']
+      || sizeValues['refreservation']
+      || sizeValues['reservation']
+      || sizeValues['special_small_block_size']
+      || !quota_warning_inherit
+      || !quota_critical_inherit
+      || !refquota_warning_inherit
+      || !refquota_critical_inherit
+      || quota_warning !== this.warning
+      || quota_critical !== this.critical
+      || refquota_critical !== this.critical
+      || refquota_warning !== this.warning
+    ) {
       this.isBasicMode = false;
     }
 
@@ -1536,15 +1552,20 @@ export class DatasetFormComponent implements FormConfiguration {
   customSubmit(body: any): Subscription {
     this.loader.open();
 
-    return ((this.isNew === true) ? this.addSubmit(body) : this.editSubmit(body)).pipe(untilDestroyed(this)).subscribe((restPostResp) => {
+    const operation = this.isNew ? this.addSubmit(body) : this.editSubmit(body);
+    return operation.pipe(untilDestroyed(this)).subscribe((restPostResp) => {
       this.loader.close();
       this.modalService.close('slide-in-form');
       const parentPath = `/mnt/${this.parent}`;
       this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((res) => {
         if (res === false) {
-          this.dialogService.confirm(helptext.afterSubmitDialog.title,
-            helptext.afterSubmitDialog.message, true, helptext.afterSubmitDialog.actionBtn, false, '', '', '', '',
-            false, helptext.afterSubmitDialog.cancelBtn).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
+          this.dialogService.confirm({
+            title: helptext.afterSubmitDialog.title,
+            message: helptext.afterSubmitDialog.message,
+            hideCheckBox: true,
+            buttonMsg: helptext.afterSubmitDialog.actionBtn,
+            cancelMsg: helptext.afterSubmitDialog.cancelBtn,
+          }).pipe(untilDestroyed(this)).subscribe((res) => {
             if (res) {
               this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe(({ acltype }) => {
                 if (acltype === AclType.Posix1e) {

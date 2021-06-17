@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { RestService } from './rest.service';
 import { WebSocketService } from './ws.service';
 
 @Injectable()
@@ -17,7 +16,7 @@ export class UserService {
   protected groupQuery: 'group.query' = 'group.query';
   protected queryOptions = { extra: { search_dscache: true }, limit: 50 };
 
-  constructor(protected rest: RestService, protected ws: WebSocketService) {}
+  constructor(protected ws: WebSocketService) {}
 
   listUsers(): Observable<User[]> {
     return this.ws.call(this.userQuery, { limit: 50 } as any);

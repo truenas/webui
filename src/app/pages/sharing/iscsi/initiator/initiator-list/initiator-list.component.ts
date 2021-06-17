@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
 import { T } from 'app/translate-marker';
 
 @Component({
@@ -39,7 +38,7 @@ export class InitiatorListComponent implements EntityTableConfig {
     },
   ];
   rowIdentifier = 'id';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

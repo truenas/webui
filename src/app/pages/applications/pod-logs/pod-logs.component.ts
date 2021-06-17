@@ -1,24 +1,24 @@
+import { HttpClient } from '@angular/common/http';
 import {
   Component, ElementRef, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { CoreEvent } from 'app/interfaces/events';
-import * as _ from 'lodash';
-import { DialogService, ShellService, WebSocketService } from '../../../services';
-import helptext from '../../../helptext/apps/apps';
-import { CoreService } from 'app/core/services/core.service';
-import { Subject } from 'rxjs';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { ApplicationsService } from '../applications.service';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { EntityUtils } from '../../common/entity/utils';
-import { StorageService } from 'app/services/storage.service';
-import { HttpClient } from '@angular/common/http';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
+import { Subject } from 'rxjs';
+import { CoreService } from 'app/core/services/core.service';
+import helptext from 'app/helptext/apps/apps';
+import { CoreEvent } from 'app/interfaces/events';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService, ShellService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { StorageService } from 'app/services/storage.service';
+import { ApplicationsService } from '../applications.service';
 
 interface PodLogEvent {
   data: string;
@@ -43,7 +43,7 @@ export class PodLogsComponent implements OnInit {
   container_name: string;
   protected tail_lines = 500;
   protected podDetails: any;
-  protected tempPodDetails: object;
+  protected tempPodDetails: Record<string, unknown>;
   protected apps: string[] = [];
   protected route_success: string[] = ['apps'];
 
@@ -233,7 +233,7 @@ export class PodLogsComponent implements OnInit {
   }
 
   // download log
-  download(entityDialog: EntityDialogComponent): void {
+  download(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     const chart_release_name = entityDialog.formGroup.controls['apps'].value;
     const pod_name = entityDialog.formGroup.controls['pods'].value;
@@ -255,18 +255,20 @@ export class PodLogsComponent implements OnInit {
     ).pipe(untilDestroyed(this)).subscribe((res: any) => {
       self.loader.close();
       const url = res[1];
-      self.storageService.streamDownloadFile(self.http, url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe((file: Blob) => {
-        if (res !== null && res !== '') {
-          self.storageService.downloadBlob(file, fileName);
-        }
-      });
+      self.storageService.streamDownloadFile(self.http, url, fileName, mimetype)
+        .pipe(untilDestroyed(this))
+        .subscribe((file: Blob) => {
+          if (res !== null && res !== '') {
+            self.storageService.downloadBlob(file, fileName);
+          }
+        });
     }, (e: any) => {
       self.loader.close();
       new EntityUtils().handleWSError(self, e, self.dialogService);
     });
   }
 
-  onChooseLogs(entityDialog: EntityDialogComponent): void {
+  onChooseLogs(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     self.chart_release_name = entityDialog.formGroup.controls['apps'].value;
     self.pod_name = entityDialog.formGroup.controls['pods'].value;

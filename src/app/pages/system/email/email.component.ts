@@ -1,24 +1,22 @@
-import {
-  ApplicationRef, Component, Injector,
-} from '@angular/core';
+import { Component } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { helptext_system_email } from 'app/helptext/system/email';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import * as _ from 'lodash';
-import { ProductType } from '../../../enums/product-type.enum';
-import {
-  DialogService, RestService, WebSocketService, AppLoaderService,
-} from '../../../services';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { T } from 'app/translate-marker';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { BehaviorSubject } from 'rxjs';
-import { FormControl } from '@angular/forms';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { BehaviorSubject } from 'rxjs';
+import { ProductType } from 'app/enums/product-type.enum';
+import { helptext_system_email } from 'app/helptext/system/email';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import {
+  DialogService, WebSocketService, AppLoaderService,
+} from 'app/services';
+import { T } from 'app/translate-marker';
 
 interface OAuthData {
   client_id?: string;
@@ -40,7 +38,7 @@ export class EmailComponent implements FormConfiguration {
   rootEmail: string;
   private oauthCreds: BehaviorSubject<OAuthData> = new BehaviorSubject({});
   customSubmit = this.saveConfigSubmit;
-  custActions: any[] = [{
+  custActions = [{
     id: 'send_mail',
     name: T('Send Test Mail'),
     function: () => {
@@ -70,7 +68,7 @@ export class EmailComponent implements FormConfiguration {
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.dialogRef.close(false);
-            this.dialogservice.Info(T('Email'), T('Test email sent!'));
+            this.dialogservice.Info(T('Email'), T('Test email sent!'), '500px', 'info');
           });
           this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((e_res: any) => {
             this.dialogRef.componentInstance.setDescription(e_res.error);
@@ -233,10 +231,13 @@ export class EmailComponent implements FormConfiguration {
   private smtp: FormControl;
   private pass: FieldConfig;
 
-  constructor(protected router: Router, protected rest: RestService,
-    protected ws: WebSocketService, protected _injector: Injector,
-    protected _appRef: ApplicationRef, private dialogservice: DialogService,
-    protected dialog: MatDialog, protected loader: AppLoaderService) {}
+  constructor(
+    protected router: Router,
+    protected ws: WebSocketService,
+    private dialogservice: DialogService,
+    protected dialog: MatDialog,
+    protected loader: AppLoaderService,
+  ) {}
 
   resourceTransformIncomingRestData(data: any): void {
     if (_.isEmpty(data.oauth)) {

@@ -1,15 +1,14 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ClipboardModule } from '@angular/cdk/clipboard';
-import { routing } from './api-keys.routing';
-import { MaterialModule } from 'app/appMaterial.module';
-import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
-import { CoreComponents } from 'app/core/components/corecomponents.module';
-import { EntityModule } from 'app/pages/common/entity/entity.module';
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-
+import { MaterialModule } from 'app/appMaterial.module';
+import { CoreComponents } from 'app/core/components/corecomponents.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { ApiKeysComponent } from './api-keys.component';
+import { routing } from './api-keys.routing';
 
 @NgModule({
   imports: [

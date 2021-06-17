@@ -3,17 +3,17 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
-import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
+import * as FontFaceObserver from 'fontfaceobserver';
 import { Observable } from 'rxjs';
-import helptext from '../../../helptext/vm/vm-cards/vm-cards';
-import { ShellConnectedEvent } from '../../../interfaces/shell.interface';
-import { ShellService, WebSocketService } from '../../../services';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
-import * as FontFaceObserver from 'fontfaceobserver';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
+import helptext from 'app/helptext/vm/vm-cards/vm-cards';
+import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
+import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
+import { ShellService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -80,7 +80,7 @@ export class VMSerialShellComponent implements OnInit, OnDestroy {
   getSize(): { rows: number; cols: number } {
     const domWidth = this.container.nativeElement.offsetWidth;
     const domHeight = this.container.nativeElement.offsetHeight;
-    var span = document.createElement('span');
+    const span = document.createElement('span');
     this.container.nativeElement.appendChild(span);
     span.style.whiteSpace = 'nowrap';
     span.style.fontFamily = this.font_name;
@@ -128,7 +128,7 @@ export class VMSerialShellComponent implements OnInit, OnDestroy {
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
 
-    var font = new FontFaceObserver(this.font_name);
+    const font = new FontFaceObserver(this.font_name);
 
     font.load().then(() => {
       this.xterm.open(this.container.nativeElement);

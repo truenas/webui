@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
 import { FibreChannelPortComponent } from './fibre-channel-port/fibre-channel-port.component';
 
 @Component({
@@ -17,7 +16,7 @@ export class FibreChannelPortsComponent implements EntityTableConfig {
     { name: 'WWPN', prop: 'wwpn' },
     { name: 'State', prop: 'state' },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
   };

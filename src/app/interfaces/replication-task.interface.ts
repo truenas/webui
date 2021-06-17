@@ -1,4 +1,3 @@
-import { DataProtectionTaskState } from './data-protection-task-state.interface';
 import { CompressionType } from 'app/enums/compression-type.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -13,6 +12,7 @@ import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
+import { DataProtectionTaskState } from './data-protection-task-state.interface';
 
 export interface ReplicationTask {
   allow_from_scratch?: boolean;
@@ -46,7 +46,7 @@ export interface ReplicationTask {
   periodic_snapshot_tasks?: number[] | PeriodicSnapshotTask[];
   properties?: boolean;
   properties_exclude?: string[];
-  properties_override?: {};
+  properties_override?: Record<string, unknown>;
   readonly?: ReadOnlyMode;
   recursive: boolean;
   replicate?: boolean;

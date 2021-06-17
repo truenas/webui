@@ -1,6 +1,6 @@
 import { Validators } from '@angular/forms';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { T } from 'app/translate-marker';
-import { regexValidator } from '../../pages/common/entity/entity-form/validators/regex-validation';
 
 export const helptext_system_cloudcredentials = {
   fieldset_basic: T('Name and Provider'),
@@ -195,6 +195,15 @@ a new application key, log in to the Backblaze account, go to the \
  <a href="https://developers.google.com/drive/api/v3/about-auth"\
  target="_blank">Google Drive</a>. Access Tokens expire periodically and \
  must be refreshed.',
+    ),
+  },
+
+  token_google_photos: {
+    placeholder: T('Access Token'),
+    tooltip: T(
+      'Token created with \
+ <a href="https://developers.google.com/drive/api/v3/about-auth"\
+ target="_blank">Google Drive</a>.',
     ),
   },
 

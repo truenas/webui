@@ -1,19 +1,11 @@
 import { Injectable } from '@angular/core';
-import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { Observable } from 'rxjs';
-
-import { RestService } from './rest.service';
+import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class VmService {
-  protected volume_resource_name = 'storage/volume';
-
-  constructor(protected rest: RestService, protected ws: WebSocketService) {}
-
-  getStorageVolumes(): void {
-    return this.rest.get(this.volume_resource_name, {});
-  }
+  constructor(protected ws: WebSocketService) {}
 
   getVM(vm: string): Observable<VirtualMachine[]> {
     return this.ws.call('vm.query', [[['name', '=', vm]], { get: true }]);

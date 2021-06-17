@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { T } from '../../../../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-rsync-module-list',
@@ -29,7 +29,7 @@ export class RSYNCconfigurationListComponent implements EntityTableConfig {
     { name: T('Host Deny'), prop: 'hostsdeny', hidden: true },
     { name: T('Auxiliary parameters'), prop: 'auxiliary', hidden: true },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
   };

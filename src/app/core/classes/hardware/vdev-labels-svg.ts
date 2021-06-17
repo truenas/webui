@@ -1,8 +1,8 @@
+import * as d3 from 'd3';
+import { Subject } from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
 import { Theme } from 'app/services/theme/theme.service';
-import { Subject } from 'rxjs';
 import { ChassisView } from './chassis-view';
-import * as d3 from 'd3';
 
 export class VDevLabelsSVG {
   /*
@@ -132,7 +132,8 @@ export class VDevLabelsSVG {
   }
 
   createVdevLabels(vdev: any): void {
-    const disks = vdev.disks ? Object.keys(vdev.disks) : [this.selectedDisk.devname]; // NOTE: vdev.slots only has values for current enclosure
+    // NOTE: vdev.slots only has values for current enclosure
+    const disks = vdev.disks ? Object.keys(vdev.disks) : [this.selectedDisk.devname];
 
     disks.forEach((disk) => {
       const slot = typeof vdev.slots !== 'undefined' ? vdev.slots[disk] : this.selectedDisk.enclosure.slot;
@@ -144,9 +145,19 @@ export class VDevLabelsSVG {
         const tray = src.getGlobalPosition();
 
         const tileClass = 'tile tile_' + disk;
-        this.createVdevLabelTile(tray.x, tray.y, src.width * this.chassis.container.scale.x, src.height * this.chassis.container.scale.y, tileClass, disk);
+        this.createVdevLabelTile(
+          tray.x,
+          tray.y,
+          src.width * this.chassis.container.scale.x,
+          src.height * this.chassis.container.scale.y,
+          tileClass,
+          disk,
+        );
         this.trays[disk] = {
-          x: tray.x, y: tray.y, width: src.width * this.chassis.container.scale.x, height: src.height * this.chassis.container.scale.y,
+          x: tray.x,
+          y: tray.y,
+          width: src.width * this.chassis.container.scale.x,
+          height: src.height * this.chassis.container.scale.y,
         };
       }
     });

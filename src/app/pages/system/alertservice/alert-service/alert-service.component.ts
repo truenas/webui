@@ -1,23 +1,22 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertServiceType } from 'app/enums/alert-service-type.enum';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
-import { WebSocketService, AppLoaderService, DialogService } from 'app/services/';
+import { AlertLevel } from 'app/enums/alert-level.enum';
+import { AlertServiceType } from 'app/enums/alert-service-type.enum';
+import helptext from 'app/helptext/system/alert-service';
+import { AlertServiceCreate } from 'app/interfaces/alert-service.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService, AppLoaderService, DialogService } from 'app/services/';
 import { T } from 'app/translate-marker';
-import helptext from 'app/helptext/system/alert-service';
-import { AlertLevel } from 'app/enums/alert-level.enum';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
@@ -673,7 +672,7 @@ export class AlertServiceComponent implements FormConfiguration {
     },
   ];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'authenticate',
       name: T('SEND TEST ALERT'),
@@ -683,15 +682,15 @@ export class AlertServiceComponent implements FormConfiguration {
 
         this.loader.open();
         this.ws.call(this.testCall, [testPayload]).pipe(untilDestroyed(this)).subscribe(
-          (res) => {
+          (wasAlertSent) => {
             this.loader.close();
-            if (res) {
+            if (wasAlertSent) {
               this.dialogService.Info(T('Succeeded'), T('Test alert sent!'), '500px', 'info');
             } else {
               this.dialogService.Info(T('Failed'), T('Failed sending test alert!'));
             }
           },
-          (err) => {
+          (err: any) => {
             this.loader.close();
             new EntityUtils().handleWSError(this, err, this.dialogService);
           },
@@ -725,20 +724,20 @@ export class AlertServiceComponent implements FormConfiguration {
   dataAttributeHandler(entityForm: EntityFormComponent): void {
     const type = entityForm.formGroup.controls['type'].value;
     for (const i in entityForm.wsResponseIdx) {
-      const field_name = type + '-' + i;
-      if (entityForm.formGroup.controls[field_name]) {
+      const fieldName = type + '-' + i;
+      if (entityForm.formGroup.controls[fieldName]) {
         if ((i === 'v3_authprotocol' || i === 'v3_privprotocol') && entityForm.wsResponseIdx[i] === null) {
           entityForm.wsResponseIdx[i] = '';
         }
-        entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
+        entityForm.formGroup.controls[fieldName].setValue(entityForm.wsResponseIdx[i]);
       }
     }
   }
 
-  generateTelegramChatIdsPayload(data: any, i: string): string[] {
+  generateTelegramChatIdsPayload(data: any, i: string): number[] {
     const wrongChatIds: string[] = [];
     // Telegram chat IDs must be an array of integer
-    const arrayChatIds: [] = data[i].map((strChatId: string) => {
+    const arrayChatIds: number[] = data[i].map((strChatId: string) => {
       const chatId = Number(strChatId);
       if (isNaN(chatId)) {
         wrongChatIds.push(strChatId);
@@ -753,20 +752,21 @@ export class AlertServiceComponent implements FormConfiguration {
     return Array.from(new Set(arrayChatIds));
   }
 
-  generatePayload(data: any): any {
-    const payload: any = { attributes: {} };
-
+  generatePayload(data: any): AlertServiceCreate {
+    const payload: AlertServiceCreate = {
+      attributes: { chat_ids: null, v3_authprotocol: null, v3_privprotocol: null },
+      enabled: data.enabled,
+      level: data.level,
+      name: data.name,
+      type: data.type,
+    };
     for (const i in data) {
-      if (i === 'name' || i === 'type' || i === 'enabled' || i === 'level') {
-        payload[i] = data[i];
-      } else {
-        if (data[i] === '' && (i === 'SNMPTrap-v3_authprotocol' || i === 'SNMPTrap-v3_privprotocol')) {
-          data[i] = null;
-        } else if (data[i] && i == 'Telegram-chat_ids') {
-          data[i] = this.generateTelegramChatIdsPayload(data, i);
-        }
-        payload['attributes'][i.split('-')[1]] = data[i];
+      if (data[i] === '' && (i === 'SNMPTrap-v3_authprotocol' || i === 'SNMPTrap-v3_privprotocol')) {
+        data[i] = null;
+      } else if (data[i] && i == 'Telegram-chat_ids') {
+        data[i] = this.generateTelegramChatIdsPayload(data, i);
       }
+      payload['attributes'][i.split('-')[1]] = data[i];
     }
     return payload;
   }
@@ -782,7 +782,7 @@ export class AlertServiceComponent implements FormConfiguration {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
         },
-        (err) => {
+        (err: any) => {
           this.loader.close();
           new EntityUtils().handleWSError(this, err, this.dialogService);
         },
@@ -793,7 +793,7 @@ export class AlertServiceComponent implements FormConfiguration {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
         },
-        (err) => {
+        (err: any) => {
           this.loader.close();
           new EntityUtils().handleWSError(this, err, this.dialogService);
         },

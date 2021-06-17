@@ -1,9 +1,7 @@
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   animate, state, style, transition, trigger,
 } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
-
 import {
   AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
@@ -12,7 +10,15 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NavigationStart, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
+import {
+  Observable, of, Subscription, EMPTY,
+} from 'rxjs';
+import {
+  catchError, filter, switchMap, take, tap,
+} from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
@@ -21,33 +27,18 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import {
   EntityTableAction,
   EntityTableColumn,
-  EntityTableConfig,
+  EntityTableConfig, EntityTableConfigConfig,
 } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import * as _ from 'lodash';
-import { Observable, of, Subscription } from 'rxjs';
-import {
-  catchError, filter, switchMap, take, tap,
-} from 'rxjs/operators';
-import { DialogService, JobService } from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { ModalService } from '../../../../services/modal.service';
-import { RestService } from '../../../../services/rest.service';
-import { StorageService } from '../../../../services/storage.service';
-import { WebSocketService } from '../../../../services/ws.service';
-import { T } from '../../../../translate-marker';
+import { DialogService, JobService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { T } from 'app/translate-marker';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
 import { EntityUtils } from '../utils';
 import { EntityTableAddActionsComponent } from './entity-table-add-actions.component';
-
-export interface SortingConfig {
-  columns: any[];
-}
-
-export interface TableConfig {
-  paging: boolean;
-  sorting: SortingConfig;
-}
 
 export interface Command {
   command: string; // Use '|' or '--pipe' to use the output of previous command as input
@@ -133,7 +124,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   rows: any[] = [];
   currentRows: any[] = []; // Rows applying filter
   getFunction: Observable<any>;
-  config: TableConfig = {
+  config: EntityTableConfigConfig = {
     paging: true,
     sorting: { columns: this.columns },
   };
@@ -185,7 +176,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     protected core: CoreService,
-    protected rest: RestService,
     protected router: Router,
     protected ws: WebSocketService,
     protected dialogService: DialogService,
@@ -234,7 +224,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.paginationPageSizeOptions = this.conf.config.pagingOptions.pageSizeOptions;
     }
 
-    this.sortKey = (this.conf.config.deleteMsg && this.conf.config.deleteMsg.key_props) ? this.conf.config.deleteMsg.key_props[0] : this.conf.columns[0].prop;
+    this.sortKey = (this.conf.config.deleteMsg && this.conf.config.deleteMsg.key_props)
+      ? this.conf.config.deleteMsg.key_props[0]
+      : this.conf.columns[0].prop;
     setTimeout(async () => {
       if (this.conf.prerequisite) {
         await this.conf.prerequisite().then(
@@ -360,7 +352,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isTableEmpty = false;
     } else {
       this.isTableEmpty = true;
-      this.configureEmptyTable(this.dataSource.filter ? EmptyType.no_search_results : this.firstUse ? EmptyType.first_use : EmptyType.no_page_data);
+      this.configureEmptyTable(
+        this.dataSource.filter
+          ? EmptyType.no_search_results
+          : this.firstUse
+            ? EmptyType.first_use
+            : EmptyType.no_page_data,
+      );
     }
 
     if (this.dataSource.paginator && this.conf.config.paging) {
@@ -525,7 +523,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.getFunction = this.ws.call(this.conf.queryCall, []);
       }
     } else {
-      this.getFunction = this.rest.get(this.conf.resource_name, options) as any;
+      this.getFunction = EMPTY;
     }
 
     if (this.conf.callGetFunction) {
@@ -631,7 +629,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filter(this.filterValue);
 
     if (this.conf.config.paging) {
-      // On first load, paginator is not rendered because table is empty, so we force render here so that we can get valid paginator instance
+      // On first load, paginator is not rendered because table is empty,
+      // so we force render here so that we can get valid paginator instance
       setTimeout(() => {
         this.dataSource.paginator = this.paginator;
       }, 0);
@@ -651,7 +650,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   isTableOverflow(): boolean {
     let hasHorizontalScrollbar = false;
     if (this.entitytable) {
-      hasHorizontalScrollbar = this.entitytable._elementRef.nativeElement.parentNode.scrollWidth > this.entitytable._elementRef.nativeElement.parentNode.clientWidth;
+      const parentNode = this.entitytable._elementRef.nativeElement.parentNode;
+      hasHorizontalScrollbar = parentNode.scrollWidth > parentNode.clientWidth;
     }
     return hasHorizontalScrollbar;
   }
@@ -826,12 +826,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {
       // double confirm: input delete item's name to confirm deletion
-      this.conf.config.deleteMsg.doubleConfirm(item).pipe(untilDestroyed(this)).subscribe((doubleConfirmDialog: boolean) => {
-        if (doubleConfirmDialog) {
-          this.toDeleteRow = item;
-          this.delete(id);
-        }
-      });
+      this.conf.config.deleteMsg.doubleConfirm(item)
+        .pipe(untilDestroyed(this))
+        .subscribe((doubleConfirmDialog: boolean) => {
+          if (doubleConfirmDialog) {
+            this.toDeleteRow = item;
+            this.delete(id);
+          }
+        });
     } else {
       this.dialogService.confirm({
         title: dialog.hasOwnProperty('title') ? dialog['title'] : T('Delete'),
@@ -850,7 +852,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   delete(id: string): void {
     this.loader.open();
     this.loaderOpen = true;
-    this.busy = this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id])).pipe(untilDestroyed(this)).subscribe(
+    this.busy = this.ws.call(
+      this.conf.wsDelete,
+      this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id],
+    ).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.getData();
         this.excuteDeletion = true;
@@ -891,16 +896,17 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.loader.open();
           this.loaderOpen = true;
         }),
-        switchMap(() =>
-          (this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id]))
-          ).pipe(
+        switchMap(() => {
+          const params = this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id];
+          return this.ws.call(this.conf.wsDelete, params).pipe(
             take(1),
             catchError((error) => {
               new EntityUtils().handleWSError(this, error, this.dialogService);
               this.loader.close();
               return of(false);
             }),
-          )),
+          );
+        }),
         switchMap((jobId: string) => (jobId ? this.job.getJobStatus(jobId) : of(false))),
       );
   }
@@ -966,36 +972,38 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.conf.wsMultiDelete) {
         // ws to do multi-delete
         if (this.conf.wsMultiDeleteParams) {
-          this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected)).pipe(untilDestroyed(this)).subscribe(
-            (res1) => {
-              if (res1.state === EntityJobState.Success) {
-                this.loader.close();
-                this.loaderOpen = false;
-                this.getData();
-                // this.selected = [];
-                this.selection.clear();
+          this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected))
+            .pipe(untilDestroyed(this))
+            .subscribe(
+              (res1) => {
+                if (res1.state === EntityJobState.Success) {
+                  this.loader.close();
+                  this.loaderOpen = false;
+                  this.getData();
+                  // this.selected = [];
+                  this.selection.clear();
 
-                const selectedName = this.conf.wsMultiDeleteParams(selected)[1];
-                let message = '';
-                for (let i = 0; i < res1.result.length; i++) {
-                  if (res1.result[i].error != null) {
-                    message = message + '<li>' + selectedName[i] + ': ' + res1.result[i].error + '</li>';
+                  const selectedName = this.conf.wsMultiDeleteParams(selected)[1];
+                  let message = '';
+                  for (let i = 0; i < res1.result.length; i++) {
+                    if (res1.result[i].error != null) {
+                      message = message + '<li>' + selectedName[i] + ': ' + res1.result[i].error + '</li>';
+                    }
+                  }
+                  if (message === '') {
+                    this.dialogService.Info(T('Items deleted'), '', '300px', 'info', true);
+                  } else {
+                    message = '<ul>' + message + '</ul>';
+                    this.dialogService.errorReport(T('Items Delete Failed'), message);
                   }
                 }
-                if (message === '') {
-                  this.dialogService.Info(T('Items deleted'), '', '300px', 'info', true);
-                } else {
-                  message = '<ul>' + message + '</ul>';
-                  this.dialogService.errorReport(T('Items Delete Failed'), message);
-                }
-              }
-            },
-            (res1) => {
-              new EntityUtils().handleWSError(this, res1, this.dialogService);
-              this.loader.close();
-              this.loaderOpen = false;
-            },
-          );
+              },
+              (res1) => {
+                new EntityUtils().handleWSError(this, res1, this.dialogService);
+                this.loader.close();
+                this.loaderOpen = false;
+              },
+            );
         }
       } else {
         // rest to do multi-delete

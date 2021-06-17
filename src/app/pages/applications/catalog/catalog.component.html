@@ -23,7 +23,7 @@
           <h3 textLimiter threshold="15">{{ item.name }}</h3>
         </div>
         <div class="catalog-version" textLimiter threshold="32" fxFlex="100%">
-          {{ item.latest_version }}
+          {{ item.latest_human_version }}
         </div>
         <div class="button-row" (click)="$event.stopPropagation()">
           <button

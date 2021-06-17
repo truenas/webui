@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { AppTableAction } from 'app/pages/common/entity/table/table.component';
 import {
   WebSocketService, KeychainCredentialService, AppLoaderService,
   DialogService, ReplicationService, StorageService, CloudCredentialService,
 } from 'app/services';
-import { ModalService } from '../../../services/modal.service';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
+import { CloudCredentialsFormComponent } from './forms/cloud-credentials-form.component';
 import { SshConnectionsFormComponent } from './forms/ssh-connections-form.component';
 import { SshKeypairsFormComponent } from './forms/ssh-keypairs-form.component';
-import { CloudCredentialsFormComponent } from './forms/cloud-credentials-form.component';
-import { T } from '../../../translate-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
@@ -148,9 +148,9 @@ export class BackupCredentialsComponent implements OnInit {
       name: 'download',
       onClick: (rowinner: any) => {
         const name = rowinner.name;
-        for (const key_type in rowinner.attributes) {
-          const key = rowinner.attributes[key_type];
-          const filename = name + '_' + key_type + '_rsa';
+        for (const keyType in rowinner.attributes) {
+          const key = rowinner.attributes[keyType];
+          const filename = name + '_' + keyType + '_rsa';
           const blob = new Blob([key], { type: 'text/plain' });
           this.storage.downloadBlob(blob, filename);
         }

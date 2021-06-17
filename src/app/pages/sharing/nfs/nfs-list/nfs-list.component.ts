@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { shared, helptext_sharing_nfs } from 'app/helptext/sharing';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { T } from 'app/translate-marker';
-import { NFSFormComponent } from '../nfs-form';
 import {
   DialogService, NetworkService, WebSocketService, UserService, ModalService,
 } from 'app/services';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
+import { NFSFormComponent } from '../nfs-form';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +30,7 @@ export class NFSListComponent implements EntityTableConfig {
     { name: helptext_sharing_nfs.column_enabled, prop: 'enabled' },
   ];
   rowIdentifier = 'nfs_paths';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -63,7 +63,13 @@ export class NFSListComponent implements EntityTableConfig {
   };
 
   doAdd(id?: number): void {
-    const formComponent = new NFSFormComponent(this.userService, this.modalService, this.ws, this.dialog, this.networkService);
+    const formComponent = new NFSFormComponent(
+      this.userService,
+      this.modalService,
+      this.ws,
+      this.dialog,
+      this.networkService,
+    );
     this.modalService.open('slide-in-form', formComponent, id);
   }
 

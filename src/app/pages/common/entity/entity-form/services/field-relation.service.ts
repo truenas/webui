@@ -3,7 +3,6 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-
 import { FieldConfig } from '../models/field-config.interface';
 import { FieldRelation, RelationGroup } from '../models/field-relation.interface';
 
@@ -84,7 +83,8 @@ export class FieldRelationService {
           if (index > 0 && relGroup.connective === RelationConnection.Or && toBeDisabled) {
             return true;
           }
-          return this.checkValueConditionIsTrue(rel.value, controlValue, rel.operator) || this.checkStatusConditionIsTrue(rel, control);
+          return this.checkValueConditionIsTrue(rel.value, controlValue, rel.operator)
+            || this.checkStatusConditionIsTrue(rel, control);
         }
 
         if (hasControlValue && relGroup.action === enable_action) {
@@ -94,7 +94,8 @@ export class FieldRelationService {
           if (index > 0 && relGroup.connective === RelationConnection.Or && !toBeDisabled) {
             return false;
           }
-          return !(this.checkValueConditionIsTrue(rel.value, controlValue, rel.operator) || this.checkStatusConditionIsTrue(rel, control));
+          return !(this.checkValueConditionIsTrue(rel.value, controlValue, rel.operator)
+            || this.checkStatusConditionIsTrue(rel, control));
         }
 
         return false;

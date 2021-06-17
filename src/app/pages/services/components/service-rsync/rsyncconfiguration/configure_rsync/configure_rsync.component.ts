@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import helptext from '../../../../../../helptext/services/components/service-rsync';
-import { RestService } from '../../../../../../services/rest.service';
-import { WebSocketService } from '../../../../../../services/ws.service';
-import { FieldConfig } from '../../../../../common/entity/entity-form/models/field-config.interface';
+import helptext from 'app/helptext/services/components/service-rsync';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Component({
   selector: 'app-configure-rsync',
@@ -34,8 +33,11 @@ export class CconfigureRYSNCComponent implements FormConfiguration {
     },
   ];
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService) {}
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+  ) {}
 
   afterInit(entityEdit: EntityFormComponent): void {
     entityEdit.submitFunction = (body) => this.ws.call('rsyncd.update', [body]);

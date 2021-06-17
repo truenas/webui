@@ -1,5 +1,5 @@
-import { Certificate } from 'app/interfaces/certificate.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { Certificate } from 'app/interfaces/certificate.interface';
 
 export interface SystemGeneralConfig {
   birthday: ApiTimestamp;

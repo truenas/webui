@@ -1,13 +1,12 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
+import { DeviceAddComponent } from './devices/device-add/device-add.component';
 import { DeviceEditComponent } from './devices/device-edit/device-edit.component';
 import { DeviceListComponent } from './devices/device-list';
 import { VmFormComponent } from './vm-form';
 import { VMListComponent } from './vm-list/vm-list.component';
-import { VMWizardComponent } from './vm-wizard';
 import { VMSerialShellComponent } from './vm-serial-shell';
-import { DeviceAddComponent } from './devices/device-add/device-add.component';
+import { VMWizardComponent } from './vm-wizard';
 
 export const routes: Routes = [
   {

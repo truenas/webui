@@ -1,10 +1,10 @@
 import {
   Component, Input, OnChanges, OnInit,
 } from '@angular/core';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import * as _ from 'lodash';
-import { EntityTableComponent } from '../entity-table.component';
 import cronstrue from 'cronstrue';
+import * as _ from 'lodash';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableComponent } from '../entity-table.component';
 
 @Component({
   selector: 'app-entity-table-row-details',
@@ -37,7 +37,9 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   }
 
   buildColumns(): void {
-    this.columns = this.parent.allColumns.filter((col) => !this.parent.conf.columns.some((c: any) => c.prop === col.prop));
+    this.columns = this.parent.allColumns.filter((col) => {
+      return !this.parent.conf.columns.some((c: any) => c.prop === col.prop);
+    });
   }
 
   getActions(): EntityTableAction[] {

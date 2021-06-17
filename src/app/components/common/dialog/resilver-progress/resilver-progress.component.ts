@@ -1,9 +1,9 @@
-import { MatDialogRef } from '@angular/material/dialog';
 import { Component, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { T } from '../../../../translate-marker';
-import { WebSocketService } from '../../../../services/ws.service';
+import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { WebSocketService } from 'app/services/ws.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

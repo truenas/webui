@@ -1,23 +1,23 @@
 import {
   Component, OnInit, ViewChild, ViewEncapsulation, AfterViewInit,
 } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material/tabs';
+import { ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subject } from 'rxjs';
+import { CommonUtils } from 'app/core/classes/common-utils';
+import { CoreService } from 'app/core/services/core.service';
+import helptext from 'app/helptext/apps/apps';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
-import { ApplicationsService } from './applications.service';
-import { ModalService } from '../../services/modal.service';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
-import { CoreService } from 'app/core/services/core.service';
+import { ModalService } from 'app/services/modal.service';
+import { ApplicationsService } from './applications.service';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
-import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
-import { Subject } from 'rxjs';
-import helptext from '../../helptext/apps/apps';
-import { ActivatedRoute } from '@angular/router';
-import { CommonUtils } from 'app/core/classes/common-utils';
-import { MatTabChangeEvent } from '@angular/material/tabs';
 import { DockerImagesComponent } from './docker-images/docker-images.component';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
 
 @UntilDestroy()
 @Component({

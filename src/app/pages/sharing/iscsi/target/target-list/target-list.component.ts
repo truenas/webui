@@ -1,14 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
-import { IscsiService } from '../../../../../services/iscsi.service';
-import { T } from 'app/translate-marker';
-import { EntityUtils } from '../../../../common/entity/utils';
-import { AppLoaderService, ModalService, WebSocketService } from 'app/services';
-import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
+import { AppLoaderService, ModalService, WebSocketService } from 'app/services';
+import { IscsiService } from 'app/services/iscsi.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -39,7 +38,7 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
       prop: 'alias',
     },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -49,8 +48,15 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
   };
 
   protected entityList: any;
-  constructor(private iscsiService: IscsiService, private modalService: ModalService, private router: Router,
-    private aroute: ActivatedRoute, private loader: AppLoaderService, private translate: TranslateService, private ws: WebSocketService) {}
+  constructor(
+    private iscsiService: IscsiService,
+    private modalService: ModalService,
+    private router: Router,
+    private aroute: ActivatedRoute,
+    private loader: AppLoaderService,
+    private translate: TranslateService,
+    private ws: WebSocketService,
+  ) {}
 
   ngOnInit(): void {
     if (this.fcEnabled) {
@@ -68,7 +74,15 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
   doAdd(rowId: string = null): void {
     this.modalService.open(
       'slide-in-form',
-      new TargetFormComponent(this.router, this.aroute, this.iscsiService, this.loader, this.translate, this.ws, this.modalService),
+      new TargetFormComponent(
+        this.router,
+        this.aroute,
+        this.iscsiService,
+        this.loader,
+        this.translate,
+        this.ws,
+        this.modalService,
+      ),
       rowId,
     );
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {

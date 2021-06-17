@@ -1,13 +1,13 @@
-import { Component, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ProductType } from '../../../../enums/product-type.enum';
-import { DialogService } from '../../../../services/dialog.service';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { AppLoaderService } from '../../../../services';
-import { PreferencesService } from 'app/core/services/preferences.service';
-import helptext from 'app/helptext/about';
 import { CoreService } from 'app/core/services/core.service';
+import { PreferencesService } from 'app/core/services/preferences.service';
+import { ProductType } from 'app/enums/product-type.enum';
+import helptext from 'app/helptext/about';
+import { AppLoaderService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 
 export interface DialogData {

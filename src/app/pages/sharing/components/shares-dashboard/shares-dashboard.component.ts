@@ -1,35 +1,29 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-
-import { TranslateService } from '@ngx-translate/core';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import _ from 'lodash';
-
-import { T } from 'app/translate-marker';
-import { helptext_sharing_webdav } from 'app/helptext/sharing';
-import { ExpandableTableState, InputExpandableTableConf } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
-import { helptext_sharing_smb } from 'app/helptext/sharing';
-import { helptext_sharing_nfs } from 'app/helptext/sharing';
-import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form';
-import {
-  AppLoaderService, DialogService, IscsiService, ModalService, NetworkService, SystemGeneralService, UserService, WebSocketService,
-} from 'app/services';
-import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form';
-import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form';
-import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
-import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { Validators } from '@angular/forms';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { TableComponent } from 'app/pages/common/entity/table/table.component';
-import { ApiDirectory } from 'app/interfaces/api-directory.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { Service } from 'app/interfaces/service.interface';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { AppTableHeaderExtraAction } from 'app/pages/common/entity/table/table.component';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { helptext_sharing_webdav, helptext_sharing_smb, helptext_sharing_nfs } from 'app/helptext/sharing';
+import { ApiDirectory } from 'app/interfaces/api-directory.interface';
+import { Service } from 'app/interfaces/service.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { ExpandableTableState, InputExpandableTableConf } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
+import { TableComponent, AppTableHeaderExtraAction } from 'app/pages/common/entity/table/table.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
+import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form';
+import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form';
+import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form';
+import {
+  AppLoaderService, DialogService, IscsiService, ModalService, NetworkService, SystemGeneralService, UserService,
+  WebSocketService,
+} from 'app/services';
+import { T } from 'app/translate-marker';
 
 enum ShareType {
   SMB = 'smb',
@@ -72,7 +66,6 @@ export class SharesDashboardComponent {
   nfsExpandableState: ExpandableTableState;
   smbExpandableState: ExpandableTableState;
   iscsiExpandableState: ExpandableTableState;
-  onDestroy$ = new Subject();
   smbServiceStatus = ServiceStatus.Loading;
   webdavServiceStatus = ServiceStatus.Loading;
   nfsServiceStatus = ServiceStatus.Loading;
@@ -85,7 +78,6 @@ export class SharesDashboardComponent {
     private iscsiService: IscsiService, private translate: TranslateService) {
     this.ws
       .call('service.query', [])
-      .pipe(takeUntil(this.onDestroy$))
       .pipe(untilDestroyed(this)).subscribe((services) => {
         [
           _.find(services, { service: ServiceName.Cifs }),
@@ -330,16 +322,37 @@ export class SharesDashboardComponent {
     let formComponent: NFSFormComponent | SMBFormComponent | WebdavFormComponent | TargetFormComponent;
     switch (share) {
       case ShareType.NFS:
-        formComponent = new NFSFormComponent(this.userService, this.modalService, this.ws, this.dialog, this.networkService);
+        formComponent = new NFSFormComponent(
+          this.userService,
+          this.modalService,
+          this.ws,
+          this.dialog,
+          this.networkService,
+        );
         break;
       case ShareType.SMB:
-        formComponent = new SMBFormComponent(this.router, this.ws, this.dialog, this.loader, this.sysGeneralService, this.modalService);
+        formComponent = new SMBFormComponent(
+          this.router,
+          this.ws,
+          this.dialog,
+          this.loader,
+          this.sysGeneralService,
+          this.modalService,
+        );
         break;
       case ShareType.WebDAV:
         formComponent = new WebdavFormComponent(this.router, this.ws, this.dialog, this.loader);
         break;
       case ShareType.ISCSI:
-        formComponent = new TargetFormComponent(this.router, this.aroute, this.iscsiService, this.loader, this.translate, this.ws, this.modalService);
+        formComponent = new TargetFormComponent(
+          this.router,
+          this.aroute,
+          this.iscsiService,
+          this.loader,
+          this.translate,
+          this.ws,
+          this.modalService,
+        );
         break;
     }
     this.modalService.open('slide-in-form', formComponent, id);
@@ -515,7 +528,7 @@ export class SharesDashboardComponent {
         onClick: () => {
           const rpc = service.state === ServiceStatus.Running ? 'service.stop' : 'service.start';
           this.updateTableServiceStatus({ ...service, state: ServiceStatus.Loading });
-          this.ws.call(rpc, [service.service]).pipe(takeUntil(this.onDestroy$)).pipe(untilDestroyed(this)).subscribe((hasChanged: boolean) => {
+          this.ws.call(rpc, [service.service]).pipe(untilDestroyed(this)).subscribe((hasChanged: boolean) => {
             if (hasChanged) {
               if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
                 this.dialog.Info(
@@ -561,10 +574,5 @@ export class SharesDashboardComponent {
       default:
         return 'fn-theme-orange';
     }
-  }
-
-  ngOnDestroy(): void {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
   }
 }

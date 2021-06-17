@@ -3,7 +3,7 @@ export function removeClass(el: any, className: string): void {
   if (!el.length) {
     el.classList.remove(className);
   } else {
-    for (var i = 0; i < el.length; i++) {
+    for (let i = 0; i < el.length; i++) {
       el[i].classList.remove(className);
     }
   }
@@ -14,7 +14,7 @@ export function addClass(el: any, className: string): void {
   if (!el.length) {
     el.classList.add(className);
   } else {
-    for (var i = 0; i < el.length; i++) {
+    for (let i = 0; i < el.length; i++) {
       el[i].classList.add(className);
     }
   }
@@ -23,7 +23,7 @@ export function addClass(el: any, className: string): void {
 export function findClosest(el: HTMLElement, className: string): HTMLElement {
   if (!el) return;
   while (el) {
-    var parent = el.parentElement;
+    const parent = el.parentElement;
     if (parent && hasClass(parent, className)) {
       return parent;
     }

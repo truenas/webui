@@ -1,23 +1,21 @@
 import {
   ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, TemplateRef,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { FieldConfig } from '../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../common/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
-
-import { RestService, WebSocketService } from '../../services';
-import { AppLoaderService } from '../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../common/entity/utils';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
   selector: 'dashboard-note-edit',
   templateUrl: './dashboard-note-edit.component.html',
-  // template: `<entity-form-embedded [args]="machineId" [conf]="this"></entity-form-embedded>`,
   providers: [EntityFormService],
 })
 export class DashboardNoteEditComponent implements OnInit {
@@ -54,11 +52,13 @@ export class DashboardNoteEditComponent implements OnInit {
   notes: any[] ;
   protected targetNoteIndex: number;
 
-  constructor(protected router: Router, protected rest: RestService,
+  constructor(
+    protected router: Router,
     protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected loader: AppLoaderService,
-    protected entityFormService: EntityFormService) {}
+    protected entityFormService: EntityFormService,
+  ) {}
 
   ngOnInit(): void {
     this.generateFieldConfig();

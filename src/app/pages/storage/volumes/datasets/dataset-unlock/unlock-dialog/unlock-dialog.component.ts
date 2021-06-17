@@ -1,9 +1,9 @@
-import { MatDialogRef } from '@angular/material/dialog';
 import {
   Component, Output, EventEmitter,
 } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import helptext from '../../../../../../helptext/storage/volumes/datasets/dataset-unlock';
+import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 
 @Component({
   selector: 'app-unlock-dialog',
@@ -56,7 +56,10 @@ export class UnlockDialogComponent {
 
   showError(dataset: any): void {
     if (this.parent.dialogService && dataset.unlock_error) {
-      this.parent.dialogService.Info(helptext.unlock_dataset_dialog.error_dialog_title + dataset.name, dataset.unlock_error);
+      this.parent.dialogService.Info(
+        helptext.unlock_dataset_dialog.error_dialog_title + dataset.name,
+        dataset.unlock_error,
+      );
     }
   }
 }

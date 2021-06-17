@@ -1,43 +1,40 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../appMaterial.module';
-import { TranslateModule } from '@ngx-translate/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
-
-import { JailService } from '../../services';
-import { EntityModule } from '../common/entity/entity.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+import { MaterialModule } from 'app/appMaterial.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { UserService } from 'app/services/user.service';
 import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
-import { UserService } from '../../services/user.service';
-
-import { routing } from './sharing.routing';
-import { NFSListComponent } from './nfs/nfs-list';
-import { NFSFormComponent } from './nfs/nfs-form';
-import { WebdavListComponent } from './webdav/webdav-list';
-import { WebdavFormComponent } from './webdav/webdav-form';
-import { SMBListComponent } from './smb/smb-list';
-import { SMBFormComponent } from './smb/smb-form';
-import { SMBAclComponent } from './smb/smb-acl/smb-acl.component';
-import { ISCSI } from './iscsi/iscsi.component';
-import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.component';
+import { EntityModule } from '../common/entity/entity.module';
+import { SharesDashboardComponent } from './components/shares-dashboard/shares-dashboard.component';
+import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form';
+import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list';
+import { AuthorizedAccessFormComponent } from './iscsi/authorizedaccess/authorizedaccess-form';
+import { AuthorizedAccessListComponent } from './iscsi/authorizedaccess/authorizedaccess-list';
+import { ExtentFormComponent } from './iscsi/extent/extent-form';
+import { ExtentListComponent } from './iscsi/extent/extent-list';
+import { FibreChannelPortComponent } from './iscsi/fibre-channel-ports/fibre-channel-port/fibre-channel-port.component';
+import { FibreChannelPortsComponent } from './iscsi/fibre-channel-ports/fibre-channel-ports.component';
 import { GlobalconfigurationComponent } from './iscsi/globalconfiguration';
-import { PortalListComponent } from './iscsi/portal/portal-list';
-import { PortalFormComponent } from './iscsi/portal/portal-form';
+import { InitiatorFormComponent } from './iscsi/initiator/initiator-form';
 import { DynamicListComponent } from './iscsi/initiator/initiator-form/dynamic-list/dynamic-list-component';
 import { InitiatorListComponent } from './iscsi/initiator/initiator-list';
-import { InitiatorFormComponent } from './iscsi/initiator/initiator-form';
-import { AuthorizedAccessListComponent } from './iscsi/authorizedaccess/authorizedaccess-list';
-import { AuthorizedAccessFormComponent } from './iscsi/authorizedaccess/authorizedaccess-form';
-import { TargetListComponent } from './iscsi/target/target-list';
+import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.component';
+import { ISCSI } from './iscsi/iscsi.component';
+import { PortalFormComponent } from './iscsi/portal/portal-form';
+import { PortalListComponent } from './iscsi/portal/portal-list';
 import { TargetFormComponent } from './iscsi/target/target-form';
-import { ExtentListComponent } from './iscsi/extent/extent-list';
-import { ExtentFormComponent } from './iscsi/extent/extent-form';
-import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list';
-import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form';
-import { FibreChannelPortsComponent } from './iscsi/fibre-channel-ports/fibre-channel-ports.component';
-import { FibreChannelPortComponent } from './iscsi/fibre-channel-ports/fibre-channel-port/fibre-channel-port.component';
-import { SharesDashboardComponent } from './components/shares-dashboard/shares-dashboard.component';
+import { TargetListComponent } from './iscsi/target/target-list';
+import { NFSFormComponent } from './nfs/nfs-form';
+import { NFSListComponent } from './nfs/nfs-list';
+import { routing } from './sharing.routing';
+import { SMBAclComponent } from './smb/smb-acl/smb-acl.component';
+import { SMBFormComponent } from './smb/smb-form';
+import { SMBListComponent } from './smb/smb-list';
+import { WebdavFormComponent } from './webdav/webdav-form';
+import { WebdavListComponent } from './webdav/webdav-list';
 
 @NgModule({
   imports: [
@@ -80,7 +77,6 @@ import { SharesDashboardComponent } from './components/shares-dashboard/shares-d
     FibreChannelPortComponent,
   ],
   providers: [
-    JailService,
     EntityFormService,
     UserService,
   ],

@@ -10,7 +10,6 @@ export interface PageOptions {
 export abstract class Page extends ViewController {
   name = 'Page';
   private url: string; // Give the page a url
-  // private displayList: any[]; // (This is a copy of the <viewsData>. If filtering view nodes, this is what gets altered instead of the actual viewsData)
 
   constructor(options?: PageOptions) {
     super();

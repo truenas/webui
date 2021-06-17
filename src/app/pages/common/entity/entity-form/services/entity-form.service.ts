@@ -7,10 +7,7 @@ import {
   FormGroup,
 } from '@angular/forms';
 import * as _ from 'lodash';
-
-import { WebSocketService } from '../../../../../services/ws.service';
-import { RestService } from '../../../../../services/rest.service';
-
+import { WebSocketService } from 'app/services/ws.service';
 import { FieldConfig, UnitType, InputUnitConfig } from '../models/field-config.interface';
 
 @Injectable()
@@ -31,8 +28,10 @@ export class EntityFormService {
     size: 'KIB',
     duration: 'MINUTE',
   };
-  constructor(@Inject(FormBuilder) private formBuilder: FormBuilder,
-    protected ws: WebSocketService, private rest: RestService) {}
+  constructor(
+    @Inject(FormBuilder) private formBuilder: FormBuilder,
+    protected ws: WebSocketService,
+  ) {}
 
   createFormGroup(controls: FieldConfig[]): FormGroup {
     const formGroup: { [id: string]: AbstractControl } = {};
@@ -97,7 +96,12 @@ export class EntityFormService {
     formArray.removeAt(index);
   }
 
-  getFilesystemListdirChildren(node: any, explorerType?: string, hideDirs?: any, showHiddenFiles = false): Promise<any[]> {
+  getFilesystemListdirChildren(
+    node: any,
+    explorerType?: string,
+    hideDirs?: any,
+    showHiddenFiles = false,
+  ): Promise<any[]> {
     const children: any[] = [];
     let typeFilter: any;
     explorerType && explorerType === 'directory' ? typeFilter = [['type', '=', 'DIRECTORY']] : typeFilter = [];
@@ -221,7 +225,11 @@ export class EntityFormService {
     // get unit and return phrased string
     unit = value.replace(num, '');
     if (unit === '') {
-      unit = config.default ? config.default : (config.allowUnits ? config.allowUnits[0] : this.defaultUnit[config.type]);
+      unit = config.default
+        ? config.default
+        : (config.allowUnits
+          ? config.allowUnits[0]
+          : this.defaultUnit[config.type]);
     }
     if (config.allowUnits !== undefined) {
       config.allowUnits.forEach((item) => item.toUpperCase());

@@ -3,8 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -24,7 +23,7 @@ export class SmartResultsComponent implements EntityTableConfig {
     { name: T('Lifetime'), prop: 'lifetime', hidden: true },
     { name: T('Error'), prop: 'lba_of_first_error', hidden: true },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
   };

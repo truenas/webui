@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Thread } from 'app/core/classes/thread';
 import { CoreEvent } from 'app/interfaces/events';
 import { CoreService } from './core.service';
-import { Thread } from 'app/core/classes/thread';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 export interface ProcessTask {
   responseEvent: string;
@@ -23,7 +23,7 @@ export class ChartDataUtilsService {
     const operations = (): void => {
       const context: Worker = self as any; // Required so Typescript doesn't complain
 
-      var callback = (data: any): void => {
+      const callback = (data: any): void => {
         context.postMessage({ name: 'TEST FROM THREAD CALLBACK', data });
       };
 

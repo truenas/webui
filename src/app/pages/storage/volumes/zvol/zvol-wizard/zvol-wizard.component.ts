@@ -3,23 +3,26 @@ import {
   Validators, FormControl, ValidationErrors, FormGroup,
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import {
+  UntilDestroy, untilDestroyed,
+} from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
+import { CoreService } from 'app/core/services/core.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
-import globalHelptext from '../../../../../helptext/global-helptext';
-import helptext from '../../../../../helptext/storage/volumes/zvol-form';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/storage/volumes/zvol-form';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { WebSocketService, StorageService } from '../../../../../services';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+import { WebSocketService, StorageService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-
-import { Observable } from 'rxjs';
-import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
-import { CoreService } from 'app/core/services/core.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface ZvolFormData {
   name: string;
@@ -40,14 +43,14 @@ interface ZvolFormData {
   selector: 'app-zvol-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
 })
-export class ZvolWizardComponent {
-  protected addWsCall = 'pool.dataset.create';
+export class ZvolWizardComponent implements WizardConfiguration {
+  addWsCall: 'pool.dataset.create' = 'pool.dataset.create';
   protected pk: any;
   protected path: string;
   queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   protected compression: any;
-  protected advanced_field: any[] = ['volblocksize'];
-  protected isBasicMode = true;
+  advanced_field: any[] = ['volblocksize'];
+  isBasicMode = true;
   protected isNew = true;
   protected isEntity = true;
   parent: string;
@@ -55,7 +58,7 @@ export class ZvolWizardComponent {
   parent_data: any;
   volid: string;
   customFilter: any[] = [];
-  protected entityWizard: any;
+  protected entityWizard: EntityWizardComponent;
   minimum_recommended_zvol_volblocksize: keyof ZvolWizardComponent['reverseZvolBlockSizeMap'];
   namesInUse: string[] = [];
   title: string;
@@ -101,7 +104,7 @@ export class ZvolWizardComponent {
     '1M': '1048576',
   };
 
-  protected wizardConfig: Wizard[] = [
+  wizardConfig: Wizard[] = [
     {
       label: T('Select Path'),
       fieldConfig: [
@@ -365,10 +368,6 @@ export class ZvolWizardComponent {
             this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sparse')['isHidden'] = true;
             this.customFilter = [[['id', '=', this.parent]]];
 
-            let sync_collection = [{ label: pk_dataset[0].sync.value, value: pk_dataset[0].sync.value }];
-            let compression_collection = [{ label: pk_dataset[0].compression.value, value: pk_dataset[0].compression.value }];
-            let deduplication_collection = [{ label: pk_dataset[0].deduplication.value, value: pk_dataset[0].deduplication.value }];
-
             const volumesize = pk_dataset[0].volsize.parsed;
 
             this.isNew = false;
@@ -390,6 +389,7 @@ export class ZvolWizardComponent {
 
             zvolEntityForm.controls['volsize'].setValue(humansize);
 
+            let sync_collection: Option[];
             if (pk_dataset[0].sync.source === 'INHERITED' || pk_dataset[0].sync.source === 'DEFAULT') {
               sync_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].sync.rawvalue})`, value: parent_dataset_res[0].sync.value }];
             } else {
@@ -399,6 +399,7 @@ export class ZvolWizardComponent {
 
             sync.options = sync_collection.concat(sync.options);
 
+            let compression_collection: Option[];
             if (pk_dataset[0].compression.source === 'INHERITED' || pk_dataset[0].compression.source === 'DEFAULT') {
               compression_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].compression.rawvalue})`, value: parent_dataset_res[0].compression.value }];
             } else {
@@ -408,6 +409,7 @@ export class ZvolWizardComponent {
 
             compression.options = compression_collection.concat(compression.options);
 
+            let deduplication_collection: Option[];
             if (pk_dataset[0].deduplication.source === 'INHERITED' || pk_dataset[0].deduplication.source === 'DEFAULT') {
               deduplication_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].deduplication.rawvalue})`, value: parent_dataset_res[0].deduplication.value }];
             } else {
@@ -432,7 +434,7 @@ export class ZvolWizardComponent {
 
   afterInit(entityWizard: EntityWizardComponent): void {
     const zvolEntityForm = (< FormGroup > this.entityWizard.formArray.get([1]));
-    (< FormGroup > entityWizard.formArray.get([0])).get('path').valueChanges.pipe(untilDestroyed(this)).subscribe((pool: String) => {
+    (<FormGroup> entityWizard.formArray.get([0])).get('path').valueChanges.pipe(untilDestroyed(this)).subscribe((pool: string) => {
       if (pool.includes('mnt')) {
         const split = pool.split('/');
         this.parent = '';
@@ -473,8 +475,8 @@ export class ZvolWizardComponent {
     zvolEntityForm.controls['volblocksize'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: keyof ZvolWizardComponent['reverseZvolBlockSizeMap']) => {
       const res_number = parseInt(this.reverseZvolBlockSizeMap[res], 10);
       if (this.minimum_recommended_zvol_volblocksize) {
-        const recommended_size_number = parseInt(this.reverseZvolBlockSizeMap[this.minimum_recommended_zvol_volblocksize], 0);
-        if (res_number < recommended_size_number) {
+        const recommendedSize = parseInt(this.reverseZvolBlockSizeMap[this.minimum_recommended_zvol_volblocksize], 0);
+        if (res_number < recommendedSize) {
           this.translate.get(helptext.blocksize_warning.a).pipe(untilDestroyed(this)).subscribe((blockMsgA) => (
             this.translate.get(helptext.blocksize_warning.b).pipe(untilDestroyed(this)).subscribe((blockMsgB) => {
               this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize').warnings = `${blockMsgA} ${this.minimum_recommended_zvol_volblocksize}. ${blockMsgB}`;

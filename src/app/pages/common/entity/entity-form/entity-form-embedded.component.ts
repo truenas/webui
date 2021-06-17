@@ -16,22 +16,19 @@ import {
   FormBuilder, FormControl, FormGroup,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CoreEvent } from 'app/interfaces/events';
-import * as _ from 'lodash';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { T } from '../../../../translate-marker';
-
-import { RestService, WebSocketService } from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import * as _ from 'lodash';
+import { Observable, Subscription, Subject } from 'rxjs';
+import { CoreEvent } from 'app/interfaces/events';
+import { WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { T } from 'app/translate-marker';
 import { EntityTemplateDirective } from '../entity-template.directive';
-
 import { FieldConfig } from './models/field-config.interface';
 import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
 import { FieldRelationService } from './services/field-relation.service';
-import { Subscription, Subject } from 'rxjs';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 export interface FormConfig {
   fieldSets?: any;
@@ -132,13 +129,16 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   error: string;
   success = false;
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
     protected location: Location, private fb: FormBuilder,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
-    public translate: TranslateService) {}
+    public translate: TranslateService,
+  ) {}
 
   ngAfterViewInit(): void {
     this.templates.forEach((item) => {
@@ -207,18 +207,18 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     if (this.conf.values) {
       // We are no longer responsible for API calls.
       for (const i in this.data) {
-	  const fg = this.formGroup.controls[i];
-	  if (fg) {
-	    const current_field = this.fieldConfig.find((control) => control.name === i);
-	    if (current_field.type === 'array') {
-	      this.setArrayValue(this.data[i], fg, i);
-	    } else {
-	      fg.setValue(this.data[i]);
-	    }
-	  }
+        const fg = this.formGroup.controls[i];
+        if (fg) {
+          const current_field = this.fieldConfig.find((control) => control.name === i);
+          if (current_field.type === 'array') {
+            this.setArrayValue(this.data[i], fg, i);
+          } else {
+            fg.setValue(this.data[i]);
+          }
+        }
       }
       if (this.conf.initial) {
-	  this.conf.initial.bind(this.conf)(this);
+        this.conf.initial.bind(this.conf)(this);
       }
     }
   }
@@ -278,7 +278,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     for (const i in value) {
       if (value.hasOwnProperty(i)) {
         if ((this.conf as any)['clean_' + i]) {
-	  value = (this.conf as any)['clean_' + i](value, i);
+          value = (this.conf as any)['clean_' + i](value, i);
         }
       }
     }
@@ -391,12 +391,11 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
       );
       this.setDisabled(config.name, tobeDisabled);
 
-      this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
-        .forEach((control) => {
-	  control.valueChanges.pipe(untilDestroyed(this)).subscribe(
-	    () => { this.relationUpdate(config, activations); },
-          );
-        });
+      this.fieldRelationService.getRelatedFormControls(config, this.formGroup).forEach((control) => {
+        control.valueChanges.pipe(untilDestroyed(this)).subscribe(
+          () => { this.relationUpdate(config, activations); },
+        );
+      });
     }
   }
 

@@ -1,20 +1,20 @@
-import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { helptext_system_advanced } from 'app/helptext/system/advanced';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
+import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   DialogService, LanguageService, StorageService,
   SystemGeneralService, WebSocketService,
-} from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { ModalService } from '../../../../services/modal.service';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { EntityUtils } from '../../../common/entity/utils';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+} from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({

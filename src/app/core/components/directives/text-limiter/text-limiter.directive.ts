@@ -1,8 +1,8 @@
+import { Overlay, OverlayRef, OverlayPositionBuilder } from '@angular/cdk/overlay';
+import { ComponentPortal } from '@angular/cdk/portal';
 import {
   Directive, Input, AfterViewInit, ElementRef, HostListener, ComponentRef,
 } from '@angular/core';
-import { Overlay, OverlayRef, OverlayPositionBuilder } from '@angular/cdk/overlay';
-import { ComponentPortal } from '@angular/cdk/portal';
 import { TextLimiterTooltipComponent } from './text-limiter-tooltip/text-limiter-tooltip.component';
 
 @Directive({
@@ -38,8 +38,11 @@ export class TextLimiterDirective implements AfterViewInit {
     this.overlayRef.detach();
   }
 
-  constructor(private el: ElementRef, private overlayPositionBuilder: OverlayPositionBuilder, private overlay: Overlay) {
-  }
+  constructor(
+    private el: ElementRef,
+    private overlayPositionBuilder: OverlayPositionBuilder,
+    private overlay: Overlay,
+  ) {}
 
   ngAfterViewInit(): void {
     this.rawText = this.el.nativeElement.innerText;

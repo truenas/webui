@@ -1,17 +1,15 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-
-import { ModalService } from 'app/services/modal.service';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import helptext from 'app/helptext/data-protection/snapshot/snapshot-form';
-import { DialogService, StorageService, TaskService } from 'app/services';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { UnitType } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DialogService, StorageService, TaskService } from 'app/services';
+import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({

@@ -1,10 +1,10 @@
-import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
-import { MatDialogRef } from '@angular/material/dialog';
 import {
   Component, ViewChild, ElementRef, EventEmitter, OnInit,
 } from '@angular/core';
-import { Interval } from 'app/interfaces/timeout.interface';
+import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
+import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
+import { Interval } from 'app/interfaces/timeout.interface';
 
 @Component({
   selector: 'consolepanel-dialog',
@@ -12,9 +12,9 @@ import { TranslateService } from '@ngx-translate/core';
   templateUrl: './consolepanel-dialog.component.html',
 })
 export class ConsolePanelModalDialog implements OnInit {
-  refreshMsg: String = 'Check to stop refresh';
+  refreshMsg = 'Check to stop refresh';
   intervalPing: Interval;
-  consoleMsg: String = 'Loading...';
+  consoleMsg = 'Loading...';
   @ViewChild('footerBarScroll', { static: true }) private footerBarScroll: ElementRef;
   onEventEmitter = new EventEmitter();
 
@@ -38,7 +38,8 @@ export class ConsolePanelModalDialog implements OnInit {
       let isScrollBottom = false;
       const delta = 3;
 
-      if (this.footerBarScroll.nativeElement.scrollTop + this.footerBarScroll.nativeElement.offsetHeight + delta >= this.footerBarScroll.nativeElement.scrollHeight) {
+      const nativeElement = this.footerBarScroll.nativeElement;
+      if (nativeElement.scrollTop + nativeElement.offsetHeight + delta >= nativeElement.scrollHeight) {
         isScrollBottom = true;
       }
       this.onEventEmitter.emit();

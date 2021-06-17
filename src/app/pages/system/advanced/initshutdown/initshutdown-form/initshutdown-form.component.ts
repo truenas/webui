@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
-
-import { EntityFormComponent } from '../../../../common/entity/entity-form';
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import helptext from '../../../../../helptext/system/initshutdown';
-import { ModalService } from 'app/services/modal.service';
-import { take } from 'rxjs/operators';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { take } from 'rxjs/operators';
+import helptext from 'app/helptext/system/initshutdown';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({

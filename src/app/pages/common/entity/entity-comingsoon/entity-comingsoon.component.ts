@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import urls from '../../../../helptext/urls';
+import urls from 'app/helptext/urls';
 
 @Component({
   selector: 'entity-comingsoon',

@@ -1,17 +1,17 @@
 import {
   Component, ViewChild, Input, OnInit, AfterViewInit,
 } from '@angular/core';
+import { Sort } from '@angular/material/sort';
 import { MatTable } from '@angular/material/table';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { TreeNode } from 'primeng/api';
+import { CoreService } from 'app/core/services/core.service';
 import { CoreEvent } from 'app/interfaces/events';
-import { DialogService, WebSocketService } from '../../../../services';
+import { DialogService, WebSocketService } from 'app/services';
 import { EntityUtils } from '../utils';
 import { EntityTreeTable } from './entity-tree-table.model';
 import { EntityTreeTableService } from './entity-tree-table.service';
-import { TranslateService } from '@ngx-translate/core';
-import { CoreService } from 'app/core/services/core.service';
-import { Sort } from '@angular/material/sort';
-import { TreeNode } from 'primeng/api';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 interface FilterValue {
   column: string;
@@ -152,7 +152,9 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     this.treeDataSource = this.treeTableService.editNode('expanded', value, rootNode.indexPath, this.treeDataSource);
 
     if (this.filter.value.length > 0) {
-      this.tableDataSource = this.treeTableService.filteredTable(this.filter.column, this.filter.value, this.treeDataSource, true);
+      this.tableDataSource = this.treeTableService.filteredTable(
+        this.filter.column, this.filter.value, this.treeDataSource, true,
+      );
     } else {
       this.tableDataSource = this.treeTableService.buildTable(this.treeDataSource);
     }

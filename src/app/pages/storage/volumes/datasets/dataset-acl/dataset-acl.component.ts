@@ -1,44 +1,46 @@
 import {
   Component,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import {
+  FormArray,
   FormControl,
   FormGroup,
 } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AclItemTag } from 'app/enums/acl-type.enum';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
+import { AclItemTag, DefaultAclType } from 'app/enums/acl-type.enum';
+import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import * as _ from 'lodash';
-
-import { UserService } from '../../../../../services/user.service';
-import { WebSocketService, StorageService, DialogService } from '../../../../../services';
 import {
   FieldConfig,
-} from '../../../../common/entity/entity-form/models/field-config.interface';
-import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { T } from '../../../../../translate-marker';
-import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-acl';
-import { MatDialog } from '@angular/material/dialog';
-import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
-import { EntityUtils } from '../../../../common/entity/utils';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService, StorageService, DialogService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { UserService } from 'app/services/user.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
   selector: 'app-dataset-acl',
   template: '<entity-form [conf]="this"></entity-form>',
+  providers: [EntityFormService],
 })
 export class DatasetAclComponent implements FormConfiguration {
   queryCall: 'filesystem.getacl' = 'filesystem.getacl';
-  updateCall = 'filesystem.setacl';
+  updateCall: 'filesystem.setacl' = 'filesystem.setacl';
   isEntity = true;
   pk: string;
   protected path: string;
@@ -54,7 +56,7 @@ export class DatasetAclComponent implements FormConfiguration {
   private aces_fc: any;
   private entityForm: any;
   formGroup: FormGroup;
-  data: Object = {};
+  data: Record<string, unknown> = {};
   error: string;
   protected dialogRef: any;
   route_success: string[] = ['storage'];
@@ -65,7 +67,7 @@ export class DatasetAclComponent implements FormConfiguration {
   protected uid_fc: any;
   protected gid_fc: any;
 
-  fieldSetDisplay = 'default';// default | carousel | stepper
+  fieldSetDisplay = 'default'; // default | carousel | stepper
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
     {
@@ -278,7 +280,7 @@ export class DatasetAclComponent implements FormConfiguration {
     },
   ];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'use_perm_editor',
       name: helptext.permissions_editor_button,
@@ -347,34 +349,39 @@ export class DatasetAclComponent implements FormConfiguration {
       });
     });
 
-    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
+    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items: any) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
       }
       this.userOptions = users;
 
+      this.uid_fc = _.find(this.fieldConfig, { name: 'uid' });
       this.uid_fc.options = this.userOptions;
     });
 
-    this.userService.groupQueryDSCache().pipe(untilDestroyed(this)).subscribe((groups) => {
+    this.userService.groupQueryDSCache().pipe(untilDestroyed(this)).subscribe((groups: any) => {
       const groupOptions: Option[] = [];
       for (let i = 0; i < groups.length; i++) {
         groupOptions.push({ label: groups[i].group, value: groups[i].group });
       }
       this.groupOptions = groupOptions;
 
+      this.gid_fc = _.find(this.fieldConfig, { name: 'gid' });
       this.gid_fc.options = this.groupOptions;
     });
     this.ws.call('filesystem.default_acl_choices').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
       res.forEach((item) => {
-        this.defaults.push({ label: item, value: item });
+        if (item !== 'POSIX_OPEN' && item !== 'POSIX_RESTRICTED') {
+          this.defaults.push({ label: item, value: item });
+        }
       });
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
+    this.entityForm.formGroup.get('path').setValue(this.path);
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive.valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
       if (value === true) {
@@ -388,9 +395,9 @@ export class DatasetAclComponent implements FormConfiguration {
       }
     });
 
-    this.ws.call('filesystem.acl_is_trivial', [this.path]).pipe(untilDestroyed(this)).subscribe((aclIsTrivial) => {
+    this.ws.call('filesystem.acl_is_trivial', [this.path]).pipe(untilDestroyed(this)).subscribe((aclIsTrivial: any) => {
       this.aclIsTrivial = aclIsTrivial;
-    }, (err) => {
+    }, (err: any) => {
       new EntityUtils().handleWSError(this.entityForm, err);
     });
 
@@ -478,7 +485,7 @@ export class DatasetAclComponent implements FormConfiguration {
     while (this.aces.controls.length > num) {
       this.aces.removeAt(num);
     }
-    this.ws.call('filesystem.get_default_acl', [value]).pipe(untilDestroyed(this)).subscribe((res) => {
+    this.ws.call('filesystem.get_default_acl', [value as DefaultAclType]).pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.dataHandler(this.entityForm, res);
     });
   }
@@ -492,7 +499,9 @@ export class DatasetAclComponent implements FormConfiguration {
     }
   }
 
+  // TODO: Refactor for better readability
   resourceTransformIncomingRestData(data: any): any {
+    let returnLater = false;
     if (data.acl.length === 0) {
       setTimeout(() => {
         this.handleEmptyACL();
@@ -500,10 +509,14 @@ export class DatasetAclComponent implements FormConfiguration {
       return { aces: [] as any };
     }
     if (this.homeShare) {
-      this.ws.call('filesystem.get_default_acl', ['HOME']).pipe(untilDestroyed(this)).subscribe((res) => {
+      returnLater = true;
+      this.ws.call('filesystem.get_default_acl', [DefaultAclType.Home]).pipe(untilDestroyed(this)).subscribe((res: any) => {
         data.acl = res;
-        return { aces: [] as any };
+        return { aces: data.acl as any };
       });
+    }
+    if (!returnLater) {
+      return { aces: data.acl as any };
     }
   }
 
@@ -517,7 +530,7 @@ export class DatasetAclComponent implements FormConfiguration {
 
   async dataHandler(entityForm: EntityFormComponent, defaults?: any): Promise<void> {
     entityForm.formGroup.controls['aces'].reset();
-    (entityForm.formGroup.controls['aces'] as FormGroup).controls = {};
+    (entityForm.formGroup.controls['aces'] as FormArray).controls = [];
     this.aces_fc.listFields = [];
     this.gid_fc = _.find(this.fieldConfig, { name: 'gid' });
     this.uid_fc = _.find(this.fieldConfig, { name: 'uid' });
@@ -595,11 +608,12 @@ export class DatasetAclComponent implements FormConfiguration {
         }
       }
       const propName = 'aces';
-      const aces_fg = entityForm.formGroup.controls[propName] as FormGroup;
-      if (aces_fg.controls[i] === undefined) {
+      const aces_fg = entityForm.formGroup.get(propName) as FormArray;
+      if (!aces_fg.controls[i]) {
         // add controls;
         const templateListField = _.cloneDeep(_.find(this.fieldConfig, { name: propName }).templateListField);
-        (aces_fg as any).push(this.entityFormService.createFormGroup(templateListField));
+        const formGroup = this.entityFormService.createFormGroup(templateListField);
+        aces_fg.push(formGroup);
         this.aces_fc.listFields.push(templateListField);
       }
 
@@ -632,13 +646,8 @@ export class DatasetAclComponent implements FormConfiguration {
   }
 
   showChoiceDialog(presetsOnly = false): void {
-    let msg1; let msg2;
-    this.translate.get(helptext.type_dialog.radio_preset_tooltip).pipe(untilDestroyed(this)).subscribe((m1) => {
-      this.translate.get(helptext.preset_dialog.message).pipe(untilDestroyed(this)).subscribe((m2) => {
-        msg1 = m1;
-        msg2 = m2;
-      });
-    });
+    const msg1 = this.translate.instant(helptext.type_dialog.radio_preset_tooltip);
+    const msg2 = this.translate.instant(helptext.preset_dialog.message);
     const conf: DialogFormConfiguration = {
       title: presetsOnly ? helptext.type_dialog.radio_preset : helptext.type_dialog.title,
       message: presetsOnly ? `${msg1} ${msg2}` : null,
@@ -739,10 +748,12 @@ export class DatasetAclComponent implements FormConfiguration {
   async customSubmit(body: any): Promise<void> {
     body.uid = body.apply_user ? body.uid : null;
     body.gid = body.apply_group ? body.gid : null;
-    const doesNotWantToEditDataset = this.storageService.isDatasetTopLevel(body.path.replace('mnt/', ''))
-      && !(await this.dialogService
-        .confirm(helptext.dataset_acl_dialog_warning, helptext.dataset_acl_toplevel_dialog_message)
-        .toPromise());
+
+    const doesNotWantToEditDataset = this.storageService.isDatasetTopLevel(this.path.replace('mnt/', ''))
+      && !(await this.dialogService.confirm({
+        title: helptext.dataset_acl_dialog_warning,
+        message: helptext.dataset_acl_toplevel_dialog_message,
+      }).toPromise());
 
     if (doesNotWantToEditDataset) {
       return;
@@ -752,44 +763,44 @@ export class DatasetAclComponent implements FormConfiguration {
     this.dialogRef.componentInstance.setDescription(helptext.save_dialog.message);
     const dacl = body.dacl;
 
-    await this.userService.getUserByName(body.uid).toPromise().then((userObj) => {
+    await this.userService.getUserByName(body.uid).toPromise().then((userObj: any) => {
       if (userObj && userObj.hasOwnProperty('pw_uid')) {
         body.uid = userObj.pw_uid;
       }
-    }, (err) => {
+    }, (err: any) => {
       console.error(err);
     });
 
-    await this.userService.getGroupByName(body.gid).toPromise().then((groupObj) => {
+    await this.userService.getGroupByName(body.gid).toPromise().then((groupObj: any) => {
       if (groupObj && groupObj.hasOwnProperty('gr_gid')) {
         body.gid = groupObj.gr_gid;
       }
-    }, (err) => {
+    }, (err: any) => {
       console.error(err);
     });
 
     for (let i = 0; i < dacl.length; i++) {
       if (dacl[i].tag === AclItemTag.User) {
-        await this.userService.getUserByName(dacl[i].id).toPromise().then((userObj) => {
+        await this.userService.getUserByName(dacl[i].id).toPromise().then((userObj: any) => {
           if (userObj && userObj.hasOwnProperty('pw_uid')) {
             dacl[i]['id'] = userObj.pw_uid;
           }
-        }, (err) => {
+        }, (err: any) => {
           console.error(err);
         });
       } else if (dacl[i].tag === AclItemTag.Group) {
-        await this.userService.getGroupByName(dacl[i].id).toPromise().then((groupObj) => {
+        await this.userService.getGroupByName(dacl[i].id).toPromise().then((groupObj: any) => {
           if (groupObj && groupObj.hasOwnProperty('gr_gid')) {
             dacl[i]['id'] = groupObj.gr_gid;
           }
-        }, (err) => {
+        }, (err: any) => {
           console.error(err);
         });
       }
     }
     this.dialogRef.componentInstance.setCall(this.updateCall,
       [{
-        path: body.path,
+        path: this.path,
         dacl,
         uid: body.uid,
         gid: body.gid,
@@ -811,7 +822,7 @@ export class DatasetAclComponent implements FormConfiguration {
   }
 
   updateGroupSearchOptions(value = '', parent: any, config: any): void {
-    (parent.userService as UserService).groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
+    (parent.userService as UserService).groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups: any) => {
       const groupOptions = [];
       for (let i = 0; i < groups.length; i++) {
         groupOptions.push({ label: groups[i].group, value: groups[i].group });
@@ -821,7 +832,7 @@ export class DatasetAclComponent implements FormConfiguration {
   }
 
   updateUserSearchOptions(value = '', parent: any, config: any): void {
-    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items: any) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -877,30 +888,34 @@ export class DatasetAclComponent implements FormConfiguration {
   }
 
   loadMoreOptions(length: number, parent: any, searchText: string, config: any): void {
-    (parent.userService as UserService).userQueryDSCache(searchText, length).pipe(untilDestroyed(this)).subscribe((items) => {
-      const users: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
-      if (searchText == '') {
-        config.options = config.options.concat(users);
-      } else {
-        config.searchOptions = config.searchOptions.concat(users);
-      }
-    });
+    (parent.userService as UserService).userQueryDSCache(searchText, length)
+      .pipe(untilDestroyed(this))
+      .subscribe((items: any) => {
+        const users: Option[] = [];
+        for (let i = 0; i < items.length; i++) {
+          users.push({ label: items[i].username, value: items[i].username });
+        }
+        if (searchText == '') {
+          config.options = config.options.concat(users);
+        } else {
+          config.searchOptions = config.searchOptions.concat(users);
+        }
+      });
   }
 
   loadMoreGroupOptions(length: number, parent: any, searchText: string, config: any): void {
-    parent.userService.groupQueryDSCache(searchText, false, length).pipe(untilDestroyed(this)).subscribe((items: any[]) => {
-      const groups: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        groups.push({ label: items[i].group, value: items[i].group });
-      }
-      if (searchText == '') {
-        config.options = config.options.concat(groups);
-      } else {
-        config.searchOptions = config.searchOptions.concat(groups);
-      }
-    });
+    parent.userService.groupQueryDSCache(searchText, false, length)
+      .pipe(untilDestroyed(this))
+      .subscribe((items: Group[]) => {
+        const groups: Option[] = [];
+        for (let i = 0; i < items.length; i++) {
+          groups.push({ label: items[i].group, value: items[i].group });
+        }
+        if (searchText == '') {
+          config.options = config.options.concat(groups);
+        } else {
+          config.searchOptions = config.searchOptions.concat(groups);
+        }
+      });
   }
 }

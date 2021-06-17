@@ -1,8 +1,8 @@
+import { CdkDragDrop, CdkDragStart } from '@angular/cdk/drag-drop';
 import {
   Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef,
 } from '@angular/core';
 import { difference, ListSelection, ListSelectionImpl } from './models';
-import { CdkDragDrop, CdkDragStart } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-dual-listbox',
@@ -13,7 +13,7 @@ export class DualListboxComponent implements OnInit {
   @Input() key = 'id';
   @Input() items: any[];
   @Input('selectedItems') _selectedItems: any[];
-  @Output() selectedItemsChange = new EventEmitter<Object>();
+  @Output() selectedItemsChange = new EventEmitter<any[]>();
 
   @Input() minHeight = '200px';
   @Input() maxHeight = '300px';

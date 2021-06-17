@@ -2,10 +2,10 @@ import {
   OnInit, Component, ViewEncapsulation, Inject,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ApplicationsService } from '../../applications.service';
-import helptext from '../../../../helptext/apps/apps';
-import { LocaleService } from 'app/services/locale.service';
+import helptext from 'app/helptext/apps/apps';
+import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'chart-events-dialog',
@@ -84,7 +84,8 @@ export class ChartEventsDialog implements OnInit {
       label = helptext.chartEventDialog.statusUpdateAvailableTo + this.catalogApp.human_latest_version;
     } else if (this.catalogApp.container_images_update_available) {
       label = helptext.chartEventDialog.containerImageStatusUpdateAvailableTo;
-      const updateAvailableImages = Object.keys(this.containerImages).filter((imageName) => (this.containerImages as any)[imageName].update_available);
+      const updateAvailableImages = Object.keys(this.containerImages)
+        .filter((imageName) => (this.containerImages as any)[imageName].update_available);
       label += updateAvailableImages.join(',');
     }
 

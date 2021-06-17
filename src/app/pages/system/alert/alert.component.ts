@@ -1,24 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { CoreEvent } from 'app/interfaces/events';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
-
+import { CoreService } from 'app/core/services/core.service';
+import { AlertLevel } from 'app/enums/alert-level.enum';
+import helptext from 'app/helptext/system/alert-settings';
+import { AlertCategory } from 'app/interfaces/alert.interface';
+import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { T } from 'app/translate-marker';
 import { DialogService, WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import helptext from 'app/helptext/system/alert-settings';
-import { CoreService } from 'app/core/services/core.service';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { AlertLevel } from 'app/enums/alert-level.enum';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { T } from 'app/translate-marker';
 
 /**
  * This form is unlike other forms in the app which make use of EntityForm.
@@ -89,13 +88,14 @@ export class AlertConfigComponent implements OnInit {
       .toPromise()
       .then((categories) => {
         this.addButtons(categories);
-        categories.forEach((category: any) => {
-          const config: any[] = [];
+        categories.forEach((category) => {
+          const config: FieldConfig[] = [];
           for (let i = 0; i < category.classes.length; i++) {
             const c = category.classes[i];
             const warningOptions = [];
             for (let j = 0; j < this.warningOptions.length; j++) {
-              const option = JSON.parse(JSON.stringify(this.warningOptions[j])); // apparently this is the proper way to clone an object
+              // apparently this is the proper way to clone an object
+              const option = JSON.parse(JSON.stringify(this.warningOptions[j]));
               if (option.value === c.level) {
                 option.label = option.label + ' (Default)';
               }
@@ -166,7 +166,7 @@ export class AlertConfigComponent implements OnInit {
       });
   }
 
-  addButtons(categories: any[]): void {
+  addButtons(categories: AlertCategory[]): void {
     const options: Option[] = [];
     categories.forEach((category, index) => {
       options.push({ label: category.title, value: index });
@@ -209,16 +209,16 @@ export class AlertConfigComponent implements OnInit {
     const payload: any = { classes: {} };
 
     for (const key in this.formGroup.value) {
-      const key_values = key.split('_');
-      const alert_class = key_values[0];
-      const class_key = key_values[1];
-      const def = _.find(this.defaults, { id: alert_class });
-      if (def[class_key].toUpperCase() !== this.formGroup.value[key].toUpperCase()) {
+      const keyValues = key.split('_');
+      const alertClass = keyValues[0];
+      const classKey = keyValues[1];
+      const def = _.find(this.defaults, { id: alertClass });
+      if (def[classKey].toUpperCase() !== this.formGroup.value[key].toUpperCase()) {
         // do not submit defaults in the payload
-        if (!payload.classes[alert_class]) {
-          payload.classes[alert_class] = {};
+        if (!payload.classes[alertClass]) {
+          payload.classes[alertClass] = {};
         }
-        payload.classes[alert_class][class_key] = this.formGroup.value[key];
+        payload.classes[alertClass][classKey] = this.formGroup.value[key];
       }
     }
 

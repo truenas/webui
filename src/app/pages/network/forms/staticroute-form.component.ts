@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import helptext from 'app/helptext/network/staticroutes/staticroutes';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
-import helptext from '../../../helptext/network/staticroutes/staticroutes';
-import { NetworkService, WebSocketService } from '../../../services';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { NetworkService, WebSocketService } from 'app/services';
 
 @Component({
   selector: 'app-staticroute-form',

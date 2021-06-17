@@ -1,42 +1,42 @@
 import {
   Component, Input, OnDestroy, OnInit,
 } from '@angular/core';
+import { MediaObserver } from '@angular/flex-layout';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription, Subject } from 'rxjs';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { LayoutService } from 'app/core/services/layout.service';
+import { PreferencesService } from 'app/core/services/preferences.service';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { ProductType } from 'app/enums/product-type.enum';
+import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
+import helptext from 'app/helptext/topbar';
 import { CoreEvent } from 'app/interfaces/events';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { Subscription, Subject } from 'rxjs';
-import { FailoverDisabledReason } from '../../../enums/failover-disabled-reason.enum';
-import { ProductType } from '../../../enums/product-type.enum';
-import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
-import helptext from '../../../helptext/topbar';
-import { EntityJobComponent } from '../../../pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from '../../../pages/common/entity/utils';
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { DialogService } from '../../../services/dialog.service';
-import { NotificationAlert, NotificationsService } from '../../../services/notifications.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
-import { SystemGeneralService } from '../../../services/system-general.service';
-import { Theme, ThemeService } from '../../../services/theme/theme.service';
-import { WebSocketService } from '../../../services/ws.service';
-import { ModalService } from '../../../services/modal.service';
-import { T } from '../../../translate-marker';
+import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
+import { ModalService } from 'app/services/modal.service';
+import { NotificationAlert, NotificationsService } from 'app/services/notifications.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { Theme, ThemeService } from 'app/services/theme/theme.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { T } from 'app/translate-marker';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
-import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
-import { MediaObserver } from '@angular/flex-layout';
-import { DialogFormConfiguration } from '../../../pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { TruecommandComponent } from '../dialog/truecommand/truecommand.component';
 import { ResilverProgressDialogComponent } from '../dialog/resilver-progress/resilver-progress.component';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
+import { TruecommandComponent } from '../dialog/truecommand/truecommand.component';
 
 @UntilDestroy()
 @Component({
@@ -422,6 +422,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
             this.dialogService.Info(
               network_interfaces_helptext.checkin_complete_title,
               network_interfaces_helptext.checkin_complete_message,
+              '500px', 'info',
             );
             this.waitingNetworkCheckin = false;
           }, (err) => {
@@ -688,9 +689,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
             message: helptext.tcDeregisterDialog.message,
             confirmBtnMsg: helptext.tcDeregisterDialog.confirmBtnMsg,
           }).pipe(untilDestroyed(this)).subscribe((res) => {
-            if (res) {
-              self.loader.open();
-              self.ws.call(self.tc_updateCall, [{ api_key: null, enabled: false }]).pipe(untilDestroyed(this)).subscribe(
+            if (!res) {
+              return;
+            }
+
+            self.loader.open();
+            self.ws.call(self.tc_updateCall, [{ api_key: null, enabled: false }])
+              .pipe(untilDestroyed(this))
+              .subscribe(
                 () => {
                   self.loader.close();
                   updateDialog.dialogRef.close();
@@ -706,7 +712,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
                   new EntityUtils().handleWSError(updateDialog.parent, err, updateDialog.parent.dialogService);
                 },
               );
-            }
           });
         },
       }],
@@ -735,7 +740,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
             entityDialog.dialogRef.close();
             // only show this for connecting TC
             if (!self.tcConnected) {
-              self.dialogService.Info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message);
+              self.dialogService.Info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message, '500px', 'info');
             }
           },
           (err) => {

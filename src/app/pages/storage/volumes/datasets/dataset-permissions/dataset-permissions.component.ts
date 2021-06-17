@@ -3,19 +3,18 @@ import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
 import { AclType } from 'app/enums/acl-type.enum';
+import helptext from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import * as _ from 'lodash';
-import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-permissions';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import {
   DialogService, StorageService, UserService, WebSocketService,
-} from '../../../../../services';
-import { T } from '../../../../../translate-marker';
-import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
+} from 'app/services';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -23,7 +22,7 @@ import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy {
-  protected updateCall = 'pool.dataset.permission';
+  protected updateCall: 'pool.dataset.permission' = 'pool.dataset.permission';
   protected datasetPath: string;
   protected datasetId: string;
   protected recursive: any;
@@ -143,7 +142,7 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
     },
   ];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'use_acl',
       name: helptext.acl_manager_button,
@@ -205,23 +204,27 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
     });
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
+    entityEdit.formGroup.get('id').setValue(this.datasetPath);
     this.storageService.filesystemStat(this.datasetPath).pipe(untilDestroyed(this)).subscribe((stat) => {
       this.datasetMode = stat.mode.toString(8).substring(2, 5);
       entityEdit.formGroup.controls['mode'].setValue(this.datasetMode);
       entityEdit.formGroup.controls['user'].setValue(stat.user);
       entityEdit.formGroup.controls['group'].setValue(stat.group);
     });
+    entityEdit.formGroup.controls['id'].setValue(this.datasetPath);
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value === true) {
-        this.dialog.confirm(T('Warning'), T('Setting permissions recursively will affect this directory and any others below it. This might make data inaccessible.'))
-          .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-            if (!res) {
-              this.recursive.setValue(false);
-            }
-          });
+        this.dialog.confirm({
+          title: T('Warning'),
+          message: T('Setting permissions recursively will affect this directory and any others below it. This might make data inaccessible.'),
+        }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
+          if (!res) {
+            this.recursive.setValue(false);
+          }
+        });
       }
     });
   }
@@ -294,30 +297,34 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
   }
 
   loadMoreOptions(length: number, parent: any, searchText: string): void {
-    (parent.userService as UserService).userQueryDSCache(searchText, length).pipe(untilDestroyed(this)).subscribe((items) => {
-      const users = [];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
-      if (searchText == '') {
-        parent.userField.options = parent.userField.options.concat(users);
-      } else {
-        parent.userField.searchOptions = parent.userField.searchOptions.concat(users);
-      }
-    });
+    (parent.userService as UserService).userQueryDSCache(searchText, length)
+      .pipe(untilDestroyed(this))
+      .subscribe((items) => {
+        const users = [];
+        for (let i = 0; i < items.length; i++) {
+          users.push({ label: items[i].username, value: items[i].username });
+        }
+        if (searchText == '') {
+          parent.userField.options = parent.userField.options.concat(users);
+        } else {
+          parent.userField.searchOptions = parent.userField.searchOptions.concat(users);
+        }
+      });
   }
 
   loadMoreGroupOptions(length: number, parent: any, searchText: string): void {
-    (parent.userService as UserService).groupQueryDSCache(searchText, false, length).pipe(untilDestroyed(this)).subscribe((groups) => {
-      const groupOptions: Option[] = [];
-      for (let i = 0; i < groups.length; i++) {
-        groupOptions.push({ label: groups[i].group, value: groups[i].group });
-      }
-      if (searchText == '') {
-        parent.groupField.options = parent.groupField.options.concat(groupOptions);
-      } else {
-        parent.groupField.searchOptions = parent.groupField.searchOptions.concat(groupOptions);
-      }
-    });
+    (parent.userService as UserService).groupQueryDSCache(searchText, false, length)
+      .pipe(untilDestroyed(this))
+      .subscribe((groups) => {
+        const groupOptions: Option[] = [];
+        for (let i = 0; i < groups.length; i++) {
+          groupOptions.push({ label: groups[i].group, value: groups[i].group });
+        }
+        if (searchText == '') {
+          parent.groupField.options = parent.groupField.options.concat(groupOptions);
+        } else {
+          parent.groupField.searchOptions = parent.groupField.searchOptions.concat(groupOptions);
+        }
+      });
   }
 }

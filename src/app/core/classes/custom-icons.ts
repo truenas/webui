@@ -8,7 +8,6 @@
 
 export const customSvgIcons = {
   multipath: 'assets/customicons/multipath.svg',
-  jail_icon: 'assets/customicons/jail_icon.svg',
   ha_disabled: 'assets/customicons/ha_disabled.svg',
   ha_enabled: 'assets/customicons/ha_enabled.svg',
   ix_full_logo: 'assets/customicons/ix_full_logo.svg',

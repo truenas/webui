@@ -2,11 +2,11 @@ import {
   Component, OnInit, Input,
 } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
-import { NotificationsService, NotificationAlert } from 'app/services/notifications.service';
-import { LocaleService } from 'app/services/locale.service';
-import * as _ from 'lodash';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { LocaleService } from 'app/services/locale.service';
+import { NotificationsService, NotificationAlert } from 'app/services/notifications.service';
 
 @UntilDestroy()
 @Component({
@@ -21,8 +21,11 @@ export class NotificationsComponent implements OnInit {
   dismissedNotifications: NotificationAlert[] = [];
   ngDateFormat = 'yyyy-MM-dd HH:mm:ss';
 
-  constructor(private router: Router, private notificationsService: NotificationsService, protected localeService: LocaleService) {
-  }
+  constructor(
+    private router: Router,
+    private notificationsService: NotificationsService,
+    protected localeService: LocaleService,
+  ) {}
 
   ngOnInit(): void {
     this.initData();

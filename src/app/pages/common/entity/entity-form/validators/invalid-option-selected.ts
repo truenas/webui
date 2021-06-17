@@ -1,6 +1,6 @@
 import { AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/forms';
-import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
+import { Option } from 'app/interfaces/option.interface';
 
 export function selectedOptionValidator(validOptions: Promise<Option[]>): AsyncValidatorFn {
   return (control: AbstractControl): Promise<ValidationErrors> => validOptions.then((options) => {
@@ -9,6 +9,8 @@ export function selectedOptionValidator(validOptions: Promise<Option[]>): AsyncV
         return v;
       }
     });
-    return selectedInvalidOptions.length > 0 ? { invalidOptionSelected: true, invalidOptins: selectedInvalidOptions } : null;
+    return selectedInvalidOptions.length > 0
+      ? { invalidOptionSelected: true, invalidOptins: selectedInvalidOptions }
+      : null;
   });
 }

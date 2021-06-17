@@ -1,26 +1,24 @@
 import {
+  animate, state, style, transition, trigger,
+} from '@angular/animations';
+import { HttpClient } from '@angular/common/http';
+import {
   Component, OnInit, ViewChild,
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatTable } from '@angular/material/table';
-import {
-  animate, state, style, transition, trigger,
-} from '@angular/animations';
-import { HttpClient } from '@angular/common/http';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
-
-import { LocaleService } from 'app/services/locale.service';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   WebSocketService, JobService, SystemGeneralService, DialogService, StorageService,
 } from 'app/services';
+import { LocaleService } from 'app/services/locale.service';
 import { T } from 'app/translate-marker';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({

@@ -1,7 +1,7 @@
+import * as _ from 'lodash';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import * as _ from 'lodash';
 import { Relation } from './entity-form/models/field-relation.interface';
 
 export const NULL_VALUE = 'null_value';
@@ -82,7 +82,8 @@ export class EntityUtils {
         const error = res.extra[i][1];
 
         field = field[1];
-        let fc = _.find(entity.fieldConfig, { name: field }) || (entity.getErrorField ? entity.getErrorField(field) : undefined);
+        let fc = _.find(entity.fieldConfig, { name: field })
+          || (entity.getErrorField ? entity.getErrorField(field) : undefined);
         let stepIndex;
         if (entity.wizardConfig) {
           _.find(entity.wizardConfig, (step, index) => {
@@ -92,7 +93,8 @@ export class EntityUtils {
           });
         }
         if (targetFieldConfig) {
-          fc = _.find(targetFieldConfig, { name: field }) || (entity.getErrorField ? entity.getErrorField(field) : undefined);
+          fc = _.find(targetFieldConfig, { name: field })
+            || (entity.getErrorField ? entity.getErrorField(field) : undefined);
         }
 
         if (fc && !fc['isHidden']) {
@@ -135,7 +137,7 @@ export class EntityUtils {
     }
   }
 
-  isObject = function (a: unknown): a is object {
+  isObject = function (a: unknown): a is Record<string, unknown> {
     return (!!a) && (a.constructor === Object);
   };
 

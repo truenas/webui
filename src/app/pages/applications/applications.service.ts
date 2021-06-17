@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Catalog } from 'app/interfaces/catalog.interface';
+import { Observable } from 'rxjs';
+import { UpgradeSummary } from 'app/interfaces/application.interface';
+import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Observable } from 'rxjs';
-import { WebSocketService } from '../../services/index';
+import { WebSocketService } from 'app/services/index';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
@@ -22,7 +23,11 @@ export class ApplicationsService {
   }
 
   getAllCatalogItems(): Observable<Catalog[]> {
-    return this.ws.call('catalog.query', [[], { extra: { item_details: true } }]);
+    return this.ws.call('catalog.query', [[], { extra: { cache: true, retrieve_versions: false, item_details: true } }]);
+  }
+
+  getCatalogItem(name: string, catalog: string, train: string): Observable<CatalogApp> {
+    return this.ws.call('catalog.get_item_details', [name, { cache: true, catalog, train }]);
   }
 
   getBindIPChoices(): Observable<any[]> {
@@ -81,5 +86,9 @@ export class ApplicationsService {
 
   updateContainerConfig(enable_image_updates: boolean): Observable<any> {
     return this.ws.call('container.update', [{ enable_image_updates }]);
+  }
+
+  getUpgradeSummary(name: string): Observable<UpgradeSummary> {
+    return this.ws.call('chart.release.upgrade_summary', [name]);
   }
 }

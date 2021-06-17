@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'vmware-snapshot-list',
@@ -21,7 +20,7 @@ export class VMwareSnapshotListComponent implements EntityTableConfig {
     { name: 'filesystem', prop: 'filesystem' }, { name: 'datastore', prop: 'datastore' },
   ];
   rowIdentifier = 'hostname';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

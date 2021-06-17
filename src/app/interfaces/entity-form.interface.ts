@@ -1,10 +1,10 @@
+import { Subject } from 'rxjs';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { Subject } from 'rxjs';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 export interface FormConfiguration {
   fieldSets?: FieldSets | FieldSet[];
@@ -30,16 +30,8 @@ export interface FormConfiguration {
   route_delete?: string[];
   custom_edit_query?: string;
   custom_add_query?: string;
-  custActions?: {
-    id: string;
-    name: string;
-    function: () => void;
-  }[];
-  compactCustomActions?: {
-    id: string;
-    name: string;
-    function: () => void;
-  }[];
+  custActions?: FormCustomAction[];
+  compactCustomActions?: FormCompactCustomAction[];
   customFilter?: any[];
   confirmSubmit?: boolean;
   confirmSubmitDialog?: {
@@ -83,4 +75,20 @@ export interface FormConfiguration {
   customSubmit?: (value: any) => void;
   closeModalForm?(): Promise<boolean>;
   afterModalFormClosed?(): void; // function will called once the modal form closed
+}
+
+export interface FormCustomAction {
+  id: string;
+  name: string;
+  function?: () => void;
+  buttonColor?: string;
+  disabled?: boolean;
+  buttonType?: string;
+}
+
+export interface FormCompactCustomAction {
+  id: string;
+  name: string;
+  function: () => void;
+  disabled?: boolean;
 }

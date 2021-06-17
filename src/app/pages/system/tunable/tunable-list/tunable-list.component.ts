@@ -1,11 +1,12 @@
 import {
   ApplicationRef, Component, Injector,
 } from '@angular/core';
+import { TooltipPosition } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ProductType } from 'app/enums/product-type.enum';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { ProductType } from '../../../../enums/product-type.enum';
-import { WebSocketService } from '../../../../services';
-import { T } from '../../../../translate-marker';
+import { WebSocketService } from 'app/services';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'system-tunables-list',
@@ -32,13 +33,13 @@ export class TunableListComponent implements EntityTableConfig {
   protected entityList: any;
 
   wsMultiDelete: 'core.bulk' = 'core.bulk';
-  multiActions: any[] = [
+  multiActions = [
     {
       id: 'mdelete',
       label: T('Delete'),
       icon: 'delete',
       enable: true,
-      ttpos: 'above',
+      ttpos: 'above' as TooltipPosition,
       onClick: (selected: any) => {
         this.entityList.doMultiDelete(selected);
       },
@@ -54,7 +55,7 @@ export class TunableListComponent implements EntityTableConfig {
   ];
   rowIdentifier = 'var';
 
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

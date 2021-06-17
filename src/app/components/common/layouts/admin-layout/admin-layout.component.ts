@@ -5,18 +5,18 @@ import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ConsolePanelModalDialog } from 'app/components/common/dialog/consolepanel/consolepanel-dialog.component';
 import { CoreService } from 'app/core/services/core.service';
 import { LayoutService } from 'app/core/services/layout.service';
+import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
-import { ProductType } from '../../../../enums/product-type.enum';
-import { RestService, WebSocketService, SystemGeneralService } from '../../../../services';
-import { LanguageService } from '../../../../services/language.service';
-import { Theme, ThemeService } from '../../../../services/theme/theme.service';
-import { ModalService } from '../../../../services/modal.service';
-import { ConsolePanelModalDialog } from '../../dialog/consolepanel/consolepanel-dialog.component';
+import { WebSocketService, SystemGeneralService } from 'app/services';
+import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ModalService } from 'app/services/modal.service';
+import { Theme, ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
 @Component({
@@ -57,7 +57,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     public cd: ChangeDetectorRef,
     public themeService: ThemeService,
     private media: MediaObserver,
-    protected rest: RestService,
     protected ws: WebSocketService,
     public language: LanguageService,
     public modalService: ModalService,

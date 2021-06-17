@@ -2,20 +2,16 @@ import {
   Component, AfterViewInit, OnDestroy, Input, ViewChild, ElementRef, OnChanges, SimpleChanges,
 } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
-import { CoreEvent } from 'app/interfaces/events';
-
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-
-import { T } from '../../../../translate-marker';
-
 import {
   tween,
   styler,
 } from 'popmotion';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
+import { CoreEvent } from 'app/interfaces/events';
+import { T } from 'app/translate-marker';
 
 interface NetTraffic {
   sent: string;

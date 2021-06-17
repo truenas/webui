@@ -2,15 +2,15 @@ import {
   Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as FontFaceObserver from 'fontfaceobserver';
 import { Observable } from 'rxjs';
-import { ShellConnectedEvent } from '../../interfaces/shell.interface';
-import { ShellService, WebSocketService } from '../../services';
-import { CopyPasteMessageComponent } from '../shell/copy-paste-message.component';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
-import * as FontFaceObserver from 'fontfaceobserver';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
+import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
+import { ShellService, WebSocketService } from 'app/services';
+import { CopyPasteMessageComponent } from '../shell/copy-paste-message.component';
 
 @UntilDestroy()
 @Component({
@@ -68,7 +68,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
   getSize(): { rows: number; cols: number } {
     const domWidth = this.container.nativeElement.offsetWidth;
     const domHeight = this.container.nativeElement.offsetHeight;
-    var span = document.createElement('span');
+    const span = document.createElement('span');
     this.container.nativeElement.appendChild(span);
     span.style.whiteSpace = 'nowrap';
     span.style.fontFamily = this.font_name;
@@ -116,7 +116,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
 
-    var font = new FontFaceObserver(this.font_name);
+    const font = new FontFaceObserver(this.font_name);
 
     font.load().then(() => {
       this.xterm.open(this.container.nativeElement);

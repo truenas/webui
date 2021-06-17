@@ -1,22 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { DatasetType } from 'app/enums/dataset-type.enum';
-import { VmDeviceType } from 'app/enums/vm.enum';
-import { ProductType } from '../../../../enums/product-type.enum';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { T } from '../../../../translate-marker';
-import * as _ from 'lodash';
-import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-
-import { WebSocketService, NetworkService, VmService } from '../../../../services';
-import { EntityUtils } from '../../../common/entity/utils';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import helptext from '../../../../helptext/vm/devices/device-add-edit';
-import { CoreService } from 'app/core/services/core.service';
-import { DialogService } from '../../../../services/dialog.service';
-import { ServiceStatus } from 'app/enums/service-status.enum';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { CoreService } from 'app/core/services/core.service';
+import { DatasetType } from 'app/enums/dataset-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
+import { VmDeviceType } from 'app/enums/vm.enum';
+import helptext from 'app/helptext/vm/devices/device-add-edit';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { WebSocketService, NetworkService, VmService } from 'app/services';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
+import { T } from 'app/translate-marker';
 
 interface DisplayDeviceAttributes {
   bind: string;
@@ -453,57 +452,64 @@ export class DeviceEditComponent implements OnInit {
     this.displayFormGroup = this.entityFormService.createFormGroup(this.displayFieldConfig);
 
     this.activeFormGroup = this.cdromFormGroup;
-    await this.ws.call('vm.device.query', [[['id', '=', this.deviceid]]]).pipe(untilDestroyed(this)).subscribe((device) => {
-      if (device[0].attributes.physical_sectorsize !== undefined && device[0].attributes.logical_sectorsize !== undefined) {
-        device[0].attributes['sectorsize'] = device[0].attributes.logical_sectorsize === null ? 0 : device[0].attributes.logical_sectorsize;
-      }
-      const deviceInformation = { ...device[0].attributes, ...{ order: device[0].order } };
-      this.vminfo = device[0];
-      const deviceType = device[0].dtype;
-      this.selectedType = deviceType;
-      switch (deviceType) {
-        case VmDeviceType.Cdrom:
-          this.activeFormGroup = this.cdromFormGroup;
-          this.isCustActionVisible = false;
-          break;
-        case VmDeviceType.Nic:
-          this.activeFormGroup = this.nicFormGroup;
-          this.isCustActionVisible = true;
-          break;
-        case VmDeviceType.Disk:
-          this.activeFormGroup = this.diskFormGroup;
-          this.isCustActionVisible = false;
-          break;
-        case VmDeviceType.Raw:
-          this.activeFormGroup = this.rawfileFormGroup;
-          this.isCustActionVisible = false;
-          // special case where RAW file device is used as a BOOT device.
-          if (this.vminfo.attributes.boot && this.vminfo.attributes.rootpwd) {
-            this.rootpwd = _.find(this.rawfileFieldConfig, { name: 'rootpwd' });
-            this.rootpwd['isHidden'] = false;
-            this.boot = _.find(this.rawfileFieldConfig, { name: 'boot' });
-            this.boot['isHidden'] = false;
-          }
-          break;
-        case VmDeviceType.Pci:
-          this.activeFormGroup = this.pciFormGroup;
-          this.isCustActionVisible = false;
-          break;
-        case VmDeviceType.Display:
-          this.activeFormGroup = this.displayFormGroup;
-          this.isCustActionVisible = false;
-          this.ws.call('vm.get_display_devices', [this.vmId]).pipe(untilDestroyed(this)).subscribe((devices: Device[]) => {
-            if (devices.length > 1) {
-              _.find(this.displayFieldConfig, { name: 'type' }).isHidden = true;
+    await this.ws.call('vm.device.query', [[['id', '=', this.deviceid]]])
+      .pipe(untilDestroyed(this))
+      .subscribe((device) => {
+        if (
+          device[0].attributes.physical_sectorsize !== undefined
+          && device[0].attributes.logical_sectorsize !== undefined
+        ) {
+          device[0].attributes['sectorsize'] = device[0].attributes.logical_sectorsize === null
+            ? 0
+            : device[0].attributes.logical_sectorsize;
+        }
+        const deviceInformation = { ...device[0].attributes, ...{ order: device[0].order } };
+        this.vminfo = device[0];
+        const deviceType = device[0].dtype;
+        this.selectedType = deviceType;
+        switch (deviceType) {
+          case VmDeviceType.Cdrom:
+            this.activeFormGroup = this.cdromFormGroup;
+            this.isCustActionVisible = false;
+            break;
+          case VmDeviceType.Nic:
+            this.activeFormGroup = this.nicFormGroup;
+            this.isCustActionVisible = true;
+            break;
+          case VmDeviceType.Disk:
+            this.activeFormGroup = this.diskFormGroup;
+            this.isCustActionVisible = false;
+            break;
+          case VmDeviceType.Raw:
+            this.activeFormGroup = this.rawfileFormGroup;
+            this.isCustActionVisible = false;
+            // special case where RAW file device is used as a BOOT device.
+            if (this.vminfo.attributes.boot && this.vminfo.attributes.rootpwd) {
+              this.rootpwd = _.find(this.rawfileFieldConfig, { name: 'rootpwd' });
+              this.rootpwd['isHidden'] = false;
+              this.boot = _.find(this.rawfileFieldConfig, { name: 'boot' });
+              this.boot['isHidden'] = false;
             }
-          }, (err) => {
-            new EntityUtils().handleWSError(this, err, this.dialogService);
-          });
-          break;
-      }
+            break;
+          case VmDeviceType.Pci:
+            this.activeFormGroup = this.pciFormGroup;
+            this.isCustActionVisible = false;
+            break;
+          case VmDeviceType.Display:
+            this.activeFormGroup = this.displayFormGroup;
+            this.isCustActionVisible = false;
+            this.ws.call('vm.get_display_devices', [this.vmId]).pipe(untilDestroyed(this)).subscribe((devices: Device[]) => {
+              if (devices.length > 1) {
+                _.find(this.displayFieldConfig, { name: 'type' }).isHidden = true;
+              }
+            }, (err) => {
+              new EntityUtils().handleWSError(this, err, this.dialogService);
+            });
+            break;
+        }
 
-      this.setgetValues(this.activeFormGroup, deviceInformation);
-    });
+        this.setgetValues(this.activeFormGroup, deviceInformation);
+      });
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.ws.call('vm.query', [[['id', '=', parseInt(params['vmid'], 10)]]]).pipe(untilDestroyed(this)).subscribe((vms) => {
         if (vms[0].status.state === ServiceStatus.Running) {
