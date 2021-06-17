@@ -17,9 +17,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1090.feature', 'Verify auxilary parameters works for AFP share')
+@scenario('features/NAS-T1090.feature', 'Verify auxiliary parameters works for AFP share')
 def test_verify_auxilary_parameters_works_for_afp_share(driver):
-    """Verify auxilary parameters works for AFP share."""
+    """Verify auxiliary parameters works for AFP share."""
     pass
 
 
