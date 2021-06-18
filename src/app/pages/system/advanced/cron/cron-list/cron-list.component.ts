@@ -3,7 +3,12 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import {
+  EntityTableAction,
+  EntityTableConfig,
+  EntityTableConfigConfig,
+} from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, TaskService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
@@ -24,7 +29,7 @@ export class CronListComponent implements EntityTableConfig {
   route_add: string[] = ['tasks', 'cron', 'add'];
   protected route_add_tooltip = 'Add Cron Job';
   route_edit: string[] = ['tasks', 'cron', 'edit'];
-  entityList: any;
+  entityList: EntityTableComponent;
 
   columns = [
     { name: T('Users'), prop: 'user', always_display: true },
@@ -46,7 +51,7 @@ export class CronListComponent implements EntityTableConfig {
     { name: T('Hide Stderr'), prop: 'stderr', hidden: true },
   ];
   rowIdentifier = 'user';
-  config: any = {
+  config: EntityTableConfigConfig = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -66,7 +71,7 @@ export class CronListComponent implements EntityTableConfig {
     public userService: UserService,
   ) {}
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
 
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {

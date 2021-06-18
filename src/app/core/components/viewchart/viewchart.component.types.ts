@@ -298,7 +298,7 @@ export interface Data {
   /**
    * Parse a JSON object for data.
    */
-  json?: {};
+  json?: Record<string, unknown>;
   /**
    * Load data from a multidimensional array, with the first element containing the data names,
    * the following containing related data in that order.

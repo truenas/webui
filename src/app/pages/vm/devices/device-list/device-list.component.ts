@@ -41,7 +41,7 @@ export class DeviceListComponent implements EntityTableConfig {
   ];
   rowIdentifier = 'id';
   title = T('VM ');
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
   };

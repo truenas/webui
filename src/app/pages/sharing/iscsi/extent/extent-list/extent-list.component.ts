@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
@@ -16,7 +17,7 @@ import { T } from 'app/translate-marker';
 })
 export class ExtentListComponent implements EntityTableConfig {
   tableTitle = 'Extents';
-  protected entityTable: any;
+  protected entityTable: EntityTableComponent;
   queryCall: 'iscsi.extent.query' = 'iscsi.extent.query';
   route_add: string[] = ['sharing', 'iscsi', 'extent', 'add'];
   protected route_add_tooltip = 'Add Extent';
@@ -46,7 +47,7 @@ export class ExtentListComponent implements EntityTableConfig {
       prop: 'enabled',
     },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -122,7 +123,7 @@ export class ExtentListComponent implements EntityTableConfig {
 
   constructor(protected router: Router) {}
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityTable = entityList;
   }
 }

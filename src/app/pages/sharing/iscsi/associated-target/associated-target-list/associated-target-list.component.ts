@@ -3,9 +3,12 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { forkJoin } from 'rxjs';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { IscsiService } from 'app/services';
+import {
+  AppLoaderService, DialogService, IscsiService, WebSocketService,
+} from 'app/services';
 import { T } from 'app/translate-marker';
 
 @UntilDestroy()
@@ -40,7 +43,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
     },
   ];
   rowIdentifier = 'target';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -49,10 +52,17 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
     },
   };
 
-  protected entityList: any;
-  constructor(protected router: Router, protected iscsiService: IscsiService) {}
+  protected entityList: EntityTableComponent;
 
-  afterInit(entityList: any): void {
+  constructor(
+    protected router: Router,
+    protected iscsiService: IscsiService,
+    private loader: AppLoaderService,
+    private dialogService: DialogService,
+    private ws: WebSocketService,
+  ) {}
+
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
   }
 
@@ -92,15 +102,15 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
             }
             deleteMsg = warningMsg + deleteMsg;
 
-            this.entityList.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).pipe(untilDestroyed(this)).subscribe((dialres: boolean) => {
+            this.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).pipe(untilDestroyed(this)).subscribe((dialres: boolean) => {
               if (dialres) {
-                this.entityList.loader.open();
+                this.loader.open();
                 this.entityList.loaderOpen = true;
-                this.entityList.ws.call(this.wsDelete, [rowinner.id, true]).pipe(untilDestroyed(this)).subscribe(
+                this.ws.call(this.wsDelete, [rowinner.id, true]).pipe(untilDestroyed(this)).subscribe(
                   () => { this.entityList.getData(); },
                   (resinner: any) => {
                     new EntityUtils().handleError(this, resinner);
-                    this.entityList.loader.close();
+                    this.loader.close();
                   },
                 );
               }

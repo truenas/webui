@@ -24,7 +24,7 @@ export class EntityJobComponent implements OnInit {
   title = '';
   showCloseButton = true;
   showAbortButton = false; // enable to abort job
-  jobId: Number;
+  jobId: number;
   progressNumberType: any;
   hideProgressValue = false;
   altMessage: string;
@@ -33,7 +33,9 @@ export class EntityJobComponent implements OnInit {
 
   private realtimeLogsSubscribed = false;
   realtimeLogs = '';
+  // eslint-disable-next-line @angular-eslint/no-output-native
   @Output() progress = new EventEmitter();
+  // eslint-disable-next-line @angular-eslint/no-output-native
   @Output() success = new EventEmitter();
   @Output() aborted = new EventEmitter();
   @Output() failure = new EventEmitter();

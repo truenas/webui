@@ -27,7 +27,7 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import {
   EntityTableAction,
   EntityTableColumn,
-  EntityTableConfig,
+  EntityTableConfig, EntityTableConfigConfig,
 } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService, JobService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -39,15 +39,6 @@ import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
 import { EntityUtils } from '../utils';
 import { EntityTableAddActionsComponent } from './entity-table-add-actions.component';
-
-export interface SortingConfig {
-  columns: any[];
-}
-
-export interface TableConfig {
-  paging: boolean;
-  sorting: SortingConfig;
-}
 
 export interface Command {
   command: string; // Use '|' or '--pipe' to use the output of previous command as input
@@ -133,7 +124,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   rows: any[] = [];
   currentRows: any[] = []; // Rows applying filter
   getFunction: Observable<any>;
-  config: TableConfig = {
+  config: EntityTableConfigConfig = {
     paging: true,
     sorting: { columns: this.columns },
   };
@@ -148,11 +139,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly EntityJobState = EntityJobState;
   // Global Actions in Page Title
   protected actionsConfig: any;
-  protected loaderOpen = false;
+  loaderOpen = false;
   protected toDeleteRow: any;
   private interval: Interval;
-  private excuteDeletion = false;
-  private needRefreshTable = false;
+  excuteDeletion = false;
+  needRefreshTable = false;
   private routeSub: Subscription;
   multiActionsIconsOnly = false;
 
@@ -186,9 +177,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     protected core: CoreService,
     protected router: Router,
-    protected ws: WebSocketService,
-    protected dialogService: DialogService,
-    protected loader: AppLoaderService,
+    public ws: WebSocketService,
+    public dialogService: DialogService,
+    public loader: AppLoaderService,
     protected translate: TranslateService,
     public storageService: StorageService,
     protected job: JobService,
@@ -879,7 +870,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  doDeleteJob(item: any): Observable<{ state: EntityJobState } | false> {
+  doDeleteJob(item: any): Observable<{ state: EntityJobState } | boolean> {
     const deleteMsg = this.getDeleteMessage(item);
     let id: string;
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
@@ -916,7 +907,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
             }),
           );
         }),
-        switchMap((jobId: string) => (jobId ? this.job.getJobStatus(jobId) : of(false))),
+        switchMap((jobId: number) => (jobId ? this.job.getJobStatus(jobId) : of(false))),
       );
   }
 

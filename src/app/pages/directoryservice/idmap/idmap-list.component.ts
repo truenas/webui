@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/directoryservice/idmap';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -23,7 +24,7 @@ export class IdmapListComponent implements EntityTableConfig {
   title = 'Idmap';
   queryCall: 'idmap.query' = 'idmap.query';
   wsDelete: 'idmap.delete' = 'idmap.delete';
-  protected entityList: any;
+  protected entityList: EntityTableComponent;
   protected idmapFormComponent: IdmapFormComponent;
   protected requiredDomains = [
     'DS_TYPE_ACTIVEDIRECTORY',
@@ -43,7 +44,7 @@ export class IdmapListComponent implements EntityTableConfig {
   ];
 
   rowIdentifier = 'name';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -79,7 +80,7 @@ export class IdmapListComponent implements EntityTableConfig {
     return data;
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
     this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
@@ -90,8 +91,8 @@ export class IdmapListComponent implements EntityTableConfig {
     return [{
       label: T('Add'),
       onClick: () => {
-        this.idmapService.getADStatus().pipe(untilDestroyed(this)).subscribe((res) => {
-          if (res.enable) {
+        this.idmapService.getADStatus().pipe(untilDestroyed(this)).subscribe((adConfig) => {
+          if (adConfig.enable) {
             this.doAdd();
           } else {
             this.dialogService.confirm(helptext.idmap.enable_ad_dialog.title, helptext.idmap.enable_ad_dialog.message,

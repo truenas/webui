@@ -129,7 +129,7 @@ export class TwoFactorComponent implements FormConfiguration {
     },
   ];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'enable_action',
       name: helptext.two_factor.enable_button,

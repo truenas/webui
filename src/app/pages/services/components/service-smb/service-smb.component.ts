@@ -243,7 +243,7 @@ export class ServiceSMBComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'basic_mode',
       name: global_helptext.basic_options,

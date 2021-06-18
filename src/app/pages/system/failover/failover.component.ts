@@ -1,4 +1,5 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
@@ -21,11 +22,10 @@ import { T } from 'app/translate-marker';
   styleUrls: [],
   providers: [],
 })
-export class FailoverComponent implements FormConfiguration, OnDestroy {
+export class FailoverComponent implements FormConfiguration {
   queryCall: 'failover.config' = 'failover.config';
   updateCall = 'failover.update';
   entityForm: EntityFormComponent;
-  protected failoverDisableSubscription: any;
   alreadyDisabled = false;
   confirmSubmit = false;
   saveSubmitText = helptext_system_failover.save_button_text;
@@ -34,26 +34,25 @@ export class FailoverComponent implements FormConfiguration, OnDestroy {
     message: T(''),
     hideCheckbox: false,
   };
-  masterSubscription: any;
-  master_fg: any;
+  master_fg: FormControl;
   warned = false;
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'sync_to_peer',
       name: T('Sync to Peer'),
       function: () => {
         const params = [{ reboot: false }];
-        const ds = this.dialog.confirm(
-          helptext_system_failover.dialog_sync_to_peer_title,
-          helptext_system_failover.dialog_sync_to_peer_message,
-          false, helptext_system_failover.dialog_button_ok,
-          true,
-          helptext_system_failover.dialog_sync_to_peer_checkbox,
-          'failover.sync_to_peer',
-          params,
-        );
-        ds.afterClosed().pipe(untilDestroyed(this)).subscribe((status: any) => {
+        const ds = this.dialog.confirm({
+          title: helptext_system_failover.dialog_sync_to_peer_title,
+          message: helptext_system_failover.dialog_sync_to_peer_message,
+          buttonMsg: helptext_system_failover.dialog_button_ok,
+          secondaryCheckBox: true,
+          secondaryCheckBoxMsg: helptext_system_failover.dialog_sync_to_peer_checkbox,
+          method: 'failover.sync_to_peer',
+          data: params,
+        });
+        ds.afterClosed().pipe(untilDestroyed(this)).subscribe((status: boolean) => {
           if (status) {
             this.load.open();
             this.ws.call(
@@ -138,13 +137,13 @@ export class FailoverComponent implements FormConfiguration, OnDestroy {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
-    this.failoverDisableSubscription = this.entityForm.formGroup.controls['disabled'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
+    this.entityForm.formGroup.controls['disabled'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (!this.alreadyDisabled) {
         this.confirmSubmit = res;
       }
     });
-    this.master_fg = this.entityForm.formGroup.controls['master'];
-    this.masterSubscription = this.master_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.master_fg = this.entityForm.formGroup.controls['master'] as FormControl;
+    this.master_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (!res && !this.warned) {
         this.dialog.confirm({
           title: helptext_system_failover.master_dialog_title,
@@ -188,9 +187,5 @@ export class FailoverComponent implements FormConfiguration, OnDestroy {
     this.alreadyDisabled = value['disabled'];
     value['master'] = true;
     return value;
-  }
-
-  ngOnDestroy(): void {
-    this.failoverDisableSubscription.unsubscribe();
   }
 }

@@ -38,7 +38,6 @@ export class ShellComponent implements OnInit, OnDestroy {
   token: any;
   xterm: any;
   resize_terminal = true;
-  private shellSubscription: any;
   private fitAddon: any;
   formEvents: Subject<CoreEvent>;
 
@@ -51,8 +50,7 @@ export class ShellComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getAuthToken().pipe(untilDestroyed(this)).subscribe((token) => {
       this.initializeWebShell(token);
-      this.shellSubscription = this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {
-      });
+      this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {});
       this.initializeTerminal();
     });
   }
@@ -60,9 +58,6 @@ export class ShellComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.ss.connected) {
       this.ss.socket.close();
-    }
-    if (this.shellSubscription) {
-      this.shellSubscription.unsubscribe();
     }
 
     this.core.unregister({ observerClass: this });

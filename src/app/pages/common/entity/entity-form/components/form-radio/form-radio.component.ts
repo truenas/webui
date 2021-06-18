@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatRadioChange } from '@angular/material/radio/radio';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,11 +10,10 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
 @UntilDestroy()
 @Component({
   selector: 'form-radio',
-  styleUrls:
-      ['form-radio.component.scss', '../dynamic-field/dynamic-field.scss'],
+  styleUrls: ['form-radio.component.scss', '../dynamic-field/dynamic-field.scss'],
   templateUrl: './form-radio.component.html',
 })
-export class FormRadioComponent implements Field {
+export class FormRadioComponent implements Field, OnInit, OnDestroy {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;

@@ -1,6 +1,7 @@
 import {
   Component, ElementRef, ViewChild,
 } from '@angular/core';
+import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
@@ -60,7 +61,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     { name: T('Space'), prop: 'rawspace' },
     { name: T('Keep'), prop: 'keep' },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     multiSelect: true,
@@ -77,7 +78,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     });
   }
 
-  dataHandler(entityList: any): void {
+  dataHandler(entityList: EntityTableComponent): void {
     entityList.rows.forEach((row: any) => {
       if (row.active !== '-' && row.active !== '') {
         row.hideCheckbox = true;
@@ -103,7 +104,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     return row[attr];
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
   }
 
@@ -191,12 +192,12 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     return actions as EntityTableAction[];
   }
 
-  multiActions: any[] = [{
+  multiActions = [{
     id: 'mdelete',
     label: T('Delete'),
     icon: 'delete',
     enable: true,
-    ttpos: 'above',
+    ttpos: 'above' as TooltipPosition,
     onClick: (selected: any) => {
       for (let i = selected.length - 1; i >= 0; i--) {
         if (selected[i].active !== '-' && selected[i].active !== '') {

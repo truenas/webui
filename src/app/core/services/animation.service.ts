@@ -11,6 +11,7 @@ import {
   ColdSubscription,
 } from 'popmotion';
 import { CoreEvent } from 'app/interfaces/events';
+import { Timeout } from 'app/interfaces/timeout.interface';
 import { DisplayObject } from '../classes/display-object';
 import { CoreService } from './core.service';
 
@@ -30,7 +31,7 @@ export interface GroupAnimationConfig {
 @UntilDestroy()
 @Injectable()
 export class AnimationService {
-  private activeAnimations: any = {};
+  private activeAnimations: { [targetId: string]: { animation: Timeout; originalState: any } } = {};
 
   constructor(private core: CoreService) {
     this.core.register({ observerClass: this, eventName: 'ScrollTo' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {

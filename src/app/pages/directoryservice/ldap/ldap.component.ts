@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/directoryservice/ldap';
 import global_helptext from 'app/helptext/global-helptext';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FormConfiguration, FormCustomAction } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
   FieldConfig,
@@ -31,15 +31,14 @@ export class LdapComponent implements FormConfiguration {
   queryCall: 'ldap.config' = 'ldap.config';
   upodateCall = 'ldap.update';
   isBasicMode = true;
-  protected idmapBacked: any;
-  protected ldap_kerberos_realm: any;
-  protected ldap_kerberos_principal: any;
-  protected ldap_ssl: any;
-  protected ldapCertificate: any;
-  protected ldap_schema: any;
+  protected ldap_kerberos_realm: FieldConfig;
+  protected ldap_kerberos_principal: FieldConfig;
+  protected ldap_ssl: FieldConfig;
+  protected ldapCertificate: FieldConfig;
+  protected ldap_schema: FieldConfig;
   protected ldap_hostname: any;
   protected entityForm: EntityFormComponent;
-  custActions: any[] = [
+  custActions: FormCustomAction[] = [
     {
       id: helptext.ldap_custactions_basic_id,
       name: global_helptext.basic_options,
@@ -214,7 +213,7 @@ export class LdapComponent implements FormConfiguration {
     },
   ];
 
-  advanced_field: any[] = helptext.ldap_advanced_fields;
+  advanced_field = helptext.ldap_advanced_fields;
 
   isCustActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
@@ -243,11 +242,11 @@ export class LdapComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
 
-    this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+    this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((realms) => {
       this.ldap_kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
-      res.forEach((item) => {
+      realms.forEach((realm) => {
         this.ldap_kerberos_realm.options.push(
-          { label: item.realm, value: item.id },
+          { label: realm.realm, value: realm.id },
         );
       });
     });

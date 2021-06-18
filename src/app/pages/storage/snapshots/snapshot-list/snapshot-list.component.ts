@@ -2,6 +2,7 @@ import {
   ApplicationRef, Component, Injector, Type,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { TooltipPosition } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -13,7 +14,12 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import {
+  EntityTableAction,
+  EntityTableConfig,
+  EntityTableConfigConfig,
+} from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService, StorageService, DialogService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
@@ -37,7 +43,7 @@ export class SnapshotListComponent implements EntityTableConfig {
   protected route_add_tooltip = 'Add Snapshot';
   wsDelete: 'zfs.snapshot.delete' = 'zfs.snapshot.delete';
   protected loaderOpen = false;
-  protected entityList: any;
+  protected entityList: EntityTableComponent;
   protected rollback: any;
   globalConfig = {
     id: 'config',
@@ -78,7 +84,7 @@ export class SnapshotListComponent implements EntityTableConfig {
   // End the show/hide section
 
   rowIdentifier = 'dataset';
-  config: any = {
+  config: EntityTableConfigConfig = {
     paging: true,
     sorting: { columns: this.columns },
     multiSelect: true,
@@ -89,13 +95,13 @@ export class SnapshotListComponent implements EntityTableConfig {
   };
 
   wsMultiDelete: 'core.bulk' = 'core.bulk';
-  multiActions: any[] = [
+  multiActions = [
     {
       id: 'mdelete',
       label: 'Delete',
       icon: 'delete',
       enable: true,
-      ttpos: 'above',
+      ttpos: 'above' as TooltipPosition,
       onClick: (selected: any) => {
         this.doMultiDelete(selected);
       },
@@ -219,7 +225,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     ] as EntityTableAction[];
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
   }
 
@@ -355,7 +361,6 @@ export class SnapshotListComponent implements EntityTableConfig {
 
       dialogRef.close();
       this.entityList.getData();
-      this.entityList.selected = [];
 
       if (jobErrors.length > 0) {
         const errorTitle = T('Warning') + ', ' + jobErrors.length + ' of ' + params[1].length + ' ' + T('snapshots could not be deleted.');
@@ -402,7 +407,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     });
   }
 
-  rollbackSubmit(entityDialog: EntityDialogComponent): void {
+  rollbackSubmit(entityDialog: EntityDialogComponent<this>): void {
     const parent = entityDialog.parent;
     const item = entityDialog.parent.rollback;
     const recursive = entityDialog.formValue.recursive;

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/directoryservice/kerberoskeytabs-form-list';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
@@ -15,13 +16,13 @@ export class KerberosKeytabsListComponent implements EntityTableConfig {
   title = 'Kerberos Keytabs';
   queryCall: 'kerberos.keytab.query' = 'kerberos.keytab.query';
   wsDelete: 'kerberos.keytab.delete' = 'kerberos.keytab.delete';
-  protected entityList: any;
+  protected entityList: EntityTableComponent;
 
   columns = [
     { name: 'Name', prop: 'name', always_display: true },
   ];
   rowIdentifier = 'name';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -32,7 +33,7 @@ export class KerberosKeytabsListComponent implements EntityTableConfig {
 
   constructor(private modalService: ModalService) { }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
     this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();

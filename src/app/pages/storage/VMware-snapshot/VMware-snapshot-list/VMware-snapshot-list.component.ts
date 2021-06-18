@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { T } from 'app/translate-marker';
 
@@ -12,7 +13,7 @@ export class VMwareSnapshotListComponent implements EntityTableConfig {
   queryCall: 'vmware.query' = 'vmware.query';
   route_add: string[] = ['storage', 'vmware-snapshots', 'add'];
   protected route_add_tooltip = 'Add VMware Snapshot';
-  protected entityList: any;
+  protected entityList: EntityTableComponent;
   wsDelete: 'vmware.delete' = 'vmware.delete';
 
   columns = [
@@ -20,7 +21,7 @@ export class VMwareSnapshotListComponent implements EntityTableConfig {
     { name: 'filesystem', prop: 'filesystem' }, { name: 'datastore', prop: 'datastore' },
   ];
   rowIdentifier = 'hostname';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -63,7 +64,7 @@ export class VMwareSnapshotListComponent implements EntityTableConfig {
     ] as EntityTableAction[];
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
   }
 }

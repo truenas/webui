@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -39,7 +39,7 @@ enum ShareType {
   styleUrls: ['./shares-dashboard.component.scss'],
   providers: [IscsiService],
 })
-export class SharesDashboardComponent {
+export class SharesDashboardComponent implements AfterViewInit {
   webdavTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.WebDAV);
   nfsTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.NFS);
   smbTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.SMB);

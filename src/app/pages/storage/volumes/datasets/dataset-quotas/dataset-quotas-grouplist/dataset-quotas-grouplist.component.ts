@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import {
   WebSocketService, StorageService, DialogService, AppLoaderService,
@@ -39,7 +40,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
     { name: T('OQ % Used'), prop: 'obj_used_percent', hidden: false },
   ];
   rowIdentifier = 'name';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -132,7 +133,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
             saveButtonText: helptext.shared.set,
             cancelButtonText: helptext.shared.cancel,
 
-            customSubmit(data: any) {
+            customSubmit(data: EntityDialogComponent) {
               const entryData = data.formValue;
               const payload = [];
               payload.push({
