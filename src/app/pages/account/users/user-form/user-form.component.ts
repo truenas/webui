@@ -477,32 +477,32 @@ export class UserFormComponent implements FormConfiguration {
     return value;
   }
 
-  beforeSubmit(entityForm: any): void {
-    entityForm.email = entityForm.email === '' ? null : entityForm.email;
+  beforeSubmit(value: any): void {
+    value.email = value.email === '' ? null : value.email;
 
     if (this.isNew) {
-      const home_user = entityForm.home.substr(
-        entityForm.home.length - entityForm.username.length,
+      const home_user = value.home.substr(
+        value.home.length - value.username.length,
       );
-      if (entityForm.home !== '/nonexistent') {
-        if (entityForm.username.toLowerCase() !== home_user.toLowerCase()) {
-          entityForm.home = entityForm.home + '/' + entityForm.username;
+      if (value.home !== '/nonexistent') {
+        if (value.username.toLowerCase() !== home_user.toLowerCase()) {
+          value.home = value.home + '/' + value.username;
         }
       }
-      if (entityForm.password_disabled) {
-        entityForm.sudo = false;
-        entityForm.locked = false;
+      if (value.password_disabled) {
+        value.sudo = false;
+        value.locked = false;
       }
     } else {
-      if (entityForm['password_edit'] === entityForm['password_conf_edit'] && entityForm['password_edit'] !== '' && entityForm['password_conf_edit'] !== '') {
-        entityForm['password'] = entityForm['password_edit'];
-        delete entityForm['password_edit'];
-        delete entityForm['password_conf_edit'];
-      } else if (entityForm['password_edit'] === '' && entityForm['password_conf_edit'] === '') {
-        delete entityForm['password_edit'];
-        delete entityForm['password_conf_edit'];
+      if (value['password_edit'] === value['password_conf_edit'] && value['password_edit'] !== '' && value['password_conf_edit'] !== '') {
+        value['password'] = value['password_edit'];
+        delete value['password_edit'];
+        delete value['password_conf_edit'];
+      } else if (value['password_edit'] === '' && value['password_conf_edit'] === '') {
+        delete value['password_edit'];
+        delete value['password_conf_edit'];
       }
-      delete entityForm['group_create'];
+      delete value['group_create'];
     }
   }
 

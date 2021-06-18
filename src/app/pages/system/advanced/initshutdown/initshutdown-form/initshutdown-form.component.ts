@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { take } from 'rxjs/operators';
 import helptext from 'app/helptext/system/initshutdown';
@@ -22,7 +23,7 @@ export class InitshutdownFormComponent implements FormConfiguration {
   protected entityForm: EntityFormComponent;
   isEntity = true;
   protected isOneColumnForm = true;
-  protected type_control: any;
+  protected type_control: FormControl;
   pk: any;
 
   fieldConfig: FieldConfig[] = [];
@@ -129,7 +130,7 @@ export class InitshutdownFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     this.pk = entityForm.pk;
     this.title = entityForm.isNew ? helptext.ini_add : helptext.ini_edit;
-    this.type_control = entityForm.formGroup.controls['type'];
+    this.type_control = entityForm.formGroup.controls['type'] as FormControl;
     this.type_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.formUpdate(value);
     });

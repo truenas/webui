@@ -7,6 +7,7 @@ import {
   FormGroup,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -53,19 +54,19 @@ export class DatasetAclComponent implements FormConfiguration {
   protected defaults: Option[] = [];
   protected recursive: any;
   private aces: any;
-  private aces_fc: any;
-  private entityForm: any;
+  private aces_fc: FieldConfig;
+  private entityForm: EntityFormComponent;
   formGroup: FormGroup;
   data: Record<string, unknown> = {};
   error: string;
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
   route_success: string[] = ['storage'];
   save_button_enabled = true;
   private homeShare: boolean;
   private isTrivialMessageSent = false;
 
-  protected uid_fc: any;
-  protected gid_fc: any;
+  protected uid_fc: FieldConfig;
+  protected gid_fc: FieldConfig;
 
   fieldSetDisplay = 'default'; // default | carousel | stepper
   fieldConfig: FieldConfig[] = [];

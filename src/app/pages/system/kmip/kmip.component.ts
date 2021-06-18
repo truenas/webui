@@ -21,7 +21,7 @@ export class KmipComponent {
   protected editCall: 'kmip.update' = 'kmip.update';
   isEntity = false;
 
-  entityForm: any;
+  entityForm: EntityFormComponent;
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [

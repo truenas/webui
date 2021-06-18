@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import {
   EntityTableAction,
   EntityTableConfig,
@@ -28,7 +29,7 @@ export class CronListComponent implements EntityTableConfig {
   route_add: string[] = ['tasks', 'cron', 'add'];
   protected route_add_tooltip = 'Add Cron Job';
   route_edit: string[] = ['tasks', 'cron', 'edit'];
-  entityList: any;
+  entityList: EntityTableComponent;
 
   columns = [
     { name: T('Users'), prop: 'user', always_display: true },
@@ -70,7 +71,7 @@ export class CronListComponent implements EntityTableConfig {
     public userService: UserService,
   ) {}
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
 
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {

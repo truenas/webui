@@ -1,6 +1,6 @@
 import { FormControl, ValidatorFn } from '@angular/forms';
 
-export function forbiddenValues(arrayOfValues: any[], caseInsensitive?: boolean): ValidatorFn {
+export function forbiddenValues(arrayOfValues: unknown[], caseInsensitive?: boolean): ValidatorFn {
   let thisControl: FormControl;
 
   return function forbiddenValuesValidate(control: FormControl) {

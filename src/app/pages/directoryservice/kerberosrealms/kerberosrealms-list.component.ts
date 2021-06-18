@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/directoryservice/kerberosrealms-form-list';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
@@ -16,7 +17,7 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
   queryCall: 'kerberos.realm.query' = 'kerberos.realm.query';
   wsDelete: 'kerberos.realm.delete' = 'kerberos.realm.delete';
   keyList = ['admin_server', 'kdc', 'kpasswd_server'];
-  protected entityList: any;
+  protected entityList: EntityTableComponent;
 
   columns = [
     { name: T('Realm'), prop: 'realm', always_display: true },
@@ -47,7 +48,7 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
     return data;
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
     this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();

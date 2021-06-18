@@ -146,9 +146,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   constructor(
     protected core: CoreService,
     protected router: Router,
-    protected ws: WebSocketService,
-    protected dialogService: DialogService,
-    protected loader: AppLoaderService,
+    public ws: WebSocketService,
+    public dialogService: DialogService,
+    public loader: AppLoaderService,
     protected mdDialog: MatDialog,
     protected translate: TranslateService,
     public sorter: StorageService,

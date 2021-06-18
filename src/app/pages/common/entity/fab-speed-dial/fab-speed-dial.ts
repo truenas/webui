@@ -37,7 +37,7 @@ export class SmdFabSpeedDialTrigger {
   }
 
   @HostListener('click', ['$event'])
-  _onClick(event: any): void {
+  _onClick(event: MouseEvent): void {
     if (!this._parent.fixed) {
       this._parent.toggle();
       event.stopPropagation();
@@ -122,7 +122,7 @@ export class SmdFabSpeedDialActions implements AfterContentInit {
     return translateFn + '(' + sign + value + ')';
   }
 
-  private changeElementStyle(elem: any, style: string, value: string): void {
+  private changeElementStyle(elem: unknown, style: string, value: string): void {
     // FIXME - Find a way to create a "wrapper" around the action button(s) provided by the user,
     // FIXME - so we don't change it's style tag
     this.renderer.setStyle(elem, style, value);

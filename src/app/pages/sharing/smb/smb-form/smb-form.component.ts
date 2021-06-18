@@ -271,7 +271,7 @@ export class SMBFormComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  advanced_field: any[] = [
+  advanced_field = [
     'acl',
     'ro',
     'browsable',

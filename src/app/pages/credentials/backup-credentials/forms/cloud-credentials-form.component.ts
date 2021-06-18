@@ -7,6 +7,7 @@ import { take } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloudcredentials';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -1199,7 +1200,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
   protected providers: any[];
   protected providerField: any;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
 
   custActions = [
     {
@@ -1320,7 +1321,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     }
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
@@ -1534,7 +1535,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     }
   }
 
-  dataAttributeHandler(entityForm: any): void {
+  dataAttributeHandler(entityForm: EntityFormComponent): void {
     const provider = entityForm.formGroup.controls['provider'].value;
     if (provider == 'S3'
     && (entityForm.wsResponseIdx['endpoint'] || entityForm.wsResponseIdx['skip_region'] || entityForm.wsResponseIdx['signatures_v2'])) {

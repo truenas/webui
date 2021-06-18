@@ -14,6 +14,7 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import {
   EntityTableAction,
   EntityTableConfig,
@@ -42,7 +43,7 @@ export class SnapshotListComponent implements EntityTableConfig {
   protected route_add_tooltip = 'Add Snapshot';
   wsDelete: 'zfs.snapshot.delete' = 'zfs.snapshot.delete';
   protected loaderOpen = false;
-  protected entityList: any;
+  protected entityList: EntityTableComponent;
   protected rollback: any;
   globalConfig = {
     id: 'config',
@@ -224,7 +225,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     ] as EntityTableAction[];
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
   }
 
@@ -360,7 +361,6 @@ export class SnapshotListComponent implements EntityTableConfig {
 
       dialogRef.close();
       this.entityList.getData();
-      this.entityList.selected = [];
 
       if (jobErrors.length > 0) {
         const errorTitle = T('Warning') + ', ' + jobErrors.length + ' of ' + params[1].length + ' ' + T('snapshots could not be deleted.');

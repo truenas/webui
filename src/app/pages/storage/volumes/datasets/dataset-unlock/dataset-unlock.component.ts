@@ -42,9 +42,9 @@ export class DatasetUnlockComponent implements FormConfiguration {
   protected datasets: any;
   protected datasets_fc: FieldConfig;
   protected key_file_fc: FieldConfig;
-  protected key_file_fg: any;
-  protected unlock_children_fg: any;
-  protected master_checkbox_fc: any;
+  protected key_file_fg: FormControl;
+  protected unlock_children_fg: FormControl;
+  protected master_checkbox_fc: FieldConfig;
   protected restart_services_fc: any;
   protected restart_services_checked: any[] = [];
 
@@ -265,8 +265,8 @@ export class DatasetUnlockComponent implements FormConfiguration {
       }
     });
 
-    this.key_file_fg = entityEdit.formGroup.controls['key_file'];
-    this.unlock_children_fg = entityEdit.formGroup.controls['unlock_children'];
+    this.key_file_fg = entityEdit.formGroup.controls['key_file'] as FormControl;
+    this.unlock_children_fg = entityEdit.formGroup.controls['unlock_children'] as FormControl;
 
     this.key_file_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((hide_key_datasets: boolean) => {
       for (let i = 0; i < this.datasets.controls.length; i++) {

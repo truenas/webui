@@ -1,5 +1,5 @@
 import {
-  ApplicationRef, Component, Injector, OnDestroy,
+  ApplicationRef, Component, Injector,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -22,13 +22,12 @@ import {
   providers: [SystemGeneralService],
 })
 
-export class ServiceS3Component implements FormConfiguration, OnDestroy {
+export class ServiceS3Component implements FormConfiguration {
   // protected resource_name: string = 'services/s3';
   queryCall: 's3.config' = 's3.config';
   updateCall = 's3.update';
   route_success: string[] = ['services'];
-  private certificate: any;
-  private ip_address: any;
+  private certificate: FieldConfig;
   private initial_path: any;
   private warned = false;
   private validBindIps: string[] = [];
@@ -111,7 +110,6 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
       divider: true,
     }];
   protected storage_path: any;
-  protected storage_path_subscription: any;
 
   constructor(
     protected router: Router,
@@ -123,13 +121,9 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
     private dialog: DialogService,
   ) {}
 
-  ngOnDestroy(): void {
-    this.storage_path_subscription.unsubscribe();
-  }
-
   afterInit(entityForm: EntityFormComponent): void {
     this.storage_path = entityForm.formGroup.controls['storage_path'];
-    this.storage_path_subscription = this.storage_path.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.storage_path.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res && res != this.initial_path && !this.warned) {
         this.dialog
           .confirm({
