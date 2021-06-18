@@ -1,5 +1,5 @@
 import {
-  Component, AfterViewInit, Input, SimpleChanges,
+  Component, AfterViewInit, Input, SimpleChanges, OnChanges,
 } from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import { ViewComponent } from 'app/core/components/view/view.component';
@@ -46,7 +46,7 @@ export const ViewChartMetadata = {
   template: ViewChartMetadata.template,
   styleUrls: ['./viewchart.component.scss'],
 })
-export class ViewChartComponent extends ViewComponent implements AfterViewInit {
+export class ViewChartComponent extends ViewComponent implements OnChanges, AfterViewInit {
   chartColors: string[];
   maxLabels: number;
   units: string;

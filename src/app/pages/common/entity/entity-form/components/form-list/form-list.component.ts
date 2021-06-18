@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormArray } from '@angular/forms';
 import * as _ from 'lodash';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -11,7 +11,7 @@ import { FieldRelationService } from 'app/pages/common/entity/entity-form/servic
   templateUrl: './form-list.component.html',
   styleUrls: ['./form-list.component.scss', '../dynamic-field/dynamic-field.scss'],
 })
-export class FormListComponent implements Field {
+export class FormListComponent implements Field, OnInit {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;

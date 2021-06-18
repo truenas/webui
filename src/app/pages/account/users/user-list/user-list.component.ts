@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -25,7 +25,7 @@ import { UserFormComponent } from '../user-form/user-form.component';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [UserService],
 })
-export class UserListComponent implements EntityTableConfig {
+export class UserListComponent implements EntityTableConfig, OnInit {
   title = 'Users';
   route_add: string[] = ['account', 'users', 'add'];
   protected route_add_tooltip = 'Add User';

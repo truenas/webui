@@ -1,5 +1,6 @@
 import {
-  Component, ElementRef, Input, ViewChild,
+  AfterViewChecked,
+  Component, ElementRef, Input, OnInit, ViewChild,
 } from '@angular/core';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { InputTableConf } from 'app/pages/common/entity/table/table.component';
@@ -22,7 +23,7 @@ export enum ExpandableTableState {
   templateUrl: './expandable-table.component.html',
   styleUrls: ['./expandable-table.component.scss'],
 })
-export class ExpandableTableComponent {
+export class ExpandableTableComponent implements OnInit, AfterViewChecked {
   title = '';
   titleHref: string;
   actions: any[];
