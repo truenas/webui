@@ -1592,4 +1592,8 @@ export class DatasetFormComponent implements Formconfiguration {
       new EntityUtils().handleWSError(this.entityForm, res);
     });
   }
+
+  goBack() {
+    this.router.navigate(new Array('/').concat(this.route_success));
+  }
 }
