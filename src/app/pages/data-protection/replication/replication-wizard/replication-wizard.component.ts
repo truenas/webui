@@ -17,6 +17,7 @@ import { SnapshotNamingOption } from 'app/enums/replication.interface';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
+import replicationFormHelptext from 'app/helptext/data-protection/replication/replication';
 import helptext from 'app/helptext/data-protection/replication/replication-wizard';
 import sshConnectionsHelptex from 'app/helptext/system/ssh-connections';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
@@ -216,10 +217,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             {
               type: 'radio',
               name: 'schema_or_regex',
-              placeholder: helptext.name_schema_or_regex_placeholder,
+              placeholder: replicationFormHelptext.name_schema_or_regex_placeholder,
               options: [
                 { label: helptext.naming_schema_placeholder, value: SnapshotNamingOption.NamingSchema },
-                { label: helptext.name_regex_placeholder, value: SnapshotNamingOption.NameRegex },
+                { label: replicationFormHelptext.name_regex_placeholder, value: SnapshotNamingOption.NameRegex },
               ],
               value: SnapshotNamingOption.NamingSchema,
               relation: [{
@@ -260,8 +261,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             {
               type: 'input',
               name: 'name_regex',
-              placeholder: helptext.name_regex_placeholder,
-              tooltip: helptext.name_regex_tooltip,
+              placeholder: replicationFormHelptext.name_regex_placeholder,
+              tooltip: replicationFormHelptext.name_regex_tooltip,
               parent: this,
               required: true,
               isHidden: true,

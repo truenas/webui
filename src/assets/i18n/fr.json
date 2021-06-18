@@ -503,7 +503,6 @@
   "Unset": "",
   "Upgrade to ": "",
   "Usages": "",
-  "Using this option will replicate all snapshots   which names match specified regular expression. The   performance on the systems with large number of snapshots   will be lower, as snapshots metadata needs to be read in order   to determine snapshots creation order.": "",
   "Using this option will replicate all snapshots  which names match specified regular expression. The  performance on the systems with large number of snapshots  will be lower, as snapshots metadata needs to be read in order  to determine snapshots creation order.": "",
   "VLANs": "",
   "VM ": "",
