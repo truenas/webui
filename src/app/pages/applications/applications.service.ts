@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
+import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { WebSocketService } from 'app/services/index';
@@ -42,7 +43,7 @@ export class ApplicationsService {
     return this.ws.call('catalog.items', [label]);
   }
 
-  getChartReleases(name?: string): Observable<any[]> {
+  getChartReleases(name?: string): Observable<ChartRelease[]> {
     const secondOption = { extra: { history: true } };
 
     if (name) {
@@ -51,7 +52,7 @@ export class ApplicationsService {
     return this.ws.call('chart.release.query', [[], secondOption]);
   }
 
-  getChartReleaseNames(): Observable<any[]> {
+  getChartReleaseNames(): Observable<{ name: string }[]> {
     return this.ws.call('chart.release.query', [[], { select: ['name'] }]);
   }
 
@@ -71,7 +72,7 @@ export class ApplicationsService {
     return this.ws.call('interface.query');
   }
 
-  getChartReleaseWithResources(name: string): Observable<any[]> {
+  getChartReleaseWithResources(name: string): Observable<ChartRelease[]> {
     const secondOption = { extra: { retrieve_resources: true } };
     return this.ws.call('chart.release.query', [[['name', '=', name]], secondOption]);
   }

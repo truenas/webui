@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/storage/volumes/volume-key';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
@@ -76,7 +77,7 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
     },
   ];
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: Pool): Pool {
     this.poolName = data.name;
     _.find(this.fieldConfig, { name: 'encrypt-headline' }).paraText += ` <em>${this.poolName}</em>`;
     return data;

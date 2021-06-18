@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { chartsTrain, latestVersion } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from 'app/helptext/apps/apps';
+import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -110,7 +111,7 @@ export class ChartFormComponent implements FormConfiguration {
     return fieldSets;
   }
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: ChartRelease): any {
     const chartSchema = {
       name: data.chart_metadata.name,
       catalog: {

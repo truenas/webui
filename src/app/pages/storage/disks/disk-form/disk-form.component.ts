@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import helptext from 'app/helptext/storage/disks/disks';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -190,9 +191,10 @@ export class DiskFormComponent implements FormConfiguration {
   ) {
   }
 
-  resourceTransformIncomingRestData(data: any): any {
-    delete data.passwd;
-    return data;
+  resourceTransformIncomingRestData(data: Disk): any {
+    const transformed: any = { ...data };
+    delete transformed.passwd;
+    return transformed;
   }
 
   preInit(): void {

@@ -285,8 +285,10 @@ export class RsyncFormComponent implements FormConfiguration {
   }
 
   resourceTransformIncomingRestData(data: RsyncTaskUi): RsyncTaskUi {
-    data.cron_schedule = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
-    return data;
+    return {
+      ...data,
+      cron_schedule: `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`,
+    };
   }
 
   updateUserSearchOptions(value = '', parent: any): void {
