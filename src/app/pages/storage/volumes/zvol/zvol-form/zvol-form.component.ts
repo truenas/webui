@@ -246,8 +246,8 @@ export class ZvolFormComponent implements FormConfiguration {
         placeholder: helptext.zvol_readonly_placeholder,
         tooltip: helptext.zvol_readonly_tooltip,
         options: [
-          { label: 'On', value: 'ON' },
-          { label: 'Off', value: 'OFF' },
+          { label: T('On'), value: 'ON' },
+          { label: T('Off'), value: 'OFF' },
         ],
       },
       {
