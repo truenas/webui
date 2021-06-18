@@ -75,7 +75,7 @@ export class DatasetFormComponent implements FormConfiguration {
   isEntity = true;
   isNew = false;
   parent_dataset: Dataset;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   minimum_recommended_dataset_recordsize = '128K';
   protected recordsize_field: any;
   protected recordsize_fg: any;
@@ -644,18 +644,6 @@ export class DatasetFormComponent implements FormConfiguration {
         },
         {
           type: 'select',
-          name: 'aclmode',
-          placeholder: helptext.dataset_form_aclmode_placeholder,
-          tooltip: helptext.dataset_form_aclmode_tooltip,
-          options: [
-            { label: T('Passthrough'), value: AclMode.Passthrough },
-            { label: T('Restricted'), value: AclMode.Restricted },
-            { label: T('Discard'), value: AclMode.Discard },
-          ],
-          value: AclMode.Passthrough,
-        },
-        {
-          type: 'select',
           name: 'acltype',
           placeholder: T('ACL Type'),
           options: [
@@ -666,6 +654,19 @@ export class DatasetFormComponent implements FormConfiguration {
           ],
           required: false,
           value: DatasetAclType.Inherit,
+        },
+        {
+          type: 'select',
+          name: 'aclmode',
+          placeholder: helptext.dataset_form_aclmode_placeholder,
+          tooltip: helptext.dataset_form_aclmode_tooltip,
+          options: [
+            { label: T('Inherit'), value: AclMode.Inherit },
+            { label: T('Passthrough'), value: AclMode.Passthrough },
+            { label: T('Restricted'), value: AclMode.Restricted },
+            { label: T('Discard'), value: AclMode.Discard },
+          ],
+          value: AclMode.Inherit,
         },
         {
           type: 'select',
@@ -951,6 +952,23 @@ export class DatasetFormComponent implements FormConfiguration {
         this.dedup_field.warnings = '';
       } else {
         this.dedup_field.warnings = helptext.dataset_form_deduplication_warning;
+      }
+    });
+
+    this.entityForm.formGroup.get('acltype').valueChanges.subscribe((value: string) => {
+      const aclModeFormControl = this.entityForm.formGroup.get('aclmode') as FormControl;
+      if (value === DatasetAclType.Nfsv4) {
+        aclModeFormControl.setValue(AclMode.Passthrough);
+        this.entityForm.setDisabled('aclmode', false, false);
+      } else if (value === DatasetAclType.Posix) {
+        aclModeFormControl.setValue(AclMode.Discard);
+        this.entityForm.setDisabled('aclmode', true, false);
+      } else if (value === DatasetAclType.Inherit) {
+        aclModeFormControl.setValue(AclMode.Inherit);
+        this.entityForm.setDisabled('aclmode', true, false);
+      } else if (value === DatasetAclType.Off) {
+        aclModeFormControl.setValue('');
+        this.entityForm.setDisabled('aclmode', true, true);
       }
     });
 
