@@ -73,6 +73,7 @@ export class CatalogAddFormComponent implements FormConfiguration {
   ) {}
 
   afterModalFormClosed(): void {
+    this.dialogService.Info(helptext.catalogForm.dialog.title, helptext.catalogForm.dialog.message, '500px', 'info', true);
     this.modalService.refreshTable();
   }
 }
