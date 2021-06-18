@@ -17,7 +17,7 @@ export class ErrorDialog {
   title: string;
   message: string;
   backtrace: string;
-  isCloseMoreInfo: Boolean = true;
+  isCloseMoreInfo = true;
   logs: any;
 
   constructor(public dialogRef: MatDialogRef < ErrorDialog >, public translate: TranslateService,

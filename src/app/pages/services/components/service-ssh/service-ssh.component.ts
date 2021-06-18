@@ -121,7 +121,7 @@ export class ServiceSSHComponent implements FormConfiguration, OnInit {
     'weak_ciphers',
   ];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,

@@ -27,7 +27,7 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
   isNew = true;
   private dq: string;
   private oq: string;
-  private selectedEntriesField: any;
+  private selectedEntriesField: FieldConfig;
   private selectedEntriesValue: any;
   private entryErrs: any;
   private entryErrBool = false;

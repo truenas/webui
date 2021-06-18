@@ -14,6 +14,7 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
   WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService,
 }
@@ -31,10 +32,10 @@ import { NTPServerFormComponent } from './ntpservers/ntpserver-form/ntpserver-fo
   templateUrl: './general-settings.component.html',
 })
 export class GeneralSettingsComponent implements OnInit {
-  dataCards: any[] = [];
+  dataCards: DataCard[] = [];
   supportTitle = helptext.supportTitle;
   ntpTitle = helptext.ntpTitle;
-  localeData: any;
+  localeData: DataCard;
   configData: any;
   displayedColumns: any;
   dataSource: any;
@@ -257,8 +258,7 @@ export class GeneralSettingsComponent implements OnInit {
     });
   }
 
-  saveConfigSubmit(entityDialog: any): void {
-    parent = entityDialog.parent;
+  saveConfigSubmit(entityDialog: EntityDialogComponent): void {
     entityDialog.loader.open();
     (entityDialog.ws as WebSocketService).call('system.info', []).pipe(untilDestroyed(this)).subscribe((systemInfo) => {
       let fileName = '';
@@ -278,7 +278,7 @@ export class GeneralSettingsComponent implements OnInit {
 
       entityDialog.ws.call('core.download', ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName])
         .pipe(untilDestroyed(this)).subscribe(
-          (download: any) => {
+          (download) => {
             const url = download[1];
             entityDialog.parent.storage
               .streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)
@@ -297,14 +297,14 @@ export class GeneralSettingsComponent implements OnInit {
           (err: any) => {
             entityDialog.loader.close();
             entityDialog.dialogRef.close();
-            new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
+            new EntityUtils().handleWSError(entityDialog, err, this.dialog);
           },
         );
     },
     (err: any) => {
       entityDialog.loader.close();
       entityDialog.dialogRef.close();
-      new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
+      new EntityUtils().handleWSError(entityDialog, err, this.dialog);
     });
   }
 
@@ -315,7 +315,7 @@ export class GeneralSettingsComponent implements OnInit {
     }
   }
 
-  uploadConfigSubmit(entityDialog: EntityDialogComponent): void {
+  uploadConfigSubmit(entityDialog: EntityDialogComponent<this>): void {
     const parent = entityDialog.conf.fieldConfig[0].parent;
     const formData: FormData = new FormData();
 
@@ -337,7 +337,7 @@ export class GeneralSettingsComponent implements OnInit {
     });
   }
 
-  resetConfigSubmit(entityDialog: EntityDialogComponent): void {
+  resetConfigSubmit(entityDialog: EntityDialogComponent<this>): void {
     const parent = entityDialog.parent;
     parent.router.navigate(new Array('').concat(['others', 'config-reset']));
   }

@@ -16,7 +16,7 @@ export class FibreChannelPortsComponent implements EntityTableConfig {
     { name: 'WWPN', prop: 'wwpn' },
     { name: 'State', prop: 'state' },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
   };

@@ -134,6 +134,7 @@ module.exports = {
         "@typescript-eslint/no-unused-vars": "off",
         "unused-imports/no-unused-imports": "error",
         "unused-imports/no-unused-vars": ["error", { vars: "local", args: "after-used" }],
+        "@typescript-eslint/ban-types": ["error"],
 
         // RxJS rules
         "rxjs/no-unsafe-takeuntil": ["error", {

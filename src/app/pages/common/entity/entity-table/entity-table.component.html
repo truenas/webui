@@ -28,7 +28,7 @@
           <!-- ICONS ONLY -->
           <ng-container *ngIf="multiActionsIconsOnly">
             <button id="{{ maction?.id }}" mat-button matTooltip="{{ maction?.label  | translate }}"
-              [matTooltipPosition]=maction?.ttpos *ngIf="maction.enable" (click)="maction.onClick(this.selection.selected);">
+              [matTooltipPosition]="maction?.ttpos" *ngIf="maction.enable" (click)="maction.onClick(this.selection.selected);">
               <mat-icon>{{ maction?.icon }}</mat-icon>
             </button>
           </ng-container>

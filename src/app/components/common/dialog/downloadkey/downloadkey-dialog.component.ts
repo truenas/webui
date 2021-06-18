@@ -22,7 +22,7 @@ export class DownloadKeyModalDialog {
   volumeId: any;
   volumeName: any;
   fileName: string;
-  isDownloaded: Boolean = false;
+  isDownloaded = false;
   help = helptext;
 
   constructor(
@@ -50,7 +50,7 @@ export class DownloadKeyModalDialog {
         this.storage.streamDownloadFile(this.http, url, this.fileName, mimetype)
           .pipe(untilDestroyed(this))
           .subscribe((file) => {
-            if (res !== null && res !== '') {
+            if (res !== null && (res as any) !== '') {
               this.storage.downloadBlob(file, this.fileName);
               this.isDownloaded = true;
             }

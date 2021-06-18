@@ -1,11 +1,13 @@
 import { Component, OnDestroy } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { CoreService } from 'app/core/services/core.service';
 import helptext from 'app/helptext/storage/import-disk/import-disk';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
   FieldConfig,
@@ -84,14 +86,13 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     },
   ];
 
-  volume: any;
-  fs_type: any;
-  private fs_type_subscription: any;
-  private fs_type_list: any;
-  msdosfs_locale: any;
+  volume: FieldConfig;
+  fs_type: FormControl;
+  private fs_type_list: FieldConfig;
+  msdosfs_locale: FieldConfig;
   private entityForm: EntityFormComponent;
-  protected dialogRef: any;
-  custActions: any[];
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
+  custActions: FormCustomAction[];
 
   constructor(
     protected router: Router,
@@ -107,12 +108,12 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     entityForm.isNew = true; // disable attempting to load data that doesn't exist
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.fieldConfig = entityForm.fieldConfig;
     this.volume = _.find(this.fieldConfig, { name: 'volume' });
     this.fs_type_list = _.find(this.fieldConfig, { name: 'fs_type' });
     this.msdosfs_locale = _.find(this.fieldConfig, { name: 'msdosfs_locale' });
-    this.fs_type = entityForm.formGroup.controls['fs_type'];
+    this.fs_type = entityForm.formGroup.controls['fs_type'] as FormControl;
 
     this.ws.call('pool.import_disk_msdosfs_locales').pipe(untilDestroyed(this)).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
@@ -123,7 +124,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
       this.initialized = true;
     });
 
-    this.fs_type_subscription = this.fs_type.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.fs_type.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value === 'msdosfs') {
         this.msdosfs_locale['isHidden'] = false;
       } else {
@@ -217,6 +218,5 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
 
   ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
-    this.fs_type_subscription.unsubscribe();
   }
 }

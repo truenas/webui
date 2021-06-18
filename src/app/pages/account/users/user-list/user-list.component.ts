@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -7,6 +7,7 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/account/user-list';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -24,13 +25,13 @@ import { UserFormComponent } from '../user-form/user-form.component';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [UserService],
 })
-export class UserListComponent implements EntityTableConfig, OnInit, OnDestroy {
+export class UserListComponent implements EntityTableConfig, OnInit {
   title = 'Users';
   route_add: string[] = ['account', 'users', 'add'];
   protected route_add_tooltip = 'Add User';
   route_edit: string[] = ['account', 'users', 'edit'];
 
-  protected entityList: any;
+  protected entityList: EntityTableComponent;
   protected loaderOpen = false;
   protected usr_lst: any[] = [];
   protected grp_lst: any[] = [];
@@ -46,7 +47,6 @@ export class UserListComponent implements EntityTableConfig, OnInit, OnDestroy {
   };
 
   addComponent: UserFormComponent;
-  private refreshTableSubscription: any;
 
   columns = [
     {
@@ -111,18 +111,12 @@ export class UserListComponent implements EntityTableConfig, OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    if (this.refreshTableSubscription) {
-      this.refreshTableSubscription.unsubscribe();
-    }
-  }
-
   refreshUserForm(): void {
     this.addComponent = new UserFormComponent(this.router, this.ws, this.storageService, this.loader,
       this.userService, this.validationService, this.modalService);
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
     setTimeout(() => {
       if (this.prefService.preferences.showUserListMessage) {
@@ -130,7 +124,7 @@ export class UserListComponent implements EntityTableConfig, OnInit, OnDestroy {
       }
     }, 2000);
 
-    this.refreshTableSubscription = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -256,7 +250,6 @@ export class UserListComponent implements EntityTableConfig, OnInit, OnDestroy {
 
       this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
       this.prefService.savePreferences();
-      this.entityList.needTableResize = false;
       this.entityList.getData();
     });
   }

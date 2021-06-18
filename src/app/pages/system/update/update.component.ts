@@ -12,6 +12,7 @@ import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -33,7 +34,7 @@ export class UpdateComponent implements OnInit {
   changeLog: any = '';
   updating = false;
   updated = false;
-  progress: Object = {};
+  progress: Record<string, unknown> = {};
   job: any = {};
   error: string;
   autoCheck = false;
@@ -574,8 +575,7 @@ export class UpdateComponent implements OnInit {
   }
 
   // Save Config dialog
-  saveConfigSubmit(entityDialog: any): void {
-    parent = entityDialog.parent;
+  saveConfigSubmit(entityDialog: EntityDialogComponent<this>): void {
     let fileName = '';
     let mimetype: string;
     if (entityDialog.parent.sysInfo) {

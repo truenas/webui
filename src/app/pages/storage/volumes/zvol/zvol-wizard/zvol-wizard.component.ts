@@ -49,7 +49,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   protected path: string;
   queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   protected compression: any;
-  advanced_field: any[] = ['volblocksize'];
+  advanced_field = ['volblocksize'];
   isBasicMode = true;
   protected isNew = true;
   protected isEntity = true;
@@ -434,7 +434,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
 
   afterInit(entityWizard: EntityWizardComponent): void {
     const zvolEntityForm = (< FormGroup > this.entityWizard.formArray.get([1]));
-    (< FormGroup > entityWizard.formArray.get([0])).get('path').valueChanges.pipe(untilDestroyed(this)).subscribe((pool: String) => {
+    (<FormGroup> entityWizard.formArray.get([0])).get('path').valueChanges.pipe(untilDestroyed(this)).subscribe((pool: string) => {
       if (pool.includes('mnt')) {
         const split = pool.split('/');
         this.parent = '';

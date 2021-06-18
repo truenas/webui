@@ -99,7 +99,7 @@ export class EntityFormService {
   getFilesystemListdirChildren(
     node: any,
     explorerType?: string,
-    hideDirs?: any,
+    hideDirs?: string,
     showHiddenFiles = false,
   ): Promise<any[]> {
     const children: any[] = [];

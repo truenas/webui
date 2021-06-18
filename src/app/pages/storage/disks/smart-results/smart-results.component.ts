@@ -23,7 +23,7 @@ export class SmartResultsComponent implements EntityTableConfig {
     { name: T('Lifetime'), prop: 'lifetime', hidden: true },
     { name: T('Error'), prop: 'lba_of_first_error', hidden: true },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
   };

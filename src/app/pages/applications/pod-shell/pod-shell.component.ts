@@ -15,6 +15,7 @@ import { CoreService } from 'app/core/services/core.service';
 import helptext from 'app/helptext/shell/shell';
 import { CoreEvent } from 'app/interfaces/events';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
@@ -41,8 +42,6 @@ export class PodShellComponent implements OnInit, OnDestroy {
   token: any;
   xterm: any;
   resize_terminal = true;
-  private shellSubscription: any;
-  private shellConnectedSubscription: any;
   private fitAddon: any;
   formEvents: Subject<CoreEvent>;
 
@@ -90,7 +89,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
           this.getAuthToken().pipe(untilDestroyed(this)).subscribe((token) => {
             this.initializeWebShell(token);
 
-            this.shellSubscription = this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe((value: any) => {
+            this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe((value: any) => {
               if (value !== undefined) {
                 if (_.trim(value) == 'logout') {
                   this.xterm.destroy();
@@ -107,13 +106,6 @@ export class PodShellComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.ss.connected) {
       this.ss.socket.close();
-    }
-    if (this.shellSubscription) {
-      this.shellSubscription.unsubscribe();
-    }
-
-    if (this.shellConnectedSubscription) {
-      this.shellConnectedSubscription.unsubscribe();
     }
   }
 
@@ -281,7 +273,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
     this.initializeTerminal();
     this.refreshToolbarButtons();
 
-    this.shellConnectedSubscription = this.ss.shellConnected.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.ss.shellConnected.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.shellConnected = res.connected;
       this.connectionId = res.id;
       this.updateTerminal();
@@ -345,7 +337,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
     this.dialogService.dialogForm(this.choosePod, true);
   }
 
-  onChooseShell(entityDialog: any): void {
+  onChooseShell(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     self.pod_name = entityDialog.formGroup.controls['pods'].value;
     self.conatiner_name = entityDialog.formGroup.controls['containers'].value;

@@ -9,7 +9,7 @@ import { WebSocketService, DialogService } from 'app/services';
 @UntilDestroy()
 @Component({
   selector: 'app-alertservice-list',
-  template: '<entity-table [title]="title"  [conf]="this"></entity-table>',
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class AlertServiceListComponent implements EntityTableConfig {
   title = 'Alert Services';
@@ -26,7 +26,7 @@ export class AlertServiceListComponent implements EntityTableConfig {
     { name: 'Level', prop: 'level' },
     { name: 'Enabled', prop: 'enabled', selectable: true },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

@@ -18,3 +18,15 @@ export interface Alert {
   text: string;
   uuid: string;
 }
+
+export interface AlertCategory {
+  id: string;
+  title: string;
+  classes: AlertClass[];
+}
+
+export interface AlertClass {
+  id: string;
+  level: AlertLevel;
+  title: string;
+}

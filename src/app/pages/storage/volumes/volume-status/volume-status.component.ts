@@ -16,6 +16,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -362,7 +363,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           fieldConfig: this.replaceDiskFormFields,
           saveButtonText: helptext.replace_disk.saveButtonText,
           parent: this,
-          customSubmit(entityDialog: any) {
+          customSubmit(entityDialog: EntityDialogComponent) {
             delete entityDialog.formValue['passphrase2'];
 
             const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {
@@ -491,7 +492,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           fieldConfig: this.extendVdevFormFields,
           saveButtonText: helptext.extend_disk.saveButtonText,
           parent: this,
-          customSubmit(entityDialog: any) {
+          customSubmit(entityDialog: EntityDialogComponent) {
             delete entityDialog.formValue['passphrase2'];
 
             const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {

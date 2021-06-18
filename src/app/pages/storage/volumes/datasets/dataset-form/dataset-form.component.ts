@@ -78,14 +78,14 @@ export class DatasetFormComponent implements FormConfiguration {
   parent_dataset: Dataset;
   protected entityForm: EntityFormComponent;
   minimum_recommended_dataset_recordsize = '128K';
-  protected recordsize_field: any;
-  protected recordsize_fg: any;
+  protected recordsize_field: FieldConfig;
+  protected recordsize_fg: FormControl;
   protected recommended_size_number: any;
   protected recordsize_warning: any;
   protected dedup_warned = false;
   protected dedup_value: any;
-  protected dedup_fg: any;
-  protected dedup_field: any;
+  protected dedup_fg: FormControl;
+  protected dedup_field: FieldConfig;
   protected encrypted_parent = false;
   protected inherit_encryption = true;
   protected non_encrypted_warned = false;
@@ -115,7 +115,7 @@ export class DatasetFormComponent implements FormConfiguration {
   protected warning = 80;
   protected critical = 95;
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -718,7 +718,7 @@ export class DatasetFormComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  advanced_field: any[] = [
+  advanced_field = [
     'refquota',
     'quota',
     'quota_unit',
@@ -758,14 +758,14 @@ export class DatasetFormComponent implements FormConfiguration {
     'pbkdf2iters',
   ];
 
-  protected byteMap: Object = {
+  protected byteMap = {
     T: 1099511627776,
     G: 1073741824,
     M: 1048576,
     K: 1024,
     B: 1,
   };
-  protected recordSizeMap: Object = {
+  protected recordSizeMap = {
     512: '512',
     1024: '1K',
     2048: '2K',
@@ -779,7 +779,7 @@ export class DatasetFormComponent implements FormConfiguration {
     524288: '512K',
     1048576: '1024K',
   };
-  protected reverseRecordSizeMap: Object = {
+  protected reverseRecordSizeMap = {
     512: '512',
     '1K': '1024',
     '2K': '2048',
@@ -939,7 +939,7 @@ export class DatasetFormComponent implements FormConfiguration {
       this.entityForm.setDisabled('deduplication', false, false);
     }
 
-    this.dedup_fg = this.entityForm.formGroup.controls['deduplication'];
+    this.dedup_fg = this.entityForm.formGroup.controls['deduplication'] as FormControl;
     this.dedup_field = _.find(this.fieldConfig, { name: 'deduplication' });
     this.dedup_value = this.dedup_fg.value;
     this.dedup_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((dedup: any) => {
@@ -987,7 +987,7 @@ export class DatasetFormComponent implements FormConfiguration {
       caseControl.updateValueAndValidity();
     });
 
-    this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'];
+    this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'] as FormControl;
 
     this.recordsize_field = _.find(this.fieldConfig, { name: 'recordsize' });
     this.recordsize_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((record_size: string) => {

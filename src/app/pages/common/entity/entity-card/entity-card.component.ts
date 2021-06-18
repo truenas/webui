@@ -87,7 +87,7 @@ export class EntityCardComponent extends iXObject implements OnInit, AfterViewIn
   }
 
   getData(): void {
-    const sort: String[] = [];
+    const sort: string[] = [];
     let options: any = {};
 
     for (const i in this.config.sorting.columns) {

@@ -13,7 +13,7 @@ import { T } from 'app/translate-marker';
 })
 export class ISCSI implements OnInit {
   activedTab = 'configuration';
-  navLinks: any[] = [{
+  navLinks = [{
     label: T('Target Global Configuration'),
     path: '/sharing/iscsi/configuration',
   },

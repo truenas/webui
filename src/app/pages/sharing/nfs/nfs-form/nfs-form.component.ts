@@ -212,7 +212,7 @@ export class NFSFormComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ]);
 
-  advanced_field: any[] = [
+  advanced_field = [
     'ro',
     'networks',
     'hosts',
@@ -226,7 +226,7 @@ export class NFSFormComponent implements FormConfiguration {
   protected advanced_sets = ['access', 'networks', 'hosts'];
   protected advanced_dividers = ['divider_access'];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -388,7 +388,7 @@ export class NFSFormComponent implements FormConfiguration {
             this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
               this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
                 this.dialog.Info(T('NFS') + shared.dialog_started_title,
-                  T('The NFS') + shared.dialog_started_message, '250px').pipe(untilDestroyed(this)).subscribe(() => {
+                  T('The NFS') + shared.dialog_started_message, '250px', 'info').pipe(untilDestroyed(this)).subscribe(() => {
                   this.dialog.closeAllDialogs();
                 });
               }, (err) => {

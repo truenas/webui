@@ -1,6 +1,7 @@
 import {
-  ApplicationRef, Component, Injector, OnDestroy, OnInit,
+  ApplicationRef, Component, Injector, OnInit,
 } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -22,7 +23,7 @@ import { T } from 'app/translate-marker';
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [SystemGeneralService],
 })
-export class ServiceFTPComponent implements FormConfiguration, OnInit, OnDestroy {
+export class ServiceFTPComponent implements FormConfiguration, OnInit {
   editCall: 'ftp.update' = 'ftp.update';
   queryCall: 'ftp.config' = 'ftp.config';
   route_success: string[] = ['services'];
@@ -30,8 +31,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit, OnDestroy
   isBasicMode = true;
   protected entityForm: EntityFormComponent;
 
-  protected rootlogin_fg: any;
-  protected rootloginSubscription: any;
+  protected rootlogin_fg: FormControl;
   protected warned = false;
   protected rootlogin: boolean;
   fieldConfig: any;
@@ -375,7 +375,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit, OnDestroy
 
   advanced_field = this.fieldSets.advancedFields;
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'basic_mode',
       name: global_helptext.basic_options,
@@ -427,8 +427,8 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit, OnDestroy
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     entityEdit.submitFunction = this.submitFunction;
-    this.rootlogin_fg = entityEdit.formGroup.controls['rootlogin'];
-    this.rootloginSubscription = this.rootlogin_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.rootlogin_fg = entityEdit.formGroup.controls['rootlogin'] as FormControl;
+    this.rootlogin_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res && !this.warned && !this.rootlogin) {
         this.dialog.confirm({
           title: helptext.rootlogin_dialog_title,
@@ -512,12 +512,8 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit, OnDestroy
     data['dirmask'] = dirmask;
   }
 
-  submitFunction(this: any, body: any): Observable<any> {
+  submitFunction(body: any): Observable<any> {
     return this.ws.call('ftp.update', [body]);
-  }
-
-  ngOnDestroy(): void {
-    this.rootloginSubscription.unsubscribe();
   }
 
   blurEvent(parent: any): void {

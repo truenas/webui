@@ -173,7 +173,7 @@ export class ServiceSNMPComponent implements FormConfiguration {
     return value;
   }
 
-  submitFunction(this: any, entityForm: any): Observable<any> {
+  submitFunction(entityForm: any): Observable<any> {
     return this.ws.call('snmp.update', [entityForm]);
   }
 }

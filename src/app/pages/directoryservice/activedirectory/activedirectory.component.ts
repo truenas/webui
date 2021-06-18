@@ -7,7 +7,10 @@ import { Observable } from 'rxjs';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/directoryservice/activedirectory';
 import global_helptext from 'app/helptext/global-helptext';
+import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
+import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -34,7 +37,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
   adStatus = false;
   entityEdit: EntityFormComponent;
   protected dialogRef: MatDialogRef<EntityJobComponent, void>;
-  custActions: any[] = [
+  custActions = [
     {
       id: helptext.activedirectory_custactions_basic_id,
       name: global_helptext.basic_options,
@@ -97,7 +100,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
               },
             ],
             saveButtonText: helptext.activedirectory_custactions_leave_domain,
-            customSubmit(entityDialog: any) {
+            customSubmit(entityDialog: EntityDialogComponent) {
               const value = entityDialog.formValue;
               const self = entityDialog;
               self.loader.open();
@@ -331,11 +334,11 @@ export class ActiveDirectoryComponent implements FormConfiguration {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
-    this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((res) => {
+    this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((realms) => {
       this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
-      res.forEach((item: any) => {
+      realms.forEach((realm) => {
         this.kerberos_realm.options.push(
-          { label: item.realm, value: item.id },
+          { label: realm.realm, value: realm.id },
         );
       });
     });
@@ -349,16 +352,16 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       });
     });
 
-    this.ws.call('activedirectory.nss_info_choices').pipe(untilDestroyed(this)).subscribe((res) => {
+    this.ws.call('activedirectory.nss_info_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
       this.nss_info = _.find(this.fieldConfig, { name: 'nss_info' });
-      res.forEach((item: any) => {
+      choices.forEach((choice) => {
         this.nss_info.options.push(
-          { label: item, value: item },
+          { label: choice, value: choice },
         );
       });
     });
 
-    entityEdit.formGroup.controls['enable'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityEdit.formGroup.controls['enable'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       _.find(this.fieldConfig, { name: 'bindpw' })['required'] = res;
     });
 
@@ -411,7 +414,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     }
   }
 
-  submitFunction(body: any): Observable<any> {
+  submitFunction(body: ActiveDirectoryUpdate): Observable<ActiveDirectoryConfig> {
     return this.ws.call('activedirectory.update', [body]);
   }
 
@@ -423,11 +426,11 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       this.adStatus = true;
     }
 
-    this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+    this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((realms) => {
       this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
-      res.forEach((item) => {
+      realms.forEach((realm) => {
         this.kerberos_realm.options.push(
-          { label: item.realm, value: item.id },
+          { label: realm.realm, value: realm.id },
         );
       });
     });
