@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   FormGroup,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
@@ -806,9 +806,10 @@ export class DatasetAclComponent implements OnDestroy {
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.entityForm.success = true;
       this.dialogRef.close();
+      const navigationExtras: NavigationExtras = { state: { highlightDataset: this.datasetId } };
       this.router.navigate(new Array('/').concat(
         this.route_success,
-      ));
+      ), navigationExtras);
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
     });
@@ -868,9 +869,10 @@ export class DatasetAclComponent implements OnDestroy {
         this.dialogRef.componentInstance.success.subscribe((res) => {
           this.entityForm.success = true;
           this.dialogRef.close();
+          const navigationExtras: NavigationExtras = { state: { highlightDataset: this.datasetId } };
           this.router.navigate(new Array('/').concat(
             this.route_success,
-          ));
+          ), navigationExtras);
         });
         this.dialogRef.componentInstance.failure.subscribe((err) => {
           new EntityUtils().handleWSError(this.entityForm, err);
@@ -878,5 +880,10 @@ export class DatasetAclComponent implements OnDestroy {
       },
     };
     this.dialogService.dialogFormWide(conf);
+  }
+
+  goBack() {
+    const navigationExtras: NavigationExtras = { state: { highlightDataset: this.datasetId } };
+    this.router.navigate(new Array('/').concat(this.route_success), navigationExtras);
   }
 }
