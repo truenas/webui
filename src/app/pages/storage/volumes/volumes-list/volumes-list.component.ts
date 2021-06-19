@@ -2,7 +2,7 @@ import { ValidationService } from '../../../../services/validation.service';
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Navigation, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { CoreService } from 'app/core/services/core.service';
@@ -121,15 +121,35 @@ export class VolumesListTableConfig implements InputTableConf {
     protected messageService: MessageService,
     protected http: HttpClient,
     protected validationService: ValidationService,
+    private highlightNode: string = null,
   ) {
     if (typeof (this._classId) !== 'undefined' && this._classId !== '' && volumeData && volumeData['children']) {
       this.tableData = [];
       for (let i = 0; i < volumeData['children'].length; i++) {
         const child = volumeData['children'][i];
         child.parent = volumeData;
-        this.tableData.push(this.dataHandler(child));
+        const treeNode = this.dataHandler(child);
+        if (highlightNode) {
+          this.expandTree(treeNode, highlightNode);
+        }
+        this.tableData.push(treeNode);
       }
     }
+  }
+
+  expandTree(tree: TreeNode, highlightNodeId: string) {
+    if (tree.data.id === highlightNodeId) {
+      return true;
+    }
+
+    for (const node of tree.children) {
+      if (this.expandTree(node, highlightNodeId)) {
+        tree.expanded = true;
+      }
+    }
+
+    // returning tree.expanded instead of false in case tree.expanded has been set true already by something else
+    return tree.expanded;
   }
 
   isCustActionVisible(actionname: string) {
@@ -1828,12 +1848,14 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   systemdatasetPool: any;
   has_encrypted_root = {};
   has_key_dataset = {};
+  navigation: Navigation;
 
   constructor(protected core: CoreService, protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService, protected messageService: MessageService, protected http: HttpClient, protected validationService: ValidationService) {
     super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog);
+    this.navigation = this.router.getCurrentNavigation();
   }
 
   repaintMe() {
@@ -1877,7 +1899,16 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           }
           pool.children = pChild ? [pChild] : [];
 
-          pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService, this.http, this.validationService);
+          const navigationState = this.navigation.extras.state as { highlightDataset: string };
+
+          if (navigationState) {
+            pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws,
+              this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService, this.http, this.validationService, navigationState.highlightDataset);
+          } else {
+            pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws,
+              this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService, this.http, this.validationService);
+          }
+
           pool.type = 'zpool';
 
           if (pool.children && pool.children[0]) {
