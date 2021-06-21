@@ -26,9 +26,9 @@ def test_verify_auxilary_parameters_works_for_afp_share(driver):
 @given('the browser is open on the TrueNAS URL and logged in')
 def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_password):
     """the browser is open on the TrueNAS URL and logged in."""
+    global host
+    host = nas_ip
     if nas_ip not in driver.current_url:
-        global host
-        host = nas_ip
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
         time.sleep(1)
