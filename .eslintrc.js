@@ -19,6 +19,7 @@ module.exports = {
       },
       "extends": [
         "airbnb-typescript/base",
+        "plugin:@angular-eslint/recommended"
       ],
       "plugins": [
         "rxjs",
@@ -111,9 +112,15 @@ module.exports = {
         "no-async-promise-executor": "off",
         "no-bitwise": "off",
         "import/no-mutable-exports": "off",
+        "@typescript-eslint/member-ordering": "off",
+
+        // Other temporary disables
+        "@angular-eslint/component-class-suffix": "off",
+        "@angular-eslint/no-input-rename": "off",
 
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",
+        "@angular-eslint/use-lifecycle-interface": ["error"],
 
         // Extra rules
         "@typescript-eslint/array-type": "error",

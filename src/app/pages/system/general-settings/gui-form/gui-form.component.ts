@@ -126,7 +126,7 @@ export class GuiFormComponent implements FormConfiguration {
     },
   ];
 
-  private ui_certificate: any;
+  private ui_certificate: FieldConfig;
   private addresses: any[];
   private v6addresses: any[];
   private http_port: any;

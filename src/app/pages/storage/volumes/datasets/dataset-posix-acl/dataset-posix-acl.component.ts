@@ -52,7 +52,7 @@ export class DatasetPosixAclComponent implements FormConfiguration {
   protected defaults: any;
   protected recursive: any;
   private aces: any;
-  private aces_fc: any;
+  private aces_fc: FieldConfig;
   private entityForm: EntityFormComponent;
   formGroup: FormGroup;
   data: Record<string, unknown> = {};
@@ -61,8 +61,8 @@ export class DatasetPosixAclComponent implements FormConfiguration {
   route_success: string[] = ['storage'];
   save_button_enabled = true;
 
-  protected uid_fc: any;
-  protected gid_fc: any;
+  protected uid_fc: FieldConfig;
+  protected gid_fc: FieldConfig;
 
   fieldSetDisplay = 'default';
   fieldConfig: FieldConfig[] = [];

@@ -47,7 +47,7 @@ export class ZvolFormComponent implements FormConfiguration {
   protected path: string;
   queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   protected compression: any;
-  advanced_field: any[] = ['volblocksize'];
+  advanced_field = ['volblocksize'];
   isBasicMode = true;
   isNew = true;
   isEntity = true;

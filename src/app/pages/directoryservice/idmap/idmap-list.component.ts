@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/directoryservice/idmap';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -23,7 +24,7 @@ export class IdmapListComponent implements EntityTableConfig {
   title = 'Idmap';
   queryCall: 'idmap.query' = 'idmap.query';
   wsDelete: 'idmap.delete' = 'idmap.delete';
-  protected entityList: any;
+  protected entityList: EntityTableComponent;
   protected idmapFormComponent: IdmapFormComponent;
   protected requiredDomains = [
     'DS_TYPE_ACTIVEDIRECTORY',
@@ -79,7 +80,7 @@ export class IdmapListComponent implements EntityTableConfig {
     return data;
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
     this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();

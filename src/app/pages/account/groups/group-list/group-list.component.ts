@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,6 +7,7 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/account/group-list';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
@@ -21,7 +22,7 @@ import { GroupFormComponent } from '../group-form/group-form.component';
   selector: 'app-group-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class GroupListComponent implements EntityTableConfig, OnDestroy {
+export class GroupListComponent implements EntityTableConfig, OnInit {
   title = 'Groups';
   queryCall: 'group.query' = 'group.query';
   wsDelete: 'group.delete' = 'group.delete';
@@ -29,7 +30,6 @@ export class GroupListComponent implements EntityTableConfig, OnDestroy {
   protected route_add_tooltip = T('Add Group');
   route_edit: string[] = ['account', 'groups', 'edit'];
   protected entityList: any;
-  refreshTableSubscription: any;
   protected loaderOpen = false;
   globalConfig = {
     id: 'config',
@@ -69,12 +69,6 @@ export class GroupListComponent implements EntityTableConfig, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    if (this.refreshTableSubscription) {
-      this.refreshTableSubscription.unsubscribe();
-    }
-  }
-
   refreshGroupForm(): void {
     this.addComponent = new GroupFormComponent(this._router, this.ws, this.modalService);
   }
@@ -93,7 +87,7 @@ export class GroupListComponent implements EntityTableConfig, OnDestroy {
     return data;
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
     setTimeout(() => {
       if (this.prefService.preferences.showGroupListMessage) {
@@ -101,7 +95,7 @@ export class GroupListComponent implements EntityTableConfig, OnDestroy {
       }
     }, 2000);
 
-    this.refreshTableSubscription = this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }

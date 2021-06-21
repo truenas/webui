@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { latestVersion } from 'app/constants/catalog.constants';
@@ -9,6 +9,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -21,15 +22,14 @@ import { PullImageFormComponent } from '../forms/pull-image-form.component';
   selector: 'app-docker-images',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class DockerImagesComponent implements EntityTableConfig, OnInit, OnDestroy {
+export class DockerImagesComponent implements EntityTableConfig, OnInit {
   title = 'Docker Images';
 
-  protected entityList: any;
+  protected entityList: EntityTableComponent;
   protected loaderOpen = false;
   queryCall: 'container.image.query' = 'container.image.query';
   wsDelete: 'container.image.delete' = 'container.image.delete';
   disableActionsConfig = true;
-  private refreshTableSubscription: any;
   addComponent: PullImageFormComponent;
 
   columns = [
@@ -76,12 +76,6 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit, OnDestr
     });
   }
 
-  ngOnDestroy(): void {
-    if (this.refreshTableSubscription) {
-      this.refreshTableSubscription.unsubscribe();
-    }
-  }
-
   refreshUserForm(): void {
     this.addComponent = new PullImageFormComponent(this.mdDialog, this.dialogService, this.modalService);
   }
@@ -91,7 +85,7 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit, OnDestr
     this.entityList.filter(this.filterString);
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
   }
 

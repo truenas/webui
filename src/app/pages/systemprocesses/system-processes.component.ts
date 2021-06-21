@@ -28,7 +28,6 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
   // xterm variables
   token: any;
   xterm: any;
-  private shellSubscription: any;
   private top_displayed = false;
   private fitAddon: any;
   connectionId: string;
@@ -40,7 +39,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     const self = this;
     this.getAuthToken().pipe(untilDestroyed(this)).subscribe((token) => {
       this.initializeWebShell(token);
-      this.shellSubscription = this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {
+      this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {
         // this.xterm.write(value);
         if (!this.top_displayed) {
           setTimeout(() => {
@@ -57,9 +56,6 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.shellSubscription) {
-      this.shellSubscription.unsubscribe();
-    }
     if (this.ss.connected) {
       this.ss.socket.close();
     }

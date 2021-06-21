@@ -267,6 +267,7 @@ export type ApiDirectory = {
   'failover.node': { params: any; response: any };
   'failover.disabled_reasons': { params: void; response: FailoverDisabledReason[] };
   'failover.config': { params: any; response: any };
+  'failover.sync_to_peer': { params: any; response: any };
 
   // FCPort
   'fcport.query': { params: any; response: any };
@@ -484,6 +485,7 @@ export type ApiDirectory = {
   'pool.is_upgraded': { params: [/* pool id */ number]; response: boolean };
   'pool.dataset.encryption_summary': { params: any; response: any };
   'pool.dataset.unlock_services_restart_choices': { params: any; response: any };
+  'pool.dataset.lock': { params: any; response: any };
   'pool.dataset.unlock': { params: any; response: any };
   'pool.resilver.config': { params: any; response: any };
   'pool.resilver.update': { params: any; response: any };
@@ -644,7 +646,7 @@ export type ApiDirectory = {
 
   // TrueNAS
   'truenas.is_eula_accepted': { params: void; response: boolean };
-  'truenas.get_eula': { params: any; response: any };
+  'truenas.get_eula': { params: void; response: string };
   'truenas.accept_eula': { params: void; response: void };
   'truenas.is_production': { params: any; response: any };
   'truenas.set_production': { params: any; response: any };

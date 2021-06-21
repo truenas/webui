@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -19,6 +19,7 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -44,7 +45,7 @@ interface DisplayWebUri {
   styleUrls: ['./vm-list.component.scss'],
   providers: [VmService, MessageService],
 })
-export class VMListComponent implements EntityTableConfig {
+export class VMListComponent implements EntityTableConfig, OnInit {
   title = 'Virtual Machines';
   queryCall: 'vm.query' = 'vm.query';
   wsDelete: 'vm.delete' = 'vm.delete';
@@ -54,7 +55,7 @@ export class VMListComponent implements EntityTableConfig {
   private productType = window.localStorage.getItem('product_type') as ProductType;
   addComponent: VMWizardComponent;
 
-  entityList: any;
+  entityList: EntityTableComponent;
   columns = [
     { name: T('Name'), prop: 'name', always_display: true },
     {
@@ -134,7 +135,7 @@ export class VMListComponent implements EntityTableConfig {
       this.translate, this.modalService, this.systemGeneralService);
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.checkMemory();
     this.entityList = entityList;
     this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {

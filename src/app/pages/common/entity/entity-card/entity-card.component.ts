@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, Input, Output, EventEmitter, TemplateRef,
+  Component, OnInit, Input, Output, EventEmitter, TemplateRef, AfterViewInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -17,7 +17,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./entity-card.component.scss'],
   providers: [DialogService],
 })
-export class EntityCardComponent extends iXObject implements OnInit {
+export class EntityCardComponent extends iXObject implements OnInit, AfterViewInit {
   @Input('conf') conf: any;
   @Input() width: string;
   @Input() height: string;
