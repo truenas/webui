@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core.service';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
@@ -94,7 +95,7 @@ export class UpdateComponent implements OnInit {
     parent: this,
   };
 
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
 
   readonly ProductType = ProductType;
   readonly SystemUpdateStatus = SystemUpdateStatus;
@@ -198,11 +199,11 @@ export class UpdateComponent implements OnInit {
   }
 
   checkForUpdateRunning(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        if (res && res.length > 0) {
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
+      (jobs) => {
+        if (jobs && jobs.length > 0) {
           this.isUpdateRunning = true;
-          this.showRunningUpdate(res[0].id);
+          this.showRunningUpdate(jobs[0].id);
         }
       },
       (err) => {
@@ -379,7 +380,7 @@ export class UpdateComponent implements OnInit {
   }
 
   // Shows an update in progress as a job dialog on the update page
-  showRunningUpdate(jobId: string): void {
+  showRunningUpdate(jobId: number): void {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Update' }, disableClose: true });
     if (this.is_ha) {
       this.dialogRef.componentInstance.disableProgressValue(true);
@@ -398,10 +399,10 @@ export class UpdateComponent implements OnInit {
 
   // Buttons in the template activate these three functions
   downloadUpdate(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        if (res[0]) {
-          this.showRunningUpdate(res[0].id);
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
+      (jobs) => {
+        if (jobs[0]) {
+          this.showRunningUpdate(jobs[0].id);
         } else {
           this.startUpdate();
         }

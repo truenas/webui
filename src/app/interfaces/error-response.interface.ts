@@ -1,18 +1,18 @@
-import { WebsocketErrorType } from 'app/enums/websocket-error-type.enum';
+import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 
-export interface WebsocketError {
+export interface ErrorResponse {
   error: number;
-  extra: ValidationError[];
+  extra: ApiValidationError[];
   reason: string;
   trace: {
     class: string;
     formatted: string;
     frames: ErrorFrame[];
   };
-  type: WebsocketErrorType | null;
+  type: ResponseErrorType | null;
 }
 
-export type ValidationError = [
+export type ApiValidationError = [
   /* attribute */ string,
   /* message */ string,
   /* code */ number,

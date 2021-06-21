@@ -48,6 +48,7 @@ import {
   IscsiPortal,
   IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { NetworkActivityChoice, NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
@@ -75,6 +76,10 @@ import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 
+/**
+ * API definitions for `call` and `job` methods.
+ * For events from `subscribed` see ApiEventDirectory.
+ */
 export type ApiDirectory = {
   // Active Directory
   'activedirectory.config': { params: void; response: ActiveDirectoryConfig };
@@ -147,9 +152,10 @@ export type ApiDirectory = {
   'catalog.query': { params: QueryParams<any, { extra: { item_details: boolean; cache: boolean; retrieve_versions: boolean } }>; response: Catalog[] };
   'catalog.update': { params: any; response: any };
   'catalog.create': { params: any; response: any };
-  'catalog.delete': { params: any; response: any };
+  'catalog.delete': { params: [/* name */ string]; response: boolean };
   'catalog.items': { params: any; response: any };
   'catalog.sync': { params: any; response: any };
+  'catalog.sync_all': { params: void; response: any };
   'catalog.get_item_details': { params: any; response: any };
 
   // Certificate
@@ -189,7 +195,7 @@ export type ApiDirectory = {
 
   // Core
   'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };
-  'core.get_jobs': { params: any; response: any };
+  'core.get_jobs': { params: QueryParams<Job>; response: Job[] };
   'core.job_abort': { params: any; response: any };
   'core.bulk': { params: any; response: any };
   'core.resize_shell': { params: ResizeShellRequest; response: void };
@@ -214,6 +220,7 @@ export type ApiDirectory = {
   'cloudsync.restore': { params: any; response: any };
   'cloudsync.query': { params: QueryParams<CloudSyncTask>; response: CloudSyncTask[] };
   'cloudsync.delete': { params: any; response: any };
+  'cloudsync.sync_onetime': { params: any; response: any };
 
   // Container
   'container.config': { params: any; response: any };
@@ -243,6 +250,7 @@ export type ApiDirectory = {
   'disk.get_unused': { params: any; response: any };
   'disk.get_encrypted': { params: any; response: any };
   'disk.temperatures': { params: any; response: any };
+  'disk.wipe': { params: any; response: any };
 
   // Directory Services
   'directoryservices.cache_refresh': { params: any; response: any };
@@ -283,6 +291,8 @@ export type ApiDirectory = {
   'failover.disabled_reasons': { params: void; response: FailoverDisabledReason[] };
   'failover.config': { params: any; response: any };
   'failover.sync_to_peer': { params: any; response: any };
+  'failover.upgrade_finish': { params: any; response: any };
+  'failover.upgrade': { params: any; response: any };
 
   // FCPort
   'fcport.query': { params: any; response: any };
@@ -319,6 +329,7 @@ export type ApiDirectory = {
   'idmap.create': { params: any; response: any };
   'idmap.update': { params: any; response: any };
   'idmap.delete': { params: any; response: any };
+  'idmap.clear_idmap_cache': { params: any; response: any };
 
   // Interface
   'interface.websocket_local_ip': { params: any; response: any };
@@ -468,6 +479,10 @@ export type ApiDirectory = {
   'pool.snapshottask.create': { params: any; response: any };
   'pool.snapshottask.update': { params: any; response: any };
   'pool.import_disk_msdosfs_locales': { params: any; response: any };
+  'pool.import_disk': { params: any; response: any };
+  'pool.import_find': { params: any; response: any };
+  'pool.import_pool': { params: any; response: any };
+  'pool.expand': { params: any; response: any };
   'pool.snapshottask.delete': { params: any; response: any };
   'pool.dataset.query': {
     params: QueryParams<Dataset, ExtraDatasetQueryOptions>;
@@ -481,10 +496,12 @@ export type ApiDirectory = {
   'pool.dataset.compression_choices': { params: any; response: any };
   'pool.dataset.encryption_algorithm_choices': { params: any; response: any };
   'pool.dataset.permission': { params: any; response: any };
+  'pool.dataset.export_key': { params: any; response: any };
   'pool.offline': { params: any; response: any };
   'pool.online': { params: any; response: any };
   'pool.remove': { params: any; response: any };
   'pool.detach': { params: any; response: any };
+  'pool.export': { params: any; response: any };
   'pool.passphrase': { params: any; response: any };
   'pool.rekey': { params: any; response: any };
   'pool.attachments': { params: any; response: any };
@@ -504,6 +521,8 @@ export type ApiDirectory = {
   'pool.dataset.unlock': { params: any; response: any };
   'pool.resilver.config': { params: any; response: any };
   'pool.resilver.update': { params: any; response: any };
+  'pool.lock': { params: any; response: any };
+  'pool.unlock': { params: any; response: any };
 
   // Replication
   'replication.list_datasets': { params: any; response: any };
@@ -589,6 +608,7 @@ export type ApiDirectory = {
   'support.is_available_and_enabled': { params: any; response: any };
   'support.config': { params: any; response: any };
   'support.update': { params: any; response: any };
+  'support.new_ticket': { params: any; response: any };
 
   // SMART
   'smart.test.disk_choices': { params: any; response: any };
@@ -726,6 +746,8 @@ export type ApiDirectory = {
   'update.get_pending': { params: any; response: any };
   'update.check_available': { params: void; response: SystemUpdate };
   'update.set_train': { params: any; response: any };
+  'update.download': { params: any; response: any };
+  'update.update': { params: any; response: any };
 
   // ZFS
   'zfs.snapshot.create': { params: any; response: any };
@@ -734,6 +756,7 @@ export type ApiDirectory = {
   'zfs.snapshot.delete': { params: any; response: any };
   'zfs.snapshot.clone': { params: any; response: any };
   'zfs.snapshot.rollback': { params: any; response: any };
+  'zfs.pool.scan': { params: any; response: any };
 
   // staticroute
   'staticroute.query': { params: QueryParams<StaticRoute>; response: StaticRoute[] };
