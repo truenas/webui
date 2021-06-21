@@ -7,6 +7,7 @@ from function import(
     is_element_present,
     wait_for_attribute_value,
     wait_on_element_disappear,
+    attribute_value_exist,
 )
 from selenium.webdriver.common.keys import (Keys)
 from pytest_bdd import (
@@ -76,10 +77,14 @@ def the_user_field_should_expand_down_click_the_edit_button(driver):
 def the_user_edit_page_should_open_add_the_root_group_and_click_save(driver):
     """the User Edit Page should open, add the root group and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
-    time.sleep(2)
+    time.sleep(4)
     assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Auxiliary Groups"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
-    assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
+    time.sleep(2)
+    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
+    # Scroll to root
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Auxiliary Groups_root"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').click()
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').send_keys(Keys.TAB)
     time.sleep(2)
@@ -97,16 +102,25 @@ def change_should_be_saved_reopen_the_edit_page_root_group_value_should_be_visib
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
     driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
-    time.sleep(1)
+    time.sleep(3)
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
-    time.sleep(2)
+    time.sleep(3)
     assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Auxiliary Groups"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
-    assert wait_on_element(driver, 10, '//mat-selected[@ix-auto="option__Auxiliary Groups_root"]')
+    #assert wait_on_element(driver, 10, '//mat-selected[@ix-auto="option__Auxiliary Groups_root"]')
+    wait_for_value = wait_for_attribute_value(driver, 5, '//mat-option[@ix-auto="option__Auxiliary Groups_root"]', 'class', 'mat-selected')
+    assert wait_for_value
+
+
     ## return to dashboard
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').send_keys(Keys.TAB)
+    time.sleep(1)
+    assert wait_on_element(driver, 10, '//*[@id="close-icon"]', 'clickable')
+    driver.find_element_by_xpath('//*[@id="close-icon"]').click()
+    time.sleep(1)
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     time.sleep(1)
