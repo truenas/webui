@@ -204,15 +204,6 @@ export class SMBFormComponent implements FormConfiguration {
         },
         {
           type: 'checkbox',
-          name: 'afp',
-          placeholder: helptext_sharing_smb.placeholder_afp,
-          tooltip: helptext_sharing_smb.tooltip_afp,
-          tooltipPosition: 'center',
-          isHidden: true,
-          customEventMethod: () => this.afpConfirm(),
-        },
-        {
-          type: 'checkbox',
           name: 'shadowcopy',
           placeholder: helptext_sharing_smb.placeholder_shadowcopy,
           tooltip: helptext_sharing_smb.tooltip_shadowcopy,
