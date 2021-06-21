@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { Subscription, combineLatest } from 'rxjs';
 import * as _ from 'lodash';
 
@@ -877,13 +877,13 @@ export class ZvolFormComponent implements Formconfiguration {
       if (res[0].volsize.parsed % volblocksize_integer_value !== 0) {
         rounded_vol_size = res[0].volsize.parsed + (volblocksize_integer_value - res[0].volsize.parsed % volblocksize_integer_value);
       }
-
+      const navigationExtras: NavigationExtras = { state: { highlightDataset: this.parent } };
       if (!this.edit_data.volsize || this.edit_data.volsize >= rounded_vol_size) {
         this.ws.call('pool.dataset.update', [this.parent, this.edit_data]).subscribe((restPostResp) => {
           this.loader.close();
           this.router.navigate(new Array('/').concat(
             this.route_success,
-          ));
+          ), navigationExtras);
         }, (eres) => {
           this.loader.close();
           new EntityUtils().handleWSError(this.entityForm, eres);
@@ -895,8 +895,14 @@ export class ZvolFormComponent implements Formconfiguration {
     });
   }
 
+  goBack() {
+    const navigationExtras: NavigationExtras = { state: { highlightDataset: this.parent } };
+    this.router.navigate(new Array('/').concat(this.route_success), navigationExtras);
+  }
+
   customSubmit(body: any) {
     this.loader.open();
+    const navigationExtras: NavigationExtras = { state: { highlightDataset: this.parent } };
 
     if (this.isNew === true) {
       this.addSubmit(body).subscribe((restPostResp) => {
@@ -904,7 +910,7 @@ export class ZvolFormComponent implements Formconfiguration {
 
         this.router.navigate(new Array('/').concat(
           this.route_success,
-        ));
+        ), navigationExtras);
       }, (res) => {
         this.loader.close();
         new EntityUtils().handleWSError(this.entityForm, res);
