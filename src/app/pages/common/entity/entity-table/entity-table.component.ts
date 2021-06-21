@@ -216,20 +216,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selection.clear();
   }
 
-  get rowsCurrentlyOnScreen(): any[] {
+  get currentRowsThatAreOnScreenToo(): any[] {
     let currentlyShowingRows = [...this.dataSource.filteredData];
     if (this.dataSource.paginator) {
       const start = this.dataSource.paginator.pageIndex * this.dataSource.paginator.pageSize;
-
       const rowsCount = currentlyShowingRows.length < start + this.dataSource.paginator.pageSize
         ? currentlyShowingRows.length - start : this.dataSource.paginator.pageSize;
       currentlyShowingRows = currentlyShowingRows.splice(start, rowsCount);
     }
-    return currentlyShowingRows;
-  }
-
-  get currentRowsThatAreOnScreenToo(): any[] {
-    const showingRows = this.rowsCurrentlyOnScreen;
+    const showingRows = currentlyShowingRows;
     return this.currentRows.filter((row) => {
       const identifier = this.conf.rowIdentifier || 'name';
       const index = showingRows.findIndex((showingRow: any) => {
@@ -1163,19 +1158,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   masterToggle(event: MatCheckboxChange): void {
-    const showingRows = this.rowsCurrentlyOnScreen;
+    const showingRows = this.currentRowsThatAreOnScreenToo;
     this.isAllSelected = event.checked;
 
-    event.checked
-      ? this.currentRows.forEach((row) => {
-        const identifier = this.conf.rowIdentifier || 'name';
-        const index = showingRows.findIndex((showingRow: any) => {
-          return showingRow[identifier] === row[identifier];
-        });
-        if (index !== -1) {
-          this.selection.select(row);
-        }
-      }) : this.selection.clear();
+    if (event.checked) {
+      showingRows.forEach((row) => {
+        this.selection.select(row);
+      });
+    } else {
+      this.selection.clear();
+    }
   }
 
   getFirstKey(): string {
