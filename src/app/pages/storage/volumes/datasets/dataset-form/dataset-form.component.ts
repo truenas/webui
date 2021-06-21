@@ -686,6 +686,15 @@ export class DatasetFormComponent implements FormConfiguration {
             { label: T('Discard'), value: AclMode.Discard },
           ],
           value: AclMode.Inherit,
+          relation: [
+            {
+              action: 'DISABLE',
+              when: [{
+                name: 'acltype',
+                value: DatasetAclType.Inherit,
+              }],
+            },
+          ],
         },
         {
           type: 'select',
@@ -1372,6 +1381,22 @@ export class DatasetFormComponent implements FormConfiguration {
       return true;
     }
     return false;
+  }
+
+  initial(entityForm: EntityFormComponent): void {
+    const aclModeFormControl = this.entityForm.formGroup.get('aclmode') as FormControl;
+    const value = entityForm.formGroup.get('acltype').value;
+    if (value === DatasetAclType.Nfsv4) {
+      this.entityForm.setDisabled('aclmode', false, false);
+    } else if (value === DatasetAclType.Posix) {
+      aclModeFormControl.setValue(AclMode.Discard);
+      this.entityForm.setDisabled('aclmode', true, false);
+    } else if (value === DatasetAclType.Inherit) {
+      aclModeFormControl.setValue(AclMode.Inherit);
+      this.entityForm.setDisabled('aclmode', true, false);
+    } else if (value === DatasetAclType.Off) {
+      this.entityForm.setDisabled('aclmode', true, true);
+    }
   }
 
   resourceTransformIncomingRestData(wsResponse: any): any {
