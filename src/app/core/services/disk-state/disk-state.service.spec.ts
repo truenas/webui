@@ -55,8 +55,6 @@ describe('DiskStateService', () => {
     });
 
     messageBus.next({ name: 'Authenticated' });
-    // spectator.service.onAuthenticated();
-    // expect(spectator.service.authenticated).toBe(true);
 
     fakeSocket.next('fake socket data');
   });
