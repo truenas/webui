@@ -1,4 +1,5 @@
 import { DefaultAclType } from 'app/enums/acl-type.enum';
+import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -11,6 +12,7 @@ import { Alert, AlertCategory } from 'app/interfaces/alert.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
+import { Bootenv, SetBootenvAttributeParams } from 'app/interfaces/bootenv.interface';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import {
   CertificateAuthority,
@@ -27,6 +29,7 @@ import {
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
+import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import {
   AuthenticatorSchema,
@@ -37,6 +40,7 @@ import { DynamicDnsUpdate } from 'app/interfaces/dynamic-dns.interface';
 import { FailoverUpdate } from 'app/interfaces/failover.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Group } from 'app/interfaces/group.interface';
+import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import {
   IscsiAuthAccess, IscsiExtent,
   IscsiInitiatorGroup,
@@ -60,6 +64,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import { SmartTest } from 'app/interfaces/smart-test.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
+import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Disk, DiskQueryOptions, DiskUpdate } from 'app/interfaces/storage.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
@@ -87,7 +92,7 @@ export type ApiDirectory = {
   'alert.list': { params: void; response: Alert[] };
   'alert.dismiss': { params: string[]; response: void };
   'alert.restore': { params: string[]; response: void };
-  'alert.list_policies': { params: any; response: any };
+  'alert.list_policies': { params: void; response: AlertPolicy[] };
   'alert.list_categories': { params: void; response: AlertCategory[] };
 
   // Alert Classes
@@ -128,15 +133,15 @@ export type ApiDirectory = {
   'boot.get_state': { params: any; response: any };
   'boot.detach': { params: any; response: any };
   'boot.attach': { params: any; response: any };
+  'boot.scrub': { params: any; response: any };
 
   // Bootenv
   'bootenv.create': { params: any; response: any };
   'bootenv.update': { params: any; response: any };
-  'bootenv.set_attribute': { params: any; response: any };
+  'bootenv.set_attribute': { params: SetBootenvAttributeParams; response: boolean };
   'bootenv.activate': { params: any; response: any };
   'bootenv.delete': { params: any; response: any };
-  'bootenv.query': { params: any; response: any };
-  'boot.scrub': { params: any; response: any };
+  'bootenv.query': { params: QueryParams<Bootenv>; response: Bootenv[] };
 
   // Catalog
   'catalog.query': { params: QueryParams<any, { extra: { item_details: boolean; cache: boolean; retrieve_versions: boolean } }>; response: Catalog[] };
@@ -179,7 +184,7 @@ export type ApiDirectory = {
 
   // CRON
   'cronjob.run': { params: any; response: any };
-  'cronjob.query': { params: any; response: any };
+  'cronjob.query': { params: QueryParams<Cronjob>; response: Cronjob[] };
   'cronjob.delete': { params: any; response: any };
 
   // Core
@@ -694,6 +699,7 @@ export type ApiDirectory = {
   'vmware.create': { params: any; response: any };
   'vmware.update': { params: any; response: any };
   'vmware.delete': { params: any; response: any };
+  'vmware.match_datastores_with_datasets': { params: any; response: any };
 
   // User
   'user.update': { params: any; response: any };
@@ -730,9 +736,10 @@ export type ApiDirectory = {
   'zfs.snapshot.rollback': { params: any; response: any };
 
   // staticroute
-  'staticroute.query': { params: any; response: any };
+  'staticroute.query': { params: QueryParams<StaticRoute>; response: StaticRoute[] };
   'staticroute.create': { params: any; response: any };
   'staticroute.update': { params: any; response: any };
+  'staticroute.delete': { params: [/* id */ number]; response: boolean };
 
   // SNMP
   'snmp.config': { params: any; response: any };
@@ -743,7 +750,7 @@ export type ApiDirectory = {
   'webdav.update': { params: any; response: any };
 
   // InitShutdownScript
-  'initshutdownscript.query': { params: any; response: any };
+  'initshutdownscript.query': { params: QueryParams<InitShutdownScript>; response: InitShutdownScript[] };
   'initshutdownscript.create': { params: any; response: any };
   'initshutdownscript.update': { params: any; response: any };
   'initshutdownscript.delete': { params: any; response: any };

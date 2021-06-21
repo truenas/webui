@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { Option } from 'app/interfaces/option.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Relation } from './entity-form/models/field-relation.interface';
@@ -61,7 +62,7 @@ export class EntityUtils {
     }
   }
 
-  handleWSError(entity: any, res: any, dialogService?: any, targetFieldConfig?: any): void {
+  handleWSError(entity: any, res: WebsocketError, dialogService?: any, targetFieldConfig?: any): void {
     let dialog;
     if (dialogService) {
       dialog = dialogService;

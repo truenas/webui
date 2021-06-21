@@ -196,7 +196,7 @@ export class WebSocketService {
     };
 
     // Create the observable
-    const source = Observable.create((observer: any) => {
+    return new Observable((observer: any) => {
       this.pendingCalls.set(uuid, {
         method,
         args: params,
@@ -205,8 +205,6 @@ export class WebSocketService {
 
       this.send(payload);
     });
-
-    return source;
   }
 
   sub<T = any>(name: string): Observable<T> {
