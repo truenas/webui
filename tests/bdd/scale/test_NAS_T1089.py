@@ -8,6 +8,7 @@ from function import(
     wait_for_attribute_value,
     wait_on_element_disappear,
 )
+from selenium.webdriver.common.keys import (Keys)
 from pytest_bdd import (
     given,
     scenario,
@@ -46,10 +47,11 @@ def on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(drive
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)
+    time.sleep(2)
     """click on the Credentials on the side menu, click on Local Users."""
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
+    time.sleep(2)
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Local Users"]').click()
 
@@ -71,14 +73,13 @@ def the_user_field_should_expand_down_click_the_edit_button(driver):
 
 
 @then('the User Edit Page should open, add the root group and click save')
-def the_user_edit_page_should_open_add_the_root_group_and_click_save():
+def the_user_edit_page_should_open_add_the_root_group_and_click_save(driver):
     """the User Edit Page should open, add the root group and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
     time.sleep(2)
     assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Auxiliary Groups"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').click()
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').click()
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').send_keys(Keys.TAB)
     time.sleep(2)
@@ -89,7 +90,7 @@ def the_user_edit_page_should_open_add_the_root_group_and_click_save():
 
 
 @then('change should be saved, reopen the edit page, root group value should be visible')
-def change_should_be_saved_reopen_the_edit_page_root_group_value_should_be_visible():
+def change_should_be_saved_reopen_the_edit_page_root_group_value_should_be_visible(driver):
     """change should be saved, reopen the edit page, root group value should be visible."""
     wait_on_element_disappear(driver, 1, '//h6[contains(.,"Please wait")]')
     time.sleep(3)
