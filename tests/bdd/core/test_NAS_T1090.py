@@ -127,6 +127,12 @@ def click_summit_the_new_share_should_create_without_errors(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    if wait_on_element(driver, 3, '//h1[contains(.,"Enable service")]'):
+        assert wait_on_element(driver, 7, '//button[@ix-auto="button__ENABLE SERVICE"]', 'clickable')
+        driver.find_element_by_xpath('//button[@ix-auto="button__ENABLE SERVICE"]').click()
+        assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+        assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 5, '//div[contains(.,"AFP (Apple File Protocol)")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"afpshare")]')
 
