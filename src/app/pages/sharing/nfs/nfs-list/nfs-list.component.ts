@@ -30,7 +30,7 @@ export class NFSListComponent implements EntityTableConfig {
     { name: helptext_sharing_nfs.column_enabled, prop: 'enabled' },
   ];
   rowIdentifier = 'nfs_paths';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

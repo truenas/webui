@@ -1,3 +1,5 @@
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
+
 export interface ConfirmOptions {
   title: string;
   message: string;
@@ -14,6 +16,6 @@ export interface ConfirmOptions {
 export interface ConfirmOptionsWithSecondaryCheckbox extends ConfirmOptions {
   secondaryCheckBox: true;
   secondaryCheckBoxMsg?: string;
-  method?: string;
+  method?: ApiMethod;
   data?: any;
 }

@@ -40,7 +40,7 @@
 
       </div>
 
-      <navigation (onStateChange)="changeState($event)" (onToggleMenu)="toggleMenu($event)" (onCloseMenu)="toggleMenu()"></navigation>
+      <navigation (stateChange)="changeState($event)" (menuToggled)="toggleMenu($event)" (menuClosed)="toggleMenu()"></navigation>
       <div class="sidenav-copyright-txt" *ngIf="!isSidenavCollapsed">
         <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
         <div>TrueNAS {{product_type}}®</div>

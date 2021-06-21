@@ -271,7 +271,7 @@ export class SMBFormComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  advanced_field: any[] = [
+  advanced_field = [
     'acl',
     'ro',
     'browsable',
@@ -294,7 +294,7 @@ export class SMBFormComponent implements FormConfiguration {
   protected accessFieldsets = _.find(this.fieldSets, { class: 'access' });
   protected otherFieldsets = _.find(this.fieldSets, { class: 'other' });
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,

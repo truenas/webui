@@ -48,7 +48,7 @@ export class SmartListComponent implements EntityTableConfig {
     },
   ];
   rowIdentifier = 'type';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

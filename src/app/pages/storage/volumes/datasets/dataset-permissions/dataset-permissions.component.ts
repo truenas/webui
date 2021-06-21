@@ -1,6 +1,7 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -21,18 +22,17 @@ import { T } from 'app/translate-marker';
   selector: 'app-dataset-permissions',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy {
+export class DatasetPermissionsComponent implements FormConfiguration {
   protected updateCall: 'pool.dataset.permission' = 'pool.dataset.permission';
   protected datasetPath: string;
   protected datasetId: string;
   protected recursive: any;
-  protected recursive_subscription: any;
   formGroup: FormGroup;
   error: string;
   route_success: string[] = ['storage'];
   isEntity = true;
-  protected dialogRef: any;
-  private entityForm: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
+  private entityForm: EntityFormComponent;
   protected userField: any;
   protected groupField: any;
 
@@ -142,7 +142,7 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
     },
   ];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'use_acl',
       name: helptext.acl_manager_button,
@@ -215,7 +215,7 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
     });
     entityEdit.formGroup.controls['id'].setValue(this.datasetPath);
     this.recursive = entityEdit.formGroup.controls['recursive'];
-    this.recursive_subscription = this.recursive.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.recursive.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value === true) {
         this.dialog.confirm({
           title: T('Warning'),
@@ -227,10 +227,6 @@ export class DatasetPermissionsComponent implements FormConfiguration, OnDestroy
         });
       }
     });
-  }
-
-  ngOnDestroy(): void {
-    this.recursive_subscription.unsubscribe();
   }
 
   updateGroupSearchOptions(value = '', parent: any): void {

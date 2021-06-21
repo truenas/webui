@@ -45,7 +45,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     },
   ];
   rowIdentifier = 'id';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

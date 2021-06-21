@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -40,7 +41,7 @@ export class IdmapFormComponent implements FormConfiguration {
   ];
   private entityForm: EntityFormComponent;
   protected backendChoices: any;
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
   protected requiredDomains = [
     'DS_TYPE_ACTIVEDIRECTORY',
     'DS_TYPE_DEFAULT_DOMAIN',
@@ -261,7 +262,7 @@ export class IdmapFormComponent implements FormConfiguration {
     },
   ];
 
-  private optionsFields: any[] = [
+  private optionsFields = [
     'schema_mode',
     'unix_primary_group',
     'unix_nss_info',
@@ -366,7 +367,7 @@ export class IdmapFormComponent implements FormConfiguration {
     }, 500);
   }
 
-  hideField(fieldName: any, show: boolean, entity: any): void {
+  hideField(fieldName: string, show: boolean, entity: any): void {
     const target = _.find(this.fieldConfig, { name: fieldName });
     target['isHidden'] = show;
     entity.setDisabled(fieldName, show, show);

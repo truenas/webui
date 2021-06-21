@@ -2,6 +2,7 @@ import { Component, Output, EventEmitter } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { T } from 'app/translate-marker';
 
 @Component({
@@ -18,7 +19,7 @@ export class ConfirmDialog {
   isSubmitEnabled = false;
   secondaryCheckBox = false;
   secondaryCheckBoxMsg = '';
-  method: string;
+  method: ApiMethod;
   data: string;
   tooltip: string;
   hideCancel = false;

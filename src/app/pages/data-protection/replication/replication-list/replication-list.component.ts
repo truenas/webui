@@ -69,7 +69,7 @@ export class ReplicationListComponent implements EntityTableConfig {
     { name: T('Last Snapshot'), prop: 'task_last_snapshot' },
   ];
 
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

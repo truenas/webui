@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import {
-  Component, ElementRef, OnInit, ViewChild, ViewEncapsulation,
+  Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -34,7 +34,7 @@ interface PodLogEvent {
   encapsulation: ViewEncapsulation.None,
 })
 
-export class PodLogsComponent implements OnInit {
+export class PodLogsComponent implements OnInit, OnDestroy {
   @ViewChild('logContainer', { static: true }) logContainer: ElementRef;
   font_size = 14;
   formEvents: Subject<CoreEvent>;
@@ -233,7 +233,7 @@ export class PodLogsComponent implements OnInit {
   }
 
   // download log
-  download(entityDialog: EntityDialogComponent): void {
+  download(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     const chart_release_name = entityDialog.formGroup.controls['apps'].value;
     const pod_name = entityDialog.formGroup.controls['pods'].value;
@@ -268,7 +268,7 @@ export class PodLogsComponent implements OnInit {
     });
   }
 
-  onChooseLogs(entityDialog: EntityDialogComponent): void {
+  onChooseLogs(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     self.chart_release_name = entityDialog.formGroup.controls['apps'].value;
     self.pod_name = entityDialog.formGroup.controls['pods'].value;

@@ -287,8 +287,8 @@ export class DirectoryservicesComponent implements OnInit {
     }
 
     if (name == 'idmap' && !id) {
-      this.idmapService.getADStatus().pipe(untilDestroyed(this)).subscribe((res) => {
-        if (res.enable) {
+      this.idmapService.getADStatus().pipe(untilDestroyed(this)).subscribe((adConfig) => {
+        if (adConfig.enable) {
           this.modalService.open('slide-in-form', addComponent, id);
         } else {
           this.dialog.confirm(idmapHelptext.idmap.enable_ad_dialog.title, idmapHelptext.idmap.enable_ad_dialog.message,

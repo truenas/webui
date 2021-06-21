@@ -11,7 +11,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./eula.component.scss'],
 })
 export class EulaComponent implements OnInit {
-  eula: any;
+  eula: string;
 
   constructor(private ws: WebSocketService, private router: Router) { }
 
@@ -20,8 +20,8 @@ export class EulaComponent implements OnInit {
     if (product_type === ProductType.Core) {
       this.router.navigate(['']);
     } else {
-      this.ws.call('truenas.get_eula').pipe(untilDestroyed(this)).subscribe((res) => {
-        this.eula = res;
+      this.ws.call('truenas.get_eula').pipe(untilDestroyed(this)).subscribe((eula) => {
+        this.eula = eula;
       });
     }
   }

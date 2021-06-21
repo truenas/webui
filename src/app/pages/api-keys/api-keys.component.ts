@@ -3,6 +3,8 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/api-keys';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
@@ -25,13 +27,13 @@ export class ApiKeysComponent implements EntityTableConfig {
   editCall: 'api_key.update' = 'api_key.update';
 
   currItem: any;
-  entityList: any;
+  entityList: EntityTableComponent;
 
   columns = [
     { name: helptext.col_name, prop: 'name', always_display: true },
     { name: helptext.col_created_at, prop: 'created_time' },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -100,7 +102,7 @@ export class ApiKeysComponent implements EntityTableConfig {
     private localeService: LocaleService,
   ) { }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
   }
   resourceTransformIncomingRestData(data: any[]): any[] {
@@ -110,7 +112,7 @@ export class ApiKeysComponent implements EntityTableConfig {
     });
   }
 
-  doSubmit(entityDialogForm: any): void {
+  doSubmit(entityDialogForm: EntityDialogComponent<this>): void {
     const that = entityDialogForm.parent;
     if (that.currItem) {
       that.ws.call(that.editCall, [that.currItem.id, entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -14,6 +14,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -367,18 +368,13 @@ export class CloudsyncFormComponent implements FormConfiguration {
   ]);
   fieldConfig: any[] = [];
 
-  protected month_field: any;
-  protected day_field: any;
-  protected mintue_field: any;
-  protected hour_field: any;
-  protected dom_field: any;
-  protected credentials: any;
-  protected bucket_field: any;
-  protected bucket_input_field: any;
-  protected folder_field: any;
+  protected credentials: FieldConfig;
+  protected bucket_field: FieldConfig;
+  protected bucket_input_field: FieldConfig;
+  protected folder_field: FieldConfig;
   credentials_list: any[] = [];
 
-  formGroup: any;
+  formGroup: FormGroup;
   error: string;
   pk: any;
   isNew = false;
@@ -386,7 +382,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
   protected providers: any;
   protected taskSchemas = ['encryption', 'fast_list', 'chunk_size', 'storage_class'];
-  custActions: any[] = [
+  custActions = [
     {
       id: 'dry_run',
       name: helptext.action_button_dry_run,
@@ -555,7 +551,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     }
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.formGroup = entityForm.formGroup;
     this.pk = entityForm.pk;
@@ -684,7 +680,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.formGroup.controls['bwlimit'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       _.find(entityForm.fieldConfig, { name: 'bwlimit' }).hasErrors = false;
       _.find(entityForm.fieldConfig, { name: 'bwlimit' }).errors = null;
-      this.formGroup.controls['bwlimit'].errors = null;
+      (this.formGroup.controls['bwlimit'] as any).errors = null;
     });
 
     // When user interacts with direction dropdown, change transfer_mode to COPY
@@ -755,7 +751,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         if (this.cloudcredentialService.getByte(sublimitArr[1]) == -1) {
           _.find(this.fieldConfig, { name: 'bwlimit' }).hasErrors = true;
           _.find(this.fieldConfig, { name: 'bwlimit' }).errors = 'Invalid bandwidth ' + sublimitArr[1];
-          this.formGroup.controls['bwlimit'].setErrors('Invalid bandwidth ' + sublimitArr[1]);
+          (this.formGroup.controls['bwlimit'] as any).setErrors('Invalid bandwidth ' + sublimitArr[1]);
         } else {
           sublimitArr[1] = this.cloudcredentialService.getByte(sublimitArr[1]);
         }

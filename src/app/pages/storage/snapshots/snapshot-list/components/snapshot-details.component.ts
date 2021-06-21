@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
@@ -19,7 +19,7 @@ import { SnapshotListComponent } from '../snapshot-list.component';
     <app-entity-row-details [conf]="this"></app-entity-row-details>
   `,
 })
-export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string }> {
+export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string }>, OnInit {
   readonly entityName: 'snapshot';
   // public locale: string;
   timezone: string;

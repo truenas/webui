@@ -1,17 +1,19 @@
 import {
-  Component, ViewChild, Renderer2, ViewContainerRef, ComponentFactoryResolver,
+  Component, ViewChild, Renderer2, ViewContainerRef, ComponentFactoryResolver, HostBinding,
 } from '@angular/core';
 
 @Component({
   selector: 'display',
   template: '<ng-container #wrapper></ng-container>',
-  host: { class: 'hidden' },
 })
 export class Display {
   displayList: any[] = []; // items in DOM
   children: any[] = [];
   @ViewChild('wrapper', { static: true }) wrapper: ViewContainerRef;
   @ViewChild('test', { static: true, read: ViewContainerRef }) test: ViewContainerRef;
+
+  @HostBinding('class.hidden')
+  isHidden = true;
 
   constructor(
     private resolver: ComponentFactoryResolver,

@@ -31,7 +31,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
   formGroup: FormGroup;
 
   protected entityForm: EntityFormComponent;
-  private datastore: any;
+  private datastore: FieldConfig;
   private datastoreList: any[];
   private dataListComplete: any[];
   private fileSystemList: any[];
@@ -95,7 +95,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
     },
   ];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'FetchDataStores',
       name: T('Fetch DataStores'),
@@ -156,28 +156,28 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(entityForm: any): void {
-    if (entityForm.filesystem !== undefined) {
-      entityForm.filesystem = entityForm.filesystem;
+  beforeSubmit(value: any): void {
+    if (value.filesystem !== undefined) {
+      value.filesystem = value.filesystem;
     }
   }
 
-  customSubmit(entityForm: any): void {
+  customSubmit(value: any): void {
     const payload = {
-      datastore: entityForm.datastore,
-      filesystem: entityForm.filesystem,
-      hostname: entityForm.hostname,
-      username: entityForm.username,
-      password: entityForm.password,
+      datastore: value.datastore,
+      filesystem: value.filesystem,
+      hostname: value.hostname,
+      username: value.username,
+      password: value.password,
     };
     // Looks for a mismatch and raises a confirm dialog if there is one; otherwise saves w/o the dialog
-    const dataStoreMatch = this.datastoreList.find((item) => item.name === entityForm.datastore);
+    const dataStoreMatch = this.datastoreList.find((item) => item.name === value.datastore);
     if (
       !dataStoreMatch
-      || (dataStoreMatch.name === entityForm.datastore && dataStoreMatch.filesystems[0] !== entityForm.filesystem)
+      || (dataStoreMatch.name === value.datastore && dataStoreMatch.filesystems[0] !== value.filesystem)
     ) {
-      const firstObj = this.fileSystemList.find((item) => item.name === entityForm.filesystem);
-      const secondObj = this.dataListComplete.find((item) => item.name === entityForm.datastore);
+      const firstObj = this.fileSystemList.find((item) => item.name === value.filesystem);
+      const secondObj = this.dataListComplete.find((item) => item.name === value.datastore);
       if (secondObj.description === '') {
         secondObj.description = T('(No description)');
       }

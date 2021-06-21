@@ -50,7 +50,7 @@ export class SMBListComponent implements EntityTableConfig {
     { name: helptext_sharing_smb.column_enabled, prop: 'enabled', checkbox: true },
   ];
   rowIdentifier = 'cifs_name';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
