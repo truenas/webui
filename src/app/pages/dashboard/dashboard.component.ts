@@ -469,6 +469,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     });
 
+    conf.push({ name: 'Storage', rendered: true, id: conf.length.toString() });
+
     this.nics.forEach((nic) => {
       conf.push({
         name: 'Interface', identifier: 'name,' + nic.name, rendered: true, id: conf.length.toString(),

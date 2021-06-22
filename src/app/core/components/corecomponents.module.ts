@@ -23,6 +23,7 @@ import { WidgetCpuComponent } from 'app/core/components/widgets/widgetcpu/widget
 import { WidgetMemoryComponent } from 'app/core/components/widgets/widgetmemory/widgetmemory.component';
 import { WidgetNicComponent } from 'app/core/components/widgets/widgetnic/widgetnic.component';
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
+import { WidgetStorageComponent } from 'app/core/components/widgets/widgetstorage/widgetstorage.component';
 import { SimpleFailoverBtnComponent, SimpleFailoverBtnDialog } from 'app/core/components/widgets/widgetsysinfo/simple-failover-btn.component';
 import { WidgetSysInfoComponent } from 'app/core/components/widgets/widgetsysinfo/widgetsysinfo.component';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -91,6 +92,7 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     SimpleFailoverBtnDialog,
     ConvertPipe,
     CopyButtonComponent,
+    WidgetStorageComponent,
   ],
   exports: [ // Modules and Components here
     CommonModule,
@@ -127,6 +129,7 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
     CopyButtonComponent,
+    WidgetStorageComponent,
   ],
   entryComponents: [
     ContextMenuComponent,
@@ -154,6 +157,7 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
     CopyButtonComponent,
+    WidgetStorageComponent,
   ],
   providers: [
     StorageService,

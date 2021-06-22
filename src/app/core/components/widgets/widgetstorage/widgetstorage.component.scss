@@ -1,0 +1,20 @@
+.widget {
+  height: 400px;
+  width: 600px;
+}
+
+.widget mat-card-content {
+  width: 100%;
+}
+
+.widget .mat-card .mat-card-content > div.grid-content {
+  padding: 10px !important;
+}
+
+mat-grid-list {
+  height: 300px;
+}
+
+mat-grid-tile {
+  background: gray;
+}
