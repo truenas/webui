@@ -6,8 +6,6 @@ import { CoreService } from './core.service';
   providedIn: 'root',
 })
 export class BaseService {
-  // protected websocket: WebSocketService;
-  // protected core: CoreService;
   protected authenticated = false;
 
   constructor(protected core: CoreService, protected websocket: WebSocketService) {
