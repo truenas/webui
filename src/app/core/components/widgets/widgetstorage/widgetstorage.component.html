@@ -29,49 +29,44 @@
 
         </mat-toolbar-row>
 
-        <div style="padding: 10px !important">
-          <mat-grid-list cols="2" [gutterSize]="'10px'" rowHeight="100px">
-            <mat-grid-tile>
-              <div fxFlex="100" fxLayout="column">
-                <div class="tile-header" fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
-                  <div class="">Movies</div>
-                  <div class="">
-                    <button mat-icon-button class="" (click)="router.navigate(['storage/status/'])"
-                      ix-auto-type="button" ix-auto-identifier="poolStatus">
-                      <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-database"
-                        matTooltip="{{'Pool Status' | translate}}"
-                        matTooltipPosition="above"
-                        aria-label="Configure Pools">
-                      </mat-icon>
-                    </button>
+        <div>
+          <div [style.padding]="padding + 'px'">
+            <mat-grid-list [cols]="cols" [gutterSize]="gap + 'px'" [rowHeight]="rowHeight + 'px'">
+              <mat-grid-tile *ngFor="let pool of pools">
+                <div fxFlex="100" fxLayout="column">
+                  <div class="tile-header" fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
+                    <div class="">Movies</div>
+                    <div class="">
+                      <button mat-icon-button class="" (click)="router.navigate(['storage/status/'])"
+                        ix-auto-type="button" ix-auto-identifier="poolStatus">
+                        <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-database"
+                          matTooltip="{{'Pool Status' | translate}}"
+                          matTooltipPosition="above"
+                          aria-label="Configure Pools">
+                        </mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="tile-content">
+                    <ul>
+                      <li fxFlex="100" fxLayout="row">
+                        <div>
+                          <span class="icon">&nbsp;<mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                          </span>
+                        </div>
+                        <div class="td label">
+                          <strong>Pool Status:</strong>
+                          <span class="capitalize">Unhealthy</span>
+                        </div>
+                      </li>
+                    </ul>
                   </div>
                 </div>
-                <div class="tile-content">
-                  <ul>
-                    <li fxFlex="100" fxLayout="row">
-                      <div>
-                        <span class="icon">
-                          &nbsp;<mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
-                        </span>
-                        <span *ngIf="poolState.status == 'ONLINE'" class="icon">
-                          &nbsp;<mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
-                        </span>
-                      </div>
-                      <div class="td label">
-                        <strong>Pool Status:</strong>
-                        <span class="capitalize">Unhealthy</span>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-            </mat-grid-tile>
-            <mat-grid-tile>2</mat-grid-tile>
-            <mat-grid-tile>3</mat-grid-tile>
-            <mat-grid-tile>4</mat-grid-tile>
-          </mat-grid-list>
+              </mat-grid-tile>
+            </mat-grid-list>
+          </div>
         </div>
+
 
 
       </mat-card-content>
