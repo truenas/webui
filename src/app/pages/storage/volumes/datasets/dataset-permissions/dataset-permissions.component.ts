@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -260,6 +260,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
   }
 
   customSubmit(data) {
+    const navigationExtras: NavigationExtras = { state: { highlightDataset: this.datasetId } };
+
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Saving Permissions') } });
     this.dialogRef.componentInstance.setDescription(T('Saving Permissions...'));
     this.dialogRef.componentInstance.setCall(this.updateCall, [this.datasetId, data]);
@@ -269,10 +271,15 @@ export class DatasetPermissionsComponent implements OnDestroy {
       this.dialogRef.close();
       this.router.navigate(new Array('/').concat(
         this.route_success,
-      ));
+      ), navigationExtras);
     });
     this.dialogRef.componentInstance.failure.subscribe((err) => {
       console.error(err);
     });
+  }
+
+  goBack() {
+    const navigationExtras: NavigationExtras = { state: { highlightDataset: this.datasetId } };
+    this.router.navigate(new Array('/').concat(this.route_success), navigationExtras);
   }
 }

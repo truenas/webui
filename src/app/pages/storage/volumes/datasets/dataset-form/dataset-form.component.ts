@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import * as _ from 'lodash';
@@ -1567,6 +1567,7 @@ export class DatasetFormComponent implements Formconfiguration {
       this.loader.close();
       const parentPath = `/mnt/${this.parent}`;
       this.ws.call('filesystem.acl_is_trivial', [parentPath]).subscribe((res) => {
+        const navigationExtras: NavigationExtras = { state: { highlightDataset: this.pk } };
         if (res === false) {
           this.dialogService.confirm(helptext.afterSubmitDialog.title,
             helptext.afterSubmitDialog.message, true, helptext.afterSubmitDialog.actionBtn, false, '', '', '', '',
@@ -1578,18 +1579,23 @@ export class DatasetFormComponent implements Formconfiguration {
             } else {
               this.router.navigate(new Array('/').concat(
                 this.route_success,
-              ));
+              ), navigationExtras);
             }
           });
         } else {
           this.router.navigate(new Array('/').concat(
             this.route_success,
-          ));
+          ), navigationExtras);
         }
       });
     }, (res) => {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
+  }
+
+  goBack() {
+    const navigationExtras: NavigationExtras = { state: { highlightDataset: this.pk } };
+    this.router.navigate(new Array('/').concat(this.route_success), navigationExtras);
   }
 }

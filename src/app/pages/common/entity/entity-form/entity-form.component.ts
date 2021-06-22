@@ -405,6 +405,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   goBack() {
+    if (this.conf.goBack) {
+      return this.conf.goBack();
+    }
     let route = this.conf.route_cancel;
     if (!route) {
       route = this.conf.route_success;
