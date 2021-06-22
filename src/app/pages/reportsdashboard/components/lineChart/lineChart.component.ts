@@ -7,7 +7,7 @@ import Dygraph from 'dygraphs';
 // eslint-disable-next-line
 import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
 import { BehaviorSubject } from 'rxjs';
-import { ThemeUtils } from 'app/core/classes/theme-utils';
+import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import { CoreService } from 'app/core/services/core.service';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';

@@ -123,6 +123,9 @@
   },
   "defaultProject": "truenas-scale-ui",
   "schematics": {
+    "@ngneat/spectator:spectator-component": {
+      "jest": true
+    },
     "@schematics/angular:component": {
       "prefix": "app",
       "style": "scss"

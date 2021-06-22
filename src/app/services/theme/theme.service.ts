@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ThemeUtils } from 'app/core/classes/theme-utils';
+import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreService } from 'app/core/services/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { WebSocketService } from 'app/services';
