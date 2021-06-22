@@ -102,6 +102,7 @@ def click_create_on_the_warning_widget_click_confirm_checkbox_click_create_pool(
 def create_pool_should_appear_while_pool_is_being_created(driver):
     """Create pool should appear while pool is being created."""
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Create Pool")]')
+    time.sleep(20)
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
 
 
