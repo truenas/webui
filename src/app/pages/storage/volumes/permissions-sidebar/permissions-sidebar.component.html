@@ -1,48 +1,48 @@
-<div class="sidebar-header">
-  <h3>{{ 'Dataset Permissions' | translate }}</h3>
+<mat-card class="card">
+  <div class="sidebar-header">
+    <div class="sidebar-title">{{ 'Dataset Permissions' | translate }}</div>
 
-  <a
-    *ngIf="acl"
-    class="action"
-    [attr.title]="'Edit permissions' | translate"
-    [routerLink]="editPermissionsUrl"
-  >
-    <mat-icon>edit</mat-icon>
-  </a>
+    <a
+      *ngIf="acl"
+      class="action"
+      [attr.title]="'Edit permissions' | translate"
+      [routerLink]="editPermissionsUrl"
+    >
+      <mat-icon>edit</mat-icon>
+    </a>
 
-  <span class="action" [attr.title]="'Close' | translate" (click)="onCloseClicked()">
-    <mat-icon>clear</mat-icon>
-  </span>
-</div>
+    <span class="action" [attr.title]="'Close' | translate" (click)="onCloseClicked()">
+      <mat-icon>cancel</mat-icon>
+    </span>
+  </div>
 
-<mat-spinner
-  *ngIf="isLoading; else loaded"
-  [diameter]="40"
-  class="spinner"
-></mat-spinner>
+  <mat-spinner
+    *ngIf="isLoading; else loaded"
+    [diameter]="40"
+    class="spinner"
+  ></mat-spinner>
 
-<ng-template #loaded>
-  <div class="file-information">
-    <ng-container *ngIf="stat">
-      <div class="owner">
-        <div class="item-label">{{ 'Owner' | translate }}</div>
-        <div class="item-value">{{ stat.user }}</div>
+  <ng-template #loaded>
+    <div class="file-information">
+      <ng-container *ngIf="stat">
+        <div class="item item-owner">
+          <div class="item-label">{{ 'Owner:' | translate }}</div>
+          <div class="item-value">{{ stat.user }}</div>
+        </div>
+        <div class="item item-group">
+          <div class="item-label">{{ 'Group:' | translate }}</div>
+          <div class="item-value">{{ stat.group }}</div>
+        </div>
+      </ng-container>
+      <div class="item item-path">
+        <div class="item-label">{{ 'Path:' | translate }}</div>
+        <div class="item-value">{{ dataset.mountpoint }}</div>
       </div>
-      <div class="group">
-        <div class="item-label">{{ 'Group' | translate }}</div>
-        <div class="item-value">{{ stat.group }}</div>
-      </div>
-    </ng-container>
-    <div class="path">
-      <div class="item-label">{{ 'Path' | translate }}</div>
-      <div class="item-value">{{ dataset.mountpoint }}</div>
     </div>
-  </div>
 
-
-  <div class="permissions">
-
-  </div>
-</ng-template>
-
+    <div class="permissions">
+      <app-unix-permissions *ngIf="acl.trivial" [stat]="stat"></app-unix-permissions>
+    </div>
+  </ng-template>
+</mat-card>
 

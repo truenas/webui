@@ -7,7 +7,7 @@ import {
 import { Acl } from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { PermissionsSidebarState } from 'app/pages/storage/volumes/permissions-sidebar/permissions-sidebar-state.interface';
+import { PermissionsSidebarState } from 'app/pages/storage/volumes/permissions-sidebar/interfaces/permissions-sidebar-state.interface';
 import { DialogService, WebSocketService } from 'app/services';
 
 const initialState: PermissionsSidebarState = {

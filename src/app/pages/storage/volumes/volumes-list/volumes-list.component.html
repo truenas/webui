@@ -1,5 +1,5 @@
-<div *ngIf="zfsPoolRows.length > 0">
-  <mat-accordion [multi]="true">
+<div *ngIf="zfsPoolRows.length > 0" class="pools-container">
+  <mat-accordion [multi]="true" class="pools">
     <mat-expansion-panel
       *ngFor="let row of zfsPoolRows; let pool = index;"
       class="no-padding"
@@ -60,6 +60,7 @@
   </mat-accordion>
   <app-permissions-sidebar
     *ngIf="viewingPermissionsForDataset"
+    class="permissions-sidebar"
     [dataset]="viewingPermissionsForDataset"
     (closed)="onPermissionsSidebarClosed()"
   ></app-permissions-sidebar>

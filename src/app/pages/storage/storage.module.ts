@@ -9,6 +9,8 @@ import { NgxFilesizeModule } from 'ngx-filesize';
 import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/appMaterial.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { PermissionsItemComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/permissions-item/permissions-item.component';
+import { UnixPermissionsComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/unix-permissions/unix-permissions.component';
 import { PermissionsSidebarComponent } from 'app/pages/storage/volumes/permissions-sidebar/permissions-sidebar.component';
 import { PermissionsSidebarStore } from 'app/pages/storage/volumes/permissions-sidebar/permissions-sidebar.store';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
@@ -95,6 +97,8 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard';
     GroupQuotaFormComponent,
     DatasetPosixAclComponent,
     PermissionsSidebarComponent,
+    PermissionsItemComponent,
+    UnixPermissionsComponent,
   ],
   exports: [VolumesListControlsComponent],
   entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],

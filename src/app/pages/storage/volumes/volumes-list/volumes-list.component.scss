@@ -14,7 +14,6 @@
   color: black;
 }
 
-
 :host ::ng-deep .global_volume_based_action_menu .panel_container {
   text-align: right;
 }
@@ -101,4 +100,17 @@
 
 .entity-tree-table-container {
   overflow: auto;
+}
+
+.pools-container {
+  display: flex;
+
+  .pools {
+    overflow-x: hidden; // TODO: Messes up shadow
+  }
+
+  .permissions-sidebar {
+    flex-shrink: 0;
+    width: 300px;
+  }
 }
