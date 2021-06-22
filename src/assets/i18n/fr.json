@@ -8,7 +8,7 @@
   "0=Disabled, blank=inherit": "0=Désactivé, vide=hérité",
   "2FA": "",
   "<strong>Dataset:</strong> ": "",
-  "<strong>The following { n, plural, one {snapshot} other {# snapshots} } will be deleted. Are you sure you want to proceed?</strong>": "<strong>{ n, plural, one {L} other {Les} } { n, plural, one {'instantané} other {# instantanés} } { n, plural, one {sera} other {seront} } { n, plural, one {supprimé} other {# supprimés} }. Êtes-vous sûr de vouloir continuer ?</strong>",
+  "<strong>The following { n, plural, one {snapshot} other {# snapshots} } will be deleted. Are you sure you want to proceed?</strong>": "<strong>{ n, plural, one {L 'instantané sera supprimé} other {Les # instantanés seront supprimés} }. Êtes-vous sûr de vouloir continuer ?</strong>",
   "A stripe": "",
   "A stripe log vdev may result in data loss if it fails combined with a power outage.": "Un vdev de stripe log peut entraîner une perte de données s'il échoue en combinaison avec une panne de courant.",
   "AD": "",
