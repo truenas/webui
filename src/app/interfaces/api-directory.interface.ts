@@ -12,9 +12,18 @@ import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
 import { Catalog } from 'app/interfaces/catalog.interface';
-import { CertificateAuthorityCreate, CertificateAuthorityUpdate } from 'app/interfaces/certificate-authority.interface';
+import {
+  CertificateAuthority,
+  CertificateAuthorityCreate,
+  CertificateAuthorityUpdate,
+} from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
-import { ChartReleaseCreate, ChartReleaseCreateResponse } from 'app/interfaces/chart-release.interface';
+import {
+  ChartRelease,
+  ChartReleaseCreate,
+  ChartReleaseCreateResponse,
+  ChartReleaseQueryParams,
+} from 'app/interfaces/chart-release.interface';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
@@ -45,6 +54,7 @@ import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { ReportingConfig } from 'app/interfaces/reporting.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
@@ -150,14 +160,14 @@ export type ApiDirectory = {
 
   // Certificate Authority
   'certificateauthority.create': { params: [CertificateAuthorityCreate]; response: any };
-  'certificateauthority.query': { params: any; response: any };
+  'certificateauthority.query': { params: QueryParams<CertificateAuthority>; response: CertificateAuthority[] };
   'certificateauthority.update': { params: [number, CertificateAuthorityUpdate]; response: any };
   'certificateauthority.profiles': { params: any; response: any };
   'certificateauthority.ca_sign_csr': { params: any; response: any };
 
   // Chart
   'chart.release.pod_logs_choices': { params: any; response: any };
-  'chart.release.query': { params: any; response: any };
+  'chart.release.query': { params: ChartReleaseQueryParams; response: ChartRelease[] };
   'chart.release.create': { params: ChartReleaseCreate; response: ChartReleaseCreateResponse };
   'chart.release.update': { params: any; response: any };
   'chart.release.scale': { params: any; response: any };
@@ -360,7 +370,7 @@ export type ApiDirectory = {
   'ipmi.query': { params: any; response: any };
 
   // Group
-  'group.query': { params: any; response: Group[] };
+  'group.query': { params: QueryParams<Group>; response: Group[] };
   'group.create': { params: any; response: any };
   'group.update': { params: [string, Partial<Group>]; response: void };
   'group.delete': { params: any; response: any };
@@ -522,7 +532,7 @@ export type ApiDirectory = {
   // Reporting
   'reporting.get_data': { params: any; response: any };
   'reporting.update': { params: any; response: any };
-  'reporting.config': { params: any; response: any };
+  'reporting.config': { params: void; response: ReportingConfig };
   'reporting.graphs': { params: any; response: any };
 
   // S3

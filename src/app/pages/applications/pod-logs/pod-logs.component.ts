@@ -72,7 +72,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
       this.tail_lines = params['tail_lines'];
 
       // Get app list
-      this.appService.getChartReleaseNames().pipe(untilDestroyed(this)).subscribe((charts: any[]) => {
+      this.appService.getChartReleaseNames().pipe(untilDestroyed(this)).subscribe((charts) => {
         charts.forEach((chart) => {
           this.apps.push(chart.name);
         });

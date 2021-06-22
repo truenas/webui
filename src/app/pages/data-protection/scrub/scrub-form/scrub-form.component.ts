@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/data-protection/scrub/scrub-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -129,15 +130,16 @@ export class ScrubFormComponent implements FormConfiguration {
     delete value.cron_schedule;
   }
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: PoolScrub): any {
     this.entityForm.formGroup.controls['threshold'].setValue(data.threshold);
     this.entityForm.formGroup.controls['enabled'].setValue(data.enabled);
     this.entityForm.formGroup.controls['description'].setValue(data.description);
     this.entityForm.formGroup.controls['pool'].setValue(data.id);
 
-    data.cron_schedule = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
-
-    return data;
+    return {
+      ...data,
+      cron_schedule: `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`,
+    };
   }
 
   dataHandler(entity: EntityFormComponent): void {

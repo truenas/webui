@@ -1,3 +1,5 @@
+import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
+
 export interface Certificate {
   CA_type_existing: boolean;
   CA_type_intermediate: boolean;
@@ -38,7 +40,7 @@ export interface Certificate {
   root_path: string;
   san: string[];
   serial: number;
-  signedby: any;
+  signedby: CertificateAuthority;
   state: string;
   subject_name_hash: number;
   type: number;

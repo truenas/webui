@@ -10,6 +10,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -532,25 +533,24 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     return data;
   }
 
-  resourceTransformIncomingRestData(data: any): any {
-    const aliases = data['aliases'];
-    const a: any[] = [];
-    const failover_aliases = data['failover_aliases'];
-    const failover_virtual_aliases = data['failover_virtual_aliases'];
+  resourceTransformIncomingRestData(data: NetworkInterface): any {
+    const aliases = data.aliases;
+    const transformedAliases: any[] = [];
+    const failover_aliases = data.failover_aliases;
+    const failover_virtual_aliases = data.failover_virtual_aliases;
     for (let i = 0; i < aliases.length; i++) {
-      a[i] = {};
-      a[i].address = aliases[i].address + '/' + aliases[i].netmask;
+      transformedAliases[i] = {};
+      transformedAliases[i].address = aliases[i].address + '/' + aliases[i].netmask;
       if (failover_aliases && failover_aliases[i]) {
-        a[i].failover_address = failover_aliases[i].address;
+        transformedAliases[i].failover_address = failover_aliases[i].address;
       }
       if (failover_virtual_aliases && failover_virtual_aliases[i]) {
-        a[i].failover_virtual_address = failover_virtual_aliases[i].address;
+        transformedAliases[i].failover_virtual_address = failover_virtual_aliases[i].address;
       }
     }
-    data['aliases'] = a;
 
-    const type = data['type'];
-    const id = data['id'];
+    const type = data.type;
+    const id = data.id;
     this.setType(type);
     if (type === NetworkInterfaceType.LinkAggregation) {
       this.networkService.getLaggPortsChoices(id).pipe(untilDestroyed(this)).subscribe((res) => {
@@ -574,7 +574,10 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       this.entityForm.setDisabled('vlan_parent_interface', true);
     }
 
-    return data;
+    return {
+      ...data,
+      aliases: transformedAliases,
+    };
   }
 
   afterSave(): void {

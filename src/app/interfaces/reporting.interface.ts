@@ -91,3 +91,12 @@ export interface ZfsUpdate {
   arc_size: number;
   cache_hit_ratio: number;
 }
+
+export interface ReportingConfig {
+  cpu_in_percentage: boolean;
+  graph_age: number;
+  graph_points: number;
+  graphite: string;
+  graphite_separateinstances: boolean;
+  id: number;
+}
