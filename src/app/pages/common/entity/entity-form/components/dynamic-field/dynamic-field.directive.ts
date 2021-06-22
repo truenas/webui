@@ -5,7 +5,6 @@ import {
   Input,
   OnChanges,
   OnInit,
-  Type,
   ViewContainerRef,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
@@ -37,7 +36,7 @@ import { FormTextareaComponent } from '../form-textarea/form-textarea.component'
 import { FormToggleButtonComponent } from '../form-toggle-button/form-toggle-button.component';
 import { FormUploadComponent } from '../form-upload/form-upload.component';
 
-const components: { [type: string]: Type<Field> } = {
+const components = {
   button: FormButtonComponent,
   input: FormInputComponent,
   label: FormLabelComponent,
@@ -64,6 +63,8 @@ const components: { [type: string]: Type<Field> } = {
   chip: FormChipComponent,
   dict: FormDictComponent,
 };
+
+export type FieldType = keyof typeof components;
 
 @Directive({ selector: '[dynamicField]' })
 export class DynamicFieldDirective implements Field, OnChanges, OnInit {
