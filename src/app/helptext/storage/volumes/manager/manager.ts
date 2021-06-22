@@ -34,7 +34,7 @@ export default {
  Choose a memorable name.'),
 
   manager_encryption_tooltip: T('Enable \
- <a href="https://zfsonlinux.org/manpages/0.8.3/man8/zfs.8.html" target="_blank">ZFS encryption</a> \
+ <a href="https://openzfs.github.io/openzfs-docs/man/8/zfs.8.html" target="_blank">ZFS encryption</a> \
  for this pool and add an encryption algorithm selector.'),
 
   manager_suggested_layout_tooltip: T('Create a recommended formation\
