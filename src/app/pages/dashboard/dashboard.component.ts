@@ -21,6 +21,7 @@ import { ReportingRealtimeUpdate, VirtualMemoryUpdate } from 'app/interfaces/rep
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormConfigurationComponent } from 'app/pages/common/entity/entity-form/entity-form-configuration.component';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
@@ -594,7 +595,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           };
         }),
       },
-    ];
+    ] as FieldSet[];
 
     this.formComponent = new EntityFormConfigurationComponent();
     this.formComponent.fieldSets = new FieldSets(fieldSets);

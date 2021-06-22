@@ -7,6 +7,7 @@ export interface Acl {
   acltype: AclType;
   flags: AclFlags;
   gid: number;
+  trivial: boolean;
   uid: number;
 }
 

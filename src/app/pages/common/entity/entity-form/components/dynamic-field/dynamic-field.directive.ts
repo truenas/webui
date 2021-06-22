@@ -64,7 +64,8 @@ const components = {
   dict: FormDictComponent,
 };
 
-export type FieldType = keyof typeof components;
+// TODO: Check if 'input-list' is properly supported.
+export type FieldType = keyof typeof components | 'input-list';
 
 @Directive({ selector: '[dynamicField]' })
 export class DynamicFieldDirective implements Field, OnChanges, OnInit {
@@ -91,12 +92,14 @@ export class DynamicFieldDirective implements Field, OnChanges, OnInit {
   }
 
   ngOnInit(): void {
-    if (!components[this.config.type]) {
+    if (!components[this.config.type as keyof typeof components]) {
       const supportedTypes = Object.keys(components).join(', ');
       throw new Error(`Trying to use an unsupported type (${this.config.type}).
         Supported types: ${supportedTypes}`);
     }
-    const component = this.resolver.resolveComponentFactory<Field>(components[this.config.type]);
+    const component = this.resolver.resolveComponentFactory<Field>(
+      components[this.config.type as keyof typeof components],
+    );
     this.component = this.container.createComponent(component);
     this.component.instance.config = this.config;
     this.component.instance.group = this.group;

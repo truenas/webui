@@ -1,7 +1,12 @@
 <div class="sidebar-header">
   <h3>{{ 'Dataset Permissions' | translate }}</h3>
 
-  <a href="" class="action" [attr.title]="'Edit permissions' | translate">
+  <a
+    *ngIf="acl"
+    class="action"
+    [attr.title]="'Edit permissions' | translate"
+    [routerLink]="editPermissionsUrl"
+  >
     <mat-icon>edit</mat-icon>
   </a>
 
@@ -10,19 +15,34 @@
   </span>
 </div>
 
-<div class="file-information">
-  <div class="owner">
-    <div class="item-label">{{ 'Owner' | translate }}</div>
-    <div class="item-value">John Smith</div>
+<mat-spinner
+  *ngIf="isLoading; else loaded"
+  [diameter]="40"
+  class="spinner"
+></mat-spinner>
+
+<ng-template #loaded>
+  <div class="file-information">
+    <ng-container *ngIf="stat">
+      <div class="owner">
+        <div class="item-label">{{ 'Owner' | translate }}</div>
+        <div class="item-value">{{ stat.user }}</div>
+      </div>
+      <div class="group">
+        <div class="item-label">{{ 'Group' | translate }}</div>
+        <div class="item-value">{{ stat.group }}</div>
+      </div>
+    </ng-container>
+    <div class="path">
+      <div class="item-label">{{ 'Path' | translate }}</div>
+      <div class="item-value">{{ dataset.mountpoint }}</div>
+    </div>
   </div>
-  <div class="group">
-    <div class="item-label">{{ 'Group' | translate }}</div>
-    <div class="item-value">users</div>
+
+
+  <div class="permissions">
+
   </div>
-  <div class="path">
-    <div class="item-label">{{ 'Path' | translate }}</div>
-    <div class="item-value">/something/dir/file</div>
-  </div>
-</div>
+</ng-template>
 
 

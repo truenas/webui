@@ -607,7 +607,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     },
   ];
 
-  protected dialogFieldConfig = [
+  protected dialogFieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'name',

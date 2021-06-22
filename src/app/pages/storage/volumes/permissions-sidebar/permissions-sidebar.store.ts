@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
-import { forkJoin, Observable } from 'rxjs';
+import { EMPTY, forkJoin, Observable } from 'rxjs';
 import {
   catchError, switchMap, takeUntil, tap,
 } from 'rxjs/operators';
@@ -8,7 +8,7 @@ import { Acl } from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { PermissionsSidebarState } from 'app/pages/storage/volumes/permissions-sidebar/permissions-sidebar-state.interface';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 const initialState: PermissionsSidebarState = {
   isLoading: false,
@@ -24,6 +24,7 @@ export class PermissionsSidebarStore extends ComponentStore<PermissionsSidebarSt
 
   constructor(
     private ws: WebSocketService,
+    private dialog: DialogService,
   ) {
     super(initialState);
   }
@@ -48,11 +49,13 @@ export class PermissionsSidebarStore extends ComponentStore<PermissionsSidebarSt
             });
           }),
           catchError((error) => {
-            new EntityUtils().errorReport(error);
+            new EntityUtils().errorReport(error, this.dialog);
 
             this.patchState({
               isLoading: false,
             });
+
+            return EMPTY;
           }),
           takeUntil(this.destroy$),
         );

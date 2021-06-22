@@ -9,7 +9,8 @@ import { NgxFilesizeModule } from 'ngx-filesize';
 import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/appMaterial.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { ViewPermissionsSidebarComponent } from 'app/pages/storage/volumes/view-permissions-sidebar/view-permissions-sidebar.component';
+import { PermissionsSidebarComponent } from 'app/pages/storage/volumes/permissions-sidebar/permissions-sidebar.component';
+import { PermissionsSidebarStore } from 'app/pages/storage/volumes/permissions-sidebar/permissions-sidebar.store';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form/volumechangekey-form.component';
@@ -93,11 +94,18 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard';
     UserQuotaFormComponent,
     GroupQuotaFormComponent,
     DatasetPosixAclComponent,
-    ViewPermissionsSidebarComponent,
+    PermissionsSidebarComponent,
   ],
   exports: [VolumesListControlsComponent],
   entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],
-  providers: [UserService, StorageService, MessageService, JobService, TranslateService],
+  providers: [
+    UserService,
+    StorageService,
+    MessageService,
+    JobService,
+    TranslateService,
+    PermissionsSidebarStore,
+  ],
 })
 export class StorageModule {
 }

@@ -1433,10 +1433,10 @@
     ts-morph "^7.1.2"
     tslib "^2.0.0"
 
-"@ngrx/component-store@^12.1.0":
-  version "12.1.0"
-  resolved "https://registry.yarnpkg.com/@ngrx/component-store/-/component-store-12.1.0.tgz#cc5514b3fd006b5c5e82e8011bda63a8bfc68987"
-  integrity sha512-KhFaEqW1Jgj2Aw/SVFbjGH1JTcdnH0OUbi3+xwKYZRHtidKoey9vswH111jV/YiROM68SJCMigWdSbsRi5cp3Q==
+"@ngrx/component-store@^10.1.2":
+  version "10.1.2"
+  resolved "https://registry.yarnpkg.com/@ngrx/component-store/-/component-store-10.1.2.tgz#49c6e3d721a483fc97ae12e6a3e45b83245f2f9f"
+  integrity sha512-UuI55Ut1mAzGMX/SLHByOeJfC3hD5Z8+qv7aQTV/iHyMdpSdBpj3O92kPbDCSl+jXWGpjFNi45iY7bfOLZNFaQ==
   dependencies:
     tslib "^2.0.0"
 

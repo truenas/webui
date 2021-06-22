@@ -28,6 +28,7 @@ import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { CoreService } from 'app/core/services/core.service';
 import { Temperature } from 'app/core/services/disk-temperature.service';
 import { CoreEvent } from 'app/interfaces/events';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from 'app/translate-marker';
@@ -1051,7 +1052,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     const obj = self.system.enclosures[self.selectedEnclosure.enclosureKey];
     const currentLabel = obj.label !== obj.name ? obj.label : self.selectedEnclosure.model;
-    const conf = {
+    const conf: DialogFormConfiguration = {
       title: T('Change Enclosure Label'),
       fieldConfig: [
         {

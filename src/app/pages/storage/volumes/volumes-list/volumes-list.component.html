@@ -58,9 +58,11 @@
       </div>
     </mat-expansion-panel>
   </mat-accordion>
-  <div>
-    Some weird sidebar.
-  </div>
+  <app-permissions-sidebar
+    *ngIf="viewingPermissionsForDataset"
+    [dataset]="viewingPermissionsForDataset"
+    (closed)="onPermissionsSidebarClosed()"
+  ></app-permissions-sidebar>
 </div>
 
 <div *ngIf="zfsPoolRows.length < 1 && showDefaults">
