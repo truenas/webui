@@ -1,3 +1,4 @@
+import { CdkAccordionModule } from '@angular/cdk/accordion';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -9,6 +10,7 @@ import { NgxFilesizeModule } from 'ngx-filesize';
 import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/appMaterial.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { AclPermissionsComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/acl-permissions/acl-permissions.component';
 import { PermissionsItemComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/permissions-item/permissions-item.component';
 import { UnixPermissionsComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/unix-permissions/unix-permissions.component';
 import { PermissionsSidebarComponent } from 'app/pages/storage/volumes/permissions-sidebar/permissions-sidebar.component';
@@ -57,7 +59,7 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard';
     RouterModule, EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, routing, MaterialModule, TreeTableModule,
     NgxDatatableModule, TranslateModule, FlexLayoutModule,
-    NgxFilesizeModule, CommonDirectivesModule,
+    NgxFilesizeModule, CommonDirectivesModule, CdkAccordionModule,
   ],
   declarations: [
     VolumesListComponent,
@@ -99,6 +101,7 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard';
     PermissionsSidebarComponent,
     PermissionsItemComponent,
     UnixPermissionsComponent,
+    AclPermissionsComponent,
   ],
   exports: [VolumesListControlsComponent],
   entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],

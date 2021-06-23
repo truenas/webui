@@ -41,7 +41,10 @@
     </div>
 
     <div class="permissions">
-      <app-unix-permissions *ngIf="acl.trivial" [stat]="stat"></app-unix-permissions>
+      <app-acl-permissions *ngIf="!acl.trivial; else unixPermissions" [acl]="acl"></app-acl-permissions>
+      <ng-template #unixPermissions>
+        <app-unix-permissions [stat]="stat"></app-unix-permissions>
+      </ng-template>
     </div>
   </ng-template>
 </mat-card>

@@ -3,3 +3,26 @@
   margin: 8px 12px 6px;
   opacity: 0.75;
 }
+
+.accordion-item {
+  background-color: #242425;
+  border-left: 4px solid transparent;
+  box-shadow: none;
+  margin-bottom: 1px;
+
+  &.mat-expanded {
+    background-color: #323232;
+
+    .accordion-item-header {
+      border-left: 4px solid #0095d5; // TODO
+    }
+  }
+}
+
+.accordion-item-header {
+  padding: 0;
+}
+
+.permission-details {
+  box-shadow: inset 1px 1px 3px 3px black;
+}

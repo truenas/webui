@@ -1,0 +1,28 @@
+<div class="title">{{ 'Click an item to view permissions' | translate }}</div>
+
+<mat-accordion hideToggle>
+  <mat-expansion-panel class="accordion-item">
+    <mat-expansion-panel-header class="accordion-item-header">
+      <app-permissions-item [item]="{ type: 'other', name: 'Pizza', permission: 'Whatever' }"></app-permissions-item>
+    </mat-expansion-panel-header>
+    <div class="permission-details">
+      <div class="details-section">
+        <div class="details-title">Permissions Basic</div>
+        <ul>
+          <li>
+            <mat-icon class="icon">check_circle</mat-icon>
+            Read
+          </li>
+          <li>Modify</li>
+        </ul>
+      </div>
+    </div>
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <app-permissions-item [item]="{ type: 'other', name: 'Pizza', permission: 'Whatever 2' }"></app-permissions-item>
+    </mat-expansion-panel-header>
+    <div>Content 2</div>
+  </mat-expansion-panel>
+</mat-accordion>
+

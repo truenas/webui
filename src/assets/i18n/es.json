@@ -591,6 +591,7 @@
   "Clear the Idmap Cache": "",
   "Clear the SED password for this disk.": "",
   "Click <b>Browse</b> to select an encryption key to upload. This allows the system to decrypt the disks.": "",
+  "Click an item to view permissions": "",
   "Click on alarms to select or unselect.": "",
   "Clicking Continue allows TrueNAS to finish the update in the background while  Abort stops the process and reverts the dataset ACL to the previously active ACL.": "",
   "Client Certificate": "",

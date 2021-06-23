@@ -106,6 +106,7 @@
   display: flex;
 
   .pools {
+    flex-grow: 1;
     overflow-x: hidden; // TODO: Messes up shadow
   }
 
