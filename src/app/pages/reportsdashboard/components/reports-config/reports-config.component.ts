@@ -3,6 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import { helptext } from 'app/helptext/system/reporting';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { ReportingConfig } from 'app/interfaces/reporting.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -21,9 +22,9 @@ export class ReportsConfigComponent implements FormConfiguration {
   isOneColumnForm: boolean;
   entityForm: EntityFormComponent;
   isCpuCheckboxChecked: boolean;
-  graphPoints: any;
-  graphAge: any;
-  graphite_separateinstances: any;
+  graphPoints: number;
+  graphAge: number;
+  graphite_separateinstances: boolean;
 
   custActions = [
     {
@@ -92,7 +93,7 @@ export class ReportsConfigComponent implements FormConfiguration {
     protected dialog: DialogService,
   ) {}
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: ReportingConfig): ReportingConfig {
     this.graphPoints = data.graph_points;
     this.graphAge = data.graph_age;
     this.isCpuCheckboxChecked = data.cpu_in_percentage;

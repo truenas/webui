@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { WebSocketService } from './ws.service';
 
@@ -24,7 +25,7 @@ export class ServicesService {
     return this.ws.call('certificate.query');
   }
 
-  getCAs(): Observable<any[]> {
+  getCAs(): Observable<CertificateAuthority[]> {
     return this.ws.call('certificateauthority.query');
   }
 

@@ -6,6 +6,7 @@ import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/network/configuration/configuration';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -259,24 +260,25 @@ export class ConfigurationComponent implements FormConfiguration {
     this.entityEdit.submitFunction = this.submitFunction;
   }
 
-  resourceTransformIncomingRestData(data: any): any[] {
+  resourceTransformIncomingRestData(data: NetworkConfiguration): any[] {
+    const transformed: any = { ...data };
     if (data.hosts && data.hosts !== '') {
-      data['hosts'] = data.hosts.split('\n');
+      transformed['hosts'] = data.hosts.split('\n');
     } else {
-      data.hosts = [];
+      transformed.hosts = [];
     }
-    data['netbios'] = data['service_announcement']['netbios'];
-    data['mdns'] = data['service_announcement']['mdns'];
-    data['wsd'] = data['service_announcement']['wsd'];
-    if (data['activity']) {
-      if (data['activity'].activities.length === 0) {
-        data['outbound_network_activity'] = data['activity'].type;
-      } else if (data['activity'].type === NetworkActivityType.Allow) {
-        data['outbound_network_activity'] = 'SPECIFIC';
-        data['outbound_network_value'] = data['activity'].activities;
+    transformed['netbios'] = data.service_announcement.netbios;
+    transformed['mdns'] = data.service_announcement.mdns;
+    transformed['wsd'] = data.service_announcement.wsd;
+    if (data.activity) {
+      if (data.activity.activities.length === 0) {
+        transformed['outbound_network_activity'] = data.activity.type;
+      } else if (data.activity.type === NetworkActivityType.Allow) {
+        transformed['outbound_network_activity'] = 'SPECIFIC';
+        transformed['outbound_network_value'] = data.activity.activities;
       }
     }
-    return data;
+    return transformed;
   }
 
   clean(data: any): any {

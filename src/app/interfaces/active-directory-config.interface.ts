@@ -10,7 +10,9 @@ export interface ActiveDirectoryConfig {
   enable: boolean;
   id: number;
   kerberos_principal: string;
-  kerberos_realm: unknown;
+  kerberos_realm: {
+    id: string;
+  };
   netbiosalias: unknown[];
   netbiosname: string;
   nss_info: unknown;

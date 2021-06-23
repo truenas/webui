@@ -10,6 +10,7 @@ import { filter, take } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -711,8 +712,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any): any {
-    data['cloudsync_picker'] = data.schedule.minute + ' '
+  resourceTransformIncomingRestData(data: CloudSyncTask): any {
+    const transformed: any = { ...data };
+    transformed.cloudsync_picker = data.schedule.minute + ' '
                           + data.schedule.hour + ' '
                           + data.schedule.dom + ' '
                           + data.schedule.month + ' '
@@ -728,10 +730,10 @@ export class CloudsyncFormComponent implements FormConfiguration {
         }
         bwlimit.push(sub_bwlimit);
       }
-      data.bwlimit = bwlimit;
+      transformed.bwlimit = bwlimit;
     }
 
-    return data;
+    return transformed;
   }
 
   handleBwlimit(bwlimit: any): any[] {

@@ -43,8 +43,8 @@ export class SMBFormComponent implements FormConfiguration {
   namesInUse: string[] = [];
   productType = window.localStorage.getItem('product_type') as ProductType;
   isOneColumnForm = true;
-  private hostsAllowOnLoad: any[] = [];
-  private hostsDenyOnLoad: any[] = [];
+  private hostsAllowOnLoad: string[] = [];
+  private hostsDenyOnLoad: string[] = [];
   private stripACLWarningSent = false;
   private mangleWarningSent = false;
   private mangle: boolean;

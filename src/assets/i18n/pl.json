@@ -2919,6 +2919,7 @@
   "Set to preserve original file permissions. This is                useful when the user is set to <i>root</i>.": "",
   "Set to prevent the dataset from being modified.": "",
   "Set to prevent the initiator from initializing this LUN.": "",
+  "Set to prevent the zvol from being modified.": "",
   "Set to prohibit users from writing to this share.": "",
   "Set to prohibit writing to the share.": "",
   "Set to provide <a href=\"https://searchstorage.techtarget.com/definition/thin-provisioning\" target=\"_blank\">thin provisioning</a>. <b>Caution:</b> writes can fail when the pool is low on space.": "",

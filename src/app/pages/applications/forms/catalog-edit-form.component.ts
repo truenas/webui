@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/apps/apps';
+import { Catalog } from 'app/interfaces/catalog.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
@@ -57,15 +58,15 @@ export class CatalogEditFormComponent implements FormConfiguration {
     this.modalService.refreshTable();
   }
 
-  resourceTransformIncomingRestData(d: any): any {
-    const data = Object.assign([], d);
-    const trains = Object.keys(d.trains);
+  resourceTransformIncomingRestData(data: Catalog): any {
+    const transformed = { ...data };
+    const trains = Object.keys(data.trains);
 
     const trainOptions = trains.map((train) => ({
       label: train,
       value: train,
     }));
     this.fieldSets.config('preferred_trains').options = trainOptions;
-    return data;
+    return transformed;
   }
 }
