@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { WebSocketService } from 'app/services/ws.service';
 import { CoreService } from './core.service';
 
@@ -7,14 +6,10 @@ import { CoreService } from './core.service';
   providedIn: 'root',
 })
 export class BaseService {
-  protected websocket: WebSocketService;
-  protected core: CoreService;
   protected authenticated = false;
 
-  constructor() {
-    this.core = CoreServiceInjector.get(CoreService);
-    this.websocket = CoreServiceInjector.get(WebSocketService);
-    this.core.register({
+  constructor(protected core: CoreService, protected websocket: WebSocketService) {
+    core.register({
       observerClass: this,
       eventName: 'Authenticated',
     }).subscribe(() => {
