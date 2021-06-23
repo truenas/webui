@@ -329,8 +329,8 @@ def starting_with_sda_click__click_wipe_check_confirm_and_click_continue_repeat_
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
         assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-        assert wait_on_element(driver, 7, '//span[contains(.,"Disk Wiped successfully")]')
-        assert wait_on_element(driver, 7, '//button[contains(.,"CLOSE")]', 'clickable')
+        assert wait_on_element(driver, 10, '//span[contains(.,"Disk Wiped successfully")]')
+        assert wait_on_element(driver, 5, '//button[contains(.,"CLOSE")]', 'clickable')
         driver.find_element_by_xpath('//button[contains(.,"CLOSE")]').click()
 
 
