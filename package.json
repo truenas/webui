@@ -18,6 +18,7 @@
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
     "test:ci": "jest --runInBand",
+    "test:pr": "echo 'Setting up temporary environment file...\n' && ./setup_env.js -i 'headless.local' && jest",
     "lint": "ng lint && stylelint src/**/*.scss",
     "lint:fix": "ng lint --fix && stylelint --fix src/**/*.scss",
     "snyk": "snyk test",
@@ -159,7 +160,7 @@
   "jest": {
     "preset": "jest-preset-angular",
     "setupFilesAfterEnv": ["<rootDir>/src/setup-jest.ts"],
-        "testPathIgnorePatterns": [
+    "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
       "<rootDir>/dist/"
     ],
