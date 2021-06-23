@@ -10,7 +10,7 @@ import { UUID } from 'angular2-uuid';
 import { Chart, ChartDataSets, InteractionMode } from 'chart.js';
 import * as d3 from 'd3';
 import { Subject } from 'rxjs';
-import { ThemeUtils } from 'app/core/classes/theme-utils';
+import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ViewChartBarComponent } from 'app/core/components/viewchartbar/viewchartbar.component';
 import { ViewChartGaugeComponent } from 'app/core/components/viewchartgauge/viewchartgauge.component';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';

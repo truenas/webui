@@ -3,7 +3,9 @@ import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum'
 import { CoreEvent } from 'app/interfaces/events';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { WebSocketService } from 'app/services';
 import { BaseService } from './base.service';
+import { CoreService } from './core.service';
 
 interface InfoObject {
   version: string; // "TrueNAS-12.0-MASTER-202003160424"
@@ -64,8 +66,8 @@ export class SystemProfileService extends BaseService {
     enclosure: false,
   };
 
-  constructor() {
-    super();
+  constructor(protected core: CoreService, protected websocket: WebSocketService) {
+    super(core, websocket);
 
     this.core.register({
       observerClass: this,

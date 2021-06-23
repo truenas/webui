@@ -13,7 +13,6 @@
     "**/*.d.ts"
   ],
   "exclude": [
-    "test.ts",
     "**/*.spec.ts",
 
     "**/*.worker.ts"
