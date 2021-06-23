@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { WebSocketService } from 'app/services/ws.service';
 import { BaseService } from '../base.service';
+import { CoreService } from '../core.service';
 
 export interface Temperature {
   keys: string[];
@@ -13,8 +14,8 @@ export interface Temperature {
   providedIn: 'root',
 })
 export class DiskStateService extends BaseService {
-  constructor(protected ws: WebSocketService) {
-    super();
+  constructor(protected core: CoreService, protected ws: WebSocketService) {
+    super(core, ws);
   }
 
   protected onAuthenticated(): void {

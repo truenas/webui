@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -29,7 +30,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   private getRow = new Subscription();
   private rowNum: any;
   title: string;
-  private incomingData: any;
+  private incomingData: CertificateAuthority;
   private unsignedCAs: any[] = [];
 
   fieldConfig: FieldConfig[];
@@ -207,7 +208,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: CertificateAuthority): CertificateAuthority {
     this.incomingData = data;
     this.setForm();
     return data;
@@ -253,8 +254,10 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   ];
 
   setForm(): void {
-    const fields = ['country', 'state', 'city', 'organization', 'organizational_unit', 'email', 'common', 'DN', 'cert_type',
-      'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'revoked', 'signed_certificates', 'lifetime'];
+    const fields: (keyof CertificateAuthority)[] = [
+      'country', 'state', 'city', 'organization', 'organizational_unit', 'email', 'common', 'DN', 'cert_type',
+      'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'revoked', 'signed_certificates', 'lifetime',
+    ];
     fields.forEach((field) => {
       const paragraph = _.find(this.fieldConfig, { name: field });
       this.incomingData[field] || this.incomingData[field] === false
@@ -263,7 +266,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     _.find(this.fieldConfig, { name: 'san' }).paraText += this.incomingData.san.join(',');
     const issuer = _.find(this.fieldConfig, { name: 'issuer' });
     if (_.isObject(this.incomingData.issuer)) {
-      issuer.paraText += this.incomingData.issuer.name;
+      issuer.paraText += (this.incomingData.issuer as any).name;
     } else {
       this.incomingData.issuer ? issuer.paraText += this.incomingData.issuer : issuer.paraText += '---';
     }

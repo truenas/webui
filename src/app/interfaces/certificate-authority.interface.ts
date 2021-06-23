@@ -75,3 +75,60 @@ export interface CertificateAuthorityUpdate {
 }
 
 export interface CertificateAuthorityCreate extends CertificateAuthorityUpdate {}
+
+export interface CertificateAuthority {
+  CA_type_existing: boolean;
+  CA_type_intermediate: boolean;
+  CA_type_internal: boolean;
+  CSR: unknown;
+  DN: string;
+  cert_type: string; // Enum?
+  cert_type_CSR: boolean;
+  cert_type_existing: boolean;
+  cert_type_internal: boolean;
+  certificate: string;
+  certificate_path: string;
+  chain: boolean;
+  chain_list: string[];
+  city: string;
+  common: string;
+  country: string;
+  crl_path: string;
+  csr_path: string;
+  digest_algorithm: string;
+  email: string;
+  extensions: {
+    AuthorityKeyIdentifier: string;
+    BasicConstraints: string;
+    ExtendedKeyUsage: string;
+    KeyUsage: string;
+    SubjectAltName: string;
+    SubjectKeyIdentifier: string;
+  };
+  fingerprint: string;
+  from: string;
+  id: number;
+  internal: string;
+  issuer: string;
+  key_length: number;
+  key_type: string;
+  lifetime: number;
+  name: string;
+  organization: string;
+  organizational_unit: string;
+  parsed: boolean;
+  privatekey: string;
+  privatekey_path: string;
+  revoked: boolean;
+  revoked_certs: unknown[];
+  revoked_date: unknown;
+  root_path: string;
+  san: string[];
+  serial: number;
+  signed_certificates: number;
+  signedby: unknown;
+  state: string;
+  subject_name_hash: number;
+  type: number;
+  until: string;
+}

@@ -308,6 +308,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   }
 
   addZvol(id: string, isNew: boolean): void {
+    this.addZvolComponent = new ZvolFormComponent(this.router, this.aroute, this.ws, this.loader,
+      this.dialogService, this.storageService, this.translate, this.modalService);
     this.addZvolComponent.setParent(id);
     this.addZvolComponent.isNew = isNew;
     this.modalService.open('slide-in-form', this.addZvolComponent, id);
