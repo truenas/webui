@@ -1,31 +1,32 @@
 <div *ngIf="rendered" class="widget stats-widget" ngClass.xs="double-height xs">
   <div class="card-container  front">
     <mat-card style="overflow:hidden" class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
-      <mat-card-content #carouselparent>
+      <mat-card-content>
         <mat-toolbar-row>
-          <span class="mat-card-title-text primary-nav">
-            <span class="card-title-text">
-              &nbsp;<span>{{title | translate}}</span>
-            </span>
-          </span>
+          <!-- Mobile Only: Exit widget -->
+          <button fxHide.gt-xs class="mat-card-title-text" mat-icon-button color="default"
+            ix-auto ix-auto-type="button" ix-auto-identifier="goBack">
+            <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
+          </button><span fxHide.gt-xs>&nbsp;&nbsp;</span>
 
-            <div class="controls">
-              <a
-                mat-icon-button
-                ix-auto
-                ix-auto-type="button"
-                ix-auto-identifier="diskReports"
-                [routerLink]="['/reportsdashboard/disk']"
-                [queryParams]="{ disks: allDiskNames }"
-              >
-                <mat-icon role="img"
-                  matTooltip="{{'Disk Reports' | translate}}"
-                  matTooltipPosition="above"
-                  aria-label="Disk Reports">
-                    insert_chart
-                </mat-icon>
-              </a>
-            </div>
+          <h3 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h3>
+          <div class="controls">
+            <a
+              mat-icon-button
+              ix-auto
+              ix-auto-type="button"
+              ix-auto-identifier="diskReports"
+              [routerLink]="['/reportsdashboard/disk']"
+              [queryParams]="{ disks: allDiskNames }"
+            >
+              <mat-icon role="img"
+                matTooltip="{{'Disk Reports' | translate}}"
+                matTooltipPosition="above"
+                aria-label="Disk Reports">
+                  insert_chart
+              </mat-icon>
+            </a>
+          </div>
 
         </mat-toolbar-row>
 
@@ -33,7 +34,7 @@
           <div [style.padding]="padding + 'px'">
             <mat-grid-list [cols]="cols" [gutterSize]="gap + 'px'" [rowHeight]="rowHeight + 'px'">
               <mat-grid-tile *ngFor="let pool of pools">
-                <div fxFlex="100" fxLayout="column">
+                <div class="tile" fxFlexFill fxLayout="column" fxLayoutAlign="start stretch" *ngIf="pool; else createNew">
                   <div class="tile-header" fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
                     <div class="">Movies</div>
                     <div class="">
@@ -47,21 +48,69 @@
                       </button>
                     </div>
                   </div>
-                  <div class="tile-content">
-                    <ul>
-                      <li fxFlex="100" fxLayout="row">
-                        <div>
-                          <span class="icon">&nbsp;<mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
-                          </span>
-                        </div>
-                        <div class="td label">
-                          <strong>Pool Status:</strong>
-                          <span class="capitalize">Unhealthy</span>
-                        </div>
+                  <div class="tile-content" fxLayout="row" fxLayoutAlign="space-between stretch">
+                    <ul fxLayout="column" [fxFlex]="cols == 1?31:100">
+                      <li fxLayout="row">
+                        <span class="icon"><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon></span>
+                        <span class="label">Pool Status:</span>
+                        <span class="value">Unhealthy</span>
+                      </li>
+                      <li fxLayout="row">
+                        <span class="icon"><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon></span>
+                        <span class="label">Used Space:</span>
+                        <span class="value">0%</span>
+                      </li>
+                      <li fxLayout="row">
+                        <span class="icon"><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon></span>
+                        <span class="label">Disks with Errors:</span>
+                        <span class="value">0</span>
+                      </li>
+                      <li fxLayout="row" *ngIf="cols == 2 && rows == 2">
+                        <span class="icon"></span>
+                        <span class="label">Path:</span>
+                        <span class="value">/mnt/MOVIES</span>
                       </li>
                     </ul>
+                    <ng-container *ngIf="cols==1">
+                      <div class="divider"></div>
+                      <ul fxLayout="column" fxFlex="31">
+                        <li fxLayout="row">
+                          <span class="label">Path:</span>
+                          <span class="value">/mnt/MOVIES</span>
+                        </li>
+                        <li fxLayout="row">
+                          <span class="label">Free Space:</span>
+                          <span class="value">16.80GiB</span>
+                        </li>
+                        <li fxLayout="row">
+                          <span class="label">Total Disks:</span>
+                          <span class="value">3</span>
+                        </li>
+                      </ul>
+                      <div class="divider"></div>
+                      <ul fxLayout="column" fxFlex="31">
+                        <li fxLayout="row">
+                          <span class="label">Data:</span>
+                          <span class="value">2 vdevs</span>
+                        </li>
+                        <li fxLayout="row">
+                          <span class="label">Caches:</span>
+                          <span class="value">0</span>
+                        </li>
+                        <li fxLayout="row">
+                          <span class="label">Spares:</span>
+                          <span class="value">1</span>
+                        </li>
+                      </ul>
+                    </ng-container>
                   </div>
                 </div>
+                <ng-template #createNew>
+                  <div class="create-new" fxFill fxLayout="column" fxLayoutAlign="center center">
+                    <mat-icon fontSet="mdi-set" fontIcon="mdi-database"></mat-icon>
+                    <span>{{'Create new Pool' | translate}}</span>
+                  </div>
+                </ng-template>
               </mat-grid-tile>
             </mat-grid-list>
           </div>

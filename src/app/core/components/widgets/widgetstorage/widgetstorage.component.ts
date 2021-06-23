@@ -4,6 +4,7 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { Pool } from 'app/interfaces/pool.interface';
 import { T } from 'app/translate-marker';
@@ -21,6 +22,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
 
   padding = 7;
   cols = 2;
+  rows = 2;
   gap = 7;
   contentHeight = 400 - 56;
   rowHeight = 150;
@@ -34,7 +36,18 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     throw new Error('Method not implemented.');
   }
 
+  // TODO: remove
+  setTestPoolDatas(): void {
+    const pool = this.pools[0];
+    while (this.pools.length < 3) {
+      this.pools.push(_.cloneDeep(pool));
+    }
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
+    // TODO: remove
+    this.setTestPoolDatas();
+
     if (changes) {
       const poolCount = this.pools.length;
       if (poolCount <= 2) {
@@ -43,16 +56,20 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
         this.gap = 15;
       } else if (poolCount <= 4) {
         this.cols = 2;
-        this.padding = 7;
-        this.gap = 7;
+        this.padding = 10;
+        this.gap = 10;
       } else {
         this.cols = 2;
-        this.padding = 3;
-        this.gap = 3;
+        this.padding = 7;
+        this.gap = 7;
       }
 
-      const rows = Math.round(poolCount / this.cols);
-      this.rowHeight = (this.contentHeight - (rows - 1) * this.gap - 2 * this.padding) / rows;
+      this.rows = Math.round(poolCount / this.cols);
+      this.rowHeight = (this.contentHeight - (this.rows - 1) * this.gap - 2 * this.padding) / this.rows;
+
+      if (this.pools.length % 2 == 1) {
+        this.pools.push(null);
+      }
     }
   }
 
