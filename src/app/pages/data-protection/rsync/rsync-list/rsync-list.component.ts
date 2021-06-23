@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
-import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
@@ -103,7 +103,7 @@ export class RsyncListComponent implements EntityTableConfig {
           hideCheckBox: true,
         }).pipe(untilDestroyed(this)).subscribe((run: boolean) => {
           if (run) {
-            row.state = { state: EntityJobState.Running };
+            row.state = { state: JobState.Running };
             this.ws.call('rsynctask.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
               (jobId: number) => {
                 this.dialog.Info(
@@ -113,7 +113,7 @@ export class RsyncListComponent implements EntityTableConfig {
                   'info',
                   true,
                 );
-                this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
+                this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
                   row.state = { state: job.state };
                   row.job = job;
                 });
@@ -155,10 +155,10 @@ export class RsyncListComponent implements EntityTableConfig {
       task.next_run = this.taskService.getTaskCronDescription(task.cron_schedule);
 
       if (task.job == null) {
-        task.state = { state: EntityJobState.Pending };
+        task.state = { state: JobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
+        this.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: Job) => {
           task.state = { state: job.state };
           task.job = job;
         });
@@ -173,7 +173,7 @@ export class RsyncListComponent implements EntityTableConfig {
 
   stateButton(row: any): void {
     if (row.job) {
-      if (row.state.state === EntityJobState.Running) {
+      if (row.state.state === JobState.Running) {
         this.entityList.runningStateButton(row.job.id);
       } else {
         this.job.showLogs(row.job);

@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { CoreEvent } from 'app/interfaces/events';
@@ -124,9 +124,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   }
 
   checkForRunningUpdate(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        if (res && res.length > 0) {
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
+      (jobs) => {
+        if (jobs && jobs.length > 0) {
           this.isUpdateRunning = true;
         }
       },

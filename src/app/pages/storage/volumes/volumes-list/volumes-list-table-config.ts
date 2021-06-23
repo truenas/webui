@@ -11,7 +11,7 @@ import { Observable } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { DatasetType } from 'app/enums/dataset-type.enum';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
@@ -215,11 +215,11 @@ export class VolumesListTableConfig implements EntityTableConfig {
                         if (res.error) {
                           self.loader.close();
                           if (res.exc_info && res.exc_info.extra) {
-                            res.extra = res.exc_info.extra;
+                            (res as any).extra = res.exc_info.extra;
                           }
                           new EntityUtils().handleWSError(this, res, self.dialogService);
                         }
-                        if (res.state === EntityJobState.Success) {
+                        if (res.state === JobState.Success) {
                           self.loader.close();
                           entityDialog.dialogRef.close(true);
                           self.parentVolumesListComponent.repaintMe();
@@ -904,11 +904,11 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   parent.loader.close();
                   if (res.error) {
                     if (res.exc_info && res.exc_info.extra) {
-                      res.extra = res.exc_info.extra;
+                      (res as any).extra = res.exc_info.extra;
                     }
                     new EntityUtils().handleWSError(this, res, parent.dialogService, conf.fieldConfig);
                   }
-                  if (res.state === EntityJobState.Success) {
+                  if (res.state === JobState.Success) {
                     if (entityDialog) {
                       entityDialog.dialogRef.close(true);
                     }

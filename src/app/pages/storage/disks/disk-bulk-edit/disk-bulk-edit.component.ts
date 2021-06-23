@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/disks/disks';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -130,7 +130,7 @@ export class DiskBulkEditComponent implements FormConfiguration {
     this.ws.job('core.bulk', ['disk.update', req])
       .pipe(untilDestroyed(this)).subscribe(
         (res) => {
-          if (res.state === EntityJobState.Success) {
+          if (res.state === JobState.Success) {
             this.loader.close();
             let success_state = true;
             for (let i = 0; i < res.result.length; i++) {

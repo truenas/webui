@@ -1,4 +1,5 @@
 import { DefaultAclType } from 'app/enums/acl-type.enum';
+import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -11,13 +12,19 @@ import { Alert, AlertCategory } from 'app/interfaces/alert.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
+import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
+import { Bootenv, SetBootenvAttributeParams } from 'app/interfaces/bootenv.interface';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import {
   CertificateAuthority,
   CertificateAuthorityCreate,
   CertificateAuthorityUpdate,
 } from 'app/interfaces/certificate-authority.interface';
-import { Certificate } from 'app/interfaces/certificate.interface';
+import {
+  Certificate,
+  CertificateProfiles,
+  ExtendedKeyUsageChoices,
+} from 'app/interfaces/certificate.interface';
 import {
   ChartRelease,
   ChartReleaseCreate,
@@ -25,8 +32,11 @@ import {
   ChartReleaseQueryParams,
 } from 'app/interfaces/chart-release.interface';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
+import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import {
   AuthenticatorSchema,
@@ -37,6 +47,7 @@ import { DynamicDnsUpdate } from 'app/interfaces/dynamic-dns.interface';
 import { FailoverUpdate } from 'app/interfaces/failover.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Group } from 'app/interfaces/group.interface';
+import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import {
   IscsiAuthAccess, IscsiExtent,
   IscsiInitiatorGroup,
@@ -44,6 +55,7 @@ import {
   IscsiPortal,
   IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { NetworkActivityChoice, NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
@@ -58,18 +70,26 @@ import { ReportingConfig } from 'app/interfaces/reporting.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
-import { SmartTest } from 'app/interfaces/smart-test.interface';
+import {
+  SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTest,
+} from 'app/interfaces/smart-test.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
+import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Disk, DiskQueryOptions, DiskUpdate } from 'app/interfaces/storage.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemUpdate } from 'app/interfaces/system-update.interface';
+import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
-import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { VirtualMachine, VmStopParams } from 'app/interfaces/virtual-machine.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 
+/**
+ * API definitions for `call` and `job` methods.
+ * For events from `subscribed` see ApiEventDirectory.
+ */
 export type ApiDirectory = {
   // Active Directory
   'activedirectory.config': { params: void; response: ActiveDirectoryConfig };
@@ -87,7 +107,7 @@ export type ApiDirectory = {
   'alert.list': { params: void; response: Alert[] };
   'alert.dismiss': { params: string[]; response: void };
   'alert.restore': { params: string[]; response: void };
-  'alert.list_policies': { params: any; response: any };
+  'alert.list_policies': { params: void; response: AlertPolicy[] };
   'alert.list_categories': { params: void; response: AlertCategory[] };
 
   // Alert Classes
@@ -125,26 +145,27 @@ export type ApiDirectory = {
   // Boot
   'boot.set_scrub_interval': { params: any; response: any };
   'boot.replace': { params: any; response: any };
-  'boot.get_state': { params: any; response: any };
+  'boot.get_state': { params: void; response: BootPoolState };
   'boot.detach': { params: any; response: any };
   'boot.attach': { params: any; response: any };
+  'boot.scrub': { params: any; response: any };
 
   // Bootenv
   'bootenv.create': { params: any; response: any };
   'bootenv.update': { params: any; response: any };
-  'bootenv.set_attribute': { params: any; response: any };
+  'bootenv.set_attribute': { params: SetBootenvAttributeParams; response: boolean };
   'bootenv.activate': { params: any; response: any };
   'bootenv.delete': { params: any; response: any };
-  'bootenv.query': { params: any; response: any };
-  'boot.scrub': { params: any; response: any };
+  'bootenv.query': { params: QueryParams<Bootenv>; response: Bootenv[] };
 
   // Catalog
   'catalog.query': { params: QueryParams<any, { extra: { item_details: boolean; cache: boolean; retrieve_versions: boolean } }>; response: Catalog[] };
   'catalog.update': { params: any; response: any };
   'catalog.create': { params: any; response: any };
-  'catalog.delete': { params: any; response: any };
+  'catalog.delete': { params: [/* name */ string]; response: boolean };
   'catalog.items': { params: any; response: any };
   'catalog.sync': { params: any; response: any };
+  'catalog.sync_all': { params: void; response: any };
   'catalog.get_item_details': { params: any; response: any };
 
   // Certificate
@@ -153,8 +174,8 @@ export type ApiDirectory = {
   'certificate.update': { params: any; response: any };
   'certificate.ec_curve_choices': { params: any; response: any };
   'certificate.country_choices': { params: any; response: any };
-  'certificate.extended_key_usage_choices': { params: any; response: any };
-  'certificate.profiles': { params: any; response: any };
+  'certificate.extended_key_usage_choices': { params: void; response: ExtendedKeyUsageChoices };
+  'certificate.profiles': { params: void; response: CertificateProfiles };
   'certificate.acme_server_choices': { params: any; response: any };
   'certificate.get_domain_names': { params: any; response: any };
 
@@ -179,12 +200,12 @@ export type ApiDirectory = {
 
   // CRON
   'cronjob.run': { params: any; response: any };
-  'cronjob.query': { params: any; response: any };
+  'cronjob.query': { params: QueryParams<Cronjob>; response: Cronjob[] };
   'cronjob.delete': { params: any; response: any };
 
   // Core
   'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };
-  'core.get_jobs': { params: any; response: any };
+  'core.get_jobs': { params: QueryParams<Job>; response: Job[] };
   'core.job_abort': { params: any; response: any };
   'core.bulk': { params: any; response: any };
   'core.resize_shell': { params: ResizeShellRequest; response: void };
@@ -194,8 +215,8 @@ export type ApiDirectory = {
   'config.reset': { params: any; response: any };
 
   // Cloudsync
-  'cloudsync.providers': { params: any; response: any };
-  'cloudsync.credentials.query': { params: any; response: any };
+  'cloudsync.providers': { params: void; response: CloudsyncProvider[] };
+  'cloudsync.credentials.query': { params: QueryParams<CloudsyncCredential>; response: CloudsyncCredential[] };
   'cloudsync.credentials.create': { params: any; response: any };
   'cloudsync.credentials.update': { params: any; response: any };
   'cloudsync.credentials.verify': { params: any; response: any };
@@ -209,6 +230,7 @@ export type ApiDirectory = {
   'cloudsync.restore': { params: any; response: any };
   'cloudsync.query': { params: QueryParams<CloudSyncTask>; response: CloudSyncTask[] };
   'cloudsync.delete': { params: any; response: any };
+  'cloudsync.sync_onetime': { params: any; response: any };
 
   // Container
   'container.config': { params: any; response: any };
@@ -216,9 +238,6 @@ export type ApiDirectory = {
   'container.image.query': { params: void; response: ContainerImage[] };
   'container.image.pull': { params: [PullContainerImageParams]; response: any };
   'container.image.delete': { params: any; response: any };
-
-  // Docker
-  'docker.images.query': { params: any; response: any };
 
   // DynDNS
   'dyndns.provider_choices': { params: any; response: any };
@@ -238,6 +257,7 @@ export type ApiDirectory = {
   'disk.get_unused': { params: any; response: any };
   'disk.get_encrypted': { params: any; response: any };
   'disk.temperatures': { params: any; response: any };
+  'disk.wipe': { params: any; response: any };
 
   // Directory Services
   'directoryservices.cache_refresh': { params: any; response: any };
@@ -278,6 +298,8 @@ export type ApiDirectory = {
   'failover.disabled_reasons': { params: void; response: FailoverDisabledReason[] };
   'failover.config': { params: any; response: any };
   'failover.sync_to_peer': { params: any; response: any };
+  'failover.upgrade_finish': { params: any; response: any };
+  'failover.upgrade': { params: any; response: any };
 
   // FCPort
   'fcport.query': { params: any; response: any };
@@ -314,6 +336,7 @@ export type ApiDirectory = {
   'idmap.create': { params: any; response: any };
   'idmap.update': { params: any; response: any };
   'idmap.delete': { params: any; response: any };
+  'idmap.clear_idmap_cache': { params: any; response: any };
 
   // Interface
   'interface.websocket_local_ip': { params: any; response: any };
@@ -463,6 +486,10 @@ export type ApiDirectory = {
   'pool.snapshottask.create': { params: any; response: any };
   'pool.snapshottask.update': { params: any; response: any };
   'pool.import_disk_msdosfs_locales': { params: any; response: any };
+  'pool.import_disk': { params: any; response: any };
+  'pool.import_find': { params: any; response: any };
+  'pool.import_pool': { params: any; response: any };
+  'pool.expand': { params: any; response: any };
   'pool.snapshottask.delete': { params: any; response: any };
   'pool.dataset.query': {
     params: QueryParams<Dataset, ExtraDatasetQueryOptions>;
@@ -476,10 +503,12 @@ export type ApiDirectory = {
   'pool.dataset.compression_choices': { params: any; response: any };
   'pool.dataset.encryption_algorithm_choices': { params: any; response: any };
   'pool.dataset.permission': { params: any; response: any };
+  'pool.dataset.export_key': { params: any; response: any };
   'pool.offline': { params: any; response: any };
   'pool.online': { params: any; response: any };
   'pool.remove': { params: any; response: any };
   'pool.detach': { params: any; response: any };
+  'pool.export': { params: any; response: any };
   'pool.passphrase': { params: any; response: any };
   'pool.rekey': { params: any; response: any };
   'pool.attachments': { params: any; response: any };
@@ -499,6 +528,8 @@ export type ApiDirectory = {
   'pool.dataset.unlock': { params: any; response: any };
   'pool.resilver.config': { params: any; response: any };
   'pool.resilver.update': { params: any; response: any };
+  'pool.lock': { params: any; response: any };
+  'pool.unlock': { params: any; response: any };
 
   // Replication
   'replication.list_datasets': { params: any; response: any };
@@ -584,12 +615,13 @@ export type ApiDirectory = {
   'support.is_available_and_enabled': { params: any; response: any };
   'support.config': { params: any; response: any };
   'support.update': { params: any; response: any };
+  'support.new_ticket': { params: any; response: any };
 
   // SMART
   'smart.test.disk_choices': { params: any; response: any };
-  'smart.update': { params: any; response: any };
-  'smart.config': { params: any; response: any };
-  'smart.test.manual_test': { params: any; response: any };
+  'smart.update': { params: [SmartConfigUpdate]; response: SmartConfig };
+  'smart.config': { params: void; response: SmartConfig };
+  'smart.test.manual_test': { params: [SmartManualTestParams[]]; response: any };
   'smart.test.query': { params: QueryParams<SmartTest>; response: SmartTest[] };
   'smart.test.create': { params: any; response: any };
   'smart.test.results': { params: any; response: any };
@@ -650,7 +682,7 @@ export type ApiDirectory = {
   'ftp.config': { params: any; response: any };
 
   // Truecommand
-  'truecommand.config': { params: any; response: any };
+  'truecommand.config': { params: void; response: TrueCommandConfig };
   'truecommand.update': { params: any; response: any };
   'truecommand.connected': { params: any; response: any };
 
@@ -675,15 +707,15 @@ export type ApiDirectory = {
   'vm.device.create': { params: any; response: any };
   'vm.random_mac': { params: void; response: string };
   'vm.device.query': { params: any; response: any };
-  'vm.stop': { params: any; response: any };
-  'vm.maximum_supported_vcpus': { params: any; response: any };
+  'vm.stop': { params: VmStopParams; response: any };
+  'vm.maximum_supported_vcpus': { params: void; response: number };
   'vm.device.update': { params: any; response: any };
   'vm.port_wizard': { params: any; response: any };
-  'vm.get_available_memory': { params: any; response: any };
+  'vm.get_available_memory': { params: void; response: number };
   'vm.clone': { params: any; response: any };
   'vm.update': { params: any; response: any };
   'vm.poweroff': { params: any; response: any };
-  'vm.restart': { params: any; response: any };
+  'vm.restart': { params: [/* id */ number]; response: any };
   'vm.get_display_devices': { params: any; response: any };
   'vm.start': { params: any; response: any };
   'vm.get_vmemory_in_use': { params: any; response: any };
@@ -694,6 +726,7 @@ export type ApiDirectory = {
   'vmware.create': { params: any; response: any };
   'vmware.update': { params: any; response: any };
   'vmware.delete': { params: any; response: any };
+  'vmware.match_datastores_with_datasets': { params: any; response: any };
 
   // User
   'user.update': { params: any; response: any };
@@ -705,7 +738,7 @@ export type ApiDirectory = {
   'user.shell_choices': { params: any; response: any };
   'user.set_attribute': { params: any; response: any };
   'user.get_next_uid': { params: any; response: any };
-  'user.has_root_password': { params: any; response: any };
+  'user.has_root_password': { params: void; response: boolean };
 
   // UPS
   'ups.update': { params: any; response: any };
@@ -720,6 +753,8 @@ export type ApiDirectory = {
   'update.get_pending': { params: any; response: any };
   'update.check_available': { params: void; response: SystemUpdate };
   'update.set_train': { params: any; response: any };
+  'update.download': { params: any; response: any };
+  'update.update': { params: any; response: any };
 
   // ZFS
   'zfs.snapshot.create': { params: any; response: any };
@@ -728,11 +763,13 @@ export type ApiDirectory = {
   'zfs.snapshot.delete': { params: any; response: any };
   'zfs.snapshot.clone': { params: any; response: any };
   'zfs.snapshot.rollback': { params: any; response: any };
+  'zfs.pool.scan': { params: any; response: any };
 
   // staticroute
-  'staticroute.query': { params: any; response: any };
+  'staticroute.query': { params: QueryParams<StaticRoute>; response: StaticRoute[] };
   'staticroute.create': { params: any; response: any };
   'staticroute.update': { params: any; response: any };
+  'staticroute.delete': { params: [/* id */ number]; response: boolean };
 
   // SNMP
   'snmp.config': { params: any; response: any };
@@ -743,10 +780,10 @@ export type ApiDirectory = {
   'webdav.update': { params: any; response: any };
 
   // InitShutdownScript
-  'initshutdownscript.query': { params: any; response: any };
+  'initshutdownscript.query': { params: QueryParams<InitShutdownScript>; response: InitShutdownScript[] };
   'initshutdownscript.create': { params: any; response: any };
   'initshutdownscript.update': { params: any; response: any };
-  'initshutdownscript.delete': { params: any; response: any };
+  'initshutdownscript.delete': { params: [/* id */ number]; response: boolean };
 };
 
 /**

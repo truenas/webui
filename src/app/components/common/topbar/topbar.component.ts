@@ -11,14 +11,16 @@ import { Subscription, Subject } from 'rxjs';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { LayoutService } from 'app/core/services/layout.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
 import helptext from 'app/helptext/topbar';
 import { CoreEvent } from 'app/interfaces/events';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
+import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
@@ -92,9 +94,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   protected tc_updateCall: 'truecommand.update' = 'truecommand.update';
   protected isTcStatusOpened = false;
   protected tcStatusDialogRef: MatDialogRef<TruecommandComponent>;
-  tcStatus: any;
+  tcStatus: TrueCommandConfig;
 
   readonly FailoverDisabledReason = FailoverDisabledReason;
+  readonly TrueCommandStatus = TrueCommandStatus;
 
   constructor(
     public themeService: ThemeService,
@@ -135,10 +138,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       window.localStorage.setItem('alias_ips', '0');
       this.checkLegacyUISetting();
     }
-    this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res && res.fields.method === 'update.update' || res.fields.method === 'failover.upgrade') {
+    this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
+      if (event && event.fields.method === 'update.update' || event.fields.method === 'failover.upgrade') {
         this.updateIsRunning = true;
-        if (res.fields.state === EntityJobState.Failed || res.fields.state === EntityJobState.Aborted) {
+        if (event.fields.state === JobState.Failed || event.fields.state === JobState.Aborted) {
           this.updateIsRunning = false;
           this.systemWillRestart = false;
         }
@@ -151,9 +154,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           });
         }
         if (!this.is_ha) {
-          if (res && res.fields && res.fields.arguments[0] && res.fields.arguments[0].reboot) {
+          if (event && event.fields && event.fields.arguments[0] && (event.fields.arguments[0] as any).reboot) {
             this.systemWillRestart = true;
-            if (res.fields.state === EntityJobState.Success) {
+            if (event.fields.state === JobState.Success) {
               this.router.navigate(['/others/reboot']);
             }
           }
@@ -171,13 +174,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.themesMenu = this.themeService.themesMenu;
     });
 
-    this.ws.call(this.tc_queryCall).pipe(untilDestroyed(this)).subscribe((res) => {
-      this.tcStatus = res;
-      this.tcConnected = !!res.api_key;
+    this.ws.call(this.tc_queryCall).pipe(untilDestroyed(this)).subscribe((config) => {
+      this.tcStatus = config;
+      this.tcConnected = !!config.api_key;
     });
-    this.ws.subscribe(this.tc_queryCall).pipe(untilDestroyed(this)).subscribe((res) => {
-      this.tcStatus = res.fields;
-      this.tcConnected = !!res.fields.api_key;
+    this.ws.subscribe(this.tc_queryCall).pipe(untilDestroyed(this)).subscribe((event) => {
+      this.tcStatus = event.fields;
+      this.tcConnected = !!event.fields.api_key;
       if (this.isTcStatusOpened && this.tcStatusDialogRef) {
         this.tcStatusDialogRef.componentInstance.update(this.tcStatus);
       }
@@ -223,7 +226,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
 
     setInterval(() => {
-      if (this.resilveringDetails && this.resilveringDetails.scan.state == EntityJobState.Finished) {
+      if (this.resilveringDetails && this.resilveringDetails.scan.state == JobState.Finished) {
         this.showResilvering = false;
         this.resilveringDetails = '';
       }
@@ -727,7 +730,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           Object.keys(self.tcStatus).forEach((key) => {
             const ctrl = entityDialog.formGroup.controls[key];
             if (ctrl) {
-              ctrl.setValue(self.tcStatus[key]);
+              ctrl.setValue(self.tcStatus[key as keyof TrueCommandConfig]);
             }
           });
         }
