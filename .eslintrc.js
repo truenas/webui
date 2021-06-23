@@ -145,7 +145,14 @@ module.exports = {
           "checkComplete": false,
           "checkDecorators": ["Component"], // default
           "checkDestroy": false
-        }]
+        }],
+        "rxjs/finnish": ["error", {
+          "parameters": true,
+          "properties": false,
+          "variables": true,
+          "functions": false,
+          "methods": false,
+        }],
       }
     },
     {
