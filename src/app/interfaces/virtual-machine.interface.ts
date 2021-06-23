@@ -24,3 +24,11 @@ export interface VirtualMachine {
   time: VmTime;
   vcpus: number;
 }
+
+export type VmStopParams = [
+  /* id */ number,
+  /* params */ {
+    force: boolean;
+    force_after_timeout: boolean;
+  },
+];

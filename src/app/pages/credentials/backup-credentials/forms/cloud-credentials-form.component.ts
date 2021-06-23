@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloudcredentials';
+import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -1198,7 +1199,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
   fieldConfig: FieldConfig[];
 
-  protected providers: any[];
+  protected providers: CloudsyncProvider[];
   protected providerField: any;
   protected entityForm: EntityFormComponent;
 
@@ -1263,13 +1264,13 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     const basicFieldset = _.find(this.fieldSets, { class: 'basic' });
     this.providerField = _.find(basicFieldset.config, { name: 'provider' });
     this.cloudcredentialService.getProviders().pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        this.providers = res;
-        for (const i in res) {
+      (providers) => {
+        this.providers = providers;
+        for (const i in providers) {
           this.providerField.options.push(
             {
-              label: res[i].title,
-              value: res[i].name,
+              label: providers[i].title,
+              value: providers[i].name,
             },
           );
         }
