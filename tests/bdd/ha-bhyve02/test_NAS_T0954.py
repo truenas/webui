@@ -108,6 +108,10 @@ def the_user_edit_page_should_open(driver):
 @then('Change "Disable Password" to No and click save')
 def change_disable_password_to_no_and_click_save(driver):
     """Change "Disable Password" to No and click save."""
+    assert wait_on_element(driver, 7, '//label[contains(.,"Auxiliary Groups")]')
+    element = driver.find_element_by_xpath('//label[contains(.,"Auxiliary Groups")]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
     assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Disable Password"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Disable Password"]').click()
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Disable Password_No"]', 'clickable')

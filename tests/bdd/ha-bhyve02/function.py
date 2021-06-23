@@ -35,7 +35,7 @@ def wait_on_element(driver, wait, xpath, condition=None):
         except TimeoutException:
             return False
     elif condition == 'inputable':
-        time.sleep(0.5)
+        time.sleep(1)
         try:
             WebDriverWait(driver, wait).until(ec.element_to_be_clickable((By.XPATH, xpath)))
             return True

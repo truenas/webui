@@ -329,7 +329,7 @@ def starting_with_sda_click__click_wipe_check_confirm_and_click_continue_repeat_
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
         assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-        assert wait_on_element(driver, 10, '//span[contains(.,"Disk Wiped successfully")]')
+        assert wait_on_element(driver, 15, '//span[contains(.,"Disk Wiped successfully")]')
         assert wait_on_element(driver, 5, '//button[contains(.,"CLOSE")]', 'clickable')
         driver.find_element_by_xpath('//button[contains(.,"CLOSE")]').click()
 
@@ -422,7 +422,7 @@ def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
     # need to wait for all controller to be online.
     assert wait_on_element(driver, 30, '//div[contains(.,"tn-bhyve01-nodea")]')
-    assert wait_on_element(driver, 30, '//div[contains(.,"tn-bhyve01-nodeb")]')
+    assert wait_on_element(driver, 120, '//div[contains(.,"tn-bhyve01-nodeb")]')
 
 
 @then('both controllers should show version and license on the dashboard')

@@ -108,7 +108,7 @@ def the_user_edit_page_should_open(driver):
 @then('Change the password in both fields and click save')
 def change_the_password_in_both_fields_and_click_save(driver):
     """Change the password in both fields and click save."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Password"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Password"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing1')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing1')
@@ -117,7 +117,7 @@ def change_the_password_in_both_fields_and_click_save(driver):
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 7, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
