@@ -43,6 +43,8 @@ export class TaskManagerComponent implements OnInit {
   timeZone: string;
   readonly EntityJobState = EntityJobState;
 
+  readonly maxJobs = 50;
+
   constructor(
     public dialogRef: MatDialogRef<TaskManagerComponent>,
     private ws: WebSocketService,
@@ -61,32 +63,33 @@ export class TaskManagerComponent implements OnInit {
     this.sysGeneralService.getSysInfo().pipe(untilDestroyed(this)).subscribe((systemInfo) => {
       this.timeZone = systemInfo.timezone;
     });
-    this.ws.call('core.get_jobs', [[], { order_by: ['-id'], limit: 50 }]).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        this.dataSource.data = res;
-        this.dataSource.sort = this.sort;
-      },
-      () => {
+    this.ws.call('core.get_jobs', [[], { order_by: ['-id'], limit: this.maxJobs }])
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        (res) => {
+          this.dataSource.data = res;
+          this.dataSource.sort = this.sort;
+        },
+        () => {
 
-      },
-    );
+        },
+      );
 
-    this.getData().pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        // only update exist jobs or add latest jobs
-        if (res.id >= this.dataSource.data[49].id) {
-          const targetRow = _.findIndex(this.dataSource.data, { id: res.id });
-          if (targetRow === -1) {
-            this.dataSource.data.push(res);
-          } else {
-            for (const key in this.dataSource.data[targetRow]) {
-              this.dataSource.data[targetRow][key] = res[key];
-            }
+    this.getData().pipe(untilDestroyed(this)).subscribe((res) => {
+      // only update exist jobs or add latest jobs
+      const lastJob = this.dataSource.data[Math.min(this.maxJobs - 1, this.dataSource.data.length - 1)];
+      if (res.id >= lastJob?.id) {
+        const targetRow = _.findIndex(this.dataSource.data, { id: res.id });
+        if (targetRow === -1) {
+          this.dataSource.data.push(res);
+        } else {
+          for (const key in this.dataSource.data[targetRow]) {
+            this.dataSource.data[targetRow][key] = res[key];
           }
-          this.taskTable.renderRows();
         }
-      },
-    );
+        this.taskTable.renderRows();
+      }
+    });
   }
 
   getData(): Observable<any> {
