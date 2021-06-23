@@ -148,7 +148,7 @@ module.exports = {
         }],
         "rxjs/finnish": ["error", {
           "parameters": true,
-          "properties": false,
+          "properties": false, // TODO: Should be true, hard to implement now.
           "variables": true,
           "functions": false,
           "methods": false,

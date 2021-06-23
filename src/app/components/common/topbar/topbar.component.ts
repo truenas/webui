@@ -236,7 +236,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.hostname = evt.data.hostname;
     });
 
-    this.sysGenService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGenService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.systemType = res;
     });
 
@@ -250,7 +250,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
 
-    this.ws.onCloseSubject.pipe(untilDestroyed(this)).subscribe(() => {
+    this.ws.onCloseSubject$.pipe(untilDestroyed(this)).subscribe(() => {
       this.modalService.close('slide-in-form');
     });
   }
@@ -267,7 +267,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   checkLegacyUISetting(): void {
-    this.sysGenService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGenService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.legacy_ui) {
         this.exposeLegacyUI = res.legacy_ui;
         window.localStorage.setItem('exposeLegacyUI', res.legacy_ui);

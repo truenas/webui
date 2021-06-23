@@ -111,7 +111,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   checkSystemType(): void {
     if (!this.logo_ready) {
-      this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
+      this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
         this.logo_ready = true;
         this.product_type = res as ProductType;
         if (this.interval) {

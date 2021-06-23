@@ -9,8 +9,8 @@ import { ShellConnectedEvent } from '../interfaces/shell.interface';
 
 @Injectable()
 export class ShellService {
-  onCloseSubject: Subject < any > ;
-  onOpenSubject: Subject < any > ;
+  onCloseSubject$: Subject<any> ;
+  onOpenSubject$: Subject<any> ;
   pendingCalls: any;
   pendingMessages: any[] = [];
   socket: WebSocket;
@@ -31,8 +31,8 @@ export class ShellService {
   subscriptions: Map < string, any[]> = new Map < string, any[]>();
 
   constructor(private _router: Router) {
-    this.onOpenSubject = new Subject();
-    this.onCloseSubject = new Subject();
+    this.onOpenSubject$ = new Subject();
+    this.onCloseSubject$ = new Subject();
     this.pendingCalls = new Map();
   }
 
@@ -47,7 +47,7 @@ export class ShellService {
   }
 
   onopen(): void {
-    this.onOpenSubject.next(true);
+    this.onOpenSubject$.next(true);
     if (this.vmId) {
       this.send(JSON.stringify({ token: this.token, options: { vm_id: this.vmId } }));
     } else if (this.podInfo) {
@@ -77,7 +77,7 @@ export class ShellService {
 
   onclose(): void {
     this.connected = false;
-    this.onCloseSubject.next(true);
+    this.onCloseSubject$.next(true);
     this.shellConnected.emit({
       connected: this.connected,
     });

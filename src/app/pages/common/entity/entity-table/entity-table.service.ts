@@ -1,5 +1,4 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { WebSocketService } from 'app/services/ws.service';
@@ -19,7 +18,6 @@ export interface Command {
   providedIn: 'root',
 })
 export class EntityTableService implements OnDestroy {
-  dataEvents: Subject<CoreEvent> = new Subject<CoreEvent>();
   private tableUtils: Worker;
 
   constructor(private ws: WebSocketService, private core: CoreService) {

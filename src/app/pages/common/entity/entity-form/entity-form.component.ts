@@ -197,7 +197,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   async ngOnInit(): Promise<void> {
     // get system general setting
-    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         if (this.conf.isBasicMode) {
           if (res.advancedmode) {

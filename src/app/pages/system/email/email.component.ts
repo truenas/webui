@@ -36,7 +36,7 @@ export class EmailComponent implements FormConfiguration {
   updateCall: 'mail.update' = 'mail.update';
   entityEdit: EntityFormComponent;
   rootEmail: string;
-  private oauthCreds: BehaviorSubject<OAuthData> = new BehaviorSubject({});
+  private oauthCreds$: BehaviorSubject<OAuthData> = new BehaviorSubject({});
   customSubmit = this.saveConfigSubmit;
   custActions = [{
     id: 'send_mail',
@@ -47,7 +47,7 @@ export class EmailComponent implements FormConfiguration {
         if (!value.send_mail_method) {
           delete value.pass;
           value.smtp = false;
-          value.oauth = this.oauthCreds.getValue();
+          value.oauth = this.oauthCreds$.getValue();
         } else {
           delete value.oauth;
         }
@@ -212,7 +212,7 @@ export class EmailComponent implements FormConfiguration {
                 if (message.data.error) {
                   dialogService.errorReport(T('Error'), message.data.error);
                 } else {
-                  self.oauthCreds.next(message.data.result);
+                  self.oauthCreds$.next(message.data.result);
                   self.checkForOauthCreds();
                 }
               }
@@ -245,7 +245,7 @@ export class EmailComponent implements FormConfiguration {
     } else {
       this.sendMailMethod.setValue(false);
     }
-    this.oauthCreds.next(data.oauth);
+    this.oauthCreds$.next(data.oauth);
     delete data.pass;
     return data;
   }
@@ -259,7 +259,7 @@ export class EmailComponent implements FormConfiguration {
     this.smtp = entityEdit.formGroup.controls['smtp'] as FormControl;
     this.sendMailMethod = entityEdit.formGroup.controls['send_mail_method'] as FormControl;
 
-    this.oauthCreds.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.oauthCreds$.pipe(untilDestroyed(this)).subscribe((value) => {
       this.sendMailMethod.setValue(!value.client_id);
     });
 
@@ -281,7 +281,7 @@ export class EmailComponent implements FormConfiguration {
   }
 
   checkForOauthCreds(): void {
-    if (this.oauthCreds.getValue().client_id) {
+    if (this.oauthCreds$.getValue().client_id) {
       this.entityEdit.setDisabled('oauth_applied', false, false);
       this.entityEdit.setDisabled('oauth_not_applied', true, true);
     } else {
@@ -310,11 +310,11 @@ export class EmailComponent implements FormConfiguration {
     if (emailConfig.pass && typeof emailConfig.pass === 'string' && emailConfig.pass.trim() === '') {
       delete emailConfig.pass;
     }
-    if (this.oauthCreds.getValue().client_id) {
+    if (this.oauthCreds$.getValue().client_id) {
       const oauth = {
-        client_id: this.oauthCreds.getValue().client_id,
-        client_secret: this.oauthCreds.getValue().client_secret,
-        refresh_token: this.oauthCreds.getValue().refresh_token,
+        client_id: this.oauthCreds$.getValue().client_id,
+        client_secret: this.oauthCreds$.getValue().client_secret,
+        refresh_token: this.oauthCreds$.getValue().refresh_token,
       };
       emailConfig.oauth = oauth;
 
@@ -330,7 +330,7 @@ export class EmailComponent implements FormConfiguration {
     if (is_smtp_method) {
       // switches from Gmail Oauth to SMTP method and remove oauth data
       emailConfig.oauth = null;
-      this.oauthCreds.next({});
+      this.oauthCreds$.next({});
     }
 
     if (emailConfig.oauth_applied) {

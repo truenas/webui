@@ -34,7 +34,7 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
     protected storageService: StorageService, private sysGeneralService: SystemGeneralService) {}
 
   ngOnInit(): void {
-    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.timezone = res.timezone;
       this._ws
         .call('zfs.snapshot.query', [[['id', '=', this.config.name]]])

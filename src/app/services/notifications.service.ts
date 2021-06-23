@@ -23,7 +23,7 @@ export interface NotificationAlert {
 @UntilDestroy()
 @Injectable()
 export class NotificationsService {
-  private subject = new Subject<any>();
+  private subject$ = new Subject<any>();
   private notifications: NotificationAlert[] = [];
   private locale = 'en-US';
   private timeZone = 'UTC';
@@ -36,14 +36,14 @@ export class NotificationsService {
   }
 
   initMe(): void {
-    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.timezone !== 'WET' && res.timezone !== 'posixrules') {
         this.timeZone = res.timezone;
       }
 
       this.ws.call('alert.list').pipe(untilDestroyed(this)).subscribe((alerts) => {
         this.notifications = this.alertsArrivedHandler(alerts);
-        this.subject.next(this.notifications);
+        this.subject$.next(this.notifications);
       });
 
       this.ws.sub<Alert>('alert.list').pipe(untilDestroyed(this)).subscribe((alert) => {
@@ -52,7 +52,7 @@ export class NotificationsService {
         if (!_.find(this.notifications, { id: notification.id })) {
           this.notifications.push(notification);
         }
-        this.subject.next(this.notifications);
+        this.subject$.next(this.notifications);
       });
 
       this.ws.subscribe('alert.list').pipe(untilDestroyed(this)).subscribe((res) => {
@@ -62,14 +62,14 @@ export class NotificationsService {
           if (index !== -1) {
             this.notifications.splice(index, 1);
           }
-          this.subject.next(this.notifications);
+          this.subject$.next(this.notifications);
         }
       });
     });
   }
 
   getNotifications(): Observable<any> {
-    return this.subject.asObservable();
+    return this.subject$.asObservable();
   }
 
   getNotificationList(): NotificationAlert[] {
@@ -90,7 +90,7 @@ export class NotificationsService {
       }
     });
 
-    this.subject.next(this.notifications);
+    this.subject$.next(this.notifications);
   }
 
   restoreNotifications(notifications: NotificationAlert[]): void {
@@ -107,7 +107,7 @@ export class NotificationsService {
       }
     });
 
-    this.subject.next(this.notifications);
+    this.subject$.next(this.notifications);
   }
 
   private alertsArrivedHandler(alerts: Alert[]): NotificationAlert[] {

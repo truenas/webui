@@ -50,7 +50,7 @@ interface PoolDiskInfo {
   styleUrls: ['./volume-status.component.scss'],
 })
 export class VolumeStatusComponent implements OnInit, OnDestroy {
-  actionEvents: Subject<CoreEvent>;
+  actionEvents$: Subject<CoreEvent>;
   poolScan: PoolScan;
   timeRemaining = {
     days: 0,
@@ -229,15 +229,15 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Setup Global Actions
     const actionId = 'refreshBtn';
-    this.actionEvents = new Subject();
-    this.actionEvents.pipe(untilDestroyed(this)).subscribe((evt) => {
+    this.actionEvents$ = new Subject();
+    this.actionEvents$.pipe(untilDestroyed(this)).subscribe((evt) => {
       if (evt.data[actionId]) {
         this.refresh();
       }
     });
 
     const toolbarConfig: ToolbarConfig = {
-      target: this.actionEvents,
+      target: this.actionEvents$,
       controls: [
         {
           type: 'button',
@@ -260,7 +260,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.actionEvents.complete();
+    this.actionEvents$.complete();
     this.core.unregister({ observerClass: this });
   }
 

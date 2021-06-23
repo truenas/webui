@@ -66,7 +66,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     private layoutService: LayoutService,
   ) {
     // detect server type
-    sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
+    sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.product_type = res as ProductType;
     });
 
@@ -179,7 +179,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   checkIfConsoleMsgShows(): void {
-    this.sysGeneralService.getAdvancedConfig.pipe(
+    this.sysGeneralService.getAdvancedConfig$.pipe(
       untilDestroyed(this),
     ).subscribe((res) => this.onShowConsoleFooterBar(res.consolemsg));
   }

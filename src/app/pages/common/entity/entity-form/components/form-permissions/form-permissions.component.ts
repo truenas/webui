@@ -1,10 +1,9 @@
 import {
-  Component, OnInit, OnDestroy,
+  Component, OnInit,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
@@ -14,7 +13,7 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   styleUrls: ['../dynamic-field/dynamic-field.scss', 'form-permissions.scss'],
   templateUrl: './form-permissions.component.html',
 })
-export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
+export class FormPermissionsComponent implements Field, OnInit {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
@@ -34,8 +33,6 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
   private other = 0;
   private value: string;
   private control: any;
-
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   private formatRe = new RegExp('^[0-7][0-7][0-7]$');
 
@@ -159,11 +156,6 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
       this.setValue();
     }
     this.refreshPermissions();
-  }
-
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 
   setValue(value = '000'): void {

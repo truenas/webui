@@ -72,7 +72,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   };
 
   preInit(): void {
-    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.scrub_interval = res.boot_scrub;
       this.updateBootState();
     });
@@ -305,7 +305,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     return [{
       label: T('Stats/Settings'),
       onClick: () => {
-        this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+        this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
           this.scrub_interval = res.boot_scrub;
           const localWS = this.ws;
           const localDialog = this.dialog;

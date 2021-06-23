@@ -611,7 +611,7 @@ export class SMBFormComponent implements FormConfiguration {
       }
     }, 700);
 
-    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((config) => {
+    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((config) => {
       this.isBasicMode = !config.advancedmode;
       this.updateForm();
     });
