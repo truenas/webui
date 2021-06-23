@@ -72,10 +72,13 @@ def the_pool_manager_appears_enter_the_tank_for_pool_name(driver):
 @then('click sdb checkbox, press the right arrow under Data VDevs')
 def click_sdb_checkbox_press_the_right_arrow_under_data_vdevs(driver):
     """click sdb checkbox, press the right arrow under Data VDevs."""
+    time.sleep(2)
     assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__disks-sdb"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-sdb"]').click()
+    time.sleep(2)
     assert wait_on_element(driver, 5, '//button[@id="vdev__add-button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
+    time.sleep(2)
     assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__force-submit-checkbox"]').click()
 
