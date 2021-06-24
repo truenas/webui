@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/system/cron-form';
+import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -137,10 +138,12 @@ export class CronFormComponent {
     });
   }
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: Cronjob): any {
     const schedule = data['schedule'];
-    data['cron_picker'] = `${schedule.minute} ${schedule.hour} ${schedule.dom} ${schedule.month} ${schedule.dow}`;
-    return data;
+    return {
+      ...data,
+      cron_picker: `${schedule.minute} ${schedule.hour} ${schedule.dom} ${schedule.month} ${schedule.dow}`,
+    };
   }
 
   beforeSubmit(value: any): void {

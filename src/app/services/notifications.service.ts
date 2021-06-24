@@ -3,8 +3,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Observable, Subject } from 'rxjs';
 import { AlertLevel } from 'app/enums/alert-level.enum';
+import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { WebSocketService, SystemGeneralService } from 'app/services';
+import { SystemGeneralService, WebSocketService } from 'app/services';
 
 export interface NotificationAlert {
   id: string;
@@ -55,10 +56,10 @@ export class NotificationsService {
         this.subject.next(this.notifications);
       });
 
-      this.ws.subscribe('alert.list').pipe(untilDestroyed(this)).subscribe((res) => {
+      this.ws.subscribe('alert.list').pipe(untilDestroyed(this)).subscribe((event) => {
         // check for changed alerts
-        if (res && res.msg === 'changed' && res.cleared) {
-          const index = _.findIndex(this.notifications, { id: res.id });
+        if (event && event.msg === ApiEventMessage.Changed && (event as any).cleared) {
+          const index = _.findIndex(this.notifications, { id: String(event.id) });
           if (index !== -1) {
             this.notifications.splice(index, 1);
           }

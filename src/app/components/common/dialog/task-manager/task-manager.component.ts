@@ -12,7 +12,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
+import { Job } from 'app/interfaces/job.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   WebSocketService, JobService, SystemGeneralService, DialogService, StorageService,
@@ -37,11 +38,11 @@ import { T } from 'app/translate-marker';
 export class TaskManagerComponent implements OnInit {
   @ViewChild('taskTable', { static: true }) taskTable: MatTable<any>;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  dataSource: MatTableDataSource<any>;
+  dataSource: MatTableDataSource<Job>;
   displayedColumns = ['state', 'method', 'percent'];
   expandedElement: any | null;
   timeZone: string;
-  readonly EntityJobState = EntityJobState;
+  readonly EntityJobState = JobState;
 
   readonly maxJobs = 50;
 
@@ -56,7 +57,7 @@ export class TaskManagerComponent implements OnInit {
     protected storageService: StorageService,
     protected http: HttpClient,
   ) {
-    this.dataSource = new MatTableDataSource<any>([]);
+    this.dataSource = new MatTableDataSource<Job>([]);
   }
 
   ngOnInit(): void {
@@ -84,7 +85,7 @@ export class TaskManagerComponent implements OnInit {
           this.dataSource.data.push(res);
         } else {
           for (const key in this.dataSource.data[targetRow]) {
-            this.dataSource.data[targetRow][key] = res[key];
+            (this.dataSource.data[targetRow][key as keyof Job] as any) = res[key];
           }
         }
         this.taskTable.renderRows();
@@ -94,8 +95,8 @@ export class TaskManagerComponent implements OnInit {
 
   getData(): Observable<any> {
     const source = Observable.create((observer: any) => {
-      this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((res) => {
-        observer.next(res.fields);
+      this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
+        observer.next(event.fields);
       });
     });
     return source;

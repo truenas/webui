@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core.service';
 import { AlertLevel } from 'app/enums/alert-level.enum';
+import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import helptext from 'app/helptext/system/alert-settings';
 import { AlertCategory } from 'app/interfaces/alert.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -65,14 +66,14 @@ export class AlertConfigComponent implements OnInit {
 
   ngOnInit(): void {
     this.loader.open();
-    this.ws.call('alert.list_policies', []).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        for (let i = 0; i < res.length; i++) {
-          let label = res[i];
-          if (res[i] === 'IMMEDIATELY') {
-            label = res[i] + ' (Default)';
+    this.ws.call('alert.list_policies').pipe(untilDestroyed(this)).subscribe(
+      (policies) => {
+        for (let i = 0; i < policies.length; i++) {
+          let label: string = policies[i];
+          if (policies[i] === AlertPolicy.Immediately) {
+            label = policies[i] + ' (Default)';
           }
-          this.settingOptions.push({ label, value: res[i] });
+          this.settingOptions.push({ label, value: policies[i] });
         }
       },
       (error) => {
@@ -118,11 +119,15 @@ export class AlertConfigComponent implements OnInit {
                 placeholder: T('Set Frequency'),
                 tooltip: helptext.policy_tooltip,
                 options: this.settingOptions,
-                value: 'IMMEDIATELY',
+                value: AlertPolicy.Immediately,
               },
             );
 
-            this.defaults.push({ id: c.id, level: c.level, policy: 'IMMEDIATELY' });
+            this.defaults.push({
+              id: c.id,
+              level: c.level,
+              policy: AlertPolicy.Immediately,
+            });
           }
 
           const fieldSet = {

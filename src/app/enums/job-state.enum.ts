@@ -1,4 +1,4 @@
-export enum EntityJobState {
+export enum JobState {
   Pending = 'PENDING',
   Running = 'RUNNING',
   Hold = 'HOLD',

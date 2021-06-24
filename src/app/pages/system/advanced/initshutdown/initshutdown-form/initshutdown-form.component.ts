@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { take } from 'rxjs/operators';
+import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
+import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import helptext from 'app/helptext/system/initshutdown';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -47,11 +49,11 @@ export class InitshutdownFormComponent implements FormConfiguration {
           options: [
             {
               label: 'Command',
-              value: 'COMMAND',
+              value: InitShutdownScriptType.Command,
             },
             {
               label: 'Script',
-              value: 'SCRIPT',
+              value: InitShutdownScriptType.Script,
             },
           ],
           value: 'COMMAND',
@@ -86,15 +88,15 @@ export class InitshutdownFormComponent implements FormConfiguration {
             },
             {
               label: 'Pre Init',
-              value: 'PREINIT',
+              value: InitShutdownScriptWhen.PreInit,
             },
             {
               label: 'Post Init',
-              value: 'POSTINIT',
+              value: InitShutdownScriptWhen.PostInit,
             },
             {
               label: 'Shutdown',
-              value: 'SHUTDOWN',
+              value: InitShutdownScriptWhen.Shutdown,
             },
           ],
           value: '',

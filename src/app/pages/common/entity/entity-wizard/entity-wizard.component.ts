@@ -186,7 +186,7 @@ export class EntityWizardComponent implements OnInit {
         (res) => {
           this.loader.close();
           if (res.error) {
-            this.dialog.errorReport(res.error, res.reason, res.exception);
+            this.dialog.errorReport(res.error, (res as any).reason, res.exception);
           } else if (this.conf.route_success) {
             this.router.navigate(new Array('/').concat(this.conf.route_success));
           } else {

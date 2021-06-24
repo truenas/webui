@@ -21,7 +21,7 @@ import {
 } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { Interval } from 'app/interfaces/timeout.interface';
 import {
@@ -136,7 +136,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   hasActions = true;
   sortKey: string;
   filterValue = ''; // the filter string filled in search input.
-  readonly EntityJobState = EntityJobState;
+  readonly EntityJobState = JobState;
   // Global Actions in Page Title
   protected actionsConfig: any;
   loaderOpen = false;
@@ -870,7 +870,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  doDeleteJob(item: any): Observable<{ state: EntityJobState } | boolean> {
+  doDeleteJob(item: any): Observable<{ state: JobState } | boolean> {
     const deleteMsg = this.getDeleteMessage(item);
     let id: string;
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
@@ -976,7 +976,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
             .pipe(untilDestroyed(this))
             .subscribe(
               (res1) => {
-                if (res1.state === EntityJobState.Success) {
+                if (res1.state === JobState.Success) {
                   this.loader.close();
                   this.loaderOpen = false;
                   this.getData();
@@ -1084,16 +1084,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
   }
 
-  getButtonClass(state: EntityJobState): string {
+  getButtonClass(state: JobState): string {
     switch (state) {
-      case EntityJobState.Pending: return 'fn-theme-orange';
-      case EntityJobState.Running: return 'fn-theme-orange';
-      case EntityJobState.Aborted: return 'fn-theme-orange';
-      case EntityJobState.Finished: return 'fn-theme-green';
-      case EntityJobState.Success: return 'fn-theme-green';
-      case EntityJobState.Error: return 'fn-theme-red';
-      case EntityJobState.Failed: return 'fn-theme-red';
-      case EntityJobState.Hold: return 'fn-theme-yellow';
+      case JobState.Pending: return 'fn-theme-orange';
+      case JobState.Running: return 'fn-theme-orange';
+      case JobState.Aborted: return 'fn-theme-orange';
+      case JobState.Finished: return 'fn-theme-green';
+      case JobState.Success: return 'fn-theme-green';
+      case JobState.Error: return 'fn-theme-red';
+      case JobState.Failed: return 'fn-theme-red';
+      case JobState.Hold: return 'fn-theme-yellow';
       default: return 'fn-theme-primary';
     }
   }
@@ -1102,7 +1102,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (colConfig.infoStates) {
       return _.indexOf(colConfig.infoStates, value) < 0;
     }
-    return value !== EntityJobState.Pending;
+    return value !== JobState.Pending;
   }
 
   runningStateButton(jobid: number): void {
