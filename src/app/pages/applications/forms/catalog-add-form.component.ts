@@ -17,6 +17,7 @@ export class CatalogAddFormComponent implements FormConfiguration {
   queryCall: 'catalog.query' = 'catalog.query';
   customFilter: any[];
   addCall: 'catalog.create' = 'catalog.create';
+  isCreateJob = true;
   isEntity = true;
   protected entityForm: EntityFormComponent;
   title = helptext.catalogForm.title;
@@ -65,11 +66,14 @@ export class CatalogAddFormComponent implements FormConfiguration {
     },
   ];
 
-  constructor(private mdDialog: MatDialog, private dialogService: DialogService,
-    private modalService: ModalService) {
-  }
+  constructor(
+    private mdDialog: MatDialog,
+    private dialogService: DialogService,
+    private modalService: ModalService,
+  ) {}
 
   afterModalFormClosed(): void {
+    this.dialogService.Info(helptext.catalogForm.dialog.title, helptext.catalogForm.dialog.message, '500px', 'info', true);
     this.modalService.refreshTable();
   }
 }
