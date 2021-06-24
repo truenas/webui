@@ -126,13 +126,12 @@ def click_the_edit_button_that_appears(driver):
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
     assert wait_on_element(driver, 7, '//h3[contains(.,"Edit User")]')
-    time.sleep(0.5)
 
 
 @then('In the SSH public Key field, paste a public key and save the change')
 def in_the_ssh_public_key_field_paste_a_public_key_and_save_the_change(driver, ssh_key):
     """In the SSH public Key field, paste a public key and save the change."""
-    assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'clickable')
+    assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'inputable')
     driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').clear()
     driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').send_keys(ssh_key)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
@@ -143,7 +142,7 @@ def in_the_ssh_public_key_field_paste_a_public_key_and_save_the_change(driver, s
 def change_should_be_saved(driver):
     """Change should be saved."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert not wait_on_element(driver, 1, 7, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element_disappear(driver, 7, '//h3[contains(.,"Edit User")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//td[contains(.,"root")]')
 
