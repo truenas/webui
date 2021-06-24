@@ -35,10 +35,6 @@ export class ApplicationsService {
     return this.ws.call('kubernetes.bindip_choices');
   }
 
-  getDockerImages(): Observable<any[]> {
-    return this.ws.call('docker.images.query');
-  }
-
   getCatItems(label: string): Observable<any> {
     return this.ws.call('catalog.items', [label]);
   }

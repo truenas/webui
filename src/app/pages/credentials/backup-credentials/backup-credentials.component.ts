@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
+import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { AppTableAction } from 'app/pages/common/entity/table/table.component';
 import {
   WebSocketService, KeychainCredentialService, AppLoaderService,
@@ -26,7 +27,7 @@ export class BackupCredentialsComponent implements OnInit {
   protected sshConnections: SshConnectionsFormComponent;
   protected sshKeypairs: SshKeypairsFormComponent;
   protected cloudCredentials: CloudCredentialsFormComponent;
-  protected providers: any[];
+  protected providers: CloudsyncProvider[];
 
   constructor(private aroute: ActivatedRoute, private keychainCredentialService: KeychainCredentialService,
     private ws: WebSocketService, private loader: AppLoaderService, private dialogService: DialogService,
@@ -44,8 +45,8 @@ export class BackupCredentialsComponent implements OnInit {
     });
 
     this.cloudCredentialsService.getProviders().pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        this.providers = res;
+      (providers) => {
+        this.providers = providers;
         this.getCards();
       },
     );

@@ -12,6 +12,7 @@ import { Alert, AlertCategory } from 'app/interfaces/alert.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
+import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
 import { Bootenv, SetBootenvAttributeParams } from 'app/interfaces/bootenv.interface';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import {
@@ -19,7 +20,11 @@ import {
   CertificateAuthorityCreate,
   CertificateAuthorityUpdate,
 } from 'app/interfaces/certificate-authority.interface';
-import { Certificate } from 'app/interfaces/certificate.interface';
+import {
+  Certificate,
+  CertificateProfiles,
+  ExtendedKeyUsageChoices,
+} from 'app/interfaces/certificate.interface';
 import {
   ChartRelease,
   ChartReleaseCreate,
@@ -27,6 +32,8 @@ import {
   ChartReleaseQueryParams,
 } from 'app/interfaces/chart-release.interface';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
@@ -63,7 +70,9 @@ import { ReportingConfig } from 'app/interfaces/reporting.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
-import { SmartTest } from 'app/interfaces/smart-test.interface';
+import {
+  SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTest,
+} from 'app/interfaces/smart-test.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Disk, DiskQueryOptions, DiskUpdate } from 'app/interfaces/storage.interface';
@@ -71,9 +80,10 @@ import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemUpdate } from 'app/interfaces/system-update.interface';
+import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
-import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { VirtualMachine, VmStopParams } from 'app/interfaces/virtual-machine.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 
 /**
@@ -135,7 +145,7 @@ export type ApiDirectory = {
   // Boot
   'boot.set_scrub_interval': { params: any; response: any };
   'boot.replace': { params: any; response: any };
-  'boot.get_state': { params: any; response: any };
+  'boot.get_state': { params: void; response: BootPoolState };
   'boot.detach': { params: any; response: any };
   'boot.attach': { params: any; response: any };
   'boot.scrub': { params: any; response: any };
@@ -164,8 +174,8 @@ export type ApiDirectory = {
   'certificate.update': { params: any; response: any };
   'certificate.ec_curve_choices': { params: any; response: any };
   'certificate.country_choices': { params: any; response: any };
-  'certificate.extended_key_usage_choices': { params: any; response: any };
-  'certificate.profiles': { params: any; response: any };
+  'certificate.extended_key_usage_choices': { params: void; response: ExtendedKeyUsageChoices };
+  'certificate.profiles': { params: void; response: CertificateProfiles };
   'certificate.acme_server_choices': { params: any; response: any };
   'certificate.get_domain_names': { params: any; response: any };
 
@@ -205,8 +215,8 @@ export type ApiDirectory = {
   'config.reset': { params: any; response: any };
 
   // Cloudsync
-  'cloudsync.providers': { params: any; response: any };
-  'cloudsync.credentials.query': { params: any; response: any };
+  'cloudsync.providers': { params: void; response: CloudsyncProvider[] };
+  'cloudsync.credentials.query': { params: QueryParams<CloudsyncCredential>; response: CloudsyncCredential[] };
   'cloudsync.credentials.create': { params: any; response: any };
   'cloudsync.credentials.update': { params: any; response: any };
   'cloudsync.credentials.verify': { params: any; response: any };
@@ -228,9 +238,6 @@ export type ApiDirectory = {
   'container.image.query': { params: void; response: ContainerImage[] };
   'container.image.pull': { params: [PullContainerImageParams]; response: any };
   'container.image.delete': { params: any; response: any };
-
-  // Docker
-  'docker.images.query': { params: any; response: any };
 
   // DynDNS
   'dyndns.provider_choices': { params: any; response: any };
@@ -612,9 +619,9 @@ export type ApiDirectory = {
 
   // SMART
   'smart.test.disk_choices': { params: any; response: any };
-  'smart.update': { params: any; response: any };
-  'smart.config': { params: any; response: any };
-  'smart.test.manual_test': { params: any; response: any };
+  'smart.update': { params: [SmartConfigUpdate]; response: SmartConfig };
+  'smart.config': { params: void; response: SmartConfig };
+  'smart.test.manual_test': { params: [SmartManualTestParams[]]; response: any };
   'smart.test.query': { params: QueryParams<SmartTest>; response: SmartTest[] };
   'smart.test.create': { params: any; response: any };
   'smart.test.results': { params: any; response: any };
@@ -675,7 +682,7 @@ export type ApiDirectory = {
   'ftp.config': { params: any; response: any };
 
   // Truecommand
-  'truecommand.config': { params: any; response: any };
+  'truecommand.config': { params: void; response: TrueCommandConfig };
   'truecommand.update': { params: any; response: any };
   'truecommand.connected': { params: any; response: any };
 
@@ -700,15 +707,15 @@ export type ApiDirectory = {
   'vm.device.create': { params: any; response: any };
   'vm.random_mac': { params: void; response: string };
   'vm.device.query': { params: any; response: any };
-  'vm.stop': { params: any; response: any };
-  'vm.maximum_supported_vcpus': { params: any; response: any };
+  'vm.stop': { params: VmStopParams; response: any };
+  'vm.maximum_supported_vcpus': { params: void; response: number };
   'vm.device.update': { params: any; response: any };
   'vm.port_wizard': { params: any; response: any };
-  'vm.get_available_memory': { params: any; response: any };
+  'vm.get_available_memory': { params: void; response: number };
   'vm.clone': { params: any; response: any };
   'vm.update': { params: any; response: any };
   'vm.poweroff': { params: any; response: any };
-  'vm.restart': { params: any; response: any };
+  'vm.restart': { params: [/* id */ number]; response: any };
   'vm.get_display_devices': { params: any; response: any };
   'vm.start': { params: any; response: any };
   'vm.get_vmemory_in_use': { params: any; response: any };
@@ -731,7 +738,7 @@ export type ApiDirectory = {
   'user.shell_choices': { params: any; response: any };
   'user.set_attribute': { params: any; response: any };
   'user.get_next_uid': { params: any; response: any };
-  'user.has_root_password': { params: any; response: any };
+  'user.has_root_password': { params: void; response: boolean };
 
   // UPS
   'ups.update': { params: any; response: any };
@@ -776,7 +783,7 @@ export type ApiDirectory = {
   'initshutdownscript.query': { params: QueryParams<InitShutdownScript>; response: InitShutdownScript[] };
   'initshutdownscript.create': { params: any; response: any };
   'initshutdownscript.update': { params: any; response: any };
-  'initshutdownscript.delete': { params: any; response: any };
+  'initshutdownscript.delete': { params: [/* id */ number]; response: boolean };
 };
 
 /**

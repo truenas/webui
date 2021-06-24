@@ -14,11 +14,13 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
 import helptext from 'app/helptext/topbar';
 import { CoreEvent } from 'app/interfaces/events';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
+import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
@@ -92,9 +94,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   protected tc_updateCall: 'truecommand.update' = 'truecommand.update';
   protected isTcStatusOpened = false;
   protected tcStatusDialogRef: MatDialogRef<TruecommandComponent>;
-  tcStatus: any;
+  tcStatus: TrueCommandConfig;
 
   readonly FailoverDisabledReason = FailoverDisabledReason;
+  readonly TrueCommandStatus = TrueCommandStatus;
 
   constructor(
     public themeService: ThemeService,
@@ -171,13 +174,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.themesMenu = this.themeService.themesMenu;
     });
 
-    this.ws.call(this.tc_queryCall).pipe(untilDestroyed(this)).subscribe((res) => {
-      this.tcStatus = res;
-      this.tcConnected = !!res.api_key;
+    this.ws.call(this.tc_queryCall).pipe(untilDestroyed(this)).subscribe((config) => {
+      this.tcStatus = config;
+      this.tcConnected = !!config.api_key;
     });
-    this.ws.subscribe(this.tc_queryCall).pipe(untilDestroyed(this)).subscribe((res) => {
-      this.tcStatus = res.fields;
-      this.tcConnected = !!res.fields.api_key;
+    this.ws.subscribe(this.tc_queryCall).pipe(untilDestroyed(this)).subscribe((event) => {
+      this.tcStatus = event.fields;
+      this.tcConnected = !!event.fields.api_key;
       if (this.isTcStatusOpened && this.tcStatusDialogRef) {
         this.tcStatusDialogRef.componentInstance.update(this.tcStatus);
       }
@@ -727,7 +730,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           Object.keys(self.tcStatus).forEach((key) => {
             const ctrl = entityDialog.formGroup.controls[key];
             if (ctrl) {
-              ctrl.setValue(self.tcStatus[key]);
+              ctrl.setValue(self.tcStatus[key as keyof TrueCommandConfig]);
             }
           });
         }

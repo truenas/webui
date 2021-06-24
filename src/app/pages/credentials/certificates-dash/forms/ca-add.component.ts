@@ -596,9 +596,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     });
 
     this.usageField = this.getTarget('ExtendedKeyUsage-usages');
-    this.ws.call('certificate.extended_key_usage_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      Object.keys(res).forEach((key) => {
-        this.usageField.options.push({ label: res[key], value: key });
+    this.ws.call('certificate.extended_key_usage_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
+      Object.keys(choices).forEach((key) => {
+        this.usageField.options.push({ label: choices[key], value: key });
       });
     });
 

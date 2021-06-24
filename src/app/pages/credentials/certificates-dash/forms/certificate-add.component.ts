@@ -685,16 +685,16 @@ export class CertificateAddComponent implements WizardConfiguration {
     });
 
     this.usageField = this.getTarget('ExtendedKeyUsage-usages');
-    this.ws.call('certificate.extended_key_usage_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      Object.keys(res).forEach((key) => {
-        this.usageField.options.push({ label: res[key], value: key });
+    this.ws.call('certificate.extended_key_usage_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
+      Object.keys(choices).forEach((key) => {
+        this.usageField.options.push({ label: choices[key], value: key });
       });
     });
 
     const profilesField = this.getTarget('profiles');
-    this.ws.call('certificate.profiles').pipe(untilDestroyed(this)).subscribe((res) => {
-      Object.keys(res).forEach((item) => {
-        profilesField.options.push({ label: item, value: res[item] });
+    this.ws.call('certificate.profiles').pipe(untilDestroyed(this)).subscribe((profiles) => {
+      Object.keys(profiles).forEach((item) => {
+        profilesField.options.push({ label: item, value: profiles[item] });
       });
     });
   }
