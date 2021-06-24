@@ -584,6 +584,10 @@ export default {
       placeholder: T('Branch'),
       tooltip: T('Please specify branch of git repository to use for the catalog.'),
     },
+    dialog: {
+      title: 'Success',
+      message: 'Adding large catalogs can take minutes. Please check on the progress in Task Manager.',
+    },
   },
 
   pullImageForm: {
