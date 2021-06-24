@@ -3,9 +3,11 @@ import { Validators, FormControl, ValidationErrors } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -346,18 +348,19 @@ export class ExtentFormComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: IscsiExtent): any {
     this.originalFilesize = parseInt(data.filesize, 10);
-    if (data.type == 'DISK') {
-      if (_.startsWith(data['path'], 'zvol')) {
-        data['disk'] = data['path'];
+    const transformed: any = { ...data };
+    if (data.type == IscsiExtentType.Disk) {
+      if (_.startsWith(data.path, 'zvol')) {
+        transformed['disk'] = data.path;
       }
-      delete data['path'];
+      delete transformed['path'];
     }
     if (data.filesize && data.filesize !== '0') {
-      data.filesize = this.storageService.convertBytestoHumanReadable(data.filesize);
+      transformed.filesize = this.storageService.convertBytestoHumanReadable(this.originalFilesize);
     }
-    return data;
+    return transformed;
   }
 
   customEditCall(value: any): void {

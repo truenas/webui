@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
@@ -88,7 +88,7 @@ export class SnapshotListComponent implements EntityTableConfig {
   }
 
   stateButton(row: any): void {
-    if (row.state.state === EntityJobState.Error) {
+    if (row.state.state === JobState.Error) {
       this.dialogService.errorReport(row.state.state, row.state.error);
     }
   }

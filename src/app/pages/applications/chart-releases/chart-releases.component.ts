@@ -10,6 +10,7 @@ import { Subject, Subscription } from 'rxjs';
 import { ixChartApp, appImagePlaceholder } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core.service';
+import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -138,6 +139,8 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
     parent: this,
   };
 
+  readonly ChartReleaseStatus = ChartReleaseStatus;
+
   constructor(private mdDialog: MatDialog, private appLoaderService: AppLoaderService,
     private dialogService: DialogService, private translate: TranslateService,
     private appService: ApplicationsService, private modalService: ModalService,
@@ -254,7 +257,7 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
             this.appService.getChartReleases().pipe(untilDestroyed(this)).subscribe((charts) => {
               this.chartItems = {};
 
-              charts.forEach((chart: any) => {
+              charts.forEach((chart) => {
                 const chartObj = {
                   name: chart.name,
                   catalog: chart.catalog,
@@ -279,9 +282,9 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
                   selected: false,
                 };
 
-                const ports: any[] = [];
+                const ports: string[] = [];
                 if (chart.used_ports) {
-                  chart.used_ports.forEach((item: any) => {
+                  chart.used_ports.forEach((item) => {
                     ports.push(`${item.port}\\${item.protocol}`);
                   });
                   (chartObj as any)['used_ports'] = ports.join(', ');
@@ -298,11 +301,11 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
   }
 
   refreshStatus(name: string): void {
-    this.appService.getChartReleases(name).pipe(untilDestroyed(this)).subscribe((res) => {
+    this.appService.getChartReleases(name).pipe(untilDestroyed(this)).subscribe((releases) => {
       const item = this.chartItems[name];
       if (item) {
-        item.status = res[0].status;
-        if (item.status === 'DEPLOYING') {
+        item.status = releases[0].status;
+        if (item.status === ChartReleaseStatus.Deploying) {
           setTimeout(() => {
             this.refreshStatus(name);
           }, 3000);

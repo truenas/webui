@@ -1,6 +1,6 @@
 import { Direction } from 'app/enums/direction.enum';
 import { DataProtectionTaskState } from 'app/interfaces/data-protection-task-state.interface';
-import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 
 export interface RsyncTask {
@@ -13,7 +13,7 @@ export interface RsyncTask {
   enabled: boolean;
   extra: any[];
   id: number;
-  job: EntityJob;
+  job: Job;
   locked: boolean;
   mode: string;
   path: string;

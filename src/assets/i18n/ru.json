@@ -918,6 +918,7 @@
   "Set to ignore the Virtual  Machine status during the delete operation. Unset to prevent deleting  the Virtual Machine when it is still active or has an undefined state.": "",
   "Set to make the module <i>read-only</i>. No new ranges  are allocated or new mappings created in the idmap pool.": "",
   "Set to override safety checks and add the disk to the pool. <br>WARNING: any data stored on the disk will be erased!": "",
+  "Set to prevent the zvol from being modified.": "",
   "Set to remove the data associated with this  Virtual Machine (which will result in data loss if the data is not backed up). Unset to  leave the data intact.": "",
   "Set to store the encryption key in the TrueNAS database.": "",
   "Set to take separate snapshots of the  dataset and each of its child datasets. Leave unset to take a  single snapshot only of the specified dataset <i>without</i> child  datasets.": "",

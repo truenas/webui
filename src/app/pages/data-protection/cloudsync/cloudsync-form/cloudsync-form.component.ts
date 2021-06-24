@@ -10,6 +10,8 @@ import { filter, take } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -380,7 +382,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
   isNew = false;
   protected data: any;
 
-  protected providers: any;
+  protected providers: CloudsyncProvider[];
   protected taskSchemas = ['encryption', 'fast_list', 'chunk_size', 'storage_class'];
   custActions = [
     {
@@ -419,8 +421,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
     protected cloudcredentialService: CloudCredentialService,
     protected job: JobService,
     protected modalService: ModalService) {
-    this.cloudcredentialService.getProviders().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.providers = res;
+    this.cloudcredentialService.getProviders().pipe(untilDestroyed(this)).subscribe((providers) => {
+      this.providers = providers;
     });
     this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((id: string) => {
       this.customFilter = [[['id', '=', id]]];
@@ -562,14 +564,12 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.bucket_input_field = this.fieldSets.config('bucket_input');
     this.setDisabled('bucket', true, true);
     this.setDisabled('bucket_input', true, true);
-    this.cloudcredentialService.getCloudsyncCredentials().then(
-      (res) => {
-        res.forEach((item: any) => {
-          this.credentials.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
-          this.credentials_list.push(item);
-        });
-      },
-    );
+    this.cloudcredentialService.getCloudsyncCredentials().then((credentials) => {
+      credentials.forEach((item) => {
+        this.credentials.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
+        this.credentials_list.push(item);
+      });
+    });
 
     this.folder_field = this.fieldSets.config('folder');
     this.formGroup.controls['credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
@@ -711,8 +711,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any): any {
-    data['cloudsync_picker'] = data.schedule.minute + ' '
+  resourceTransformIncomingRestData(data: CloudSyncTask): any {
+    const transformed: any = { ...data };
+    transformed.cloudsync_picker = data.schedule.minute + ' '
                           + data.schedule.hour + ' '
                           + data.schedule.dom + ' '
                           + data.schedule.month + ' '
@@ -728,10 +729,10 @@ export class CloudsyncFormComponent implements FormConfiguration {
         }
         bwlimit.push(sub_bwlimit);
       }
-      data.bwlimit = bwlimit;
+      transformed.bwlimit = bwlimit;
     }
 
-    return data;
+    return transformed;
   }
 
   handleBwlimit(bwlimit: any): any[] {

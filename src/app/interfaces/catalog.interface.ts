@@ -59,6 +59,7 @@ export interface ChartMetadata {
   apiVersion: string;
   appVersion: string;
   dependencies: ChartMetadataDependency[];
+  latest_chart_version: string;
   description: string;
   home: string;
   icon: string;

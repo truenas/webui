@@ -306,13 +306,16 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     protected systemGeneralService: SystemGeneralService,
     protected dialogservice: DialogService) { }
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: ActiveDirectoryConfig): any {
+    const transformed: any = {
+      ...data,
+      netbiosalias: data.netbiosalias.join(' '),
+    };
     if (data['kerberos_realm'] && data['kerberos_realm'] !== null) {
-      data['kerberos_realm'] = data['kerberos_realm'].id;
+      transformed['kerberos_realm'] = data['kerberos_realm'].id;
     }
-    data['netbiosalias'] = data['netbiosalias'].join(' ');
-    delete data['bindpw'];
-    return data;
+    delete transformed['bindpw'];
+    return transformed;
   }
 
   preInit(entityForm: EntityFormComponent): void {

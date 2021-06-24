@@ -241,7 +241,7 @@ export class VMwareSnapshotFormComponent implements FormConfiguration {
 
       if (payload['password'] !== '' && typeof (payload['password']) !== 'undefined') {
         parent.loader.open();
-        parent.ws.call('vmware.match_datastores_with_datasets', [payload]).pipe(untilDestroyed(this)).subscribe((res: any) => {
+        parent.ws.call('vmware.match_datastores_with_datasets', [payload]).pipe(untilDestroyed(parent)).subscribe((res: any) => {
           res.filesystems.forEach((filesystem_item: any) => {
             _.find(parent.fieldConfig, { name: 'filesystem' })['options'].push(
               {

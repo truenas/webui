@@ -15,6 +15,7 @@ export interface FormConfiguration {
   isEntity?: boolean;
   addCall?: ApiMethod;
   editCall?: ApiMethod;
+  isCreateJob?: boolean;
   isEditJob?: boolean;
   queryCall?: ApiMethod;
   queryCallOption?: any[];

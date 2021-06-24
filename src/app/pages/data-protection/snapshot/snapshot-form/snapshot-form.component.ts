@@ -4,6 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { UnitType } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -24,7 +25,7 @@ export class SnapshotFormComponent implements FormConfiguration {
   editCall: 'pool.snapshottask.update' = 'pool.snapshottask.update';
   isEntity = true;
   pk: number;
-  protected dataset: any;
+  protected dataset: string;
   protected dataset_disabled = false;
   protected datasetFg: any;
   save_button_enabled = true;
@@ -188,14 +189,15 @@ export class SnapshotFormComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any): any {
-    data['cron_schedule'] = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
-    data['begin'] = data.schedule.begin;
-    data['end'] = data.schedule.end;
-
+  resourceTransformIncomingRestData(data: PeriodicSnapshotTask): any {
     this.dataset = data.dataset;
-    data['lifetime'] = data['lifetime_value'] + ' ' + data['lifetime_unit'] + (data['lifetime_value'] > 1 ? 'S' : '');
-    return data;
+    return {
+      ...data,
+      cron_schedule: `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`,
+      begin: data.schedule.begin,
+      end: data.schedule.end,
+      lifetime: data.lifetime_value + ' ' + data.lifetime_unit + (data.lifetime_value > 1 ? 'S' : ''),
+    };
   }
 
   beforeSubmit(value: any): void {

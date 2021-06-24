@@ -247,9 +247,9 @@ export class OpenvpnServerComponent implements FormConfiguration {
       });
       this.certOptions = config.options;
     });
-    this.services.getCAs().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+    this.services.getCAs().pipe(untilDestroyed(this)).subscribe((authorities) => {
       const config = this.fieldConfig.find((c) => c.name === 'root_ca');
-      res.forEach((item) => {
+      authorities.forEach((item) => {
         config.options.push({ label: item.name, value: item.id });
       });
     });

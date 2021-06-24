@@ -37,7 +37,7 @@ export enum DefaultAclType {
   Home = 'HOME',
 }
 
-export enum DAclNfs4Tag {
+export enum NfsAclTag {
   Owner = 'owner@',
   Group = 'group@',
   Everyone = 'everyone@',
@@ -45,19 +45,44 @@ export enum DAclNfs4Tag {
   UserGroup = 'GROUP',
 }
 
-export enum DAclType {
+export enum NfsAclType {
   Allow = 'ALLOW',
   Deny = 'DENY',
 }
 
-export enum DAclPermissionsBasic {
+export enum NfsBasicPermission {
   FullControl = 'FULL_CONTROL',
   Modify = 'MODIFY',
   Read = 'READ',
   Traverse = 'TRAVERSE',
 }
 
-export enum DAclFlagsBasic {
+export enum NfsAdvancedPermission {
+  ReadData = 'READ_DATA',
+  WriteData = 'WRITE_DATA',
+  AppendData = 'APPEND_DATA',
+  ReadNamedAttrs = 'READ_NAMED_ATTRS',
+  WriteNamedAttrs = 'WRITE_NAMED_ATTRS',
+  Execute = 'EXECUTE',
+  DeleteChild = 'DELETE_CHILD',
+  ReadAttributes = 'READ_ATTRIBUTES',
+  WriteAttributes = 'WRITE_ATTRIBUTES',
+  Delete = 'DELETE',
+  ReadAcl = 'READ_ACL',
+  WriteAcl = 'WRITE_ACL',
+  WriteOwner = 'WRITE_OWNER',
+  Synchronize = 'SYNCHRONIZE',
+}
+
+export enum NfsBasicFlag {
   Inherit = 'INHERIT',
   NoInherit = 'NOINHERIT',
+}
+
+export enum NfsAdvancedFlag {
+  FileInherit = 'FILE_INHERIT',
+  DirectoryInherit = 'DIRECTORY_INHERIT',
+  NoPropagateInherit = 'NO_PROPAGATE_INHERIT',
+  InheritOnly = 'INHERIT_ONLY',
+  Inherited = 'INHERITED',
 }

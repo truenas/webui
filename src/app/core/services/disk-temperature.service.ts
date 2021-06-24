@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { QueryOptions } from 'app/interfaces/query-api.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
+import { WebSocketService } from 'app/services';
 import { BaseService } from './base.service';
+import { CoreService } from './core.service';
 
 export interface Temperature {
   keys: string[];
@@ -19,8 +21,8 @@ export class DiskTemperatureService extends BaseService {
   protected broadcast: Interval;
   protected subscribers = 0;
 
-  constructor() {
-    super();
+  constructor(protected core: CoreService, protected websocket: WebSocketService) {
+    super(core, websocket);
 
     this.core.register({ observerClass: this, eventName: 'DiskTemperaturesSubscribe' }).subscribe(() => {
       this.subscribers++;

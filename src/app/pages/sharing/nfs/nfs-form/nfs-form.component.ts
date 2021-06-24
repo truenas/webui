@@ -9,6 +9,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_nfs, shared } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
@@ -344,26 +345,28 @@ export class NFSFormComponent implements FormConfiguration {
     return true;
   }
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: NfsShare): any {
     const paths = [];
     for (let i = 0; i < data['paths'].length; i++) {
       paths.push({ path: data['paths'][i], alias: data['aliases'][i] ? data['aliases'][i] : undefined });
     }
-    data['paths'] = paths;
 
     const networks = [];
     for (let i = 0; i < data['networks'].length; i++) {
       networks.push({ network: data['networks'][i] });
     }
-    data['networks'] = networks;
 
     const hosts = [];
     for (let i = 0; i < data['hosts'].length; i++) {
       hosts.push({ host: data['hosts'][i] });
     }
-    data['hosts'] = hosts;
 
-    return data;
+    return {
+      ...data,
+      paths,
+      networks,
+      hosts,
+    };
   }
 
   clean(data: any): any {

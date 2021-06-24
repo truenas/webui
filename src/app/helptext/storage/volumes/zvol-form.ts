@@ -47,6 +47,9 @@ export default {
  a one-way process. <b>Deduplicated data cannot be undeduplicated!</b>.'),
   zvol_deduplication_validation: [Validators.required],
 
+  zvol_readonly_placeholder: T('Read-only'),
+  zvol_readonly_tooltip: T('Set to prevent the zvol from being modified.'),
+
   zvol_sparse_placeholder: T('Sparse'),
   zvol_sparse_tooltip: T('Set to provide <a\
  href="https://searchstorage.techtarget.com/definition/thin-provisioning"\

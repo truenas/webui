@@ -8,7 +8,7 @@ import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
-import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
@@ -30,7 +30,7 @@ export interface ReplicationTask {
   exclude?: string[];
   hold_pending_snapshots?: boolean;
   id: number;
-  job?: EntityJob;
+  job?: Job;
   large_block?: boolean;
   lifetime_unit?: LifetimeUnit;
   lifetime_value?: number;

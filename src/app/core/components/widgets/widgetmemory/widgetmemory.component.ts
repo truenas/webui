@@ -11,7 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { Chart, ChartColor, ChartDataSets } from 'chart.js';
 import { Subject } from 'rxjs';
-import { ThemeUtils } from 'app/core/classes/theme-utils';
+import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ViewChartBarComponent } from 'app/core/components/viewchartbar/viewchartbar.component';
 import { ViewChartGaugeComponent } from 'app/core/components/viewchartgauge/viewchartgauge.component';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
