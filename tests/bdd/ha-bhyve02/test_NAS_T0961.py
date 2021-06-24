@@ -64,8 +64,8 @@ def navigate_to_storage(driver):
 def when_the_storage_page_appears_click_create(driver):
     """when the storage page appears, click Create."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Storage")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button___POOL_CREATE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button___POOL_CREATE"]').click()
+    assert wait_on_element(driver, 7, '//a[@ix-auto="button___POOL_CREATE"]', 'clickable')
+    driver.find_element_by_xpath('//a[@ix-auto="button___POOL_CREATE"]').click()
 
 
 @then('the Pools page should open')
@@ -83,6 +83,7 @@ def the_pool_manager_page_should_open(driver):
 @then(parsers.parse('enter {pool_name} for pool name, check the box next to {disk}'))
 def enter_dozer_for_pool_name_check_the_box_next_to_sdb(driver, pool_name, disk):
     """enter dozer for pool name, check the box next to sdb."""
+    assert wait_on_element(driver, 7, '//input[@id="pool-manager__name-input-field"]', 'inputable')
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').clear()
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys(pool_name)
     driver.find_element_by_xpath(f'//mat-checkbox[@id="pool-manager__disks-{disk}"]').click()
@@ -204,8 +205,8 @@ def navigate_to_dashboard(driver):
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
     driver.refresh()
-    if wait_on_element(driver, 5, '//input[@data-placeholder="Username"]'):
-        assert wait_on_element(driver, 5, '//input[@data-placeholder="Username"]', 'clickable')
+    if wait_on_element(driver, 10, '//input[@data-placeholder="Username"]'):
+        assert wait_on_element(driver, 5, '//input[@data-placeholder="Username"]', 'inputable')
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
         driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
