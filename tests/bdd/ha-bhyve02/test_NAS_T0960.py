@@ -156,13 +156,13 @@ def reopen_the_user_edit_page_and_ensure_that_the_key_was_saved(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_root"]').click()
     assert wait_on_element(driver, 5, '//h3[contains(.,"Edit User")]')
     assert wait_on_element(driver, 5, '//h4[contains(.,"Identification")]')
-    time.sleep(1)
+    time.sleep(0.5)
 
 
 @then('Public key should be on the root user page')
 def public_key_should_be_on_the_root_user_page(driver, ssh_key):
     """Public key should be on the root user page."""
-    assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'clickable')
+    assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'inputable')
     assert attribute_value_exist(driver, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'value', ssh_key)
     assert wait_on_element(driver, 5, '//mat-icon[contains(.,"cancel")]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[contains(.,"cancel")]').click()
