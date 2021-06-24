@@ -15,9 +15,8 @@
               mat-icon-button
               ix-auto
               ix-auto-type="button"
-              ix-auto-identifier="diskReports"
+              ix-auto-identifier="storageReports"
               [routerLink]="['/reportsdashboard/disk']"
-              [queryParams]="{ disks: allDiskNames }"
             >
               <mat-icon role="img"
                 matTooltip="{{'Disk Reports' | translate}}"
@@ -27,19 +26,18 @@
               </mat-icon>
             </a>
           </div>
-
         </mat-toolbar-row>
 
         <div>
           <div [style.padding]="padding + 'px'">
             <mat-grid-list [cols]="cols" [gutterSize]="gap + 'px'" [rowHeight]="rowHeight + 'px'">
               <mat-grid-tile *ngFor="let pool of pools">
-                <div class="tile" fxFlexFill fxLayout="column" fxLayoutAlign="start stretch" *ngIf="pool; else createNew">
+                <div class="tile" fxFlexFill fxLayout="column" fxLayoutAlign="start stretch">
                   <div class="tile-header" fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center">
-                    <div class="">Movies</div>
+                    <div class="">{{pool.name}}</div>
                     <div class="">
-                      <button mat-icon-button class="" (click)="router.navigate(['storage/status/'])"
-                        ix-auto-type="button" ix-auto-identifier="poolStatus">
+                      <button mat-icon-button class="" (click)="router.navigate(['storage/status/' + pool.id.toString()])"
+                      ix-auto ix-auto-type="button" ix-auto-identifier="poolStatus">
                         <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-database"
                           matTooltip="{{'Pool Status' | translate}}"
                           matTooltipPosition="above"
@@ -48,27 +46,27 @@
                       </button>
                     </div>
                   </div>
-                  <div class="tile-content" fxLayout="row" fxLayoutAlign="space-between stretch">
+                  <div class="tile-content" fxLayout="row" fxLayoutAlign="space-between stretch" [class.rows-3]="rows==3">
                     <ul fxLayout="column" [fxFlex]="cols == 1?31:100">
                       <li fxLayout="row">
-                        <span class="icon"><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon></span>
+                        <span class="icon {{poolInfoMap[pool.name].status.level}}"><mat-icon role="img" fontSet="mdi-set" fontIcon="{{poolInfoMap[pool.name].status.icon}}"></mat-icon></span>
                         <span class="label">Pool Status:</span>
-                        <span class="value">Unhealthy</span>
+                        <span class="storage-value">{{poolInfoMap[pool.name].status.value}}</span>
                       </li>
                       <li fxLayout="row">
-                        <span class="icon"><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon></span>
+                        <span class="icon {{poolInfoMap[pool.name].usedSpace.level}}"><mat-icon role="img" fontSet="mdi-set" fontIcon="{{poolInfoMap[pool.name].usedSpace.icon}}"></mat-icon></span>
                         <span class="label">Used Space:</span>
-                        <span class="value">0%</span>
+                        <span class="storage-value">{{poolInfoMap[pool.name].usedSpace.value}}</span>
                       </li>
                       <li fxLayout="row">
-                        <span class="icon"><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon></span>
+                        <span class="icon {{poolInfoMap[pool.name].disksWithError.level}}"><mat-icon role="img" fontSet="mdi-set" fontIcon="{{poolInfoMap[pool.name].disksWithError.icon}}"></mat-icon></span>
                         <span class="label">Disks with Errors:</span>
-                        <span class="value">0</span>
+                        <span class="storage-value">{{poolInfoMap[pool.name].disksWithError.value}}</span>
                       </li>
                       <li fxLayout="row" *ngIf="cols == 2 && rows == 2">
                         <span class="icon"></span>
                         <span class="label">Path:</span>
-                        <span class="value">/mnt/MOVIES</span>
+                        <span class="storage-value">{{pool.path}}</span>
                       </li>
                     </ul>
                     <ng-container *ngIf="cols==1">
@@ -76,48 +74,50 @@
                       <ul fxLayout="column" fxFlex="31">
                         <li fxLayout="row">
                           <span class="label">Path:</span>
-                          <span class="value">/mnt/MOVIES</span>
+                          <span class="storage-value">{{pool.path}}</span>
                         </li>
                         <li fxLayout="row">
                           <span class="label">Free Space:</span>
-                          <span class="value">16.80GiB</span>
+                          <span class="storage-value">{{ getFreeSpace(pool) }}</span>
                         </li>
                         <li fxLayout="row">
                           <span class="label">Total Disks:</span>
-                          <span class="value">3</span>
+                          <span class="storage-value">{{totalDisks(pool)}}</span>
                         </li>
                       </ul>
                       <div class="divider"></div>
                       <ul fxLayout="column" fxFlex="31">
                         <li fxLayout="row">
                           <span class="label">Data:</span>
-                          <span class="value">2 vdevs</span>
+                          <span class="storage-value" *ngIf="pool.topology">{{pool.topology.data.length}} vdev</span>
                         </li>
                         <li fxLayout="row">
                           <span class="label">Caches:</span>
-                          <span class="value">0</span>
+                          <span class="storage-value" *ngIf="pool.topology">{{pool.topology.cache.length}}</span>
                         </li>
                         <li fxLayout="row">
                           <span class="label">Spares:</span>
-                          <span class="value">1</span>
+                          <span class="storage-value" *ngIf="pool.topology">{{pool.topology.spare.length}}</span>
                         </li>
                       </ul>
                     </ng-container>
                   </div>
                 </div>
-                <ng-template #createNew>
-                  <div class="create-new" fxFill fxLayout="column" fxLayoutAlign="center center">
-                    <mat-icon fontSet="mdi-set" fontIcon="mdi-database"></mat-icon>
-                    <span>{{'Create new Pool' | translate}}</span>
-                  </div>
-                </ng-template>
+              </mat-grid-tile>
+              <mat-grid-tile *ngIf="pools.length%2==1" >
+                <a class="create-new"
+                  fxFill fxFlex="100" fxLayout="column" fxLayoutAlign="center center"
+                  ix-auto
+                  ix-auto-identifier="createNewPool"
+                  [routerLink]="['/storage/manager/']"
+                >
+                  <mat-icon fontSet="mdi-set" fontIcon="mdi-database"></mat-icon>
+                  <span>{{'Create new Pool' | translate}}</span>
+                </a>
               </mat-grid-tile>
             </mat-grid-list>
           </div>
         </div>
-
-
-
       </mat-card-content>
     </mat-card>
 

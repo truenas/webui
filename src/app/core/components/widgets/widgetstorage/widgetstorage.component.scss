@@ -31,7 +31,7 @@
     }
 
     li {
-      height: 20px;
+      height: 25px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -39,6 +39,10 @@
       .label {
         margin-right: 6px;
       }
+    }
+
+    &.rows-3 li {
+      height: 20px;
     }
   }
 }
@@ -56,7 +60,19 @@
 }
 
 mat-grid-tile {
-  background: #1e1e1e;
+  background-color: var(--bg1);
+}
+
+span.error {
+  color: var(--red);
+}
+
+span.warn {
+  color: var(--yellow);
+}
+
+span.safe {
+  color: var(--green);
 }
 
 span.icon {
