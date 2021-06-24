@@ -170,18 +170,13 @@ def the_system_dataset_page_should_open(driver):
     assert wait_on_element(driver, 5, '//h3[contains(.,"System Dataset Pool")]')
 
 
-@then(parsers.parse('click on System Dataset Pool select {pool_name}'))
-def click_on_system_dataser_pool_select_dozer(driver, pool_name):
-    """click on System Dataset Pool select dozer."""
+@then(parsers.parse('click on System Dataset Pool select {pool_name}, click Save'))
+def click_on_system_dataser_pool_select_dozer_click_Save(driver, pool_name):
+    """click on System Dataset Pool select dozer, click Save."""
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Select Pool"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Select Pool"]').click()
     assert wait_on_element(driver, 5, f'//mat-option[@ix-auto="option__Select Pool_{pool_name}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Select Pool_{pool_name}"]').click()
-
-
-@then('click the Confirm checkbox then and click CONTINUE, Click Save')
-def click_the_confirm_checkbox_then_and_click_continue_click_save(driver):
-    """click the Confirm checkbox then and click CONTINUE, Click Save."""
     assert wait_on_element(driver, 30, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
