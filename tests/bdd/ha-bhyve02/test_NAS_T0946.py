@@ -422,6 +422,7 @@ def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
     # need to wait for the passive controller to be online.
     assert wait_on_element(driver, 120, '//div[contains(.,"tn-bhyve01-nodeb")]')
+    assert wait_on_element(driver, 10, '//mat-icon[@svgicon="ha_enabled"]')
 
 
 @then('both controllers should show version and license on the dashboard')

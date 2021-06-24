@@ -142,48 +142,46 @@ def the_dozer_pool_should_be_on_the_pools_list(driver, pool_name):
 @then('navigate to System Setting and click Misc')
 def navigate_to_system_setting_and_click_misc(driver):
     """navigate to System Setting and click Misc."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System Settings"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Misc"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Misc"]').click()
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Advanced"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Advanced"]').click()
 
 
-@then('the Miscellaneous page should open')
+@then('the Advanced page should open')
 def the_miscellaneous_page_should_open(driver):
-    """the Miscellaneous page should open."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Miscellaneous")]')
+    """the Advanced page should open."""
+    assert wait_on_element(driver, 7, '//h1[contains(.,"Advanced")]')
 
 
 @then('click on System Dataset')
 def click_on_system_dataset(driver):
     """click on System Dataset."""
-    assert wait_on_element(driver, 7, '//li[contains(.,"System Dataset")]')
-    driver.find_element_by_xpath('//li[contains(.,"System Dataset")]').click()
+    assert wait_on_element(driver, 7, '(//button[contains(.,"Configure")])[4]', 'clickable')
+    driver.find_element_by_xpath('(//button[contains(.,"Configure")])[4]').click()
+    assert wait_on_element(driver, 5, '//h1[contains(.,"Warning")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then('the System Dataset page should open')
 def the_system_dataset_page_should_open(driver):
     """the System Dataset page should open."""
-    assert wait_on_element(driver, 5, '//h4[contains(.,"Configure System Dataset")]')
+    assert wait_on_element(driver, 5, '//h3[contains(.,"System Dataset Pool")]')
 
 
 @then(parsers.parse('click on System Dataset Pool select {pool_name}'))
 def click_on_system_dataser_pool_select_dozer(driver, pool_name):
-    """click on System Dataser Pool select dozer."""
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__System Dataset Pool"]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__System Dataset Pool"]').click()
-    assert wait_on_element(driver, 5, f'//mat-option[@ix-auto="option__System Dataset Pool_{pool_name}"]')
-    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__System Dataset Pool_{pool_name}"]').click()
+    """click on System Dataset Pool select dozer."""
+    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Select Pool"]', 'clickable')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Select Pool"]').click()
+    assert wait_on_element(driver, 5, f'//mat-option[@ix-auto="option__Select Pool_{pool_name}"]')
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Select Pool_{pool_name}"]').click()
 
 
 @then('click the Confirm checkbox then and click CONTINUE, Click Save')
 def click_the_confirm_checkbox_then_and_click_continue_click_save(driver):
     """click the Confirm checkbox then and click CONTINUE, Click Save."""
-    assert wait_on_element(driver, 5, '//h1[contains(.,"WARNING")]')
-    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
     assert wait_on_element(driver, 30, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
@@ -191,7 +189,7 @@ def click_the_confirm_checkbox_then_and_click_continue_click_save(driver):
 @then('Please wait should appear while settings are being applied')
 def Please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
-    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
 
 
 @then('navigate to the dashboard')
@@ -205,7 +203,7 @@ def navigate_to_dashboard(driver):
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
     driver.refresh()
-    if wait_on_element(driver, 10, '//input[@data-placeholder="Username"]'):
+    if wait_on_element(driver, 5, '//input[@data-placeholder="Username"]'):
         assert wait_on_element(driver, 5, '//input[@data-placeholder="Username"]', 'inputable')
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
@@ -215,5 +213,3 @@ def refresh_and_wait_for_the_second_node_to_be_up(driver):
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     assert wait_on_element(driver, 120, '//div[contains(.,"tn-bhyve01-nodeb")]')
     assert wait_on_element(driver, 10, '//mat-icon[@svgicon="ha_enabled"]')
-    # This 5 seconds of sleep is to let the system ketchup.
-    time.sleep(5)
