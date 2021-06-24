@@ -4,6 +4,7 @@ import {
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { parseMode } from 'app/helpers/mode.helper';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
@@ -172,16 +173,16 @@ export class FormPermissionsComponent implements Field, OnInit {
 
     const permissions = parseMode(this.value);
 
-    this.ownerRead = permissions.owner.read;
-    this.ownerWrite = permissions.owner.write;
-    this.ownerExec = permissions.owner.execute;
+    this.ownerRead = permissions.owner[PosixPermission.Read];
+    this.ownerWrite = permissions.owner[PosixPermission.Write];
+    this.ownerExec = permissions.owner[PosixPermission.Execute];
 
-    this.groupRead = permissions.group.read;
-    this.groupWrite = permissions.group.write;
-    this.groupExec = permissions.group.execute;
+    this.groupRead = permissions.group[PosixPermission.Read];
+    this.groupWrite = permissions.group[PosixPermission.Write];
+    this.groupExec = permissions.group[PosixPermission.Execute];
 
-    this.otherRead = permissions.other.read;
-    this.otherWrite = permissions.other.write;
-    this.otherExec = permissions.other.execute;
+    this.otherRead = permissions.other[PosixPermission.Read];
+    this.otherWrite = permissions.other[PosixPermission.Write];
+    this.otherExec = permissions.other[PosixPermission.Execute];
   }
 }

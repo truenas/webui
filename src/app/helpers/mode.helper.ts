@@ -1,3 +1,4 @@
+import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { UnixFilePermissions } from 'app/interfaces/posix-permissions.interface';
 
 /**
@@ -19,19 +20,19 @@ export function parseMode(mode: string): UnixFilePermissions {
 
   return {
     owner: {
-      read: owner - 4 >= 0,
-      write: owner - 2 >= 0,
-      execute: owner - 1 >= 0,
+      [PosixPermission.Read]: owner - 4 >= 0,
+      [PosixPermission.Write]: owner - 2 >= 0,
+      [PosixPermission.Execute]: owner - 1 >= 0,
     },
     group: {
-      read: group - 4 >= 0,
-      write: group - 2 >= 0,
-      execute: group - 1 >= 0,
+      [PosixPermission.Read]: group - 4 >= 0,
+      [PosixPermission.Write]: group - 2 >= 0,
+      [PosixPermission.Execute]: group - 1 >= 0,
     },
     other: {
-      read: other - 4 >= 0,
-      write: other - 2 >= 0,
-      execute: other - 1 >= 0,
+      [PosixPermission.Read]: other - 4 >= 0,
+      [PosixPermission.Write]: other - 2 >= 0,
+      [PosixPermission.Execute]: other - 1 >= 0,
     },
   };
 }

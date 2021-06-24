@@ -1,11 +1,7 @@
-export interface UnixFilePermissions {
-  owner: UnixPermissions;
-  group: UnixPermissions;
-  other: UnixPermissions;
-}
+import { PosixPermissions } from 'app/interfaces/acl.interface';
 
-export interface UnixPermissions {
-  read: boolean;
-  write: boolean;
-  execute: boolean;
+export interface UnixFilePermissions {
+  owner: PosixPermissions;
+  group: PosixPermissions;
+  other: PosixPermissions;
 }

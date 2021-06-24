@@ -2,19 +2,19 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { parseApiMode } from 'app/helpers/mode.helper';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
-import { UnixPermissions } from 'app/interfaces/posix-permissions.interface';
 import {
   PermissionItem,
   PermissionsItemType,
 } from 'app/pages/storage/volumes/permissions-sidebar/interfaces/permission-item.interface';
+import { posixPermissionsToDescription } from 'app/pages/storage/volumes/permissions-sidebar/utils/permissions-to-description.utils';
 
 @Component({
-  selector: 'app-unix-permissions',
-  templateUrl: 'unix-permissions.component.html',
-  styleUrls: ['./unix-permissions.component.scss'],
+  selector: 'app-trivial-permissions',
+  templateUrl: 'trivial-permissions.component.html',
+  styleUrls: ['./trivial-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UnixPermissionsComponent {
+export class TrivialPermissionsComponent {
   @Input()
   set stat(stat: FileSystemStat) {
     this.permissionItems = this.statToPermissionItems(stat);
@@ -24,7 +24,8 @@ export class UnixPermissionsComponent {
 
   constructor(
     private translate: TranslateService,
-  ) {}
+  ) {
+  }
 
   private statToPermissionItems(stat: FileSystemStat): PermissionItem[] {
     const permissions = parseApiMode(stat.mode);
@@ -33,38 +34,18 @@ export class UnixPermissionsComponent {
       {
         type: PermissionsItemType.User,
         name: stat.user,
-        permissions: this.permissionsToString(permissions.owner),
+        description: posixPermissionsToDescription(this.translate, permissions.owner),
       },
       {
         type: PermissionsItemType.Group,
         name: stat.group,
-        permissions: this.permissionsToString(permissions.group),
+        description: posixPermissionsToDescription(this.translate, permissions.group),
       },
       {
         type: PermissionsItemType.Other,
         name: this.translate.instant('Other'),
-        permissions: this.permissionsToString(permissions.other),
+        description: posixPermissionsToDescription(this.translate, permissions.other),
       },
     ];
-  }
-
-  private permissionsToString(permissions: UnixPermissions): string {
-    const allowed: string[] = [];
-
-    if (permissions.read) {
-      allowed.push(this.translate.instant('Read'));
-    }
-    if (permissions.write) {
-      allowed.push(this.translate.instant('Write'));
-    }
-    if (permissions.write) {
-      allowed.push(this.translate.instant('Execute'));
-    }
-
-    if (!allowed.length) {
-      return this.translate.instant('None');
-    }
-
-    return allowed.join(' | ');
   }
 }

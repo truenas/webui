@@ -11,8 +11,11 @@ import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { getNfsAdvancedPermissionLabels } from 'app/enums/nfs-acl.enum';
+import { PosixAclTag } from 'app/enums/posix-acl.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 import * as _ from 'lodash';
-import { AclItemTag, DefaultAclType } from 'app/enums/acl-type.enum';
+import { DefaultAclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Group } from 'app/interfaces/group.interface';
@@ -207,7 +210,7 @@ export class DatasetAclComponent implements FormConfiguration {
               name: 'advanced_perms',
               placeholder: helptext.dataset_acl_perms_placeholder,
               tooltip: helptext.dataset_acl_perms_tooltip,
-              options: helptext.dataset_acl_advanced_perms_options,
+              options: mapToOptions(getNfsAdvancedPermissionLabels(this.translate)),
             },
             {
               type: 'select',
@@ -432,10 +435,10 @@ export class DatasetAclComponent implements FormConfiguration {
             if (!group_fc['parent']) {
               group_fc.parent = this;
             }
-            if (res[i].tag === AclItemTag.User) {
+            if (res[i].tag === PosixAclTag.User) {
               this.setDisabled(user_fc, this.aces.controls[i].controls['user'], false, false);
               this.setDisabled(group_fc, this.aces.controls[i].controls['group'], true, true);
-            } else if (res[i].tag === AclItemTag.Group) {
+            } else if (res[i].tag === PosixAclTag.Group) {
               this.setDisabled(user_fc, this.aces.controls[i].controls['user'], true, true);
               this.setDisabled(group_fc, this.aces.controls[i].controls['group'], false, false);
             } else {
@@ -565,7 +568,7 @@ export class DatasetAclComponent implements FormConfiguration {
       acl = {};
       acl.type = data[i].type;
       acl.tag = data[i].tag;
-      if (acl.tag === AclItemTag.User) {
+      if (acl.tag === PosixAclTag.User) {
         const usr: any = await this.userService.getUserObject(data[i].id);
         if (usr && usr.pw_name) {
           acl.user = usr.pw_name;
@@ -573,7 +576,7 @@ export class DatasetAclComponent implements FormConfiguration {
           acl.user = data[i].id;
           acl['user_not_found'] = true;
         }
-      } else if (acl.tag === AclItemTag.Group) {
+      } else if (acl.tag === PosixAclTag.Group) {
         const grp: any = await this.userService.getGroupObject(data[i].id);
         if (grp && grp.gr_name) {
           acl.group = grp.gr_name;
@@ -711,9 +714,9 @@ export class DatasetAclComponent implements FormConfiguration {
       const acl = data.aces[i];
       d['tag'] = acl.tag;
       d['id'] = null;
-      if (acl.tag === AclItemTag.User) {
+      if (acl.tag === PosixAclTag.User) {
         d['id'] = acl.user;
-      } else if (acl.tag === AclItemTag.Group) {
+      } else if (acl.tag === PosixAclTag.Group) {
         d['id'] = acl.group;
       }
       d['type'] = acl.type;
@@ -721,7 +724,7 @@ export class DatasetAclComponent implements FormConfiguration {
         d['perms'] = { BASIC: acl.basic_perms };
       } else {
         d['perms'] = {};
-        const adv_perm_options = helptext.dataset_acl_advanced_perms_options;
+        const adv_perm_options = mapToOptions(getNfsAdvancedPermissionLabels(this.translate));
         for (let j = 0; j < adv_perm_options.length; j++) {
           const perm = adv_perm_options[j].value;
           if (_.indexOf(acl.advanced_perms, perm) > -1) {
@@ -781,7 +784,7 @@ export class DatasetAclComponent implements FormConfiguration {
     });
 
     for (let i = 0; i < dacl.length; i++) {
-      if (dacl[i].tag === AclItemTag.User) {
+      if (dacl[i].tag === PosixAclTag.User) {
         await this.userService.getUserByName(dacl[i].id).toPromise().then((userObj: any) => {
           if (userObj && userObj.hasOwnProperty('pw_uid')) {
             dacl[i]['id'] = userObj.pw_uid;
@@ -789,7 +792,7 @@ export class DatasetAclComponent implements FormConfiguration {
         }, (err: any) => {
           console.error(err);
         });
-      } else if (dacl[i].tag === AclItemTag.Group) {
+      } else if (dacl[i].tag === PosixAclTag.Group) {
         await this.userService.getGroupByName(dacl[i].id).toPromise().then((groupObj: any) => {
           if (groupObj && groupObj.hasOwnProperty('gr_gid')) {
             dacl[i]['id'] = groupObj.gr_gid;

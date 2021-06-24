@@ -1,7 +1,7 @@
 export interface PermissionItem {
   name: string;
   type: PermissionsItemType;
-  permissions: string;
+  description: string;
 }
 
 export enum PermissionsItemType {

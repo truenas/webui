@@ -1,15 +1,21 @@
 import {
-  AclItemTag,
-  AclPermission,
   AclType,
-  NfsBasicFlag,
-  NfsAclTag,
-  NfsBasicPermission,
-  NfsAclType,
-  NfsAdvancedPermission,
-  NfsAdvancedFlag,
-} from 'app/enums/acl-type.enum';
 
+
+
+
+} from 'app/enums/acl-type.enum';
+import {
+  NfsAclTag,
+  NfsAclType,
+  NfsAdvancedFlag,
+  NfsAdvancedPermission,
+  NfsBasicFlag,
+  NfsBasicPermission
+} from 'app/enums/nfs-acl.enum';
+import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
+
+// TODO: Can be split in multiple interfaces: PosixAcl, NfsAcl.
 export interface Acl {
   acl: PosixAclItem[] | NfsAclItem[];
   acltype: AclType;
@@ -23,12 +29,8 @@ export interface Acl {
 export interface PosixAclItem {
   default: boolean;
   id: number;
-  perms: {
-    [AclPermission.Read]: boolean;
-    [AclPermission.Write]: boolean;
-    [AclPermission.Execute]: boolean;
-  };
-  tag: AclItemTag;
+  perms: PosixPermissions;
+  tag: PosixAclTag;
 }
 
 export interface NfsAclItem {
@@ -61,10 +63,10 @@ export interface BasicNfsFlags {
   BASIC: NfsBasicFlag;
 }
 
-export interface DAclPosix1ePermissions {
-  [AclPermission.Read]: boolean;
-  [AclPermission.Write]: boolean;
-  [AclPermission.Execute]: boolean;
+export interface PosixPermissions {
+  [PosixPermission.Read]: boolean;
+  [PosixPermission.Write]: boolean;
+  [PosixPermission.Execute]: boolean;
 }
 
 export interface Nfs41Flags {

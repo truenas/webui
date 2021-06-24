@@ -1,28 +1,42 @@
 <div class="title">{{ 'Click an item to view permissions' | translate }}</div>
 
-<mat-accordion hideToggle>
-  <mat-expansion-panel class="accordion-item">
-    <mat-expansion-panel-header class="accordion-item-header">
-      <app-permissions-item [item]="{ type: 'other', name: 'Pizza', permission: 'Whatever' }"></app-permissions-item>
-    </mat-expansion-panel-header>
-    <div class="permission-details">
+<cdk-accordion>
+  <cdk-accordion-item
+    *ngFor="let aclItem of acl.acl; let i = index"
+    #accordionItem="cdkAccordionItem"
+    class="accordion-item"
+  >
+    <div class="accordion-item-header" (click)="accordionItem.toggle()">
+      <app-permissions-item [item]="permissionItems[i]"></app-permissions-item>
+    </div>
+    <div
+      *ngIf="permissionDetails[i] as details"
+      class="permission-details"
+      [class.expanded]="accordionItem.expanded"
+    >
       <div class="details-section">
-        <div class="details-title">Permissions Basic</div>
+        <div class="details-title">
+          {{ details.arePermissionsAdvanced ? ('Basic Permissions' | translate) : ('Permissions Advanced' | translate) }}
+        </div>
         <ul>
-          <li>
+          <li *ngFor="let permission of details.permissions">
             <mat-icon class="icon">check_circle</mat-icon>
-            Read
+            {{ permission }}
           </li>
-          <li>Modify</li>
+        </ul>
+      </div>
+      <div *ngIf="details.flags.length" class="details-section">
+        <div class="details-title">
+          {{ details.areFlagsAdvanced ? ('Flags Permissions' | translate) : ('Flags Advanced' | translate) }}
+        </div>
+        <ul>
+          <li *ngFor="let flag of details.flags">
+            <mat-icon class="icon">check_circle</mat-icon>
+            {{ flag }}
+          </li>
         </ul>
       </div>
     </div>
-  </mat-expansion-panel>
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      <app-permissions-item [item]="{ type: 'other', name: 'Pizza', permission: 'Whatever 2' }"></app-permissions-item>
-    </mat-expansion-panel-header>
-    <div>Content 2</div>
-  </mat-expansion-panel>
-</mat-accordion>
+  </cdk-accordion-item>
+</cdk-accordion>
 
