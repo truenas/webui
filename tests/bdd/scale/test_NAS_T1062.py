@@ -45,11 +45,11 @@ def the_browser_is_open_navigate_to_the_scale_url(driver, nas_ip, root_password)
 @when('on the dashboard, verify the Welcome box is loaded, click Close')
 def on_the_dashboard_verify_the_welcome_box_is_loaded_click_close(driver):
     """on the dashboard, verify the Welcome box is loaded, click Close."""
-    time.sleep(2)
+    time.sleep(4)
     assert wait_on_element(driver, 5, '//h1[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__I AGREE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-    time.sleep(2)    
+    time.sleep(4)    
     assert wait_on_element(driver, 5, '//div[contains(.,"Welcome to your new NAS")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
