@@ -202,13 +202,5 @@ def navigate_to_dashboard(driver):
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
     driver.refresh()
-    if wait_on_element(driver, 5, '//input[@data-placeholder="Username"]'):
-        assert wait_on_element(driver, 5, '//input[@data-placeholder="Username"]', 'inputable')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]', 'clickable')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     assert wait_on_element(driver, 120, '//div[contains(.,"tn-bhyve01-nodeb")]')
     assert wait_on_element(driver, 10, '//mat-icon[@svgicon="ha_enabled"]')
