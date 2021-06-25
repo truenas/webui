@@ -26,6 +26,7 @@ interface PoolInfo {
 interface PoolInfoMap {
   [poolName: string]: PoolInfo;
 }
+
 @UntilDestroy()
 @Component({
   selector: 'widget-storage',
@@ -218,7 +219,7 @@ export class WidgetStorageComponent extends WidgetComponent implements OnChanges
           total += item.children.length;
         }
       });
-      return total.toString() + T(' (data)');
+      return total.toString() + ' (data)';
     }
 
     return T('Unknown');
