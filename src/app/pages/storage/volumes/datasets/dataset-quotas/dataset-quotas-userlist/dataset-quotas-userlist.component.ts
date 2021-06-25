@@ -219,7 +219,6 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
         this.entityList.loader.open();
         this.useFullFilter = !this.useFullFilter;
         window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
-        this.entityList.needTableResize = false;
         this.entityList.getData();
         this.loader.close();
       }

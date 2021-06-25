@@ -1340,7 +1340,7 @@ export class DatasetFormComponent implements FormConfiguration {
     return field.value;
   }
 
-  getFieldValueOrNone(field: ZfsProperty<unknown>): string {
+  getFieldValueOrNone(field: ZfsProperty<unknown>): any {
     if (field === undefined || field.value === undefined) {
       return null;
     }
