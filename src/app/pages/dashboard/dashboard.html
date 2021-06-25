@@ -161,6 +161,7 @@
                 </widget-pool>
 
                 <widget-storage *ngSwitchCase="'storage'"
+                  (back)="onMobileBack()"
                   fxFlex="{{widgetWidth}}px"
                   fxFlex.xs="100"
                   [pools]="pools"

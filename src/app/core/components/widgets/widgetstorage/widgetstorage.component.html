@@ -56,7 +56,7 @@
                       <li fxLayout="row">
                         <span class="icon {{poolInfoMap[pool.name].usedSpace.level}}"><mat-icon role="img" fontSet="mdi-set" fontIcon="{{poolInfoMap[pool.name].usedSpace.icon}}"></mat-icon></span>
                         <span class="label">Used Space:</span>
-                        <span class="storage-value">{{poolInfoMap[pool.name].usedSpace.value}}</span>
+                        <span class="storage-value" textLimiter threshold="25">{{poolInfoMap[pool.name].usedSpace.value}}</span>
                       </li>
                       <li fxLayout="row">
                         <span class="icon {{poolInfoMap[pool.name].disksWithError.level}}"><mat-icon role="img" fontSet="mdi-set" fontIcon="{{poolInfoMap[pool.name].disksWithError.icon}}"></mat-icon></span>
@@ -66,7 +66,7 @@
                       <li fxLayout="row" *ngIf="cols == 2 && rows == 2">
                         <span class="icon"></span>
                         <span class="label">Path:</span>
-                        <span class="storage-value">{{pool.path}}</span>
+                        <span class="storage-value" textLimiter threshold="32">{{pool.path}}</span>
                       </li>
                     </ul>
                     <ng-container *ngIf="cols==1">
@@ -74,11 +74,11 @@
                       <ul fxLayout="column" fxFlex="31">
                         <li fxLayout="row">
                           <span class="label">Path:</span>
-                          <span class="storage-value">{{pool.path}}</span>
+                          <span class="storage-value" textLimiter threshold="22">{{pool.path}}</span>
                         </li>
                         <li fxLayout="row">
                           <span class="label">Free Space:</span>
-                          <span class="storage-value">{{ getFreeSpace(pool) }}</span>
+                          <span class="storage-value" textLimiter threshold="14">{{ getFreeSpace(pool) }}</span>
                         </li>
                         <li fxLayout="row">
                           <span class="label">Total Disks:</span>
@@ -104,7 +104,7 @@
                   </div>
                 </div>
               </mat-grid-tile>
-              <mat-grid-tile *ngIf="pools.length%2==1" >
+              <mat-grid-tile *ngIf="pools.length%2 == 1 || pools.length == 0" >
                 <a class="create-new"
                   fxFill fxFlex="100" fxLayout="column" fxLayoutAlign="center center"
                   ix-auto

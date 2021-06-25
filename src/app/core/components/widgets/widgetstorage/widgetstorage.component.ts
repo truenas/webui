@@ -1,5 +1,5 @@
 import {
-  Component, OnDestroy, Input, OnChanges, SimpleChanges,
+  Component, Input, OnChanges, SimpleChanges,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -32,7 +32,7 @@ interface PoolInfoMap {
   templateUrl: './widgetstorage.component.html',
   styleUrls: ['./widgetstorage.component.scss'],
 })
-export class WidgetStorageComponent extends WidgetComponent implements OnDestroy, OnChanges {
+export class WidgetStorageComponent extends WidgetComponent implements OnChanges {
   @Input() pools: Pool[];
   @Input() volumeData: any;
   title: string = T('Storage');
@@ -74,9 +74,12 @@ export class WidgetStorageComponent extends WidgetComponent implements OnDestroy
     }
 
     this.rows = Math.round(poolCount / this.cols);
-    if (this.rows == 1) {
+    if (this.rows <= 1) {
       this.rows++;
+    } else if (this.rows > 3) {
+      this.rows = 3;
     }
+
     this.rowHeight = (this.contentHeight - (this.rows - 1) * this.gap - 2 * this.padding) / this.rows;
   }
 
@@ -88,10 +91,6 @@ export class WidgetStorageComponent extends WidgetComponent implements OnDestroy
         disksWithError: this.getDiskWithErrorsItemInfo(pool),
       };
     });
-  }
-
-  ngOnDestroy(): void {
-    this.core.unregister({ observerClass: this });
   }
 
   getStatusItemInfo(pool: Pool): ItemInfo {
@@ -141,7 +140,12 @@ export class WidgetStorageComponent extends WidgetComponent implements OnDestroy
       level = 'warn';
       icon = 'mdi-alert-circle';
     } else {
-      value = vol.used_pct;
+      if (this.cols == 1) {
+        value = vol.used_pct;
+      } else {
+        value = this.getSizeString(vol.used) + ' of ' + this.getSizeString(vol.avail) + ' (' + vol.used_pct + ')';
+      }
+
       if (this.percentAsNumber(vol.used_pct) >= 80) {
         level = 'warn';
         icon = 'mdi-alert-circle';
@@ -189,7 +193,11 @@ export class WidgetStorageComponent extends WidgetComponent implements OnDestroy
       } else {
         level = 'warn';
         icon = 'mdi-alert-circle';
-        value = unhealthy.length + T(' Disks');
+        value = unhealthy.length.toString();
+      }
+
+      if (this.cols > 1) {
+        value += ' of ' + this.totalDisks(pool);
       }
     }
 
@@ -229,28 +237,33 @@ export class WidgetStorageComponent extends WidgetComponent implements OnDestroy
       }
 
       if (usedValue != 'Locked') {
-        // this.core.emit({ name: 'PoolDisksRequest', data: [pool.id] });
-        let unit;
-        let size;
-        displayValue = filesize(vol.avail, { standard: 'iec' });
-        if (displayValue.slice(-2) === ' B') {
-          unit = displayValue.slice(-1);
-          size = new Intl.NumberFormat().format(parseFloat(displayValue.slice(0, -2)));
-        } else {
-          unit = displayValue.slice(-3);
-          size = new Intl.NumberFormat().format(parseFloat(displayValue.slice(0, -4)));
-        }
-        // Adds a zero to numbers with one (and only one) digit after the decimal
-        if (size.charAt(size.length - 2) === '.' || size.charAt(size.length - 2) === ',') {
-          size = size.concat('0');
-        }
-        displayValue = size + ' ' + unit;
+        displayValue = this.getSizeString(vol.avail - vol.used);
       }
     } else if (!vol || typeof vol.avail == undefined) {
       displayValue = T('Unknown');
     } else {
       displayValue = T('Gathering data...');
     }
+
+    return displayValue;
+  }
+
+  getSizeString(volSize: number): string {
+    let unit;
+    let size;
+    let displayValue = filesize(volSize, { standard: 'iec' });
+    if (displayValue.slice(-2) === ' B') {
+      unit = displayValue.slice(-1);
+      size = new Intl.NumberFormat().format(parseFloat(displayValue.slice(0, -2)));
+    } else {
+      unit = displayValue.slice(-3);
+      size = new Intl.NumberFormat().format(parseFloat(displayValue.slice(0, -4)));
+    }
+    // Adds a zero to numbers with one (and only one) digit after the decimal
+    if (size.charAt(size.length - 2) === '.' || size.charAt(size.length - 2) === ',') {
+      size = size.concat('0');
+    }
+    displayValue = size + ' ' + unit;
 
     return displayValue;
   }
