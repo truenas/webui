@@ -1,4 +1,4 @@
-export interface DynamicDnsUpdate {
+export interface DynamicDnsConfig {
   provider: string;
   checkip_ssl: boolean;
   checkip_server: string;
@@ -11,3 +11,5 @@ export interface DynamicDnsUpdate {
   password: string;
   period: number;
 }
+
+export type DynamicDnsUpdate = Omit<DynamicDnsConfig, 'id'>;

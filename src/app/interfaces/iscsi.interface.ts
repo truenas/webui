@@ -75,7 +75,3 @@ export interface IscsiTargetExtent {
   lunid: number;
   target: number;
 }
-
-export interface IscsiIpChoices {
-  [ip: string]: string;
-}

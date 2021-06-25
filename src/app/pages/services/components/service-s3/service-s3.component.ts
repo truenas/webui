@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/services/components/service-s3';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { S3Config, S3ConfigUpdate } from 'app/interfaces/s3-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -149,7 +150,7 @@ export class ServiceS3Component implements FormConfiguration {
       }
     });
     this.ws
-      .call('s3.bindip_choices', [])
+      .call('s3.bindip_choices')
       .pipe(
         map((response) =>
           Object.keys(response || {}).map((key) => ({
@@ -191,8 +192,8 @@ export class ServiceS3Component implements FormConfiguration {
     return data;
   }
 
-  submitFunction(entityForm: any): Observable<any> {
-    return this.ws.call('s3.update', [entityForm]);
+  submitFunction(configUpdate: S3ConfigUpdate): Observable<S3Config> {
+    return this.ws.call('s3.update', [configUpdate]);
   }
 
   beforeSubmit(data: any): void {

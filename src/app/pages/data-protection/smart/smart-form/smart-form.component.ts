@@ -107,9 +107,9 @@ export class SmartFormComponent implements FormConfiguration {
   constructor(protected ws: WebSocketService, protected modalService: ModalService) {
     this.disk_field = this.fieldSets.config('disks');
     this.ws.call('smart.test.disk_choices').pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        for (const key in res) {
-          this.disk_field.options.push({ label: res[key], value: key });
+      (choices) => {
+        for (const key in choices) {
+          this.disk_field.options.push({ label: choices[key], value: key });
         }
       }, (err) => new EntityUtils().handleWSError(this, err),
     );
