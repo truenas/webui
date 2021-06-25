@@ -65,6 +65,7 @@ def the_pools_page_appears_click_create_pool(driver):
 def the_pool_manager_appears_enter_the_tank_for_pool_name(driver):
     """the Pool Manager appears, enter the tank for pool name."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Pool Manager")]')
+    time.sleep(2)
     assert wait_on_element(driver, 10, '//input[@id="pool-manager__name-input-field"]')
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys('tank')
 
