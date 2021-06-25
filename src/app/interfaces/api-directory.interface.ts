@@ -35,6 +35,7 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
+import { ContainerConfig, ContainerConfigUpdate } from 'app/interfaces/container-config.interface';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
@@ -95,6 +96,7 @@ import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine, VmStopParams } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
+import { WebdavConfig, WebdavConfigUpdate } from 'app/interfaces/webdav-config.interface';
 
 /**
  * API definitions for `call` and `job` methods.
@@ -245,8 +247,8 @@ export type ApiDirectory = {
   'cloudsync.sync_onetime': { params: any; response: any };
 
   // Container
-  'container.config': { params: any; response: any };
-  'container.update': { params: any; response: any };
+  'container.config': { params: void; response: ContainerConfig };
+  'container.update': { params: [ContainerConfigUpdate]; response: ContainerConfig };
   'container.image.query': { params: void; response: ContainerImage[] };
   'container.image.pull': { params: [PullContainerImageParams]; response: any };
   'container.image.delete': { params: any; response: any };
@@ -364,7 +366,7 @@ export type ApiDirectory = {
   'interface.create': { params: any; response: any };
   'interface.update': { params: any; response: any };
   'interface.has_pending_changes': { params: void; response: boolean };
-  'interface.checkin_waiting': { params: any; response: any };
+  'interface.checkin_waiting': { params: void; response: any };
   'interface.checkin': { params: any; response: any };
   'interface.websocket_interface': { params: any; response: any };
 
@@ -783,8 +785,8 @@ export type ApiDirectory = {
   'snmp.update': { params: any; response: any };
 
   // WEBDAV
-  'webdav.config': { params: any; response: any };
-  'webdav.update': { params: any; response: any };
+  'webdav.config': { params: void; response: WebdavConfig };
+  'webdav.update': { params: [WebdavConfigUpdate]; response: WebdavConfig };
 
   // InitShutdownScript
   'initshutdownscript.query': { params: QueryParams<InitShutdownScript>; response: InitShutdownScript[] };

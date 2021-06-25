@@ -42,8 +42,6 @@ export class DashboardNoteEditComponent implements OnInit {
       { type: 'textarea', name: 'content', placeholder: 'Content' },
     ],
   }];
-  private bootloader: any;
-  bootloader_type: any[];
 
   error: any;
   success: any;
