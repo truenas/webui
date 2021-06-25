@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import helptext from 'app/helptext/directoryservice/ldap';
 import global_helptext from 'app/helptext/global-helptext';
 import { FormConfiguration, FormCustomAction } from 'app/interfaces/entity-form.interface';
+import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
   FieldConfig,
@@ -36,7 +37,7 @@ export class LdapComponent implements FormConfiguration {
   protected ldap_ssl: FieldConfig;
   protected ldapCertificate: FieldConfig;
   protected ldap_schema: FieldConfig;
-  protected ldap_hostname: any;
+  protected ldap_hostname: string[];
   protected entityForm: EntityFormComponent;
   custActions: FormCustomAction[] = [
     {
@@ -232,11 +233,14 @@ export class LdapComponent implements FormConfiguration {
     private dialogservice: DialogService,
     protected systemGeneralService: SystemGeneralService) { }
 
-  resourceTransformIncomingRestData(data: any): any {
-    delete data['bindpw'];
-    data['hostname_noreq'] = data['hostname'];
+  resourceTransformIncomingRestData(data: LdapConfig): any {
+    const transformed = {
+      ...data,
+      hostname_noreq: data['hostname'],
+    };
+    delete transformed['bindpw'];
     this.ldap_hostname = data['hostname'];
-    return data;
+    return transformed;
   }
 
   afterInit(entityEdit: EntityFormComponent): void {
@@ -251,7 +255,7 @@ export class LdapComponent implements FormConfiguration {
       });
     });
 
-    this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+    this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       this.ldap_kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' });
       res.forEach((item) => {
         this.ldap_kerberos_principal.options.push(
@@ -269,7 +273,7 @@ export class LdapComponent implements FormConfiguration {
       });
     });
 
-    this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+    this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
       this.ldapCertificate = _.find(this.fieldConfig, { name: 'certificate' });
       res.forEach((item) => {
         this.ldapCertificate.options.push(
@@ -283,7 +287,7 @@ export class LdapComponent implements FormConfiguration {
       }
     });
 
-    this.ws.call('ldap.schema_choices').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+    this.ws.call('ldap.schema_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       this.ldap_schema = _.find(this.fieldConfig, { name: 'schema' });
       res.forEach(((item) => {
         this.ldap_schema.options.push(

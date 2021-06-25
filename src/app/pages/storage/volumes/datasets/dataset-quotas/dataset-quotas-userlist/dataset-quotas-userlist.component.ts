@@ -7,6 +7,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import {
   WebSocketService, StorageService, DialogService, AppLoaderService,
@@ -21,7 +22,7 @@ import { T } from 'app/translate-marker';
 export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDestroy {
   pk: string;
   title = helptext.users.table_title;
-  protected entityList: any;
+  protected entityList: EntityTableComponent;
   quotaValue: number;
   protected fullFilter = [['OR', [['used_bytes', '>', 0], ['obj_used', '>', 0]]]];
   protected emptyFilter: string[] = [];
@@ -167,14 +168,14 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
     return actions as EntityTableAction[];
   }
 
-  preInit(entityList: any): void {
+  preInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
     const paramMap: any = (<any> this.aroute.params).getValue();
     this.pk = paramMap.pk;
     this.useFullFilter = window.localStorage.getItem('useFullFilter') !== 'false';
   }
 
-  callGetFunction(entityList: any): void {
+  callGetFunction(entityList: EntityTableComponent): void {
     const filter = this.useFullFilter ? this.fullFilter : this.emptyFilter;
     this.ws.call('pool.dataset.get_quota', [this.pk, 'USER', filter]).pipe(untilDestroyed(this)).subscribe((res) => {
       entityList.handleData(res, true);

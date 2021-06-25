@@ -27,8 +27,8 @@ export class IscsiService {
     return this.ws.call('iscsi.initiator.query', []);
   }
 
-  getExtentDevices(): Observable<any[]> {
-    return this.ws.call('iscsi.extent.disk_choices', []);
+  getExtentDevices(): Observable<Choices> {
+    return this.ws.call('iscsi.extent.disk_choices');
   }
 
   getExtents(): Observable<IscsiExtent[]> {

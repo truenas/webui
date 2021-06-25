@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -28,7 +29,7 @@ export class ChartReleaseAddComponent implements OnDestroy, WizardConfiguration 
   addCall: 'chart.release.create' = 'chart.release.create';
 
   private title = helptext.chartForm.title;
-  private dialogRef: any;
+  private dialogRef: MatDialogRef<EntityJobComponent>;
   hideCancel = true;
   summary: any = {};
   summaryTitle = 'Chart Release Summary';

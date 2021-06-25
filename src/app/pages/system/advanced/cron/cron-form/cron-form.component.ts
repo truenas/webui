@@ -25,7 +25,7 @@ export class CronFormComponent {
   protected addCall = 'cronjob.create';
   protected pk: any;
   protected data: any;
-  protected user_field: any;
+  protected user_field: FieldConfig;
   protected isOneColumnForm = true;
   protected isEntity = true;
 

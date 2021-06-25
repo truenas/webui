@@ -4,7 +4,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { RelationGroup } from 'app/pages/common/entity/entity-form/models/field-relation.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
@@ -134,14 +136,14 @@ export class InitiatorFormComponent implements OnInit {
 
     if (this.pk) {
       this.ws.call(this.queryCall, this.customFilter).pipe(untilDestroyed(this)).subscribe(
-        (res: any[]) => {
+        (res) => {
           for (const i in res[0]) {
             const ctrl = this.formGroup.controls[i];
             if (ctrl) {
               if (i === 'initiators' || i === 'auth_network') {
                 ctrl.setValue(new Set(res[0][i]));
               } else {
-                ctrl.setValue(res[0][i]);
+                ctrl.setValue(res[0][i as keyof IscsiInitiatorGroup]);
               }
             }
           }
@@ -210,7 +212,7 @@ export class InitiatorFormComponent implements OnInit {
     }
   }
 
-  relationUpdate(config: FieldConfig, activations: any): void {
+  relationUpdate(config: FieldConfig, activations: RelationGroup): void {
     const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
       activations, this.formGroup,
     );

@@ -130,7 +130,7 @@ export class PortalFormComponent implements FormConfiguration {
 
   fieldConfig: FieldConfig[];
   pk: any;
-  protected authgroup_field: any;
+  protected authgroup_field: FieldConfig;
   protected entityForm: EntityFormComponent;
   protected ip: any;
 

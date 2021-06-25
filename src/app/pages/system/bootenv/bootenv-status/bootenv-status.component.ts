@@ -27,7 +27,6 @@ interface PoolDiskInfo {
 export class BootStatusListComponent implements OnInit {
   title = 'Boot Pool Status';
   protected queryCall: 'boot.get_state' = 'boot.get_state';
-  protected entityList: any;
   protected pk: number;
   poolScan: any;
   oneDisk = false;

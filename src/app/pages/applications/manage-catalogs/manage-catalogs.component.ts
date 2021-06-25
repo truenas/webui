@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/apps/apps';
@@ -59,7 +60,7 @@ export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
 
   filterString = '';
 
-  private dialogRef: any;
+  private dialogRef: MatDialogRef<EntityJobComponent>;
   protected entityList: EntityTableComponent;
   protected loaderOpen = false;
 

@@ -29,7 +29,7 @@ export class DeviceListComponent implements EntityTableConfig {
   protected route_delete: string[];
   protected pk: any;
   vm: string;
-  private entityList: any;
+  private entityList: EntityTableComponent;
   wsDelete: 'datastore.delete' = 'datastore.delete';
   queryCall: 'vm.device.query' = 'vm.device.query';
   queryCallOption: any[] = [[['vm', '=']]];

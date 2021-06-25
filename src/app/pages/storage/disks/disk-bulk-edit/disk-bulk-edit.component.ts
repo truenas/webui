@@ -84,10 +84,6 @@ export class DiskBulkEditComponent implements FormConfiguration {
     },
   ];
 
-  protected disk_hddstandby: any;
-  protected disk_advpowermgmt: any;
-  protected entityList: any;
-
   constructor(
     private _router: Router,
     private dialogService: DialogService,

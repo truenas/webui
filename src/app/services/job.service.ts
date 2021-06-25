@@ -40,9 +40,9 @@ export class JobService {
     return source;
   }
 
-  showLogs(job: any, title?: string, cancelMsg?: string): void {
-    let dialog_title; let
-      cancelButtonMsg;
+  showLogs(job: Job, title?: string, cancelMsg?: string): void {
+    let dialog_title;
+    let cancelButtonMsg;
     title ? dialog_title = title : dialog_title = T('Logs');
     cancelMsg ? cancelButtonMsg = cancelMsg : cancelButtonMsg = T('Close');
 

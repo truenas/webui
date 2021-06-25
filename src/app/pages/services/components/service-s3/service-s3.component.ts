@@ -141,7 +141,7 @@ export class ServiceS3Component implements FormConfiguration {
           });
       }
     });
-    this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+    this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
       this.certificate = _.find(this.fieldConfig, { name: 'certificate' });
       if (res.length > 0) {
         res.forEach((item) => {

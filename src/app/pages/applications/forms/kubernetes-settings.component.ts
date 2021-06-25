@@ -122,7 +122,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     );
 
     const setV4InterfaceControl = this.appService.getInterfaces().pipe(
-      tap((interfaces: any[]) => {
+      tap((interfaces) => {
         const v4InterfaceControl = _.find(this.fieldSets[1].config, { name: 'route_v4_interface' });
         interfaces.forEach((i) => {
           v4InterfaceControl.options.push({ label: i.name, value: i.name });

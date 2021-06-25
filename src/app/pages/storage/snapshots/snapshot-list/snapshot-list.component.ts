@@ -229,7 +229,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     this.entityList = entityList;
   }
 
-  callGetFunction(entityList: any): void {
+  callGetFunction(entityList: EntityTableComponent): void {
     this.ws.call('systemdataset.config').toPromise().then((res) => {
       if (res && res.basename && res.basename !== '') {
         this.queryCallOption[0][2] = (['name', '!^', res.basename]);

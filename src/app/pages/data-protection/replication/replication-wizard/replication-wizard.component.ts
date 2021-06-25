@@ -987,8 +987,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     });
   }
 
-  setDisable(field: any, disabled: boolean, isHidden: boolean, stepIndex: number): void {
-    const control: any = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
+  setDisable(field: string, disabled: boolean, isHidden: boolean, stepIndex: number): void {
+    const control: FieldConfig = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
     control['isHidden'] = isHidden;
     control.disabled = disabled;
     disabled
@@ -1305,7 +1305,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
   }
 
-  createSSHConnection(activedField: any): void {
+  createSSHConnection(activedField: string): void {
     const self = this;
 
     const conf: DialogFormConfiguration = {
