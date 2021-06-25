@@ -152,13 +152,17 @@ def navigate_to_system_setting_and_click_misc(driver):
 def the_miscellaneous_page_should_open(driver):
     """the Advanced page should open."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Advanced")]')
+    assert wait_on_element(driver, 7, '//h3[contains(.,"Cron Jobs")]')
+    element = driver.find_element_by_xpath('//h3[contains(.,"Cron Jobs")]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
 
 
 @then('click on System Dataset')
 def click_on_system_dataset(driver):
     """click on System Dataset."""
-    assert wait_on_element(driver, 7, '(//button[contains(.,"Configure")])[4]', 'clickable')
-    driver.find_element_by_xpath('(//button[contains(.,"Configure")])[4]').click()
+    assert wait_on_element(driver, 7, '//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]').click()
     assert wait_on_element(driver, 5, '//h1[contains(.,"Warning")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
@@ -184,14 +188,14 @@ def click_on_system_dataser_pool_select_dozer_click_Save(driver, pool_name):
 @then('Please wait should appear while settings are being applied')
 def Please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
-    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 90, '//h6[contains(.,"Please wait")]')
 
 
 @then('navigate to the dashboard')
 def navigate_to_dashboard(driver):
     """navigate to The dashboard."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    assert wait_on_element(driver, 30, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
 
 
 @then('refresh and wait for the second node to be up')
