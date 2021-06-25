@@ -214,7 +214,6 @@ export class GroupListComponent implements EntityTableConfig, OnInit {
               if (res) {
                 this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
                 this.prefService.savePreferences();
-                this.entityList.needTableResize = false;
                 this.entityList.getData();
               }
             });
