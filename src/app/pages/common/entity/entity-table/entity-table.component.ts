@@ -226,9 +226,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     const showingRows = currentlyShowingRows;
     return this.currentRows.filter((row) => {
-      const identifier = this.conf.rowIdentifier || 'name';
       const index = showingRows.findIndex((showingRow: any) => {
-        return showingRow[identifier] === row[identifier];
+        return showingRow['multiselect_id'] === row['multiselect_id'];
       });
       return index >= 0;
     });
@@ -659,6 +658,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.configureEmptyTable(this.firstUse ? EmptyType.first_use : EmptyType.no_page_data);
     }
 
+    for (let i = 0; i < this.currentRows.length; i++) {
+      this.currentRows[i].multiselect_id = i;
+    }
     this.dataSource = new MatTableDataSource(this.currentRows);
     this.dataSource.sort = this.sort;
 
