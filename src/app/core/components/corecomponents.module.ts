@@ -13,6 +13,7 @@ import { Display } from 'app/core/components/display/display.component';
 import { PageComponent } from 'app/core/components/page/page.component';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
+import { ViewChartAreaComponent } from 'app/core/components/viewchartarea/viewchartarea.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewControlComponent } from 'app/core/components/viewcontrol/viewcontrol.component';
@@ -71,6 +72,7 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     Display,
     ViewButtonComponent,
     ViewChartComponent,
+    ViewChartAreaComponent,
     ViewChartDonutComponent,
     ViewChartPieComponent,
     ViewChartGaugeComponent,
@@ -104,6 +106,7 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     PageComponent,
     ViewComponent,
     ViewChartComponent,
+    ViewChartAreaComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
     ViewChartBarComponent,
@@ -133,6 +136,7 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     CopyPasteMessageComponent,
     ViewComponent,
     ViewChartComponent,
+    ViewChartAreaComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
     ViewChartBarComponent,
