@@ -1,0 +1,37 @@
+.widget {
+  height: 400px;
+  width: 600px;
+}
+
+.widget mat-card-content {
+  width: 100%;
+}
+
+mat-grid-tile {
+  background-color: var(--bg1);
+
+  .tile {
+    padding: 10px;
+
+    .nic-info {
+      font-size: 12px;
+
+      .info-header {
+        font-size: 20px;
+      }
+
+      ul {
+        text-align: left;
+      }
+    }
+
+    .nic-boby {
+      font-size: 12px;
+    }
+
+    .chart {
+      background: red;
+    }
+  }
+
+}

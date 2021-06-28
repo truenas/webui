@@ -475,6 +475,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     });
 
+    conf.push({ name: 'Network', rendered: true, id: conf.length.toString() });
+
     return conf;
   }
 
