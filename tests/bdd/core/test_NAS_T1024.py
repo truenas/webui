@@ -21,7 +21,7 @@ from pytest_bdd import (
 )
 
 user = os.environ.get('USER')
-mount_point = '/tmp/iscsi_'.join(random.choices(string.digits, k=2))
+mount_point = f'/tmp/iscsi_{"".join(random.choices(string.digits, k=2))}'
 
 
 @scenario('features/NAS-T1024.feature', 'Start iscsi services and connect to iscsi zvol and file share with CHAP',
@@ -35,15 +35,15 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
     """the browser is open on the TrueNAS URL and logged in."""
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 0.5, 10, '//input[@placeholder="Username"]')
+        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
         time.sleep(1)
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
+        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
+        assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -55,27 +55,27 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
 @when('you should be on the dashboard')
 def you_should_be_on_the_dashboard(driver):
     """you should be on the dashboard."""
-    assert wait_on_element(driver, 1, 7, '//a[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, '//li[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
 
 
 @then('click on Services on the side menu')
 def click_on_services_on_the_side_menu(driver):
     """click on Services on the side menu."""
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Services"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Services"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
 
 
 @then('the Services page should open')
 def the_services_page_should_open(driver):
     """the Services page should open."""
-    assert wait_on_element(driver, 1, 7, '//services')
+    assert wait_on_element(driver, 7, '//services')
 
 
 @then('if the SCSI service is not started, start the service')
 def if_the_scsi_service_is_not_started_start_the_service(driver):
     """if the SCSI service is not started, start the service."""
-    assert wait_on_element(driver, 1, 7, '//div[@ix-auto="value__iSCSI"]')
+    assert wait_on_element(driver, 7, '//div[@ix-auto="value__iSCSI"]')
     value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__iSCSI_Running"]', 'class', 'mat-checked')
     if not value_exist:
         driver.find_element_by_xpath('//div[@ix-auto="overlay__iSCSI_Running"]').click()
