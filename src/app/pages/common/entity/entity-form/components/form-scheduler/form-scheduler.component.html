@@ -1,4 +1,4 @@
-<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']" 
+<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
   ix-auto ix-auto-type="scheduler" ix-auto-identifier="{{config.placeholder}}">
     <mat-form-field class="full-width" matTooltip="{{currentValue}}" matTooltipPosition="above" [ngClass]="{'overlay-opened': isOpen}">
     <mat-select [formControlName]="config.name" [required]="config.required" [placeholder]="config.placeholder | translate" (change)="onChangeOption($event)">
@@ -43,7 +43,7 @@
           <ul class="schedule-list" #preview>
             <div class="text-small time-zone-label"><strong>{{"System Time Zone:" | translate}}</strong> {{timezone}}</div>
             <ng-container *ngFor="let date of generatedSchedule;">
-              <li>{{ date | date: ngDateFormat:offset}} {{ offset }}</li>
+              <li>{{ date | date:ngDateFormat:convertToUtcOffset(date._date._offset) }}</li>
             </ng-container>
           </ul>
         </div>
@@ -53,7 +53,7 @@
           <section style="text-align:left;">
             <h4 class="preview-label">{{"Presets" | translate}}</h4>
             <mat-form-field class="cron-presets">
-              <mat-select placeholder="Choose a preset" [(ngModel)]="preset" [ngModelOptions]="{standalone: true}">
+              <mat-select [placeholder]="'Choose a preset' | translate" [(ngModel)]="preset" [ngModelOptions]="{standalone: true}">
                 <mat-option *ngFor="let preset of presets" [value]="preset">
                   {{ preset.label }}
                 </mat-option>
@@ -68,9 +68,6 @@
               <tooltip [header]="config.noMinutes ? helptext.scheduler.general.headerWithoutMinutes : helptext.scheduler.general.header" [message]="helptext.scheduler.general.tooltip"></tooltip>
             </div>
             <span id="no-spaces">{{"Separate values with commas, and without spaces." | translate}}</span>
-            <!--<mat-form-field >
-              <input matInput placeholder="Seconds">
-              </mat-form-field>-->
               <mat-form-field *ngIf="!config.noMinutes">
                 <input matInput [(ngModel)]="minutes" [ngModelOptions]="{standalone: true}" [value]="minutes" placeholder="Minutes" required [ngClass]=" {'invalid' : validMinutes === false}">
               </mat-form-field>
@@ -93,7 +90,6 @@
             <table class="months jan-jun">
               <tbody>
                 <tr>
-                  <!--<td>All</td>-->
                   <td>{{"Jan" | translate}}</td>
                   <td>{{"Feb" | translate}}</td>
                   <td>{{"Mar" | translate}}</td>
@@ -102,7 +98,6 @@
                   <td>{{"Jun" | translate}}</td>
                 </tr>
                 <tr>
-                  <!--<td><mat-checkbox class="month"></mat-checkbox></td>-->
                   <td><mat-checkbox [(ngModel)]="jan" [ngModelOptions]="{standalone: true}" [value]="jan" class="month"></mat-checkbox></td>
                   <td><mat-checkbox [(ngModel)]="feb" [ngModelOptions]="{standalone: true}" [value]="feb" class="month"></mat-checkbox></td>
                   <td><mat-checkbox [(ngModel)]="mar" [ngModelOptions]="{standalone: true}" [value]="mar" class="month"></mat-checkbox></td>
@@ -115,7 +110,6 @@
             <table class="months jul-dec">
               <tbody>
                 <tr>
-                  <!--<td>All</td>-->
                   <td>{{"Jul" | translate}}</td>
                   <td>{{"Aug" | translate}}</td>
                   <td>{{"Sep" | translate}}</td>
@@ -124,7 +118,6 @@
                   <td>{{"Dec" | translate}}</td>
                 </tr>
                 <tr>
-                  <!--<td><mat-checkbox class="month"></mat-checkbox></td>-->
                   <td><mat-checkbox [(ngModel)]="jul" [ngModelOptions]="{standalone: true}" [value]="jul" class="month"></mat-checkbox></td>
                   <td><mat-checkbox [(ngModel)]="aug" [ngModelOptions]="{standalone: true}" [value]="aug" class="month"></mat-checkbox></td>
                   <td><mat-checkbox [(ngModel)]="sep" [ngModelOptions]="{standalone: true}" [value]="sep" class="month"></mat-checkbox></td>
@@ -144,7 +137,6 @@
             <table class="days-of-week">
               <tbody>
                 <tr>
-                  <!--<td>All</td>-->
                   <td>{{"Sun" | translate}}</td>
                   <td>{{"Mon" | translate}}</td>
                   <td>{{"Tue" | translate}}</td>
@@ -154,7 +146,6 @@
                   <td>{{"Sat" | translate}}</td>
                 </tr>
                 <tr>
-                  <!--<td><mat-checkbox class="weekday"></mat-checkbox></td>-->
                   <td><mat-checkbox [(ngModel)]="sun" [ngModelOptions]="{standalone: true}" [value]="sun" class="weekday"></mat-checkbox></td>
                   <td><mat-checkbox [(ngModel)]="mon" [ngModelOptions]="{standalone: true}" [value]="mon" class="weekday"></mat-checkbox></td>
                   <td><mat-checkbox [(ngModel)]="tue" [ngModelOptions]="{standalone: true}" [value]="tue" class="weekday"></mat-checkbox></td>
@@ -174,6 +165,3 @@
       </mat-card>
     </ng-template>
 </div>
-
-
-<!--</mat-form-field>-->

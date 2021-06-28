@@ -1,16 +1,15 @@
-import {Injectable} from '@angular/core';
-import {Router} from '@angular/router';
-import {UUID} from 'angular2-uuid';
-import {LocalStorage} from 'ngx-webstorage';
-import {Observable, Subject} from 'rxjs/Rx';
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { UUID } from 'angular2-uuid';
+import { LocalStorage } from 'ngx-webstorage';
+import { Observable, Subject } from 'rxjs/Rx';
 
-import {environment} from '../../environments/environment';
+import { environment } from '../../environments/environment';
 import { filter, map } from 'rxjs/operators';
 
 @Injectable()
 export class WebSocketService {
-
-  private debug: boolean = true;
+  private debug = true;
   private _authStatus: Subject<any>;
   onCloseSubject: Subject<any>;
   onOpenSubject: Subject<any>;
@@ -18,17 +17,17 @@ export class WebSocketService {
   pendingSubs: any = {};
   pendingMessages: any[] = [];
   socket: WebSocket;
-  connected: boolean = false;
-  loggedIn: boolean = false;
+  connected = false;
+  loggedIn = false;
   @LocalStorage() token;
-  redirectUrl: string = '';
+  redirectUrl = '';
   shuttingdown = false;
 
   protocol: any;
   remote: any;
   private consoleSub: Observable<string>;
 
-  public subscriptions: Map<string, Array<any>> = new Map<string, Array<any>>();
+  subscriptions: Map<string, any[]> = new Map<string, any[]>();
 
   constructor(private _router: Router) {
     this._authStatus = new Subject();
@@ -40,15 +39,15 @@ export class WebSocketService {
     this.connect();
   }
 
-  get authStatus(){
+  get authStatus() {
     return this._authStatus.asObservable();
   }
 
   get consoleMessages() {
     if (!this.consoleSub) {
-      this.consoleSub = this.sub("filesystem.file_tail_follow:/var/log/messages:499").pipe(
-        filter(res => res && res.data && typeof res.data === "string"),
-        map(res => res.data)
+      this.consoleSub = this.sub('filesystem.file_tail_follow:/var/log/messages:499').pipe(
+        filter((res) => res && res.data && typeof res.data === 'string'),
+        map((res) => res.data),
       );
     }
     return this.consoleSub;
@@ -62,8 +61,9 @@ export class WebSocketService {
 
   connect() {
     this.socket = new WebSocket(
-        (this.protocol == 'https:' ? 'wss://' : 'ws://') +
-        this.remote + '/websocket');
+      (this.protocol == 'https:' ? 'wss://' : 'ws://')
+        + this.remote + '/websocket',
+    );
     this.socket.onmessage = this.onmessage.bind(this);
     this.socket.onopen = this.onopen.bind(this);
     this.socket.onclose = this.onclose.bind(this);
@@ -71,13 +71,13 @@ export class WebSocketService {
 
   onopen(event) {
     this.onOpenSubject.next(true);
-    this.send({"msg" : "connect", "version" : "1", "support" : [ "1" ]});
+    this.send({ msg: 'connect', version: '1', support: ['1'] });
   }
 
   onconnect() {
     this.shuttingdown = false;
     while (this.pendingMessages.length > 0) {
-      let payload = this.pendingMessages.pop();
+      const payload = this.pendingMessages.pop();
       this.send(payload);
     }
   }
@@ -93,7 +93,7 @@ export class WebSocketService {
 
   ping() {
     if (this.connected) {
-      this.socket.send(JSON.stringify({"msg" : "ping", "id" : UUID.UUID()}));
+      this.socket.send(JSON.stringify({ msg: 'ping', id: UUID.UUID() }));
       setTimeout(this.ping.bind(this), 20000);
     }
   }
@@ -106,48 +106,49 @@ export class WebSocketService {
       return;
     }
 
-    if (data.msg == "result") {
-      let call = this.pendingCalls.get(data.id);
+    if (data.msg == 'result') {
+      const call = this.pendingCalls.get(data.id);
 
       this.pendingCalls.delete(data.id);
       if (data.error) {
-        console.log("Error: ", data.error);
+        console.log('Error: ', data.error);
         call.observer.error(data.error);
       }
       if (call && call.observer) {
         call.observer.next(data.result);
         call.observer.complete();
       }
-    } else if (data.msg == "connected") {
+    } else if (data.msg == 'connected') {
       this.connected = true;
       setTimeout(this.ping.bind(this), 20000);
       this.onconnect();
-    } else if (data.msg == "nosub") {
+    } else if (data.msg == 'nosub') {
       console.warn(data);
-    } else if (data.msg == "added") {
-      let nom = data.collection.replace('.', '_');
-      if(this.pendingSubs[nom] && this.pendingSubs[nom].observers){
-        for(let uuid in this.pendingSubs[nom].observers){
-          let subObserver = this.pendingSubs[nom].observers[uuid];
+    } else if (data.msg == 'added' || data.collection == 'disk.query') {
+      const nom = data.collection.replace('.', '_');
+      if (this.pendingSubs[nom] && this.pendingSubs[nom].observers) {
+        for (const uuid in this.pendingSubs[nom].observers) {
+          const subObserver = this.pendingSubs[nom].observers[uuid];
           if (data.error) {
-            console.log("Error: ", data.error);
+            console.log('Error: ', data.error);
             subObserver.error(data.error);
           }
-          if (subObserver) {
+          if (subObserver && data.fields) {
             subObserver.next(data.fields);
+          } else if (subObserver && !data.fields) {
+            subObserver.next(data);
           }
         }
       }
-
-    } else if (data.msg == "changed") {
+    } else if (data.msg == 'changed') {
       this.subscriptions.forEach((v, k) => {
         if (k == '*' || k == data.collection) {
           v.forEach((item) => { item.next(data); });
         }
       });
-    } else if (data.msg == "pong") {
+    } else if (data.msg == 'pong') {
       // pass
-    } else if (data.msg == "sub") {
+    } else if (data.msg == 'sub') {
       // pass
     } else {
       // console.log("Unknown message: ", data);
@@ -163,11 +164,11 @@ export class WebSocketService {
   }
 
   subscribe(name): Observable<any> {
-    let source = Observable.create((observer) => {
+    const source = Observable.create((observer) => {
       if (this.subscriptions.has(name)) {
         this.subscriptions.get(name).push(observer);
       } else {
-        this.subscriptions.set(name, [ observer ]);
+        this.subscriptions.set(name, [observer]);
       }
     });
     return source;
@@ -185,50 +186,48 @@ export class WebSocketService {
   }
 
   call(method, params?: any, debug = false): Observable<any> {
-
-    let uuid = UUID.UUID();
-    let payload = {"id" : uuid, "msg" : "method", "method" : method, "params" : params};
+    const uuid = UUID.UUID();
+    const payload = {
+      id: uuid, msg: 'method', method, params,
+    };
 
     // Create the observable
-    let source = Observable.create((observer) => {
+    const source = Observable.create((observer) => {
       this.pendingCalls.set(uuid, {
-        "method" : method,
-        "args" : params,
-        "observer" : observer,
+        method,
+        args: params,
+        observer,
       });
 
       this.send(payload);
     });
 
-
     return source;
   }
 
   sub(name): Observable<any> {
-
-    let nom = name.replace('.','_'); // Avoid weird behavior
-    if(!this.pendingSubs[nom]){ 
-      this.pendingSubs[nom]= {
-        observers: {} 
-      }; 
+    const nom = name.replace('.', '_'); // Avoid weird behavior
+    if (!this.pendingSubs[nom]) {
+      this.pendingSubs[nom] = {
+        observers: {},
+      };
     }
 
-    let uuid = UUID.UUID();
-    let payload =
-        {"id" : uuid, "name" : name, "msg" : "sub" };
+    const uuid = UUID.UUID();
+    const payload = { id: uuid, name, msg: 'sub' };
 
-    let obs = Observable.create((observer) => {
+    const obs = Observable.create((observer) => {
       this.pendingSubs[nom].observers[uuid] = observer;
-      this.send(payload);      
-      
-      // cleanup routine 
+      this.send(payload);
+
+      // cleanup routine
       observer.complete = () => {
-        let unsub_payload = {"id" : uuid, "msg" : "unsub" };
-        this.send(unsub_payload);  
+        const unsub_payload = { id: uuid, msg: 'unsub' };
+        this.send(unsub_payload);
         this.pendingSubs[nom].observers[uuid].unsubscribe();
         delete this.pendingSubs[nom].observers[uuid];
-        if(!this.pendingSubs[nom].observers){ delete this.pendingSubs[nom]}
-      }
+        if (!this.pendingSubs[nom].observers) { delete this.pendingSubs[nom]; }
+      };
 
       return observer;
     });
@@ -236,9 +235,9 @@ export class WebSocketService {
   }
 
   job(method, params?: any): Observable<any> {
-    let source = Observable.create((observer) => {
+    const source = Observable.create((observer) => {
       this.call(method, params).subscribe((job_id) => {
-        this.subscribe("core.get_jobs").subscribe((res) => {
+        this.subscribe('core.get_jobs').subscribe((res) => {
           if (res.id == job_id) {
             observer.next(res.fields);
             if (res.fields.state == 'SUCCESS' || res.fields.state == 'FAILED') {
@@ -252,7 +251,7 @@ export class WebSocketService {
   }
 
   login(username, password, otp_token?): Observable<any> {
-    let params = otp_token ? [username, password, otp_token] : [username, password]
+    const params = otp_token ? [username, password, otp_token] : [username, password];
     return Observable.create((observer) => {
       this.call('auth.login', params).subscribe((result) => {
         this.loginCallback(result, observer);
@@ -262,17 +261,17 @@ export class WebSocketService {
 
   loginCallback(result, observer) {
     if (result === true) {
-      if(!this.loggedIn){
+      if (!this.loggedIn) {
         this._authStatus.next(this.loggedIn);
       }
 
       this.loggedIn = true;
-      
+
       // Subscribe to all events by default
       this.send({
-        "id" : UUID.UUID(),
-        "name" : "*",
-        "msg" : "sub",
+        id: UUID.UUID(),
+        name: '*',
+        msg: 'sub',
       });
     } else {
       this.loggedIn = false;
@@ -284,8 +283,8 @@ export class WebSocketService {
 
   login_token(token): Observable<any> {
     return Observable.create((observer) => {
-      if(token) {
-        this.call('auth.token', [ token ]).subscribe((result) => {
+      if (token) {
+        this.call('auth.token', [token]).subscribe((result) => {
           this.loginCallback(result, observer);
         });
       }

@@ -33,8 +33,6 @@
             "styles": [
               "src/assets/styles/reset.css",
               "node_modules/xterm/dist/xterm.css",
-              "node_modules/quill/dist/quill.core.css",
-              "node_modules/quill/dist/quill.snow.css",
               "node_modules/dragula/dist/dragula.css",
               "node_modules/angular-calendar/css/angular-calendar.css",
               "node_modules/hopscotch/dist/css/hopscotch.min.css",
@@ -63,7 +61,6 @@
               "node_modules/hopscotch/dist/js/hopscotch.min.js",
               "node_modules/hammerjs/hammer.js",
               "src/vendor/Chart.min.js",
-              "node_modules/quill/dist/quill.min.js",
               "node_modules/element-resize-detector/dist/element-resize-detector.min.js",
               "node_modules/filesize/lib/filesize.js",
               "node_modules/xterm/dist/xterm.js",
@@ -124,7 +121,6 @@
               "node_modules/hopscotch/dist/js/hopscotch.min.js",
               "node_modules/hammerjs/hammer.js",
               "src/vendor/Chart.min.js",
-              "node_modules/quill/dist/quill.min.js",
               "node_modules/element-resize-detector/dist/element-resize-detector.min.js",
               "node_modules/filesize/lib/filesize.js",
               "node_modules/xterm/dist/xterm.js",
@@ -133,8 +129,6 @@
             ],
             "styles": [
               "node_modules/xterm/dist/xterm.css",
-              "node_modules/quill/dist/quill.core.css",
-              "node_modules/quill/dist/quill.snow.css",
               "node_modules/dragula/dist/dragula.css",
               "node_modules/angular-calendar/css/angular-calendar.css",
               "node_modules/hopscotch/dist/css/hopscotch.min.css",
@@ -165,37 +159,12 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "src/tsconfig.app.json",
-              "src/tsconfig.spec.json",
-              "tsconfig.worker.json"
-            ],
-            "exclude": []
-          }
-        }
-      }
-    },
-    "freenas-material-ui-e2e": {
-      "root": "e2e",
-      "sourceRoot": "e2e",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "./protractor.conf.js",
-            "devServerTarget": "freenas-material-ui:serve"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "e2e/tsconfig.e2e.json"
-            ],
-            "exclude": []
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }
@@ -212,6 +181,7 @@
     }
   },
   "cli": {
-    "analytics": false
+    "analytics": false,
+    "packageManager": "yarn"
   }
 }

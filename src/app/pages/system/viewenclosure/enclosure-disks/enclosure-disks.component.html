@@ -55,7 +55,7 @@
                   [style.background]="subenclosure ? theme[theme.accentColors[subenclosure.poolKeys[pool]]] : theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]">
                 </div>
                 {{pool}} 
-                <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]].healthy">
+                <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]] || !system.pools[selectedEnclosure.poolKeys[pool]].healthy">
                   <mat-icon fontSet="mdi-set" role="img" fontIcon="mdi-alert"></mat-icon>
                 </span>
               </div>
@@ -99,7 +99,7 @@
         <!-- DETAILS OVERLAY -->
           <div *ngIf="currentView == 'details' || exitingView == 'details'" class="details stage-left dom-overlay">
             <div class="content">
-              <h2 class="disk-name {{selectedDisk.name}}">{{selectedDisk.name}}</h2>
+              <h1 class="disk-name {{selectedDisk.name}}">{{selectedDisk.name}}</h1>
               <div class="title">
                 <span class="semibold">vdev: </span> 
                 <span *ngIf="selectedVdev.type == 'DISK'"> NONE </span>
@@ -115,6 +115,10 @@
                     <span *ngSwitchDefault> {{selectedVdev.topology.toUpperCase()}}</span>
                   </ng-container>
                 </ng-container>
+              </div>
+              <div class="title">
+                <span class="semibold">Slot: </span> 
+                <span>{{selectedDisk.enclosure.slot}}</span> 
               </div>
             </div>
           </div>
@@ -141,11 +145,9 @@
         <div *ngIf="showCaption && chassis && !chassis.rear && !chassis.internal" class="caption dom-overlay">Choose a Disk</div>
 
         <!-- FRONT/REAR TOGGLE -->
-        <!--<div *ngIf="subenclosure && currentView != 'expanders'" class="caption dom-overlay front-rear-toggle">-->
         <div *ngIf="chassis && (chassis.rear || chassis.internal) && currentView != 'expanders'" class="caption dom-overlay front-rear-toggle">
           <button mat-button (click)="enclosureOverride('front')">FRONT</button>
           <button *ngIf="chassis.rear" mat-button (click)="enclosureOverride('rear')">REAR</button>
-          <button *ngIf="chassis.internal" mat-button (click)="enclosureOverride('rear')">Internal</button>
         </div>
 
         <!-- CANVAS/SVG OVERLAY -->
@@ -228,7 +230,7 @@
             <disk-ui [data]="selectedDisk"></disk-ui><!-- disk icon + labels -->
             <div class="capacity">{{converter(selectedDisk.size)}}</div>
             <div class="disk-actions">
-              <button id="identify-btn" mat-button color="primary" (click)="toggleSlotStatus()">Identify Drive</button>
+              <button *ngIf="isIdentifiable" id="identify-btn" mat-button color="primary" (click)="toggleSlotStatus()">Identify Drive</button>
             </div>
           </div>
   

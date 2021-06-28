@@ -1,1 +1,1 @@
-export {VolumeRekeyFormComponent} from './volumerekey-form.component';
+export { VolumeRekeyFormComponent } from './volumerekey-form.component';

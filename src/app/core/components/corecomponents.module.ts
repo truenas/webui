@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { MaterialModule } from '../../appMaterial.module';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
@@ -9,10 +10,10 @@ import { ViewComponent } from 'app/core/components/view/view.component';
 import { CardComponent } from 'app/core/components/card/card.component';
 import { ViewControlComponent } from 'app/core/components/viewcontrol/viewcontrol.component';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { Display,DisplayContainer } from 'app/core/components/display/display.component';
+import { Display, DisplayContainer } from 'app/core/components/display/display.component';
 import { ViewButtonComponent } from './viewbutton/viewbutton.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormsModule }   from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 
 import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
@@ -33,7 +34,6 @@ import { WidgetMemoryComponent } from 'app/core/components/widgets/widgetmemory/
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
 import { SimpleFailoverBtnComponent, SimpleFailoverBtnDialog } from 'app/core/components/widgets/widgetsysinfo/simple-failover-btn.component';
 
-
 import { TranslateModule } from '@ngx-translate/core';
 import { ContextMenuComponent } from './context-menu/context-menu.component';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
@@ -44,7 +44,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
 
 /*
  *
- * This is the Core Module. By importing this module you'll 
+ * This is the Core Module. By importing this module you'll
  * ensure your page will have the right dependencies in place
  * to make use of Core Components
  *
@@ -59,7 +59,8 @@ import { ConvertPipe } from './pipes/convert.pipe';
     FlexLayoutModule,
     FormsModule,
     TranslateModule,
-    CommonDirectivesModule
+    CommonDirectivesModule,
+    RouterModule,
   ],
   declarations: [
     ContextMenuComponent,
@@ -103,7 +104,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     ContextMenuComponent,
     CopyPasteMessageComponent,
     PageComponent,
-    ViewComponent, 
+    ViewComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
@@ -126,7 +127,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
   ],
-  entryComponents:[
+  entryComponents: [
     ContextMenuComponent,
     CopyPasteMessageComponent,
     DisplayContainer,
@@ -153,8 +154,8 @@ import { ConvertPipe } from './pipes/convert.pipe';
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
   ],
-  providers:[
-    StorageService
-  ]
+  providers: [
+    StorageService,
+  ],
 })
 export class CoreComponents {}

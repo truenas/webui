@@ -8,9 +8,9 @@ describe('WidgetcontrollerComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ WidgetcontrollerComponent ]
+      declarations: [WidgetcontrollerComponent],
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

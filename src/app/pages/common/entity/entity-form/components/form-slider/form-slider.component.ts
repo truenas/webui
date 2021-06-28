@@ -15,7 +15,7 @@ export class FormSliderComponent implements Field, OnInit {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
-  public value: any;
+  value: any;
 
   constructor(public translate: TranslateService) {}
 
@@ -23,7 +23,7 @@ export class FormSliderComponent implements Field, OnInit {
     this.value = this.config.min;
     this.group.controls[this.config.name].valueChanges.subscribe((res) => {
       this.value = res;
-    })
+    });
   }
 
   updateValue($event) {

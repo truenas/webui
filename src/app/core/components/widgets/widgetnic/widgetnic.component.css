@@ -108,7 +108,7 @@
   text-align:left;
   border-left:solid 1px rgba(0,0,0,0.1);
 }
- 
+
 .slide .right li{
   font-size: 115%;
   padding: 6px;
@@ -116,7 +116,6 @@
 }
 
 .slide.overview .left .left-content{
-  display:table;
   height: calc(400px * 0.5);
 }
 
@@ -257,7 +256,7 @@
   width: 100%;
   height: calc(100vh - 96px);
   position: absolute;
-  min-height:600px; 
+  min-height:600px;
 }
 
 .xs.widget .overview .right .list-subheader{

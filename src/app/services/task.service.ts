@@ -1,5 +1,3 @@
-
-
 import { Injectable } from '@angular/core';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
@@ -8,7 +6,7 @@ import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class TaskService {
-  protected volumeResource: string = 'storage/volume/';
+  protected volumeResource = 'storage/volume/';
   protected time_options: any[] = [
     { label: '00:00:00', value: '00:00' },
     { label: '00:15:00', value: '00:15' },
@@ -109,7 +107,7 @@ export class TaskService {
     { label: '23:59:00', value: '23:59' },
   ];
 
-  constructor(protected rest: RestService, protected ws: WebSocketService) {};
+  constructor(protected rest: RestService, protected ws: WebSocketService) {}
 
   getTimeOptions() {
     return this.time_options;

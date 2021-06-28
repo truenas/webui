@@ -1,1 +1,1 @@
-export {BootEnvironmentRenameComponent} from './bootenv-rename.component';
+export { BootEnvironmentRenameComponent } from './bootenv-rename.component';

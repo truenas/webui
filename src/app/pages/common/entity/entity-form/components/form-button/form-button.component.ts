@@ -1,14 +1,14 @@
-import {Component} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
-import {FieldConfig} from '../../models/field-config.interface';
-import {Field} from '../../models/field.interface';
+import { FieldConfig } from '../../models/field-config.interface';
+import { Field } from '../../models/field.interface';
 
 @Component({
-  selector : 'form-button',
-  styleUrls : [ 'form-button.component.scss' ],
-  template : `
+  selector: 'form-button',
+  styleUrls: ['form-button.component.scss'],
+  template: `
     <div
       *ngIf="!config.isHidden"
       class="dynamic-field form-button"
@@ -25,7 +25,7 @@ import {Field} from '../../models/field.interface';
         {{ config.label | translate }}
       </button>
     </div>
-  `
+  `,
 })
 export class FormButtonComponent implements Field {
   config: FieldConfig;
@@ -34,7 +34,7 @@ export class FormButtonComponent implements Field {
   constructor(public translate: TranslateService) {}
 
   customEventMethod($event) {
-    if( this.config.customEventMethod !== undefined && this.config.customEventMethod != null) {
+    if (this.config.customEventMethod !== undefined && this.config.customEventMethod != null) {
       this.config.customEventMethod({ event: $event });
     }
     $event.preventDefault();

@@ -5,31 +5,30 @@ import { View } from 'app/core/classes/view';
 import { Action } from 'app/core/classes/viewcontrol';
 
 export interface ViewControllerOptions {
-  //data: any[];
+  // data: any[];
   events: Subject<CoreEvent>;
-  //actions?: Action[];
+  // actions?: Action[];
 }
 
 export abstract class ViewController implements OnDestroy {
-
-  public name: string = "ViewController";
+  name = 'ViewController';
   protected controlEvents: Subject<CoreEvent>;
 
   constructor(options?: ViewControllerOptions) {
-    if(options){
+    if (options) {
       this.setControlEvents(options.events);
     } else {
       this.setControlEvents();
     }
   }
 
-  public setControlEvents(subj?:Subject<CoreEvent>){
-    if(subj){
+  setControlEvents(subj?: Subject<CoreEvent>) {
+    if (subj) {
       this.controlEvents = subj;
     } else {
       this.controlEvents = new Subject();
     }
   }
 
-  ngOnDestroy(){}
+  ngOnDestroy() {}
 }

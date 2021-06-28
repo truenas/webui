@@ -1,4 +1,6 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import {
+  Component, Input, OnChanges, OnInit,
+} from '@angular/core';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { TaskService } from 'app/services';
 
@@ -14,32 +16,31 @@ import { TaskService } from 'app/services';
         {{ run }}
       </mat-list-item>
     </mat-list>
-  `
+  `,
 })
 export class TaskScheduleListComponent implements OnInit, OnChanges {
   private static readonly LIST_LENGTH = 5;
-  @Input() public value: string;
-  @Input() public config: { schedule?: string; cron_schedule?: string; cron?: string; scrub_schedule?: string };
-  @Input() public parent: EntityTableComponent & { conf: any };
+  @Input() value: string;
+  @Input() config: { schedule?: string; cron_schedule?: string; cron?: string; scrub_schedule?: string };
+  @Input() parent: EntityTableComponent & { conf: any };
 
-  public futureRuns: string[];
+  futureRuns: string[];
 
   constructor(private _taskService: TaskService) {}
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     this._buildFutureRuns();
   }
 
-  public ngOnChanges(): void {
+  ngOnChanges(): void {
     this._buildFutureRuns();
   }
 
   private _buildFutureRuns(): void {
-    const scheduleExpression =
-      this.config.cron_schedule || this.config.cron || this.config.scrub_schedule || this.config.schedule;
+    const scheduleExpression = this.config.cron_schedule || this.config.cron || this.config.scrub_schedule || this.config.schedule;
 
     this.futureRuns = this._taskService
       .getTaskNextRuns(scheduleExpression, TaskScheduleListComponent.LIST_LENGTH)
-      .map(run => run.toLocaleString());
+      .map((run) => run.toLocaleString());
   }
 }

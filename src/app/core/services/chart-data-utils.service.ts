@@ -9,8 +9,8 @@ import * as moment from 'moment';
 
 export interface ProcessTask {
   responseEvent: string;
-  operation:string;
-  data:any[];
+  operation: string;
+  data: any[];
 }
 
 interface TimeData { // This is in WidgetChartComponent as well. Widgets eventually need to be updated to use this instead
@@ -22,30 +22,28 @@ interface TimeData { // This is in WidgetChartComponent as well. Widgets eventua
 
 @Injectable()
 export class ChartDataUtilsService {
-
-  private debug: boolean = false;
-  protected runAsWebWorker:boolean = false;
-  protected worker:Worker;
-  public thread:Worker;
+  private debug = false;
+  protected runAsWebWorker = false;
+  protected worker: Worker;
+  thread: Worker;
   protected ready: boolean;
 
-  constructor(protected core: CoreService){
-
+  constructor(protected core: CoreService) {
     // Operations are what will run on the thread
     const operations = (e) => {
-      const context:Worker = self as any; // Required so Typescript doesn't complain
-      
-      var callback = (data) => {
-        context.postMessage({name:"TEST FROM THREAD CALLBACK", data: data});
-      }
+      const context: Worker = self as any; // Required so Typescript doesn't complain
 
-      context.onmessage = (e:MessageEvent) => {
-        let evt:CoreEvent = e.data;
-        console.warn("Thread received message: " + evt.name);
+      var callback = (data) => {
+        context.postMessage({ name: 'TEST FROM THREAD CALLBACK', data });
+      };
+
+      context.onmessage = (e: MessageEvent) => {
+        const evt: CoreEvent = e.data;
+        console.warn('Thread received message: ' + evt.name);
         console.warn(evt);
         callback(evt.data);
-      }
-    }
+      };
+    };
 
     // Create the new thread
     const thread = new Thread(core);
@@ -54,30 +52,28 @@ export class ChartDataUtilsService {
     thread.operations = operations;
 
     // Calback for when we receive messages from the thread
-    thread.onmessage = (e:MessageEvent) => {
-      let evt:CoreEvent = e.data;
-      if(this.debug) {
-        console.log("Parent received message:" + evt.name);
+    thread.onmessage = (e: MessageEvent) => {
+      const evt: CoreEvent = e.data;
+      if (this.debug) {
+        console.log('Parent received message:' + evt.name);
         console.log(evt);
       }
-      //console.warn("chart-data-utils")
+      // console.warn("chart-data-utils")
       this.core.emit(evt);
-    }
+    };
 
     // Start up the thread
     thread.start();
 
     // Test Message
-    thread.postMessage({name:"TEST FROM SERVICE", data:"Test Data Placeholder"});
+    thread.postMessage({ name: 'TEST FROM SERVICE', data: 'Test Data Placeholder' });
 
-    core.register({observerClass:this, eventName:"ReportsHandleSources"}).subscribe((evt:CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'ReportsHandleSources' }).subscribe((evt: CoreEvent) => {
       thread.postMessage(evt);
     });
 
-    core.register({observerClass:this, eventName:"ReportsHandleStats"}).subscribe((evt:CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'ReportsHandleStats' }).subscribe((evt: CoreEvent) => {
       thread.postMessage(evt);
     });
-
   }
-
 }

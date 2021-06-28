@@ -5,7 +5,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   selector: 'app-eula',
   templateUrl: './eula.component.html',
-  styleUrls: ['./eula.component.css']
+  styleUrls: ['./eula.component.css'],
 })
 export class EulaComponent implements OnInit {
   eula: any;
@@ -20,10 +20,10 @@ export class EulaComponent implements OnInit {
       this.ws.call('truenas.get_eula').subscribe((res) => {
         this.eula = res;
       });
-    };
+    }
   }
 
   goToSupport() {
-    this.router.navigate(['/system/support'])
+    this.router.navigate(['/system/support']);
   }
 }

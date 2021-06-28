@@ -1,4 +1,12 @@
 {
-    "tslint.enable": true,
-    "vsicons.presets.angular": true
+  "vsicons.presets.angular": true,
+  "eslint.options": {
+    "extensions": [".ts", ".html"]
+  },
+  "eslint.validate": [
+    "typescript",
+    "html"
+  ],
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.updateImportsOnFileMove.enabled": "always",
 }

@@ -1,4 +1,6 @@
-import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild } from '@angular/core';
+import {
+  Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -14,30 +16,29 @@ import { ShellService, WebSocketService } from '../../../services';
 })
 
 export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() prompt= '';
-  @ViewChild('terminal', { static: true}) container: ElementRef;
+  @Input() prompt = '';
+  @ViewChild('terminal', { static: true }) container: ElementRef;
   cols: string;
   rows: string;
   font_size: number;
-  public token: any;
-  public xterm: any;
+  token: any;
+  xterm: any;
   private shellSubscription: any;
-  public shell_tooltip = helptext.serial_shell_tooltip;
+  shell_tooltip = helptext.serial_shell_tooltip;
 
-  clearLine = "\u001b[2K\r"
+  clearLine = '\u001b[2K\r';
   protected pk: string;
 
   constructor(private ws: WebSocketService,
-              public ss: ShellService,
-              protected aroute: ActivatedRoute,
-              public translate: TranslateService,
-              private dialog: MatDialog) {
-              }
-
+    public ss: ShellService,
+    protected aroute: ActivatedRoute,
+    public translate: TranslateService,
+    private dialog: MatDialog) {
+  }
 
   ngOnInit() {
     const self = this;
-    this.aroute.params.subscribe(params => {
+    this.aroute.params.subscribe((params) => {
       this.pk = params['pk'];
       this.getAuthToken().subscribe((res) => {
         this.initializeWebShell(res);
@@ -49,24 +50,23 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
         this.initializeTerminal();
       });
     });
-
   }
 
   ngOnDestroy() {
     if (this.shellSubscription) {
       this.shellSubscription.unsubscribe();
     }
-    if (this.ss.connected){
+    if (this.ss.connected) {
       this.ss.socket.close();
     }
-  };
+  }
 
   resetDefault() {
     this.font_size = 14;
   }
 
   ngOnChanges(changes: {
-    [propKey: string]: SimpleChange
+    [propKey: string]: SimpleChange;
   }) {
     const log: string[] = [];
     for (const propName in changes) {
@@ -82,11 +82,11 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     this.xterm = new (<any>window).Terminal({
-      'cursorBlink': true,
-      'tabStopWidth': 8,
-      'cols': 80,
-      'rows': parseInt(rowNum.toFixed(),10),
-      'focus': true
+      cursorBlink: true,
+      tabStopWidth: 8,
+      cols: 80,
+      rows: parseInt(rowNum.toFixed(), 10),
+      focus: true,
     });
 
     this.xterm.open(this.container.nativeElement);

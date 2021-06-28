@@ -8,10 +8,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SystemGeneralService } from '../../services';
 import { EntityModule } from '../common/entity/entity.module';
 
-import { ActiveDirectoryComponent } from './activedirectory/';
+import { ActiveDirectoryComponent } from './activedirectory';
 import { routing } from './directoryservice.routing';
-import { LdapComponent } from './ldap/';
-import { NISComponent } from './nis/';
+import { LdapComponent } from './ldap';
+import { NISComponent } from './nis';
 import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list';
 import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form';
 import { KerberosSettingsComponent } from './kerberossettings';
@@ -23,7 +23,7 @@ import { IdmapFormComponent } from './idmap-form/idmap-form.component';
 @NgModule({
   imports: [
     CommonModule, EntityModule, FormsModule, ReactiveFormsModule,
-    NgxUploaderModule, routing, MaterialModule, TranslateModule
+    NgxUploaderModule, routing, MaterialModule, TranslateModule,
   ],
   declarations: [
     LdapComponent,
@@ -37,5 +37,5 @@ import { IdmapFormComponent } from './idmap-form/idmap-form.component';
     IdmapListComponent,
     IdmapFormComponent,
   ],
-  providers: [SystemGeneralService]
+  providers: [SystemGeneralService],
 }) export class DirectoryServiceModule {}

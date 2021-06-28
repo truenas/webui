@@ -5,8 +5,8 @@ import { Subject } from 'rxjs';
 
 /*
  * Heavily influenced by Objective C's NSNotificationCenter
- * Methodology has been altered to incorporate RxJS Subjects 
- * to leverage built in functionality of Angular. 
+ * Methodology has been altered to incorporate RxJS Subjects
+ * to leverage built in functionality of Angular.
  *
  * ObjectiveC uses a "selector" a.k.a. callback that NSNotificationCenter
  * would call directly. This CoreService instead returns an RxJS Observable that
@@ -18,7 +18,7 @@ import { Subject } from 'rxjs';
  * NSNotification = CoreEvent
  * addObserver() = register()
  * postNotification() = emit()
- * 
+ *
  *
  * */
 
@@ -29,168 +29,166 @@ export interface CoreEvent {
 }
 
 interface Registration {
-  observerClass:object; // The component/service listening for the event
+  observerClass: object; // The component/service listening for the event
   observable?: Subject<CoreEvent>; // The Subject that provides the Observable to the observerClass
   eventName?: string; // If undefined, your class will react to everything
-  sender?:object; // Only listen for events from a specific sender
+  sender?: object; // Only listen for events from a specific sender
 }
 
 @Injectable()
 export class CoreService {
-  public coreEvents: Subject<CoreEvent>;
-  private debug:boolean;
-  debug_show_subscription_type:boolean;
-  debug_show_dispatch_table:boolean;
-  debug_show_emit_logs:boolean;
-  debug_filter_eventName: string = "";
-  //private debug_show_data:boolean
+  coreEvents: Subject<CoreEvent>;
+  private debug: boolean;
+  debug_show_subscription_type: boolean;
+  debug_show_dispatch_table: boolean;
+  debug_show_emit_logs: boolean;
+  debug_filter_eventName = '';
+  // private debug_show_data:boolean
   constructor() {
-    /////////////////////////////
-    //Set Debug options here
+    /// //////////////////////////
+    // Set Debug options here
     this.debug = false;
     this.debug_show_emit_logs = false;
     this.debug_show_subscription_type = false;
     this.debug_show_dispatch_table = false;
-    this.debug_filter_eventName = "";
-    /////////////////////////////
-    if(this.debug){
-      console.log("*** New Instance of Core Service ***");
+    this.debug_filter_eventName = '';
+    /// //////////////////////////
+    if (this.debug) {
+      console.log('*** New Instance of Core Service ***');
     }
     this.coreEvents = new Subject();
     this.coreEvents.subscribe(
-      (evt:CoreEvent) => {
-	// Do Stuff
-	//DEBUG: console.log("*** CoreEvent: " + evt.name);
+      (evt: CoreEvent) => {
+        // Do Stuff
+        // DEBUG: console.log("*** CoreEvent: " + evt.name);
       },
-      (err) =>{
-	console.log(err);
-      });
+      (err) => {
+        console.log(err);
+      },
+    );
   }
 
   private dispatchTable = [];
 
-  public register(reg:Registration){
+  register(reg: Registration) {
     reg.observable = new Subject();
     this.dispatchTable.push(reg);
     return reg.observable;
   }
 
-  public unregister(reg: Registration){
-    if(this.debug){
-      console.log("CoreService: Unregistering the following ObserverClass...")
+  unregister(reg: Registration) {
+    if (this.debug) {
+      console.log('CoreService: Unregistering the following ObserverClass...');
       console.log(reg.observerClass);
     }
-    let clone = [];// New Dispatch Table
-    if(!reg.eventName){
-      for(var i = 0; i < this.dispatchTable.length; i++){
-	let registration = this.dispatchTable[i];
-	if(registration.observerClass == reg.observerClass){
+    const clone = [];// New Dispatch Table
+    if (!reg.eventName) {
+      for (var i = 0; i < this.dispatchTable.length; i++) {
+        const registration = this.dispatchTable[i];
+        if (registration.observerClass == reg.observerClass) {
 	  continue;
-	} else {
-          clone.push(registration)
+        } else {
+          clone.push(registration);
         }
       }
     } else {
-      for(var i = 0; i < this.dispatchTable.length; i++){
-	let registration = this.dispatchTable[i];
-	if(registration.observerClass == reg.observerClass && registration.eventName == reg.eventName){
+      for (var i = 0; i < this.dispatchTable.length; i++) {
+        const registration = this.dispatchTable[i];
+        if (registration.observerClass == reg.observerClass && registration.eventName == reg.eventName) {
           continue;
-	} else {
+        } else {
 	  clone.push(registration);
         }
       }
     }
     this.dispatchTable = clone;
-    if(this.debug && this.debug_show_dispatch_table){
-      console.log("UNREGISTER: DISPATCH = ");
+    if (this.debug && this.debug_show_dispatch_table) {
+      console.log('UNREGISTER: DISPATCH = ');
       const tbl = this.debug_filter_eventName ? this.dispatchTable.filter((r) => r.eventName == this.debug_filter_eventName) : this.dispatchTable;
       console.log(tbl);
-      console.log(this.dispatchTable.length + " Observers in table.");
+      console.log(this.dispatchTable.length + ' Observers in table.');
     }
   }
 
-  public emit(evt: CoreEvent){
+  emit(evt: CoreEvent) {
     // DEBUG MESSAGES
-    if(this.debug && this.debug_filter_eventName.length > 0 && this.debug_filter_eventName == evt.name){
-      console.log("*******************************************************");
-      console.log("CORESERVICE: Emitting " + evt.name);
+    if (this.debug && this.debug_filter_eventName.length > 0 && this.debug_filter_eventName == evt.name) {
+      console.log('*******************************************************');
+      console.log('CORESERVICE: Emitting ' + evt.name);
       console.log(this.dispatchTable.filter((r) => r.eventName == evt.name));
-    } else if(this.debug && this.debug_filter_eventName.length == 0){
-      console.log("*******************************************************");
-      console.log("CORESERVICE: Emitting " + evt.name);
+    } else if (this.debug && this.debug_filter_eventName.length == 0) {
+      console.log('*******************************************************');
+      console.log('CORESERVICE: Emitting ' + evt.name);
       console.log(evt);
-    } 
-       
-      
+    }
 
-    if(this.debug && this.debug_show_emit_logs){ 
-      if(this.debug_show_dispatch_table){
-        console.log("CORESERVICE: dispatchTable...");
-        console.log(this.dispatchTable.length + " Observers in table.");
+    if (this.debug && this.debug_show_emit_logs) {
+      if (this.debug_show_dispatch_table) {
+        console.log('CORESERVICE: dispatchTable...');
+        console.log(this.dispatchTable.length + ' Observers in table.');
         const tbl = this.debug_filter_eventName ? this.dispatchTable.filter((r) => r.eventName == this.debug_filter_eventName) : this.dispatchTable;
         console.log(tbl);
       }
     }
 
-    //avoid matching null values
-    if(!evt.name){
-      evt.name = "null";
+    // avoid matching null values
+    if (!evt.name) {
+      evt.name = 'null';
     }
-    if(!evt.sender){
-      evt.sender = "null";
+    if (!evt.sender) {
+      evt.sender = 'null';
     }
 
-    for(var i=0; i < this.dispatchTable.length; i++){
-      let reg = this.dispatchTable[i]; // subscription
+    for (var i = 0; i < this.dispatchTable.length; i++) {
+      const reg = this.dispatchTable[i]; // subscription
 
-      let subscriptionType:string = "any";
-      if(reg.eventName && reg.sender){
-        subscriptionType = "NameSender";
-      } else if(reg.eventName){
-        subscriptionType = "Name";
-      } else if(reg.sender){
-        subscriptionType = "Sender";
+      let subscriptionType = 'any';
+      if (reg.eventName && reg.sender) {
+        subscriptionType = 'NameSender';
+      } else if (reg.eventName) {
+        subscriptionType = 'Name';
+      } else if (reg.sender) {
+        subscriptionType = 'Sender';
       }
 
-      if(this.debug && this.debug_show_subscription_type){
-        console.log(i + ":CoreService: Subscription type = " + subscriptionType);
+      if (this.debug && this.debug_show_subscription_type) {
+        console.log(i + ':CoreService: Subscription type = ' + subscriptionType);
       }
 
-      if(reg.eventName == evt.name && reg.sender == evt.sender && subscriptionType == "NameSender"){
-        if(this.debug && this.debug_show_emit_logs){
-          console.log(">>>>>>>>");
-          console.log("Matched name and sender");
+      if (reg.eventName == evt.name && reg.sender == evt.sender && subscriptionType == 'NameSender') {
+        if (this.debug && this.debug_show_emit_logs) {
+          console.log('>>>>>>>>');
+          console.log('Matched name and sender');
           console.log(reg.observerClass);
           console.log(evt);
-          console.log("<<<<<<<<");
+          console.log('<<<<<<<<');
         }
-	reg.observable.next(evt);
-      } else if(evt.name && reg.eventName == evt.name && subscriptionType == "Name"){
-        if(this.debug && this.debug_show_emit_logs){
-          console.log(">>>>>>>>");
-          console.log("Matched name only");
+        reg.observable.next(evt);
+      } else if (evt.name && reg.eventName == evt.name && subscriptionType == 'Name') {
+        if (this.debug && this.debug_show_emit_logs) {
+          console.log('>>>>>>>>');
+          console.log('Matched name only');
           console.log(reg.observerClass);
           console.log(evt);
-          console.log("<<<<<<<<");
+          console.log('<<<<<<<<');
         }
-	reg.observable.next(evt);
-      } else if(evt.sender && reg.sender == evt.sender && subscriptionType == "Sender"){
-        if(this.debug && this.debug_show_emit_logs){
-          console.log(">>>>>>>>");
-          console.log("Matched sender only");
+        reg.observable.next(evt);
+      } else if (evt.sender && reg.sender == evt.sender && subscriptionType == 'Sender') {
+        if (this.debug && this.debug_show_emit_logs) {
+          console.log('>>>>>>>>');
+          console.log('Matched sender only');
           console.log(reg.observerClass);
           console.log(evt);
-          console.log("<<<<<<<<");
+          console.log('<<<<<<<<');
         }
-	reg.observable.next(evt);
+        reg.observable.next(evt);
       } else {
-        //DEBUG: console.log("No match found");
+        // DEBUG: console.log("No match found");
       }
     }
-    if(this.debug && this.debug_show_emit_logs){ 
-      console.log("*******************************************************");
+    if (this.debug && this.debug_show_emit_logs) {
+      console.log('*******************************************************');
     }
     return this;
   }
-
 }

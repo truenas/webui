@@ -14,11 +14,10 @@ export let CoreServiceInjector: Injector;
  * "TS2539: Cannot assign to 'CoreServiceInjector' because it is not a variable".
  */
 export function setCoreServiceInjector(injector: Injector) {
-    if (CoreServiceInjector) {
-        // Should not happen
-        console.error('Programming error: CoreServiceInjector was already set');
-    }
-    else {
-        CoreServiceInjector = injector;
-    }
+  if (CoreServiceInjector) {
+    // Should not happen
+    console.error('Programming error: CoreServiceInjector was already set');
+  } else {
+    CoreServiceInjector = injector;
+  }
 }

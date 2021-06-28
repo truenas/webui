@@ -25,8 +25,7 @@ export class FormComboboxComponent implements Field {
   }
 
   updateSearchOptions(value) {
-    
-    if(this.config.updater && this.config.parent) {
+    if (this.config.updater && this.config.parent) {
       if (this.config.updateLocal) {
         this.config.updater(value, this.config.parent, this.config);
       } else {
@@ -34,10 +33,9 @@ export class FormComboboxComponent implements Field {
       }
     } else {
       value = value.toLowerCase();
-      let searchOptions = [];
+      const searchOptions = [];
       for (let i = 0; i < this.config.options.length; i++) {
         if (this.config.options[i].label.toLowerCase().includes(value)) {
-
           searchOptions.push(this.config.options[i]);
         }
       }

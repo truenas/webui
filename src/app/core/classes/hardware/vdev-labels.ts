@@ -19,49 +19,48 @@ import {
   everyFrame,
   keyframes,
   timeline,
-  //velocity,
+  // velocity,
   multicast,
   action,
   transform,
-  //transformMap,
-  //clamp
-  } from 'popmotion';
+  // transformMap,
+  // clamp
+} from 'popmotion';
 
 interface Position {
   x: number;
   y: number;
 }
 
-export class VDevLabels extends LabelFactory{
-
- /*
-  * This is meant to put labels on 
+export class VDevLabels extends LabelFactory {
+  /*
+  * This is meant to put labels on
   * enclosure slots.
   * Don't use this class directly.
-  * Instead extend this class for label 
+  * Instead extend this class for label
   * label functionality you need
-  * 
+  *
   */
 
-  public events: Subject<CoreEvent>; 
+  events: Subject<CoreEvent>;
   protected mainStage: any;
   protected app: any;
   protected chassis: Chassis; // The chassis we are labelling
-  public container: Container;
+  container: Container;
   protected domLabels: any;
-  public color: string;
-  
+  color: string;
+
   private textAreas: any;
 
-  constructor(chassis, stage, color/*, domLabels*/){
-    super(chassis, stage)
-    //this.domLabels = domLabels;
-    //console.log(this.domLabels);
+  constructor(chassis, stage, color/* , domLabels */) {
+    super(chassis, stage);
+    // this.domLabels = domLabels;
+    // console.log(this.domLabels);
     this.color = color;
     this.onInit(chassis, stage);
   }
 
-  onInit(chassis, app){
+  onInit(chassis, app) {
     this.chassis = chassis;
     this.app = app;
     this.mainStage = this.app.stage;
@@ -76,132 +75,123 @@ export class VDevLabels extends LabelFactory{
     this.defineTextAreas();
 
     this.events = new Subject<CoreEvent>();
-    this.events.subscribe((evt:CoreEvent) => {
-      switch(evt.name){
-        case "LabelDrives":
-          //console.log(evt);
+    this.events.subscribe((evt: CoreEvent) => {
+      switch (evt.name) {
+        case 'LabelDrives':
+          // console.log(evt);
           this.createVdevLabels(evt.data);
-          break
-        case "OverlayReady":
-          //console.log(evt);
+          break;
+        case 'OverlayReady':
+          // console.log(evt);
           this.traceElements(evt.data.vdev, evt.data.overlay);
-          break
+          break;
       }
     });
-
   }
 
-  onDestroy(){
-    console.log("Clean up after yourself");
+  onDestroy() {
+    console.log('Clean up after yourself');
   }
 
   // Animate into view
-  enter(){
-    console.log("Animate into view...");
+  enter() {
+    console.log('Animate into view...');
   }
 
   // Animate out of view
-  exit(){
-
+  exit() {
     this.mainStage.removeChild(this.container);
 
     this.mainStage.removeChild(this.textAreas.selected.container);
-    this.textAreas.selected.container.destroy()
+    this.textAreas.selected.container.destroy();
 
     this.mainStage.removeChild(this.textAreas.vdev.container);
-    this.textAreas.vdev.container.destroy()
-    //this.container.destroy();
-    this.events.next({name:"LabelsDestroyed"});
+    this.textAreas.vdev.container.destroy();
+    // this.container.destroy();
+    this.events.next({ name: 'LabelsDestroyed' });
   }
 
-  createVdevLabelTile(x,y,w,h){
+  createVdevLabelTile(x, y, w, h) {
     const tile = new PIXI.Graphics();
 
     // draw a rounded rectangle
     tile.lineStyle(1, this.parseColor(this.color), 1);
     tile.beginFill(this.parseColor(this.color), 0);
-    //tile.drawRoundedRect(0, 0, 100, 100, 16);
+    // tile.drawRoundedRect(0, 0, 100, 100, 16);
     tile.drawRect(x, y, w, h);
     tile.endFill();
 
     return tile;
   }
 
-  createVdevLabelText(diskName){
-
+  createVdevLabelText(diskName) {
     const style = new PIXI.TextStyle({
-      fontFamily:'Roboto',
+      fontFamily: 'Roboto',
       fontSize: 14, // double it and then scale it down for clarity
       fontWeight: 'normal',
-      fill: ['#cccccc']
-    })
-    
-    let text = new PIXI.Text(diskName, style);
-    //let text = new PIXI.extras.BitmapText(diskName, style);
-    /*text.scale.x = 0.5;
-    text.scale.y = 0.5;*/
+      fill: ['#cccccc'],
+    });
 
-    //text.x = 120//this.textAreas.selected.width / 2 - text.width / 2;
-    //text.y = 144//this.textAreas.selected.height / 2 - text.height / 2;
+    const text = new PIXI.Text(diskName, style);
+    // let text = new PIXI.extras.BitmapText(diskName, style);
+    /* text.scale.x = 0.5;
+    text.scale.y = 0.5; */
+
+    // text.x = 120//this.textAreas.selected.width / 2 - text.width / 2;
+    // text.y = 144//this.textAreas.selected.height / 2 - text.height / 2;
     text.name = 'vdev_label_text';
 
     return text;
   }
 
-  createVdevLabels(vdev){
+  createVdevLabels(vdev) {
+    const disks = Object.keys(vdev.disks);// NOTE: vdev.slots only has values for current enclosure
+    const xOffset = this.chassis.container.x + this.chassis.container.width + 16;
+    const freeSpace = this.app._options.width - xOffset;
+    const gap = 3;
 
-    let disks = Object.keys(vdev.disks);// NOTE: vdev.slots only has values for current enclosure
-    let xOffset = this.chassis.container.x + this.chassis.container.width + 16;
-    let freeSpace = this.app._options.width - xOffset;
-    let gap = 3;
-      
-    
     // Simulate disks that live on another enclosure
-    /*for(let i = 10; i < 21; i++){
+    /* for(let i = 10; i < 21; i++){
       disks.push('ada' + i);
-    }*/
-    
+    } */
 
     disks.forEach((disk, index) => {
       let present = false; // Is the disk in this enclosure?
-      if(typeof vdev.slots[disk] !== 'undefined'){
-
+      if (typeof vdev.slots[disk] !== 'undefined') {
         present = true;
         // Create tile if the disk is in the current enclosure
-        let src = this.chassis.driveTrayObjects[vdev.slots[disk]].container;
-        let tray = src.getGlobalPosition();
+        const src = this.chassis.driveTrayObjects[vdev.slots[disk]].container;
+        const tray = src.getGlobalPosition();
 
-        let tile = this.createVdevLabelTile(tray.x, tray.y, src.width * this.chassis.container.scale.x, src.height * this.chassis.container.scale.y);
-        tile.name = "tile_" + disk;
-        //tile.renderCanvas()
+        const tile = this.createVdevLabelTile(tray.x, tray.y, src.width * this.chassis.container.scale.x, src.height * this.chassis.container.scale.y);
+        tile.name = 'tile_' + disk;
+        // tile.renderCanvas()
         this.textAreas.vdev.container.addChild(tile);
-
       }
     });
-
   }
 
-  traceElements(vdev, overlay){
-    let disks = Object.keys(vdev.disks);// NOTE: vdev.slots only has values for current enclosure
+  traceElements(vdev, overlay) {
+    const disks = Object.keys(vdev.disks);// NOTE: vdev.slots only has values for current enclosure
     disks.forEach((disk, index) => {
       let present = false; // Is the disk in this enclosure?
-      if(typeof vdev.slots[disk] !== 'undefined'){
+      if (typeof vdev.slots[disk] !== 'undefined') {
         present = true;
         // Create tile if the disk is in the current enclosure
-        let src = this.textAreas.vdev.container.getChildByName("tile_" + disk);
-        let tray = src.getLocalBounds();
+        const src = this.textAreas.vdev.container.getChildByName('tile_' + disk);
+        const tray = src.getLocalBounds();
 
-        let el = overlay.nativeElement.querySelector('div.vdev-disk.' + disk);
-        let startX = tray.x + tray.width;
-        let startY = tray.y + tray.height / 2;
-        let endX = el.offsetLeft + el.offsetParent.offsetLeft;
-        let endY = el.offsetTop + el.offsetParent.offsetTop + (el.offsetHeight / 2);
+        const el = overlay.nativeElement.querySelector('div.vdev-disk.' + disk);
+        const startX = tray.x + tray.width;
+        const startY = tray.y + tray.height / 2;
+        const endX = el.offsetLeft + el.offsetParent.offsetLeft;
+        const endY = el.offsetTop + el.offsetParent.offsetTop + (el.offsetHeight / 2);
         this.createTrace(startX, startY, endX, endY);
       }
     });
   }
 
-  createTrace(startX,startY, endX, endY){
+  createTrace(startX, startY, endX, endY) {
     const graphics = new PIXI.Graphics(true);
     // draw a shape
     graphics.beginFill(this.parseColor(this.color));
@@ -209,36 +199,36 @@ export class VDevLabels extends LabelFactory{
     graphics.moveTo(startX, startY);
     graphics.lineTo(endX, endY);
     graphics.endFill();
-    //graphics.renderCanvas();
+    // graphics.renderCanvas();
 
     this.textAreas.vdev.container.addChild(graphics);
   }
 
-  createLabel(vdev){
+  createLabel(vdev) {
     const style = new PIXI.TextStyle({
-      fontFamily:'Roboto',
+      fontFamily: 'Roboto',
       fontSize: 48, // double it and then scale it down for clarity
       fontStyle: 'normal',
-      fill: ['#cccccc']
-    })
-    
+      fill: ['#cccccc'],
+    });
+
     console.log(vdev.selectedDisk);
-    let text = new PIXI.Text(vdev.selectedDisk, style);
+    const text = new PIXI.Text(vdev.selectedDisk, style);
     text.scale.x = 0.5;
     text.scale.y = 0.5;
-    //text.x = 120//this.textAreas.selected.width / 2 - text.width / 2;
-    //text.y = 144//this.textAreas.selected.height / 2 - text.height / 2;
+    // text.x = 120//this.textAreas.selected.width / 2 - text.width / 2;
+    // text.y = 144//this.textAreas.selected.height / 2 - text.height / 2;
     text.name = 'selected_disk_text';
     this.textAreas.vdev.container.addChild(text);
     console.log(this.textAreas.selected);
   }
 
-  private defineTextAreas(){
+  private defineTextAreas() {
     // selected disk on left and other vdev disks on right
-    let selectedDiskLabel = new PIXI.Container();
+    const selectedDiskLabel = new PIXI.Container();
     selectedDiskLabel.name = 'selected_disk_label';
 
-    let vDevLabels = new PIXI.Container();
+    const vDevLabels = new PIXI.Container();
     vDevLabels.name = 'vdev_labels';
 
     this.textAreas = {
@@ -247,16 +237,16 @@ export class VDevLabels extends LabelFactory{
         top: 16,
         right: this.chassis.container.x - 16,
         bottom: this.mainStage.height - 16,
-        left: 16
+        left: 16,
       },
       vdev: {
         container: vDevLabels,
         top: 16,
         right: this.mainStage.width - 16,
         bottom: this.mainStage.height - 16,
-        left: this.chassis.container.x + this.chassis.container.width
-      }
-    }
+        left: this.chassis.container.x + this.chassis.container.width,
+      },
+    };
 
     this.setBounds(this.textAreas.selected);
     this.setBounds(this.textAreas.vdev);
@@ -265,16 +255,14 @@ export class VDevLabels extends LabelFactory{
     this.mainStage.addChild(vDevLabels);
 
     console.log(this.app);
-
   }
 
-  protected setBounds(obj){
+  protected setBounds(obj) {
     obj.container.width = obj.right - obj.left;
     obj.container.height = obj.bottom - obj.top;
   }
 
-  protected parseColor(color:string){
-    return parseInt("0x" + color.substring(1), 16)
+  protected parseColor(color: string) {
+    return parseInt('0x' + color.substring(1), 16);
   }
-
 }
