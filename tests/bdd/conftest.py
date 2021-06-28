@@ -86,7 +86,7 @@ def driver():
     return web_driver
 
 
-# Close firefox after all tests are completed
+# Close Firefox after all tests are completed
 def pytest_sessionfinish(session, exitstatus):
     web_driver.quit()
 

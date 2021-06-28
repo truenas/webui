@@ -155,12 +155,12 @@ def check_the_enable_box_and_click_save(driver):
 def the_active_directory_setup_should_successfully_save_without_an_error(driver):
     """the Active Directory setup should successfully save without an error."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, f'//span[text()="{domain.upper()}")]')
+    assert wait_on_element(driver, 7, f'//span[text()="{domain.upper()}"]')
 
 
 @then(parsers.parse('run "{cmd}" on the NAS with ssh'))
-def run_wbinfo_u_on_the_nas_with_ssh(driver, cmd):
-    """run "wbinfo -u" on the NAS with ssh."""
+def run_cmd_on_the_nas_with_ssh(driver, cmd):
+    """run "cmd" on the NAS with ssh."""
     global results
     results = ssh_cmd(cmd, 'root', 'testing', host)
     assert results['result'], results['output']
@@ -173,27 +173,11 @@ def verify_that_ad01administrator_is_in__wbinfo_u_output(driver, ad_object):
     time.sleep(1)
 
 
-@then(parsers.parse('run "{cmd} on the NAS with ssh'))
-def run_wbinfo_g_on_the_nas_with_ssh(driver, cmd):
-    """run "wbinfo -g" on the NAS with ssh."""
-    global results
-    results = ssh_cmd(cmd, 'root', 'testing', host)
-    assert results['result'], results['output']
-
-
 @then(parsers.parse('verify that "{ad_object}" is in wbinfo -g output'))
 def verify_that_ad_object_is_in_wbinfo_g_output(driver, ad_object):
     """verify that "ad_object" is in wbinfo -g output."""
     assert ad_object in results['output'], results['output']
     time.sleep(1)
-
-
-@then(parsers.parse('run "{cmd}" on the NAS with ssh'))
-def run_wbinfo_t_on_the_nas_with_ssh(driver, cmd):
-    """run "wbinfo -t" on the NAS with ssh."""
-    global results
-    results = ssh_cmd(cmd, 'root', 'testing', host)
-    assert results['result'], results['output']
 
 
 @then('verify that the trust secret succeeded')
