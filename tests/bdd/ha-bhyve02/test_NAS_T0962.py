@@ -2,8 +2,6 @@
 """SCALE High Availability (tn-bhyve01) feature tests."""
 
 import time
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
