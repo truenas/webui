@@ -9,6 +9,7 @@ import { WidgetComponent } from 'app/core/components/widgets/widget/widget.compo
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
+import { VDev } from 'app/interfaces/storage.interface';
 import { T } from 'app/translate-marker';
 
 interface ItemInfo {
@@ -169,17 +170,17 @@ export class WidgetStorageComponent extends WidgetComponent implements OnChanges
     let value = T('Unknown');
 
     if (pool && pool.topology) {
-      const unhealthy: any[] = []; // Disks with errors
-      pool.topology.data.forEach((item: any) => {
+      const unhealthy: string[] = []; // Disks with errors
+      pool.topology.data.forEach((item: VDev) => {
         if (item.type == VDevType.Disk) {
-          const diskErrors = item.read_errors + item.write_errors + item.checksum_errors;
+          const diskErrors = item.stats.read_errors + item.stats.write_errors + item.stats.checksum_errors;
 
           if (diskErrors > 0) {
             unhealthy.push(item.disk);
           }
         } else {
-          item.children.forEach((device: any) => {
-            const diskErrors = device.read_errors + device.write_errors + device.checksum_errors;
+          item.children.forEach((device: VDev) => {
+            const diskErrors = device.stats.read_errors + device.stats.write_errors + device.stats.checksum_errors;
 
             if (diskErrors > 0) {
               unhealthy.push(device.disk);

@@ -18,7 +18,7 @@ mat-grid-tile {
   background-color: var(--bg1);
 
   .tile {
-    padding: 0 10px 10px;
+    padding: 0 10px 10px 18px;
 
     .tile-header {
       font-size: 20px;
@@ -84,8 +84,8 @@ mat-grid-tile {
 
     .mat-icon.mdi-set {
       font-size: 40px;
-      margin: 10px;
-      margin-top: -2px;
+      height: 31px;
+      width: 40px;
     }
   }
 }
