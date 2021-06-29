@@ -1,8 +1,8 @@
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 
 export interface DataProtectionTaskState {
-  state: EntityJobState;
+  state: JobState;
   datetime?: ApiTimestamp;
   error?: string;
   warnings?: any;

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { IscsiIpChoices } from 'app/interfaces/iscsi.interface';
+import { Choices } from 'app/interfaces/choices.interface';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { IscsiService } from 'app/services';
 import { T } from 'app/translate-marker';
@@ -51,7 +51,7 @@ export class PortalListComponent implements EntityTableConfig {
       key_props: ['tag'],
     },
   };
-  ipChoices: IscsiIpChoices;
+  ipChoices: Choices;
   constructor(protected router: Router, protected iscsiService: IscsiService) {}
 
   prerequisite(): Promise<boolean> {

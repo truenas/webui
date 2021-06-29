@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,7 +13,7 @@ import { filter, map, switchMap } from 'rxjs/operators';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { AclType } from 'app/enums/acl-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
@@ -58,7 +59,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
     },
   };
 
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
   route_add = ['storage', 'import'];
   route_add_tooltip = T('Create or Import Pool');
   showDefaults = false;
@@ -216,11 +217,11 @@ export class VolumesListTableConfig implements EntityTableConfig {
                         if (res.error) {
                           self.loader.close();
                           if (res.exc_info && res.exc_info.extra) {
-                            res.extra = res.exc_info.extra;
+                            (res as any).extra = res.exc_info.extra;
                           }
                           new EntityUtils().handleWSError(this, res, self.dialogService);
                         }
-                        if (res.state === EntityJobState.Success) {
+                        if (res.state === JobState.Success) {
                           self.loader.close();
                           entityDialog.dialogRef.close(true);
                           self.parentVolumesListComponent.repaintMe();
@@ -905,11 +906,11 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   parent.loader.close();
                   if (res.error) {
                     if (res.exc_info && res.exc_info.extra) {
-                      res.extra = res.exc_info.extra;
+                      (res as any).extra = res.exc_info.extra;
                     }
                     new EntityUtils().handleWSError(this, res, parent.dialogService, conf.fieldConfig);
                   }
-                  if (res.state === EntityJobState.Success) {
+                  if (res.state === JobState.Success) {
                     if (entityDialog) {
                       entityDialog.dialogRef.close(true);
                     }

@@ -249,7 +249,7 @@ export class IPMIFromComponent implements FormConfiguration {
     }
   }
 
-  setErrorStatus(status: any, field: any): void {
+  setErrorStatus(status: any, field: FieldConfig): void {
     status === 'INVALID' ? field.hasErrors = true : field.hasErrors = false;
   }
 

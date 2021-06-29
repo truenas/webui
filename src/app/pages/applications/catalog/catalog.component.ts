@@ -309,7 +309,7 @@ export class CatalogComponent implements OnInit {
           '500px', 'info', true);
       });
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: string) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       new EntityUtils().handleWSError(self, err, self.dialogService);
     });
   }

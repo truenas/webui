@@ -135,8 +135,8 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  private rsyncmod_group: any;
-  private rsyncmod_user: any;
+  private rsyncmod_group: FieldConfig;
+  private rsyncmod_user: FieldConfig;
   protected entityForm: EntityFormComponent;
   customFilter: any;
   constructor(protected ws: WebSocketService, protected router: Router,

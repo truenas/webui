@@ -1,6 +1,6 @@
 import { CACreateType } from '../enums/ca-create-type.enum';
-import { CADigestAlgorithm } from '../enums/ca-digest-algorithm.enum';
-import { CAKeyType } from '../enums/ca-key-type.enum';
+import { CertificateDigestAlgorithm } from '../enums/ca-digest-algorithm.enum';
+import { CertificateKeyType } from '../enums/ca-key-type.enum';
 import { EcCurve } from '../enums/ec-curve.enum';
 import { ExtendedKeyUsages } from '../enums/extended-key-usages.enum';
 
@@ -61,7 +61,7 @@ export interface CertificateAuthorityUpdate {
   CSR: string;
   ec_curve: EcCurve;
   email: string;
-  key_type: CAKeyType;
+  key_type: CertificateKeyType;
   name: string;
   organization: string;
   organizational_unit: string;
@@ -69,7 +69,7 @@ export interface CertificateAuthorityUpdate {
   privatekey: string;
   state: string;
   create_type: CACreateType;
-  digest_algorithm: CADigestAlgorithm;
+  digest_algorithm: CertificateDigestAlgorithm;
   san: string[];
   cert_extensions: CertificateExtensions;
 }

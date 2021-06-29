@@ -19,7 +19,7 @@ export class StaticRouteFormComponent implements FormConfiguration {
 
   isEntity = true;
   protected isOneColumnForm = true;
-  afterModalFormClosed: any;
+  afterModalFormClosed: () => void;
 
   fieldSets: FieldSet[] = [
     {

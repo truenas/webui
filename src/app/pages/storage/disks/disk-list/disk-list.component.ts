@@ -10,6 +10,7 @@ import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import helptext from 'app/helptext/storage/disks/disks';
 import { CoreEvent } from 'app/interfaces/events';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { SmartManualTestParams } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -135,7 +136,12 @@ export class DiskListComponent implements EntityTableConfig {
     this.ws.call('disk.get_unused', []).pipe(untilDestroyed(this)).subscribe((unused_res) => {
       this.unused = unused_res;
     }, (err) => new EntityUtils().handleWSError(this, err));
-    this.ws.call('smart.test.disk_choices').pipe(untilDestroyed(this)).subscribe((res) => this.SMARTdiskChoices = res, (err) => new EntityUtils().handleWSError(this, err));
+    this.ws.call('smart.test.disk_choices').pipe(untilDestroyed(this)).subscribe(
+      (res) => {
+        this.SMARTdiskChoices = res;
+      },
+      (err) => new EntityUtils().handleWSError(this, err),
+    );
   }
 
   getActions(parentRow: any): EntityTableAction[] {
@@ -295,9 +301,9 @@ export class DiskListComponent implements EntityTableConfig {
   manualTest(selected: any): void {
     const parent = this;
     const disks = Array.isArray(selected) ? selected.map((item) => item.name) : [selected.name];
-    const disksIdentifier = Array.isArray(selected)
-      ? selected.map((item) => ({ identifier: item.identifier }))
-      : [{ identifier: selected.identifier }];
+    const disksIdentifier: SmartManualTestParams[] = Array.isArray(selected)
+      ? selected.map((item) => ({ identifier: item.identifier } as SmartManualTestParams))
+      : [{ identifier: selected.identifier }] as SmartManualTestParams[];
     const conf: DialogFormConfiguration = {
       title: helptext.manual_test_dialog.title,
       fieldConfig: [
@@ -336,7 +342,7 @@ export class DiskListComponent implements EntityTableConfig {
       saveButtonText: helptext.manual_test_dialog.saveButtonText,
       customSubmit(entityDialog: EntityDialogComponent) {
         disksIdentifier.forEach((item) => {
-          (item as any)['type'] = entityDialog.formValue.type;
+          item.type = entityDialog.formValue.type;
         });
 
         parent.ws.call('smart.test.manual_test', [disksIdentifier]).pipe(untilDestroyed(this)).subscribe(

@@ -30,7 +30,7 @@ import { UnlockDialogComponent } from './unlock-dialog/unlock-dialog.component';
 })
 export class DatasetUnlockComponent implements FormConfiguration {
   queryCall: 'pool.dataset.encryption_summary' = 'pool.dataset.encryption_summary';
-  updateCall = 'pool.dataset.unlock';
+  updateCall: 'pool.dataset.unlock' = 'pool.dataset.unlock';
   route_success: string[] = ['storage'];
   isEntity = true;
   isNew = true;
@@ -45,8 +45,8 @@ export class DatasetUnlockComponent implements FormConfiguration {
   protected key_file_fg: FormControl;
   protected unlock_children_fg: FormControl;
   protected master_checkbox_fc: FieldConfig;
-  protected restart_services_fc: any;
-  protected restart_services_checked: any[] = [];
+  protected restart_services_fc: FieldSet;
+  protected restart_services_checked: string[] = [];
 
   subs: any;
 

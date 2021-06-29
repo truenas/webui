@@ -223,7 +223,7 @@ export class GuiFormComponent implements FormConfiguration {
       .config.find((config) => config.name === 'ui_httpsprotocols');
 
     this.ws.call('system.general.ui_httpsprotocols_choices').pipe(untilDestroyed(this)).subscribe(
-      (res: any) => {
+      (res) => {
         httpsprotocolsField.options = [];
         for (const key in res) {
           httpsprotocolsField.options.push({ label: res[key], value: key });

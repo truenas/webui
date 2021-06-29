@@ -1,7 +1,7 @@
 import {
   Component, AfterViewInit, OnInit, ViewChild,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { MatTabGroup } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -21,8 +21,8 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
   group: FormGroup;
   fieldShow: string;
 
-  tabFormGroup: any;
-  protected control: any;
+  tabFormGroup: FormGroup;
+  protected control: AbstractControl;
   protected active_tab: any;
   protected value: any;
   protected init: boolean;

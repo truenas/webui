@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, ValidationErrors, Validators } from '@angular/forms';
+import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -14,6 +15,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -80,8 +82,8 @@ export class DatasetFormComponent implements FormConfiguration {
   minimum_recommended_dataset_recordsize = '128K';
   protected recordsize_field: FieldConfig;
   protected recordsize_fg: FormControl;
-  protected recommended_size_number: any;
-  protected recordsize_warning: any;
+  protected recommended_size_number: number;
+  protected recordsize_warning: string;
   protected dedup_warned = false;
   protected dedup_value: any;
   protected dedup_fg: FormControl;
@@ -640,18 +642,6 @@ export class DatasetFormComponent implements FormConfiguration {
         },
         {
           type: 'select',
-          name: 'aclmode',
-          placeholder: helptext.dataset_form_aclmode_placeholder,
-          tooltip: helptext.dataset_form_aclmode_tooltip,
-          options: [
-            { label: T('Passthrough'), value: AclMode.Passthrough },
-            { label: T('Restricted'), value: AclMode.Restricted },
-            { label: T('Discard'), value: AclMode.Discard },
-          ],
-          value: AclMode.Passthrough,
-        },
-        {
-          type: 'select',
           name: 'acltype',
           placeholder: T('ACL Type'),
           options: [
@@ -662,6 +652,43 @@ export class DatasetFormComponent implements FormConfiguration {
           ],
           required: false,
           value: DatasetAclType.Inherit,
+          onChangeOption: (event: { event: MatSelectChange }) => {
+            const aclModeFormControl = this.entityForm.formGroup.get('aclmode') as FormControl;
+            const value = event.event.value;
+            if (value === DatasetAclType.Nfsv4) {
+              aclModeFormControl.setValue(AclMode.Passthrough);
+              this.entityForm.setDisabled('aclmode', false, false);
+            } else if (value === DatasetAclType.Posix || value === DatasetAclType.Off) {
+              aclModeFormControl.setValue(AclMode.Discard);
+              this.entityForm.setDisabled('aclmode', true, false);
+            } else if (value === DatasetAclType.Inherit) {
+              aclModeFormControl.setValue(AclMode.Inherit);
+              this.entityForm.setDisabled('aclmode', true, false);
+            }
+            this.dialogService.Info('ACL Types & ACL Modes', helptext.acl_type_change_warning);
+          },
+        },
+        {
+          type: 'select',
+          name: 'aclmode',
+          placeholder: helptext.dataset_form_aclmode_placeholder,
+          tooltip: helptext.dataset_form_aclmode_tooltip,
+          options: [
+            { label: T('Inherit'), value: AclMode.Inherit },
+            { label: T('Passthrough'), value: AclMode.Passthrough },
+            { label: T('Restricted'), value: AclMode.Restricted },
+            { label: T('Discard'), value: AclMode.Discard },
+          ],
+          value: AclMode.Inherit,
+          relation: [
+            {
+              action: RelationAction.Disable,
+              when: [{
+                name: 'acltype',
+                value: DatasetAclType.Inherit,
+              }],
+            },
+          ],
         },
         {
           type: 'select',
@@ -742,17 +769,17 @@ export class DatasetFormComponent implements FormConfiguration {
     'aclmode',
   ];
 
-  encryption_fields: any[] = [
+  encryption_fields = [
     'encryption_type',
     'generate_key',
     'algorithm',
   ];
 
-  key_fields: any[] = [
+  key_fields = [
     'key',
   ];
 
-  passphrase_fields: any[] = [
+  passphrase_fields = [
     'passphrase',
     'confirm_passphrase',
     'pbkdf2iters',
@@ -925,6 +952,20 @@ export class DatasetFormComponent implements FormConfiguration {
     protected modalService: ModalService,
   ) { }
 
+  initial(entityForm: EntityFormComponent): void {
+    const aclModeFormControl = this.entityForm.formGroup.get('aclmode') as FormControl;
+    const value = entityForm.formGroup.get('acltype').value;
+    if (value === DatasetAclType.Nfsv4) {
+      this.entityForm.setDisabled('aclmode', false, false);
+    } else if (value === DatasetAclType.Posix || value === DatasetAclType.Off) {
+      aclModeFormControl.setValue(AclMode.Discard);
+      this.entityForm.setDisabled('aclmode', true, false);
+    } else if (value === DatasetAclType.Inherit) {
+      aclModeFormControl.setValue(AclMode.Inherit);
+      this.entityForm.setDisabled('aclmode', true, false);
+    }
+  }
+
   afterInit(entityForm: EntityFormComponent): void {
     this.productType = window.localStorage.getItem('product_type') as ProductType;
     const aclControl = entityForm.formGroup.get('aclmode');
@@ -1007,7 +1048,12 @@ export class DatasetFormComponent implements FormConfiguration {
     this.setBasicMode(this.isBasicMode);
   }
 
-  paramMap: any;
+  paramMap: {
+    volid?: string;
+    pk?: string;
+    parent?: any;
+  };
+
   preInit(entityForm: EntityFormComponent): void {
     this.volid = this.paramMap['volid'];
 
@@ -1027,10 +1073,10 @@ export class DatasetFormComponent implements FormConfiguration {
       _.find(this.fieldSets, { class: 'dataset' }).label = false;
       _.find(this.fieldSets, { class: 'refdataset' }).label = false;
     }
-    this.ws.call('pool.dataset.compression_choices').pipe(untilDestroyed(this)).subscribe((res) => {
+    this.ws.call('pool.dataset.compression_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
       const compression = _.find(this.fieldConfig, { name: 'compression' });
-      for (const key in res) {
-        compression.options.push({ label: key, value: res[key] });
+      for (const key in choices) {
+        compression.options.push({ label: key, value: choices[key] });
       }
     });
 
@@ -1334,14 +1380,14 @@ export class DatasetFormComponent implements FormConfiguration {
     return field.value;
   }
 
-  getFieldValueOrNone(field: any): any {
+  getFieldValueOrNone(field: ZfsProperty<unknown>): any {
     if (field === undefined || field.value === undefined) {
       return null;
     }
     return field.value;
   }
 
-  isInherited(field: any, value: any): boolean {
+  isInherited(field: ZfsProperty<unknown>, value: unknown): boolean {
     if (!field) {
       return true;
     }
@@ -1472,6 +1518,12 @@ export class DatasetFormComponent implements FormConfiguration {
     if (data.recordsize === '1M') {
       data.recordsize = '1024K';
     }
+
+    if (data.acltype === DatasetAclType.Posix || data.acltype === DatasetAclType.Off) {
+      data.aclmode = AclMode.Discard;
+    } else if (data.acltype === DatasetAclType.Inherit) {
+      data.aclmode = AclMode.Inherit;
+    }
     return this.ws.call('pool.dataset.update', [this.pk, data]);
   }
 
@@ -1546,6 +1598,11 @@ export class DatasetFormComponent implements FormConfiguration {
     delete data.encryption_type;
     delete data.algorithm;
 
+    if (data.acltype === DatasetAclType.Posix || data.acltype === DatasetAclType.Off) {
+      data.aclmode = AclMode.Discard;
+    } else if (data.acltype === DatasetAclType.Inherit) {
+      data.aclmode = AclMode.Inherit;
+    }
     return this.ws.call('pool.dataset.create', [data]);
   }
 
@@ -1600,13 +1657,13 @@ export class DatasetFormComponent implements FormConfiguration {
     this.paramMap.parent = id;
   }
 
-  setVolId(pool: any): void {
+  setVolId(pool: string): void {
     if (!this.paramMap) {
       this.paramMap = {};
     }
     this.paramMap.volid = pool;
   }
-  setPk(id: any): void {
+  setPk(id: string): void {
     if (!this.paramMap) {
       this.paramMap = {};
     }

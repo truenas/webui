@@ -26,8 +26,7 @@ interface PoolDiskInfo {
 })
 export class BootStatusListComponent implements OnInit {
   title = 'Boot Pool Status';
-  protected queryCall = 'boot.get_state';
-  protected entityList: any;
+  protected queryCall: 'boot.get_state' = 'boot.get_state';
   protected pk: number;
   poolScan: any;
   oneDisk = false;
@@ -53,13 +52,12 @@ export class BootStatusListComponent implements OnInit {
 
   getData(): void {
     this.ws.call('boot.get_state').pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        if (res.groups.data[0].type === 'disk') {
+      (state) => {
+        if (state.groups.data[0].type === 'disk') {
           this.oneDisk = true;
         }
-        if (res) {
-          // this.poolScan = res.scan;
-          this.dataHandler(res);
+        if (state) {
+          this.dataHandler(state);
         }
       },
       (err) => {

@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { Choices } from 'app/interfaces/choices.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { WebSocketService } from 'app/services/index';
@@ -35,10 +36,6 @@ export class ApplicationsService {
     return this.ws.call('kubernetes.bindip_choices');
   }
 
-  getDockerImages(): Observable<any[]> {
-    return this.ws.call('docker.images.query');
-  }
-
   getCatItems(label: string): Observable<any> {
     return this.ws.call('catalog.items', [label]);
   }
@@ -64,7 +61,7 @@ export class ApplicationsService {
     return this.ws.call('chart.release.pod_console_choices', [name]);
   }
 
-  getNICChoices(): Observable<any[]> {
+  getNICChoices(): Observable<Choices> {
     return this.ws.call('chart.release.nic_choices');
   }
 

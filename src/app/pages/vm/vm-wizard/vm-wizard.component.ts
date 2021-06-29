@@ -48,7 +48,6 @@ export class VMWizardComponent implements WizardConfiguration {
   summary: any = {};
   isLinear = true;
   firstFormGroup: FormGroup;
-  protected dialogRef: any;
   summaryTitle = T('VM Summary');
   namesInUse: string[] = [];
   statSize: any;

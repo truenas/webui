@@ -1,13 +1,14 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { filter, take } from 'rxjs/operators';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -30,7 +31,7 @@ import { T } from 'app/translate-marker';
 export class ManualUpdateComponent extends ViewControllerComponent implements FormConfiguration {
   formGroup: FormGroup;
   route_success: string[] = ['system', 'update'];
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
   fileLocation: any;
   subs: any;
   isHA = false;
@@ -249,11 +250,11 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
   }
 
   checkForUpdateRunning(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        if (res && res.length > 0) {
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
+      (jobs) => {
+        if (jobs && jobs.length > 0) {
           this.isUpdateRunning = true;
-          this.showRunningUpdate(res[0].id);
+          this.showRunningUpdate(jobs[0].id);
         }
       },
       (err) => {

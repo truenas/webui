@@ -192,7 +192,7 @@ export class LocalizationFormComponent implements FormConfiguration {
     });
   }
 
-  getKeyByValue(object: any, value: any): any {
+  getKeyByValue(object: { [key: string]: unknown }, value: unknown): string {
     return Object.keys(object).find((key) => object[key] === value);
   }
 }

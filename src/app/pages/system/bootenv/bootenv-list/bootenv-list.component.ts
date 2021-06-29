@@ -245,19 +245,19 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   }
 
   updateBootState(): void {
-    this.ws.call('boot.get_state').pipe(untilDestroyed(this)).subscribe((wres) => {
-      if (wres.scan.end_time) {
-        this.scrub_msg = this.localeService.formatDateTime(wres.scan.end_time.$date);
+    this.ws.call('boot.get_state').pipe(untilDestroyed(this)).subscribe((state) => {
+      if (state.scan.end_time) {
+        this.scrub_msg = this.localeService.formatDateTime(state.scan.end_time.$date as any);
       } else {
         this.scrub_msg = T('Never');
       }
-      this.size_consumed = this.storage.convertBytestoHumanReadable(wres.properties.allocated.parsed);
-      this.condition = wres.properties.health.value;
+      this.size_consumed = this.storage.convertBytestoHumanReadable(state.properties.allocated.parsed);
+      this.condition = state.properties.health.value;
       if (this.condition === 'DEGRADED') {
         this.condition = this.condition + T(' Check Notifications for more details.');
       }
-      this.size_boot = this.storage.convertBytestoHumanReadable(wres.properties.size.parsed);
-      this.percentange = wres.properties.capacity.value;
+      this.size_boot = this.storage.convertBytestoHumanReadable(state.properties.size.parsed);
+      this.percentange = state.properties.capacity.value;
     });
   }
 

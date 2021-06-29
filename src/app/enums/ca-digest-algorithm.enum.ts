@@ -1,4 +1,4 @@
-export enum CADigestAlgorithm {
+export enum CertificateDigestAlgorithm {
   SHA1 = 'SHA1',
   SHA224 = 'SHA224',
   SHA256 = 'SHA256',
