@@ -1,25 +1,27 @@
-<div class="title">{{ 'Click an item to view permissions' | translate }}</div>
+<div class="title">{{ 'Click an item to view NFSv4 permissions' | translate }}</div>
 
 <cdk-accordion>
   <cdk-accordion-item
     *ngFor="let aclItem of acl.acl; let i = index"
     #accordionItem="cdkAccordionItem"
     class="accordion-item"
+    [class.expanded]="accordionItem.expanded"
   >
-    <div class="accordion-item-header" (click)="accordionItem.toggle()">
-      <app-permissions-item [item]="permissionItems[i]"></app-permissions-item>
-    </div>
+    <app-permissions-item
+      class="accordion-item-header"
+      [item]= "permissionItems[i]"
+      (click)="accordionItem.toggle()"
+    ></app-permissions-item>
     <div
       *ngIf="permissionDetails[i] as details"
       class="permission-details"
-      [class.expanded]="accordionItem.expanded"
     >
       <div class="details-section">
         <div class="details-title">
-          {{ details.arePermissionsAdvanced ? ('Basic Permissions' | translate) : ('Permissions Advanced' | translate) }}
+          {{ details.arePermissionsBasic ? ('Permissions Basic' | translate) : ('Permissions Advanced' | translate) }}
         </div>
-        <ul>
-          <li *ngFor="let permission of details.permissions">
+        <ul class="details-items">
+          <li *ngFor="let permission of details.permissions" class="details-item">
             <mat-icon class="icon">check_circle</mat-icon>
             {{ permission }}
           </li>
@@ -27,10 +29,10 @@
       </div>
       <div *ngIf="details.flags.length" class="details-section">
         <div class="details-title">
-          {{ details.areFlagsAdvanced ? ('Flags Permissions' | translate) : ('Flags Advanced' | translate) }}
+          {{ details.areFlagsBasic ? ('Flags Basic' | translate) : ('Flags Advanced' | translate) }}
         </div>
-        <ul>
-          <li *ngFor="let flag of details.flags">
+        <ul class="details-items">
+          <li *ngFor="let flag of details.flags" class="details-item">
             <mat-icon class="icon">check_circle</mat-icon>
             {{ flag }}
           </li>

@@ -30,12 +30,13 @@ export class PermissionsSidebarStore extends ComponentStore<PermissionsSidebarSt
   }
 
   readonly loadPermissions = this.effect((mountpoints$: Observable<string>) => {
-    this.setState({
-      ...initialState,
-      isLoading: true,
-    });
-
     return mountpoints$.pipe(
+      tap(() => {
+        this.setState({
+          ...initialState,
+          isLoading: true,
+        });
+      }),
       switchMap((mountpoint) => {
         return forkJoin([
           this.ws.call('filesystem.stat', [mountpoint]),

@@ -1,9 +1,6 @@
 import {
   AclType,
 
-
-
-
 } from 'app/enums/acl-type.enum';
 import {
   NfsAclTag,
@@ -11,19 +8,29 @@ import {
   NfsAdvancedFlag,
   NfsAdvancedPermission,
   NfsBasicFlag,
-  NfsBasicPermission
+  NfsBasicPermission,
 } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
 
-// TODO: Can be split in multiple interfaces: PosixAcl, NfsAcl.
-export interface Acl {
-  acl: PosixAclItem[] | NfsAclItem[];
+export type Acl = NfsAcl | PosixAcl;
+
+export interface BaseAcl {
   acltype: AclType;
-  flags: AclFlags;
-  nfs41_flags?: Nfs41Flags;
   gid: number;
   trivial: boolean;
   uid: number;
+}
+
+export interface NfsAcl extends BaseAcl {
+  acl: NfsAclItem[];
+  acltype: AclType.Nfs4;
+  nfs41_flags: Nfs41Flags;
+}
+
+export interface PosixAcl extends BaseAcl {
+  acl: PosixAclItem[];
+  acltype: AclType.Posix1e;
+  flags: AclFlags;
 }
 
 export interface PosixAclItem {

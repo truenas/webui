@@ -41,9 +41,13 @@
     </div>
 
     <div class="permissions">
-      <app-acl-permissions *ngIf="!acl.trivial; else unixPermissions" [acl]="acl"></app-acl-permissions>
-      <ng-template #unixPermissions>
-        <app-trivial-permissions [stat]="stat"></app-trivial-permissions>
+      <app-trivial-permissions *ngIf="acl.trivial; else nonTrivial" [stat]="stat"></app-trivial-permissions>
+
+      <ng-template #nonTrivial>
+        <ng-container [ngSwitch]="acl.acltype">
+          <app-posix-permissions *ngSwitchCase="AclType.Posix1e" [acl]="acl"></app-posix-permissions>
+          <app-nfs-permissions *ngSwitchCase="AclType.Nfs4" [acl]="acl"></app-nfs-permissions>
+        </ng-container>
       </ng-template>
     </div>
   </ng-template>

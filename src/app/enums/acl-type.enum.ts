@@ -1,7 +1,6 @@
 export enum AclType {
   Nfs4 = 'NFS4',
   Posix1e = 'POSIX1E',
-  Rich = 'RICH',
 }
 
 export enum AclMode {

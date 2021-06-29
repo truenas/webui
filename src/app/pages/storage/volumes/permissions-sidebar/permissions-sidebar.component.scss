@@ -3,7 +3,7 @@
 }
 
 .sidebar-header {
-  border-bottom: 1px solid #efefef0f; // TODO: Variable
+  border-bottom: 1px solid var(--lines);
   display: flex;
   padding: 11px 10px 7px 12px;
 
@@ -19,7 +19,7 @@
 }
 
 .file-information {
-  border-bottom: 1px solid #efefef0f; // TODO: Variable
+  border-bottom: 1px solid var(--lines);
   display: flex;
   flex-wrap: wrap;
   padding: 15px 12px;
@@ -41,4 +41,8 @@
     margin: 0;
     width: 100%;
   }
+}
+
+:host .spinner {
+  margin: 30px auto;
 }

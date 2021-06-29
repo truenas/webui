@@ -25,22 +25,24 @@ export class PermissionsSidebarComponent implements OnInit, OnChanges {
   stat: FileSystemStat;
   acl: Acl;
 
+  readonly AclType = AclType;
+
+  constructor(
+    private store: PermissionsSidebarStore,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
   get editPermissionsUrl(): string[] {
     if (this.acl.trivial) {
       return ['/storage/permissions', this.dataset.id];
     }
 
     if (this.acl.acltype === AclType.Posix1e) {
-      return ['/storage/id', this.dataset.pool, 'dataset/posix-acl', this.dataset.id];
+      return ['/storage/id', this.dataset.pool, 'dataset', 'posix-acl', this.dataset.id];
     }
 
-    return ['/storage/id', this.dataset.pool, 'dataset/acl', this.dataset.id];
+    return ['/storage/id', this.dataset.pool, 'dataset', 'acl', this.dataset.id];
   }
-
-  constructor(
-    private store: PermissionsSidebarStore,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.store.state$

@@ -136,7 +136,7 @@ module.exports = {
         "unused-imports/no-unused-vars": ["error", {
           vars: "local",
           args: "after-used",
-          varsIgnorePattern: "^_"
+          argsIgnorePattern: "^_$"
         }],
         "@typescript-eslint/ban-types": ["error"],
 
