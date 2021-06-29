@@ -5,6 +5,7 @@ import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { ContainerConfig } from 'app/interfaces/container-config.interface';
+import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { WebSocketService } from 'app/services/index';
@@ -17,7 +18,7 @@ export class ApplicationsService {
     return this.ws.call('pool.query');
   }
 
-  getKubernetesConfig(): Observable<any> {
+  getKubernetesConfig(): Observable<KubernetesConfig> {
     return this.ws.call('kubernetes.config');
   }
 
@@ -33,7 +34,7 @@ export class ApplicationsService {
     return this.ws.call('catalog.get_item_details', [name, { cache: true, catalog, train }]);
   }
 
-  getBindIPChoices(): Observable<any[]> {
+  getBindIPChoices(): Observable<Choices> {
     return this.ws.call('kubernetes.bindip_choices');
   }
 

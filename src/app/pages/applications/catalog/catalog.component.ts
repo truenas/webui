@@ -295,8 +295,7 @@ export class CatalogComponent implements OnInit {
     const pool = entityDialog.formGroup.controls['pools'].value;
     const dialogRef = self.mdDialog.open(EntityJobComponent, {
       data: {
-        title: (
-          helptext.choosePool.jobTitle),
+        title: (helptext.choosePool.jobTitle),
       },
       disableClose: true,
     });

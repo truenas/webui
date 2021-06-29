@@ -54,7 +54,7 @@ export interface EntityTableConfig {
   resourceTransformIncomingRestData?: (data: any) => any;
   getActions?: (row: any) => EntityTableAction[];
   getAddActions?: () => any[];
-  rowValue?: (row: any, attr: any) => any;
+  rowValue?: (row: any, attr: string) => any;
   wsMultiDeleteParams?: (selected: any) => any;
   updateMultiAction?: (selected: any) => any;
   doAdd?: (id?: string | number, tableComponent?: EntityTableComponent) => void;

@@ -2,6 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { Subject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -100,11 +101,11 @@ export class SystemGeneralService {
     return this.ws.call(this.certificateList);
   }
 
-  getUnsignedCertificates(): Observable<any[]> {
+  getUnsignedCertificates(): Observable<Certificate[]> {
     return this.ws.call(this.certificateList, [[['CSR', '!=', null]]]);
   }
 
-  getUnsignedCAs(): Observable<any[]> {
+  getUnsignedCAs(): Observable<CertificateAuthority[]> {
     return this.ws.call(this.caList, [[['privatekey', '!=', null]]]);
   }
 

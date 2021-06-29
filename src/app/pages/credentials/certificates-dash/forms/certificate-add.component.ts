@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { Certificate } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -28,8 +29,8 @@ import { T } from 'app/translate-marker';
 })
 export class CertificateAddComponent implements WizardConfiguration {
   addWsCall: 'certificate.create' = 'certificate.create';
-  private entityForm: any;
-  private CSRList: any[] = [];
+  private entityForm: EntityWizardComponent;
+  private CSRList: Certificate[] = [];
   title = helptext_system_certificates.add.title;
   private getType = new Subscription();
   private type: any;
@@ -572,7 +573,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     },
 
   ];
-  private internalFields: any[] = [
+  private internalFields = [
     'signedby',
     'key_type',
     'ec_curve',
@@ -588,7 +589,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     'common',
     'san',
   ];
-  private csrFields: any[] = [
+  private csrFields = [
     'key_type',
     'key_length',
     'ec_curve',
@@ -602,7 +603,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     'common',
     'san',
   ];
-  private importFields: any[] = [
+  private importFields = [
     'certificate',
     'csronsys',
     'csrlist',
@@ -610,13 +611,13 @@ export class CertificateAddComponent implements WizardConfiguration {
     'passphrase',
     'passphrase2',
   ];
-  private importCSRFields: any[] = [
+  private importCSRFields = [
     'CSR',
     'privatekey',
     'passphrase',
     'passphrase2',
   ];
-  private extensionFields: any[] = [
+  private extensionFields = [
     'BasicConstraints-enabled',
     'BasicConstraints-path_length',
     'BasicConstraints',
@@ -646,7 +647,7 @@ export class CertificateAddComponent implements WizardConfiguration {
 
   preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
-    this.systemGeneralService.getUnsignedCAs().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+    this.systemGeneralService.getUnsignedCAs().pipe(untilDestroyed(this)).subscribe((res) => {
       this.signedby = this.getTarget('signedby');
       res.forEach((item) => {
         this.signedby.options.push(
@@ -703,7 +704,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     this.currentStep = stepper._selectedIndex;
   }
 
-  getSummaryValueLabel(fieldConfig: any, value: any): any {
+  getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
     if (fieldConfig.type == 'select') {
       const option = fieldConfig.options.find((option: any) => option.value == value);
       if (option) {
@@ -912,7 +913,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     this.setSummary();
   }
 
-  loadProfiles(value: any, reset?: any): void {
+  loadProfiles(value: any, reset?: boolean): void {
     if (value) {
       Object.keys(value).forEach((item) => {
         if (item === 'cert_extensions') {
@@ -979,12 +980,12 @@ export class CertificateAddComponent implements WizardConfiguration {
     return null;
   }
 
-  hideField(fieldName: any, show: boolean): void {
+  hideField(fieldName: string, show: boolean): void {
     this.getTarget(fieldName).isHidden = show;
     this.setDisabled(fieldName, show);
   }
 
-  setDisabled(fieldName: any, disable: boolean): void {
+  setDisabled(fieldName: string, disable: boolean): void {
     const target = this.getField(fieldName);
     if (disable) {
       target.disable();

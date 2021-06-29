@@ -69,7 +69,7 @@ export class CertificatesDashComponent implements OnInit {
         this.openForm(this.acmeAddComponent, res['row']);
       }
     });
-    this.systemGeneralService.getUnsignedCertificates().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+    this.systemGeneralService.getUnsignedCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
       res.forEach((item) => {
         this.unsignedCAs.push(
           { label: item.name, value: parseInt(item.id) },
