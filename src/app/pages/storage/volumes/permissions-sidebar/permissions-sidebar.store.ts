@@ -4,8 +4,6 @@ import { EMPTY, forkJoin, Observable } from 'rxjs';
 import {
   catchError, switchMap, takeUntil, tap,
 } from 'rxjs/operators';
-import { Acl } from 'app/interfaces/acl.interface';
-import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { PermissionsSidebarState } from 'app/pages/storage/volumes/permissions-sidebar/interfaces/permissions-sidebar-state.interface';
 import { DialogService, WebSocketService } from 'app/services';
@@ -18,10 +16,6 @@ const initialState: PermissionsSidebarState = {
 
 @Injectable()
 export class PermissionsSidebarStore extends ComponentStore<PermissionsSidebarState> {
-  isLoading$: Observable<boolean> = this.select((state) => state.isLoading);
-  acl$: Observable<Acl> = this.select((state) => state.acl);
-  stat$: Observable<FileSystemStat> = this.select((state) => state.stat);
-
   constructor(
     private ws: WebSocketService,
     private dialog: DialogService,

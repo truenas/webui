@@ -1,12 +1,10 @@
 import {
   NfsAclTag,
   NfsAdvancedFlag,
-  NfsAdvancedPermission,
   NfsBasicFlag,
-  NfsBasicPermission
+  NfsBasicPermission,
 } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
-import { mapToOptions } from 'app/helpers/options.helper';
 import { T } from 'app/translate-marker';
 
 export default {

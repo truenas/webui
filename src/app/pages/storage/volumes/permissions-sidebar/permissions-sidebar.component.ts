@@ -8,7 +8,6 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { PermissionsSidebarStore } from 'app/pages/storage/volumes/permissions-sidebar/permissions-sidebar.store';
 
-// TODO: What if acl type is 'off'?
 @UntilDestroy()
 @Component({
   selector: 'app-permissions-sidebar',
