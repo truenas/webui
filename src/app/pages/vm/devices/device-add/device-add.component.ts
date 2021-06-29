@@ -519,7 +519,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
           }
         } else {
           const typeField = _.find(this.displayFieldConfig, { name: 'type' });
-          _.pull(typeField.options, _.find(typeField.options, { value: vmDisplayDevices[0].attributes.type }));
+          _.pull(typeField.options, _.find(typeField.options, { value: (vmDisplayDevices[0].attributes as any).type }));
           this.displayFormGroup.controls['type'].setValue(typeField.options[0].value);
         }
       }

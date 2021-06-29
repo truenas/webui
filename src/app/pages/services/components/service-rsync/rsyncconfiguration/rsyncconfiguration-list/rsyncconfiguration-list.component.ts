@@ -10,7 +10,6 @@ export class RSYNCconfigurationListComponent implements EntityTableConfig {
   title = 'RSYNC Modules';
   queryCall: 'rsyncmod.query' = 'rsyncmod.query';
   hasDetails = true;
-  protected entityList: any;
   wsDelete: 'rsyncmod.delete' = 'rsyncmod.delete';
   route_add: string[] = ['services', 'rsync', 'rsync-module', 'add'];
   route_edit: string[] = ['services', 'rsync', 'rsync-module', 'edit'];

@@ -1,9 +1,12 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UpsMode } from 'app/enums/ups-mode.enum';
 import helptext from 'app/helptext/services/components/service-ups';
+import { Choices } from 'app/interfaces/choices.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { WebSocketService } from 'app/services';
@@ -14,10 +17,10 @@ import { WebSocketService } from 'app/services';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ServiceUPSComponent implements FormConfiguration {
-  protected ups_driver: any;
-  private ups_drivers_list: any[] = [];
-  private ups_driver_key: any;
-  protected ups_port: any;
+  protected ups_driver: FieldConfig;
+  private ups_drivers_list: Choices = {};
+  private ups_driver_key: string;
+  protected ups_port: FieldConfig;
   protected entityForm: EntityFormComponent;
 
   queryCall: 'ups.config' = 'ups.config';
@@ -273,14 +276,14 @@ export class ServiceUPSComponent implements FormConfiguration {
     this.ups_driver = generalSet.config.find((config) => config.name === 'driver');
     this.ups_port = generalSet.config.find((config) => config.name === 'port');
 
-    this.ws.call('ups.driver_choices', []).pipe(untilDestroyed(this)).subscribe((res) => {
+    this.ws.call('ups.driver_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       this.ups_drivers_list = res;
       for (const item in res) {
         this.ups_driver.options.push({ label: res[item], value: res[item] });
       }
     });
 
-    this.ws.call('ups.port_choices', []).pipe(untilDestroyed(this)).subscribe((res) => {
+    this.ws.call('ups.port_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
         this.ups_port.options.push({ label: res[i], value: res[i] });
       }
@@ -293,14 +296,14 @@ export class ServiceUPSComponent implements FormConfiguration {
       }
     });
 
-    entityForm.formGroup.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      generalSet.config.find((conf) => conf.name === 'remotehost').isHidden = res === 'MASTER';
-      generalSet.config.find((conf) => conf.name === 'remoteport').isHidden = res === 'MASTER';
-      generalSet.config.find((conf) => conf.name === 'driver').isHidden = res === 'SLAVE';
+    entityForm.formGroup.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: UpsMode) => {
+      generalSet.config.find((conf) => conf.name === 'remotehost').isHidden = res === UpsMode.Master;
+      generalSet.config.find((conf) => conf.name === 'remoteport').isHidden = res === UpsMode.Master;
+      generalSet.config.find((conf) => conf.name === 'driver').isHidden = res === UpsMode.Slave;
     });
   }
 
-  getKeyByValue(object: any, value: any): any {
+  getKeyByValue(object: { [key: string]: unknown }, value: unknown): string {
     return Object.keys(object).find((key) => object[key] === value);
   }
 

@@ -10,6 +10,7 @@ import helptext from 'app/helptext/storage/volumes/datasets/dataset-permissions'
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import {
@@ -33,8 +34,8 @@ export class DatasetPermissionsComponent implements FormConfiguration {
   isEntity = true;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   private entityForm: EntityFormComponent;
-  protected userField: any;
-  protected groupField: any;
+  protected userField: FieldConfig;
+  protected groupField: FieldConfig;
 
   fieldSets: FieldSet[] = [
     {

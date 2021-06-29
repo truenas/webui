@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -197,7 +198,7 @@ export class CertificateEditComponent implements FormConfiguration {
 
   private rowNum: any;
   protected entityForm: EntityFormComponent;
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
   private getRow = new Subscription();
   private incomingData: Certificate;
 

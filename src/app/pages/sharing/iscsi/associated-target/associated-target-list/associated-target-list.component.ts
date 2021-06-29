@@ -66,7 +66,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
     this.entityList = entityList;
   }
 
-  dataHandler(entityList: any): void {
+  dataHandler(entityList: EntityTableComponent): void {
     forkJoin([
       this.iscsiService.getTargets(),
       this.iscsiService.getExtents(),

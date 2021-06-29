@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -27,7 +28,7 @@ export class EntityTaskComponent implements OnInit {
   protected hour_field: any;
   protected daymonth_field: any;
 
-  formGroup: any;
+  formGroup: FormGroup;
   error: string;
   protected pk: any;
   isNew = false;

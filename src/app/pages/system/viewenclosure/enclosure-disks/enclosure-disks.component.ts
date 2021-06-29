@@ -68,7 +68,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   @Input('controller-events') controllerEvents: Subject<CoreEvent>;
 
   app: Application;
-  private renderer: any;
   private loader = PIXI.loader;
   private resources = PIXI.loader.resources;
   container: Container;
@@ -350,8 +349,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       antialias: true,
       autoStart: true,
     });
-
-    this.renderer = this.app.renderer;
 
     this.app.renderer.backgroundColor = 0x000000;
     this.visualizer.nativeElement.appendChild(this.app.view);

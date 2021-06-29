@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -34,7 +35,7 @@ export class ChartFormComponent implements FormConfiguration {
   private name: string;
   private getRow = new Subscription();
   private rowName: string;
-  private dialogRef: any;
+  private dialogRef: MatDialogRef<EntityJobComponent>;
   fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {

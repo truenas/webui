@@ -46,13 +46,11 @@ export class FieldRelationService {
     return controls;
   }
 
-  isFormControlToBeDisabled(relGroup: RelationGroup,
-    formGroup: FormGroup): boolean {
+  isFormControlToBeDisabled(relGroup: RelationGroup, formGroup: FormGroup): boolean {
     return this.isFormControlToBe(relGroup, formGroup, true);
   }
 
-  isFormControlToBeHide(relGroup: RelationGroup,
-    formGroup: FormGroup): boolean {
+  isFormControlToBeHide(relGroup: RelationGroup, formGroup: FormGroup): boolean {
     return this.isFormControlToBe(relGroup, formGroup, false);
   }
 

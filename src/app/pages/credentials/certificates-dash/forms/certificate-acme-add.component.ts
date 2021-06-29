@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormArray } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -120,7 +121,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   ];
 
   protected entityForm: EntityFormComponent;
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
   queryCallOption: any[];
   initialCount = 1;
   private domainList: any;

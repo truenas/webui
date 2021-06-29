@@ -69,12 +69,12 @@ export class SnapshotListComponent implements EntityTableConfig {
     { name: 'Referenced', prop: 'referenced' },
   ];
 
-  columnsHide: any[] = [
+  columnsHide = [
     { name: 'Dataset', prop: 'dataset' },
     { name: 'Snapshot', prop: 'snapshot' },
   ];
 
-  columnsShow: any[] = [
+  columnsShow = [
     { name: 'Dataset', prop: 'dataset' },
     { name: 'Snapshot', prop: 'snapshot' },
     { name: 'Used', prop: 'used' },
@@ -83,7 +83,7 @@ export class SnapshotListComponent implements EntityTableConfig {
   ];
   // End the show/hide section
 
-  rowIdentifier = 'dataset';
+  rowIdentifier = 'name';
   config: EntityTableConfigConfig = {
     paging: true,
     sorting: { columns: this.columns },
@@ -229,7 +229,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     this.entityList = entityList;
   }
 
-  callGetFunction(entityList: any): void {
+  callGetFunction(entityList: EntityTableComponent): void {
     this.ws.call('systemdataset.config').toPromise().then((res) => {
       if (res && res.basename && res.basename !== '') {
         this.queryCallOption[0][2] = (['name', '!^', res.basename]);

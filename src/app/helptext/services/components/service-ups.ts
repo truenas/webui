@@ -1,4 +1,5 @@
 import { Validators } from '@angular/forms';
+import { UpsMode, UpsShutdownMode } from 'app/enums/ups-mode.enum';
 import { T } from 'app/translate-marker';
 
 export default {
@@ -16,8 +17,8 @@ export default {
  <a href="http://networkupstools.org/docs/user-manual.chunked/ar01s02.html#_monitoring_client"\
  target="_blank">Network UPS Tools Overview</a>.'),
   ups_mode_options: [
-    { label: 'Master', value: 'MASTER' },
-    { label: 'Slave', value: 'SLAVE' },
+    { label: 'Master', value: UpsMode.Master },
+    { label: 'Slave', value: UpsMode.Slave },
   ],
 
   ups_identifier_placeholder: T('Identifier'),
@@ -71,8 +72,8 @@ export default {
   ups_shutdown_placeholder: T('Shutdown Mode'),
   ups_shutdown_tooltip: T('Choose when the UPS initiates shutdown.'),
   ups_shutdown_options: [
-    { label: 'UPS reaches low battery', value: 'LOWBATT' },
-    { label: 'UPS goes on battery', value: 'BATT' },
+    { label: 'UPS reaches low battery', value: UpsShutdownMode.LowBattery },
+    { label: 'UPS goes on battery', value: UpsShutdownMode.Battery },
   ],
 
   ups_shutdowntimer_placeholder: T('Shutdown Timer'),

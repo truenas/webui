@@ -322,7 +322,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.modalService.open('slide-in-form', this.addDatasetFormComponent, id);
   }
 
-  editDataset(pool: any, id: string): void {
+  editDataset(pool: string, id: string): void {
     this.editDatasetFormComponent = new DatasetFormComponent(
       this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService,
     );

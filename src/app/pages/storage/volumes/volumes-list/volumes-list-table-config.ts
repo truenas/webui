@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -58,7 +59,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
     },
   };
 
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
   route_add = ['storage', 'import'];
   route_add_tooltip = T('Create or Import Pool');
   showDefaults = false;

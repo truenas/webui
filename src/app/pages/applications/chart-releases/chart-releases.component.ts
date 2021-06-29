@@ -2,6 +2,7 @@ import {
   Component, Output, EventEmitter, OnInit, OnDestroy,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -42,7 +43,7 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
   chartItems: any = {};
   @Output() switchTab = new EventEmitter<string>();
 
-  private dialogRef: any;
+  private dialogRef: MatDialogRef<EntityJobComponent>;
   ixIcon = 'assets/images/ix-original.png';
   private rollbackChartName: string;
 
@@ -501,7 +502,7 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
         });
         this.dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', names.map((item) => [item])]);
         this.dialogRef.componentInstance.submit();
-        this.dialogRef.componentInstance.success.subscribe((res: any) => {
+        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
           this.dialogService.closeAllDialogs();
           let message = '';
           for (let i = 0; i < res.result.length; i++) {

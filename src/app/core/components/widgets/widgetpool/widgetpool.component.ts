@@ -15,6 +15,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
+import { VDev } from 'app/interfaces/storage.interface';
 import { T } from 'app/translate-marker';
 
 interface Slide {
@@ -76,12 +77,12 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   @ViewChild('carousel', { static: true }) carousel: ElementRef;
   @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef;
 
-  @ViewChild('overview', { static: false }) overview: TemplateRef<any>;
-  @ViewChild('data', { static: false }) data: TemplateRef<any>;
-  @ViewChild('disks', { static: false }) disks: TemplateRef<any>;
-  @ViewChild('disk_details', { static: false }) disk_details: TemplateRef<any>;
-  @ViewChild('empty', { static: false }) empty: TemplateRef<any>;
-  templates: any;
+  @ViewChild('overview', { static: false }) overview: TemplateRef<void>;
+  @ViewChild('data', { static: false }) data: TemplateRef<void>;
+  @ViewChild('disks', { static: false }) disks: TemplateRef<void>;
+  @ViewChild('disk_details', { static: false }) disk_details: TemplateRef<void>;
+  @ViewChild('empty', { static: false }) empty: TemplateRef<void>;
+  templates: { [template: string]: TemplateRef<void> };
   tpl = this.overview;
 
   // NAVIGATION
@@ -152,7 +153,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
 
     const allDiskNames: string[] = [];
     (['cache', 'data', 'dedup', 'log', 'spare', 'special'] as PoolTopologyCategory[]).forEach((categoryName) => {
-      const category: any[] = this.poolState.topology[categoryName];
+      const category = this.poolState.topology[categoryName];
 
       if (!category || !category.length) {
         return;
@@ -162,7 +163,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
         if (item.type == 'DISK' && item.disk) {
           allDiskNames.push(item.disk);
         } else {
-          (item.children as any[]).forEach((device) => {
+          item.children.forEach((device) => {
             if (!device.disk) {
               return;
             }
@@ -236,7 +237,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     });
 
     this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      const currentPath = (this.path as any)[this.currentSlideIndex] as Slide;
+      const currentPath = this.path[this.currentSlideIndex as number] as Slide;
       const currentName = currentPath && currentPath.dataSource
         ? this.currentMultipathDetails
           ? this.checkMultipathLabel(currentPath.dataSource.disk)
@@ -360,7 +361,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     slideIndex: number,
     dataIndex?: number,
     topology?: PoolTopologyCategory,
-    vdev?: any,
+    vdev?: VDev,
   ): void {
     if (name !== 'overview' && !verified) { return; }
     const dataSource = vdev || { children: this.poolState.topology[topology] };
@@ -384,7 +385,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     this.updateSlidePosition(slideIndex);
   }
 
-  updateSlidePosition(value: any): void {
+  updateSlidePosition(value: number): void {
     if (value.toString() == this.currentSlide) { return; }
 
     const carousel = this.carouselParent.nativeElement.querySelector('.carousel');
@@ -458,11 +459,6 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     } else {
       this.poolHealth.selector = 'fn-theme-green';
     }
-  }
-
-  nextPath(obj: any, index: number | string): any {
-    if (typeof index == 'string') { index = parseInt(index); }
-    return obj[index];
   }
 
   percentAsNumber(value: string): number {
