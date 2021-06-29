@@ -16,9 +16,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1105.feature', 'Verify the Nextcloud plugin functions')
-def test_verify_the_nextcloud_plugin_functions(driver):
-    """Verify the Nextcloud plugin functions."""
+@scenario('features/NAS-T1106.feature', 'Verify the Plex Media Server plugin functions')
+def test_verify_the_plex_media_server_plugin_functions(driver):
+    """Verify the Plex Media Server plugin functions."""
     pass
 
 
@@ -52,31 +52,31 @@ def on_the_dashboard_click_on_plugins_on_the_left_sidebar(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Plugins"]').click()
 
 
-@then('on the Plugins page, Nextcloud should be available to install')
-def on_the_plugins_page_nextcloud_should_be_available_to_install(driver):
-    """on the Plugins page, Nextcloud should be available to install."""
+@then('on the Plugins page, Plex Media Server should be available to install')
+def on_the_plugins_page_plex_media_server_should_be_available_to_install(driver):
+    """on the Plugins page, Plex Media Server should be available to install."""
     assert wait_on_element(driver, 5, '//div[text()="Plugins"]')
     assert wait_on_element(driver, 5, '//mat-button-toggle[@ix-auto="button__Nextcloud"]/button', 'clickable')
 
 
-@then('click on the Nextcloud plugin, then click INSTALL')
-def click_on_the_nextcloud_plugin_then_click_install(driver):
-    """click on the Nextcloud plugin, then click INSTALL."""
-    driver.find_element_by_xpath('//mat-button-toggle[@ix-auto="button__Nextcloud"]/button').click()
-    assert wait_on_element(driver, 5, '//img[@alt="Nextcloud"]')
+@then('click on the Plex Media Server plugin, then click INSTALL')
+def click_on_the_plex_media_server_plugin_then_click_install(driver):
+    """click on the Plex Media Server plugin, then click INSTALL."""
+    driver.find_element_by_xpath('//mat-button-toggle[@ix-auto="button__Plex Media Server"]/button').click()
+    assert wait_on_element(driver, 5, '//img[@alt="Plex Media Server"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__INSTALL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__INSTALL"]').click()
 
 
-@then('under Jail Name, enter "nextcloudtest", and NAT should be checked')
-def under_jail_name_enter_nextcloudtest_and_nat_should_be_checked(driver):
-    """under Jail Name, enter "nextcloudtest", and NAT should be checked."""
+@then('under Jail Name, enter "plexmediatest", and DHCP should be checked')
+def under_jail_name_enter_plexmediatest_and_dhcp_should_be_checked(driver):
+    """under Jail Name, enter "plexmediatest", and DHCP should be checked."""
     assert wait_on_element(driver, 10, '//li[contains(.,"Add")]')
     assert wait_on_element(driver, 5, '//input[@placeholder="Jail Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Jail Name"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Jail Name"]').send_keys('nextcloudtest')
-    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__NAT"]')
-    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__NAT"]', 'class', 'mat-checkbox-checked')
+    driver.find_element_by_xpath('//input[@placeholder="Jail Name"]').send_keys('plexmediatest')
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__DHCP"]')
+    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__DHCP"]', 'class', 'mat-checkbox-checked')
 
 
 @then('click SAVE, then an Install window should be visible outlining progress')
@@ -95,54 +95,55 @@ def when_plugin_installed_successfully_appear_click_close(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
-@then('after the Nextcloud plugin should be in the table')
-def after_the_nextcloud_plugin_should_be_in_the_table(driver):
-    """after the Nextcloud plugin should be in the table."""
-    assert wait_on_element(driver, 20, '//datatable-body-row[contains(.,"nextcloudtest")]')
+@then('after the Plex Media Server plugin should be in the table')
+def after_the_plex_media_server_plugin_should_be_in_the_table(driver):
+    """after the Plex Media Server plugin should be in the table."""
+    assert wait_on_element(driver, 20, '//datatable-body-row[contains(.,"plexmediatest")]')
 
 
 @then('status should be "up", with the Boot option checked')
 def status_should_be_up_with_the_boot_option_checked(driver):
     """status should be "up", with the Boot option checked."""
-    assert wait_on_element(driver, 20, '//div[@id="nextcloudtest_Status"]//span[text()="up"]')
-    assert wait_on_element(driver, 5, '//mat-checkbox[@id="nextcloudtest_Boot-checkbox"]')
-    assert attribute_value_exist(driver, '//mat-checkbox[@id="nextcloudtest_Boot-checkbox"]', 'class', 'mat-checkbox-checked')
+    assert wait_on_element(driver, 20, '//div[@id="plexmediatest_Status"]//span[text()="up"]')
+    assert wait_on_element(driver, 5, '//mat-checkbox[@id="plexmediatest_Boot-checkbox"]')
+    assert attribute_value_exist(driver, '//mat-checkbox[@id="plexmediatest_Boot-checkbox"]', 'class', 'mat-checkbox-checked')
 
 
 @then('at the right of the plugin table, click the ">"')
 def at_the_right_of_the_plugin_table_click_the_(driver):
     """at the right of the plugin table, click the ">"."""
-    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__nextcloudtest"]', 'clickable')
-    driver.find_element_by_xpath('//a[@ix-auto="expander__nextcloudtest"]').click()
+    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__plexmediatest"]', 'clickable')
+    driver.find_element_by_xpath('//a[@ix-auto="expander__plexmediatest"]').click()
 
 
 @then('these options will be shown (Restart/Stop/Update/Mount Points/Manage/Uninstall)')
 def these_options_will_be_shown_restartstopupdatemount_pointsmanageuninstall(driver):
     """these options will be shown (Restart/Stop/Update/Mount Points/Manage/Uninstall)."""
-    assert wait_on_element(driver, 5, '//button[@id="action_button_nextcloudtest__restart"]')
-    assert wait_on_element(driver, 5, '//button[@id="action_button_nextcloudtest__stop"]')
-    assert wait_on_element(driver, 5, '//button[@id="action_button_nextcloudtest__update"]')
-    assert wait_on_element(driver, 5, '//button[@id="action_button_nextcloudtest__mount"]')
-    assert wait_on_element(driver, 5, '//button[@id="action_button_nextcloudtest__management"]')
-    assert wait_on_element(driver, 5, '//button[@id="action_button_nextcloudtest__delete"]')
+    assert wait_on_element(driver, 5, '//button[@id="action_button_plexmediatest__restart"]')
+    assert wait_on_element(driver, 5, '//button[@id="action_button_plexmediatest__stop"]')
+    assert wait_on_element(driver, 5, '//button[@id="action_button_plexmediatest__update"]')
+    assert wait_on_element(driver, 5, '//button[@id="action_button_plexmediatest__mount"]')
+    assert wait_on_element(driver, 5, '//button[@id="action_button_plexmediatest__management"]')
+    assert wait_on_element(driver, 5, '//button[@id="action_button_plexmediatest__delete"]')
 
 
 @then('click the "Manage" option')
 def click_the_manage_option(driver):
     """click the "Manage" option."""
-    assert wait_on_element(driver, 5, '//button[@id="action_button_nextcloudtest__management"]', 'clickable')
-    driver.find_element_by_xpath('//button[@id="action_button_nextcloudtest__management"]').click()
+    assert wait_on_element(driver, 5, '//button[@id="action_button_plexmediatest__management"]', 'clickable')
+    driver.find_element_by_xpath('//button[@id="action_button_plexmediatest__management"]').click()
     time.sleep(1)
 
 
-@then('a new tab or window should load Nextcloud Credentials page')
-def a_new_tab_or_window_should_load_nextcloud_credentials_page(driver):
-    """a new tab or window should load Nextcloud Credentials page."""
+@then('a new tab or window should load Plex Media Credentials page')
+def a_new_tab_or_window_should_load_plex_media_credentials_page(driver):
+    """a new tab or window should load Plex Media Credentials page."""
     driver.switch_to.window(driver.window_handles[1])
-    assert wait_on_element(driver, 5, '//div[@class="logo" and contains(.,"Nextcloud")]')
-    assert wait_on_element(driver, 5, '//input[@placeholder="Username or email"]')
-    assert wait_on_element(driver, 5, '//input[@placeholder="Password"]')
-    assert wait_on_element(driver, 5, '//input[@class="login primary"]')
+    assert wait_on_element(driver, 5, '//iframe[@title="Plex Authentication"]')
+    iframe = driver.find_element_by_xpath('//iframe[@title="Plex Authentication"]')
+    driver.switch_to.frame(iframe)
+    assert wait_on_element(driver, 5, '//div[contains(.,"Continue with Email")]')
+    driver.switch_to.default_content()
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
     assert wait_on_element(driver, 5, '//div[text()="Plugins"]')
