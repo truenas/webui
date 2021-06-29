@@ -8,6 +8,7 @@ export enum AclMode {
   Restricted = 'RESTRICTED',
   Passthrough = 'PASSTHROUGH',
   Discard = 'DISCARD',
+  Inherit = 'INHERIT',
 }
 
 export enum DefaultAclType {

@@ -23,8 +23,8 @@ export class EntityCardComponent extends iXObject implements OnInit, AfterViewIn
   @Input() height: string;
   @Input() isFlipped = false;
   @Output() editCard: EventEmitter<boolean> = new EventEmitter<boolean>();
-  @Input() front: TemplateRef<any>;
-  @Input() back: TemplateRef<any>;
+  @Input() front: TemplateRef<void>;
+  @Input() back: TemplateRef<void>;
   @Input() lazyLoaded = false;
   actions = false;
 

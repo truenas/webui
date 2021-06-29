@@ -7,6 +7,7 @@ import {
   FormGroup,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
@@ -58,7 +59,7 @@ export class DatasetPosixAclComponent implements FormConfiguration {
   formGroup: FormGroup;
   data: Record<string, unknown> = {};
   error: string;
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
   route_success: string[] = ['storage'];
   save_button_enabled = true;
 

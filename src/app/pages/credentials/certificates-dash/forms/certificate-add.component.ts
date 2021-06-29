@@ -28,7 +28,6 @@ import { T } from 'app/translate-marker';
 })
 export class CertificateAddComponent implements WizardConfiguration {
   addWsCall: 'certificate.create' = 'certificate.create';
-  protected dialogRef: any;
   private entityForm: any;
   private CSRList: any[] = [];
   title = helptext_system_certificates.add.title;

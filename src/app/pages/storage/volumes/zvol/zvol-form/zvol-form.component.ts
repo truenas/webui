@@ -41,7 +41,7 @@ interface ZvolFormData {
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ZvolFormComponent implements FormConfiguration {
-  pk: any;
+  pk: string;
   protected path: string;
   protected compression: any;
   advanced_field = ['volblocksize'];

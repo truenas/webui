@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -225,7 +226,7 @@ export class EmailComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ]);
 
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
 
   private sendMailMethod: FormControl;
   private smtp: FormControl;

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Choices } from 'app/interfaces/choices.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { WebSocketService } from './ws.service';
 
@@ -22,7 +23,7 @@ export class VmService {
     ];
   }
 
-  getCPUModels(): Observable<any> {
+  getCPUModels(): Observable<Choices> {
     return this.ws.call('vm.cpu_model_choices');
   }
 }

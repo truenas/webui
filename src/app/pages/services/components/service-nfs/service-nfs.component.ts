@@ -4,7 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/services/components/service-nfs';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FormConfiguration, FormCustomAction } from 'app/interfaces/entity-form.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -159,14 +159,14 @@ export class ServiceNFSComponent implements FormConfiguration {
     },
   ];
 
-  private ipChoices$ = this.ws.call('nfs.bindip_choices', [])
+  private ipChoices$ = this.ws.call('nfs.bindip_choices')
     .pipe(
       map((ips: { [ip: string]: string }) =>
         Object.keys(ips || {}).map((key) => ({ label: key, value: key }))),
     );
   private validBindIps: string[] = [];
 
-  custActions: any[] = [
+  custActions: FormCustomAction[] = [
     {
       id: 'has_nfs_status',
       name: helptext.addSPN.btnTxt,
