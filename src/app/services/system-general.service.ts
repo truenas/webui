@@ -2,6 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { Subject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -95,7 +96,7 @@ export class SystemGeneralService {
     return this.ws.call(this.caList, []);
   }
 
-  getCertificates(): Observable<any[]> {
+  getCertificates(): Observable<Certificate[]> {
     return this.ws.call(this.certificateList);
   }
 

@@ -32,8 +32,8 @@ export class NetworkService {
     return this.ws.call('interface.lag_ports_choices', [id]);
   }
 
-  getLaggProtocolChoices(): Observable<any[]> {
-    return this.ws.call('interface.lag_supported_protocols', []);
+  getLaggProtocolChoices(): Observable<string[]> {
+    return this.ws.call('interface.lag_supported_protocols');
   }
 
   getBridgeMembersChoices(id: string = null): Observable<Choices> {

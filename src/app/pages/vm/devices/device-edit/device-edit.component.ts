@@ -45,21 +45,21 @@ interface Device {
 export class DeviceEditComponent implements OnInit {
   protected updateCall: 'vm.device.update' = 'vm.device.update';
   protected route_success: string[];
-  deviceid: any;
+  deviceid: number;
   vmname: any;
   fieldSets: any;
   isCustActionVisible = false;
-  protected ipAddress: any = [];
+  protected ipAddress: FieldConfig;
   selectedType = VmDeviceType.Cdrom;
-  formGroup: any;
-  activeFormGroup: any;
-  cdromFormGroup: any;
-  diskFormGroup: any;
-  nicFormGroup: any;
-  rawfileFormGroup: any;
-  pciFormGroup: any;
-  displayFormGroup: any;
-  rootpwd: any;
+  formGroup: FormGroup;
+  activeFormGroup: FormGroup;
+  cdromFormGroup: FormGroup;
+  diskFormGroup: FormGroup;
+  nicFormGroup: FormGroup;
+  rawfileFormGroup: FormGroup;
+  pciFormGroup: FormGroup;
+  displayFormGroup: FormGroup;
+  rootpwd: FieldConfig;
   vminfo: any;
   vmId: number;
   boot: any;
@@ -402,7 +402,7 @@ export class DeviceEditComponent implements OnInit {
     });
   }
   // Setting values coming from backend and populating formgroup with it.
-  setgetValues(activeformgroup: FormGroup, deviceInformation: any[]): void {
+  setgetValues(activeformgroup: FormGroup, deviceInformation: any): void {
     for (const value in deviceInformation) {
       const fg = activeformgroup.controls[value];
       if (typeof fg !== 'undefined') {
@@ -456,12 +456,12 @@ export class DeviceEditComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((device) => {
         if (
-          device[0].attributes.physical_sectorsize !== undefined
-          && device[0].attributes.logical_sectorsize !== undefined
+          (device[0] as any).attributes.physical_sectorsize !== undefined
+          && (device[0] as any).attributes.logical_sectorsize !== undefined
         ) {
-          device[0].attributes['sectorsize'] = device[0].attributes.logical_sectorsize === null
+          (device[0] as any).attributes['sectorsize'] = (device[0] as any).attributes.logical_sectorsize === null
             ? 0
-            : device[0].attributes.logical_sectorsize;
+            : (device[0] as any).attributes.logical_sectorsize;
         }
         const deviceInformation = { ...device[0].attributes, ...{ order: device[0].order } };
         this.vminfo = device[0];

@@ -287,7 +287,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   private lag_fieldset: FieldSet;
   private bridge_fieldset: FieldSet;
   private failover_fieldset: FieldSet;
-  private vlan_pcp: any;
   private vlan_pint: FieldConfig;
   private lag_ports: FieldConfig;
   private lag_protocol: FieldConfig;

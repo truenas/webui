@@ -57,11 +57,14 @@ import {
   IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { KerberosConfig } from 'app/interfaces/kerberos-config.interface';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { LldpConfig, LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { NetworkActivityChoice, NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
+import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { OpenvpnClientConfig } from 'app/interfaces/openvpn-client-config.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -90,6 +93,7 @@ import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig } from 'app/interfaces/ups-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine, VmStopParams } from 'app/interfaces/virtual-machine.interface';
+import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 
 /**
@@ -197,6 +201,8 @@ export type ApiDirectory = {
   'chart.release.query': { params: ChartReleaseQueryParams; response: ChartRelease[] };
   'chart.release.create': { params: ChartReleaseCreate; response: ChartReleaseCreateResponse };
   'chart.release.update': { params: any; response: any };
+  'chart.release.upgrade': { params: any; response: any };
+  'chart.release.delete': { params: any; response: any };
   'chart.release.scale': { params: any; response: any };
   'chart.release.pod_console_choices': { params: any; response: any };
   'chart.release.nic_choices': { params: void; response: Choices };
@@ -335,6 +341,7 @@ export type ApiDirectory = {
   // Mail
   'mail.config': { params: any; response: any };
   'mail.update': { params: any; response: any };
+  'mail.send': { params: any; response: any };
 
   // idmap
   'idmap.backend_options': { params: any; response: any };
@@ -350,7 +357,7 @@ export type ApiDirectory = {
   'interface.services_restarted_on_sync': { params: any; response: any };
   'interface.rollback': { params: any; response: any };
   'interface.bridge_members_choices': { params: any; response: Choices };
-  'interface.lag_supported_protocols': { params: any; response: any };
+  'interface.lag_supported_protocols': { params: void; response: string[] };
   'interface.lag_ports_choices': { params: any; response: Choices };
   'interface.vlan_parent_interface_choices': { params: void; response: Choices };
   'interface.query': { params: QueryParams<NetworkInterface>; response: NetworkInterface[] };
@@ -365,7 +372,7 @@ export type ApiDirectory = {
   'iscsi.initiator.query': { params: any; response: IscsiInitiatorGroup[] };
   'iscsi.initiator.delete': { params: any; response: any };
   'iscsi.target.query': { params: any; response: IscsiTarget[] };
-  'iscsi.extent.disk_choices': { params: any; response: any };
+  'iscsi.extent.disk_choices': { params: void; response: Choices };
   'iscsi.extent.query': { params: any; response: IscsiExtent[] };
   'iscsi.extent.create': { params: any; response: any };
   'iscsi.extent.update': { params: any; response: any };
@@ -410,9 +417,9 @@ export type ApiDirectory = {
   'notifier.choices': { params: any; response: any };
 
   // Network
+  'network.general.summary': { params: void; response: NetworkSummary };
   'network.configuration.activity_choices': { params: void; response: NetworkActivityChoice[] };
   'network.configuration.update': { params: any; response: any };
-  'network.general.summary': { params: any; response: any };
   'network.configuration.config': { params: void; response: NetworkConfiguration };
 
   // Kerberos
@@ -421,9 +428,9 @@ export type ApiDirectory = {
   'kerberos.realm.update': { params: any; response: any };
   'kerberos.realm.delete': { params: any; response: any };
   'kerberos.keytab.has_nfs_principal': { params: any; response: any };
-  'kerberos.config': { params: any; response: any };
+  'kerberos.config': { params: void; response: KerberosConfig };
   'kerberos.update': { params: any; response: any };
-  'kerberos.keytab.kerberos_principal_choices': { params: any; response: any };
+  'kerberos.keytab.kerberos_principal_choices': { params: void; response: string[] };
   'kerberos.keytab.create': { params: any; response: any };
   'kerberos.keytab.update': { params: any; response: any };
   'kerberos.keytab.query': { params: any; response: any };
@@ -439,7 +446,7 @@ export type ApiDirectory = {
   'ldap.ssl_choices': { params: void; response: string[] };
   'ldap.update': { params: any; response: any };
   'ldap.schema_choices': { params: void; response: string[] };
-  'ldap.config': { params: any; response: any };
+  'ldap.config': { params: void; response: LdapConfig };
 
   // LLDP
   'lldp.country_choices': { params: void; response: Choices };
@@ -523,7 +530,7 @@ export type ApiDirectory = {
   'pool.dataset.create': { params: any; response: any };
   'pool.is_upgraded': { params: [/* pool id */ number]; response: boolean };
   'pool.dataset.encryption_summary': { params: any; response: any };
-  'pool.dataset.unlock_services_restart_choices': { params: any; response: any };
+  'pool.dataset.unlock_services_restart_choices': { params: [/* id */ string]; response: Choices };
   'pool.dataset.lock': { params: any; response: any };
   'pool.dataset.unlock': { params: any; response: any };
   'pool.resilver.config': { params: any; response: any };
@@ -706,7 +713,7 @@ export type ApiDirectory = {
   'vm.device.passthrough_device_choices': { params: void; response: Choices };
   'vm.device.create': { params: any; response: any };
   'vm.random_mac': { params: void; response: string };
-  'vm.device.query': { params: any; response: any };
+  'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
   'vm.stop': { params: VmStopParams; response: any };
   'vm.maximum_supported_vcpus': { params: void; response: number };
   'vm.device.update': { params: any; response: any };

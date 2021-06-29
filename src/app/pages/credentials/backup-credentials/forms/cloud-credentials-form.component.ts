@@ -1200,7 +1200,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   fieldConfig: FieldConfig[];
 
   protected providers: CloudsyncProvider[];
-  protected providerField: any;
+  protected providerField: FieldConfig;
   protected entityForm: EntityFormComponent;
 
   custActions = [

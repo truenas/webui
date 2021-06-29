@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { CommonUtils } from 'app/core/classes/common-utils';
@@ -20,13 +21,13 @@ import { ApplicationsService } from '../applications.service';
 })
 
 export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
-  protected addCall = 'chart.release.create';
+  protected addCall: 'chart.release.create' = 'chart.release.create';
   protected utils: CommonUtils;
   summary = {};
   isAutoSummary = true;
   hideCancel = true;
   private title: string;
-  private dialogRef: any;
+  private dialogRef: MatDialogRef<EntityJobComponent>;
   wizardConfig: Wizard[] = [];
   private catalogApp: any;
   private entityWizard: EntityWizardComponent;
@@ -159,7 +160,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
       if (res.exc_info && res.exc_info.extra) {
         new EntityUtils().handleWSError(this, res);
       } else {
-        this.dialogRef.errorReport('Error', res.error, res.exception);
+        this.dialogService.errorReport('Error', res.error, res.exception);
       }
     });
   }

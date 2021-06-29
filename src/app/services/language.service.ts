@@ -393,7 +393,7 @@ export class LanguageService {
     }));
   }
 
-  setMiddlewareLanguage(lang: any): void {
+  setMiddlewareLanguage(lang: string): void {
     this.ws.call(this.updateCall,
       [{ language: lang }]).pipe(untilDestroyed(this)).subscribe(
       () => {},
