@@ -465,7 +465,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.pools.forEach((pool) => {
       conf.push({
-        name: 'Pool', identifier: 'name,' + pool.name, rendered: true, id: conf.length.toString(),
+        name: 'Pool', identifier: 'name,' + pool.name, rendered: false, id: conf.length.toString(),
       });
     });
 

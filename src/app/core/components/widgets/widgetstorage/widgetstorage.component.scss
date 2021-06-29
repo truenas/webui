@@ -16,25 +16,48 @@
 
 mat-grid-tile {
   background-color: var(--bg1);
+  opacity: 0.7;
 
   .tile {
-    padding: 0 10px 10px 18px;
+    padding-left: 15px;
+
+    &.rows-3 {
+      .tile-header {
+        height: 38px;
+      }
+
+      .tile-content {
+        padding-bottom: 0;
+      }
+    }
+
+    &.rows-2-2 {
+      .tile-header {
+        height: 48px;
+      }
+
+      .tile-content {
+        padding-bottom: 13px;
+      }
+    }
 
     .tile-header {
-      font-size: 20px;
+      font-size: 29px;
+      height: 48px;
     }
 
     .tile-content {
       font-size: 12px;
+      padding-bottom: 10px;
 
       .divider {
         background-color: var(--fg2);
-        height: 100%;
+        height: 75%;
         width: 1px;
       }
 
       li {
-        height: 25px;
+        line-height: 20px;
         overflow: hidden;
         white-space: nowrap;
 
@@ -42,16 +65,12 @@ mat-grid-tile {
           margin-right: 6px;
         }
       }
-
-      &.rows-3 li {
-        height: 20px;
-      }
     }
 
     span.icon {
       height: 10px;
       text-align: left;
-      width: 15px;
+      width: 17px;
 
       &.error {
         color: var(--red);
@@ -71,7 +90,7 @@ mat-grid-tile {
         width: 14px;
 
         &.mdi-set {
-          font-size: 12px;
+          font-size: 14px;
           margin-top: -2px;
         }
       }
@@ -83,9 +102,10 @@ mat-grid-tile {
     opacity: 0.7;
 
     .mat-icon.mdi-set {
-      font-size: 40px;
-      height: 31px;
-      width: 40px;
+      font-size: 48px;
+      height: 48px;
+      line-height: 48px;
+      width: 48px;
     }
   }
 }

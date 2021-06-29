@@ -40,7 +40,10 @@ export class WidgetStorageComponent extends WidgetComponent implements OnChanges
   title: string = T('Storage');
 
   poolInfoMap: PoolInfoMap = {};
-  padding = 7;
+  paddingTop = 7;
+  paddingLeft = 7;
+  paddingRight = 7;
+  paddingBottom = 7;
   cols = 2;
   rows = 2;
   gap = 7;
@@ -63,16 +66,25 @@ export class WidgetStorageComponent extends WidgetComponent implements OnChanges
     const poolCount = this.pools.length;
     if (poolCount <= 2) {
       this.cols = 1;
-      this.padding = 15;
-      this.gap = 15;
+      this.paddingTop = 24;
+      this.paddingRight = 24;
+      this.paddingBottom = 42;
+      this.paddingLeft = 24;
+      this.gap = 24;
     } else if (poolCount <= 4) {
       this.cols = 2;
-      this.padding = 10;
-      this.gap = 10;
+      this.gap = 16;
+      this.paddingTop = 5;
+      this.paddingRight = 16;
+      this.paddingBottom = 26;
+      this.paddingLeft = 16;
     } else {
       this.cols = 2;
-      this.padding = 7;
-      this.gap = 7;
+      this.gap = 8;
+      this.paddingTop = 0;
+      this.paddingRight = 16;
+      this.paddingBottom = 12;
+      this.paddingLeft = 16;
     }
 
     this.rows = Math.round(poolCount / this.cols);
@@ -82,7 +94,8 @@ export class WidgetStorageComponent extends WidgetComponent implements OnChanges
       this.rows = 3;
     }
 
-    this.rowHeight = (this.contentHeight - (this.rows - 1) * this.gap - 2 * this.padding) / this.rows;
+    const space = (this.rows - 1) * this.gap + this.paddingTop + this.paddingBottom;
+    this.rowHeight = (this.contentHeight - space) / this.rows;
   }
 
   updatePoolInfoMap(): void {
