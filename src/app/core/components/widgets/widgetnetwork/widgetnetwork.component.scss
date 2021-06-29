@@ -7,31 +7,82 @@
   width: 100%;
 }
 
+.card-body {
+  padding: 10px;
+}
+
 mat-grid-tile {
   background-color: var(--bg1);
+}
 
-  .tile {
-    padding: 10px;
+.tile {
+  padding: 10px;
 
-    .nic-info {
-      font-size: 12px;
+  .nic-info {
+    font-size: 12px;
+    padding-right: 10px;
 
-      .info-header {
-        font-size: 20px;
+    .divider {
+      background-color: var(--fg2);
+      height: 100%;
+      width: 1px;
+    }
+
+    .info-header {
+      font-size: 20px;
+      line-height: 30px;
+
+      .mat-icon-button {
+        height: 30px;
+        line-height: 30px;
+        width: 30px;
+      }
+    }
+
+    .info-body {
+      span.icon {
+        display: inline-block;
+        text-align: center;
+        width: 18px;
+
+        &.state {
+          height: 14px;
+        }
+      }
+
+      .icon.green {
+        color: var(--green);
+      }
+
+      .mat-icon {
+        font-size: 14px;
+        height: 14px;
+        margin-left: -5px;
+        top: 0;
+
+        &.mdi-set {
+          margin-top: 0;
+        }
       }
 
       ul {
         text-align: left;
+
+        li {
+          line-height: 20px;
+          overflow: hidden;
+          white-space: nowrap;
+        }
       }
     }
 
-    .nic-boby {
-      font-size: 12px;
-    }
-
-    .chart {
-      background: red;
-    }
   }
 
+  .nic-boby {
+    font-size: 12px;
+  }
+
+  .chart-body {
+    background: red;
+  }
 }

@@ -17,45 +17,51 @@
           </span>
         </mat-toolbar-row>
         <div>
-          <div [style.padding]="padding + 'px'">
-            <mat-grid-list [cols]="cols" [gutterSize]="gap + 'px'" [rowHeight]="rowHeight + 'px'">
-              <mat-grid-tile *ngFor="let nic of nics">
-                <div class="tile" fxLayout="row" fxFlex="100" fxLayoutAlign="start start">
-                  <div class="nic-info" fxLayout="column" fxLayoutAlign="start center">
-                    <div class="info-header">
-                      {{nic.name}}
-                        <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/network'])"
-                          ix-auto="network" ix-auto-type="button" ix-auto-identifier="networkReports">
-                          <mat-icon role="img"
-                            matTooltip="{{'Network Reports' | translate}}"
-                            matTooltipPosition="above"
-                            aria-label="Network Reports">
-                              insert_chart
-                          </mat-icon>
-                        </button>
+          <div class="card-body">
+            <mat-grid-list cols="6" [gutterSize]="gap + 'px'" [rowHeight]="rowHeight + 'px'">
+              <mat-grid-tile *ngFor="let nic of nics; let i=index" [colspan]="getColspan(i)">
+                <div class="tile" [fxLayout]="nics.length==1?'column':'row'" fxFill fxLayoutAlign="start stretch">
+                  <div class="nic-info" fxLayout="column" fxLayoutAlign="start start">
+                    <div class="info-header" fxLayout="row">
+                      <span>{{nic.name}}</span>
+                      <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/network'])"
+                        ix-auto="network" ix-auto-type="button" ix-auto-identifier="networkReports">
+                        <mat-icon role="img"
+                          matTooltip="{{'Network Reports' | translate}}"
+                          matTooltipPosition="above"
+                          aria-label="Network Reports">
+                            insert_chart
+                        </mat-icon>
+                      </button>
                     </div>
-                    <div class="info-body" fxLayout="column" fxLayoutAlign="start start">
-                      <div>
-                        <span class="icon"><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon></span>
-                        Link STATE UP
-                      </div>
-                      <div fxLayout="row" fxLayoutAlign="start start">
-                        <div>
-                          <span class="icon"><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert-circle"></mat-icon></span>
-                        </div>
-                        <ul>
-                          <li>In: 757.25KiB/stretch</li>
-                          <li>Out:0.00 KiB/s</li>
-                          <li>10.215.3.99/26</li>
-                        </ul>
-                      </div>
+                    <div class="info-body" fxLayout="row" fxFlex fxLayoutAlign="space-between stretch">
+                      <ul fxFlex="30">
+                        <li fxLayout="row" fxLayoutAlign="start center">
+                          <span class="icon green"><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon></span>
+                          <span>LINK STATE UP</span>
+                        </li>
+                        <li fxLayout="row" fxLayoutAlign="start center">
+                          <span class="icon state"><mat-icon class="state-info-icon" svgIcon="network-upload-download"></mat-icon></span>
+                          <ul>
+                            <li>In: 757.25KiB/s</li>
+                            <li>Out:0.00 KiB/s</li>
+                          </ul>
+                        </li>
+                        <li fxLayout="row" fxLayoutAlign="start center" *ngIf="nics.length > 1">
+                          <span class="icon empty"></span>
+                          <span>10.215.3.99/26</span>
+                        </li>
+                      </ul>
+                      <div class="divider"></div>
+                      <ul fxFlex="60">
+                        <li>Media Type: Ethernet</li>
+                        <li>Media Subtype: 1000Mb/s Twisted Pair</li>
+                        <li>IP Addresses: 10.215.3.99/26</li>
+                      </ul>
                     </div>
                   </div>
-                  <div class="nic-chart" fxFlex fxLayout="column" fxFlexFill fxLayoutAlign="space-between end">
-                    <div>
-                      <span>ens33(in)</span><span>ens33(out)</span>
-                    </div>
-                    <div class="chart" fxFlexFill>
+                  <div class="nic-chart" fxFlex fxLayout="row" fxLayoutAlign="space-between stretch" *ngIf="nics.length <= 3">
+                    <div class="chart-body" fxFlex>
                       chart
                     </div>
                   </div>

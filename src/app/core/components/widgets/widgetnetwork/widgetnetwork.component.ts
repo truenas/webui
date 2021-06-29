@@ -19,13 +19,6 @@ interface Converted {
   units: string;
 }
 
-interface Tile {
-  color: string;
-  cols: number;
-  rows: number;
-  text: string;
-}
-
 @UntilDestroy()
 @Component({
   selector: 'widget-network',
@@ -39,27 +32,12 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
 
   title = T('Network');
 
-  padding = 7;
+  padding = 10;
   cols = 2;
   rows = 2;
-  gap = 7;
+  gap = 10;
   contentHeight = 400 - 56;
   rowHeight = 150;
-
-  tiles: Tile[] = [
-    {
-      text: 'One', cols: 3, rows: 1, color: 'lightblue',
-    },
-    {
-      text: 'Two', cols: 1, rows: 2, color: 'lightgreen',
-    },
-    {
-      text: 'Three', cols: 1, rows: 1, color: 'lightpink',
-    },
-    {
-      text: 'Four', cols: 2, rows: 1, color: '#DDBDF1',
-    },
-  ];
 
   constructor(public router: Router, public translate: TranslateService) {
     super(translate);
@@ -75,24 +53,33 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     this.updateGridInfo();
   }
 
+  getColspan(index: number): number {
+    let colSpan = 6;
+    if (this.nics.length <= 3) {
+      colSpan = 6;
+    } else if (this.nics.length == 4) {
+      colSpan = 3;
+    } else if (this.nics.length == 5) {
+      if (index < 2) {
+        colSpan = 3;
+      } else {
+        colSpan = 2;
+      }
+    } else if (this.nics.length >= 6) {
+      colSpan = 2;
+    }
+    return colSpan;
+  }
+
   updateGridInfo(): void {
     const nicsCount = this.nics.length;
-    if (nicsCount <= 2) {
-      this.cols = 1;
-      this.padding = 15;
-      this.gap = 15;
-    } else if (nicsCount <= 4) {
-      this.cols = 2;
-      this.padding = 10;
-      this.gap = 10;
+    if (nicsCount <= 3) {
+      this.rows = nicsCount;
     } else {
-      this.cols = 2;
-      this.padding = 7;
-      this.gap = 7;
+      this.rows = 2;
     }
 
-    this.rows = Math.round(nicsCount / this.cols);
-    if (this.rows <= 1) {
+    if (this.rows < 1) {
       this.rows++;
     } else if (this.rows > 3) {
       this.rows = 3;
