@@ -83,7 +83,7 @@ export class SnapshotListComponent implements EntityTableConfig {
   ];
   // End the show/hide section
 
-  rowIdentifier = 'dataset';
+  rowIdentifier = 'name';
   config: EntityTableConfigConfig = {
     paging: true,
     sorting: { columns: this.columns },

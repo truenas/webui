@@ -111,10 +111,11 @@
         <!-- Multiselect Checkboxes -->
         <ng-container *ngIf="column == 'multiselect'" matColumnDef="{{column}}" sticky>
           <th class="multiselect-column" mat-header-cell *matHeaderCellDef>
-            <mat-checkbox [indeterminate]="selection.hasValue() && !isAllSelected"
-              color="primary"
-              (change)="$event ? masterToggle() : null"
+            <mat-checkbox
+              [indeterminate]="selection.hasValue() && !isAllSelected"
               [checked]="selection.hasValue() && isAllSelected"
+              color="primary"
+              (change)="masterToggle($event)"
               ix-auto ix-auto-type="checkbox" ix-auto-identifier="title">
             </mat-checkbox>
           </th>
@@ -122,7 +123,7 @@
             <mat-checkbox
               color="primary"
               (click)="$event.stopPropagation()"
-              (change)="$event ? selection.toggle(element) : null"
+              (change)="$event ? toggleSelection(element) : null"
               [checked]="selection.isSelected(element)"
               ix-auto ix-auto-type="checkbox"
               [ix-auto-identifier]="element[conf.rowIdentifier || 'name']">
@@ -205,6 +206,7 @@
 
   <mat-card-footer style="padding: 0 !important" *ngIf="conf.config.paging">
     <mat-paginator
+      (page)="pageChanged()"
       [pageIndex]="paginationPageIndex"
       [pageSize]="paginationPageSize"
       [pageSizeOptions]="paginationPageSizeOptions"
