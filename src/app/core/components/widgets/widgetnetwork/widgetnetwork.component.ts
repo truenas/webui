@@ -32,10 +32,12 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
 
   title = T('Network');
 
-  padding = 10;
+  paddingX = 16;
+  paddingTop = 16;
+  paddingBottom = 16;
   cols = 2;
   rows = 2;
-  gap = 10;
+  gap = 16;
   contentHeight = 400 - 56;
   rowHeight = 150;
 
@@ -75,8 +77,20 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     const nicsCount = this.nics.length;
     if (nicsCount <= 3) {
       this.rows = nicsCount;
+      if (nicsCount == 3) {
+        this.paddingTop = 0;
+        this.paddingBottom = 4;
+        this.gap = 8;
+      } else {
+        this.paddingTop = 16;
+        this.paddingBottom = 16;
+        this.gap = 16;
+      }
     } else {
       this.rows = 2;
+      this.paddingTop = 16;
+      this.paddingBottom = 16;
+      this.gap = 16;
     }
 
     if (this.rows < 1) {
@@ -84,8 +98,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     } else if (this.rows > 3) {
       this.rows = 3;
     }
-
-    this.rowHeight = (this.contentHeight - (this.rows - 1) * this.gap - 2 * this.padding) / this.rows;
+    const space = (this.rows - 1) * this.gap + this.paddingTop + this.paddingBottom;
+    this.rowHeight = (this.contentHeight - space) / this.rows;
   }
 
   getMbps(arr: number[]): number | string {

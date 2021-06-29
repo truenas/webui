@@ -16,6 +16,7 @@ mat-grid-tile {
 }
 
 .tile {
+  opacity: 0.7;
   padding: 10px;
 
   .nic-info {
@@ -29,24 +30,35 @@ mat-grid-tile {
     }
 
     .info-header {
-      font-size: 20px;
-      line-height: 30px;
+      font-size: 24px;
+      height: 40px;
 
       .mat-icon-button {
         height: 30px;
         line-height: 30px;
+        margin-left: 22px;
         width: 30px;
       }
     }
 
     .info-body {
+      font-size: 14px;
+
+      .line-state {
+        padding: 4px 0;
+      }
+
+      .defailt-info {
+        font-size: 12px;
+      }
+
       span.icon {
         display: inline-block;
         text-align: center;
-        width: 18px;
+        width: 25px;
 
         &.state {
-          height: 14px;
+          height: 24px;
         }
       }
 
@@ -54,9 +66,14 @@ mat-grid-tile {
         color: var(--green);
       }
 
+      span.icon.state .mat-icon {
+        font-size: 24px;
+        height: 24px;
+      }
+
       .mat-icon {
-        font-size: 14px;
-        height: 14px;
+        font-size: 20px;
+        height: 20px;
         margin-left: -5px;
         top: 0;
 
@@ -69,7 +86,7 @@ mat-grid-tile {
         text-align: left;
 
         li {
-          line-height: 20px;
+          line-height: 18px;
           overflow: hidden;
           white-space: nowrap;
         }
