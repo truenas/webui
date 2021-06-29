@@ -294,7 +294,11 @@ export class SystemProfiler {
   getEnclosureExpanders(index: number) {
     if (this.rearIndex && index == this.rearIndex) { index = this.headIndex; }
     const raw = this.enclosures[index].elements.filter((item) => item.name == 'SAS Expander');
-    return raw[0].elements;
+
+    if (raw.length > 0) {
+      return raw[0].elements;
+    }
+    return raw;
   }
 
   rawCapacity() {
