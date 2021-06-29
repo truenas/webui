@@ -462,14 +462,14 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       this.type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((type: NetworkInterfaceType) => {
         this.setType(type);
       });
-      this.networkService.getVlanParentInterfaceChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-        for (const key in res) {
-          this.vlan_pint.options.push({ label: res[key], value: key });
+      this.networkService.getVlanParentInterfaceChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
+        for (const key in choices) {
+          this.vlan_pint.options.push({ label: choices[key], value: key });
         }
       });
-      this.networkService.getLaggPortsChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-        for (const key in res) {
-          this.lag_ports.options.push({ label: res[key], value: key });
+      this.networkService.getLaggPortsChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
+        for (const key in choices) {
+          this.lag_ports.options.push({ label: choices[key], value: key });
         }
       });
       this.networkService.getLaggProtocolChoices().pipe(untilDestroyed(this)).subscribe((res) => {
@@ -477,9 +477,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           this.lag_protocol.options.push({ label: res[i], value: res[i] });
         }
       });
-      this.networkService.getBridgeMembersChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-        for (const key in res) {
-          this.bridge_members.options.push({ label: res[key], value: key });
+      this.networkService.getBridgeMembersChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
+        for (const key in choices) {
+          this.bridge_members.options.push({ label: choices[key], value: key });
         }
       });
     } else {
@@ -553,9 +553,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     const id = data.id;
     this.setType(type);
     if (type === NetworkInterfaceType.LinkAggregation) {
-      this.networkService.getLaggPortsChoices(id).pipe(untilDestroyed(this)).subscribe((res) => {
-        for (const key in res) {
-          this.lag_ports.options.push({ label: res[key], value: key });
+      this.networkService.getLaggPortsChoices(id).pipe(untilDestroyed(this)).subscribe((choices) => {
+        for (const key in choices) {
+          this.lag_ports.options.push({ label: choices[key], value: key });
         }
       });
 
@@ -565,9 +565,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         }
       });
     } else if (type === NetworkInterfaceType.Bridge) {
-      this.networkService.getBridgeMembersChoices(id).pipe(untilDestroyed(this)).subscribe((res) => {
-        for (const key in res) {
-          this.bridge_members.options.push({ label: res[key], value: key });
+      this.networkService.getBridgeMembersChoices(id).pipe(untilDestroyed(this)).subscribe((choices) => {
+        for (const key in choices) {
+          this.bridge_members.options.push({ label: choices[key], value: key });
         }
       });
     } else if (type === NetworkInterfaceType.Vlan) {

@@ -1067,10 +1067,10 @@ export class DatasetFormComponent implements FormConfiguration {
       _.find(this.fieldSets, { class: 'dataset' }).label = false;
       _.find(this.fieldSets, { class: 'refdataset' }).label = false;
     }
-    this.ws.call('pool.dataset.compression_choices').pipe(untilDestroyed(this)).subscribe((res) => {
+    this.ws.call('pool.dataset.compression_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
       const compression = _.find(this.fieldConfig, { name: 'compression' });
-      for (const key in res) {
-        compression.options.push({ label: key, value: res[key] });
+      for (const key in choices) {
+        compression.options.push({ label: key, value: choices[key] });
       }
     });
 

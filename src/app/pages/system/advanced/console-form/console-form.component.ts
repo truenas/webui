@@ -130,13 +130,13 @@ export class ConsoleFormComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
 
-    this.ws.call('system.advanced.serial_port_choices').pipe(untilDestroyed(this)).subscribe((serial_port_choices) => {
+    this.ws.call('system.advanced.serial_port_choices').pipe(untilDestroyed(this)).subscribe((serialPorts) => {
       const serialport = this.fieldSets.config('serialport');
       serialport.options = [];
 
-      for (const k in serial_port_choices) {
+      for (const k in serialPorts) {
         serialport.options.push({
-          label: k, value: serial_port_choices[k],
+          label: k, value: serialPorts[k],
         });
       }
     });

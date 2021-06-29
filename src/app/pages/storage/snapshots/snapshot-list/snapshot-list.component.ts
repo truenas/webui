@@ -69,12 +69,12 @@ export class SnapshotListComponent implements EntityTableConfig {
     { name: 'Referenced', prop: 'referenced' },
   ];
 
-  columnsHide: any[] = [
+  columnsHide = [
     { name: 'Dataset', prop: 'dataset' },
     { name: 'Snapshot', prop: 'snapshot' },
   ];
 
-  columnsShow: any[] = [
+  columnsShow = [
     { name: 'Dataset', prop: 'dataset' },
     { name: 'Snapshot', prop: 'snapshot' },
     { name: 'Used', prop: 'used' },

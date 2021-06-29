@@ -260,9 +260,9 @@ export class LdapComponent implements FormConfiguration {
       });
     });
 
-    this.ws.call('ldap.ssl_choices').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+    this.ws.call('ldap.ssl_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
       this.ldap_ssl = _.find(this.fieldConfig, { name: 'ssl' });
-      res.forEach((item) => {
+      choices.forEach((item) => {
         this.ldap_ssl.options.push(
           { label: item, value: item },
         );
