@@ -17,7 +17,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1003.feature', 'Setup ACL and verify it is working')
+@scenario('features/NAS-T1003.feature', 'Setup AD and verify it is working')
 def test_setup_acl_and_verify_it_is_working(driver):
     """Setup ACL and verify it is working."""
 
