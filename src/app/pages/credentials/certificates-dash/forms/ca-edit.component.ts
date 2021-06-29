@@ -244,7 +244,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
         this.systemGeneralService.getUnsignedCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
           res.forEach((item) => {
             this.unsignedCAs.push(
-              { label: item.name, value: parseInt(item.id) },
+              { label: item.name, value: item.id },
             );
           });
           this.dialog.dialogForm(this.signCSRFormConf);

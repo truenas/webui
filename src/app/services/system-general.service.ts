@@ -118,7 +118,7 @@ export class SystemGeneralService {
   }
 
   getSysInfo(): Observable<SystemInfo> {
-    return this.ws.call('system.info', []);
+    return this.ws.call('system.info');
   }
 
   ipChoicesv4(): Observable<Option[]> {

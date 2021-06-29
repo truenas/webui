@@ -232,17 +232,17 @@ export class SnapshotListComponent implements EntityTableConfig {
   }
 
   callGetFunction(entityList: EntityTableComponent): void {
-    this.ws.call('systemdataset.config').toPromise().then((res) => {
-      if (res && res.basename && res.basename !== '') {
-        this.queryCallOption[0][2] = (['name', '!^', res.basename]);
+    this.ws.call('systemdataset.config').toPromise().then((config) => {
+      if (config && config.basename && config.basename !== '') {
+        this.queryCallOption[0][2] = (['name', '!^', config.basename]);
       }
       this.ws.call(this.queryCall, this.queryCallOption as QueryParams<ZfsSnapshot>)
         .pipe(untilDestroyed(this))
-        .subscribe((res1) => {
-          entityList.handleData(res1, true);
+        .subscribe((snapshot) => {
+          entityList.handleData(snapshot, true);
         },
         () => {
-          new EntityUtils().handleWSError(this, res, entityList.dialogService);
+          new EntityUtils().handleWSError(this, config, entityList.dialogService);
         });
     });
   }
