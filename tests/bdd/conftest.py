@@ -135,6 +135,8 @@ def pytest_runtest_makereport(item):
             else:
                 # To make sure we exit any combobox to stop other test to fail
                 ActionChains(web_driver).send_keys(Keys.ESCAPE).perform()
+                if not wait_on_element(2, '//span[contains(.,"root")]'):
+                    web_driver.refresh()
 
 
 def save_screenshot(name):
