@@ -7,7 +7,7 @@ import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { matchOtherValidator, doesNotEqual } from 'app/pages/common/entity/entity-form/validators/password-validation';
+import { matchOtherValidator, doesNotEqual } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { WebSocketService } from 'app/services/ws.service';
