@@ -28,10 +28,6 @@ describe('PasswordValidation', () => {
       otherControl = form.get('other');
     });
 
-    it('should have parent', () => {
-      expect(thisControl.parent).toBeTruthy();
-    });
-
     it('should throw error when no otherControl is given', () => {
       form.removeControl('other');
 
@@ -71,10 +67,6 @@ describe('PasswordValidation', () => {
 
       thisControl = form.get('this');
       otherControl = form.get('other');
-    });
-
-    it('should have parent', () => {
-      expect(thisControl.parent).toBeTruthy();
     });
 
     it('should throw error if otherControl is missing', () => {
