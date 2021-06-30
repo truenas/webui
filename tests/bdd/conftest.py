@@ -134,7 +134,7 @@ def pytest_runtest_makereport(item):
                 disable_ldap()
             else:
                 # To make sure we exit any combobox to stop other test to fail
-                ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+                ActionChains(web_driver).send_keys(Keys.ESCAPE).perform()
 
 
 def save_screenshot(name):
