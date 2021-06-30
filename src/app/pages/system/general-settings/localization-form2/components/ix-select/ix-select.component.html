@@ -1,0 +1,26 @@
+<mat-select #selectTrigger ix-auto ix-auto-type="select" 
+ (selectionChange)="onOptionChanged($event)">
+
+  <mat-select-trigger *ngIf="multiple">
+    <span *ngFor="let value of customTriggerValues ; last as isLast">
+        {{ value }}{{ isLast ? '' : ', ' }}
+    </span>
+  </mat-select-trigger>
+
+  <div>
+    <mat-selection-list>
+      <ng-container *ngFor="let option of options; let i=index">
+        <mat-option [value]="option.value" (click)="onToggleSelect(option)">
+          <span *ngIf="multiple">
+            <mat-icon *ngIf="selectedValues[option.value]" class="fn-checked">check_circle</mat-icon>
+            <mat-icon *ngIf="!selectedValues[option.value]" class="fn-unchecked">remove</mat-icon>
+          </span>
+          {{ option.label }}
+          <span *ngIf="shouldAlertOnOption(option)" class="alert-icon">
+            <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+          </span>
+        </mat-option>
+      </ng-container>
+    </mat-selection-list>
+  </div>
+</mat-select>

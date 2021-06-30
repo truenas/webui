@@ -1,0 +1,15 @@
+<mat-card class="form-card">
+  <div class="mat-content">
+    <form #f="ngForm" (ngSubmit)="onSubmit(f)" class="form-wrap">
+      <div class="fieldset-container fieldset-display-default">
+        <div class="entity-form fieldset divider-true" fxLayout="row wrap" fxLayoutGap="24px" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{'100%'}} - 16px)">
+          <div fxFlex="100%" fxFlex.gt-xs="calc({{'100%'}} - 16px)" [ngClass]="'form-inline'">
+            <ix-input name="myInput" id="myInput" [required]="true" ngModel></ix-input>
+          </div>
+          <ix-select [multiple]="true" [options]="selectOptions" name="mySelect" id="mySelect" ngModel></ix-select>
+          <button type="submit">Submit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</mat-card>

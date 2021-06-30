@@ -1,5 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { LocalizationForm2Component } from 'app/pages/system/general-settings/localization-form2/localization-form2.component';
 import { T } from 'app/translate-marker';
 import { Services } from '../services/services.component';
 import { ShellComponent } from '../shell/shell.component';
@@ -20,7 +21,6 @@ import { BootEnvReplaceFormComponent } from './bootenv/bootenv-replace';
 import { BootStatusListComponent } from './bootenv/bootenv-status';
 import { EmailComponent } from './email';
 import { FailoverComponent } from './failover/failover.component';
-import { GeneralSettingsComponent } from './general-settings/general-settings.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { SupportComponent } from './general-settings/support/support.component';
 import { TunableFormComponent } from './tunable/tunable-form';
@@ -39,7 +39,7 @@ export const routes: Routes = [
       data: { title: T('General'), breadcrumb: T('General'), icon: 'build' },
       children: [{
         path: '',
-        component: GeneralSettingsComponent,
+        component: LocalizationForm2Component,
         data: { title: T('General'), breadcrumb: T('General') },
       }],
     }, {
