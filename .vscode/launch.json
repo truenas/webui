@@ -1,15 +1,37 @@
 {
-    "version": "0.2.0",
-    "configurations": [{
-        "name": "Attach to Chrome, with sourcemaps",
-        "type": "chrome",
-        "request": "attach",
-        "port": 9222,
-        "sourceMaps": true,
-        "webRoot": "${workspaceRoot}/src",
-        "url": "http://localhost:4200/*",
-        "sourceMapPathOverrides": {
-            "webpack:///*": "/*"
-        }
-    }]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach to Chrome, with sourcemaps",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "sourceMaps": true,
+      "webRoot": "${workspaceRoot}/src",
+      "url": "http://localhost:4200/*",
+      "sourceMapPathOverrides": {
+        "webpack:///*": "/*"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest: Run all",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest: Run current File",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["${relativeFile}"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true
+    }
+  ]
 }
