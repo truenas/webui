@@ -3,7 +3,7 @@ import {
   AbstractControl,
   FormBuilder, FormGroup, FormsModule,
 } from '@angular/forms';
-import { doesNotEqual } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
+import { doesNotEqualValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 import { matchOtherValidator } from './password-validation';
 
 describe('PasswordValidation', () => {
@@ -53,7 +53,7 @@ describe('PasswordValidation', () => {
     });
   });
 
-  describe('doesNotEqual', () => {
+  describe('doesNotEqualValidator', () => {
     let thisControl: AbstractControl;
     let otherControl: AbstractControl;
     let form: FormGroup;
@@ -65,7 +65,7 @@ describe('PasswordValidation', () => {
 
       const formBuilder = new FormBuilder();
       form = formBuilder.group({
-        this: ['', [doesNotEqual('other')]],
+        this: ['', [doesNotEqualValidator('other')]],
         other: ['', []],
       });
 
