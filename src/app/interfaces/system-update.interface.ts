@@ -22,3 +22,16 @@ export interface SystemUpdateChange {
     version: string;
   };
 }
+
+export interface SystemUpdateTrains {
+  current: string;
+  selected: string;
+  trains: {
+    [name: string]: SystemUpdateTrain;
+  };
+}
+
+export interface SystemUpdateTrain {
+  description: string;
+  sequence: string;
+}

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Choices } from 'app/interfaces/choices.interface';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { IscsiService } from 'app/services';
 import { T } from 'app/translate-marker';
@@ -68,11 +69,11 @@ export class PortalListComponent implements EntityTableConfig {
     });
   }
 
-  dataHandler(data: any): void {
-    for (const i in data.rows) {
-      for (const ip in data.rows[i].listen) {
-        const listenIP = this.ipChoices[data.rows[i].listen[ip].ip] || data.rows[i].listen[ip].ip;
-        data.rows[i].listen[ip] = listenIP + ':' + data.rows[i].listen[ip].port;
+  dataHandler(entityTable: EntityTableComponent): void {
+    for (const i in entityTable.rows) {
+      for (const ip in entityTable.rows[i].listen) {
+        const listenIP = this.ipChoices[entityTable.rows[i].listen[ip].ip] || entityTable.rows[i].listen[ip].ip;
+        entityTable.rows[i].listen[ip] = listenIP + ':' + entityTable.rows[i].listen[ip].port;
       }
     }
   }

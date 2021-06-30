@@ -432,7 +432,7 @@ export class AdvancedSettingsComponent implements OnInit {
   }
 
   saveDebug(): void {
-    this.ws.call('system.info', []).pipe(untilDestroyed(this)).subscribe((systemInfo) => {
+    this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
       let fileName = '';
       let mimeType = 'application/gzip';
       if (systemInfo) {
