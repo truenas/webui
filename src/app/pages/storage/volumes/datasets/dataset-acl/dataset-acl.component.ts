@@ -15,6 +15,7 @@ import * as _ from 'lodash';
 import { DefaultAclType } from 'app/enums/acl-type.enum';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
+import { NfsAclItem } from 'app/interfaces/acl.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -487,7 +488,7 @@ export class DatasetAclComponent implements FormConfiguration {
     while (this.aces.controls.length > num) {
       this.aces.removeAt(num);
     }
-    this.ws.call('filesystem.get_default_acl', [value as DefaultAclType]).pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.ws.call('filesystem.get_default_acl', [value as DefaultAclType]).pipe(untilDestroyed(this)).subscribe((res) => {
       this.dataHandler(this.entityForm, res);
     });
   }
@@ -512,7 +513,7 @@ export class DatasetAclComponent implements FormConfiguration {
     }
     if (this.homeShare) {
       returnLater = true;
-      this.ws.call('filesystem.get_default_acl', [DefaultAclType.Home]).pipe(untilDestroyed(this)).subscribe((res: any) => {
+      this.ws.call('filesystem.get_default_acl', [DefaultAclType.Home]).pipe(untilDestroyed(this)).subscribe((res) => {
         data.acl = res;
         return { aces: data.acl as any };
       });
@@ -530,7 +531,7 @@ export class DatasetAclComponent implements FormConfiguration {
       });
   }
 
-  async dataHandler(entityForm: EntityFormComponent, defaults?: any): Promise<void> {
+  async dataHandler(entityForm: EntityFormComponent, defaults?: NfsAclItem[]): Promise<void> {
     entityForm.formGroup.controls['aces'].reset();
     (entityForm.formGroup.controls['aces'] as FormArray).controls = [];
     this.aces_fc.listFields = [];

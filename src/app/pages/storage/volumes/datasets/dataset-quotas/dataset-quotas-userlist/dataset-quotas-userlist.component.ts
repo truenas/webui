@@ -182,7 +182,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
     });
   }
 
-  dataHandler(data: any): void {
+  dataHandler(data: EntityTableComponent): void {
     this.translate.get(helptext.shared.nameErr).pipe(untilDestroyed(this)).subscribe((msg) => {
       data.rows.forEach((row: any) => {
         if (!row.name) {

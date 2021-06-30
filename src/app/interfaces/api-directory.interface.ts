@@ -3,7 +3,9 @@ import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { Acl, AclQueryParams, SetAcl } from 'app/interfaces/acl.interface';
+import {
+  Acl, AclQueryParams, NfsAclItem, SetAcl,
+} from 'app/interfaces/acl.interface';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
@@ -35,6 +37,7 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
+import { ContainerConfig, ContainerConfigUpdate } from 'app/interfaces/container-config.interface';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
@@ -60,11 +63,13 @@ import { Job } from 'app/interfaces/job.interface';
 import { KerberosConfig } from 'app/interfaces/kerberos-config.interface';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { LldpConfig, LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { NetworkActivityChoice, NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
+import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { OpenvpnClientConfig } from 'app/interfaces/openvpn-client-config.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -82,12 +87,14 @@ import {
   SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTest,
 } from 'app/interfaces/smart-test.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
+import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
+import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Disk, DiskQueryOptions, DiskUpdate } from 'app/interfaces/storage.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { SystemUpdate } from 'app/interfaces/system-update.interface';
+import { SystemUpdate, SystemUpdateChange, SystemUpdateTrains } from 'app/interfaces/system-update.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig } from 'app/interfaces/ups-config.interface';
@@ -95,6 +102,8 @@ import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine, VmStopParams } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
+import { WebdavConfig, WebdavConfigUpdate } from 'app/interfaces/webdav-config.interface';
+import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 
 /**
  * API definitions for `call` and `job` methods.
@@ -245,8 +254,8 @@ export type ApiDirectory = {
   'cloudsync.sync_onetime': { params: any; response: any };
 
   // Container
-  'container.config': { params: any; response: any };
-  'container.update': { params: any; response: any };
+  'container.config': { params: void; response: ContainerConfig };
+  'container.update': { params: [ContainerConfigUpdate]; response: ContainerConfig };
   'container.image.query': { params: void; response: ContainerImage[] };
   'container.image.pull': { params: [PullContainerImageParams]; response: any };
   'container.image.delete': { params: any; response: any };
@@ -292,7 +301,7 @@ export type ApiDirectory = {
   'filesystem.listdir': { params: any; response: any };
   'filesystem.stat': { params: [/* path */ string]; response: FileSystemStat };
   'filesystem.default_acl_choices': { params: void; response: string[] };
-  'filesystem.get_default_acl': { params: [DefaultAclType]; response: any };
+  'filesystem.get_default_acl': { params: [DefaultAclType]; response: NfsAclItem[] };
   'filesystem.statfs': { params: any; response: any };
   'filesystem.getacl': { params: AclQueryParams; response: Acl };
   'filesystem.setacl': { params: [SetAcl]; response: any };
@@ -331,9 +340,9 @@ export type ApiDirectory = {
   'keychaincredential.remote_ssh_semiautomatic_setup': { params: any; response: any };
 
   // Kubernetes
-  'kubernetes.config': { params: any; response: any };
-  'kubernetes.update': { params: any; response: any };
-  'kubernetes.bindip_choices': { params: any; response: any };
+  'kubernetes.config': { params: void; response: KubernetesConfig };
+  'kubernetes.update': { params: [KubernetesConfigUpdate]; response: any };
+  'kubernetes.bindip_choices': { params: void; response: Choices };
 
   // Multipath
   'multipath.query': { params: any; response: any };
@@ -364,7 +373,7 @@ export type ApiDirectory = {
   'interface.create': { params: any; response: any };
   'interface.update': { params: any; response: any };
   'interface.has_pending_changes': { params: void; response: boolean };
-  'interface.checkin_waiting': { params: any; response: any };
+  'interface.checkin_waiting': { params: void; response: any };
   'interface.checkin': { params: any; response: any };
   'interface.websocket_interface': { params: any; response: any };
 
@@ -460,7 +469,7 @@ export type ApiDirectory = {
   // NFS
   'nfs.bindip_choices': { params: void; response: Choices };
   'nfs.add_principal': { params: any; response: any };
-  'nfs.config': { params: any; response: any };
+  'nfs.config': { params: void; response: NfsConfig };
   'nfs.update': { params: any; response: any };
 
   // OpenVPN
@@ -588,8 +597,8 @@ export type ApiDirectory = {
   'smb.sharesec.update': { params: any; response: any };
 
   // SSH
-  'ssh.update': { params: any; response: any };
-  'ssh.config': { params: any; response: any };
+  'ssh.update': { params: [SshConfigUpdate]; response: SshConfig };
+  'ssh.config': { params: void; response: SshConfig };
   'ssh.bindiface_choices': { params: void; response: Choices };
 
   // System
@@ -598,7 +607,7 @@ export type ApiDirectory = {
   'system.reboot': { params: any; response: any };
   'system.shutdown': { params: any; response: any };
   'system.advanced.serial_port_choices': { params: void; response: Choices };
-  'system.info': { params: any; response: SystemInfo };
+  'system.info': { params: void; response: SystemInfo };
   'system.advanced.config': { params: void; response: AdvancedConfig };
   'system.general.update': { params: any; response: any };
   'system.ntpserver.delete': { params: any; response: any };
@@ -697,7 +706,7 @@ export type ApiDirectory = {
   'truenas.is_eula_accepted': { params: void; response: boolean };
   'truenas.get_eula': { params: void; response: string };
   'truenas.accept_eula': { params: void; response: void };
-  'truenas.is_production': { params: any; response: any };
+  'truenas.is_production': { params: void; response: boolean };
   'truenas.set_production': { params: any; response: any };
 
   // Vm
@@ -755,9 +764,9 @@ export type ApiDirectory = {
 
   // Update
   'update.get_auto_download': { params: void; response: boolean };
-  'update.get_trains': { params: any; response: any };
-  'update.set_auto_download': { params: any; response: any };
-  'update.get_pending': { params: any; response: any };
+  'update.get_trains': { params: void; response: SystemUpdateTrains };
+  'update.set_auto_download': { params: [boolean]; response: void };
+  'update.get_pending': { params: void; response: SystemUpdateChange[] };
   'update.check_available': { params: void; response: SystemUpdate };
   'update.set_train': { params: any; response: any };
   'update.download': { params: any; response: any };
@@ -765,8 +774,7 @@ export type ApiDirectory = {
 
   // ZFS
   'zfs.snapshot.create': { params: any; response: any };
-  'zfs.dataset.query': { params: any; response: any };
-  'zfs.snapshot.query': { params: any; response: any };
+  'zfs.snapshot.query': { params: QueryParams<ZfsSnapshot>; response: ZfsSnapshot[] };
   'zfs.snapshot.delete': { params: any; response: any };
   'zfs.snapshot.clone': { params: any; response: any };
   'zfs.snapshot.rollback': { params: any; response: any };
@@ -779,12 +787,12 @@ export type ApiDirectory = {
   'staticroute.delete': { params: [/* id */ number]; response: boolean };
 
   // SNMP
-  'snmp.config': { params: any; response: any };
-  'snmp.update': { params: any; response: any };
+  'snmp.config': { params: void; response: SnmpConfig };
+  'snmp.update': { params: [SnmpConfigUpdate]; response: SnmpConfig };
 
   // WEBDAV
-  'webdav.config': { params: any; response: any };
-  'webdav.update': { params: any; response: any };
+  'webdav.config': { params: void; response: WebdavConfig };
+  'webdav.update': { params: [WebdavConfigUpdate]; response: WebdavConfig };
 
   // InitShutdownScript
   'initshutdownscript.query': { params: QueryParams<InitShutdownScript>; response: InitShutdownScript[] };

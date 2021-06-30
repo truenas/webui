@@ -57,7 +57,6 @@ export class LayoutObject {
   intro: string;
   outro: string;
   updateMessage: string;
-  updateMessageData: any;
   itemSize: ElementDimensions;
   contentSize: ElementDimensions;
 

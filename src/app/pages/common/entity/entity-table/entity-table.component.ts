@@ -723,10 +723,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.conf.queryRes) {
         this.conf.queryRes = rows;
       }
-
-      if (this.conf.queryRes) {
-        this.conf.queryRes = rows;
-      }
     } else {
       for (let i = 0; i < this.currentRows.length; i++) {
         const index = _.findIndex(rows, { id: this.currentRows[i].id });
