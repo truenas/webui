@@ -16,9 +16,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1107.feature', 'Verify the Plexpass plugin functions')
-def test_verify_the_plexpass_plugin_functions(driver):
-    """Verify the Plexpass plugin functions."""
+@scenario('features/NAS-T1109.feature', 'Verify the syncthing plugin functions')
+def test_verify_the_syncthing_plugin_functions(driver):
+    """Verify the syncthing plugin functions."""
     pass
 
 
@@ -52,31 +52,31 @@ def on_the_dashboard_click_on_plugins_on_the_left_sidebar(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Plugins"]').click()
 
 
-@then('on the Plugins page, Plex Media Server (Beta) should be available to install')
-def on_the_plugins_page_plex_media_server_beta_should_be_available_to_install(driver):
-    """on the Plugins page, Plex Media Server (Beta) should be available to install."""
+@then('on the Plugins page, Syncthing should be available to install')
+def on_the_plugins_page_syncthing_should_be_available_to_install(driver):
+    """on the Plugins page, Syncthing should be available to install."""
     assert wait_on_element(driver, 5, '//div[text()="Plugins"]')
-    assert wait_on_element(driver, 5, '//mat-button-toggle[@ix-auto="button__Plex Media Server (Beta)"]/button', 'clickable')
+    assert wait_on_element(driver, 5, '//mat-button-toggle[@ix-auto="button__Syncthing"]/button', 'clickable')
 
 
-@then('click on the Plex Media Server (Beta) plugin, then click INSTALL')
-def click_on_the_plex_media_server_beta_plugin_then_click_install(driver):
-    """click on the Plex Media Server (Beta) plugin, then click INSTALL."""
-    driver.find_element_by_xpath('//mat-button-toggle[@ix-auto="button__Plex Media Server (Beta)"]/button').click()
-    assert wait_on_element(driver, 5, '//img[@alt="Plex Media Server (Beta)"]')
+@then('click on the Syncthing plugin, then click INSTALL')
+def click_on_the_syncthing_plugin_then_click_install(driver):
+    """click on the Syncthing plugin, then click INSTALL."""
+    driver.find_element_by_xpath('//mat-button-toggle[@ix-auto="button__Syncthing"]/button').click()
+    assert wait_on_element(driver, 5, '//img[@alt="Syncthing"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__INSTALL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__INSTALL"]').click()
 
 
-@then('under Jail Name, enter "plexpasstest", and DHCP should be checked')
-def under_jail_name_enter_plexpasstest_and_dhcp_should_be_checked(driver):
-    """under Jail Name, enter "plexpasstest", and DHCP should be checked."""
+@then('under Jail Name, enter "syncthingtest", and NAT should be checked')
+def under_jail_name_enter_syncthingtest_and_nat_should_be_checked(driver):
+    """under Jail Name, enter "syncthingtest", and NAT should be checked."""
     assert wait_on_element(driver, 10, '//li[contains(.,"Add")]')
     assert wait_on_element(driver, 5, '//input[@placeholder="Jail Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Jail Name"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Jail Name"]').send_keys('plexpasstest')
-    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__DHCP"]')
-    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__DHCP"]', 'class', 'mat-checkbox-checked')
+    driver.find_element_by_xpath('//input[@placeholder="Jail Name"]').send_keys('syncthingtest')
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__NAT"]')
+    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__NAT"]', 'class', 'mat-checkbox-checked')
 
 
 @then('click SAVE, then an Install window should be visible outlining progress')
@@ -95,55 +95,55 @@ def when_plugin_installed_successfully_appear_click_close(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
-@then('after the Plex Media Server (Beta) plugin should be in the table')
-def after_the_plex_media_server_beta_plugin_should_be_in_the_table(driver):
-    """after the Plex Media Server (Beta) plugin should be in the table."""
-    assert wait_on_element(driver, 20, '//datatable-body-row[contains(.,"plexpasstest")]')
+@then('after the Syncthing plugin should be in the table')
+def after_the_syncthing_plugin_should_be_in_the_table(driver):
+    """after the Syncthing plugin should be in the table."""
+    assert wait_on_element(driver, 20, '//datatable-body-row[contains(.,"syncthingtest")]')
 
 
 @then('status should be "up", with the Boot option checked')
 def status_should_be_up_with_the_boot_option_checked(driver):
     """status should be "up", with the Boot option checked."""
-    assert wait_on_element(driver, 20, '//div[@id="plexpasstest_Status"]//span[text()="up"]')
-    assert wait_on_element(driver, 5, '//mat-checkbox[@id="plexpasstest_Boot-checkbox"]')
-    assert attribute_value_exist(driver, '//mat-checkbox[@id="plexpasstest_Boot-checkbox"]', 'class', 'mat-checkbox-checked')
+    assert wait_on_element(driver, 20, '//div[@id="syncthingtest_Status"]//span[text()="up"]')
+    assert wait_on_element(driver, 5, '//mat-checkbox[@id="syncthingtest_Boot-checkbox"]')
+    assert attribute_value_exist(driver, '//mat-checkbox[@id="syncthingtest_Boot-checkbox"]', 'class', 'mat-checkbox-checked')
 
 
 @then('at the right of the plugin table, click the ">"')
 def at_the_right_of_the_plugin_table_click_the_(driver):
     """at the right of the plugin table, click the ">"."""
-    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__plexpasstest"]', 'clickable')
-    driver.find_element_by_xpath('//a[@ix-auto="expander__plexpasstest"]').click()
+    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__syncthingtest"]', 'clickable')
+    driver.find_element_by_xpath('//a[@ix-auto="expander__syncthingtest"]').click()
 
 
 @then('these options will be shown (Restart/Stop/Update/Mount Points/Manage/Uninstall)')
 def these_options_will_be_shown_restartstopupdatemount_pointsmanageuninstall(driver):
     """these options will be shown (Restart/Stop/Update/Mount Points/Manage/Uninstall)."""
-    assert wait_on_element(driver, 5, '//button[@id="action_button_plexpasstest__restart"]')
-    assert wait_on_element(driver, 5, '//button[@id="action_button_plexpasstest__stop"]')
-    assert wait_on_element(driver, 5, '//button[@id="action_button_plexpasstest__update"]')
-    assert wait_on_element(driver, 5, '//button[@id="action_button_plexpasstest__mount"]')
-    assert wait_on_element(driver, 5, '//button[@id="action_button_plexpasstest__management"]')
-    assert wait_on_element(driver, 5, '//button[@id="action_button_plexpasstest__delete"]')
+    assert wait_on_element(driver, 5, '//button[@id="action_button_syncthingtest__restart"]')
+    assert wait_on_element(driver, 5, '//button[@id="action_button_syncthingtest__stop"]')
+    assert wait_on_element(driver, 5, '//button[@id="action_button_syncthingtest__update"]')
+    assert wait_on_element(driver, 5, '//button[@id="action_button_syncthingtest__mount"]')
+    assert wait_on_element(driver, 5, '//button[@id="action_button_syncthingtest__management"]')
+    assert wait_on_element(driver, 5, '//button[@id="action_button_syncthingtest__delete"]')
 
 
 @then('click the "Manage" option')
 def click_the_manage_option(driver):
     """click the "Manage" option."""
-    assert wait_on_element(driver, 5, '//button[@id="action_button_plexpasstest__management"]', 'clickable')
-    driver.find_element_by_xpath('//button[@id="action_button_plexpasstest__management"]').click()
+    assert wait_on_element(driver, 5, '//button[@id="action_button_syncthingtest__management"]', 'clickable')
+    driver.find_element_by_xpath('//button[@id="action_button_syncthingtest__management"]').click()
     time.sleep(1)
 
 
-@then('a new tab or window should load Plex Media Server (Beta) Credentials page')
-def a_new_tab_or_window_should_load_plex_media_server_beta_credentials_page(driver):
-    """a new tab or window should load Plex Media Server (Beta) Credentials page."""
+@then('a new tab or window should load Syncthing home page')
+def a_new_tab_or_window_should_load_syncthing_home_page(driver):
+    """a new tab or window should load Syncthing home page."""
     driver.switch_to.window(driver.window_handles[1])
-    assert wait_on_element(driver, 5, '//iframe[@title="Plex Authentication"]')
-    iframe = driver.find_element_by_xpath('//iframe[@title="Plex Authentication"]')
-    driver.switch_to.frame(iframe)
-    assert wait_on_element(driver, 5, '//div[contains(.,"Continue with Email")]')
-    driver.switch_to.default_content()
+    assert wait_on_element(driver, 10, '//h4[contains(.,"Allow Anonymous Usage Reporting?")]')
+    assert wait_on_element(driver, 5, '//button[contains(@class,"btn-success") and contains(.,"Yes")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(@class,"btn-success") and contains(.,"Yes")]').click()
+    assert wait_on_element(driver, 5, '//p[text()="syncthingtest"]')
+    assert wait_on_element(driver, 5, '//h3[text()="Folders"]')
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
     assert wait_on_element(driver, 5, '//div[text()="Plugins"]')
