@@ -109,14 +109,14 @@ def pytest_runtest_makereport(item):
         xfail = hasattr(report, 'wasxfail')
         if (report.skipped and xfail) or (report.failed and not xfail):
             screenshot_name = f'screenshot/{report.nodeid.replace("::", "_")}.png'
-            screenshot_name_error = f'screenshot/{report.nodeid.replace("::", "_")}-error.png'
+            screenshot_error_name = f'screenshot/{report.nodeid.replace("::", "_")}_error.png'
             # look if there is a Error window
             if element_exist('//h1[normalize-space(text())="Error"]'):
                 web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
                 time.sleep(2)
                 traceback_name = f'screenshot/{report.nodeid.replace("::", "_")}.txt'
                 save_traceback(traceback_name)
-                save_screenshot(screenshot_name_error)
+                save_screenshot(screenshot_error_name)
             # Press CLOSE if exist
             if element_exist('//button[@ix-auto="button__CLOSE"]'):
                 web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
