@@ -31,7 +31,6 @@ export class LicenseComponent implements FormConfiguration {
     },
   ];
   title = helptext.update_license.license_placeholder;
-  entityForm: any;
 
   constructor(private ws: WebSocketService, private modalService: ModalService,
     private loader: AppLoaderService, private dialog: DialogService) { }

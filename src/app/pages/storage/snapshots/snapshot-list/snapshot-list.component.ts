@@ -9,7 +9,9 @@ import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Snapshot } from 'app/interfaces/storage.interface';
+import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -44,7 +46,7 @@ export class SnapshotListComponent implements EntityTableConfig {
   wsDelete: 'zfs.snapshot.delete' = 'zfs.snapshot.delete';
   protected loaderOpen = false;
   protected entityList: EntityTableComponent;
-  protected rollback: any;
+  protected rollback: ZfsSnapshot;
   globalConfig = {
     id: 'config',
     onClick: () => {
@@ -69,12 +71,12 @@ export class SnapshotListComponent implements EntityTableConfig {
     { name: 'Referenced', prop: 'referenced' },
   ];
 
-  columnsHide: any[] = [
+  columnsHide = [
     { name: 'Dataset', prop: 'dataset' },
     { name: 'Snapshot', prop: 'snapshot' },
   ];
 
-  columnsShow: any[] = [
+  columnsShow = [
     { name: 'Dataset', prop: 'dataset' },
     { name: 'Snapshot', prop: 'snapshot' },
     { name: 'Used', prop: 'used' },
@@ -83,7 +85,7 @@ export class SnapshotListComponent implements EntityTableConfig {
   ];
   // End the show/hide section
 
-  rowIdentifier = 'dataset';
+  rowIdentifier = 'name';
   config: EntityTableConfigConfig = {
     paging: true,
     sorting: { columns: this.columns },
@@ -229,21 +231,23 @@ export class SnapshotListComponent implements EntityTableConfig {
     this.entityList = entityList;
   }
 
-  callGetFunction(entityList: any): void {
-    this.ws.call('systemdataset.config').toPromise().then((res) => {
-      if (res && res.basename && res.basename !== '') {
-        this.queryCallOption[0][2] = (['name', '!^', res.basename]);
+  callGetFunction(entityList: EntityTableComponent): void {
+    this.ws.call('systemdataset.config').toPromise().then((config) => {
+      if (config && config.basename && config.basename !== '') {
+        this.queryCallOption[0][2] = (['name', '!^', config.basename]);
       }
-      this.ws.call(this.queryCall, this.queryCallOption).pipe(untilDestroyed(this)).subscribe((res1) => {
-        entityList.handleData(res1, true);
-      },
-      () => {
-        new EntityUtils().handleWSError(this, res, entityList.dialogService);
-      });
+      this.ws.call(this.queryCall, this.queryCallOption as QueryParams<ZfsSnapshot>)
+        .pipe(untilDestroyed(this))
+        .subscribe((snapshot) => {
+          entityList.handleData(snapshot, true);
+        },
+        () => {
+          new EntityUtils().handleWSError(this, config, entityList.dialogService);
+        });
     });
   }
 
-  dataHandler(list: { rows: { name: string; dataset: string; snapshot: string }[] }): void {
+  dataHandler(list: EntityTableComponent): void {
     list.rows = list.rows.map((ss) => {
       const [datasetName, snapshotName] = ss.name.split('@');
       ss.dataset = datasetName;

@@ -122,7 +122,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     );
 
     const setV4InterfaceControl = this.appService.getInterfaces().pipe(
-      tap((interfaces: any[]) => {
+      tap((interfaces) => {
         const v4InterfaceControl = _.find(this.fieldSets[1].config, { name: 'route_v4_interface' });
         interfaces.forEach((i) => {
           v4InterfaceControl.options.push({ label: i.name, value: i.name });
@@ -163,11 +163,10 @@ export class KubernetesSettingsComponent implements FormConfiguration {
   customSubmit(data: any): void {
     this.loader.open();
 
-    const promises = [];
-    promises.push(this.ws.job(this.editCall, [data]).toPromise());
-    promises.push(this.appService.updateContainerConfig(this.newEnableContainerImageUpdate).toPromise());
-
-    Promise.all(promises).then(() => {
+    Promise.all([
+      this.ws.job(this.editCall, [data]).toPromise(),
+      this.appService.updateContainerConfig(this.newEnableContainerImageUpdate).toPromise(),
+    ]).then(() => {
       this.loader.close();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();

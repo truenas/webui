@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { T } from 'app/translate-marker';
 
@@ -10,7 +11,6 @@ export class RSYNCconfigurationListComponent implements EntityTableConfig {
   title = 'RSYNC Modules';
   queryCall: 'rsyncmod.query' = 'rsyncmod.query';
   hasDetails = true;
-  protected entityList: any;
   wsDelete: 'rsyncmod.delete' = 'rsyncmod.delete';
   route_add: string[] = ['services', 'rsync', 'rsync-module', 'add'];
   route_edit: string[] = ['services', 'rsync', 'rsync-module', 'edit'];
@@ -34,8 +34,8 @@ export class RSYNCconfigurationListComponent implements EntityTableConfig {
     sorting: { columns: this.columns },
   };
 
-  dataHandler(res: any): void {
-    const rows = res.rows;
+  dataHandler(entityTable: EntityTableComponent): void {
+    const rows = entityTable.rows;
     for (let i = 0; i < rows.length; i++) {
       rows[i].details = [];
       rows[i].details.push({ label: T('Maximum connections'), value: rows[i]['maxconn'] },

@@ -6,6 +6,7 @@ interface RoutePart {
   breadcrumb: string;
   params?: Params;
   url: string;
+  toplevel: boolean;
 }
 
 @Injectable()
@@ -13,7 +14,7 @@ export class RoutePartsService {
   routeParts: RoutePart[];
 
   generateRouteParts(snapshot: ActivatedRouteSnapshot): RoutePart[] {
-    let routeParts = <any[]>[];
+    let routeParts: RoutePart[] = [];
     if (snapshot) {
       if (snapshot.firstChild) {
         routeParts = routeParts.concat(this.generateRouteParts(snapshot.firstChild));

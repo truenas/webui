@@ -30,7 +30,6 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   summary: any = {};
   isLinear = true;
   firstFormGroup: FormGroup;
-  protected dialogRef: any;
   summaryTitle = 'Pool Import Summary';
   subs: any;
   saveSubmitText = T('Import');

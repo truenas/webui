@@ -1,6 +1,7 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -30,7 +31,7 @@ import { T } from 'app/translate-marker';
 export class ManualUpdateComponent extends ViewControllerComponent implements FormConfiguration {
   formGroup: FormGroup;
   route_success: string[] = ['system', 'update'];
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
   fileLocation: any;
   subs: any;
   isHA = false;

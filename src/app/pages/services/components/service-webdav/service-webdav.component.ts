@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/services/components/service-webdav';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { WebdavConfig, WebdavConfigUpdate } from 'app/interfaces/webdav-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -103,13 +104,14 @@ export class ServiceWebdavComponent implements FormConfiguration {
     protected validationService: ValidationService,
   ) {}
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: WebdavConfig): any {
+    const transformed = { ...data };
     const certificate = data['certssl'];
     if (certificate && certificate.id) {
-      data['certssl'] = certificate.id;
+      transformed['certssl'] = certificate.id;
     }
-    delete data['password'];
-    return data;
+    delete transformed['password'];
+    return transformed;
   }
 
   afterInit(entityForm: EntityFormComponent): void {
@@ -135,7 +137,7 @@ export class ServiceWebdavComponent implements FormConfiguration {
       });
 
     this.webdav_certssl = _.find(this.fieldConfig, { name: 'certssl' });
-    this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+    this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.length > 0) {
         res.forEach((item) => {
           this.webdav_certssl.options.push(
@@ -172,7 +174,7 @@ export class ServiceWebdavComponent implements FormConfiguration {
     }
   }
 
-  submitFunction(body: any): Observable<any> {
+  submitFunction(body: WebdavConfigUpdate & { password2?: string }): Observable<WebdavConfig> {
     delete body['password2'];
     return this.ws.call('webdav.update', [body]);
   }

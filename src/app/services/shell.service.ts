@@ -9,8 +9,8 @@ import { ShellConnectedEvent } from '../interfaces/shell.interface';
 
 @Injectable()
 export class ShellService {
-  onCloseSubject: Subject < any > ;
-  onOpenSubject: Subject < any > ;
+  onCloseSubject: Subject<true> ;
+  onOpenSubject: Subject<true> ;
   pendingCalls: any;
   pendingMessages: any[] = [];
   socket: WebSocket;
@@ -28,7 +28,7 @@ export class ShellService {
   @Output() shellOutput = new EventEmitter < any >();
   @Output() shellConnected = new EventEmitter<ShellConnectedEvent>();
 
-  subscriptions: Map < string, any[]> = new Map < string, any[]>();
+  subscriptions = new Map <string, any[]>();
 
   constructor(private _router: Router) {
     this.onOpenSubject = new Subject();

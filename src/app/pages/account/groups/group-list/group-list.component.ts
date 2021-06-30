@@ -29,7 +29,7 @@ export class GroupListComponent implements EntityTableConfig, OnInit {
   route_add = ['account', 'groups', 'add'];
   protected route_add_tooltip = T('Add Group');
   route_edit: string[] = ['account', 'groups', 'edit'];
-  protected entityList: any;
+  protected entityList: EntityTableComponent;
   protected loaderOpen = false;
   globalConfig = {
     id: 'config',
@@ -214,7 +214,6 @@ export class GroupListComponent implements EntityTableConfig, OnInit {
               if (res) {
                 this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
                 this.prefService.savePreferences();
-                this.entityList.needTableResize = false;
                 this.entityList.getData();
               }
             });

@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { FormArray } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -27,7 +29,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   queryCall: 'certificate.query' = 'certificate.query';
   isEntity = true;
   isNew = true;
-  private csrOrg: any;
+  private csrOrg: Certificate;
   formArray: FormArray;
   commonName: string;
   private getRow = new Subscription();
@@ -120,7 +122,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   ];
 
   protected entityForm: EntityFormComponent;
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
   queryCallOption: any[];
   initialCount = 1;
   private domainList: any;

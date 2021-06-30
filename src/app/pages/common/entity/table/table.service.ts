@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService, AppLoaderService } from 'app/services';
@@ -16,7 +17,7 @@ const stateClass = {
 @UntilDestroy()
 @Injectable()
 export class TableService {
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
 
   constructor(
     private dialogService: DialogService,

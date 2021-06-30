@@ -2,6 +2,9 @@ import { EventEmitter, Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { Subject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
+import { Certificate } from 'app/interfaces/certificate.interface';
+import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WebSocketService } from './ws.service';
@@ -94,15 +97,15 @@ export class SystemGeneralService {
     return this.ws.call(this.caList, []);
   }
 
-  getCertificates(): Observable<any[]> {
+  getCertificates(): Observable<Certificate[]> {
     return this.ws.call(this.certificateList);
   }
 
-  getUnsignedCertificates(): Observable<any[]> {
+  getUnsignedCertificates(): Observable<Certificate[]> {
     return this.ws.call(this.certificateList, [[['CSR', '!=', null]]]);
   }
 
-  getUnsignedCAs(): Observable<any[]> {
+  getUnsignedCAs(): Observable<CertificateAuthority[]> {
     return this.ws.call(this.caList, [[['privatekey', '!=', null]]]);
   }
 
@@ -115,11 +118,11 @@ export class SystemGeneralService {
   }
 
   getSysInfo(): Observable<SystemInfo> {
-    return this.ws.call('system.info', []);
+    return this.ws.call('system.info');
   }
 
-  ipChoicesv4(): Observable<any> {
-    return this.ws.call('system.general.ui_address_choices', []).pipe(
+  ipChoicesv4(): Observable<Option[]> {
+    return this.ws.call('system.general.ui_address_choices').pipe(
       map((response) =>
         Object.keys(response || {}).map((key) => ({
           label: response[key],
@@ -128,8 +131,8 @@ export class SystemGeneralService {
     );
   }
 
-  ipChoicesv6(): Observable<any> {
-    return this.ws.call('system.general.ui_v6address_choices', []).pipe(
+  ipChoicesv6(): Observable<Option[]> {
+    return this.ws.call('system.general.ui_v6address_choices').pipe(
       map((response) =>
         Object.keys(response || {}).map((key) => ({
           label: response[key],
@@ -139,7 +142,7 @@ export class SystemGeneralService {
   }
 
   kbdMapChoices(): Observable<Option[]> {
-    return this.ws.call('system.general.kbdmap_choices', []).pipe(
+    return this.ws.call('system.general.kbdmap_choices').pipe(
       map((response) =>
         Object.keys(response || {}).map((key) => ({
           label: `${response[key]} (${key})`,
@@ -148,12 +151,12 @@ export class SystemGeneralService {
     );
   }
 
-  languageChoices(): Observable<any> {
+  languageChoices(): Observable<Choices> {
     return this.ws.call('system.general.language_choices');
   }
 
-  timezoneChoices(): Observable<any> {
-    return this.ws.call('system.general.timezone_choices', []).pipe(
+  timezoneChoices(): Observable<Option[]> {
+    return this.ws.call('system.general.timezone_choices').pipe(
       map((response) =>
         Object.keys(response || {}).map((key) => ({
           label: response[key],

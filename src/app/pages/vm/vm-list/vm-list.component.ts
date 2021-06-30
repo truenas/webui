@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -51,7 +52,7 @@ export class VMListComponent implements EntityTableConfig, OnInit {
   wsDelete: 'vm.delete' = 'vm.delete';
   route_add: string[] = ['vm', 'wizard'];
   route_edit: string[] = ['vm', 'edit'];
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
   private productType = window.localStorage.getItem('product_type') as ProductType;
   addComponent: VMWizardComponent;
 

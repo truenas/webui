@@ -3,6 +3,9 @@ import { Observable } from 'rxjs';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { Choices } from 'app/interfaces/choices.interface';
+import { ContainerConfig } from 'app/interfaces/container-config.interface';
+import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { WebSocketService } from 'app/services/index';
@@ -15,7 +18,7 @@ export class ApplicationsService {
     return this.ws.call('pool.query');
   }
 
-  getKubernetesConfig(): Observable<any> {
+  getKubernetesConfig(): Observable<KubernetesConfig> {
     return this.ws.call('kubernetes.config');
   }
 
@@ -31,7 +34,7 @@ export class ApplicationsService {
     return this.ws.call('catalog.get_item_details', [name, { cache: true, catalog, train }]);
   }
 
-  getBindIPChoices(): Observable<any[]> {
+  getBindIPChoices(): Observable<Choices> {
     return this.ws.call('kubernetes.bindip_choices');
   }
 
@@ -60,7 +63,7 @@ export class ApplicationsService {
     return this.ws.call('chart.release.pod_console_choices', [name]);
   }
 
-  getNICChoices(): Observable<any[]> {
+  getNICChoices(): Observable<Choices> {
     return this.ws.call('chart.release.nic_choices');
   }
 
@@ -77,11 +80,11 @@ export class ApplicationsService {
     return this.ws.call('chart.release.events', [name]);
   }
 
-  getContainerConfig(): Observable<any> {
+  getContainerConfig(): Observable<ContainerConfig> {
     return this.ws.call('container.config');
   }
 
-  updateContainerConfig(enable_image_updates: boolean): Observable<any> {
+  updateContainerConfig(enable_image_updates: boolean): Observable<ContainerConfig> {
     return this.ws.call('container.update', [{ enable_image_updates }]);
   }
 
