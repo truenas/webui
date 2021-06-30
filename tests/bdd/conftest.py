@@ -16,6 +16,8 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
 
 # random hostname
 hostname = f'uitest{"".join(random.choices(string.digits, k=3))}'
@@ -107,27 +109,32 @@ def pytest_runtest_makereport(item):
         xfail = hasattr(report, 'wasxfail')
         if (report.skipped and xfail) or (report.failed and not xfail):
             screenshot_name = f'screenshot/{report.nodeid.replace("::", "_")}.png'
+            screenshot_name_error = f'screenshot/{report.nodeid.replace("::", "_")}-error.png'
             # look if there is a Error window
-            if element_exist('//h1[contains(.,"Error")]') and not element_exist('//h1[contains(.,"Error details")]'):
+            if element_exist('//h1[normalize-space(text())="Error"]'):
                 web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
                 time.sleep(2)
                 traceback_name = f'screenshot/{report.nodeid.replace("::", "_")}.txt'
                 save_traceback(traceback_name)
-            save_screenshot(screenshot_name)
+                save_screenshot(screenshot_name_error)
             # Press CLOSE if exist
             if element_exist('//button[@ix-auto="button__CLOSE"]'):
                 web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
             else:
                 if element_exist('//button[@ix-auto="button__I AGREE"]'):
                     web_driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+            save_screenshot(screenshot_name)
             # if test that use disable failover make sure to enable failover back.
             if 'T0905' in screenshot_name or 'T0919' in screenshot_name or 'T0920' in screenshot_name or 'T0922' in screenshot_name:
                 if element_exist('//mat-icon[@svgicon="ha_disabled"]'):
                     enable_failover()
-            if 'T1010' in screenshot_name:
+            elif 'T1010' in screenshot_name:
                 disable_active_directory()
-            if 'T1013' in screenshot_name:
+            elif 'T1013' in screenshot_name:
                 disable_ldap()
+            else:
+                # To make sure we exit any combobox to stop other test to fail
+                ActionChains(driver).send_keys(Keys.ESCAPE).perform()
 
 
 def save_screenshot(name):
