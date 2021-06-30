@@ -18,11 +18,11 @@
         </mat-toolbar-row>
         <div>
           <div class="card-body" [style.padding]="paddingTop + 'px ' + paddingX + 'px ' + paddingBottom + 'px'">
-            <mat-grid-list cols="6" [gutterSize]="gap + 'px'" [rowHeight]="rowHeight + 'px'">
-              <mat-grid-tile *ngFor="let nic of nics; let i=index" [colspan]="getColspan(i)">
-                <div class="tile" [fxLayout]="nics.length==1?'column':'row'" fxFill fxLayoutAlign="start center">
+            <mat-grid-list cols="6" [gutterSize]="gap + 'px'" [rowHeight]="rowHeight + 'px'"  class="nics-{{ nics.length}}">
+              <mat-grid-tile *ngFor="let nic of nics; let i=index" [colspan]="getColspan(i)" class="tile-{{ i }}">
+                <div class="tile" [fxLayout]="nics.length==1?'column':'row'" fxFill fxLayoutAlign="start stretch" >
                   <div class="nic-info" fxLayout="column" fxLayoutAlign="start stretch">
-                    <div class="info-header" fxLayout="row" fxLayoutAlign="start center">
+                    <div class="info-header" fxLayout="row" fxLayoutAlign="start start">
                       <span>{{nic.name}}</span>
                       <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/network'])"
                         ix-auto="network" ix-auto-type="button" ix-auto-identifier="networkReports">
@@ -53,15 +53,15 @@
                         </li>
                       </ul>
                       <div class="divider" *ngIf="nics.length == 1"></div>
-                      <ul fxFlex="70" class="defailt-info" *ngIf="nics.length == 1">
+                      <ul fxFlex="62" class="detail-info" *ngIf="nics.length == 1" fxLayout="column" fxLayoutAlign="space-between start">
                         <li>Media Type: Ethernet</li>
                         <li>Media Subtype: 1000Mb/s Twisted Pair</li>
                         <li>IP Addresses: 10.215.3.99/26</li>
                       </ul>
                     </div>
                   </div>
-                  <div class="nic-chart" fxFlex fxLayout="row" fxLayoutAlign="space-between stretch" *ngIf="nics.length <= 3">
-                    <div class="chart-body" fxFlex>
+                  <div class="nic-chart" fxFlex fxLayout="row" *ngIf="nics.length <= 3">
+                    <div class="chart-body" fxFill>
                       chart
                     </div>
                   </div>

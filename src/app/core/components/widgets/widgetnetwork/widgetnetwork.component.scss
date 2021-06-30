@@ -11,95 +11,155 @@
   padding: 10px;
 }
 
-mat-grid-tile {
-  background-color: var(--bg1);
-}
-
 .tile {
   opacity: 0.7;
-  padding: 10px;
+  padding: 16px;
+}
 
-  .nic-info {
-    font-size: 12px;
-    padding-right: 10px;
+mat-grid-list {
+  &:not(.nics-1) .tile {
+    background-color: var(--bg1);
+  }
 
-    .divider {
-      background-color: var(--fg2);
-      height: 100%;
-      width: 1px;
-    }
+  &.nics-1 .tile {
+    padding: 12px 16px;
 
     .info-header {
-      font-size: 24px;
-      height: 40px;
-
-      .mat-icon-button {
-        height: 30px;
-        line-height: 30px;
-        margin-left: 22px;
-        width: 30px;
-      }
+      height: 35px;
     }
 
+    .detail-info li {
+      line-height: 20px;
+    }
+  }
+
+  &.nics-2 .tile {
+    padding: 12px 16px;
+  }
+
+  &.nics-3 .tile {
+    padding: 4px 4px 4px 16px;
+
     .info-body {
-      font-size: 14px;
+      font-size: 12px;
+    }
+
+    .info-body .line-state {
+      padding: 0;
+    }
+
+    .info-body ul li {
+      line-height: 15px;
+    }
+  }
+
+  &.nics-4 .tile {
+    padding: 12px 16px;
+  }
+
+  &.nics-5 {
+    .tile-0 .tile,
+    .tile-1 .tile {
+      padding: 12px 16px;
+    }
+
+    .tile-2 .tile .info-body,
+    .tile-3 .tile .info-body,
+    .tile-4 .tile .info-body {
+      font-size: 12px;
 
       .line-state {
-        padding: 4px 0;
+        padding: 0;
       }
+    }
+  }
 
-      .defailt-info {
-        font-size: 12px;
-      }
+  &.nics-6 .info-body {
+    font-size: 12px;
 
-      span.icon {
-        display: inline-block;
-        text-align: center;
-        width: 25px;
+    .line-state {
+      padding: 0;
+    }
+  }
+}
 
-        &.state {
-          height: 24px;
-        }
-      }
 
-      .icon.green {
-        color: var(--green);
-      }
+.nic-info {
+  font-size: 12px;
+  padding-right: 10px;
 
-      span.icon.state .mat-icon {
+  .divider {
+    background-color: var(--fg2);
+    height: 100%;
+    width: 1px;
+  }
+}
+
+.info-header {
+  font-size: 24px;
+  height: 40px;
+
+  .mat-icon-button {
+    height: 30px;
+    line-height: 30px;
+    margin-left: 18px;
+    width: 30px;
+  }
+}
+
+.info-body {
+  font-size: 14px;
+
+  .line-state {
+    padding: 4px 0;
+  }
+
+  .detail-info {
+    font-size: 12px;
+  }
+
+  span.icon {
+    display: inline-block;
+    height: 22px;
+    text-align: center;
+    width: 25px;
+
+    &.green {
+      color: var(--green);
+    }
+
+    &.state {
+      height: 24px;
+
+      .mat-icon {
         font-size: 24px;
         height: 24px;
       }
-
-      .mat-icon {
-        font-size: 20px;
-        height: 20px;
-        margin-left: -5px;
-        top: 0;
-
-        &.mdi-set {
-          margin-top: 0;
-        }
-      }
-
-      ul {
-        text-align: left;
-
-        li {
-          line-height: 18px;
-          overflow: hidden;
-          white-space: nowrap;
-        }
-      }
     }
-
   }
 
-  .nic-boby {
-    font-size: 12px;
+  .mat-icon {
+    font-size: 22px;
+    line-height: 22px;
+    margin-left: -5px;
+    margin-top: 0;
+
+    &.mdi-set {
+      margin-top: 0;
+    }
   }
 
-  .chart-body {
-    background: red;
+  ul {
+    text-align: left;
+
+    li {
+      line-height: 18px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
   }
+}
+
+.chart-body {
+  background: red;
 }
