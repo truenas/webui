@@ -33,11 +33,22 @@ export interface PosixAcl extends BaseAcl {
   flags: AclFlags;
 }
 
+export type AclQueryParams = [
+  /* path */ string,
+  /* simplified */ boolean?,
+  /* resolve_ids */ boolean?,
+];
+
 export interface PosixAclItem {
   default: boolean;
   id: number;
   perms: PosixPermissions;
   tag: PosixAclTag;
+
+  /**
+   * Present when queried with resolve_ids.
+   */
+  who?: string;
 }
 
 export interface NfsAclItem {
@@ -46,6 +57,11 @@ export interface NfsAclItem {
   type: NfsAclType;
   perms: BasicNfsPermissions | AdvancedNfsPermissions;
   flags: BasicNfsFlags | AdvancedNfsFlags;
+
+  /**
+   * Present when queried with resolve_ids.
+   */
+  who?: string;
 }
 
 export interface AclFlags {

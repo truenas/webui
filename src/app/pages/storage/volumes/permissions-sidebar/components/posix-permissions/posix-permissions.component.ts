@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { PosixAclTag } from 'app/enums/posix-acl.enum';
+import { getPosixAclTagLabels, PosixAclTag } from 'app/enums/posix-acl.enum';
 import { PosixAcl, PosixAclItem } from 'app/interfaces/acl.interface';
 import {
   PermissionItem,
@@ -34,14 +34,21 @@ export class PosixPermissionsComponent implements OnChanges {
   }
 
   private posixAceToPermissionItem(ace: PosixAclItem): PermissionItem {
+    const labels = getPosixAclTagLabels(this.translate);
+    let name = labels.get(ace.tag);
+
     let type: PermissionsItemType;
     switch (ace.tag) {
       case PosixAclTag.User:
       case PosixAclTag.UserObject:
         type = PermissionsItemType.User;
+        name = `${name} – ${ace.who || '?'}`;
         break;
       case PosixAclTag.Group:
       case PosixAclTag.GroupObject:
+        type = PermissionsItemType.Group;
+        name = `${name} - ${ace.who || '?'}`;
+        break;
       case PosixAclTag.Mask:
         type = PermissionsItemType.Group;
         break;
@@ -51,8 +58,7 @@ export class PosixPermissionsComponent implements OnChanges {
 
     return {
       type,
-      // TODO: Replace tag with labels.
-      name: ace.tag, // TODO: Support for user name and group.
+      name,
       description: posixPermissionsToDescription(this.translate, ace.perms),
     };
   }

@@ -8,6 +8,16 @@ export enum NfsAclTag {
   UserGroup = 'GROUP',
 }
 
+export function getNfsAclTagLabels(translate: TranslateService): Map<NfsAclTag, string> {
+  return new Map<NfsAclTag, string>([
+    [NfsAclTag.User, translate.instant('User')],
+    [NfsAclTag.UserGroup, translate.instant('Group')],
+    [NfsAclTag.Owner, translate.instant('owner@')],
+    [NfsAclTag.Group, translate.instant('group@')],
+    [NfsAclTag.Everyone, translate.instant('everyone@')],
+  ]);
+}
+
 export enum NfsAclType {
   Allow = 'ALLOW',
   Deny = 'DENY',

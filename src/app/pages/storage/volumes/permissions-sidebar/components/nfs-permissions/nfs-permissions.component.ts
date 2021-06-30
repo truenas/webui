@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  getNfsAclTagLabels,
   getNfsAclTypeLabels, getNfsAdvancedFlagLabels, getNfsAdvancedPermissionLabels, getNfsBasicFlagLabels,
   getNfsBasicPermissionLabels,
   NfsAclTag, NfsAdvancedFlag,
@@ -55,15 +56,20 @@ export class NfsPermissionsComponent implements OnChanges {
   }
 
   private aceToPermissionItem(ace: NfsAclItem): PermissionItem {
+    const labels = getNfsAclTagLabels(this.translate);
+    let name = labels.get(ace.tag);
+
     let type: PermissionsItemType;
     switch (ace.tag) {
       case NfsAclTag.User:
       case NfsAclTag.Owner:
         type = PermissionsItemType.User;
+        name = `${name} - ${ace.who || '?'}`;
         break;
       case NfsAclTag.Group:
       case NfsAclTag.UserGroup:
         type = PermissionsItemType.Group;
+        name = `${name} - ${ace.who || '?'}`;
         break;
       default:
         type = PermissionsItemType.Other;
@@ -82,7 +88,7 @@ export class NfsPermissionsComponent implements OnChanges {
 
     return {
       type,
-      name: ace.tag, // TODO: Support user/group name.
+      name,
       description: `${access} | ${action}`,
     };
   }

@@ -34,7 +34,7 @@ export class PermissionsSidebarStore extends ComponentStore<PermissionsSidebarSt
       switchMap((mountpoint) => {
         return forkJoin([
           this.ws.call('filesystem.stat', [mountpoint]),
-          this.ws.call('filesystem.getacl', [mountpoint]),
+          this.ws.call('filesystem.getacl', [mountpoint, false, true]),
         ]).pipe(
           tap(([stat, acl]) => {
             this.patchState({

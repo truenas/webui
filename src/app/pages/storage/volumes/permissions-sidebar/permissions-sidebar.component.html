@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <div class="permissions">
+    <div *ngIf="acl" class="permissions">
       <app-trivial-permissions *ngIf="acl.trivial; else nonTrivial" [stat]="stat"></app-trivial-permissions>
 
       <ng-template #nonTrivial>
