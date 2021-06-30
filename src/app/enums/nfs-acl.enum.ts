@@ -1,4 +1,4 @@
-import { TranslateService } from '@ngx-translate/core';
+import { T } from 'app/translate-marker';
 
 export enum NfsAclTag {
   Owner = 'owner@',
@@ -8,27 +8,23 @@ export enum NfsAclTag {
   UserGroup = 'GROUP',
 }
 
-export function getNfsAclTagLabels(translate: TranslateService): Map<NfsAclTag, string> {
-  return new Map<NfsAclTag, string>([
-    [NfsAclTag.User, translate.instant('User')],
-    [NfsAclTag.UserGroup, translate.instant('Group')],
-    [NfsAclTag.Owner, translate.instant('owner@')],
-    [NfsAclTag.Group, translate.instant('group@')],
-    [NfsAclTag.Everyone, translate.instant('everyone@')],
-  ]);
-}
+export const nfsAclTagLabels = new Map<NfsAclTag, string>([
+  [NfsAclTag.User, T('User')],
+  [NfsAclTag.UserGroup, T('Group')],
+  [NfsAclTag.Owner, T('owner@')],
+  [NfsAclTag.Group, T('group@')],
+  [NfsAclTag.Everyone, T('everyone@')],
+]);
 
 export enum NfsAclType {
   Allow = 'ALLOW',
   Deny = 'DENY',
 }
 
-export function getNfsAclTypeLabels(translate: TranslateService): Map<NfsAclType, string> {
-  return new Map<NfsAclType, string>([
-    [NfsAclType.Allow, translate.instant('Allow')],
-    [NfsAclType.Deny, translate.instant('Deny')],
-  ]);
-}
+export const nfsAclTypeLabels = new Map<NfsAclType, string>([
+  [NfsAclType.Allow, T('Allow')],
+  [NfsAclType.Deny, T('Deny')],
+]);
 
 export enum NfsBasicPermission {
   FullControl = 'FULL_CONTROL',
@@ -37,14 +33,12 @@ export enum NfsBasicPermission {
   Traverse = 'TRAVERSE',
 }
 
-export function getNfsBasicPermissionLabels(translate: TranslateService): Map<NfsBasicPermission, string> {
-  return new Map<NfsBasicPermission, string>([
-    [NfsBasicPermission.Read, translate.instant('Read')],
-    [NfsBasicPermission.Modify, translate.instant('Modify')],
-    [NfsBasicPermission.Traverse, translate.instant('Traverse')],
-    [NfsBasicPermission.FullControl, translate.instant('Full Control')],
-  ]);
-}
+export const nfsBasicPermissionLabels = new Map<NfsBasicPermission, string>([
+  [NfsBasicPermission.Read, T('Read')],
+  [NfsBasicPermission.Modify, T('Modify')],
+  [NfsBasicPermission.Traverse, T('Traverse')],
+  [NfsBasicPermission.FullControl, T('Full Control')],
+]);
 
 export enum NfsAdvancedPermission {
   ReadData = 'READ_DATA',
@@ -63,36 +57,32 @@ export enum NfsAdvancedPermission {
   Synchronize = 'SYNCHRONIZE',
 }
 
-export function getNfsAdvancedPermissionLabels(translate: TranslateService): Map<NfsAdvancedPermission, string> {
-  return new Map<NfsAdvancedPermission, string>([
-    [NfsAdvancedPermission.ReadData, translate.instant('Read Data')],
-    [NfsAdvancedPermission.WriteData, translate.instant('Write Data')],
-    [NfsAdvancedPermission.AppendData, translate.instant('Append Data')],
-    [NfsAdvancedPermission.ReadNamedAttrs, translate.instant('Read Named Attributes')],
-    [NfsAdvancedPermission.WriteNamedAttrs, translate.instant('Write Named Attributes')],
-    [NfsAdvancedPermission.Execute, translate.instant('Execute')],
-    [NfsAdvancedPermission.DeleteChild, translate.instant('Delete Children')],
-    [NfsAdvancedPermission.ReadAttributes, translate.instant('Read Attributes')],
-    [NfsAdvancedPermission.WriteAttributes, translate.instant('Write Attributes')],
-    [NfsAdvancedPermission.Delete, translate.instant('Delete')],
-    [NfsAdvancedPermission.ReadAcl, translate.instant('Read ACL')],
-    [NfsAdvancedPermission.WriteAcl, translate.instant('Write ACL')],
-    [NfsAdvancedPermission.WriteOwner, translate.instant('Write Owner')],
-    [NfsAdvancedPermission.Synchronize, translate.instant('Synchronize')],
-  ]);
-}
+export const nfsAdvancedPermissionLabels = new Map<NfsAdvancedPermission, string>([
+  [NfsAdvancedPermission.ReadData, T('Read Data')],
+  [NfsAdvancedPermission.WriteData, T('Write Data')],
+  [NfsAdvancedPermission.AppendData, T('Append Data')],
+  [NfsAdvancedPermission.ReadNamedAttrs, T('Read Named Attributes')],
+  [NfsAdvancedPermission.WriteNamedAttrs, T('Write Named Attributes')],
+  [NfsAdvancedPermission.Execute, T('Execute')],
+  [NfsAdvancedPermission.DeleteChild, T('Delete Children')],
+  [NfsAdvancedPermission.ReadAttributes, T('Read Attributes')],
+  [NfsAdvancedPermission.WriteAttributes, T('Write Attributes')],
+  [NfsAdvancedPermission.Delete, T('Delete')],
+  [NfsAdvancedPermission.ReadAcl, T('Read ACL')],
+  [NfsAdvancedPermission.WriteAcl, T('Write ACL')],
+  [NfsAdvancedPermission.WriteOwner, T('Write Owner')],
+  [NfsAdvancedPermission.Synchronize, T('Synchronize')],
+]);
 
 export enum NfsBasicFlag {
   Inherit = 'INHERIT',
   NoInherit = 'NOINHERIT',
 }
 
-export function getNfsBasicFlagLabels(translate: TranslateService): Map<NfsBasicFlag, string> {
-  return new Map<NfsBasicFlag, string>([
-    [NfsBasicFlag.Inherit, translate.instant('Inherit')],
-    [NfsBasicFlag.NoInherit, translate.instant('No Inherit')],
-  ]);
-}
+export const nfsBasicFlagLabels = new Map<NfsBasicFlag, string>([
+  [NfsBasicFlag.Inherit, T('Inherit')],
+  [NfsBasicFlag.NoInherit, T('No Inherit')],
+]);
 
 export enum NfsAdvancedFlag {
   FileInherit = 'FILE_INHERIT',
@@ -102,12 +92,10 @@ export enum NfsAdvancedFlag {
   Inherited = 'INHERITED',
 }
 
-export function getNfsAdvancedFlagLabels(translate: TranslateService): Map<NfsAdvancedFlag, string> {
-  return new Map<NfsAdvancedFlag, string>([
-    [NfsAdvancedFlag.FileInherit, translate.instant('File Inherit')],
-    [NfsAdvancedFlag.DirectoryInherit, translate.instant('Directory Inherit')],
-    [NfsAdvancedFlag.NoPropagateInherit, translate.instant('No Propagate Inherit')],
-    [NfsAdvancedFlag.InheritOnly, translate.instant('Inherit Only')],
-    [NfsAdvancedFlag.Inherited, translate.instant('Inherited')],
-  ]);
-}
+export const nfsAdvancedFlagLabels = new Map<NfsAdvancedFlag, string>([
+  [NfsAdvancedFlag.FileInherit, T('File Inherit')],
+  [NfsAdvancedFlag.DirectoryInherit, T('Directory Inherit')],
+  [NfsAdvancedFlag.NoPropagateInherit, T('No Propagate Inherit')],
+  [NfsAdvancedFlag.InheritOnly, T('Inherit Only')],
+  [NfsAdvancedFlag.Inherited, T('Inherited')],
+]);

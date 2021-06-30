@@ -1,4 +1,4 @@
-import { TranslateService } from '@ngx-translate/core';
+import { T } from 'app/translate-marker';
 
 export enum PosixAclTag {
   UserObject = 'USER_OBJ',
@@ -9,16 +9,14 @@ export enum PosixAclTag {
   Mask = 'MASK',
 }
 
-export function getPosixAclTagLabels(translate: TranslateService): Map<PosixAclTag, string> {
-  return new Map<PosixAclTag, string>([
-    [PosixAclTag.User, translate.instant('User')],
-    [PosixAclTag.Group, translate.instant('Group')],
-    [PosixAclTag.Other, translate.instant('Other')],
-    [PosixAclTag.GroupObject, translate.instant('Group Obj')],
-    [PosixAclTag.UserObject, translate.instant('User Obj')],
-    [PosixAclTag.Mask, translate.instant('Mask')],
-  ]);
-}
+export const posixAclTagLabels = new Map<PosixAclTag, string>([
+  [PosixAclTag.User, T('User')],
+  [PosixAclTag.Group, T('Group')],
+  [PosixAclTag.Other, T('Other')],
+  [PosixAclTag.GroupObject, T('Group Obj')],
+  [PosixAclTag.UserObject, T('User Obj')],
+  [PosixAclTag.Mask, T('Mask')],
+]);
 
 export enum PosixPermission {
   Read = 'READ',

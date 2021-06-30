@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { getPosixAclTagLabels, PosixAclTag } from 'app/enums/posix-acl.enum';
+import { PosixAclTag, posixAclTagLabels } from 'app/enums/posix-acl.enum';
 import { PosixAcl, PosixAclItem } from 'app/interfaces/acl.interface';
 import {
   PermissionItem,
@@ -34,8 +34,7 @@ export class PosixPermissionsComponent implements OnChanges {
   }
 
   private posixAceToPermissionItem(ace: PosixAclItem): PermissionItem {
-    const labels = getPosixAclTagLabels(this.translate);
-    let name = labels.get(ace.tag);
+    let name = this.translate.instant(posixAclTagLabels.get(ace.tag));
 
     let type: PermissionsItemType;
     switch (ace.tag) {

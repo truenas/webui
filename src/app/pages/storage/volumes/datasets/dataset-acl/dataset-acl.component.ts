@@ -13,9 +13,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { DefaultAclType } from 'app/enums/acl-type.enum';
-import { getNfsAdvancedPermissionLabels } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
-import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Group } from 'app/interfaces/group.interface';
@@ -210,7 +208,7 @@ export class DatasetAclComponent implements FormConfiguration {
               name: 'advanced_perms',
               placeholder: helptext.dataset_acl_perms_placeholder,
               tooltip: helptext.dataset_acl_perms_tooltip,
-              options: mapToOptions(getNfsAdvancedPermissionLabels(this.translate)),
+              options: helptext.dataset_acl_advanced_perms_options,
             },
             {
               type: 'select',
@@ -724,7 +722,7 @@ export class DatasetAclComponent implements FormConfiguration {
         d['perms'] = { BASIC: acl.basic_perms };
       } else {
         d['perms'] = {};
-        const adv_perm_options = mapToOptions(getNfsAdvancedPermissionLabels(this.translate));
+        const adv_perm_options = helptext.dataset_acl_advanced_perms_options;
         for (let j = 0; j < adv_perm_options.length; j++) {
           const perm = adv_perm_options[j].value;
           if (_.indexOf(acl.advanced_perms, perm) > -1) {
