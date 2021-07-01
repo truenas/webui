@@ -8,6 +8,7 @@ import { WidgetUtils } from 'app/core/components/widgets/widget-utils';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
+import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { TableService } from 'app/pages/common/entity/table/table.service';
 import { T } from 'app/translate-marker';
 
@@ -32,7 +33,7 @@ interface NicInfoMap {
 })
 export class WidgetNetworkComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
   @Input() stats: any;
-  @Input() nics: any[];
+  @Input() nics: BaseNetworkInterface[];
 
   private utils: WidgetUtils;
   title = T('Network');
@@ -105,7 +106,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   }
 
   updateMapInfo(): void {
-    this.nics.forEach((nic: any) => {
+    this.nics.forEach((nic: BaseNetworkInterface) => {
       this.nicInfoMap[nic.state.name] = {
         ip: this.getIpAddress(nic),
         state: this.getLinkState(nic),
@@ -146,10 +147,10 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     this.rowHeight = (this.contentHeight - space) / this.rows;
   }
 
-  getIpAddress(nic: any): string {
-    let ip = '0';
+  getIpAddress(nic: BaseNetworkInterface): string {
+    let ip = T('Unknown');
     if (nic.aliases) {
-      const filtered = nic.aliases.filter((item: any) =>
+      const filtered = nic.aliases.filter((item: NetworkInterfaceAlias) =>
         [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
       if (filtered.length > 0) {
         ip = filtered[0].address + '/' + filtered[0].netmask;
@@ -159,7 +160,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     return ip;
   }
 
-  getLinkState(nic: any): string {
+  getLinkState(nic: BaseNetworkInterface): string {
     if (!nic.state.aliases) { return ''; }
     return nic.state.link_state.replace(/_/g, ' ');
   }

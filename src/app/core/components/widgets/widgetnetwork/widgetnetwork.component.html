@@ -55,7 +55,7 @@
                         </li>
                         <li fxLayout="row" fxLayoutAlign="start center" *ngIf="nics.length > 1">
                           <span class="icon empty"></span>
-                          <span><span class="label">{{ 'IP' | translate }}:</span>{{ nicInfoMap[nic.state.name]?.ip }}</span>
+                          <span>{{ nicInfoMap[nic.state.name]?.ip }}</span>
                         </li>
                       </ul>
                       <div class="divider" *ngIf="nics.length === 1"></div>
