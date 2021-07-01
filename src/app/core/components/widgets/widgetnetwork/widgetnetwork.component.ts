@@ -1,22 +1,27 @@
 import {
   Component, AfterViewInit, OnDestroy, Input,
 } from '@angular/core';
-import { NavigationExtras, Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { WidgetUtils } from 'app/core/components/widgets/widget-utils';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
+import { CoreEvent } from 'app/interfaces/events';
+import { TableService } from 'app/pages/common/entity/table/table.service';
 import { T } from 'app/translate-marker';
 
-interface NetTraffic {
-  sent: string;
-  sentUnits: string;
-  received: string;
-  receivedUnits: string;
+interface NicInfo {
+  ip: string;
+  state: string;
+  in: string;
+  out: string;
+  lastSent: number;
+  lastReceived: number;
 }
 
-interface Converted {
-  value: string;
-  units: string;
+interface NicInfoMap {
+  [name: string]: NicInfo;
 }
 
 @UntilDestroy()
@@ -28,10 +33,10 @@ interface Converted {
 export class WidgetNetworkComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
   @Input() stats: any;
   @Input() nics: any[];
-  traffic: NetTraffic;
 
+  private utils: WidgetUtils;
   title = T('Network');
-
+  nicInfoMap: NicInfoMap = {};
   paddingX = 16;
   paddingTop = 16;
   paddingBottom = 16;
@@ -41,9 +46,10 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   contentHeight = 400 - 56;
   rowHeight = 150;
 
-  constructor(public router: Router, public translate: TranslateService) {
+  constructor(public router: Router, private tableService: TableService, public translate: TranslateService) {
     super(translate);
     this.configurable = false;
+    this.utils = new WidgetUtils();
   }
 
   ngOnDestroy(): void {
@@ -53,6 +59,31 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
 
   ngAfterViewInit(): void {
     this.updateGridInfo();
+    this.updateMapInfo();
+
+    this.stats.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+      if (evt.name.startsWith('NetTraffic_')) {
+        const nicName = evt.name.substr('NetTraffic_'.length);
+        if (nicName in this.nicInfoMap) {
+          const sent = this.utils.convert(evt.data.sent_bytes_rate);
+          const received = this.utils.convert(evt.data.received_bytes_rate);
+
+          const nicInfo = this.nicInfoMap[nicName];
+          nicInfo.in = received.value + ' ' + received.units + '/s';
+          nicInfo.out = sent.value + ' ' + sent.units + '/s';
+
+          if (evt.data.sent_bytes - nicInfo.lastSent > 1024) {
+            nicInfo.lastSent = evt.data.sent_bytes;
+            this.tableService.updateStateInfoIcon(nicName, 'sent');
+          }
+
+          if (evt.data.received_bytes - nicInfo.lastReceived > 1024) {
+            nicInfo.lastReceived = evt.data.received_bytes;
+            this.tableService.updateStateInfoIcon(nicName, 'received');
+          }
+        }
+      }
+    });
   }
 
   getColspan(index: number): number {
@@ -71,6 +102,19 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
       colSpan = 2;
     }
     return colSpan;
+  }
+
+  updateMapInfo(): void {
+    this.nics.forEach((nic: any) => {
+      this.nicInfoMap[nic.state.name] = {
+        ip: this.getIpAddress(nic),
+        state: this.getLinkState(nic),
+        in: '',
+        out: '',
+        lastSent: 0,
+        lastReceived: 0,
+      };
+    });
   }
 
   updateGridInfo(): void {
@@ -102,74 +146,21 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     this.rowHeight = (this.contentHeight - space) / this.rows;
   }
 
-  getMbps(arr: number[]): number | string {
-    // NOTE: Stat is in bytes so we convert
-    // no average
-    const result = arr[0] / 1024 / 1024;
-    if (result > 999) {
-      return result.toFixed(1);
-    } if (result < 1000 && result > 99) {
-      return result.toFixed(2);
-    } if (result > 9 && result < 100) {
-      return result.toFixed(3);
-    } if (result < 10) {
-      return result.toFixed(4);
-    }
-    return -1;
-  }
-
-  convert(value: number): Converted {
-    let result: number;
-    let units: string;
-
-    // uppercase so we handle bits and bytes...
-    switch (this.optimizeUnits(value)) {
-      case 'B':
-      case 'KB':
-        units = T('KiB');
-        result = value / 1024;
-        break;
-      case 'MB':
-        units = T('MiB');
-        result = value / 1024 / 1024;
-        break;
-      case 'GB':
-        units = T('GiB');
-        result = value / 1024 / 1024 / 1024;
-        break;
-      case 'TB':
-        units = T('TiB');
-        result = value / 1024 / 1024 / 1024 / 1024;
-        break;
-      case 'PB':
-        units = T('PiB');
-        result = value / 1024 / 1024 / 1024 / 1024 / 1024;
-        break;
-      default:
-        units = T('KiB');
-        result = 0.00;
+  getIpAddress(nic: any): string {
+    let ip = '0';
+    if (nic.aliases) {
+      const filtered = nic.aliases.filter((item: any) =>
+        [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
+      if (filtered.length > 0) {
+        ip = filtered[0].address + '/' + filtered[0].netmask;
+      }
     }
 
-    return result ? { value: result.toFixed(2), units } : { value: '0.00', units };
+    return ip;
   }
 
-  optimizeUnits(value: number): string {
-    let units = 'B';
-    if (value > 1024 && value < (1024 * 1024)) {
-      units = 'KB';
-    } else if (value >= (1024 * 1024) && value < (1024 * 1024 * 1024)) {
-      units = 'MB';
-    } else if (value >= (1024 * 1024 * 1024) && value < (1024 * 1024 * 1024 * 1024)) {
-      units = 'GB';
-    } else if (value >= (1024 * 1024 * 1024 * 1024) && value < (1024 * 1024 * 1024 * 1024 * 1024)) {
-      units = 'TB';
-    }
-
-    return units;
-  }
-
-  manageInterface(_interface: any): void {
-    const navigationExtras: NavigationExtras = { state: { editInterface: _interface.name } };
-    this.router.navigate(['network'], navigationExtras);
+  getLinkState(nic: any): string {
+    if (!nic.state.aliases) { return ''; }
+    return nic.state.link_state.replace(/_/g, ' ');
   }
 }

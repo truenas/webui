@@ -16,6 +16,10 @@
   padding: 16px;
 }
 
+.label {
+  margin-right: 6px;
+}
+
 mat-grid-list {
   &:not(.nics-1) .tile {
     background-color: var(--bg1);
@@ -90,7 +94,7 @@ mat-grid-list {
 
   .divider {
     background-color: var(--fg2);
-    height: 100%;
+    margin: 5px 0;
     width: 1px;
   }
 }
@@ -116,6 +120,7 @@ mat-grid-list {
 
   .detail-info {
     font-size: 12px;
+    padding-bottom: 2px;
   }
 
   span.icon {
@@ -124,8 +129,12 @@ mat-grid-list {
     text-align: center;
     width: 25px;
 
-    &.green {
+    &.up {
       color: var(--green);
+    }
+
+    &.down {
+      color: var(--red);
     }
 
     &.state {
