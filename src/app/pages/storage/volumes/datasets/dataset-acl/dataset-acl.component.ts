@@ -12,8 +12,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { AclItemTag, DefaultAclType } from 'app/enums/acl-type.enum';
+import { DefaultAclType } from 'app/enums/acl-type.enum';
+import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
+import { NfsAclItem } from 'app/interfaces/acl.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -432,10 +434,10 @@ export class DatasetAclComponent implements FormConfiguration {
             if (!group_fc['parent']) {
               group_fc.parent = this;
             }
-            if (res[i].tag === AclItemTag.User) {
+            if (res[i].tag === PosixAclTag.User) {
               this.setDisabled(user_fc, this.aces.controls[i].controls['user'], false, false);
               this.setDisabled(group_fc, this.aces.controls[i].controls['group'], true, true);
-            } else if (res[i].tag === AclItemTag.Group) {
+            } else if (res[i].tag === PosixAclTag.Group) {
               this.setDisabled(user_fc, this.aces.controls[i].controls['user'], true, true);
               this.setDisabled(group_fc, this.aces.controls[i].controls['group'], false, false);
             } else {
@@ -486,7 +488,7 @@ export class DatasetAclComponent implements FormConfiguration {
     while (this.aces.controls.length > num) {
       this.aces.removeAt(num);
     }
-    this.ws.call('filesystem.get_default_acl', [value as DefaultAclType]).pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.ws.call('filesystem.get_default_acl', [value as DefaultAclType]).pipe(untilDestroyed(this)).subscribe((res) => {
       this.dataHandler(this.entityForm, res);
     });
   }
@@ -511,7 +513,7 @@ export class DatasetAclComponent implements FormConfiguration {
     }
     if (this.homeShare) {
       returnLater = true;
-      this.ws.call('filesystem.get_default_acl', [DefaultAclType.Home]).pipe(untilDestroyed(this)).subscribe((res: any) => {
+      this.ws.call('filesystem.get_default_acl', [DefaultAclType.Home]).pipe(untilDestroyed(this)).subscribe((res) => {
         data.acl = res;
         return { aces: data.acl as any };
       });
@@ -529,7 +531,7 @@ export class DatasetAclComponent implements FormConfiguration {
       });
   }
 
-  async dataHandler(entityForm: EntityFormComponent, defaults?: any): Promise<void> {
+  async dataHandler(entityForm: EntityFormComponent, defaults?: NfsAclItem[]): Promise<void> {
     entityForm.formGroup.controls['aces'].reset();
     (entityForm.formGroup.controls['aces'] as FormArray).controls = [];
     this.aces_fc.listFields = [];
@@ -565,7 +567,7 @@ export class DatasetAclComponent implements FormConfiguration {
       acl = {};
       acl.type = data[i].type;
       acl.tag = data[i].tag;
-      if (acl.tag === AclItemTag.User) {
+      if (acl.tag === PosixAclTag.User) {
         const usr: any = await this.userService.getUserObject(data[i].id);
         if (usr && usr.pw_name) {
           acl.user = usr.pw_name;
@@ -573,7 +575,7 @@ export class DatasetAclComponent implements FormConfiguration {
           acl.user = data[i].id;
           acl['user_not_found'] = true;
         }
-      } else if (acl.tag === AclItemTag.Group) {
+      } else if (acl.tag === PosixAclTag.Group) {
         const grp: any = await this.userService.getGroupObject(data[i].id);
         if (grp && grp.gr_name) {
           acl.group = grp.gr_name;
@@ -711,9 +713,9 @@ export class DatasetAclComponent implements FormConfiguration {
       const acl = data.aces[i];
       d['tag'] = acl.tag;
       d['id'] = null;
-      if (acl.tag === AclItemTag.User) {
+      if (acl.tag === PosixAclTag.User) {
         d['id'] = acl.user;
-      } else if (acl.tag === AclItemTag.Group) {
+      } else if (acl.tag === PosixAclTag.Group) {
         d['id'] = acl.group;
       }
       d['type'] = acl.type;
@@ -781,7 +783,7 @@ export class DatasetAclComponent implements FormConfiguration {
     });
 
     for (let i = 0; i < dacl.length; i++) {
-      if (dacl[i].tag === AclItemTag.User) {
+      if (dacl[i].tag === PosixAclTag.User) {
         await this.userService.getUserByName(dacl[i].id).toPromise().then((userObj: any) => {
           if (userObj && userObj.hasOwnProperty('pw_uid')) {
             dacl[i]['id'] = userObj.pw_uid;
@@ -789,7 +791,7 @@ export class DatasetAclComponent implements FormConfiguration {
         }, (err: any) => {
           console.error(err);
         });
-      } else if (dacl[i].tag === AclItemTag.Group) {
+      } else if (dacl[i].tag === PosixAclTag.Group) {
         await this.userService.getGroupByName(dacl[i].id).toPromise().then((groupObj: any) => {
           if (groupObj && groupObj.hasOwnProperty('gr_gid')) {
             dacl[i]['id'] = groupObj.gr_gid;

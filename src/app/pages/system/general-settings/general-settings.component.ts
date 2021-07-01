@@ -260,7 +260,7 @@ export class GeneralSettingsComponent implements OnInit {
 
   saveConfigSubmit(entityDialog: EntityDialogComponent): void {
     entityDialog.loader.open();
-    (entityDialog.ws as WebSocketService).call('system.info', []).pipe(untilDestroyed(this)).subscribe((systemInfo) => {
+    entityDialog.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
       let fileName = '';
       let mimetype: string;
       if (systemInfo) {

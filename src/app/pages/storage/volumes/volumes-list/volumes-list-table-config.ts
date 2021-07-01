@@ -11,7 +11,6 @@ import { TreeNode } from 'primeng/api';
 import { Observable } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
-import { AclType } from 'app/enums/acl-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -435,7 +434,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
             new EntityUtils().handleWSError(self, res, self.dialogService);
           });
         },
-      })),
+      } as DialogFormConfiguration)),
       switchMap((conf) => this.dialogService.dialogForm(conf)),
     ).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {});
   }
@@ -1016,31 +1015,11 @@ export class VolumesListTableConfig implements EntityTableConfig {
       if (rowDataPathSplit[1] !== 'iocage' && !rowData.locked) {
         actions.push({
           id: rowData.name,
-          name: T('Edit Permissions'),
-          label: T('Edit Permissions'),
+          name: T('View Permissions'),
+          label: T('View Permissions'),
           ttposition: 'left',
-          onClick: () => {
-            this.ws.call('filesystem.acl_is_trivial', [rowData.mountpoint]).pipe(untilDestroyed(this, 'destroy')).subscribe((acl_is_trivial) => {
-              if (acl_is_trivial) {
-                this.router.navigate(new Array('/').concat([
-                  'storage', 'permissions', rowData.id,
-                ]));
-              } else {
-                this.ws.call('filesystem.getacl', [rowData.mountpoint]).pipe(untilDestroyed(this, 'destroy')).subscribe((acl) => {
-                  if (acl.acltype === AclType.Posix1e) {
-                    this.router.navigate(new Array('/').concat([
-                      'storage', 'id', rowData.pool, 'dataset',
-                      'posix-acl', rowData.id,
-                    ]));
-                  } else {
-                    this.router.navigate(new Array('/').concat([
-                      'storage', 'id', rowData.pool, 'dataset',
-                      'acl', rowData.id,
-                    ]));
-                  }
-                });
-              }
-            });
+          onClick: (row: any) => {
+            this.parentVolumesListComponent.viewingPermissionsForDataset = row;
           },
         },
         {

@@ -57,6 +57,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.validationService,
   );
 
+  viewingPermissionsForDataset: Dataset;
+
   actionComponent = {
     getActions: (row: Pool) => {
       const actions: any[] = [
@@ -335,5 +337,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   createPool(): void {
     this.router.navigate(['/storage/manager']);
+  }
+
+  onPermissionsSidebarClosed(): void {
+    this.viewingPermissionsForDataset = null;
   }
 }

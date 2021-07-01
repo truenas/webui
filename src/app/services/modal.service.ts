@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { ModalComponent } from 'app/components/common/modal/modal.component';
 
 @Injectable({ providedIn: 'root' })
 export class ModalService {
-  private modals: any[] = [];
+  private modals: ModalComponent[] = [];
 
   refreshTable$ = new Subject();
   onClose$ = new Subject();
@@ -23,7 +24,7 @@ export class ModalService {
     this.message$.next(message);
   }
 
-  add(modal: any): void {
+  add(modal: ModalComponent): void {
     // add modal to array of active modals
     this.modals.push(modal);
   }
@@ -39,16 +40,20 @@ export class ModalService {
       this.getRow$.next(rowid);
     }
     // open modal specified by id
-    const modal: any = this.modals.filter((x) => x.id === id)[0];
+    const modal = this.modals.filter((x) => x.id === id)[0];
     modal.open(conf);
   }
 
   close(id: string, error?: any, response?: any): Promise<boolean> {
     // close modal specified by id
-    const modal: any = this.modals.filter((x) => x.id === id)[0];
-    if (error) this.onClose$.error(error);
-    else if (response) this.onClose$.next(response);
-    else this.onClose$.next(true);
+    const modal = this.modals.filter((x) => x.id === id)[0];
+    if (error) {
+      this.onClose$.error(error);
+    } else if (response) {
+      this.onClose$.next(response);
+    } else {
+      this.onClose$.next(true);
+    }
     return modal.close();
   }
 }

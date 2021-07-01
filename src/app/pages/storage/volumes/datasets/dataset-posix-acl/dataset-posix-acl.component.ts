@@ -12,7 +12,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
-import { AclItemTag, AclType } from 'app/enums/acl-type.enum';
+import { AclType } from 'app/enums/acl-type.enum';
+import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -356,10 +357,10 @@ export class DatasetPosixAclComponent implements FormConfiguration {
             if (!group_fc['parent']) {
               group_fc.parent = this;
             }
-            if (res[i].tag === AclItemTag.User) {
+            if (res[i].tag === PosixAclTag.User) {
               this.setDisabled(user_fc, this.aces.controls[i].controls['user'], false, false);
               this.setDisabled(group_fc, this.aces.controls[i].controls['group'], true, true);
-            } else if (res[i].tag === AclItemTag.Group) {
+            } else if (res[i].tag === PosixAclTag.Group) {
               this.setDisabled(user_fc, this.aces.controls[i].controls['user'], true, true);
               this.setDisabled(group_fc, this.aces.controls[i].controls['group'], false, false);
             } else {
@@ -441,7 +442,7 @@ export class DatasetPosixAclComponent implements FormConfiguration {
           acl.perms.push(item);
         }
       }
-      if (acl.tag === AclItemTag.User) {
+      if (acl.tag === PosixAclTag.User) {
         const usr: any = await this.userService.getUserObject(data[i].id);
         if (usr && usr.pw_name) {
           acl.user = usr.pw_name;
@@ -449,7 +450,7 @@ export class DatasetPosixAclComponent implements FormConfiguration {
           acl.user = data[i].id;
           acl['user_not_found'] = true;
         }
-      } else if (acl.tag === AclItemTag.Group) {
+      } else if (acl.tag === PosixAclTag.Group) {
         const grp: any = await this.userService.getGroupObject(data[i].id);
         if (grp && grp.gr_name) {
           acl.group = grp.gr_name;
@@ -493,9 +494,9 @@ export class DatasetPosixAclComponent implements FormConfiguration {
       d['tag'] = acl.tag;
       d['id'] = -1;
       d['default'] = acl.default ? acl.default : false;
-      if (acl.tag === AclItemTag.User) {
+      if (acl.tag === PosixAclTag.User) {
         d['id'] = acl.user;
-      } else if (acl.tag === AclItemTag.Group) {
+      } else if (acl.tag === PosixAclTag.Group) {
         d['id'] = acl.group;
       }
       d['perms'] = {};
@@ -548,7 +549,7 @@ export class DatasetPosixAclComponent implements FormConfiguration {
     });
 
     for (let i = 0; i < dacl.length; i++) {
-      if (dacl[i].tag === AclItemTag.User) {
+      if (dacl[i].tag === PosixAclTag.User) {
         await this.userService.getUserByName(dacl[i].id).toPromise().then((userObj) => {
           if (userObj && userObj.hasOwnProperty('pw_uid')) {
             dacl[i]['id'] = userObj.pw_uid;
@@ -556,7 +557,7 @@ export class DatasetPosixAclComponent implements FormConfiguration {
         }, (err) => {
           console.error(err);
         });
-      } else if (dacl[i].tag === AclItemTag.Group) {
+      } else if (dacl[i].tag === PosixAclTag.Group) {
         await this.userService.getGroupByName(dacl[i].id).toPromise().then((groupObj) => {
           if (groupObj && groupObj.hasOwnProperty('gr_gid')) {
             dacl[i]['id'] = groupObj.gr_gid;

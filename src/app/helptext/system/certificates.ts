@@ -1,5 +1,5 @@
 import { Validators } from '@angular/forms';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
+import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 import { T } from 'app/translate-marker';
 
 export const helptext_system_certificates = {

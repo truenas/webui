@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/services/components/service-nfs';
 import { FormConfiguration, FormCustomAction } from 'app/interfaces/entity-form.interface';
+import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -183,7 +184,7 @@ export class ServiceNFSComponent implements FormConfiguration {
     private dialog: DialogService,
   ) {}
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: NfsConfig): NfsConfig {
     this.v4krbValue = data.v4_krb;
     // If validIps is slow to load, skip check on load (It's still done on save)
     if (this.validBindIps?.length) {
