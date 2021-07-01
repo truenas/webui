@@ -5,7 +5,6 @@ import {
   Input,
   OnChanges,
   OnInit,
-  Type,
   ViewContainerRef,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
@@ -37,7 +36,7 @@ import { FormTextareaComponent } from '../form-textarea/form-textarea.component'
 import { FormToggleButtonComponent } from '../form-toggle-button/form-toggle-button.component';
 import { FormUploadComponent } from '../form-upload/form-upload.component';
 
-const components: { [type: string]: Type<Field> } = {
+const components = {
   button: FormButtonComponent,
   input: FormInputComponent,
   label: FormLabelComponent,
@@ -65,6 +64,9 @@ const components: { [type: string]: Type<Field> } = {
   dict: FormDictComponent,
 };
 
+// TODO: Check if 'input-list' is properly supported.
+export type FieldType = keyof typeof components | 'input-list';
+
 @Directive({ selector: '[dynamicField]' })
 export class DynamicFieldDirective implements Field, OnChanges, OnInit {
   @Input()
@@ -90,12 +92,14 @@ export class DynamicFieldDirective implements Field, OnChanges, OnInit {
   }
 
   ngOnInit(): void {
-    if (!components[this.config.type]) {
+    if (!components[this.config.type as keyof typeof components]) {
       const supportedTypes = Object.keys(components).join(', ');
       throw new Error(`Trying to use an unsupported type (${this.config.type}).
         Supported types: ${supportedTypes}`);
     }
-    const component = this.resolver.resolveComponentFactory<Field>(components[this.config.type]);
+    const component = this.resolver.resolveComponentFactory<Field>(
+      components[this.config.type as keyof typeof components],
+    );
     this.component = this.container.createComponent(component);
     this.component.instance.config = this.config;
     this.component.instance.group = this.group;

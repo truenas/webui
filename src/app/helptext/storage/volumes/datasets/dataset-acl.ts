@@ -1,10 +1,10 @@
 import {
-  AclItemTag,
-  AclPermission, NfsAclTag, NfsAdvancedFlag,
-  NfsAdvancedPermission,
-  NfsBasicFlag,
-  NfsBasicPermission,
-} from 'app/enums/acl-type.enum';
+  nfsAclTagLabels, nfsAclTypeLabels,
+  NfsAdvancedFlag, nfsAdvancedPermissionLabels,
+  NfsBasicFlag, nfsBasicPermissionLabels,
+} from 'app/enums/nfs-acl.enum';
+import { posixAclTagLabels, PosixPermission } from 'app/enums/posix-acl.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { T } from 'app/translate-marker';
 
 export default {
@@ -23,22 +23,13 @@ export default {
  <i>group@</i> to apply this entry to the group that owns the dataset,\
  or <i>everyone@</i> to apply this entry to all users and groups. See\
  <a href="https://www.freebsd.org/cgi/man.cgi?query=setfacl" target="_blank">setfacl(1) NFSv4 ACL ENTRIES</a>.'),
-  dataset_acl_tag_options: [
-    { label: T('User'), value: NfsAclTag.User },
-    { label: T('Group'), value: NfsAclTag.UserGroup },
-    { label: T('owner@'), value: NfsAclTag.Owner },
-    { label: T('group@'), value: NfsAclTag.Group },
-    { label: T('everyone@'), value: NfsAclTag.Everyone },
-  ],
+  dataset_acl_tag_options: mapToOptions(nfsAclTagLabels),
 
   dataset_acl_type_placeholder: T('ACL Type'),
   dataset_acl_type_tooltip: T('How the <i>Permissions</i> are applied to\
  the chosen <i>Who</>. Choose <i>Allow</i> to grant the specified\
  permissions and <i>Deny</i> to restrict the specified permissions.'),
-  dataset_acl_type_options: [
-    { label: T('Allow'), value: 'ALLOW' },
-    { label: T('Deny'), value: 'DENY' },
-  ],
+  dataset_acl_type_options: mapToOptions(nfsAclTypeLabels),
 
   dataset_acl_perms_type_placeholder: T('Permissions Type'),
   dataset_acl_perms_type_tooltip: T('Choose the type of permissions.\
@@ -84,10 +75,7 @@ export default {
   dataset_acl_perms_tooltip: T('Select permissions to apply to the chosen\
  <i>Who</i>. Choices change depending on the <i>Permissions Type</i>.'),
   dataset_acl_basic_perms_options: [
-    { label: T('Read'), value: NfsBasicPermission.Read },
-    { label: T('Modify'), value: NfsBasicPermission.Modify },
-    { label: T('Traverse'), value: NfsBasicPermission.Traverse },
-    { label: T('Full Control'), value: NfsBasicPermission.FullControl },
+    ...mapToOptions(nfsBasicPermissionLabels),
     {
       label: T('Other (Too complicated to be displayed)'),
       value: 'OTHER',
@@ -96,22 +84,7 @@ export default {
     },
   ],
   dataset_acl_basic_perms_other_warning: T('These permissions are too complicated to be displayed and cannot be saved unless changed.'),
-  dataset_acl_advanced_perms_options: [
-    { label: T('Read Data'), value: NfsAdvancedPermission.ReadData },
-    { label: T('Write Data'), value: NfsAdvancedPermission.WriteData },
-    { label: T('Append Data'), value: NfsAdvancedPermission.AppendData },
-    { label: T('Read Named Attributes'), value: NfsAdvancedPermission.ReadNamedAttrs },
-    { label: T('Write Named Attributes'), value: NfsAdvancedPermission.WriteNamedAttrs },
-    { label: T('Execute'), value: NfsAdvancedPermission.Execute },
-    { label: T('Delete Children'), value: NfsAdvancedPermission.DeleteChild },
-    { label: T('Read Attributes'), value: NfsAdvancedPermission.ReadAttributes },
-    { label: T('Write Attributes'), value: NfsAdvancedPermission.WriteAttributes },
-    { label: T('Delete'), value: NfsAdvancedPermission.Delete },
-    { label: T('Read ACL'), value: NfsAdvancedPermission.ReadAcl },
-    { label: T('Write ACL'), value: NfsAdvancedPermission.WriteAcl },
-    { label: T('Write Owner'), value: NfsAdvancedPermission.WriteOwner },
-    { label: T('Synchronize'), value: NfsAdvancedPermission.Synchronize },
-  ],
+  dataset_acl_advanced_perms_options: mapToOptions(nfsAdvancedPermissionLabels),
 
   dataset_acl_flags_type_placeholder: T('Flags Type'),
   dataset_acl_flags_type_tooltip: T('Select the set of ACE inheritance\
@@ -203,24 +176,16 @@ export default {
     placeholder: T('Permissions'),
     tooltip: T('Permissions'),
     options: [
-      { label: T('Read'), value: AclPermission.Read },
-      { label: T('Write'), value: AclPermission.Write },
-      { label: T('Execute'), value: AclPermission.Execute },
+      { label: T('Read'), value: PosixPermission.Read },
+      { label: T('Write'), value: PosixPermission.Write },
+      { label: T('Execute'), value: PosixPermission.Execute },
     ],
   },
 
   posix_tag: {
     placeholder: T('Who'),
     tooltip: T('Tag'),
-    options:
-  [
-    { label: T('User'), value: AclItemTag.User },
-    { label: T('Group'), value: AclItemTag.Group },
-    { label: T('Other'), value: AclItemTag.Other },
-    { label: T('Group Obj'), value: AclItemTag.GroupObject },
-    { label: T('User Obj'), value: AclItemTag.UserObject },
-    { label: T('Mask'), value: AclItemTag.Mask },
-  ],
+    options: mapToOptions(posixAclTagLabels),
   },
 
   posix_default: {

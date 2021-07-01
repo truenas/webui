@@ -13,7 +13,7 @@ export interface Dataset {
   key_format: ZfsProperty<string>;
   key_loaded: boolean;
   locked: boolean;
-  mountpoint: unknown;
+  mountpoint: string;
   name: string;
   pool: string;
   readonly: ZfsProperty<boolean>;

@@ -1,33 +1,54 @@
 import {
-  AclItemTag,
-  AclPermission,
   AclType,
-  NfsBasicFlag,
-  NfsAclTag,
-  NfsBasicPermission,
-  NfsAclType,
-  NfsAdvancedPermission,
-  NfsAdvancedFlag,
-} from 'app/enums/acl-type.enum';
 
-export interface Acl {
-  acl: PosixAclItem[] | NfsAclItem[];
+} from 'app/enums/acl-type.enum';
+import {
+  NfsAclTag,
+  NfsAclType,
+  NfsAdvancedFlag,
+  NfsAdvancedPermission,
+  NfsBasicFlag,
+  NfsBasicPermission,
+} from 'app/enums/nfs-acl.enum';
+import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
+
+export type Acl = NfsAcl | PosixAcl;
+
+export interface BaseAcl {
   acltype: AclType;
-  flags: AclFlags;
-  nfs41_flags?: Nfs41Flags;
   gid: number;
+  trivial: boolean;
   uid: number;
 }
+
+export interface NfsAcl extends BaseAcl {
+  acl: NfsAclItem[];
+  acltype: AclType.Nfs4;
+  nfs41_flags: Nfs41Flags;
+}
+
+export interface PosixAcl extends BaseAcl {
+  acl: PosixAclItem[];
+  acltype: AclType.Posix1e;
+  flags: AclFlags;
+}
+
+export type AclQueryParams = [
+  /* path */ string,
+  /* simplified */ boolean?,
+  /* resolve_ids */ boolean?,
+];
 
 export interface PosixAclItem {
   default: boolean;
   id: number;
-  perms: {
-    [AclPermission.Read]: boolean;
-    [AclPermission.Write]: boolean;
-    [AclPermission.Execute]: boolean;
-  };
-  tag: AclItemTag;
+  perms: PosixPermissions;
+  tag: PosixAclTag;
+
+  /**
+   * Present when queried with resolve_ids.
+   */
+  who?: string;
 }
 
 export interface NfsAclItem {
@@ -36,6 +57,11 @@ export interface NfsAclItem {
   type: NfsAclType;
   perms: BasicNfsPermissions | AdvancedNfsPermissions;
   flags: BasicNfsFlags | AdvancedNfsFlags;
+
+  /**
+   * Present when queried with resolve_ids.
+   */
+  who?: string;
 }
 
 export interface AclFlags {
@@ -60,10 +86,10 @@ export interface BasicNfsFlags {
   BASIC: NfsBasicFlag;
 }
 
-export interface DAclPosix1ePermissions {
-  [AclPermission.Read]: boolean;
-  [AclPermission.Write]: boolean;
-  [AclPermission.Execute]: boolean;
+export interface PosixPermissions {
+  [PosixPermission.Read]: boolean;
+  [PosixPermission.Write]: boolean;
+  [PosixPermission.Execute]: boolean;
 }
 
 export interface Nfs41Flags {

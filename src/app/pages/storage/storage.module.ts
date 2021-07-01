@@ -1,3 +1,4 @@
+import { CdkAccordionModule } from '@angular/cdk/accordion';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -9,6 +10,12 @@ import { NgxFilesizeModule } from 'ngx-filesize';
 import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/appMaterial.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { NfsPermissionsComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/nfs-permissions/nfs-permissions.component';
+import { PermissionsItemComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/permissions-item/permissions-item.component';
+import { PosixPermissionsComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/posix-permissions/posix-permissions.component';
+import { TrivialPermissionsComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/trivial-permissions/trivial-permissions.component';
+import { PermissionsSidebarComponent } from 'app/pages/storage/volumes/permissions-sidebar/permissions-sidebar.component';
+import { PermissionsSidebarStore } from 'app/pages/storage/volumes/permissions-sidebar/permissions-sidebar.store';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
 import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form/volumechangekey-form.component';
@@ -53,7 +60,7 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard';
     RouterModule, EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, routing, MaterialModule, TreeTableModule,
     NgxDatatableModule, TranslateModule, FlexLayoutModule,
-    NgxFilesizeModule, CommonDirectivesModule,
+    NgxFilesizeModule, CommonDirectivesModule, CdkAccordionModule,
   ],
   declarations: [
     VolumesListComponent,
@@ -92,10 +99,22 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard';
     UserQuotaFormComponent,
     GroupQuotaFormComponent,
     DatasetPosixAclComponent,
+    PermissionsSidebarComponent,
+    PermissionsItemComponent,
+    TrivialPermissionsComponent,
+    PosixPermissionsComponent,
+    NfsPermissionsComponent,
   ],
   exports: [VolumesListControlsComponent],
   entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],
-  providers: [UserService, StorageService, MessageService, JobService, TranslateService],
+  providers: [
+    UserService,
+    StorageService,
+    MessageService,
+    JobService,
+    TranslateService,
+    PermissionsSidebarStore,
+  ],
 })
 export class StorageModule {
 }

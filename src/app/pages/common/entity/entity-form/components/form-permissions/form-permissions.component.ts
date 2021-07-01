@@ -1,10 +1,11 @@
 import {
-  Component, OnInit, OnDestroy,
+  Component, OnInit,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
+import { PosixPermission } from 'app/enums/posix-acl.enum';
+import { parseMode } from 'app/helpers/mode.helper';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
@@ -14,7 +15,7 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   styleUrls: ['../dynamic-field/dynamic-field.scss', 'form-permissions.scss'],
   templateUrl: './form-permissions.component.html',
 })
-export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
+export class FormPermissionsComponent implements Field, OnInit {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
@@ -34,8 +35,6 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
   private other = 0;
   private value: string;
   private control: any;
-
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
 
   private formatRe = new RegExp('^[0-7][0-7][0-7]$');
 
@@ -161,11 +160,6 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
     this.refreshPermissions();
   }
 
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
-
   setValue(value = '000'): void {
     if (this.config.value && this.formatRe.test(this.config.value)) {
       this.value = this.config.value;
@@ -173,50 +167,22 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
       this.value = value;
     }
 
-    let owner = parseInt(this.value[0]);
-    this.owner = owner;
-    let grp = parseInt(this.value[1]);
-    this.grp = grp;
-    let other = parseInt(this.value[2]);
-    this.other = other;
+    this.owner = parseInt(this.value[0]);
+    this.grp = parseInt(this.value[1]);
+    this.other = parseInt(this.value[2]);
 
-    if (owner - 4 >= 0) {
-      owner -= 4;
-      this.ownerRead = true;
-    }
-    if (owner - 2 >= 0) {
-      owner -= 2;
-      this.ownerWrite = true;
-    }
-    if (owner - 1 >= 0) {
-      owner -= 1;
-      this.ownerExec = true;
-    }
+    const permissions = parseMode(this.value);
 
-    if (grp - 4 >= 0) {
-      grp -= 4;
-      this.groupRead = true;
-    }
-    if (grp - 2 >= 0) {
-      grp -= 2;
-      this.groupWrite = true;
-    }
-    if (grp - 1 >= 0) {
-      grp -= 1;
-      this.groupExec = true;
-    }
+    this.ownerRead = permissions.owner[PosixPermission.Read];
+    this.ownerWrite = permissions.owner[PosixPermission.Write];
+    this.ownerExec = permissions.owner[PosixPermission.Execute];
 
-    if (other - 4 >= 0) {
-      other -= 4;
-      this.otherRead = true;
-    }
-    if (other - 2 >= 0) {
-      other -= 2;
-      this.otherWrite = true;
-    }
-    if (other - 1 >= 0) {
-      other -= 1;
-      this.otherExec = true;
-    }
+    this.groupRead = permissions.group[PosixPermission.Read];
+    this.groupWrite = permissions.group[PosixPermission.Write];
+    this.groupExec = permissions.group[PosixPermission.Execute];
+
+    this.otherRead = permissions.other[PosixPermission.Read];
+    this.otherWrite = permissions.other[PosixPermission.Write];
+    this.otherExec = permissions.other[PosixPermission.Execute];
   }
 }
