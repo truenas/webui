@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { filter, take, tap } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
@@ -20,7 +20,7 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityUtils, NULL_VALUE } from 'app/pages/common/entity/utils';
 import {
   WebSocketService, DialogService, CloudCredentialService, AppLoaderService, JobService,
 } from 'app/services';
@@ -93,9 +93,23 @@ export class CloudsyncFormComponent implements FormConfiguration {
           type: 'explorer',
           initial: '/mnt',
           explorerType: 'directory',
-          name: 'path',
+          name: 'path_destination',
           placeholder: helptext.path_placeholder,
           value: '/mnt',
+          tooltip: helptext.path_tooltip,
+          required: true,
+          validation: helptext.path_validation,
+        },
+        {
+          type: 'explorer',
+          initial: '/mnt',
+          explorerType: 'directory',
+          name: 'path_source',
+          placeholder: helptext.path_placeholder,
+          value: '/mnt',
+          multiple: true,
+          disabled: true,
+          isHidden: true,
           tooltip: helptext.path_tooltip,
           required: true,
           validation: helptext.path_validation,
@@ -143,7 +157,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           validation: helptext.bucket_input_validation,
         }, {
           type: 'explorer',
-          name: 'folder',
+          name: 'folder_destination',
           placeholder: helptext.folder_placeholder,
           tooltip: helptext.folder_tooltip,
           initial: '/',
@@ -160,15 +174,27 @@ export class CloudsyncFormComponent implements FormConfiguration {
           },
           isHidden: true,
           disabled: true,
-          relation: [
-            {
-              action: RelationAction.Hide,
-              when: [{
-                name: 'credentials',
-                value: null,
-              }],
-            },
-          ],
+        },
+        {
+          type: 'explorer',
+          multiple: true,
+          name: 'folder_source',
+          placeholder: helptext.folder_placeholder,
+          tooltip: helptext.folder_tooltip,
+          initial: '/',
+          value: '/',
+          explorerType: 'directory',
+          customTemplateStringOptions: {
+            displayField: 'Path',
+            isExpandedField: 'expanded',
+            idField: 'uuid',
+            getChildren: this.getChildren.bind(this),
+            nodeHeight: 23,
+            allowDrag: true,
+            useVirtualScroll: false,
+          },
+          isHidden: true,
+          disabled: true,
         },
       ],
     },
@@ -373,7 +399,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
   protected credentials: FieldConfig;
   protected bucket_field: FieldConfig;
   protected bucket_input_field: FieldConfig;
-  protected folder_field: FieldConfig;
+  protected folder_field_destination: FieldConfig;
+  protected folder_field_source: FieldConfig;
   credentials_list: any[] = [];
 
   formGroup: FormGroup;
@@ -571,15 +598,122 @@ export class CloudsyncFormComponent implements FormConfiguration {
       });
     });
 
-    this.folder_field = this.fieldSets.config('folder');
+    this.formGroup.get('folder_source').valueChanges.pipe(untilDestroyed(this)).subscribe((values: any) => {
+      if (!values) {
+        return;
+      }
+      if (!Array.isArray(values)) {
+        values = [values];
+      }
+      if (!values.length) {
+        return;
+      }
+      const directories = values.map((value: string) => value.split('/'));
+      let allMatch = true;
+      const path_length = directories[0].length;
+      for (let i = 0; i < path_length - 1 && allMatch; i++) {
+        for (const directory of directories) {
+          if (directory[i] !== directories[0][i]) {
+            allMatch = false;
+            break;
+          }
+        }
+      }
+      const folder_source_field = this.fieldSets.config('folder_source');
+      const folder_source_fc = this.formGroup.get('folder_source');
+      let prevErrors = folder_source_fc.errors;
+      if (prevErrors === null) {
+        prevErrors = {};
+      }
+      if (!allMatch) {
+        folder_source_fc.setErrors({
+          ...prevErrors,
+          misMatchDirectories: true,
+        });
+        folder_source_field.warnings = 'All selected entries must be at the same level i.e., must have the same parent directory.';
+      } else {
+        delete prevErrors.misMatchDirectories;
+        if (Object.keys(prevErrors).length) {
+          folder_source_fc.setErrors({ ...prevErrors });
+        } else {
+          folder_source_fc.setErrors(null);
+        }
+        folder_source_field.warnings = null;
+      }
+    });
+
+    this.formGroup.get('path_source').valueChanges.pipe(untilDestroyed(this)).subscribe((values: any) => {
+      if (!values) {
+        return;
+      }
+      if (!Array.isArray(values)) {
+        values = [values];
+      }
+      if (!values.length) {
+        return;
+      }
+      const directories = values.map((value: string) => value.split('/'));
+      const path_length = directories[0].length;
+      let allMatch = true;
+      for (let i = 0; i < path_length - 1 && allMatch; i++) {
+        for (const directory of directories) {
+          if (directory[i] !== directories[0][i]) {
+            allMatch = false;
+            break;
+          }
+        }
+      }
+      const path_source_field = this.fieldSets.config('path_source');
+      const path_source_fc = this.formGroup.get('path_source');
+      let prevErrors = path_source_fc.errors;
+      if (prevErrors === null) {
+        prevErrors = {};
+      }
+      if (!allMatch) {
+        path_source_fc.setErrors({
+          ...prevErrors,
+          misMatchDirectories: true,
+        });
+        path_source_field.warnings = 'All selected entries must be at the same level i.e., must have the same parent directory.';
+      } else {
+        delete prevErrors.misMatchDirectories;
+        if (Object.keys(prevErrors).length) {
+          path_source_fc.setErrors({ ...prevErrors });
+        } else {
+          path_source_fc.setErrors(null);
+        }
+        path_source_field.warnings = null;
+      }
+    });
+
+    this.folder_field_destination = this.fieldSets.config('folder_destination');
+    this.folder_field_source = this.fieldSets.config('folder_source');
     this.formGroup.controls['credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.setDisabled('bucket', true, true);
       this.setDisabled('bucket_input', true, true);
       // reset folder tree view
-      if (!this.folder_field.disabled) {
-        if (this.folder_field.customTemplateStringOptions.explorer) {
-          this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+      if (!this.folder_field_destination.disabled) {
+        if (this.folder_field_destination.customTemplateStringOptions.explorer) {
+          this.folder_field_destination.customTemplateStringOptions.explorer.ngOnInit();
         }
+      }
+      if (!this.folder_field_source.disabled) {
+        if (this.folder_field_source.customTemplateStringOptions.explorer) {
+          this.folder_field_source.customTemplateStringOptions.explorer.ngOnInit();
+        }
+      }
+
+      if (res !== NULL_VALUE) {
+        if (this.formGroup.get('direction').value === Direction.Pull) {
+          this.setDisabled('folder_source', false, false);
+          this.setDisabled('folder_destination', true, true);
+        } else {
+          this.setDisabled('folder_source', true, true);
+          this.setDisabled('folder_destination', false, false);
+        }
+      } else {
+        this.setDisabled('folder_source', true, true);
+        this.setDisabled('folder_destination', true, true);
       }
 
       if (res != null) {
@@ -665,15 +799,21 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
     this.formGroup.controls['bucket_input'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.setBucketError(null);
-      if (this.folder_field.customTemplateStringOptions.explorer) {
-        this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+      if (this.folder_field_destination.customTemplateStringOptions.explorer) {
+        this.folder_field_destination.customTemplateStringOptions.explorer.ngOnInit();
+      }
+      if (this.folder_field_source.customTemplateStringOptions.explorer) {
+        this.folder_field_source.customTemplateStringOptions.explorer.ngOnInit();
       }
     });
 
     this.formGroup.controls['bucket'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.setBucketError(null);
-      if (this.folder_field.customTemplateStringOptions.explorer) {
-        this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+      if (this.folder_field_destination.customTemplateStringOptions.explorer) {
+        this.folder_field_destination.customTemplateStringOptions.explorer.ngOnInit();
+      }
+      if (this.folder_field_source.customTemplateStringOptions.explorer) {
+        this.folder_field_source.customTemplateStringOptions.explorer.ngOnInit();
       }
     });
 
@@ -686,7 +826,27 @@ export class CloudsyncFormComponent implements FormConfiguration {
     // When user interacts with direction dropdown, change transfer_mode to COPY
     this.formGroup
       .get('direction')
-      .valueChanges.pipe(filter(() => this.formGroup.get('transfer_mode').value !== TransferMode.Copy))
+      .valueChanges
+      .pipe(tap((direction: string) => {
+        if (direction === Direction.Pull) {
+          if (this.formGroup.get('credentials').value && this.formGroup.get('credentials').value !== NULL_VALUE) {
+            this.setDisabled('folder_source', false, false);
+            this.setDisabled('folder_destination', true, true);
+          } // we don't have an else here because in that case both are
+          // hidden by the relation rule defined in the field config
+          this.setDisabled('path_destination', false, false);
+          this.setDisabled('path_source', true, true);
+        } else {
+          this.setDisabled('path_source', false, false);
+          this.setDisabled('path_destination', true, true);
+          if (this.formGroup.get('credentials').value && this.formGroup.get('credentials').value !== NULL_VALUE) {
+            this.setDisabled('folder_source', true, true);
+            this.setDisabled('folder_destination', false, false);
+          } // we don't have an else here because in that case both are
+          // hidden by the relation rule defined in the field config
+        }
+      }))
+      .pipe(filter(() => this.formGroup.get('transfer_mode').value !== TransferMode.Copy))
       .pipe(untilDestroyed(this)).subscribe(() => {
         this.dialog.Info(helptext.resetTransferModeDialog.title, helptext.resetTransferModeDialog.content, '500px', 'info', true);
         this.formGroup.get('transfer_mode').setValue(TransferMode.Copy);
@@ -772,6 +932,21 @@ export class CloudsyncFormComponent implements FormConfiguration {
     const attributes: any = {};
     const schedule: Schedule = {};
 
+    value.path = value.direction === Direction.Pull ? value.path_destination : value.path_source;
+
+    if (Array.isArray(value.path)) {
+      value.includes = [];
+      for (const dir of value.path) {
+        const directory = dir.split('/');
+        value.includes.push('/' + directory[directory.length - 1] + '/**');
+      }
+      const directory = value.path[0].split('/');
+      value.path = directory.slice(0, directory.length - 1).join('/');
+    }
+
+    delete value.path_source;
+    delete value.path_destination;
+
     value['credentials'] = parseInt(value.credentials, 10);
 
     if (value.bucket != undefined) {
@@ -782,8 +957,20 @@ export class CloudsyncFormComponent implements FormConfiguration {
       attributes['bucket'] = value.bucket_input;
       delete value.bucket_input;
     }
-    attributes['folder'] = value.folder;
-    delete value.folder;
+    attributes['folder'] = value.direction === Direction.Pull ? value.folder_source : value.folder_destination;
+    delete value.folder_source;
+    delete value.folder_destination;
+
+    if (Array.isArray(attributes['folder'])) {
+      attributes.includes = [];
+      for (const dir of attributes.folder) {
+        const directory = dir.split('/');
+        attributes.includes.push('/' + directory[directory.length - 1] + '/**');
+      }
+      const directory = attributes.folder[0].split('/');
+      attributes.folder = directory.slice(0, directory.length - 1).join('/');
+    }
+
     if (value.task_encryption != undefined) {
       attributes['encryption'] = value.task_encryption === '' ? null : value.task_encryption;
       delete value.task_encryption;
