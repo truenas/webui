@@ -21,7 +21,6 @@ interface BoundingBox {
 }
 
 export class LayoutObject {
-  // public collection: DisplayObject[]; // rename to displayList?
   collection: any = {}; // Try an object literal to see if it performs any better
   private orderedCollection: string[]; // collection of displayObject IDs
   private screenPositions: BoundingBox[];
@@ -285,14 +284,14 @@ export class LayoutObject {
               this.updateCollectionPositions(dragTargetIndex, index);
             }
 
-            this.updateInteractiveMovement(dragTarget, newCollection);
+            this.updateInteractiveMovement(newCollection);
           }
         }
       });
     });
   }
 
-  private updateInteractiveMovement(dragTarget: any, newCollection: any): void { // React to new order while in dragging
+  private updateInteractiveMovement(newCollection: string[]): void { // React to new order while in dragging
     this.reorderedCollection = newCollection;
   }
 

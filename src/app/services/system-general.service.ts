@@ -6,6 +6,7 @@ import { CertificateAuthority } from 'app/interfaces/certificate-authority.inter
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WebSocketService } from './ws.service';
 
@@ -17,7 +18,7 @@ export class SystemGeneralService {
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
   updateIsDone$ = new Subject();
-  sendConfigData$ = new Subject();
+  sendConfigData$ = new Subject<SystemGeneralConfig>();
   refreshSysGeneral$ = new Subject();
 
   // Prevent repetitive api calls in a short time when data is already available
@@ -173,7 +174,7 @@ export class SystemGeneralService {
     this.updateIsDone$.next();
   }
 
-  sendConfigData(data: any): void {
+  sendConfigData(data: SystemGeneralConfig): void {
     this.sendConfigData$.next(data);
   }
 

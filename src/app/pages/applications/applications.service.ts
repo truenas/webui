@@ -59,7 +59,7 @@ export class ApplicationsService {
     return this.ws.call('chart.release.scale', [name, { replica_count: count }]);
   }
 
-  getPodConsoleChoices(name: string): Observable<any[]> {
+  getPodConsoleChoices(name: string): Observable<Record<string, string[]>> {
     return this.ws.call('chart.release.pod_console_choices', [name]);
   }
 

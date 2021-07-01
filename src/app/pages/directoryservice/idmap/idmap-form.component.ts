@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import helptext from 'app/helptext/directoryservice/idmap';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -40,7 +41,7 @@ export class IdmapFormComponent implements FormConfiguration {
     this.validationService.greaterThan('range_low', [helptext.idmap.range_low.placeholder]),
   ];
   private entityForm: EntityFormComponent;
-  protected backendChoices: any;
+  protected backendChoices: IdmapBackendOptions;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   protected requiredDomains = [
     'DS_TYPE_ACTIVEDIRECTORY',
@@ -351,10 +352,10 @@ export class IdmapFormComponent implements FormConfiguration {
       }
     });
 
-    this.idmapService.getBackendChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.backendChoices = res;
+    this.idmapService.getBackendChoices().pipe(untilDestroyed(this)).subscribe((backendChoices) => {
+      this.backendChoices = backendChoices;
       const config = this.fieldConfig.find((c) => c.name === 'idmap_backend');
-      for (const item in res) {
+      for (const item in backendChoices) {
         config.options.push({ label: item, value: item });
       }
       entityEdit.formGroup.controls['idmap_backend'].setValue('AD');
@@ -367,7 +368,7 @@ export class IdmapFormComponent implements FormConfiguration {
     }, 500);
   }
 
-  hideField(fieldName: string, show: boolean, entity: any): void {
+  hideField(fieldName: string, show: boolean, entity: EntityFormComponent): void {
     const target = _.find(this.fieldConfig, { name: fieldName });
     target['isHidden'] = show;
     entity.setDisabled(fieldName, show, show);

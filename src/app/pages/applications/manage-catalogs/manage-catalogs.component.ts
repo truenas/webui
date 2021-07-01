@@ -4,6 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/apps/apps';
+import { Catalog } from 'app/interfaces/catalog.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import {
@@ -137,7 +138,7 @@ export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
     ] as any[];
   }
 
-  resourceTransformIncomingRestData(d: any): any {
+  resourceTransformIncomingRestData(d: Catalog[]): Catalog[] {
     const data = Object.assign([], d);
     return data;
   }

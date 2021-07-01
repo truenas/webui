@@ -9,13 +9,13 @@ import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  DialogService, LanguageService, StorageService,
-  SystemGeneralService, WebSocketService,
+  DialogService, LanguageService, StorageService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
@@ -127,14 +127,14 @@ export class GuiFormComponent implements FormConfiguration {
   ];
 
   private ui_certificate: FieldConfig;
-  private addresses: any[];
-  private v6addresses: any[];
-  private http_port: any;
-  private https_port: any;
-  private redirect: any;
-  private guicertificate: any;
+  private addresses: string[];
+  private v6addresses: string[];
+  private http_port: number;
+  private https_port: number;
+  private redirect: boolean;
+  private guicertificate: string;
   private entityForm: EntityFormComponent;
-  private configData: any;
+  private configData: SystemGeneralConfig;
   title = helptext.guiPageTitle;
 
   constructor(
@@ -178,12 +178,12 @@ export class GuiFormComponent implements FormConfiguration {
   }
 
   preInit(): void {
-    this.http_port = this.configData['ui_port'];
-    this.https_port = this.configData['ui_httpsport'];
-    this.redirect = this.configData['ui_httpsredirect'];
-    if (this.configData['ui_certificate'] && this.configData['ui_certificate'].id) {
-      this.configData['ui_certificate'] = this.configData['ui_certificate'].id.toString();
-      this.guicertificate = this.configData['ui_certificate'];
+    this.http_port = this.configData.ui_port;
+    this.https_port = this.configData.ui_httpsport;
+    this.redirect = this.configData.ui_httpsredirect;
+    if (this.configData.ui_certificate && this.configData.ui_certificate.id) {
+      (this.configData['ui_certificate'] as any) = this.configData.ui_certificate.id.toString();
+      this.guicertificate = this.configData.ui_certificate.id.toString();
     }
     this.addresses = this.configData['ui_address'];
     this.v6addresses = this.configData['ui_v6address'];
@@ -210,7 +210,7 @@ export class GuiFormComponent implements FormConfiguration {
 
     this.ws.call('system.general.ui_certificate_choices')
       .pipe(untilDestroyed(this))
-      .subscribe((res: any) => {
+      .subscribe((res) => {
         this.ui_certificate.options = [{ label: '---', value: null }];
         for (const id in res) {
           this.ui_certificate.options.push({ label: res[id], value: id });
@@ -296,7 +296,7 @@ export class GuiFormComponent implements FormConfiguration {
 
             this.loader.open();
             this.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
-            this.ws.call('service.restart', ['http']).pipe(untilDestroyed(this)).subscribe(() => {
+            this.ws.call('service.restart', ['http' as any]).pipe(untilDestroyed(this)).subscribe(() => {
             }, (res: any) => {
               this.loader.close();
               this.dialog.errorReport(helptext.dialog_error_title, res.reason, res.trace.formatted);

@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout/admin-layout.component';
 import { CoreService } from 'app/core/services/core.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
@@ -236,18 +237,22 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   doNTPDelete(server: any): void {
-    this.dialog.confirm(helptext.deleteServer.title, `${helptext.deleteServer.message} ${server.address}?`,
-      false, helptext.deleteServer.message).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        this.loader.open();
-        this.ws.call('system.ntpserver.delete', [server.id]).pipe(untilDestroyed(this)).subscribe(() => {
-          this.loader.close();
-          this.getNTPData();
-        }, (err) => {
-          this.loader.close();
-          this.dialog.errorReport('Error', err.reason, err.trace.formatted);
-        });
-      }
+    this.dialog.confirm({
+      title: helptext.deleteServer.title,
+      message: `${helptext.deleteServer.message} ${server.address}?`,
+      buttonMsg: helptext.deleteServer.message,
+    }).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.loader.open();
+      this.ws.call('system.ntpserver.delete', [server.id]).pipe(untilDestroyed(this)).subscribe(() => {
+        this.loader.close();
+        this.getNTPData();
+      }, (err) => {
+        this.loader.close();
+        this.dialog.errorReport('Error', err.reason, err.trace.formatted);
+      });
     });
   }
 

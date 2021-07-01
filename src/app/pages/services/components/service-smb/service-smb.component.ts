@@ -39,7 +39,6 @@ export class ServiceSMBComponent implements FormConfiguration {
   private cifs_srv_guest: FieldConfig;
   private cifs_srv_unixcharset: FieldConfig;
   private cifs_srv_admin_group: FieldConfig;
-  protected idNumber: any;
   entityEdit: EntityFormComponent;
   private validBindIps: Choices;
   title = helptext.formTitle;

@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -96,7 +97,7 @@ export class ConsoleFormComponent implements FormConfiguration {
   ]);
 
   private entityForm: EntityFormComponent;
-  private configData: any;
+  private configData: SystemGeneralConfig;
   title = helptext_system_advanced.fieldset_console;
 
   constructor(

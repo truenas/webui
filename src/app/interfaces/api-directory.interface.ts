@@ -52,7 +52,9 @@ import { FailoverUpdate } from 'app/interfaces/failover.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { FtpConfig } from 'app/interfaces/ftp-config.interface';
 import { Group } from 'app/interfaces/group.interface';
+import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
+import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface';
 import {
   IscsiAuthAccess, IscsiExtent,
   IscsiInitiatorGroup,
@@ -72,6 +74,7 @@ import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { OpenvpnClientConfig } from 'app/interfaces/openvpn-client-config.interface';
+import { OpenvpnServerConfig } from 'app/interfaces/openvpn-server-config.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -178,7 +181,10 @@ export type ApiDirectory = {
   'bootenv.query': { params: QueryParams<Bootenv>; response: Bootenv[] };
 
   // Catalog
-  'catalog.query': { params: QueryParams<any, { extra: { item_details: boolean; cache: boolean; retrieve_versions: boolean } }>; response: Catalog[] };
+  'catalog.query': {
+    params: QueryParams<Catalog, { extra: { item_details: boolean; cache: boolean; retrieve_versions: boolean } }>;
+    response: Catalog[];
+  };
   'catalog.update': { params: any; response: any };
   'catalog.create': { params: any; response: any };
   'catalog.delete': { params: [/* name */ string]; response: boolean };
@@ -206,14 +212,14 @@ export type ApiDirectory = {
   'certificateauthority.ca_sign_csr': { params: any; response: any };
 
   // Chart
-  'chart.release.pod_logs_choices': { params: any; response: any };
+  'chart.release.pod_logs_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.query': { params: ChartReleaseQueryParams; response: ChartRelease[] };
   'chart.release.create': { params: ChartReleaseCreate; response: ChartReleaseCreateResponse };
   'chart.release.update': { params: any; response: any };
   'chart.release.upgrade': { params: any; response: any };
   'chart.release.delete': { params: any; response: any };
   'chart.release.scale': { params: any; response: any };
-  'chart.release.pod_console_choices': { params: any; response: any };
+  'chart.release.pod_console_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.nic_choices': { params: void; response: Choices };
   'chart.release.events': { params: any; response: any };
   'chart.release.rollback': { params: any; response: any };
@@ -353,7 +359,7 @@ export type ApiDirectory = {
   'mail.send': { params: any; response: any };
 
   // idmap
-  'idmap.backend_options': { params: any; response: any };
+  'idmap.backend_options': { params: void; response: IdmapBackendOptions };
   'idmap.query': { params: any; response: any };
   'idmap.create': { params: any; response: any };
   'idmap.update': { params: any; response: any };
@@ -389,7 +395,7 @@ export type ApiDirectory = {
   'iscsi.auth.query': { params: any; response: IscsiAuthAccess[] };
   'iscsi.auth.delete': { params: any; response: any };
   'iscsi.global.sessions': { params: any; response: any };
-  'iscsi.global.config': { params: any; response: any };
+  'iscsi.global.config': { params: void; response: IscsiGlobalConfig };
   'iscsi.global.update': { params: any; response: any };
   'iscsi.targetextent.create': { params: any; response: any };
   'iscsi.targetextent.query': { params: any; response: IscsiTargetExtent[] };
@@ -482,7 +488,7 @@ export type ApiDirectory = {
   'openvpn.server.authentication_algorithm_choices': { params: any; response: any };
   'openvpn.server.client_configuration_generation': { params: any; response: any };
   'openvpn.server.update': { params: any; response: any };
-  'openvpn.server.config': { params: any; response: any };
+  'openvpn.server.config': { params: void; response: OpenvpnServerConfig };
 
   // Pool
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
@@ -621,7 +627,7 @@ export type ApiDirectory = {
   'system.general.ui_address_choices': { params: void; response: Choices };
   'system.license_update': { params: any; response: any };
   'system.general.ui_v6address_choices': { params: void; response: Choices };
-  'system.general.ui_certificate_choices': { params: any; response: any };
+  'system.general.ui_certificate_choices': { params: void; response: Record<number, string> };
   'system.general.ui_httpsprotocols_choices': { params: void; response: Choices };
   'system.build_time': { params: void; response: ApiTimestamp };
   'system.product_type': { params: void; response: ProductType };
@@ -658,7 +664,7 @@ export type ApiDirectory = {
     params: [ServiceName];
     response: boolean; // False indicates that service has been stopped.
   };
-  'service.restart': { params: any; response: any };
+  'service.restart': { params: [ServiceName]; response: void };
 
   // Sensor
   'sensor.query': { params: any; response: any };
