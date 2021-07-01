@@ -1,5 +1,6 @@
 import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
 import { Option } from 'app/interfaces/option.interface';
+import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { RelationGroup } from './field-relation.interface';
 
 export enum UnitType {
@@ -88,7 +89,7 @@ export interface FieldConfig {
   tooltip?: string;
   tooltipPosition?: string;
   tristate?: boolean;
-  type: string;
+  type: FieldType;
   updateLocal?: boolean;
   updater?: any;
   validation?: any[] | ValidatorFn | ValidatorFn[];
