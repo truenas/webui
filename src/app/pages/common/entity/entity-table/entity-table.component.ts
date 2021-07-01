@@ -5,6 +5,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import {
   AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -170,9 +171,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   hasDetails = (): boolean =>
     this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
 
-  get isAllSelected(): boolean {
-    return this.selection.selected.length === this.currentRows.length;
-  }
+  isAllSelected = false;
 
   constructor(
     protected core: CoreService,
@@ -211,6 +210,40 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.routeSub.closed) {
       this.routeSub.unsubscribe();
     }
+  }
+
+  pageChanged(): void {
+    this.selection.clear();
+  }
+
+  get currentRowsThatAreOnScreenToo(): any[] {
+    let currentlyShowingRows = [...this.dataSource.filteredData];
+    if (this.dataSource.paginator) {
+      const start = this.dataSource.paginator.pageIndex * this.dataSource.paginator.pageSize;
+      const rowsCount = currentlyShowingRows.length < start + this.dataSource.paginator.pageSize
+        ? currentlyShowingRows.length - start : this.dataSource.paginator.pageSize;
+      currentlyShowingRows = currentlyShowingRows.splice(start, rowsCount);
+    }
+    const showingRows = currentlyShowingRows;
+    return this.currentRows.filter((row) => {
+      const index = showingRows.findIndex((showingRow: any) => {
+        return showingRow['multiselect_id'] === row['multiselect_id'];
+      });
+      return index >= 0;
+    });
+  }
+
+  toggleSelection(element: any): void {
+    this.selection.toggle(element);
+
+    const allShown = this.currentRowsThatAreOnScreenToo;
+    for (const row of allShown) {
+      if (!this.selection.isSelected(row)) {
+        this.isAllSelected = false;
+        return;
+      }
+    }
+    this.isAllSelected = true;
   }
 
   ngOnInit(): void {
@@ -364,6 +397,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.dataSource.paginator && this.conf.config.paging) {
       this.dataSource.paginator.firstPage();
     }
+    this.isAllSelected = false;
+    this.selection.clear();
   }
 
   configureEmptyTable(emptyType: EmptyType, error: any = null): void {
@@ -623,6 +658,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.configureEmptyTable(this.firstUse ? EmptyType.first_use : EmptyType.no_page_data);
     }
 
+    for (let i = 0; i < this.currentRows.length; i++) {
+      this.currentRows[i].multiselect_id = i;
+    }
     this.dataSource = new MatTableDataSource(this.currentRows);
     this.dataSource.sort = this.sort;
 
@@ -682,10 +720,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (this.rows.length === 0) {
-      if (this.conf.queryRes) {
-        this.conf.queryRes = rows;
-      }
-
       if (this.conf.queryRes) {
         this.conf.queryRes = rows;
       }
@@ -1121,10 +1155,17 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.currentColumns.map((column) => column.prop);
   }
 
-  masterToggle(): void {
-    this.isAllSelected
-      ? this.selection.clear()
-      : this.currentRows.forEach((row) => this.selection.select(row));
+  masterToggle(event: MatCheckboxChange): void {
+    const showingRows = this.currentRowsThatAreOnScreenToo;
+    this.isAllSelected = event.checked;
+
+    if (event.checked) {
+      showingRows.forEach((row) => {
+        this.selection.select(row);
+      });
+    } else {
+      this.selection.clear();
+    }
   }
 
   getFirstKey(): string {

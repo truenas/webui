@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/services/components/service-snmp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -156,7 +157,7 @@ export class ServiceSNMPComponent implements FormConfiguration {
     entityForm.submitFunction = this.submitFunction;
   }
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: SnmpConfig): any {
     delete data['v3_privpassphrase'];
     delete data['v3_password'];
     return data;
@@ -173,7 +174,7 @@ export class ServiceSNMPComponent implements FormConfiguration {
     return value;
   }
 
-  submitFunction(entityForm: any): Observable<any> {
+  submitFunction(entityForm: SnmpConfigUpdate): Observable<SnmpConfig> {
     return this.ws.call('snmp.update', [entityForm]);
   }
 }

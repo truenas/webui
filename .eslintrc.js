@@ -133,7 +133,11 @@ module.exports = {
         "@typescript-eslint/explicit-function-return-type": ["error", { allowExpressions: true }],
         "@typescript-eslint/no-unused-vars": "off",
         "unused-imports/no-unused-imports": "error",
-        "unused-imports/no-unused-vars": ["error", { vars: "local", args: "after-used" }],
+        "unused-imports/no-unused-vars": ["error", {
+          vars: "local",
+          args: "after-used",
+          argsIgnorePattern: "^_$"
+        }],
         "@typescript-eslint/ban-types": ["error"],
 
         // RxJS rules

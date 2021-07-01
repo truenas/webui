@@ -438,7 +438,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       });
     });
 
-    this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+    this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' });
       this.kerberos_principal.options.length = 0;
       this.kerberos_principal.options.push({ label: '---', value: null });

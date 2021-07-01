@@ -39,7 +39,7 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
       this._ws
         .call('zfs.snapshot.query', [[['id', '=', this.config.name]]])
         .pipe(
-          map((response) => ({
+          map((response: any) => ({
             ...response[0].properties,
             name: this.config.name,
             creation: this.localeService.formatDateTime(response[0].properties.creation.parsed.$date, this.timezone),

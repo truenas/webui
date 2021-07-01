@@ -3,6 +3,8 @@ import * as _ from 'lodash';
 import { reject } from 'q';
 import { Observable } from 'rxjs';
 import { SshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService } from './ws.service';
 
@@ -10,7 +12,7 @@ import { WebSocketService } from './ws.service';
 export class ReplicationService {
   constructor(protected ws: WebSocketService) { }
 
-  getSnapshotTasks(): Observable<any[]> {
+  getSnapshotTasks(): Observable<PeriodicSnapshotTask[]> {
     return this.ws.call('pool.snapshottask.query');
   }
 
@@ -61,7 +63,7 @@ export class ReplicationService {
     );
   }
 
-  getReplicationTasks(): Observable<any[]> {
+  getReplicationTasks(): Observable<ReplicationTask[]> {
     return this.ws.call('replication.query');
   }
 

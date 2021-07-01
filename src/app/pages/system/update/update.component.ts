@@ -12,6 +12,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
+import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -40,8 +41,8 @@ export class UpdateComponent implements OnInit {
   error: string;
   autoCheck = false;
   train: string;
-  trains: any[] = [];
-  selectedTrain: any;
+  trains: { name: string; description: string }[] = [];
+  selectedTrain: string;
   general_update_error: string;
   update_downloaded = false;
   release_train: boolean;
@@ -50,7 +51,7 @@ export class UpdateComponent implements OnInit {
   updates_available = false;
   currentTrainDescription: string;
   trainDescriptionOnPageLoad: string;
-  fullTrainList: any[];
+  fullTrainList: { [name: string]: SystemUpdateTrain };
   isUpdateRunning = false;
   updateMethod = 'update.update';
   is_ha = false;

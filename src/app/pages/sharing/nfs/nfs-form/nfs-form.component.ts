@@ -279,7 +279,7 @@ export class NFSFormComponent implements FormConfiguration {
       this.pk = id;
     });
 
-    this.ws.call('nfs.config', []).pipe(untilDestroyed(this)).subscribe((nfsConfig) => {
+    this.ws.call('nfs.config').pipe(untilDestroyed(this)).subscribe((nfsConfig) => {
       this.fieldSets.config('security').isHidden = !nfsConfig.v4;
     });
   }
