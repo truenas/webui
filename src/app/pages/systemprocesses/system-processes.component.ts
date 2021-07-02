@@ -29,7 +29,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
   token: any;
   xterm: any;
   private top_displayed = false;
-  private fitAddon: any;
+  private fitAddon: FitAddon;
   connectionId: string;
   clearLine = '\u001b[2K\r';
   font_size = 14;

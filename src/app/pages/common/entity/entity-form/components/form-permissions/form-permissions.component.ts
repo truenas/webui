@@ -1,7 +1,7 @@
 import {
   Component, OnInit,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { PosixPermission } from 'app/enums/posix-acl.enum';
@@ -34,7 +34,7 @@ export class FormPermissionsComponent implements Field, OnInit {
   private grp = 0;
   private other = 0;
   private value: string;
-  private control: any;
+  private control: AbstractControl;
 
   private formatRe = new RegExp('^[0-7][0-7][0-7]$');
 

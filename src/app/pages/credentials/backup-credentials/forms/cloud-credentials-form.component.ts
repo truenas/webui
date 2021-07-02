@@ -6,8 +6,10 @@ import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloudcredentials';
+import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -31,13 +33,13 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   addCall: 'cloudsync.credentials.create' = 'cloudsync.credentials.create';
   queryCall: 'cloudsync.credentials.query' = 'cloudsync.credentials.query';
   editCall: 'cloudsync.credentials.update' = 'cloudsync.credentials.update';
-  queryCallOption: any[];
+  queryCallOption: QueryFilter<CloudsyncCredential>[];
   protected formGroup: FormGroup;
-  protected id: any;
+  protected id: number;
   pk: any;
   protected keyID: number;
   protected isOneColumnForm = true;
-  private rowNum: any;
+  private rowNum: number;
   title = helptext.formTitle;
 
   protected selectedProvider = 'S3';
@@ -1258,7 +1260,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   ) {
     this.modalService.getRow$
       .pipe(take(1), untilDestroyed(this))
-      .subscribe((row) => {
+      .subscribe((row: number) => {
         this.rowNum = row;
       });
     const basicFieldset = _.find(this.fieldSets, { class: 'basic' });
@@ -1326,7 +1328,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
-    entityForm.formGroup.controls['provider'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['provider'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       if (this.providerField.hasErrors) {
         this.providerField.hasErrors = false;
         this.providerField.errors = '';

@@ -5,11 +5,11 @@ import { Pipe, PipeTransform } from '@angular/core';
   pure: false,
 })
 export class ConvertPipe implements PipeTransform {
-  transform(value: any, args: any): any {
+  transform(value: number, args: string): string | number {
     return this.calculate(value, args);
   }
 
-  calculate(value: number, args: any): string | number {
+  calculate(value: number, args: string): string | number {
     if (!value) { return 0.00; }
     let result;
     // uppercase so we handle bits and bytes...

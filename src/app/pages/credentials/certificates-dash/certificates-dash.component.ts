@@ -39,7 +39,7 @@ export class CertificatesDashComponent implements OnInit {
   protected certificateAuthorityEditComponent: CertificateAuthorityEditComponent;
   protected acmeAddComponent: CertificateAcmeAddComponent;
   protected acmeDNSComponent: AcmednsFormComponent;
-  private downloadActions: any;
+  private downloadActions: AppTableAction[];
   private unsignedCAs: Option[] = [];
   private caId: any;
 

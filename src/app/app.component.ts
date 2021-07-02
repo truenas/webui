@@ -92,7 +92,7 @@ export class AppComponent {
       }
     });
 
-    this.router.errorHandler = function (err: any) {
+    this.router.errorHandler = function (err: Error) {
       const chunkFailedMessage = /Loading chunk [\d]+ failed/;
 
       if (chunkFailedMessage.test(err.message)) {

@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import helptext from 'app/helptext/apps/apps';
+import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
 import { ChartContainerImage } from 'app/interfaces/chart-release.interface';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -18,7 +19,7 @@ import { LocaleService } from 'app/services/locale.service';
 export class ChartEventsDialog implements OnInit {
   catalogApp: any;
   containerImages: { [key: string]: ChartContainerImage } = {};
-  chartEvents: any[] = [];
+  chartEvents: ChartReleaseEvent[] = [];
   pods: any[] = [];
   deployments: any[] = [];
   statefulsets: any[] = [];

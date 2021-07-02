@@ -42,7 +42,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
   token: any;
   xterm: any;
   resize_terminal = true;
-  private fitAddon: any;
+  private fitAddon: FitAddon;
   formEvents: Subject<CoreEvent>;
 
   usage_tooltip = helptext.usage_tooltip;
