@@ -22,7 +22,7 @@ export class LocaleService {
 
   constructor(public prefService: PreferencesService, public sysGeneralService: SystemGeneralService,
     private core: CoreService) {
-    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.timeZone = res.timezone;
     });
     if (window.localStorage.dateFormat) {

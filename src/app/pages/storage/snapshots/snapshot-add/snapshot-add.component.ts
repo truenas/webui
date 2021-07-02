@@ -127,7 +127,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
     const nameConfig = this.fieldConfig.find((config) => config.name === 'name');
     const namingSchemaControl = this.entityForm.formGroup.get('naming_schema');
 
-    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       nameControl.setValue(
         'manual-' + format(
           utcToZonedTime(

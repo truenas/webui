@@ -39,7 +39,7 @@ export class ShellComponent implements OnInit, OnDestroy {
   xterm: any;
   resize_terminal = true;
   private fitAddon: any;
-  formEvents: Subject<CoreEvent>;
+  formEvent$: Subject<CoreEvent>;
 
   usage_tooltip = helptext.usage_tooltip;
 
@@ -64,8 +64,8 @@ export class ShellComponent implements OnInit, OnDestroy {
   }
 
   refreshToolbarButtons(): void {
-    this.formEvents = new Subject();
-    this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.formEvent$ = new Subject();
+    this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'restore') {
         this.resetDefault();
         this.refreshToolbarButtons();
@@ -116,7 +116,7 @@ export class ShellComponent implements OnInit, OnDestroy {
     const actionsConfig = {
       actionType: EntityToolbarComponent,
       actionConfig: {
-        target: this.formEvents,
+        target: this.formEvent$,
         controls,
       },
     };

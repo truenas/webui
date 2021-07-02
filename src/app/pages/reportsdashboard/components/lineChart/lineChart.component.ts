@@ -55,9 +55,9 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   units = '';
   yLabelPrefix: string;
   showLegendValues = false;
-  legendEvents: BehaviorSubject<any>;
-  legendLabels: BehaviorSubject<any>;
-  legendAnalytics: BehaviorSubject<any>;
+  legendEvent$: BehaviorSubject<any>;
+  legendLabel$: BehaviorSubject<any>;
+  legendAnalytic$: BehaviorSubject<any>;
 
   _colorPattern: string[] = ['#2196f3', '#009688', '#ffc107', '#9c27b0', '#607d8b', '#00bcd4', '#8bc34a', '#ffeb3b', '#e91e63', '#3f51b5'];
   get colorPattern(): string[] {
@@ -79,15 +79,15 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     super();
     this.utils = new ThemeUtils();
     this.controlUid = 'chart_' + UUID.UUID();
-    this.legendEvents = new BehaviorSubject({ xHTML: '' });
-    this.legendLabels = new BehaviorSubject([]);
-    this.legendAnalytics = new BehaviorSubject([]);
+    this.legendEvent$ = new BehaviorSubject({ xHTML: '' });
+    this.legendLabel$ = new BehaviorSubject([]);
+    this.legendAnalytic$ = new BehaviorSubject([]);
   }
 
   applyHandledData(columns: any, linechartData: any, legendLabels: any): void {
     this.columns = columns;
     this.linechartData = linechartData;
-    this.legendLabels.next(legendLabels);
+    this.legendLabel$.next(legendLabels);
   }
 
   render(option?: string): void {

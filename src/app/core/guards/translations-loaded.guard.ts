@@ -21,16 +21,16 @@ export class TranslationsLoadedGuard implements CanActivate {
   ) {}
 
   canActivate(): Observable<boolean> {
-    let waitForTranslations: Observable<boolean>;
+    let waitForTranslations$: Observable<boolean>;
 
     if (!this.ws.connected) {
       // Cannot load translations for an unauthorized user.
-      waitForTranslations = this.languageService.setLanguageFromBrowser();
+      waitForTranslations$ = this.languageService.setLanguageFromBrowser();
     } else {
-      waitForTranslations = this.languageService.setLanguageFromMiddleware();
+      waitForTranslations$ = this.languageService.setLanguageFromMiddleware();
     }
 
-    return waitForTranslations.pipe(
+    return waitForTranslations$.pipe(
       timeout(this.maxLanguageLoadingTime),
       map(() => true),
       catchError((error) => {

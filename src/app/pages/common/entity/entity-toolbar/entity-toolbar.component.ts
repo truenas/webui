@@ -21,18 +21,18 @@ import { Control } from './models/control.interface';
 export class EntityToolbarComponent implements OnChanges, GlobalAction {
   @Input('conf') conf: ToolbarConfig; // ControlConfig[];
   config: any;
-  controller: Subject<Control>;
+  controller$: Subject<Control>;
   values: any;
 
   constructor(
     protected loader: AppLoaderService,
     public translate: TranslateService,
   ) {
-    this.controller = new Subject();
+    this.controller$ = new Subject();
   }
 
   init(): void {
-    this.controller.pipe(untilDestroyed(this)).subscribe((evt: Control) => {
+    this.controller$.pipe(untilDestroyed(this)).subscribe((evt: Control) => {
       const clone = Object.assign([], this.values);
       clone[evt.name] = evt.value;
       this.values = clone;
