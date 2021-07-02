@@ -935,10 +935,10 @@ export class CloudsyncFormComponent implements FormConfiguration {
     value.path = value.direction === Direction.Pull ? value.path_destination : value.path_source;
 
     if (Array.isArray(value.path)) {
-      value.includes = [];
+      value.include = [];
       for (const dir of value.path) {
         const directory = dir.split('/');
-        value.includes.push('/' + directory[directory.length - 1] + '/**');
+        value.include.push('/' + directory[directory.length - 1] + '/**');
       }
       const directory = value.path[0].split('/');
       value.path = directory.slice(0, directory.length - 1).join('/');
@@ -962,10 +962,10 @@ export class CloudsyncFormComponent implements FormConfiguration {
     delete value.folder_destination;
 
     if (Array.isArray(attributes['folder'])) {
-      attributes.includes = [];
+      attributes.include = [];
       for (const dir of attributes.folder) {
         const directory = dir.split('/');
-        attributes.includes.push('/' + directory[directory.length - 1] + '/**');
+        attributes.include.push('/' + directory[directory.length - 1] + '/**');
       }
       const directory = attributes.folder[0].split('/');
       attributes.folder = directory.slice(0, directory.length - 1).join('/');
