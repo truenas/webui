@@ -242,7 +242,7 @@ export class LayoutObject {
     let latestPosition = -1;
     const maxIndex = Object.keys(this.collection).length - 1;
 
-    dragTarget.inputStream.pipe(debounceTime(15)).subscribe(() => {
+    dragTarget.inputStream$.pipe(debounceTime(15)).subscribe(() => {
       const pad = this.margin / 2;
       /* const dragBox = {
           top: evt.y - pad,

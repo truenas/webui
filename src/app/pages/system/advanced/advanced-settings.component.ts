@@ -85,7 +85,7 @@ export class AdvancedSettingsComponent implements OnInit {
     message: T('To configure sysctls, click the "Add" button.'),
   };
   isHA = false;
-  formEvents: Subject<CoreEvent>;
+  formEvent$: Subject<CoreEvent>;
   actionsConfig: any;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
 
@@ -209,8 +209,8 @@ export class AdvancedSettingsComponent implements OnInit {
       this.refreshForms();
     });
 
-    this.formEvents = new Subject();
-    this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.formEvent$ = new Subject();
+    this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.save_debug) {
         this.saveDebug();
       }
@@ -220,7 +220,7 @@ export class AdvancedSettingsComponent implements OnInit {
     const actionsConfig = {
       actionType: EntityToolbarComponent,
       actionConfig: {
-        target: this.formEvents,
+        target: this.formEvent$,
         controls: [
           {
             name: 'save_debug',

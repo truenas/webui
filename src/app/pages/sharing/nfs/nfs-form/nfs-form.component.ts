@@ -2,13 +2,13 @@ import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { take } from 'rxjs/operators';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_nfs, shared } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Group } from 'app/interfaces/group.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -44,22 +44,26 @@ export class NFSFormComponent implements FormConfiguration {
     {
       name: helptext_sharing_nfs.fieldset_paths,
       label: true,
-      config: [{
-        type: 'list',
-        name: 'paths',
-        width: '100%',
-        templateListField: [{
-          name: 'path',
-          placeholder: helptext_sharing_nfs.placeholder_path,
-          tooltip: helptext_sharing_nfs.tooltip_path,
-          type: 'explorer',
-          explorerType: 'directory',
-          initial: '/mnt',
-          required: true,
-          validation: helptext_sharing_nfs.validators_path,
-        }],
-        listFields: [],
-      }],
+      config: [
+        {
+          type: 'list',
+          name: 'paths',
+          width: '100%',
+          templateListField: [
+            {
+              name: 'path',
+              placeholder: helptext_sharing_nfs.placeholder_path,
+              tooltip: helptext_sharing_nfs.tooltip_path,
+              type: 'explorer',
+              explorerType: 'directory',
+              initial: '/mnt',
+              required: true,
+              validation: helptext_sharing_nfs.validators_path,
+            },
+          ],
+          listFields: [],
+        },
+      ],
     },
     { name: 'divider_general', divider: true },
     {
@@ -114,7 +118,9 @@ export class NFSFormComponent implements FormConfiguration {
           value: '',
           searchOptions: [],
           parent: this,
+          updateLocal: true,
           updater: this.updateMapRootUserSearchOptions,
+          loadMoreOptions: this.loadMoreUserOptions,
         },
         {
           type: 'combobox',
@@ -125,7 +131,9 @@ export class NFSFormComponent implements FormConfiguration {
           value: '',
           searchOptions: [],
           parent: this,
+          updateLocal: true,
           updater: this.updateMapRootGroupSearchOptions,
+          loadMoreOptions: this.loadMoreGroupOptions,
         },
         {
           type: 'combobox',
@@ -136,7 +144,9 @@ export class NFSFormComponent implements FormConfiguration {
           value: '',
           searchOptions: [],
           parent: this,
+          updateLocal: true,
           updater: this.updateMapAllUserSearchOptions,
+          loadMoreOptions: this.loadMoreUserOptions,
         },
         {
           type: 'combobox',
@@ -147,7 +157,9 @@ export class NFSFormComponent implements FormConfiguration {
           value: '',
           searchOptions: [],
           parent: this,
+          updateLocal: true,
           updater: this.updateMapAllGroupSearchOptions,
+          loadMoreOptions: this.loadMoreGroupOptions,
         },
         {
           type: 'select',
@@ -181,34 +193,42 @@ export class NFSFormComponent implements FormConfiguration {
       name: helptext_sharing_nfs.fieldset_networks,
       label: false,
       class: 'networks',
-      config: [{
-        type: 'list',
-        name: 'networks',
-        templateListField: [{
-          type: 'ipwithnetmask',
-          name: 'network',
-          placeholder: helptext_sharing_nfs.placeholder_network,
-          tooltip: helptext_sharing_nfs.tooltip_network,
-          validation: [ipv4or6cidrValidator()],
-        }],
-        listFields: [],
-      }],
+      config: [
+        {
+          type: 'list',
+          name: 'networks',
+          templateListField: [
+            {
+              type: 'ipwithnetmask',
+              name: 'network',
+              placeholder: helptext_sharing_nfs.placeholder_network,
+              tooltip: helptext_sharing_nfs.tooltip_network,
+              validation: [ipv4or6cidrValidator()],
+            },
+          ],
+          listFields: [],
+        },
+      ],
     },
     {
       name: helptext_sharing_nfs.fieldset_hosts,
       label: false,
       class: 'hosts',
-      config: [{
-        type: 'list',
-        name: 'hosts',
-        templateListField: [{
-          type: 'input',
-          name: 'host',
-          placeholder: helptext_sharing_nfs.placeholder_hosts,
-          tooltip: helptext_sharing_nfs.tooltip_hosts,
-        }],
-        listFields: [],
-      }],
+      config: [
+        {
+          type: 'list',
+          name: 'hosts',
+          templateListField: [
+            {
+              type: 'input',
+              name: 'host',
+              placeholder: helptext_sharing_nfs.placeholder_hosts,
+              tooltip: helptext_sharing_nfs.tooltip_hosts,
+            },
+          ],
+          listFields: [],
+        },
+      ],
     },
     { name: 'divider', divider: true },
   ]);
@@ -233,9 +253,7 @@ export class NFSFormComponent implements FormConfiguration {
       name: globalHelptext.basic_options,
       function: () => {
         this.isBasicMode = !this.isBasicMode;
-        this.fieldSets
-          .toggleSets(this.advanced_sets)
-          .toggleDividers(this.advanced_dividers);
+        this.fieldSets.toggleSets(this.advanced_sets).toggleDividers(this.advanced_dividers);
       },
     },
     {
@@ -243,9 +261,7 @@ export class NFSFormComponent implements FormConfiguration {
       name: globalHelptext.advanced_options,
       function: () => {
         this.isBasicMode = !this.isBasicMode;
-        this.fieldSets
-          .toggleSets(this.advanced_sets)
-          .toggleDividers(this.advanced_dividers);
+        this.fieldSets.toggleSets(this.advanced_sets).toggleDividers(this.advanced_dividers);
       },
     },
   ];
@@ -275,13 +291,16 @@ export class NFSFormComponent implements FormConfiguration {
   }
 
   preInit(): void {
-    this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((id: number) => {
+    this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((id: number) => {
       this.pk = id;
     });
 
-    this.ws.call('nfs.config').pipe(untilDestroyed(this)).subscribe((nfsConfig) => {
-      this.fieldSets.config('security').isHidden = !nfsConfig.v4;
-    });
+    this.ws
+      .call('nfs.config')
+      .pipe(untilDestroyed(this))
+      .subscribe((nfsConfig) => {
+        this.fieldSets.config('security').isHidden = !nfsConfig.v4;
+      });
   }
 
   afterInit(entityForm: EntityFormComponent): void {
@@ -289,33 +308,43 @@ export class NFSFormComponent implements FormConfiguration {
 
     this.title = entityForm.isNew ? helptext_sharing_nfs.title : helptext_sharing_nfs.editTitle;
 
-    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
-      const users = [{
-        label: '---------',
-        value: '',
-      }];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
-      this.mapall_user = this.fieldSets.config('mapall_user');
-      this.mapall_user.options = users;
-      this.maproot_user = this.fieldSets.config('maproot_user');
-      this.maproot_user.options = users;
-    });
+    this.userService
+      .userQueryDSCache()
+      .pipe(untilDestroyed(this))
+      .subscribe((items) => {
+        const users = [
+          {
+            label: '---------',
+            value: '',
+          },
+        ];
+        for (let i = 0; i < items.length; i++) {
+          users.push({ label: items[i].username, value: items[i].username });
+        }
+        this.mapall_user = this.fieldSets.config('mapall_user');
+        this.mapall_user.options = users;
+        this.maproot_user = this.fieldSets.config('maproot_user');
+        this.maproot_user.options = users;
+      });
 
-    this.userService.groupQueryDSCache().pipe(untilDestroyed(this)).subscribe((groups) => {
-      const groupOptions: Option[] = [{
-        label: '---------',
-        value: '',
-      }];
-      for (let i = 0; i < groups.length; i++) {
-        groupOptions.push({ label: groups[i].group, value: groups[i].group });
-      }
-      this.mapall_group = this.fieldSets.config('mapall_group');
-      this.mapall_group.options = groupOptions;
-      this.maproot_group = this.fieldSets.config('maproot_group');
-      this.maproot_group.options = groupOptions;
-    });
+    this.userService
+      .groupQueryDSCache()
+      .pipe(untilDestroyed(this))
+      .subscribe((groups) => {
+        const groupOptions: Option[] = [
+          {
+            label: '---------',
+            value: '',
+          },
+        ];
+        for (let i = 0; i < groups.length; i++) {
+          groupOptions.push({ label: groups[i].group, value: groups[i].group });
+        }
+        this.mapall_group = this.fieldSets.config('mapall_group');
+        this.mapall_group.options = groupOptions;
+        this.maproot_group = this.fieldSets.config('maproot_group');
+        this.maproot_group.options = groupOptions;
+      });
 
     if (this.productType.includes(ProductType.Scale)) {
       this.hideOnScale.forEach((name) => {
@@ -339,7 +368,8 @@ export class NFSFormComponent implements FormConfiguration {
   isCustActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
-    } if (actionId === 'basic_mode' && this.isBasicMode === true) {
+    }
+    if (actionId === 'basic_mode' && this.isBasicMode === true) {
       return false;
     }
     return true;
@@ -382,28 +412,57 @@ export class NFSFormComponent implements FormConfiguration {
   afterSave(): void {
     this.modalService.close('slide-in-form');
     this.modalService.refreshTable();
-    this.ws.call('service.query', [[]]).pipe(untilDestroyed(this)).subscribe((res) => {
-      const service = _.find(res, { service: ServiceName.Nfs });
-      if (!service.enable) {
-        this.dialog.confirm(shared.dialog_title, shared.dialog_message,
-          true, shared.dialog_button).pipe(untilDestroyed(this)).subscribe((dialogRes: boolean) => {
-          if (dialogRes) {
-            this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
-              this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
-                this.dialog.Info(T('NFS') + shared.dialog_started_title,
-                  T('The NFS') + shared.dialog_started_message, '250px', 'info').pipe(untilDestroyed(this)).subscribe(() => {
-                  this.dialog.closeAllDialogs();
-                });
-              }, (err) => {
-                this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
-              });
-            }, (err) => {
-              this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
+    this.ws
+      .call('service.query', [[]])
+      .pipe(untilDestroyed(this))
+      .subscribe((res) => {
+        const service = _.find(res, { service: ServiceName.Nfs });
+        if (!service.enable) {
+          this.dialog
+            .confirm({
+              title: shared.dialog_title,
+              message: shared.dialog_message,
+              hideCheckBox: true,
+              buttonMsg: shared.dialog_button,
+            })
+            .pipe(untilDestroyed(this))
+            .subscribe((dialogRes: boolean) => {
+              if (dialogRes) {
+                this.ws
+                  .call('service.update', [service.id, { enable: true }])
+                  .pipe(untilDestroyed(this))
+                  .subscribe(
+                    () => {
+                      this.ws
+                        .call('service.start', [service.service])
+                        .pipe(untilDestroyed(this))
+                        .subscribe(
+                          () => {
+                            this.dialog
+                              .Info(
+                                T('NFS') + shared.dialog_started_title,
+                                T('The NFS') + shared.dialog_started_message,
+                                '250px',
+                                'info',
+                              )
+                              .pipe(untilDestroyed(this))
+                              .subscribe(() => {
+                                this.dialog.closeAllDialogs();
+                              });
+                          },
+                          (err) => {
+                            this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
+                          },
+                        );
+                    },
+                    (err) => {
+                      this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
+                    },
+                  );
+              }
             });
-          }
-        });
-      }
-    });
+        }
+      });
   }
 
   updateMapAllGroupSearchOptions(value = '', parent: NFSFormComponent): void {
@@ -415,13 +474,16 @@ export class NFSFormComponent implements FormConfiguration {
   }
 
   updateGroupSearchOptions(value = '', parent: NFSFormComponent, field: string): void {
-    (parent.userService as UserService).groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
-      const groupOptions: Option[] = [];
-      for (let i = 0; i < groups.length; i++) {
-        groupOptions.push({ label: groups[i].group, value: groups[i].group });
-      }
-      parent.fieldSets.config(field).searchOptions = groupOptions;
-    });
+    parent.userService
+      .groupQueryDSCache(value)
+      .pipe(untilDestroyed(parent))
+      .subscribe((groups) => {
+        const groupOptions: Option[] = [];
+        for (let i = 0; i < groups.length; i++) {
+          groupOptions.push({ label: groups[i].group, value: groups[i].group });
+        }
+        parent.fieldSets.config(field).searchOptions = groupOptions;
+      });
   }
 
   updateMapAllUserSearchOptions(value = '', parent: NFSFormComponent): void {
@@ -433,12 +495,49 @@ export class NFSFormComponent implements FormConfiguration {
   }
 
   updateUserSearchOptions(value = '', parent: NFSFormComponent, field: string): void {
-    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
-      const users: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
-      parent.fieldSets.config(field).searchOptions = users;
-    });
+    parent.userService
+      .userQueryDSCache(value)
+      .pipe(untilDestroyed(parent))
+      .subscribe((items) => {
+        const users: Option[] = [];
+        for (let i = 0; i < items.length; i++) {
+          users.push({ label: items[i].username, value: items[i].username });
+        }
+        parent.fieldSets.config(field).searchOptions = users;
+      });
+  }
+
+  loadMoreUserOptions(length: number, parent: NFSFormComponent, searchText: string, config: any): void {
+    parent.userService
+      .userQueryDSCache(searchText, length)
+      .pipe(untilDestroyed(parent))
+      .subscribe((items: any) => {
+        const users: Option[] = [];
+        for (let i = 0; i < items.length; i++) {
+          users.push({ label: items[i].username, value: items[i].username });
+        }
+        if (searchText == '') {
+          config.options = config.options.concat(users);
+        } else {
+          config.searchOptions = config.searchOptions.concat(users);
+        }
+      });
+  }
+
+  loadMoreGroupOptions(length: number, parent: NFSFormComponent, searchText: string, config: any): void {
+    parent.userService
+      .groupQueryDSCache(searchText, false, length)
+      .pipe(untilDestroyed(parent))
+      .subscribe((items: Group[]) => {
+        const groups: Option[] = [];
+        for (let i = 0; i < items.length; i++) {
+          groups.push({ label: items[i].group, value: items[i].group });
+        }
+        if (searchText == '') {
+          config.options = config.options.concat(groups);
+        } else {
+          config.searchOptions = config.searchOptions.concat(groups);
+        }
+      });
   }
 }

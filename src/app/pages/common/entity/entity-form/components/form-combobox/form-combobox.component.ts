@@ -1,10 +1,10 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { fromEvent, Subscription, Subject } from 'rxjs';
+import { fromEvent, Subject } from 'rxjs';
 import {
   map, takeUntil, debounceTime, distinctUntilChanged,
 } from 'rxjs/operators';
@@ -17,13 +17,12 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   styleUrls: ['form-combobox.component.scss', '../dynamic-field/dynamic-field.scss'],
   templateUrl: './form-combobox.component.html',
 })
-export class FormComboboxComponent implements Field, OnDestroy {
+export class FormComboboxComponent implements Field {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
   searchText = '';
-  searchTextChanged = new Subject<string>();
-  searchSubscription: Subscription;
+  searchTextChanged$ = new Subject<string>();
 
   @ViewChild('autoComplete') autoCompleteRef: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
@@ -31,7 +30,7 @@ export class FormComboboxComponent implements Field, OnDestroy {
   @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
 
   constructor(public translate: TranslateService) {
-    this.searchSubscription = this.searchTextChanged.pipe(
+    this.searchTextChanged$.pipe(
       debounceTime(250),
       distinctUntilChanged(),
       untilDestroyed(this),
@@ -41,12 +40,8 @@ export class FormComboboxComponent implements Field, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this.searchSubscription?.unsubscribe();
-  }
-
   search(query: string): void {
-    this.searchTextChanged.next(query);
+    this.searchTextChanged$.next(query);
   }
 
   onChangeOption(value: any): void {

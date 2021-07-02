@@ -22,7 +22,7 @@ export class SystemGeneralService {
 
   // Prevent repetitive api calls in a short time when data is already available
   generalConfigInfo: any;
-  getGeneralConfig = new Observable<any>((observer) => {
+  getGeneralConfig$ = new Observable<any>((observer) => {
     if (!this.ws.loggedIn) {
       return observer.next({});
     }
@@ -50,7 +50,7 @@ export class SystemGeneralService {
   });
 
   advancedConfigInfo: any;
-  getAdvancedConfig = new Observable<any>((observer) => {
+  getAdvancedConfig$ = new Observable<any>((observer) => {
     if ((!this.advancedConfigInfo || _.isEmpty(this.advancedConfigInfo))) {
       this.advancedConfigInfo = { waiting: true };
       this.ws.call('system.advanced.config').subscribe((advancedConfig) => {
@@ -71,7 +71,7 @@ export class SystemGeneralService {
   });
 
   productType = '';
-  getProductType = new Observable<string>((observer) => {
+  getProductType$ = new Observable<string>((observer) => {
     if (!this.productType) {
       this.productType = 'pending';
       this.ws.call('system.product_type').subscribe((res) => {

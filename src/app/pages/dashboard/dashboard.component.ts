@@ -43,7 +43,7 @@ type DashboardNetworkInterface = NetworkInterface & {
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   formComponent: EntityFormConfigurationComponent;
-  formEvents: Subject<CoreEvent>;
+  formEvents$: Subject<CoreEvent>;
   actionsConfig: any;
 
   screenType = 'Desktop'; // Desktop || Mobile
@@ -65,7 +65,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   zPoolFlex = '100';
   noteFlex = '23';
 
-  statsDataEvents: Subject<CoreEvent>;
+  statsDataEvent$: Subject<CoreEvent>;
   private statsEvents: any;
   tcStats: any;
 
@@ -116,7 +116,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }, 100);
     });
 
-    this.statsDataEvents = new Subject<CoreEvent>();
+    this.statsDataEvent$ = new Subject<CoreEvent>();
 
     this.checkScreenSize();
 
@@ -316,7 +316,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.statsEvents = this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((update) => {
       if (update.cpu) {
-        this.statsDataEvents.next({ name: 'CpuStats', data: update.cpu });
+        this.statsDataEvent$.next({ name: 'CpuStats', data: update.cpu });
       }
 
       if (update.virtual_memory) {
@@ -325,14 +325,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         if (update.zfs && update.zfs.arc_size != null) {
           memStats.arc_size = update.zfs.arc_size;
         }
-        this.statsDataEvents.next({ name: 'MemoryStats', data: memStats });
+        this.statsDataEvent$.next({ name: 'MemoryStats', data: memStats });
       }
 
       if (update.interfaces) {
         const keys = Object.keys(update.interfaces);
         keys.forEach((key) => {
           const data = update.interfaces[key];
-          this.statsDataEvents.next({ name: 'NetTraffic_' + key, data });
+          this.statsDataEvent$.next({ name: 'NetTraffic_' + key, data });
         });
       }
     });
@@ -345,8 +345,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     // unsubsribe from global actions
-    if (this.formEvents) {
-      this.formEvents.complete();
+    if (this.formEvents$) {
+      this.formEvents$.complete();
     }
   }
 
@@ -406,7 +406,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isDataReady(): void {
-    const isReady = !!(this.statsDataEvents && typeof this.pools !== undefined && this.volumeData && this.nics);
+    const isReady = !!(this.statsDataEvent$ && typeof this.pools !== undefined && this.volumeData && this.nics);
 
     if (isReady) {
       this.availableWidgets = this.generateDefaultConfig();
@@ -414,8 +414,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dashState = this.availableWidgets;
       }
 
-      this.formEvents = new Subject();
-      this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+      this.formEvents$ = new Subject();
+      this.formEvents$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
         switch (evt.name) {
           case 'FormSubmit':
             this.formHandler(evt);
@@ -430,7 +430,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       const actionsConfig = {
         actionType: EntityToolbarComponent,
         actionConfig: {
-          target: this.formEvents,
+          target: this.formEvents$,
           controls: [
             {
               name: 'dashConfig',
@@ -504,10 +504,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     switch (item.name.toLowerCase()) {
       case 'cpu':
-        data = this.statsDataEvents;
+        data = this.statsDataEvent$;
         break;
       case 'memory':
-        data = this.statsDataEvents;
+        data = this.statsDataEvent$;
         break;
       case 'pool':
         data = spl
@@ -604,7 +604,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.formComponent.title = 'Dashboard Configuration';
     this.formComponent.isOneColumnForm = true;
     this.formComponent.formType = 'EntityFormComponent';
-    this.formComponent.target = this.formEvents;
+    this.formComponent.target = this.formEvents$;
   }
 
   formHandler(evt: CoreEvent): void {

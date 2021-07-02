@@ -39,7 +39,7 @@ export class GeneralSettingsComponent implements OnInit {
   configData: any;
   displayedColumns: any;
   dataSource: any;
-  formEvents: Subject<CoreEvent>;
+  formEvent$: Subject<CoreEvent>;
 
   // Components included in this dashboard
   protected localizationComponent = new LocalizationFormComponent(this.language, this.ws, this.dialog, this.loader,
@@ -127,8 +127,8 @@ export class GeneralSettingsComponent implements OnInit {
       this.getNTPData();
     });
 
-    this.formEvents = new Subject();
-    this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.formEvent$ = new Subject();
+    this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       switch (evt.data.configFiles.value) {
         case 'save_config':
           this.dialog.dialogForm(this.saveConfigFormConf);
@@ -147,7 +147,7 @@ export class GeneralSettingsComponent implements OnInit {
     const actionsConfig = {
       actionType: EntityToolbarComponent,
       actionConfig: {
-        target: this.formEvents,
+        target: this.formEvent$,
         controls: [
           {
             name: 'configFiles',
@@ -168,7 +168,7 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   getDataCardData(): void {
-    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.configData = res;
       this.dataCards = [
         {
