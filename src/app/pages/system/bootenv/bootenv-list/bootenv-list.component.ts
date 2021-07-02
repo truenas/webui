@@ -5,6 +5,7 @@ import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
+import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -87,7 +88,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     });
   }
 
-  rowValue(row: any, attr: string): any {
+  rowValue(row: Bootenv, attr: keyof Bootenv): unknown {
     if (attr === 'created') {
       return this.localeService.formatDateTime(row.created.$date);
     }

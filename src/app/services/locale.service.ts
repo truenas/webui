@@ -79,7 +79,7 @@ export class LocaleService {
     ];
   }
 
-  formatDateTime(date: Date, tz?: string): string {
+  formatDateTime(date: Date | number, tz?: string): string {
     if (tz) {
       date = utcToZonedTime(date.valueOf(), tz);
     } else if (this.timeZone) {

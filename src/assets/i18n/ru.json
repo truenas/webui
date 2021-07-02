@@ -1401,7 +1401,6 @@
   " is the minimum recommended record size. Choosing a smaller size can reduce system performance.": " - минимально рекомендуемый размер записи. Выбор меньшего размера может уменьшить производительность системы.",
   " minute": " минута",
   " minutes": " минут",
-  " seconds": " секунд",
   " seconds.": " секунд.",
   " service has been enabled.": " служба была включена.",
   " should be at least ": " должно быть как минимум ",

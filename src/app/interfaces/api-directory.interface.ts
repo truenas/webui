@@ -16,7 +16,7 @@ import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces
 import { LoginParams } from 'app/interfaces/auth.interface';
 import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
 import { Bootenv, SetBootenvAttributeParams } from 'app/interfaces/bootenv.interface';
-import { Catalog } from 'app/interfaces/catalog.interface';
+import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import {
   CertificateAuthority,
   CertificateAuthorityCreate,
@@ -107,11 +107,14 @@ import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
-import { Disk, DiskQueryOptions, DiskUpdate } from 'app/interfaces/storage.interface';
+import {
+  Disk, DiskQueryOptions, DiskUpdate, UnusedDisk,
+} from 'app/interfaces/storage.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemUpdate, SystemUpdateChange, SystemUpdateTrains } from 'app/interfaces/system-update.interface';
+import { TftpConfig } from 'app/interfaces/tftp-config.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig } from 'app/interfaces/ups-config.interface';
@@ -195,10 +198,7 @@ export type ApiDirectory = {
   'bootenv.query': { params: QueryParams<Bootenv>; response: Bootenv[] };
 
   // Catalog
-  'catalog.query': {
-    params: QueryParams<Catalog, { extra: { item_details: boolean; cache: boolean; retrieve_versions: boolean } }>;
-    response: Catalog[];
-  };
+  'catalog.query': { params: CatalogQueryParams; response: Catalog[] };
   'catalog.update': { params: any; response: any };
   'catalog.create': { params: any; response: any };
   'catalog.delete': { params: [/* name */ string]; response: boolean };
@@ -295,7 +295,7 @@ export type ApiDirectory = {
   // Disk
   'disk.query': { params: QueryParams<Disk, DiskQueryOptions>; response: Disk[] };
   'disk.update': { params: [string, DiskUpdate]; response: Disk }; // TODO: Response is a job
-  'disk.get_unused': { params: any; response: any };
+  'disk.get_unused': { params: [/* joinPartitions */ boolean?]; response: UnusedDisk[] };
   'disk.get_encrypted': { params: any; response: any };
   'disk.temperatures': { params: any; response: any };
   'disk.wipe': { params: any; response: any };
@@ -521,7 +521,7 @@ export type ApiDirectory = {
   'pool.download_encryption_key': { params: any; response: any };
   'pool.snapshottask.create': { params: any; response: any };
   'pool.snapshottask.update': { params: any; response: any };
-  'pool.import_disk_msdosfs_locales': { params: any; response: any };
+  'pool.import_disk_msdosfs_locales': { params: void; response: string[] };
   'pool.import_disk': { params: any; response: any };
   'pool.import_find': { params: any; response: any };
   'pool.import_pool': { params: any; response: any };
@@ -711,7 +711,7 @@ export type ApiDirectory = {
 
   // TFTP
   'tftp.update': { params: any; response: any };
-  'tftp.config': { params: any; response: any };
+  'tftp.config': { params: void; response: TftpConfig };
 
   // FTP
   'ftp.update': { params: any; response: any };

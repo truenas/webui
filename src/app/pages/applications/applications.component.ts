@@ -86,7 +86,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
       this.dockerImagesTab.onToolbarAction(evt);
     });
 
-    const controls: any[] = [
+    const controls = [
       {
         name: 'filter',
         type: 'input',

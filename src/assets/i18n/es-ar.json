@@ -661,7 +661,6 @@
   " is the minimum recommended record size. Choosing a smaller size can reduce system performance.": " es el tamaño de registro mínimo recomendado. Elegir un tamaño más pequeño puede reducir el rendimiento del sistema.",
   " minute": " minuto",
   " minutes": " minutos",
-  " seconds": " segundos",
   " seconds.": " segundos.",
   " service has been enabled.": " el servicio ha sido habilitado.",
   " should be at least ": " debe ser al menos ",

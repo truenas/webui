@@ -61,7 +61,7 @@ export class ChartEventsDialog implements OnInit {
   }
 
   // return the container image status
-  containerImageStatus(containerImage: any): string {
+  containerImageStatus(containerImage: { value: ChartContainerImage }): string {
     if (containerImage.value.update_available) {
       return helptext.chartEventDialog.statusUpdateAvailable;
     }

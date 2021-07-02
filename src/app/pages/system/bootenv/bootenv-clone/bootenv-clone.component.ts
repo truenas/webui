@@ -17,7 +17,7 @@ import { BootEnvService, WebSocketService } from 'app/services';
 export class BootEnvironmentCloneComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot'];
   addCall: 'bootenv.create' = 'bootenv.create';
-  pk: any;
+  pk: string;
   isNew = true;
   isEntity = true;
 

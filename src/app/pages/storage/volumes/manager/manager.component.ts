@@ -333,8 +333,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.loaderOpen = false;
       this.disks = [];
       for (const i in res) {
-        res[i]['real_capacity'] = res[i]['size'];
-        res[i]['capacity'] = filesize(res[i]['size'], { standard: 'iec' });
+        (res[i] as any)['real_capacity'] = res[i]['size'];
+        (res[i] as any)['capacity'] = filesize(res[i]['size'], { standard: 'iec' });
         const details = [];
         if (res[i]['rotationrate']) {
           details.push({ label: T('Rotation Rate'), value: res[i]['rotationrate'] });
@@ -344,7 +344,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         if (res[i]['enclosure']) {
           details.push({ label: T('Enclosure'), value: res[i]['enclosure']['number'] });
         }
-        res[i]['details'] = details;
+        (res[i] as any)['details'] = details;
         this.disks.push(res[i]);
       }
 
