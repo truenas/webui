@@ -45,7 +45,7 @@ import { StaticRouteFormComponent } from './forms/staticroute-form.component';
 export class NetworkComponent extends ViewControllerComponent implements OnInit, OnDestroy {
   protected summayCall: 'network.general.summary' = 'network.general.summary';
   protected configCall: 'network.configuration.config' = 'network.configuration.config';
-  formEvents: Subject<CoreEvent>;
+  formEvent$: Subject<CoreEvent>;
 
   ha_enabled = false;
   hasPendingChanges = false;
@@ -507,8 +507,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   ngOnDestroy(): void {
-    if (this.formEvents) {
-      this.formEvents.complete();
+    if (this.formEvent$) {
+      this.formEvent$.complete();
     }
     this.core.unregister({ observerClass: this });
   }

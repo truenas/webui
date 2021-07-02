@@ -12,7 +12,7 @@
 
 
     <!-- SORTABLE WIDGETS -->
-    <ng-container  *ngIf="!empty && screenType == 'Desktop' && statsDataEvents && pools && nics && volumeData && sysinfoReady">
+    <ng-container  *ngIf="!empty && screenType == 'Desktop' && statsDataEvent$ && pools && nics && volumeData && sysinfoReady">
       <ng-container  *ngIf="dashState">
         <ng-container  *ngFor="let widget of dashState">
           <ng-container  *ngIf="widget.rendered">
@@ -79,7 +79,7 @@
                 fxFlex="{{widgetWidth}}px"
                 fxFlex.xs="100"
                 [nicState]="dataFromConfig(widget)"
-                [stats]="statsDataEvents"
+                [stats]="statsDataEvent$"
                 [widgetSize]="medium"
                 configurable="false">
               </widget-nic>
@@ -115,7 +115,7 @@
         </widget-controller>
 
         <div class="mobile-widget-container">
-          <ng-container  *ngIf="screenType == 'Mobile' && statsDataEvents && pools && nics && volumeData && sysinfoReady">
+          <ng-container  *ngIf="screenType == 'Mobile' && statsDataEvent$ && pools && nics && volumeData && sysinfoReady">
             <ng-container  *ngFor="let widget of activeMobileWidget">
               <ng-container [ngSwitch]="widget.name.toLowerCase()">
 
@@ -173,7 +173,7 @@
                 <widget-nic *ngSwitchCase="'interface'"
                   (back)="onMobileBack()"
                   [nicState]="dataFromConfig(widget)"
-                  [stats]="statsDataEvents"
+                  [stats]="statsDataEvent$"
                   [widgetSize]="medium"
                   configurable="false">
                 </widget-nic>

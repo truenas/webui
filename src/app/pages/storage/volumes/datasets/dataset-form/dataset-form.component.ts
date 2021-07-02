@@ -1609,8 +1609,8 @@ export class DatasetFormComponent implements FormConfiguration {
   customSubmit(body: any): Subscription {
     this.loader.open();
 
-    const operation = this.isNew ? this.addSubmit(body) : this.editSubmit(body);
-    return operation.pipe(untilDestroyed(this)).subscribe((restPostResp) => {
+    const operation$ = this.isNew ? this.addSubmit(body) : this.editSubmit(body);
+    return operation$.pipe(untilDestroyed(this)).subscribe((restPostResp) => {
       this.loader.close();
       this.modalService.close('slide-in-form');
       const parentPath = `/mnt/${this.parent}`;
