@@ -1,74 +1,68 @@
 import 'jest-canvas-mock';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-/* import { Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core.service';
-import { CoreEvent } from 'app/interfaces/events';
-import { WebSocketService } from 'app/services/ws.service';
-import { DiskStateService } from './disk-state.service'; */
-import { ViewChartAreaComponent, ChartData } from './viewchartarea.component';
+import {
+  createComponentFactory, Spectator,
+} from '@ngneat/spectator/jest';
+import { ChartData } from 'chart.js';
+import { ViewChartAreaComponent } from './viewchartarea.component';
 
 describe('ViewChartAreaComponent', () => {
+  /*
+  * Component Setup
+  * */
+
   let spectator: Spectator<ViewChartAreaComponent>;
 
-  const createComponent = createComponentFactory(ViewChartAreaComponent);
+  const createComponent = createComponentFactory({
+    component: ViewChartAreaComponent,
+    detectChanges: false,
+  });
 
-  // let dataStream: ReturnType<typeof setInterval>;
-  // let latestData: any;
+  /*
+  * Generate Mock Data
+  * */
 
-  const generateColumns = (dataSources: number, dataPoints: number): any[] => {
-    const output = [];
+  const generateDatasets = (dataSources: number, dataPoints: number): any[] => {
+    const datasets = [];
 
-    for (let i = 0; i < dataPoints; i++) {
-      const row = [];
+    for (let i = 0; i < dataSources; i++) {
+      const data = [];
 
-      for (let x = 0; x < dataSources; x++) {
-        const dataPoint = 1;
-        row.push(dataPoint);
-      }
-
-      output.push(row);
-    }
-
-    return output;
-  };
-
-  const generateRows = (dataSources: number, dataPoints: number): any[] => {
-    const output = [];
-
-    for (let i = 0; i < dataPoints; i++) {
-      const row = [];
-
-      for (let x = 0; x < dataSources; x++) {
+      for (let x = 0; x < dataPoints; x++) {
         const dataPoint = Math.floor(Math.random() * 100);
-        row.push(dataPoint);
+        data.push(dataPoint);
       }
+      const dataset = {
+        label: 'Item ' + i.toString(),
+        data,
+      };
 
-      output.push(row);
+      datasets.push(dataset);
     }
 
-    return output;
+    return datasets;
   };
 
-  const generateData = (dataSources: number, dataPoints: number, structure: string): ChartData => {
-    const data = structure == 'columns' ? generateColumns(dataSources, dataPoints) : generateRows(dataSources, dataPoints);
-
-    return {
-      structure,
-      data,
+  const generateChartData = (dataSources: number, dataPoints: number): ChartData => {
+    const datasets = generateDatasets(dataSources, dataPoints);
+    const data: ChartData = {
+      labels: [],
+      datasets,
     };
+
+    return data;
   };
 
   /*
-   * Test Methods
+   * Test Setup
    * */
 
   beforeEach(() => {
     spectator = createComponent();
   });
 
-  afterEach(() => {
-    // if(dataStream) clearInterval(dataStream);
-  });
+  /*
+   * Test Methods
+   * */
 
   it('should instantiate', () => {
     expect(spectator).toBeTruthy();
@@ -79,10 +73,22 @@ describe('ViewChartAreaComponent', () => {
   });
 
   it('should render chart when data arrives', () => {
-    spectator.setInput('chartData', generateData(2, 24, 'rows'));
+    const data: ChartData = generateChartData(2, 24);
+    spectator.setInput('data', data);
 
-    spectator.component.render(spectator.component.chartData);
+    // Manually trigger change detection
+    spectator.component.ngOnChanges({
+      data: {
+        currentValue: data,
+        previousValue: null,
+        firstChange: true,
+        isFirstChange: () => true,
+      },
+    });
 
+    // Make sure expected values are present after input is set
+    expect(spectator.component.data).toBeTruthy();
+    expect(spectator.component.canvas).toBeTruthy();
     expect(spectator.component.chart).toBeTruthy();
   });
 });

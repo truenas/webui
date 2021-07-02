@@ -59,6 +59,7 @@
     "@pixi/filter-advanced-bloom": "2.7.0",
     "@pixi/filter-outline": "2.7.0",
     "@swimlane/ngx-datatable": "17.0.0",
+    "@types/dygraphs": "^2.1.2",
     "@types/fontfaceobserver": "^0.0.6",
     "@types/jest": "^26.0.23",
     "angular-calendar": "0.28.2",

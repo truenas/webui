@@ -1,19 +1,7 @@
 import {
   Component, Input, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef,
 } from '@angular/core';
-import Dygraph from 'dygraphs';
-// eslint-disable-next-line
-import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
-// import { BehaviorSubject } from 'rxjs';
-// import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
-// import { ViewComponent } from 'app/core/components/view/view.component';
-// import { CoreService } from 'app/core/services/core.service';
-// import { ThemeService, Theme } from 'app/services/theme/theme.service';
-
-export interface ChartData {
-  structure: string;
-  data: any[];
-}
+import { Chart, ChartData } from 'chart.js';
 
 @Component({
   selector: 'viewchartarea',
@@ -22,38 +10,41 @@ export interface ChartData {
 })
 export class ViewChartAreaComponent implements OnDestroy, OnChanges {
   @ViewChild('wrapper', { static: true }) el: ElementRef;
-  // @ViewChild('chartelement', {static: false}) el: ElementRef;
-  chart: Dygraph;
+  @ViewChild('canvas', { static: true }) canvas: ElementRef;
+  @Input() data: ChartData;
 
+  chart: Chart;
   maxSources = 8;
 
-  @Input() chartData: ChartData;
-
-  render(data: ChartData): void {
-    this.chart = new Dygraph(
-      this.el.nativeElement,
+  makeConfig(data: ChartData): Chart.ChartConfiguration {
+    return {
+      type: 'line',
       data,
+      options: {
+        responsive: true,
+      },
+    };
+  }
+
+  render(data: ChartData): Chart {
+    return new Chart(
+      this.canvas.nativeElement,
+      this.makeConfig(data),
     );
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.data) {
-      this.render(changes.data.currentValue);
-    }
-
-    if (changes.data) {
-      if (this.chart) {
-        // this.chart.destroy();
-        // this.render('update');
-      } else {
-        this.render(changes.data.currentValue);// make an update method?
+      if (changes.data.firstChange) {
+        this.chart = this.render(changes.data.currentValue);
+      } else if (this.chart) {
+        this.chart.data = changes.data.currentValue;
+        this.chart.update();
       }
     }
   }
 
   ngOnDestroy(): void {
-    // this.core.unregister({ observerClass: this });
-
-    this.chart.destroy();
+    if (this.chart) this.chart.destroy();
   }
 }
