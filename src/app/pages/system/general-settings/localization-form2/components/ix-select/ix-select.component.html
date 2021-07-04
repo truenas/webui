@@ -1,26 +1,110 @@
-<mat-select #selectTrigger ix-auto ix-auto-type="select" 
- (selectionChange)="onOptionChanged($event)">
+<div fxLayout="row wrap" fxLayoutGap="24px" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{'100%'}} - 16px)">
+  <div fxFlex="100%" fxFlex.gt-xs="calc({{'100%'}} - 16px)" [ngClass]="formInline ? 'form-inline' : 'form-line'">
+  <div id="{{name}}" class="form-element dynamic-field form-select {{inlineLabel ? 'inline-label' : 'not'}}" [ngClass]="fieldShow" [class.has-tooltip]="tooltip" [hidden]="isHidden">
 
-  <mat-select-trigger *ngIf="multiple">
-    <span *ngFor="let value of customTriggerValues ; last as isLast">
-        {{ value }}{{ isLast ? '' : ', ' }}
-    </span>
-  </mat-select-trigger>
-
-  <div>
-    <mat-selection-list>
-      <ng-container *ngFor="let option of options; let i=index">
-        <mat-option [value]="option.value" (click)="onToggleSelect(option)">
-          <span *ngIf="multiple">
-            <mat-icon *ngIf="selectedValues[option.value]" class="fn-checked">check_circle</mat-icon>
-            <mat-icon *ngIf="!selectedValues[option.value]" class="fn-unchecked">remove</mat-icon>
-          </span>
-          {{ option.label }}
-          <span *ngIf="shouldAlertOnOption(option)" class="alert-icon">
-            <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
-          </span>
-        </mat-option>
+    <div class="label-container" *ngIf="placeholder || tooltip">
+      <ng-container *ngIf="inlineLabel">
+        <div class="label half-width"></div>
       </ng-container>
-    </mat-selection-list>
+      <label class="label input-select">
+        {{placeholder | translate}}
+        <span *ngIf="required">*</span>
+      </label>
+      <tooltip *ngIf="tooltip" [header]="placeholder" [message]="tooltip" [position]="tooltipPosition ? tooltipPosition : null"></tooltip>
+    </div>
+
+    <ng-container *ngIf="inlineLabel">
+      <div class="label half-width">{{inlineLabel}}</div>
+    </ng-container>
+    <mat-form-field [ngClass]="{'full-width': !inlineLabel,'half-width': inlineLabel}" #field>
+        <mat-spinner
+          diameter='40'
+          class="form-select-spinner"
+          id="{{name}}_form-select-spinner"
+          *ngIf="isLoading">
+        </mat-spinner>
+      <mat-select
+        #selectTrigger
+        [(ngModel)]="value"
+        [formControl]="formControl"
+        [multiple]="multiple"
+        [required]="required"
+        (selectionChange)="optionChanged($event)"
+        ix-auto ix-auto-type="select" ix-auto-identifier="{{placeholder}}">
+
+
+        <mat-select-trigger *ngIf="multiple">
+          <span *ngFor="let value of customTriggerValue ; last as isLast">
+              {{ value }}{{ isLast ? '' : ', ' }}
+          </span>
+        </mat-select-trigger>
+
+        <!--
+          <div class="mat-option" (click)="onToggleSelectAll()">
+            <span *ngIf="multiple">
+              <mat-icon *ngIf="allSelected" class="fn-checked">check_circle</mat-icon>
+              <mat-icon *ngIf="!allSelected" class="fn-unchecked">remove</mat-icon>
+            </span>
+          Select All
+        </div>
+        -->
+
+        <div *ngIf="formReady">
+          <mat-selection-list>
+          <ng-container *ngFor="let option of options; let i=index">
+            <!-- if disabled -->
+            <mat-option *ngIf="isDisabled(option) && !option.hiddenFromDisplay" [value]="option.value" disabled style="opacity:0.5"
+              ix-auto
+              ix-auto-type="option"
+              ix-auto-identifier="{{placeholder}}_{{option.label}}">
+                <span *ngIf="multiple">
+                  <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
+                  <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
+                </span>
+                {{ option.label | translate }}
+                <span *ngIf="shouldAlertOnOption(option)" class="alert-icon">
+                  <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                </span>
+            </mat-option>
+
+            <!-- else -->
+            <mat-option *ngIf="!option?.disable" [value]="option.value" (click)="onToggleSelect(option)"
+              ix-auto
+              ix-auto-type="option"
+              ix-auto-identifier="{{placeholder}}_{{option.label}}">
+                <span *ngIf="multiple">
+                  <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
+                  <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
+                </span>
+                {{ option.label | translate }}
+                <span *ngIf="shouldAlertOnOption(option)" class="alert-icon">
+                  <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                </span>
+                </mat-option>
+
+          </ng-container>
+          </mat-selection-list>
+        </div>
+
+        <div *ngIf="!formReady || options.length == 0">
+          <ng-container>
+            <mat-option disabled style="opacity:0.5"
+              ix-auto
+              ix-auto-type="option"
+              ix-auto-identifier="{{placeholder}}_zeroState">
+              {{zeroStateMessage ? zeroStateMessage : '--'}}
+            </mat-option>
+          </ng-container>
+        </div>
+      </mat-select>
+
+
+    </mat-form-field>
+    <div class="margin-for-error">
+      <ix-form-errors [control]="formControl" [placeholder]="placeholder" [hideErrMsg]="hideErrMsg" ></ix-form-errors>
+      <mat-error *ngIf="hasErrors"><div [innerHTML]="errors"></div></mat-error>
+      <mat-error *ngIf="warnings"><div [innerHTML]="warnings | translate"></div></mat-error>
+    </div>
   </div>
-</mat-select>
+</div>
+</div>

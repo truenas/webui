@@ -9,6 +9,8 @@ import { NgxUploaderModule } from 'ngx-uploader';
 import { MaterialModule } from 'app/appMaterial.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
+import { IXFormErrorsComponent } from 'app/pages/system/general-settings/localization-form2/components/ix-form-errors/ix-form-errors.component';
+import { IXFormFieldSet } from 'app/pages/system/general-settings/localization-form2/components/ix-form-field-set/ix-form-field-set.component';
 import { IXInputComponent } from 'app/pages/system/general-settings/localization-form2/components/ix-input/ix-input.component';
 import { IXSelectComponent } from 'app/pages/system/general-settings/localization-form2/components/ix-select/ix-select.component';
 import { EntityModule } from '../common/entity/entity.module';
@@ -105,6 +107,8 @@ import { EnclosureModule } from './viewenclosure/enclosure.module';
     LocalizationForm2Component,
     IXInputComponent,
     IXSelectComponent,
+    IXFormErrorsComponent,
+    IXFormFieldSet,
   ],
   entryComponents: [QRDialog],
   providers: [],

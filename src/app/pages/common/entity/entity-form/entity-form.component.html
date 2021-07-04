@@ -9,10 +9,10 @@
     <div class="mat-content">
 
         <mat-spinner
-            [diameter]='40'
-            id="entity-table-spinner"
-            *ngIf="showSpinner" #entityspinner>
-          </mat-spinner>
+          [diameter]='40'
+          id="entity-table-spinner"
+          *ngIf="showSpinner" #entityspinner>
+        </mat-spinner>
 
         <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm">
             <div class="fieldset-container fieldset-display-default" *ngIf="fieldSets">
