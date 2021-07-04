@@ -86,7 +86,7 @@ export class IXInputComponent extends ValueAccessorParent {
   }
 
   blurEvent(): void {
-    this.blur.emit({});
+    this.inputBlur.emit({});
   }
 
   togglePW(): void {
