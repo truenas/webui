@@ -27,6 +27,8 @@ export class ViewChartAreaComponent implements OnDestroy, OnChanges {
   }
 
   render(data: ChartData): Chart {
+    if (data.datasets.length > this.maxSources) throw 'ERROR: Maximum Sources Exceeded. Line/Area charts have a hard limit of 8 data sources';
+
     return new Chart(
       this.canvas.nativeElement,
       this.makeConfig(data),
