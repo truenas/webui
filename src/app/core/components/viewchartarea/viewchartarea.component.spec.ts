@@ -64,16 +64,15 @@ describe('ViewChartAreaComponent', () => {
    * Test Methods
    * */
 
-  it('should instantiate', () => {
-    expect(spectator).toBeTruthy();
-  });
-
   it('should not handle more than 8 data points', () => {
+    const data: ChartData = generateChartData(9, 2);
+
     expect(spectator.component.maxSources).toBe(8);
+    expect(() => spectator.component.render(data)).toThrow();
   });
 
   it('should render chart when data arrives', () => {
-    const data: ChartData = generateChartData(2, 24);
+    const data: ChartData = { labels: [], datasets: [] };
     spectator.setInput('data', data);
 
     // Manually trigger change detection
