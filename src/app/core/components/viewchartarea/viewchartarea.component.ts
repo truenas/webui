@@ -9,7 +9,6 @@ import { Chart, ChartData } from 'chart.js';
   styleUrls: ['./viewchartarea.component.scss'],
 })
 export class ViewChartAreaComponent implements OnDestroy, OnChanges {
-  @ViewChild('wrapper', { static: true }) el: ElementRef;
   @ViewChild('canvas', { static: true }) canvas: ElementRef;
   @Input() data: ChartData;
 
