@@ -94,38 +94,38 @@ export class BootStatusListComponent implements OnInit {
     );
   }
 
-  parseData(data: VDev, category?: string, boot_pool_data?: VDev): any {
+  parseData(data: VDev | BootPoolState, category?: string, boot_pool_data?: VDev): any {
     let stats = {
       read_errors: 0,
       write_errors: 0,
       checksum_errors: 0,
     };
 
-    if (data.stats) {
+    if ('stats' in data) {
       stats = data.stats;
     }
 
-    let name: string;
-    if (data.type && data.type != 'disk') {
+    let name = (data as BootPoolState).name;
+    if ('type' in data && data.type != 'disk') {
       name = data.type;
     }
     // use path as the device name if the device name is null
-    if (!data.device || data.device == null) {
-      data.device = data.path;
+    if (!(data as VDev).device) {
+      (data as VDev).device = (data as VDev).path;
     }
 
     const item: PoolDiskInfo = {
-      name: name || data.device,
+      name: name || (data as VDev).device,
       read: stats.read_errors ? stats.read_errors : 0,
       write: stats.write_errors ? stats.write_errors : 0,
       checksum: stats.checksum_errors ? stats.checksum_errors : 0,
       status: data.status,
-      path: data.path,
+      path: (data as VDev).path,
     };
 
     let actions: any[] = [];
 
-    if (data.type && boot_pool_data && boot_pool_data.type === 'mirror' && data.path) {
+    if ('type' in data && boot_pool_data && boot_pool_data.type === 'mirror' && data.path) {
       actions = [{
         id: 'edit',
         label: T('Detach'),
@@ -143,7 +143,7 @@ export class BootStatusListComponent implements OnInit {
       }];
     }
 
-    if (data.type && boot_pool_data && boot_pool_data.type === 'disk' && data.path && !this.oneDisk) {
+    if ('type' in data && boot_pool_data && boot_pool_data.type === 'disk' && data.path && !this.oneDisk) {
       actions = [
         {
           label: T('Replace'),
@@ -154,7 +154,7 @@ export class BootStatusListComponent implements OnInit {
         }];
     }
 
-    if (data.type && boot_pool_data && boot_pool_data.type === 'disk' && data.path && this.oneDisk) {
+    if ('type' in data && boot_pool_data && boot_pool_data.type === 'disk' && data.path && this.oneDisk) {
       actions = [
         {
           label: T('Attach'),
