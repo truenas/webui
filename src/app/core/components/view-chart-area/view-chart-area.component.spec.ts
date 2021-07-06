@@ -89,5 +89,6 @@ describe('ViewChartAreaComponent', () => {
     expect(spectator.component.data).toBeTruthy();
     expect(spectator.component.canvas).toBeTruthy();
     expect(spectator.component.chart).toBeTruthy();
+    expect(spectator.component.chart.data).toMatchObject(data);
   });
 });
