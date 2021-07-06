@@ -38,10 +38,10 @@ import { SnapshotAddComponent } from './snapshots/snapshot-add';
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone';
 import { SnapshotDetailsComponent, SnapshotListComponent } from './snapshots/snapshot-list';
 import { routing } from './storage.routing';
-import { DatasetAclComponent } from './volumes/datasets/dataset-acl';
+import { DatasetNfsAclComponent } from 'app/pages/storage/volumes/datasets/dataset-nfs-acl/dataset-nfs-acl.component';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form';
-import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions';
-import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl';
+import { DatasetTrivialPermissionsComponent } from 'app/pages/storage/volumes/datasets/dataset-trivial-permissions/dataset-trivial-permissions.component';
+import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl/dataset-posix-acl.component';
 import { DatasetQuotasGrouplistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { DatasetQuotasUserlistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
@@ -82,8 +82,8 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard';
     SnapshotCloneComponent,
     SnapshotAddComponent,
     ImportDiskComponent,
-    DatasetPermissionsComponent,
-    DatasetAclComponent,
+    DatasetTrivialPermissionsComponent,
+    DatasetNfsAclComponent,
     DatasetUnlockComponent,
     UnlockDialogComponent,
     VMwareSnapshotFormComponent,

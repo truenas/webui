@@ -17,22 +17,25 @@ import {
   DialogService, StorageService, UserService, WebSocketService,
 } from 'app/services';
 import { T } from 'app/translate-marker';
+import { filter } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
   selector: 'app-dataset-permissions',
-  template: '<entity-form [conf]="this"></entity-form>',
+  templateUrl: './dataset-trivial-permissions.component.html',
+  styleUrls: ['./dataset-trivial-permissions.component.scss'],
 })
-export class DatasetPermissionsComponent implements FormConfiguration {
+export class DatasetTrivialPermissionsComponent implements FormConfiguration {
   protected updateCall: 'pool.dataset.permission' = 'pool.dataset.permission';
-  protected datasetPath: string;
+
+  datasetPath: string;
+
   protected datasetId: string;
   protected recursive: any;
   formGroup: FormGroup;
   error: string;
   route_success: string[] = ['storage'];
   isEntity = true;
-  protected dialogRef: MatDialogRef<EntityJobComponent>;
   private entityForm: EntityFormComponent;
   protected userField: FieldConfig;
   protected groupField: FieldConfig;
@@ -215,23 +218,25 @@ export class DatasetPermissionsComponent implements FormConfiguration {
       entityEdit.formGroup.controls['group'].setValue(stat.group);
     });
     entityEdit.formGroup.controls['id'].setValue(this.datasetPath);
-    this.recursive = entityEdit.formGroup.controls['recursive'];
-    this.recursive.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+
+    const recursive = entityEdit.formGroup.controls['recursive'];
+    recursive.valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
       if (value === true) {
         this.dialog.confirm({
           title: T('Warning'),
           message: T('Setting permissions recursively will affect this directory and any others below it. This might make data inaccessible.'),
-        }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (!res) {
-            this.recursive.setValue(false);
-          }
+        }).pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe(() => {
+          recursive.setValue(false);
         });
       }
     });
   }
 
-  updateGroupSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
+  updateGroupSearchOptions(value = '', parent: this): void {
+    parent.userService.groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
       const groupOptions: Option[] = [];
       for (let i = 0; i < groups.length; i++) {
         groupOptions.push({ label: groups[i].group, value: groups[i].group });
@@ -240,8 +245,8 @@ export class DatasetPermissionsComponent implements FormConfiguration {
     });
   }
 
-  updateUserSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+  updateUserSearchOptions(value = '', parent: this): void {
+    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -277,24 +282,24 @@ export class DatasetPermissionsComponent implements FormConfiguration {
   }
 
   customSubmit(data: any): void {
-    this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Saving Permissions') } });
-    this.dialogRef.componentInstance.setDescription(T('Saving Permissions...'));
-    this.dialogRef.componentInstance.setCall(this.updateCall, [this.datasetId, data]);
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+    const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Saving Permissions') } });
+    dialogRef.componentInstance.setDescription(T('Saving Permissions...'));
+    dialogRef.componentInstance.setCall(this.updateCall, [this.datasetId, data]);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityForm.success = true;
-      this.dialogRef.close();
+      dialogRef.close();
       this.router.navigate(new Array('/').concat(
         this.route_success,
       ));
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
       console.error(err);
     });
   }
 
-  loadMoreOptions(length: number, parent: any, searchText: string): void {
-    (parent.userService as UserService).userQueryDSCache(searchText, length)
+  loadMoreOptions(length: number, parent: this, searchText: string): void {
+    parent.userService.userQueryDSCache(searchText, length)
       .pipe(untilDestroyed(this))
       .subscribe((items) => {
         const users = [];
@@ -309,8 +314,8 @@ export class DatasetPermissionsComponent implements FormConfiguration {
       });
   }
 
-  loadMoreGroupOptions(length: number, parent: any, searchText: string): void {
-    (parent.userService as UserService).groupQueryDSCache(searchText, false, length)
+  loadMoreGroupOptions(length: number, parent: this, searchText: string): void {
+    parent.userService.groupQueryDSCache(searchText, false, length)
       .pipe(untilDestroyed(this))
       .subscribe((groups) => {
         const groupOptions: Option[] = [];
