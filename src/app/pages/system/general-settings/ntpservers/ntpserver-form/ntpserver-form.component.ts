@@ -4,7 +4,7 @@ import { helptext_system_ntpservers as helptext } from 'app/helptext/system/ntps
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { greaterThan } from 'app/pages/common/entity/entity-form/validators/compare-validation';
+import { ValidationService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
 @Component({
@@ -69,7 +69,7 @@ export class NTPServerFormComponent implements FormConfiguration {
           value: 10,
           validation: [
             Validators.max(17),
-            greaterThan('minpoll', [helptext.add.minpoll.placeholder]),
+            this.validationService.greaterThan('minpoll', [helptext.add.minpoll.placeholder]),
             Validators.required,
           ],
         },
@@ -85,6 +85,7 @@ export class NTPServerFormComponent implements FormConfiguration {
 
   constructor(
     private modalService: ModalService,
+    private validationService: ValidationService,
   ) {}
 
   afterSubmit(): void {
