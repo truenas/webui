@@ -26,7 +26,7 @@ export class FailoverComponent implements OnInit {
     protected dialogService: DialogService, protected dialog: MatDialog,
     private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
     this.ws = ws;
-    this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.product_type = res as ProductType;
     });
   }

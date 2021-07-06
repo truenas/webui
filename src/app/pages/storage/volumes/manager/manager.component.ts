@@ -301,7 +301,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }
       }
     });
-    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.swapondrive = res.swapondrive;
     });
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {

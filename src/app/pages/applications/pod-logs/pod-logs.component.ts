@@ -38,7 +38,7 @@ interface PodLogEvent {
 export class PodLogsComponent implements OnInit, OnDestroy {
   @ViewChild('logContainer', { static: true }) logContainer: ElementRef;
   font_size = 14;
-  formEvents: Subject<CoreEvent>;
+  formEvent$: Subject<CoreEvent>;
   chart_release_name: string;
   pod_name: string;
   container_name: string;
@@ -127,8 +127,8 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   }
 
   setupToolbarButtons(): void {
-    this.formEvents = new Subject();
-    this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.formEvent$ = new Subject();
+    this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'download') {
         this.showChooseLogsDialog(true);
       } else if (evt.data.event_control == 'reconnect') {
@@ -166,7 +166,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
     const actionsConfig = {
       actionType: EntityToolbarComponent,
       actionConfig: {
-        target: this.formEvents,
+        target: this.formEvent$,
         controls,
       },
     };

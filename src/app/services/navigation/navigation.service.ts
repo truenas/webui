@@ -125,11 +125,9 @@ export class NavigationService {
   // This title will appear if any icon type item is present in menu.
   iconTypeMenuTitle = 'Frequently Accessed';
   // sets defaultMenu as default;
-  menuItems = new BehaviorSubject < IMenuItem[] >(this.defaultMenu);
-  // navigation component has subscribed this Observable
-  menuItems$ = this.menuItems.asObservable();
+  menuItems$ = new BehaviorSubject<IMenuItem[]>(this.defaultMenu);
 
   publishNavigationChange(): void {
-    this.menuItems.next(this.defaultMenu);
+    this.menuItems$.next(this.defaultMenu);
   }
 }

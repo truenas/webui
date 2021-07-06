@@ -23,14 +23,14 @@ import { CoreEvent } from 'app/interfaces/events';
 
 interface Registration {
   observerClass: any; // The component/service listening for the event
-  observable?: Subject<CoreEvent>; // The Subject that provides the Observable to the observerClass
+  observable$?: Subject<CoreEvent>; // The Subject that provides the Observable to the observerClass
   eventName?: string; // If undefined, your class will react to everything
   sender?: any; // Only listen for events from a specific sender
 }
 
 @Injectable()
 export class CoreService {
-  coreEvents: Subject<CoreEvent>;
+  coreEvent$: Subject<CoreEvent>;
   private debug: boolean;
   debug_show_subscription_type: boolean;
   debug_show_dispatch_table: boolean;
@@ -49,15 +49,15 @@ export class CoreService {
     if (this.debug) {
       console.info('*** New Instance of Core Service ***');
     }
-    this.coreEvents = new Subject();
+    this.coreEvent$ = new Subject();
   }
 
-  private dispatchTable: any[] = [];
+  private dispatchTable: Registration[] = [];
 
   register(reg: Registration): Observable<CoreEvent> {
-    reg.observable = new Subject();
+    reg.observable$ = new Subject();
     this.dispatchTable.push(reg);
-    return reg.observable;
+    return reg.observable$;
   }
 
   unregister(reg: Registration): void {
@@ -151,7 +151,7 @@ export class CoreService {
           console.info(evt);
           console.info('<<<<<<<<');
         }
-        reg.observable.next(evt);
+        reg.observable$.next(evt);
       } else if (evt.name && reg.eventName == evt.name && subscriptionType == 'Name') {
         if (this.debug && this.debug_show_emit_logs) {
           console.info('>>>>>>>>');
@@ -160,7 +160,7 @@ export class CoreService {
           console.info(evt);
           console.info('<<<<<<<<');
         }
-        reg.observable.next(evt);
+        reg.observable$.next(evt);
       } else if (evt.sender && reg.sender == evt.sender && subscriptionType == 'Sender') {
         if (this.debug && this.debug_show_emit_logs) {
           console.info('>>>>>>>>');
@@ -169,7 +169,7 @@ export class CoreService {
           console.info(evt);
           console.info('<<<<<<<<');
         }
-        reg.observable.next(evt);
+        reg.observable$.next(evt);
       } else {
         // DEBUG: console.log("No match found");
       }

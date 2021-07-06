@@ -278,7 +278,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     // Set default value
     this._months = '*';
 
-    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.timezone = res.timezone;
       this.minDate = this.zonedTime;
       this.maxDate = dateFns.endOfMonth(this.minDate);

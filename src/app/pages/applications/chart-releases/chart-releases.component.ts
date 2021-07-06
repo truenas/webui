@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { Subject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ixChartApp, appImagePlaceholder } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core.service';
@@ -48,7 +48,6 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
   private rollbackChartName: string;
 
   protected utils: CommonUtils;
-  settingsEvent: Subject<CoreEvent>;
   private chartReleaseChangedListener: Subscription;
 
   private selectedAppName: string;

@@ -35,7 +35,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   isSelectedOneMore = false;
   isSelectedAll = false;
   isSelectedPool = false;
-  settingsEvent: Subject<CoreEvent>;
+  settingsEvent$: Subject<CoreEvent>;
   filterString = '';
   toolbarConfig: ToolbarConfig;
   catalogOptions: Option[] = [];
@@ -70,8 +70,8 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   }
 
   setupToolbar(): void {
-    this.settingsEvent = new Subject();
-    this.settingsEvent.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.settingsEvent$ = new Subject();
+    this.settingsEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'filter') {
         this.filterString = evt.data.filter;
       }
@@ -95,7 +95,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
     ];
 
     const toolbarConfig = {
-      target: this.settingsEvent,
+      target: this.settingsEvent$,
       controls,
     };
     const settingsConfig = {

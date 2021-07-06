@@ -163,7 +163,7 @@ export class InteractionManagerService {
   }
 
   private startCollisionDetection(dragTarget: DisplayObject, targets: any[]): void {
-    dragTarget.updateStream.pipe(untilDestroyed(this)).subscribe(() => {
+    dragTarget.updateStream$.pipe(untilDestroyed(this)).subscribe(() => {
       targets.forEach((target) => {
         const found = this.detectCollision(target, dragTarget);
         if (found) {

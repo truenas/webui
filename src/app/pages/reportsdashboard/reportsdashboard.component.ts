@@ -98,7 +98,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.scrollContainer = document.querySelector('.rightside-content-hold ');// this.container.nativeElement;
     this.scrollContainer.style.overflow = 'hidden';
 
-    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.isFooterConsoleOpen = res.consolemsg;
       }

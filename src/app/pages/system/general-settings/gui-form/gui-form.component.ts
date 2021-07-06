@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout/admin-layout.component';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -296,7 +297,7 @@ export class GuiFormComponent implements FormConfiguration {
 
             this.loader.open();
             this.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
-            this.ws.call('service.restart', ['http' as any]).pipe(untilDestroyed(this)).subscribe(() => {
+            this.ws.call('service.restart', [ServiceName.Http]).pipe(untilDestroyed(this)).subscribe(() => {
             }, (res: any) => {
               this.loader.close();
               this.dialog.errorReport(helptext.dialog_error_title, res.reason, res.trace.formatted);

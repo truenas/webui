@@ -3,7 +3,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { ViewController } from './viewcontroller';
 
 export interface PageOptions {
-  events: Subject<CoreEvent>;
+  events$: Subject<CoreEvent>;
   url: string;
 }
 
@@ -14,7 +14,7 @@ export abstract class Page extends ViewController {
   constructor(options?: PageOptions) {
     super();
     if (options) {
-      this.setControlEvents(options.events);
+      this.setControlEvents(options.events$);
     }
   }
 }

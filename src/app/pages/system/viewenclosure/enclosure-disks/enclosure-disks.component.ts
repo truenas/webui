@@ -66,7 +66,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   @Input('system-profiler') system: SystemProfiler;
   @Input('selected-enclosure') selectedEnclosure: any;
   @Input('current-tab') currentTab: any;
-  @Input('controller-events') controllerEvents: Subject<CoreEvent>;
+  @Input('controller-events') controllerEvent$: Subject<CoreEvent>;
 
   app: Application;
   private loader = PIXI.loader;
@@ -199,8 +199,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       if (this.theme == evt.data) { return; }
       this.theme = evt.data;
       this.setCurrentView(this.currentView);
-      if (this.labels && this.labels.events) {
-        this.labels.events.next(evt);
+      if (this.labels && this.labels.events$) {
+        this.labels.events$.next(evt);
       }
       this.optimizeChassisOpacity();
     });
@@ -213,7 +213,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   ngAfterContentInit(): void {
-    this.controllerEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.controllerEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       switch (evt.name) {
         case 'CanvasExtract':
           this.createExtractedEnclosure(evt.data);
@@ -271,7 +271,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
             if (diskName && this.currentView == 'details' && this.exitingView == 'details') {
               this.update('stage-right'); // View has changed so we launch transition animations
               this.update('stage-left'); // View has changed so we launch transition animations
-              this.labels.events.next({ name: 'OverlayReady', data: { vdev: this.selectedVdev, overlay: this.domLabels }, sender: this });
+              this.labels.events$.next({ name: 'OverlayReady', data: { vdev: this.selectedVdev, overlay: this.domLabels }, sender: this });
             }
             break;
         }
@@ -362,7 +362,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.container.height = this.app.stage.height;
 
     this.createEnclosure();
-    this.controllerEvents.next({ name: 'VisualizerReady', sender: this });
+    this.controllerEvent$.next({ name: 'VisualizerReady', sender: this });
   }
 
   createEnclosure(profile: any = this.selectedEnclosure): void {
@@ -396,7 +396,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new E60();
         break;
       default:
-        this.controllerEvents.next({
+        this.controllerEvent$.next({
           name: 'Error',
           data: {
             name: 'Unsupported Hardware',
@@ -484,7 +484,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         chassis = new E60();
         break;
       default:
-        this.controllerEvents.next({
+        this.controllerEvent$.next({
           name: 'Error',
           data: {
             name: 'Unsupported Hardware',
@@ -527,7 +527,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   extractEnclosure(enclosure: ChassisView, profile: any): void {
     const canvas = this.app.renderer.plugins.extract.canvas(enclosure.container);
-    this.controllerEvents.next({ name: 'EnclosureCanvas', data: { canvas, profile }, sender: this });
+    this.controllerEvent$.next({ name: 'EnclosureCanvas', data: { canvas, profile }, sender: this });
     this.container.removeChild(enclosure.container);
   }
 
@@ -602,7 +602,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
         this.labels = new VDevLabelsSVG(this.enclosure, this.app, this.theme, this.selectedDisk);
 
-        this.labels.events.next({ name: 'LabelDrives', data: vdev, sender: this });
+        this.labels.events$.next({ name: 'LabelDrives', data: vdev, sender: this });
 
         break;
     }
@@ -651,7 +651,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       update: (v: any) => { el.set(v); },
       complete: () => {
         if (this.currentView == 'details') {
-          this.labels.events.next({ name: 'OverlayReady', data: { vdev: this.selectedVdev, overlay: this.domLabels }, sender: this });
+          this.labels.events$.next({ name: 'OverlayReady', data: { vdev: this.selectedVdev, overlay: this.domLabels }, sender: this });
         }
       },
     });
@@ -903,7 +903,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   toggleHighlightMode(mode: string): void {
     if (this.selectedDisk.status == 'AVAILABLE') { return; }
 
-    this.labels.events.next({
+    this.labels.events$.next({
       name: mode == 'on' ? 'EnableHighlightMode' : 'DisableHighlightMode',
       sender: this,
     });
@@ -911,7 +911,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   showPath(devname: string): void {
     // show the svg path
-    this.labels.events.next({
+    this.labels.events$.next({
       name: 'ShowPath',
       data: { devname, overlay: this.domLabels },
       sender: this,
@@ -919,7 +919,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   hidePath(devname: string): void {
-    this.labels.events.next({
+    this.labels.events$.next({
       name: 'HidePath',
       data: { devname, overlay: this.domLabels },
       sender: this,
@@ -928,7 +928,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   highlightPath(devname: string): void {
     // show the svg path
-    this.labels.events.next({
+    this.labels.events$.next({
       name: 'HighlightDisk',
       data: { devname, overlay: this.domLabels },
       sender: this,
@@ -937,7 +937,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   unhighlightPath(devname: string): void {
     // show the svg path
-    this.labels.events.next({
+    this.labels.events$.next({
       name: 'UnhighlightDisk',
       data: { devname, overlay: this.domLabels },
       sender: this,
@@ -1041,7 +1041,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
 
     const args: any = { index: this.selectedEnclosure.enclosureKey, id: enclosure.id, label: value };
-    this.controllerEvents.next({ name: 'SetEnclosureLabel', data: args, sender: this });
+    this.controllerEvent$.next({ name: 'SetEnclosureLabel', data: args, sender: this });
   }
 
   labelForm(): void {
