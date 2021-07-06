@@ -50,7 +50,7 @@ export class BootEnvReplaceFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.diskChoice = _.find(this.fieldConfig, { name: 'dev' });
-    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((res) => {
       res.forEach((item) => {
         this.diskChoice.options.push({ label: item.name, value: item.name });
       });

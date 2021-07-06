@@ -353,7 +353,8 @@ export class ZvolWizardComponent implements WizardConfiguration {
           const root = this.parent.split('/')[0];
           this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((res) => {
             zvolEntityForm.controls['volblocksize'].setValue(res);
-            this.minimum_recommended_zvol_volblocksize = res;
+            // TODO: Check if actual server response matches map
+            this.minimum_recommended_zvol_volblocksize = res as any;
           });
         } else {
           let parent_dataset: string | string[] = pk_dataset[0].name.split('/');

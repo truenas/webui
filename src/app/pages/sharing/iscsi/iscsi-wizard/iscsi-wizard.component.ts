@@ -418,27 +418,21 @@ export class IscsiWizardComponent implements WizardConfiguration {
     },
   ];
 
-  protected deviceFieldGroup: any[] = [
+  protected deviceFieldGroup = [
     'disk',
   ];
-  protected fileFieldGroup: any[] = [
+  protected fileFieldGroup = [
     'path',
     'filesize',
   ];
-  protected zvolFieldGroup: any[] = [
+  protected zvolFieldGroup = [
     'dataset',
     'volsize',
     'volsize_unit',
     'volblocksize',
   ];
-  protected useforFieldGroup: any[] = [
-    'blocksize',
-    'insecure_tpc',
-    'xen',
-    'rpm',
-  ];
   // allways hidden fields
-  protected hiddenFieldGroup: any[] = [
+  protected hiddenFieldGroup = [
     'volblocksize',
     'insecure_tpc',
     'xen',
@@ -484,12 +478,12 @@ export class IscsiWizardComponent implements WizardConfiguration {
     },
   ];
 
-  protected portalFieldGroup: any[] = [
+  protected portalFieldGroup = [
     'discovery_authmethod',
     'discovery_authgroup',
     'listen',
   ];
-  protected authAccessFieldGroup: any[] = [
+  protected authAccessFieldGroup = [
     'tag',
     'user',
     'secret',
@@ -521,14 +515,16 @@ export class IscsiWizardComponent implements WizardConfiguration {
     associateTarget: 'iscsi.targetextent.create',
   };
 
-  constructor(private iscsiService: IscsiService,
+  constructor(
+    private iscsiService: IscsiService,
     private ws: WebSocketService,
     private cloudcredentialService: CloudCredentialService,
     private dialogService: DialogService,
     private loader: AppLoaderService,
     private networkService: NetworkService,
     private router: Router,
-    private storageService: StorageService) {
+    private storageService: StorageService,
+  ) {
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
       this.namesInUse.push(...extents.map((extent) => extent.name));
     });
@@ -731,10 +727,10 @@ export class IscsiWizardComponent implements WizardConfiguration {
     return summary;
   }
 
-  disablefieldGroup(fieldGroup: any[], disabled: boolean, stepIndex: number): void {
+  disablefieldGroup(fieldGroup: string[], disabled: boolean, stepIndex: number): void {
     fieldGroup.forEach((field) => {
       if (_.indexOf(this.hiddenFieldGroup, field) < 0) {
-        const control: any = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
+        const control = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
         control['isHidden'] = disabled;
         control.disabled = disabled;
         disabled

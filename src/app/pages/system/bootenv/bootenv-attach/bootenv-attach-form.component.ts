@@ -63,7 +63,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.diskChoice = _.find(this.fieldConfig, { name: 'dev' });
-    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((res) => {
       res.forEach((item) => {
         const disk_name = item.name;
         const disksize = filesize(item['size'], { standard: 'iec' });

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
+import { AlertService } from 'app/interfaces/alert-service.interface';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService, DialogService } from 'app/services';
@@ -11,7 +12,7 @@ import { WebSocketService, DialogService } from 'app/services';
   selector: 'app-alertservice-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class AlertServiceListComponent implements EntityTableConfig {
+export class AlertServiceListComponent implements EntityTableConfig<AlertService> {
   title = 'Alert Services';
   protected route_add_tooltip = 'Add Alert Service';
   queryCall: 'alertservice.query' = 'alertservice.query';
@@ -55,14 +56,14 @@ export class AlertServiceListComponent implements EntityTableConfig {
     protected dialogService: DialogService,
   ) { }
 
-  isActionVisible(actionId: string, row: any): boolean {
+  isActionVisible(actionId: string, row: AlertService): boolean {
     if (actionId === 'edit' && this.providerList.indexOf(row.type) === -1) {
       return false;
     }
     return true;
   }
 
-  onCheckboxChange(row: any): void {
+  onCheckboxChange(row: AlertService): void {
     row.enabled = !row.enabled;
     this.ws.call('alertservice.update', [row.id, { enabled: row.enabled }])
       .pipe(untilDestroyed(this)).subscribe(

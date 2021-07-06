@@ -4,6 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/data-protection/smart/smart';
 import { SmartTestUi } from 'app/interfaces/smart-test.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
@@ -56,7 +57,7 @@ export class SmartListComponent implements EntityTableConfig {
       key_props: ['type', 'desc'],
     },
   };
-  listDisks: any[] = [];
+  listDisks: Disk[] = [];
 
   constructor(
     protected ws: WebSocketService,
@@ -89,7 +90,7 @@ export class SmartListComponent implements EntityTableConfig {
       if (test.all_disks) {
         test.disks = [this.translate.instant(helptext.smarttest_all_disks_placeholder)];
       } else if (test.disks.length) {
-        const readableDisks = test.disks.map((disk: any) => {
+        const readableDisks = test.disks.map((disk) => {
           return this.listDisks.find((item) => item.identifier === disk).devname;
         });
         test.disks = readableDisks;

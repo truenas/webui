@@ -11,12 +11,12 @@ export interface DialogFormConfiguration<P = any> {
   cancelButtonText?: string;
   custActions?: any[];
   customSubmit?: (entityDialog: EntityDialogComponent<P>) => void;
-  isCustActionVisible?: any;
+  isCustActionVisible?: (actionId: string) => boolean;
   hideButton?: boolean;
-  message?: any;
-  warning?: any;
-  preInit?: any;
-  afterInit?: any;
+  message?: string;
+  warning?: string;
+  preInit?: (entityDialog: EntityDialogComponent<P>) => void;
+  afterInit?: (entityDialog: EntityDialogComponent<P>) => void;
   parent?: P;
   confirmCheckbox?: boolean;
   hideCancel?: boolean;

@@ -289,8 +289,8 @@ export class WebSocketService {
     observer.complete();
   }
 
-  login_token(token: string): Observable<any> {
-    return Observable.create((observer: any) => {
+  login_token(token: string): Observable<boolean> {
+    return Observable.create((observer: Observer<boolean>) => {
       if (token) {
         this.call('auth.token', [token]).pipe(untilDestroyed(this)).subscribe((result) => {
           this.loginCallback(result, observer);

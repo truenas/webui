@@ -39,7 +39,7 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
       this._ws
         .call('zfs.snapshot.query', [[['id', '=', this.config.name]]])
         .pipe(
-          map((response: any) => ({
+          map((response) => ({
             ...response[0].properties,
             name: this.config.name,
             creation: this.localeService.formatDateTime(response[0].properties.creation.parsed.$date, this.timezone),
@@ -53,11 +53,11 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
             },
             {
               label: 'Used',
-              value: this.storageService.convertBytestoHumanReadable(snapshot.used.rawvalue),
+              value: this.storageService.convertBytestoHumanReadable((snapshot as any).used.rawvalue),
             },
             {
               label: 'Referenced',
-              value: this.storageService.convertBytestoHumanReadable(snapshot.referenced.rawvalue),
+              value: this.storageService.convertBytestoHumanReadable((snapshot as any).referenced.rawvalue),
             },
           ];
         });

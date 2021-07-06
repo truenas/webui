@@ -51,8 +51,8 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
   private chartReleaseChangedListener: Subscription;
 
   private selectedAppName: string;
-  private podList: any[] = [];
-  private podDetails: any = {};
+  private podList: string[] = [];
+  private podDetails: Record<string, string[]> = {};
   imagePlaceholder = appImagePlaceholder;
 
   emptyPageConf: EmptyConfig = {
@@ -588,7 +588,7 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
           value: item,
         }));
         this.choosePodForLogs.fieldConfig[1].value = this.podDetails[this.podList[0]][0];
-        this.choosePodForLogs.fieldConfig[1].options = this.podDetails[this.podList[0]].map((item: any) => ({
+        this.choosePodForLogs.fieldConfig[1].options = this.podDetails[this.podList[0]].map((item) => ({
           label: item,
           value: item,
         }));

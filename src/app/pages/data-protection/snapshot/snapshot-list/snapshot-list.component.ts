@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
-import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
+import { PeriodicSnapshotTask, PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -18,7 +18,7 @@ import { T } from 'app/translate-marker';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, StorageService],
 })
-export class SnapshotListComponent implements EntityTableConfig {
+export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshotTaskUi> {
   title = T('Periodic Snapshot Tasks');
   queryCall: 'pool.snapshottask.query' = 'pool.snapshottask.query';
   updateCall: 'pool.snapshottask.update' = 'pool.snapshottask.update';
@@ -71,29 +71,34 @@ export class SnapshotListComponent implements EntityTableConfig {
     });
   }
 
-  resourceTransformIncomingRestData(data: PeriodicSnapshotTaskUi[]): PeriodicSnapshotTaskUi[] {
+  resourceTransformIncomingRestData(data: PeriodicSnapshotTask[]): PeriodicSnapshotTaskUi[] {
     return data.map((task) => {
-      task.keepfor = `${task.lifetime_value} ${task.lifetime_unit}(S)`;
-      task.when = this.translate.instant(T('From {task_begin} to {task_end}'), { task_begin: task.schedule.begin, task_end: task.schedule.end });
-      task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
-      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
-      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
+      const transformedTask = {
+        ...task,
+        keepfor: `${task.lifetime_value} ${task.lifetime_unit}(S)`,
+        when: this.translate.instant(T('From {task_begin} to {task_end}'), { task_begin: task.schedule.begin, task_end: task.schedule.end }),
+        cron_schedule: `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`,
+      } as PeriodicSnapshotTaskUi;
 
-      return task;
+      return {
+        ...transformedTask,
+        next_run: this.taskService.getTaskNextRun(transformedTask.cron_schedule),
+        frequency: this.taskService.getTaskCronDescription(transformedTask.cron_schedule),
+      };
     });
   }
 
-  onButtonClick(row: any): void {
+  onButtonClick(row: PeriodicSnapshotTaskUi): void {
     this.stateButton(row);
   }
 
-  stateButton(row: any): void {
+  stateButton(row: PeriodicSnapshotTaskUi): void {
     if (row.state.state === JobState.Error) {
       this.dialogService.errorReport(row.state.state, row.state.error);
     }
   }
 
-  onCheckboxChange(row: any): void {
+  onCheckboxChange(row: PeriodicSnapshotTaskUi): void {
     row.enabled = !row.enabled;
     this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
       (res) => {

@@ -10,7 +10,6 @@ import { CoreService } from './core.service';
 })
 export class StatsService extends BaseService {
   protected disks: any[] = [];
-  protected broadcast: any;
   protected subscribers = 0;
   protected realtimeEvents: Subscription;
   protected diskQueryEvents: Subscription;

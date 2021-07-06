@@ -189,7 +189,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     return rows;
   }
 
-  rowValue(row: any, attr: any): any {
+  rowValue(row: any, attr: string): any {
     switch (attr) {
       case 'used':
         return filesize(row[attr], { standard: 'iec' });
