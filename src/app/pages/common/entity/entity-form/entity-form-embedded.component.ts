@@ -30,7 +30,7 @@ import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
 import { FieldRelationService } from './services/field-relation.service';
 
-export interface FormConfig {
+export interface EmbeddedFormConfig {
   fieldSets?: any;
   fieldSetDisplay?: any;
   values?: any;
@@ -89,7 +89,7 @@ export interface FormConfig {
   providers: [EntityFormService, FieldRelationService],
 })
 export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
-  @Input('conf') conf: FormConfig;
+  @Input('conf') conf: EmbeddedFormConfig;
   @Input() data: any;
   @Input() hiddenFieldSets: string[] = [];
   @Input() target: Subject<CoreEvent>;

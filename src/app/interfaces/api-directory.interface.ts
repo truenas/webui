@@ -41,6 +41,7 @@ import { ContainerConfig, ContainerConfigUpdate } from 'app/interfaces/container
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
+import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import {
   AuthenticatorSchema,
@@ -518,7 +519,7 @@ export type ApiDirectory = {
   'pool.scrub.create': { params: any; response: any };
   'pool.dataset.compression_choices': { params: void; response: Choices };
   'pool.dataset.encryption_algorithm_choices': { params: void; response: Choices };
-  'pool.dataset.permission': { params: any; response: any };
+  'pool.dataset.permission': { params: DatasetPermissionsUpdate; response: number };
   'pool.dataset.export_key': { params: any; response: any };
   'pool.offline': { params: any; response: any };
   'pool.online': { params: any; response: any };

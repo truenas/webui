@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { filter } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-permissions';
+import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -17,7 +18,6 @@ import {
   DialogService, StorageService, UserService, WebSocketService,
 } from 'app/services';
 import { T } from 'app/translate-marker';
-import { filter } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
@@ -31,9 +31,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
   datasetPath: string;
 
   protected datasetId: string;
-  protected recursive: any;
   formGroup: FormGroup;
-  error: string;
   route_success: string[] = ['storage'];
   isEntity = true;
   private entityForm: EntityFormComponent;
@@ -41,23 +39,6 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
   protected groupField: FieldConfig;
 
   fieldSets: FieldSet[] = [
-    {
-      name: helptext.heading_dataset_path,
-      label: true,
-      config: [
-        {
-          type: 'input',
-          name: 'id',
-          placeholder: helptext.dataset_permissions_id_placeholder,
-          readonly: true,
-        },
-      ],
-      width: '100%',
-    },
-    {
-      name: 'divider',
-      divider: true,
-    },
     {
       name: helptext.heading_owner,
       label: true,
@@ -148,7 +129,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
 
   custActions = [
     {
-      id: 'use_acl',
+      id: 'cancel',
       name: helptext.acl_manager_button,
       function: () => {
         this.ws.call('filesystem.getacl', [this.datasetPath]).pipe(untilDestroyed(this)).subscribe((acl) => {
@@ -181,12 +162,10 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
   ) { }
 
   preInit(entityEdit: EntityFormComponent): void {
-    entityEdit.isNew = true; // remove me when we find a way to get the permissions
+    entityEdit.isNew = true;
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.datasetId = params['pk'];
       this.datasetPath = '/mnt/' + this.datasetId;
-      const idField = _.find(this.fieldSets.find((set) => set.name === helptext.heading_dataset_path).config, { name: 'id' });
-      idField.value = this.datasetPath;
     });
 
     this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
@@ -210,14 +189,12 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
-    entityEdit.formGroup.get('id').setValue(this.datasetPath);
     this.storageService.filesystemStat(this.datasetPath).pipe(untilDestroyed(this)).subscribe((stat) => {
       this.datasetMode = stat.mode.toString(8).substring(2, 5);
       entityEdit.formGroup.controls['mode'].setValue(this.datasetMode);
       entityEdit.formGroup.controls['user'].setValue(stat.user);
       entityEdit.formGroup.controls['group'].setValue(stat.group);
     });
-    entityEdit.formGroup.controls['id'].setValue(this.datasetPath);
 
     const recursive = entityEdit.formGroup.controls['recursive'];
     recursive.valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
@@ -281,7 +258,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     }
   }
 
-  customSubmit(data: any): void {
+  customSubmit(data: DatasetPermissionsUpdate): void {
     const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Saving Permissions') } });
     dialogRef.componentInstance.setDescription(T('Saving Permissions...'));
     dialogRef.componentInstance.setCall(this.updateCall, [this.datasetId, data]);
@@ -289,9 +266,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityForm.success = true;
       dialogRef.close();
-      this.router.navigate(new Array('/').concat(
-        this.route_success,
-      ));
+      this.router.navigate(['/', this.route_success]);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
       console.error(err);
