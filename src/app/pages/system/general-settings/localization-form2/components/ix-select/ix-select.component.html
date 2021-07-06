@@ -1,6 +1,5 @@
-<div fxLayout="row wrap" fxLayoutGap="24px" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{'100%'}} - 16px)">
   <div fxFlex="100%" fxFlex.gt-xs="calc({{'100%'}} - 16px)" [ngClass]="formInline ? 'form-inline' : 'form-line'">
-  <div id="{{name}}" class="form-element dynamic-field form-select {{inlineLabel ? 'inline-label' : 'not'}}" [ngClass]="fieldShow" [class.has-tooltip]="tooltip" [hidden]="isHidden">
+  <div id="{{name}}" class="form-element dynamic-field form-select {{inlineLabel ? 'inline-label' : 'not'}}"  [formGroup]="formGroup"  [ngClass]="fieldShow" [class.has-tooltip]="tooltip" [hidden]="isHidden">
 
     <div class="label-container" *ngIf="placeholder || tooltip">
       <ng-container *ngIf="inlineLabel">
@@ -26,6 +25,7 @@
       <mat-select
         #selectTrigger
         [(ngModel)]="value"
+        [formControlName]="formControlName"
         [formControl]="formControl"
         [multiple]="multiple"
         [required]="required"
@@ -106,5 +106,4 @@
       <mat-error *ngIf="warnings"><div [innerHTML]="warnings | translate"></div></mat-error>
     </div>
   </div>
-</div>
 </div>

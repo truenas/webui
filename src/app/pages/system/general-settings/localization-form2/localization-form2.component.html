@@ -1,11 +1,18 @@
-<mat-card class="form-card">
-  <div class="mat-content">
-    <form #f="ngForm" (ngSubmit)="onSubmit(f)" class="form-wrap">
-      <ix-form-field-set>
-        <ix-input name="myInput" id="myInput" [placeholder]="'My Name'" [required]="true" ngModel></ix-input>
-        <ix-select [options]="selectOptions" [placeholder]="'My Sibling'" name="mySelect" id="mySelect" ngModel></ix-select>
-      </ix-form-field-set>
-      <button mat-button type="submit">Submit</button>
-    </form>
-  </div>
-</mat-card>
+<ix-form (formSubmit)="onSubmit($event)" [formGroup]="formGroup">
+
+  <ix-form-field-set [label]="'Personal Info'">
+    <ix-input [formGroup]="formGroup" [formControlName]="'myInput'" name="myInput" id="myInput" [placeholder]="'My Name'" [required]="true" ngModel></ix-input>
+    <ix-select  [formGroup]="formGroup" [formControlName]="'mySelect'" [options]="selectOptions" [placeholder]="'My Sibling'" name="mySelect" id="mySelect" ngModel></ix-select>
+  </ix-form-field-set>
+
+  <ix-form-actions>
+
+    <button id="save_button" type="submit" mat-button color="primary"
+      [disabled]="!formGroup?.valid"
+      >{{ "Save" | translate}}</button>
+    <button id="goback_button" type="button" (click)="goBack()" mat-button color="default"
+      >{{"Cancel" | translate}}</button>
+      
+  </ix-form-actions>
+
+</ix-form>

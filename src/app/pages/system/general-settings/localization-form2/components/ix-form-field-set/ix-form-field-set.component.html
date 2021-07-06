@@ -1,0 +1,5 @@
+  <mat-divider *ngIf="divider"></mat-divider>
+  <h4 *ngIf="label" class="fieldset-label">{{label | translate}}</h4>
+  <div class="entity-form fieldset divider-{{divider}}">
+    <ng-content></ng-content>
+  </div>

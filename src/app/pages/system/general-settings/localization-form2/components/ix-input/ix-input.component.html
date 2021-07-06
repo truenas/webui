@@ -1,6 +1,5 @@
-<div fxLayout="row wrap" fxLayoutGap="24px" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{'100%'}} - 16px)">
   <div fxFlex="100%" fxFlex.gt-xs="calc({{'100%'}} - 16px)" [ngClass]="formInline ? 'form-inline' : 'form-line'">
-  <div id="{{name}}" class="dynamic-field form-input form-element" [ngClass]="fieldShow" [class.has-pwtoggle]="togglePw" [class.has-tooltip]="tooltip" *ngIf="!isHidden">
+  <div id="{{name}}" class="dynamic-field form-input form-element" [formGroup]="formGroup"  [ngClass]="fieldShow" [class.has-pwtoggle]="togglePw" [class.has-tooltip]="tooltip" *ngIf="!isHidden">
     <div *ngIf="placeholder" class="label-container">
       <label class="label input-text">
         {{placeholder | translate}}
@@ -28,6 +27,7 @@
         <span *ngIf="searchable" class="searchable"><mat-icon>search</mat-icon></span>
         <input [(ngModel)]="value" [ngStyle]="{'padding-left': searchable ? '2rem' : '', 'padding-right': shouldShowResetInput() ? '2rem': ''}" [type]="inputType ? inputType : 'text'"
           [formControl]="formControl"
+          [formControlName]="formControlName"
           [attr.value]="value"
           [readonly]="readonly"
           [required]="required"
@@ -68,4 +68,3 @@
   </div>
 
   </div>
-</div>

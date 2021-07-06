@@ -4,7 +4,9 @@ import {
   ChangeDetectorRef,
   Component, EventEmitter, forwardRef, Input, Output, ViewChild,
 } from '@angular/core';
-import { AsyncValidatorFn, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+  AsyncValidatorFn, FormControl, FormGroup, NG_VALUE_ACCESSOR,
+} from '@angular/forms';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelect, MatSelectChange } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -51,6 +53,8 @@ export class IXSelectComponent extends ValueAccessorParent implements AfterViewI
   @Input() zeroStateMessage?: string;
   @Input() formInline: boolean;
 
+  @Input() formControlName: string;
+  @Input() formGroup: FormGroup;
   @Output() selectionChange = new EventEmitter<MatSelectChange>();
 
   fieldShow: string;

@@ -1,7 +1,7 @@
 import {
   Component, EventEmitter, forwardRef, Input, Output, ViewChild,
 } from '@angular/core';
-import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -48,6 +48,8 @@ export class IXInputComponent extends ValueAccessorParent {
   @Input() warnings?: string;
   @Input() hideErrMsg?: boolean;
   @Input() formInline: boolean;
+  @Input() formControlName: string;
+  @Input() formGroup: FormGroup;
 
   formControl = new FormControl();
 

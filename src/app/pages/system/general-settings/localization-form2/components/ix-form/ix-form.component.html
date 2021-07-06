@@ -1,0 +1,10 @@
+<mat-card class="form-card">
+    <div class="mat-content">
+        <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm">
+          <div class="fieldset-container fieldset-display-default">
+            <ng-content></ng-content>
+          </div>
+            <!-- <div class="btn-group btn-group-justified"> -->
+        </form>
+    </div>
+</mat-card>
