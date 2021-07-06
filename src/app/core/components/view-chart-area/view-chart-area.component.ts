@@ -4,7 +4,7 @@ import {
 import { Chart, ChartData } from 'chart.js';
 
 @Component({
-  selector: 'viewchartarea',
+  selector: 'view-chart-area',
   templateUrl: './view-chart-area.component.html',
   styleUrls: ['./view-chart-area.component.scss'],
 })
