@@ -3,7 +3,7 @@ import {
   createComponentFactory, Spectator,
 } from '@ngneat/spectator/jest';
 import { ChartData } from 'chart.js';
-import { ViewChartAreaComponent } from './viewchartarea.component';
+import { ViewChartAreaComponent } from './view-chart-area.component';
 
 describe('ViewChartAreaComponent', () => {
   /*

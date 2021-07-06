@@ -5,8 +5,8 @@ import { Chart, ChartData } from 'chart.js';
 
 @Component({
   selector: 'viewchartarea',
-  templateUrl: './viewchartarea.component.html',
-  styleUrls: ['./viewchartarea.component.scss'],
+  templateUrl: './view-chart-area.component.html',
+  styleUrls: ['./view-chart-area.component.scss'],
 })
 export class ViewChartAreaComponent implements OnDestroy, OnChanges {
   @ViewChild('canvas', { static: true }) canvas: ElementRef;
