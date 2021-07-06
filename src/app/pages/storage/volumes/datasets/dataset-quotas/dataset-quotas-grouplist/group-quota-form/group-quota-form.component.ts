@@ -1,4 +1,6 @@
-import { Component, DoCheck, IterableDiffers } from '@angular/core';
+import {
+  Component, DoCheck, IterableDiffer, IterableDiffers,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -32,7 +34,7 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
   private entryErrs: any;
   private entryErrBool = false;
   save_button_enabled = false;
-  private differ: any;
+  private differ: IterableDiffer<unknown>;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
     {

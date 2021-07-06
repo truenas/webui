@@ -197,10 +197,6 @@ export class GroupListComponent implements EntityTableConfig, OnInit {
     return actions as EntityTableAction[];
   }
 
-  ableToDeleteAllMembers(group: any): boolean {
-    return group.users.length !== 0;
-  }
-
   toggleBuiltins(): void {
     const show = this.prefService.preferences.hide_builtin_groups
       ? helptext.builtins_dialog.show

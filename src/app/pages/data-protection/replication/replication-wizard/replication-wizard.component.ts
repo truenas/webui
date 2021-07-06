@@ -59,7 +59,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   saveSubmitText = T('START REPLICATION');
 
   protected entityWizard: EntityWizardComponent;
-  custActions: any[] = [{
+  custActions = [{
     id: 'advanced_add',
     name: T('Advanced Replication Creation'),
     function: () => {
@@ -770,11 +770,9 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     private ws: WebSocketService, private replicationService: ReplicationService,
     private datePipe: DatePipe, private entityFormService: EntityFormService,
     private modalService: ModalService) {
-    this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe(
-      (res: any[]) => {
-        this.namesInUse.push(...res.map((replication) => replication.name));
-      },
-    );
+    this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe((res) => {
+      this.namesInUse.push(...res.map((replication) => replication.name));
+    });
     this.modalService.getRow$.pipe(
       take(1),
       untilDestroyed(this),
@@ -1221,12 +1219,12 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             }
           }
           if (hasBadSnapshots) {
-            return this.dialogService.confirm(
-              helptext.clearSnapshotDialog_title,
-              helptext.clearSnapshotDialog_content,
-            ).toPromise().then(
-              (dialog_res: any) => {
-                payload['allow_from_scratch'] = dialog_res;
+            return this.dialogService.confirm({
+              title: helptext.clearSnapshotDialog_title,
+              message: helptext.clearSnapshotDialog_content,
+            }).toPromise().then(
+              (dialogResult) => {
+                payload['allow_from_scratch'] = dialogResult;
                 return this.ws.call((this.createCalls as any)[item], [payload]).toPromise();
               },
             );
@@ -1236,7 +1234,6 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         () =>
         // show error ?
           this.ws.call((this.createCalls as any)[item], [payload]).toPromise(),
-
       );
     }
   }

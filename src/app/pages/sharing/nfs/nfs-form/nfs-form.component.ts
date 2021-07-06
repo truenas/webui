@@ -13,6 +13,7 @@ import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { ipv4or6cidrValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import {
   DialogService, NetworkService, WebSocketService, UserService, ModalService,
@@ -266,10 +267,10 @@ export class NFSFormComponent implements FormConfiguration {
     },
   ];
 
-  private maproot_user: any;
-  private maproot_group: any;
-  private mapall_user: any;
-  private mapall_group: any;
+  private maproot_user: FieldConfig;
+  private maproot_group: FieldConfig;
+  private mapall_user: FieldConfig;
+  private mapall_group: FieldConfig;
 
   constructor(
     protected userService: UserService,

@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import {
+  AbstractControl, FormArray, FormControl, FormGroup,
+} from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
@@ -54,8 +56,11 @@ export class FieldRelationService {
     return this.isFormControlToBe(relGroup, formGroup, false);
   }
 
-  isFormControlToBe(relGroup: RelationGroup,
-    formGroup: FormGroup, isDisable: boolean): boolean {
+  isFormControlToBe(
+    relGroup: RelationGroup,
+    formGroup: FormGroup,
+    isDisable: boolean,
+  ): boolean {
     return relGroup.when.reduce(
       (toBeDisabled: boolean, rel: FieldRelation, index: number) => {
         const control = formGroup.get(rel.name);
@@ -102,8 +107,8 @@ export class FieldRelationService {
     );
   }
 
-  checkValueConditionIsTrue(conditionValue: any, controlValue: any, operator: string): boolean {
-    let result = false;
+  checkValueConditionIsTrue(conditionValue: unknown, controlValue: unknown, operator: string): boolean {
+    let result: boolean;
 
     switch (operator) {
       case '=':
@@ -158,7 +163,7 @@ export class FieldRelationService {
     return result;
   }
 
-  checkStatusConditionIsTrue(condition: any, control: any): boolean {
+  checkStatusConditionIsTrue(condition: FieldRelation, control: AbstractControl): boolean {
     return control && condition.status === control.status;
   }
 
@@ -212,26 +217,26 @@ export class FieldRelationService {
     }
   }
 
-  relationUpdate(config: FieldConfig, activations: any, formGroup: FormGroup): void {
+  relationUpdate(config: FieldConfig, activations: RelationGroup, formGroup: FormGroup): void {
     const tobeDisabled = this.isFormControlToBeDisabled(activations, formGroup);
     const tobeHide = this.isFormControlToBeHide(activations, formGroup);
     this.setDisabled(config, formGroup, tobeDisabled, tobeHide);
   }
 
-  isDeepEqual(data1: any, data2: any): boolean {
+  isDeepEqual(data1: unknown, data2: unknown): boolean {
     if (this.getDataType(data1) != this.getDataType(data2)) {
       return false;
     }
 
     switch (this.getDataType(data1)) {
       case 'array':
-        if (data1.length !== data2.length) {
+        if ((data1 as unknown[]).length !== (data2 as unknown[]).length) {
           return false;
         }
 
-        for (let i = 0; i < data2.length; i++) {
-          const val1 = data1[i];
-          const val2 = data2[i];
+        for (let i = 0; i < (data2 as unknown[]).length; i++) {
+          const val1 = (data1 as unknown[])[i];
+          const val2 = (data2 as unknown[])[i];
           if (!this.isDeepEqual(val1, val2)) {
             return false;
           }
@@ -246,8 +251,8 @@ export class FieldRelationService {
         }
 
         for (const key of keys1) {
-          const val1 = data1[key];
-          const val2 = data2[key];
+          const val1 = (data1 as Record<string, unknown>)[key];
+          const val2 = (data2 as Record<string, unknown>)[key];
           if (!this.isDeepEqual(val1, val2)) {
             return false;
           }
@@ -272,11 +277,11 @@ export class FieldRelationService {
     return 'basic';
   }
 
-  isRelationEqual(x: any, y: any): boolean {
+  isRelationEqual(x: unknown, y: unknown): boolean {
     return this.isDeepEqual(x, y);
   }
 
-  isRelationGreaterThan(x: any, y: any): boolean {
+  isRelationGreaterThan(x: unknown, y: unknown): boolean {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
@@ -318,7 +323,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationGreaterThanOrEqual(x: any, y: any): boolean {
+  isRelationGreaterThanOrEqual(x: unknown, y: unknown): boolean {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
@@ -360,7 +365,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationLessThan(x: any, y: any): boolean {
+  isRelationLessThan(x: unknown, y: unknown): boolean {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
@@ -402,7 +407,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationLessThanOrEqual(x: any, y: any): boolean {
+  isRelationLessThanOrEqual(x: unknown, y: unknown): boolean {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
@@ -444,7 +449,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationRegMatch(x: any, y: any): boolean {
+  isRelationRegMatch(x: unknown, y: unknown): boolean {
     let result = false;
     if (typeof x == 'string' && typeof y == 'string') {
       result = !!x.match(y);
@@ -453,7 +458,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationStartsWith(x: any, y: any): boolean {
+  isRelationStartsWith(x: unknown, y: unknown): boolean {
     let result = false;
     if (typeof x == 'string' && typeof y == 'string') {
       result = x.startsWith(y);
@@ -462,7 +467,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationEndsWith(x: any, y: any): boolean {
+  isRelationEndsWith(x: unknown, y: unknown): boolean {
     let result = false;
     if (typeof x == 'string' && typeof y == 'string') {
       result = x.endsWith(y);
@@ -471,7 +476,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationIn(x: any, y: any): boolean {
+  isRelationIn(x: unknown, y: unknown): boolean {
     let result = false;
 
     if (y !== null) {
@@ -484,7 +489,7 @@ export class FieldRelationService {
               break;
             case 'basic':
             default:
-              result = y.includes(x);
+              result = (y as unknown[]).includes(x);
               break;
           }
           break;
@@ -496,7 +501,7 @@ export class FieldRelationService {
               break;
             case 'basic':
             default:
-              result = Object.keys(y).includes(x);
+              result = Object.keys(y).includes(x as string);
               break;
           }
           break;
