@@ -1,4 +1,4 @@
-export enum EncryptionKeyFormat {
+export enum ReplicationEncryptionKeyFormat {
   Hex = 'HEX',
   Passphrase = 'PASSPHRASE',
 }

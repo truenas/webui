@@ -9,6 +9,7 @@ import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout
 import { CoreService } from 'app/core/services/core.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { CoreEvent } from 'app/interfaces/events';
+import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -39,7 +40,7 @@ export class GeneralSettingsComponent implements OnInit {
   localeData: DataCard;
   configData: any;
   displayedColumns: any;
-  dataSource: any;
+  dataSource: NtpServer[];
   formEvent$: Subject<CoreEvent>;
 
   // Components included in this dashboard
