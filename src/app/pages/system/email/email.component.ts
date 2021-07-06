@@ -6,9 +6,11 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { BehaviorSubject } from 'rxjs';
+import { MailSecurity } from 'app/enums/mail-security.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptext_system_email } from 'app/helptext/system/email';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { MailConfig } from 'app/interfaces/mail-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -145,9 +147,9 @@ export class EmailComponent implements FormConfiguration {
           placeholder: helptext_system_email.security.placeholder,
           tooltip: helptext_system_email.security.tooltip,
           options: [
-            { label: T('Plain (No Encryption)'), value: 'PLAIN' },
-            { label: T('SSL (Implicit TLS)'), value: 'SSL' },
-            { label: T('TLS (STARTTLS)'), value: 'TLS' },
+            { label: T('Plain (No Encryption)'), value: MailSecurity.Plain },
+            { label: T('SSL (Implicit TLS)'), value: MailSecurity.Ssl },
+            { label: T('TLS (STARTTLS)'), value: MailSecurity.Tls },
           ],
         },
         {
@@ -240,7 +242,7 @@ export class EmailComponent implements FormConfiguration {
     protected loader: AppLoaderService,
   ) {}
 
-  resourceTransformIncomingRestData(data: any): void {
+  resourceTransformIncomingRestData(data: MailConfig): any {
     if (_.isEmpty(data.oauth)) {
       this.sendMailMethod.setValue(true);
     } else {

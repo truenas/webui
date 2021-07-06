@@ -417,7 +417,7 @@ export class AdvancedSettingsComponent implements OnInit {
         .Info(helptext_system_advanced.first_time.title, helptext_system_advanced.first_time.message)
         .pipe(untilDestroyed(this)).subscribe(() => {
           if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
-            this.sysGeneralService.sendConfigData(this.configData);
+            this.sysGeneralService.sendConfigData(this.configData as any);
           }
 
           this.modalService.open('slide-in-form', addComponent, id);
@@ -425,7 +425,7 @@ export class AdvancedSettingsComponent implements OnInit {
         });
     } else {
       if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
-        this.sysGeneralService.sendConfigData(this.configData);
+        this.sysGeneralService.sendConfigData(this.configData as any);
       }
       this.modalService.open('slide-in-form', addComponent, id);
     }

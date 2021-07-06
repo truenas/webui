@@ -155,7 +155,7 @@ export class DialogService {
     dialogRef.componentInstance.optionPlaceHolder = optionPlaceHolder;
     dialogRef.componentInstance.method = method;
 
-    dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: any) => {
+    dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection) => {
       if (selection === 'force') {
         data = { [selection]: true };
       } else {

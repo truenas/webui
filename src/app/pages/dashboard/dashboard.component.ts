@@ -4,7 +4,7 @@ import {
 import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { tween, styler } from 'popmotion';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { DashConfigItem } from 'app/core/components/widgets/widgetcontroller/widgetcontroller.component';
 import { CoreService } from 'app/core/services/core.service';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
@@ -66,7 +66,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   noteFlex = '23';
 
   statsDataEvent$: Subject<CoreEvent>;
-  private statsEvents: any;
+  private statsEvents: Subscription;
   tcStats: any;
 
   // For empty state
@@ -341,7 +341,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   stopListeners(): void {
     // unsubscribe from middleware
     if (this.statsEvents) {
-      this.statsEvents.complete();
+      this.statsEvents.unsubscribe();
     }
 
     // unsubsribe from global actions
@@ -466,9 +466,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.pools.forEach((pool) => {
       conf.push({
-        name: 'Pool', identifier: 'name,' + pool.name, rendered: true, id: conf.length.toString(),
+        name: 'Pool', identifier: 'name,' + pool.name, rendered: false, id: conf.length.toString(),
       });
     });
+
+    conf.push({ name: 'Storage', rendered: true, id: conf.length.toString() });
 
     this.nics.forEach((nic) => {
       conf.push({
@@ -542,7 +544,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   generateFormComponent(): void {
-    const widgetTypes: any[] = [];
+    const widgetTypes: string[] = [];
     this.dashState.forEach((item) => {
       if (widgetTypes.indexOf(item.name) == -1) {
         widgetTypes.push(item.name);

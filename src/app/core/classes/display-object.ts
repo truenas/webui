@@ -44,7 +44,7 @@ export class DisplayObject {
   private _moveable: boolean;
   private _resizeable: boolean;
   target: any;
-  rawTarget: any;
+  rawTarget: HTMLElement;
   private pointerTracker: ColdSubscription;
   private focus: ColdSubscription;
   private moveHandle: Element;

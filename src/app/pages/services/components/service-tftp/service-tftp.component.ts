@@ -4,6 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/services/components/service-tftp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { TftpConfig } from 'app/interfaces/tftp-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -108,7 +109,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
     protected userService: UserService,
   ) {}
 
-  resourceTransformIncomingRestData(data: any): { umask: string } {
+  resourceTransformIncomingRestData(data: TftpConfig): { umask: string } {
     return invertUMask(data);
   }
 

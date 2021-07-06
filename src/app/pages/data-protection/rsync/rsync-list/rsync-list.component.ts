@@ -60,7 +60,7 @@ export class RsyncListComponent implements EntityTableConfig {
     { name: T('Enabled'), prop: 'enabled', hidden: true },
   ];
   rowIdentifier = 'path';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

@@ -16,7 +16,7 @@ import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces
 import { LoginParams } from 'app/interfaces/auth.interface';
 import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
 import { Bootenv, SetBootenvAttributeParams } from 'app/interfaces/bootenv.interface';
-import { Catalog } from 'app/interfaces/catalog.interface';
+import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import {
   CertificateAuthority,
   CertificateAuthorityCreate,
@@ -27,6 +27,7 @@ import {
   CertificateProfiles,
   ExtendedKeyUsageChoices,
 } from 'app/interfaces/certificate.interface';
+import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
 import {
   ChartRelease,
   ChartReleaseCreate,
@@ -41,7 +42,13 @@ import { ContainerConfig, ContainerConfigUpdate } from 'app/interfaces/container
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
+import {
+  DatasetEncryptedRootKeys,
+  DatasetEncryptionSummary,
+} from 'app/interfaces/dataset-encryption-summary.interface';
+import { DatasetHasVmsQueryParams } from 'app/interfaces/dataset-has-vms-query-params.interface';
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
+import { DatasetQuota, DatasetQuotaQueryParams } from 'app/interfaces/dataset-quota.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import {
   AuthenticatorSchema,
@@ -53,7 +60,9 @@ import { FailoverUpdate } from 'app/interfaces/failover.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { FtpConfig } from 'app/interfaces/ftp-config.interface';
 import { Group } from 'app/interfaces/group.interface';
+import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
+import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface';
 import {
   IscsiAuthAccess, IscsiExtent,
   IscsiInitiatorGroup,
@@ -67,18 +76,25 @@ import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credenti
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { LldpConfig, LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
+import { MailConfig } from 'app/interfaces/mail-config.interface';
 import { NetworkActivityChoice, NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { OpenvpnClientConfig } from 'app/interfaces/openvpn-client-config.interface';
+import { OpenvpnServerConfig } from 'app/interfaces/openvpn-server-config.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
+import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
+import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
+import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-query.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { ReportingConfig } from 'app/interfaces/reporting.interface';
+import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { RsyncConfig, RsyncConfigUpdate } from 'app/interfaces/rsync-config.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { S3Config, S3ConfigUpdate } from 'app/interfaces/s3-config.interface';
@@ -87,15 +103,19 @@ import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import {
   SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTest,
 } from 'app/interfaces/smart-test.interface';
+import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
-import { Disk, DiskQueryOptions, DiskUpdate } from 'app/interfaces/storage.interface';
+import {
+  Disk, DiskQueryOptions, DiskUpdate, UnusedDisk,
+} from 'app/interfaces/storage.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemUpdate, SystemUpdateChange, SystemUpdateTrains } from 'app/interfaces/system-update.interface';
+import { TftpConfig } from 'app/interfaces/tftp-config.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig } from 'app/interfaces/ups-config.interface';
@@ -154,7 +174,7 @@ export type ApiDirectory = {
     params: LoginParams;
     response: boolean;
   };
-  'auth.token': { params: any; response: any };
+  'auth.token': { params: [/* token */ string]; response: boolean };
   'auth.logout': { params: void; response: void };
   'auth.twofactor.update': { params: any; response: any };
   'auth.twofactor.provisioning_uri': { params: void; response: string };
@@ -179,7 +199,7 @@ export type ApiDirectory = {
   'bootenv.query': { params: QueryParams<Bootenv>; response: Bootenv[] };
 
   // Catalog
-  'catalog.query': { params: QueryParams<any, { extra: { item_details: boolean; cache: boolean; retrieve_versions: boolean } }>; response: Catalog[] };
+  'catalog.query': { params: CatalogQueryParams; response: Catalog[] };
   'catalog.update': { params: any; response: any };
   'catalog.create': { params: any; response: any };
   'catalog.delete': { params: [/* name */ string]; response: boolean };
@@ -207,16 +227,16 @@ export type ApiDirectory = {
   'certificateauthority.ca_sign_csr': { params: any; response: any };
 
   // Chart
-  'chart.release.pod_logs_choices': { params: any; response: any };
+  'chart.release.pod_logs_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.query': { params: ChartReleaseQueryParams; response: ChartRelease[] };
   'chart.release.create': { params: ChartReleaseCreate; response: ChartReleaseCreateResponse };
   'chart.release.update': { params: any; response: any };
   'chart.release.upgrade': { params: any; response: any };
   'chart.release.delete': { params: any; response: any };
   'chart.release.scale': { params: any; response: any };
-  'chart.release.pod_console_choices': { params: any; response: any };
+  'chart.release.pod_console_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.nic_choices': { params: void; response: Choices };
-  'chart.release.events': { params: any; response: any };
+  'chart.release.events': { params: [/* name */ string]; response: ChartReleaseEvent[] };
   'chart.release.rollback': { params: any; response: any };
   'chart.release.upgrade_summary': { params: any; response: any };
 
@@ -276,7 +296,7 @@ export type ApiDirectory = {
   // Disk
   'disk.query': { params: QueryParams<Disk, DiskQueryOptions>; response: Disk[] };
   'disk.update': { params: [string, DiskUpdate]; response: Disk }; // TODO: Response is a job
-  'disk.get_unused': { params: any; response: any };
+  'disk.get_unused': { params: [/* joinPartitions */ boolean?]; response: UnusedDisk[] };
   'disk.get_encrypted': { params: any; response: any };
   'disk.temperatures': { params: any; response: any };
   'disk.wipe': { params: any; response: any };
@@ -349,12 +369,12 @@ export type ApiDirectory = {
   'multipath.query': { params: any; response: any };
 
   // Mail
-  'mail.config': { params: any; response: any };
+  'mail.config': { params: void; response: MailConfig };
   'mail.update': { params: any; response: any };
   'mail.send': { params: any; response: any };
 
   // idmap
-  'idmap.backend_options': { params: any; response: any };
+  'idmap.backend_options': { params: void; response: IdmapBackendOptions };
   'idmap.query': { params: any; response: any };
   'idmap.create': { params: any; response: any };
   'idmap.update': { params: any; response: any };
@@ -390,7 +410,7 @@ export type ApiDirectory = {
   'iscsi.auth.query': { params: any; response: IscsiAuthAccess[] };
   'iscsi.auth.delete': { params: any; response: any };
   'iscsi.global.sessions': { params: any; response: any };
-  'iscsi.global.config': { params: any; response: any };
+  'iscsi.global.config': { params: void; response: IscsiGlobalConfig };
   'iscsi.global.update': { params: any; response: any };
   'iscsi.targetextent.create': { params: any; response: any };
   'iscsi.targetextent.query': { params: any; response: IscsiTargetExtent[] };
@@ -483,7 +503,7 @@ export type ApiDirectory = {
   'openvpn.server.authentication_algorithm_choices': { params: any; response: any };
   'openvpn.server.client_configuration_generation': { params: any; response: any };
   'openvpn.server.update': { params: any; response: any };
-  'openvpn.server.config': { params: any; response: any };
+  'openvpn.server.config': { params: void; response: OpenvpnServerConfig };
 
   // Pool
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
@@ -492,17 +512,17 @@ export type ApiDirectory = {
   'pool.dataset.path_in_locked_datasets': { params: any; response: any };
   'pool.filesystem_choices': { params: any; response: any };
   'pool.dataset.set_quota': { params: any; response: any };
-  'pool.dataset.recommended_zvol_blocksize': { params: any; response: any };
+  'pool.dataset.recommended_zvol_blocksize': { params: [/* name */ string]; response: string };
   'pool.dataset.inherit_parent_encryption_properties': { params: any; response: any };
   'pool.unlock_services_restart_choices': { params: any; response: any };
-  'pool.dataset.get_quota': { params: any; response: any };
+  'pool.dataset.get_quota': { params: DatasetQuotaQueryParams; response: DatasetQuota[] };
   'pool.dataset.change_key': { params: any; response: any };
   'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
   'pool.import_disk_autodetect_fs_type': { params: any; response: any };
   'pool.download_encryption_key': { params: any; response: any };
   'pool.snapshottask.create': { params: any; response: any };
   'pool.snapshottask.update': { params: any; response: any };
-  'pool.import_disk_msdosfs_locales': { params: any; response: any };
+  'pool.import_disk_msdosfs_locales': { params: void; response: string[] };
   'pool.import_disk': { params: any; response: any };
   'pool.import_find': { params: any; response: any };
   'pool.import_pool': { params: any; response: any };
@@ -512,7 +532,7 @@ export type ApiDirectory = {
     params: QueryParams<Dataset, ExtraDatasetQueryOptions>;
     response: Dataset[];
   };
-  'pool.get_disks': { params: any; response: any };
+  'pool.get_disks': { params: [/* id */]; response: string[] };
   'pool.scrub.delete': { params: any; response: any };
   'pool.scrub.query': { params: QueryParams<PoolScrub>; response: PoolScrub[] };
   'pool.scrub.update': { params: any; response: any };
@@ -528,25 +548,25 @@ export type ApiDirectory = {
   'pool.export': { params: any; response: any };
   'pool.passphrase': { params: any; response: any };
   'pool.rekey': { params: any; response: any };
-  'pool.attachments': { params: any; response: any };
+  'pool.attachments': { params: [/* id */ number]; response: PoolAttachment[] };
   'pool.recoverykey_rm': { params: any; response: any };
-  'pool.processes': { params: any; response: any };
+  'pool.processes': { params: [/* id */ number]; response: PoolProcess[] };
   'pool.scrub': { params: any; response: any };
-  'pool.dataset.query_encrypted_roots_keys': { params: any; response: any };
+  'pool.dataset.query_encrypted_roots_keys': { params: void; response: DatasetEncryptedRootKeys };
   'pool.upgrade': { params: any; response: any };
   'pool.dataset.delete': { params: any; response: any };
   'pool.dataset.promote': { params: any; response: any };
   'pool.dataset.update': { params: any; response: any };
   'pool.dataset.create': { params: any; response: any };
   'pool.is_upgraded': { params: [/* pool id */ number]; response: boolean };
-  'pool.dataset.encryption_summary': { params: any; response: any };
+  'pool.dataset.encryption_summary': { params: [/* path */ string]; response: DatasetEncryptionSummary };
   'pool.dataset.unlock_services_restart_choices': { params: [/* id */ string]; response: Choices };
   'pool.dataset.lock': { params: any; response: any };
   'pool.dataset.unlock': { params: any; response: any };
-  'pool.resilver.config': { params: any; response: any };
+  'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: any; response: any };
   'pool.lock': { params: any; response: any };
-  'pool.unlock': { params: any; response: any };
+  'pool.unlock': { params: PoolUnlockQuery; response: PoolUnlockResult };
 
   // Replication
   'replication.list_datasets': { params: any; response: any };
@@ -593,7 +613,7 @@ export type ApiDirectory = {
   'smb.unixcharset_choices': { params: void; response: Choices };
   'smb.get_smb_ha_mode': { params: any; response: any };
   'smb.update': { params: any; response: any };
-  'smb.config': { params: any; response: any };
+  'smb.config': { params: void; response: SmbConfig };
   'smb.sharesec.query': { params: any; response: any };
   'smb.sharesec.update': { params: any; response: any };
 
@@ -612,7 +632,7 @@ export type ApiDirectory = {
   'system.advanced.config': { params: void; response: AdvancedConfig };
   'system.general.update': { params: any; response: any };
   'system.ntpserver.delete': { params: any; response: any };
-  'system.ntpserver.query': { params: any; response: any };
+  'system.ntpserver.query': { params: QueryParams<NtpServer>; response: NtpServer[] };
   'system.ntpserver.create': { params: any; response: any };
   'system.ntpserver.update': { params: any; response: any };
   'system.general.config': { params: void; response: SystemGeneralConfig };
@@ -622,7 +642,7 @@ export type ApiDirectory = {
   'system.general.ui_address_choices': { params: void; response: Choices };
   'system.license_update': { params: any; response: any };
   'system.general.ui_v6address_choices': { params: void; response: Choices };
-  'system.general.ui_certificate_choices': { params: any; response: any };
+  'system.general.ui_certificate_choices': { params: void; response: Record<number, string> };
   'system.general.ui_httpsprotocols_choices': { params: void; response: Choices };
   'system.build_time': { params: void; response: ApiTimestamp };
   'system.product_type': { params: void; response: ProductType };
@@ -659,7 +679,7 @@ export type ApiDirectory = {
     params: [ServiceName];
     response: boolean; // False indicates that service has been stopped.
   };
-  'service.restart': { params: any; response: any };
+  'service.restart': { params: [ServiceName]; response: void };
 
   // Sensor
   'sensor.query': { params: any; response: any };
@@ -692,7 +712,7 @@ export type ApiDirectory = {
 
   // TFTP
   'tftp.update': { params: any; response: any };
-  'tftp.config': { params: any; response: any };
+  'tftp.config': { params: void; response: TftpConfig };
 
   // FTP
   'ftp.update': { params: any; response: any };
@@ -738,7 +758,7 @@ export type ApiDirectory = {
   'vm.get_vmemory_in_use': { params: any; response: any };
 
   // Vmware
-  'vmware.dataset_has_vms': { params: any; response: any };
+  'vmware.dataset_has_vms': { params: DatasetHasVmsQueryParams; response: boolean };
   'vmware.query': { params: any; response: any };
   'vmware.create': { params: any; response: any };
   'vmware.update': { params: any; response: any };

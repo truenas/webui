@@ -525,7 +525,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       }
       // if type == 'Container Provider' and rawfile boot device exists, hide rootpwd and boot fields.
       if (_.find(vm[0].devices, { dtype: VmDeviceType.Raw }) && (vm[0] as any).type === 'Container Provider') {
-        vm[0].devices.forEach((element: any) => {
+        vm[0].devices.forEach((element) => {
           if (element.dtype === VmDeviceType.Raw) {
             if (element.attributes.boot) {
               this.rootpwd = _.find(this.rawfileFieldConfig, { name: 'rootpwd' });

@@ -5,6 +5,9 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/account/user-list';
+import { Group } from 'app/interfaces/group.interface';
+import { User } from 'app/interfaces/user.interface';
+import { UserListRow } from 'app/pages/account/users/user-list/user-list-row.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
@@ -25,7 +28,7 @@ import { UserFormComponent } from '../user-form/user-form.component';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [UserService],
 })
-export class UserListComponent implements EntityTableConfig, OnInit {
+export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit {
   title = 'Users';
   route_add: string[] = ['account', 'users', 'add'];
   protected route_add_tooltip = 'Add User';
@@ -33,8 +36,8 @@ export class UserListComponent implements EntityTableConfig, OnInit {
 
   protected entityList: EntityTableComponent;
   protected loaderOpen = false;
-  protected usr_lst: any[] = [];
-  protected grp_lst: any[] = [];
+  protected usr_lst: [User[]?] = [];
+  protected grp_lst: [Group[]?] = [];
   hasDetails = true;
   queryCall: 'user.query' = 'user.query';
   wsDelete: 'user.delete' = 'user.delete';
@@ -80,7 +83,7 @@ export class UserListComponent implements EntityTableConfig, OnInit {
     { name: 'Samba Authentication', prop: 'smb', hidden: true },
   ];
   rowIdentifier = 'username';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -89,7 +92,7 @@ export class UserListComponent implements EntityTableConfig, OnInit {
     },
   };
 
-  isActionVisible(actionId: string, row: any): boolean {
+  isActionVisible(actionId: string, row: UserListRow): boolean {
     if (actionId === 'delete' && row.builtin === true) {
       return false;
     }
@@ -129,14 +132,14 @@ export class UserListComponent implements EntityTableConfig, OnInit {
     });
   }
 
-  getActions(row: any): EntityTableAction[] {
-    const actions = [];
+  getActions(row: UserListRow): EntityTableAction<UserListRow>[] {
+    const actions: EntityTableAction<UserListRow>[] = [];
     actions.push({
       id: row.username,
       icon: 'edit',
       label: helptext.user_list_actions_edit_label,
       name: helptext.user_list_actions_edit_id,
-      onClick: (users_edit: any) => {
+      onClick: (users_edit) => {
         this.modalService.open('slide-in-form', this.addComponent, users_edit.id);
       },
     });
@@ -146,7 +149,7 @@ export class UserListComponent implements EntityTableConfig, OnInit {
         icon: 'delete',
         name: 'delete',
         label: helptext.user_list_actions_delete_label,
-        onClick: (users_edit: any) => {
+        onClick: (users_edit) => {
           const self = this;
           const conf: DialogFormConfiguration = {
             title: helptext.deleteDialog.title,
@@ -183,10 +186,10 @@ export class UserListComponent implements EntityTableConfig, OnInit {
         },
       });
     }
-    return actions as EntityTableAction[];
+    return actions;
   }
 
-  ableToDeleteGroup(id: any): boolean {
+  ableToDeleteGroup(id: number): boolean {
     const user = _.find(this.usr_lst[0], { id });
     const group_users = _.find(this.grp_lst[0], { id: user.group.id })['users'];
     // Show checkbox if deleting the last member of a group
@@ -196,19 +199,18 @@ export class UserListComponent implements EntityTableConfig, OnInit {
     return false;
   }
 
-  resourceTransformIncomingRestData(d: any): any {
-    let data = Object.assign([], d);
+  resourceTransformIncomingRestData(rawUsers: User[]): UserListRow[] {
+    let users = [...rawUsers] as UserListRow[];
     this.usr_lst = [];
     this.grp_lst = [];
-    this.usr_lst.push(data);
+    this.usr_lst.push(users);
     this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((res) => {
       this.grp_lst.push(res);
-      data.forEach((user: any) => {
+      users.forEach((user) => {
         const group = _.find(res, { gid: user.group.bsdgrp_gid });
-        // user.group.bsdgrp_gid = group['gid'];
         user.gid = group['gid'];
       });
-      const rows = data;
+      const rows = users;
       for (let i = 0; i < rows.length; i++) {
         rows[i].details = [];
         rows[i].details.push({ label: T('GID'), value: rows[i].group['bsdgrp_gid'] },
@@ -218,15 +220,15 @@ export class UserListComponent implements EntityTableConfig, OnInit {
       }
     });
     if (this.prefService.preferences.hide_builtin_users) {
-      const newData: any[] = [];
-      data.forEach((item: any) => {
-        if (!item.builtin || item.username === 'root') {
-          newData.push(item);
+      const newData: UserListRow[] = [];
+      users.forEach((user) => {
+        if (!user.builtin || user.username === 'root') {
+          newData.push(user);
         }
       });
-      return data = newData;
+      return users = newData;
     }
-    return data;
+    return users;
   }
 
   toggleBuiltins(): void {
@@ -257,8 +259,13 @@ export class UserListComponent implements EntityTableConfig, OnInit {
   showOneTimeBuiltinMsg(): void {
     this.prefService.preferences.showUserListMessage = false;
     this.prefService.savePreferences();
-    this.dialogService.confirm(helptext.builtinMessageDialog.title, helptext.builtinMessageDialog.message,
-      true, helptext.builtinMessageDialog.button, false, '', '', '', '', true);
+    this.dialogService.confirm({
+      title: helptext.builtinMessageDialog.title,
+      message: helptext.builtinMessageDialog.message,
+      hideCheckBox: true,
+      hideCancel: true,
+      buttonMsg: helptext.builtinMessageDialog.button,
+    });
   }
 
   doAdd(): void {

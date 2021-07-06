@@ -175,7 +175,7 @@ export class InteractionManagerService {
   }
 
   // Collision Detection Goes Here...
-  private detectCollision(a: any, b: any): boolean {
+  private detectCollision(a: any, b: DisplayObject): boolean {
     return !(
       ((a.y + a.height) < (b.y))
           || (a.y > (b.y + b.height))

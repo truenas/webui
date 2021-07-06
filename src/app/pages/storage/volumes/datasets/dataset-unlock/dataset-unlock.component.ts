@@ -7,8 +7,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
+import { DatasetEncryptionSummary } from 'app/interfaces/dataset-encryption-summary.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
   FieldConfig,
@@ -223,38 +226,40 @@ export class DatasetUnlockComponent implements FormConfiguration {
     dialogRef.componentInstance.setDescription(helptext.fetching_encryption_summary_message + this.pk);
     dialogRef.componentInstance.setCall(this.queryCall, [this.pk]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
-      if (res) {
-        dialogRef.close();
-        if (res.result && res.result.length > 0) {
-          for (let i = 0; i < res.result.length; i++) {
-            if (this.datasets.controls[i] === undefined) {
-              const templateListField = _.cloneDeep(this.datasets_fc.templateListField);
-              const newfg = this.entityFormService.createFormGroup(templateListField);
-              newfg.setParent(this.datasets);
-              this.datasets.controls.push(newfg);
-              this.datasets_fc.listFields.push(templateListField);
-            }
-            const controls = listFields[i];
-            const passphrase_fc = _.find(controls, { name: 'passphrase' });
-            const name_text_fc = _.find(controls, { name: 'name_text' });
-            const result = res.result[i];
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<DatasetEncryptionSummary[]>) => {
+      if (!res) {
+        return;
+      }
 
-            this.datasets.controls[i].controls['name'].setValue(result['name']);
-            name_text_fc.paraText = helptext.dataset_name_paratext + result['name'];
-            const is_passphrase = (result.key_format === 'PASSPHRASE');
-            if (!is_passphrase) { // hide key datasets by default
-              name_text_fc.isHidden = true;
-              // only show key_file checkbox and upload if keys encrypted datasets exist
-              if (this.key_file_fg.value === false) {
-                this.key_file_fg.setValue(true);
-                this.key_file_fc.isHidden = false;
-                this.key_file_fc.width = '50%';
-              }
-            }
-            this.datasets.controls[i].controls['is_passphrase'].setValue(is_passphrase);
-            this.setDisabled(passphrase_fc, this.datasets.controls[i].controls['passphrase'], !is_passphrase, !is_passphrase);
+      dialogRef.close();
+      if (res.result && res.result.length > 0) {
+        for (let i = 0; i < res.result.length; i++) {
+          if (this.datasets.controls[i] === undefined) {
+            const templateListField = _.cloneDeep(this.datasets_fc.templateListField);
+            const newfg = this.entityFormService.createFormGroup(templateListField);
+            newfg.setParent(this.datasets);
+            this.datasets.controls.push(newfg);
+            this.datasets_fc.listFields.push(templateListField);
           }
+          const controls = listFields[i];
+          const passphrase_fc = _.find(controls, { name: 'passphrase' });
+          const name_text_fc = _.find(controls, { name: 'name_text' });
+          const result = res.result[i];
+
+          this.datasets.controls[i].controls['name'].setValue(result['name']);
+          name_text_fc.paraText = helptext.dataset_name_paratext + result['name'];
+          const is_passphrase = result.key_format === DatasetEncryptionType.Passphrase;
+          if (!is_passphrase) { // hide key datasets by default
+            name_text_fc.isHidden = true;
+            // only show key_file checkbox and upload if keys encrypted datasets exist
+            if (this.key_file_fg.value === false) {
+              this.key_file_fg.setValue(true);
+              this.key_file_fc.isHidden = false;
+              this.key_file_fc.width = '50%';
+            }
+          }
+          this.datasets.controls[i].controls['is_passphrase'].setValue(is_passphrase);
+          this.setDisabled(passphrase_fc, this.datasets.controls[i].controls['passphrase'], !is_passphrase, !is_passphrase);
         }
       }
     });
@@ -290,7 +295,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
     });
     this.unlock_children_fg.valueChanges
       .pipe(untilDestroyed(this))
-      .subscribe((unlock_children: any) => {
+      .subscribe((unlock_children: boolean) => {
         for (let i = 0; i < this.datasets.controls.length; i++) {
           const controls = listFields[i];
           const dataset_controls = this.datasets.controls[i].controls;
