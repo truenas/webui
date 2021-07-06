@@ -14,7 +14,7 @@ export class VDevLabelsSVG {
   *
   */
 
-  events: Subject<CoreEvent>;
+  events$: Subject<CoreEvent>;
 
   protected svg: any; // Our d3 generated svg layer
   protected mainStage: any; // WebGL Canvas
@@ -45,8 +45,8 @@ export class VDevLabelsSVG {
     this.d3Init();
 
     let tiles;
-    this.events = new Subject<CoreEvent>();
-    this.events.subscribe((evt: CoreEvent) => {
+    this.events$ = new Subject<CoreEvent>();
+    this.events$.subscribe((evt: CoreEvent) => {
       switch (evt.name) {
         case 'ThemeChanged':
           const theme = evt.data;

@@ -54,7 +54,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
         this.chassis = new MINIXLPLUS();
         break;
       default:
-        this.controllerEvents.next({
+        this.controllerEvent$.next({
           name: 'Error',
           data: {
             name: 'Unsupported Hardware',

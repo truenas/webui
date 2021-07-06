@@ -273,7 +273,7 @@ export class VmFormComponent implements FormConfiguration {
       });
     }
 
-    this.systemGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.systemGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.isolatedGpuPciIds = res.isolated_gpu_pci_ids;
     });
 

@@ -70,7 +70,7 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
       gpusFormControl.setValue(this.isolatedGpuPciIds);
     });
 
-    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((adv_conf: AdvancedConfig) => {
+    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((adv_conf: AdvancedConfig) => {
       this.isolatedGpuPciIds = adv_conf.isolated_gpu_pci_ids;
       this.advancedConfig = adv_conf;
     });

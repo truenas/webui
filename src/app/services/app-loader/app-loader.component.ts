@@ -30,7 +30,7 @@ export class AppLoaderComponent {
     private _dialog: MatDialog,
     private _ws: WebSocketService, private sysGeneralService: SystemGeneralService,
   ) {
-    this.sysGeneralService.getAdvancedConfig
+    this.sysGeneralService.getAdvancedConfig$
       .pipe(untilDestroyed(this))
       .subscribe((res) => {
         if (res.consolemsg) {

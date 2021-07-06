@@ -33,7 +33,7 @@ import { T } from 'app/translate-marker';
   providers: [EntityFormService],
 })
 export class AlertConfigComponent implements OnInit {
-  formEvents: Subject<CoreEvent>;
+  formEvent$: Subject<CoreEvent>;
   protected route_success = ['system', 'alertsettings'];
   protected queryCall: 'alertclasses.config' = 'alertclasses.config';
   protected editCall: 'alertclasses.update' = 'alertclasses.update';
@@ -176,8 +176,8 @@ export class AlertConfigComponent implements OnInit {
     categories.forEach((category, index) => {
       options.push({ label: category.title, value: index });
     });
-    this.formEvents = new Subject();
-    this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.formEvent$ = new Subject();
+    this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'save') {
         this.onSubmit();
       } else {
@@ -189,7 +189,7 @@ export class AlertConfigComponent implements OnInit {
     const actionsConfig = {
       actionType: EntityToolbarComponent,
       actionConfig: {
-        target: this.formEvents,
+        target: this.formEvent$,
         controls: [
           {
             name: 'save',

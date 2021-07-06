@@ -13,7 +13,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { add, sub } from 'date-fns';
-import { Subject } from 'rxjs';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
@@ -100,7 +99,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     return Object.keys(this.data.aggregations);
   }
 
-  legendLabels: Subject<any> = new Subject();
   legendData: any = {};
   subtitle: string = T('% of all cores');
   altTitle = '';
@@ -191,7 +189,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
     this.core.emit({ name: 'ThemeDataRequest', sender: this });
 
-    this.sysGeneralService.getGeneralConfig.pipe(
+    this.sysGeneralService.getGeneralConfig$.pipe(
       untilDestroyed(this),
     ).subscribe((res) => this.timezone = res.timezone);
   }
