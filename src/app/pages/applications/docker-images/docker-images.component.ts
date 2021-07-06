@@ -150,7 +150,7 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
 
   updateImage(entityDialog: EntityDialogComponent): void {
     const self = entityDialog.parent;
-    const tag = entityDialog.formGroup.controls.tag.value;
+    const tag = entityDialog.formGroup.controls['tag'].value;
     const params = tag.split(':');
     const payload: [PullContainerImageParams] = [{
       from_image: params[0],

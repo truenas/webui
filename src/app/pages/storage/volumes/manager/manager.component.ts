@@ -217,8 +217,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
             + ' (' + size + ') ' + type + 's and leaving ' + remaining + ' of those drives unused.';
           copy_desc.paraText = paraText;
         };
-        setParatext(entityDialog.formGroup.controls.vdevs.value);
-        entityDialog.formGroup.controls.vdevs.valueChanges.pipe(untilDestroyed(this)).subscribe((vdevs) => {
+        setParatext(entityDialog.formGroup.controls['vdevs'].value);
+        entityDialog.formGroup.controls['vdevs'].valueChanges.pipe(untilDestroyed(this)).subscribe((vdevs) => {
           setParatext(vdevs);
         });
       },
@@ -306,8 +306,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.swapondrive = res.swapondrive;
     });
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      if (params.pk) {
-        this.pk = parseInt(params.pk, 10);
+      if (params['pk']) {
+        this.pk = parseInt(params['pk'], 10);
         this.isNew = false;
       }
     });
@@ -334,18 +334,18 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.loaderOpen = false;
       this.disks = [];
       for (const i in res) {
-        res[i].real_capacity = res[i].size;
-        res[i].capacity = filesize(res[i].size, { standard: 'iec' });
+        res[i]['real_capacity'] = res[i]['size'];
+        res[i]['capacity'] = filesize(res[i]['size'], { standard: 'iec' });
         const details = [];
-        if (res[i].rotationrate) {
-          details.push({ label: T('Rotation Rate'), value: res[i].rotationrate });
+        if (res[i]['rotationrate']) {
+          details.push({ label: T('Rotation Rate'), value: res[i]['rotationrate'] });
         }
-        details.push({ label: T('Model'), value: res[i].model });
-        details.push({ label: T('Serial'), value: res[i].serial });
-        if (res[i].enclosure) {
-          details.push({ label: T('Enclosure'), value: res[i].enclosure.number });
+        details.push({ label: T('Model'), value: res[i]['model'] });
+        details.push({ label: T('Serial'), value: res[i]['serial'] });
+        if (res[i]['enclosure']) {
+          details.push({ label: T('Enclosure'), value: res[i]['enclosure']['number'] });
         }
-        res[i].details = details;
+        res[i]['details'] = details;
         this.disks.push(res[i]);
       }
 
@@ -557,7 +557,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     if (!this.force) {
       let warnings = helptext.force_warning;
       if (this.vdevdisksSizeError) {
-        warnings = warnings + '<br/><br/>' + helptext.force_warnings.diskSizeWarning;
+        warnings = warnings + '<br/><br/>' + helptext.force_warnings['diskSizeWarning'];
       }
       if (this.stripeVdevTypeError) {
         warnings = warnings + '<br/><br/>' + this.stripeVdevTypeError;
@@ -605,7 +605,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         if (this.isNew) {
           body = { name: this.name, encryption: this.isEncrypted, topology: layout };
           if (this.isEncrypted) {
-            body.encryption_options = { generate_key: true, algorithm: this.encryption_algorithm };
+            body['encryption_options'] = { generate_key: true, algorithm: this.encryption_algorithm };
           }
         } else {
           body = { topology: layout };
@@ -749,7 +749,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.capacityFilterField = '';
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
-    this.vdevs.data.push({});
+    this.vdevs['data'].push({});
     this.vdevComponents.first.estimateSize();
     this.disks = Array.from(this.original_disks);
     this.suggestable_disks = Array.from(this.orig_suggestable_disks);

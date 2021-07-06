@@ -111,6 +111,7 @@ module.exports = {
         // Other temporary disables
         "@angular-eslint/component-class-suffix": "off",
         "@angular-eslint/no-input-rename": "off",
+        "@typescript-eslint/dot-notation": "off",
 
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",

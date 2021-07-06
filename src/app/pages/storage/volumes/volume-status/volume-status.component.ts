@@ -189,9 +189,9 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
       // if pool is passphrase protected, abled passphrase field.
       if (pools[0].encrypt === 2) {
         [this.replaceDiskFormFields, this.extendVdevFormFields].forEach((formFields) => {
-          _.find(formFields, { name: 'passphrase' }).isHidden = false;
+          _.find(formFields, { name: 'passphrase' })['isHidden'] = false;
           _.find(formFields, { name: 'passphrase' }).disabled = false;
-          _.find(formFields, { name: 'passphrase2' }).isHidden = false;
+          _.find(formFields, { name: 'passphrase2' })['isHidden'] = false;
           _.find(formFields, { name: 'passphrase2' }).disabled = false;
         });
       }
@@ -252,7 +252,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
 
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.pk = parseInt(params.pk, 10);
+      this.pk = parseInt(params['pk'], 10);
       this.getData();
     });
 
@@ -364,7 +364,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           saveButtonText: helptext.replace_disk.saveButtonText,
           parent: this,
           customSubmit(entityDialog: EntityDialogComponent) {
-            delete entityDialog.formValue.passphrase2;
+            delete entityDialog.formValue['passphrase2'];
 
             const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {
               data: { title: helptext.replace_disk.title },
@@ -493,7 +493,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           saveButtonText: helptext.extend_disk.saveButtonText,
           parent: this,
           customSubmit(entityDialog: EntityDialogComponent) {
-            delete entityDialog.formValue.passphrase2;
+            delete entityDialog.formValue['passphrase2'];
 
             const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {
               data: { title: helptext.extend_disk.title },

@@ -81,7 +81,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
   data: ReportData;
   ready = false;
-  product_type = window.localStorage.product_type as ProductType;
+  product_type = window.localStorage['product_type'] as ProductType;
   private delay = 1000; // delayed report render time
 
   readonly ProductType = ProductType;

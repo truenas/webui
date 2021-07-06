@@ -260,7 +260,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
               pool.children[0].has_encrypted_children = false;
               for (let i = 0; i < datasets.length; i++) {
                 const ds = datasets[i];
-                if (ds.id.startsWith(pool.children[0].id) && ds.id !== pool.children[0].id && ds.encrypted) {
+                if (ds['id'].startsWith(pool.children[0].id) && ds.id !== pool.children[0].id && ds.encrypted) {
                   pool.children[0].has_encrypted_children = true;
                   break;
                 }

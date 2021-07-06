@@ -483,8 +483,8 @@ export class ChartReleaseAddComponent implements OnDestroy, WizardConfiguration 
       },
     }];
 
-    if (data.gpuConfiguration) {
-      (payload[0] as any).values.gpuConfiguration = data.gpuConfiguration;
+    if (data['gpuConfiguration']) {
+      (payload[0] as any).values['gpuConfiguration'] = data['gpuConfiguration'];
     }
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {

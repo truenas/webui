@@ -72,8 +72,8 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
       this.iscsiService.getExtents(),
     ]).pipe(untilDestroyed(this)).subscribe(([targets, extents]) => {
       for (let i = 0; i < entityList.rows.length; i++) {
-        entityList.rows[i].target = _.find(targets, { id: entityList.rows[i].target }).name;
-        entityList.rows[i].extent = _.find(extents, { id: entityList.rows[i].extent }).name;
+        entityList.rows[i].target = _.find(targets, { id: entityList.rows[i].target })['name'];
+        entityList.rows[i].extent = _.find(extents, { id: entityList.rows[i].extent })['name'];
       }
     });
   }

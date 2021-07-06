@@ -52,7 +52,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
       // prepend / to first part
       if (i === 0) {
         item.url = `/${item.url}`;
-        if (!item.toplevel) {
+        if (!item['toplevel']) {
           item.disabled = true;
         }
         return item;
@@ -76,7 +76,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
         // prepend / to first part
         if (i === 0) {
           item.url = `/${item.url}`;
-          if (!item.toplevel) {
+          if (!item['toplevel']) {
             item.disabled = true;
           }
           return item;

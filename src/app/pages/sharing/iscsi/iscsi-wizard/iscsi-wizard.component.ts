@@ -705,28 +705,28 @@ export class IscsiWizardComponent implements WizardConfiguration {
       Target: this.summaryObj.target,
     };
     if (this.summaryObj.type === 'FILE') {
-      delete summary.Extent.Device;
-      delete summary.Extent['New Device'];
+      delete summary['Extent']['Device'];
+      delete summary['Extent']['New Device'];
     } else {
-      delete summary.Extent.File;
-      this.summaryObj.disk === 'Create New' ? delete summary.Extent.Device : delete summary.Extent['New Device'];
+      delete summary['Extent']['File'];
+      this.summaryObj.disk === 'Create New' ? delete summary['Extent']['Device'] : delete summary['Extent']['New Device'];
     }
 
-    this.summaryObj.portal === 'Create New' ? delete summary.Portal : delete summary['New Portal'];
+    this.summaryObj.portal === 'Create New' ? delete summary['Portal'] : delete summary['New Portal'];
     this.summaryObj.discovery_authgroup === 'NEW' ? delete summary['Authorized Access'] : delete summary['New Authorized Access'];
 
     if (!this.summaryObj.initiators && !this.summaryObj.auth_network && !this.summaryObj.comment) {
-      delete summary.Initiator;
+      delete summary['Initiator'];
     } else if (!this.summaryObj.initiators) {
-      delete summary.Initiator.Initiators;
+      delete summary['Initiator']['Initiators'];
     } else if (!this.summaryObj.auth_network) {
-      delete summary.Initiator['Authorized Networks'];
+      delete summary['Initiator']['Authorized Networks'];
     } else if (!this.summaryObj.comment) {
-      delete summary.Initiator.Comment;
+      delete summary['Initiator']['Comment'];
     }
 
     if (this.summaryObj.target === 'Create New') {
-      delete summary.Target;
+      delete summary['Target'];
     }
     return summary;
   }
@@ -735,7 +735,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     fieldGroup.forEach((field) => {
       if (_.indexOf(this.hiddenFieldGroup, field) < 0) {
         const control: any = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
-        control.isHidden = disabled;
+        control['isHidden'] = disabled;
         control.disabled = disabled;
         disabled
           ? this.entityWizard.formArray.get([stepIndex]).get(field).disable()
@@ -808,17 +808,17 @@ export class IscsiWizardComponent implements WizardConfiguration {
     for (const item in createdItems) {
       if (!toStop) {
         if (!(
-          (item === 'zvol' && value.disk !== 'NEW')
-                    || (item === 'auth' && value.discovery_authgroup !== 'NEW')
+          (item === 'zvol' && value['disk'] !== 'NEW')
+                    || (item === 'auth' && value['discovery_authgroup'] !== 'NEW')
                     || (item === 'portal' && value[item] !== 'NEW')
-                    || ((item === 'initiator' || item === 'portal' || item === 'target') && value.target !== 'NEW')
+                    || ((item === 'initiator' || item === 'portal' || item === 'target') && value['target'] !== 'NEW')
         )) {
           await this.doCreate(value, item).then(
             (res) => {
               if (item === 'zvol') {
-                value.disk = 'zvol/' + res.id;
+                value['disk'] = 'zvol/' + res.id;
               } else if (item === 'auth') {
-                value.discovery_authgroup = res.tag;
+                value['discovery_authgroup'] = res.tag;
               } else {
                 value[item] = res.id;
               }
@@ -841,8 +841,8 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   getRoundVolsize(value: any): number {
-    const volsize = this.cloudcredentialService.getByte(value.volsize + value.volsize_unit);
-    const volblocksize = this.cloudcredentialService.getByte(value.volblocksize);
+    const volsize = this.cloudcredentialService.getByte(value['volsize'] + value['volsize_unit']);
+    const volblocksize = this.cloudcredentialService.getByte(value['volblocksize']);
     return volsize + (volblocksize - volsize % volblocksize);
   }
 
@@ -850,34 +850,34 @@ export class IscsiWizardComponent implements WizardConfiguration {
     let payload: any;
     if (item === 'zvol') {
       payload = {
-        name: value.dataset + '/' + value.name,
+        name: value['dataset'] + '/' + value['name'],
         type: 'VOLUME',
-        volblocksize: value.volblocksize,
+        volblocksize: value['volblocksize'],
         volsize: this.getRoundVolsize(value),
       };
     }
     if (item === 'portal') {
       payload = {
-        comment: value.name,
-        discovery_authgroup: value.discovery_authgroup,
-        discovery_authmethod: value.discovery_authmethod,
-        listen: value.listen,
+        comment: value['name'],
+        discovery_authgroup: value['discovery_authgroup'],
+        discovery_authmethod: value['discovery_authmethod'],
+        listen: value['listen'],
       };
-      if (payload.discovery_authgroup === '') {
-        delete payload.discovery_authgroup;
+      if (payload['discovery_authgroup'] === '') {
+        delete payload['discovery_authgroup'];
       }
     }
     if (item === 'auth') {
       payload = {
-        tag: value.tag,
-        user: value.user,
-        secret: value.secret,
+        tag: value['tag'],
+        user: value['user'],
+        secret: value['secret'],
       };
     }
     if (item === 'extent') {
       payload = {
-        name: value.name,
-        type: value.type,
+        name: value['name'],
+        type: value['type'],
       };
       if (payload.type === 'FILE') {
         this.fileFieldGroup.forEach((field) => {
@@ -889,24 +889,24 @@ export class IscsiWizardComponent implements WizardConfiguration {
           }
         });
       } else if (payload.type === 'DISK') {
-        payload.disk = value.disk;
+        payload['disk'] = value['disk'];
       }
-      payload = Object.assign(payload, _.find(this.defaultUseforSettings, { key: value.usefor }).values);
+      payload = Object.assign(payload, _.find(this.defaultUseforSettings, { key: value['usefor'] }).values);
     }
     if (item === 'initiator') {
       payload = {
-        initiators: value.initiators,
-        auth_network: value.auth_network,
-        comment: value.name,
+        initiators: value['initiators'],
+        auth_network: value['auth_network'],
+        comment: value['name'],
       };
     }
     if (item === 'target') {
       payload = {
-        name: value.name,
+        name: value['name'],
         groups: [
           {
-            portal: value.portal,
-            initiator: value.initiator ? value.initiator : null,
+            portal: value['portal'],
+            initiator: value['initiator'] ? value['initiator'] : null,
             authmethod: 'NONE', // default value for now
             auth: null, // default value for now
           },
@@ -915,8 +915,8 @@ export class IscsiWizardComponent implements WizardConfiguration {
     }
     if (item === 'associateTarget') {
       payload = {
-        target: value.target,
-        extent: value.extent,
+        target: value['target'],
+        extent: value['extent'],
       };
     }
     return this.ws.call((this.createCalls as any)[item], [payload]).toPromise();

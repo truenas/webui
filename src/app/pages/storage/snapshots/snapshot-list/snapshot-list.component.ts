@@ -419,7 +419,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     if (recursive !== null) {
       data[recursive] = true;
     }
-    data.force = true;
+    data['force'] = true;
     parent.entityList.loader.open();
     parent.entityList.loaderOpen = true;
     parent.ws

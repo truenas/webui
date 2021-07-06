@@ -38,10 +38,10 @@ export class RSYNCconfigurationListComponent implements EntityTableConfig {
     const rows = entityTable.rows;
     for (let i = 0; i < rows.length; i++) {
       rows[i].details = [];
-      rows[i].details.push({ label: T('Maximum connections'), value: rows[i].maxconn },
-        { label: T('Host Allow'), value: rows[i].hostsallow },
-        { label: T('Host Deny'), value: rows[i].hostsdeny },
-        { label: T('Auxiliary parameters'), value: rows[i].auxiliary });
+      rows[i].details.push({ label: T('Maximum connections'), value: rows[i]['maxconn'] },
+        { label: T('Host Allow'), value: rows[i]['hostsallow'] },
+        { label: T('Host Deny'), value: rows[i]['hostsdeny'] },
+        { label: T('Auxiliary parameters'), value: rows[i]['auxiliary'] });
     }
   }
 }

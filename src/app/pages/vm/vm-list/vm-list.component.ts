@@ -155,18 +155,18 @@ export class VMListComponent implements EntityTableConfig, OnInit {
 
   resourceTransformIncomingRestData(vms: any[]): any[] {
     for (let vm_index = 0; vm_index < vms.length; vm_index++) {
-      vms[vm_index].state = vms[vm_index].status.state;
-      vms[vm_index].com_port = `/dev/nmdm${vms[vm_index].id}B`;
-      vms[vm_index].shutdown_timeout += T(' seconds');
+      vms[vm_index]['state'] = vms[vm_index]['status']['state'];
+      vms[vm_index]['com_port'] = `/dev/nmdm${vms[vm_index]['id']}B`;
+      vms[vm_index]['shutdown_timeout'] += T(' seconds');
       if (this.checkDisplay(vms[vm_index])) {
-        vms[vm_index].port = this.displayPort(vms[vm_index]);
+        vms[vm_index]['port'] = this.displayPort(vms[vm_index]);
       } else {
-        vms[vm_index].port = 'N/A';
-        if (vms[vm_index].vm_type === 'Container Provider') {
-          vms[vm_index].vm_type = globalHelptext.dockerhost;
+        vms[vm_index]['port'] = 'N/A';
+        if (vms[vm_index]['vm_type'] === 'Container Provider') {
+          vms[vm_index]['vm_type'] = globalHelptext.dockerhost;
         }
       }
-      vms[vm_index].memory = this.storageService.convertBytestoHumanReadable(vms[vm_index].memory * 1048576, 2);
+      vms[vm_index]['memory'] = this.storageService.convertBytestoHumanReadable(vms[vm_index]['memory'] * 1048576, 2);
     }
     return vms;
   }
@@ -203,7 +203,7 @@ export class VMListComponent implements EntityTableConfig, OnInit {
 
   onSliderChange(row: any): void {
     let method: ApiMethod;
-    if (row.status.state === ServiceStatus.Running) {
+    if (row['status']['state'] === ServiceStatus.Running) {
       method = this.wsMethods.stop;
       const parent = this;
       const stopDialog: DialogFormConfiguration = {
@@ -325,7 +325,7 @@ export class VMListComponent implements EntityTableConfig, OnInit {
       this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe(
         (res: any[]) => {
           for (const row of rows) {
-            const targetIndex = _.findIndex(res, (o) => o.id === row.id);
+            const targetIndex = _.findIndex(res, (o) => o['id'] === row.id);
             if (targetIndex === -1) {
               reject(false);
             }
@@ -626,7 +626,7 @@ export class VMListComponent implements EntityTableConfig, OnInit {
         ).pipe(untilDestroyed(this)).subscribe((pass_res: { [displayId: number]: DisplayWebUri }) => {
           this.loader.close();
           if (pass_res[display_device.id].error) {
-            passDialog.formGroup.controls.password.reset();
+            passDialog.formGroup.controls['password'].reset();
             return pass_conf.fieldConfig[0].warnings = pass_res[display_device.id].error;
           }
           passDialog.dialogRef.close();
@@ -642,12 +642,12 @@ export class VMListComponent implements EntityTableConfig, OnInit {
   }
 
   isActionVisible(actionId: string, row: any): boolean {
-    if (actionId === 'DISPLAY' && (row.status.state !== ServiceStatus.Running || !this.checkDisplay(row))) {
+    if (actionId === 'DISPLAY' && (row['status']['state'] !== ServiceStatus.Running || !this.checkDisplay(row))) {
       return false;
     } if ((actionId === 'POWER_OFF' || actionId === 'STOP' || actionId === 'RESTART'
-            || actionId === 'SERIAL') && row.status.state !== ServiceStatus.Running) {
+            || actionId === 'SERIAL') && row['status']['state'] !== ServiceStatus.Running) {
       return false;
-    } if (actionId === 'START' && row.status.state === ServiceStatus.Running) {
+    } if (actionId === 'START' && row['status']['state'] === ServiceStatus.Running) {
       return false;
     }
     return true;

@@ -65,7 +65,7 @@ export class ApiKeysComponent implements EntityTableConfig {
       const disableCheckbox = !this.parent.currItem;
       entityFrom.setDisabled('reset', disableCheckbox, disableCheckbox);
       if (this.parent.currItem) {
-        entityFrom.formGroup.controls.name.setValue(this.parent.currItem.name);
+        entityFrom.formGroup.controls['name'].setValue(this.parent.currItem.name);
       }
     },
     parent: this,
@@ -107,7 +107,7 @@ export class ApiKeysComponent implements EntityTableConfig {
   }
   resourceTransformIncomingRestData(data: any[]): any[] {
     return data.map((item) => {
-      item.created_time = this.localeService.formatDateTime(item.created_at.$date);
+      item['created_time'] = this.localeService.formatDateTime(item.created_at.$date);
       return item;
     });
   }

@@ -143,11 +143,11 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
 
     this.modalService.message$.pipe(takeUntil(this.onDestroy$)).pipe(untilDestroyed(this)).subscribe((res: any) => {
-      if (res.action === 'open' && res.component === 'replicationForm') {
-        this.modalService.open('slide-in-form', this.replicationFormComponent, res.row);
+      if (res['action'] === 'open' && res['component'] === 'replicationForm') {
+        this.modalService.open('slide-in-form', this.replicationFormComponent, res['row']);
       }
-      if (res.action === 'open' && res.component === 'replicationWizard') {
-        this.modalService.open('slide-in-form', this.replicationWizardComponent, res.row);
+      if (res['action'] === 'open' && res['component'] === 'replicationWizard') {
+        this.modalService.open('slide-in-form', this.replicationWizardComponent, res['row']);
       }
     });
   }
