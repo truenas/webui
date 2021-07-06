@@ -182,9 +182,7 @@ export class SystemProfiler {
         v.disks[name] = -1; // no children so we use this as placeholder
       } else if (vdev.children.length > 0) {
         vdev.children.forEach((disk, dIndex) => {
-          if (!disk.device && disk.status == 'REMOVED') {
-
-          } else {
+          if (disk.device && disk.status != 'REMOVED') {
             const spl = disk.disk.split('p'); // was disk.device
             const name = spl[0];
             v.disks[name] = dIndex;
@@ -294,7 +292,11 @@ export class SystemProfiler {
   getEnclosureExpanders(index: number) {
     if (this.rearIndex && index == this.rearIndex) { index = this.headIndex; }
     const raw = this.enclosures[index].elements.filter((item) => item.name == 'SAS Expander');
-    return raw[0].elements;
+
+    if (raw.length > 0) {
+      return raw[0].elements;
+    }
+    return raw;
   }
 
   rawCapacity() {
