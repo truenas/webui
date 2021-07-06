@@ -640,7 +640,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           ...prevErrors,
           misMatchDirectories: true,
         });
-        folder_source_field.warnings = 'All selected entries must be at the same level i.e., must have the same parent directory.';
+        folder_source_field.warnings = T('All selected entries must be at the same level i.e., must have the same parent directory.');
       } else {
         delete prevErrors.misMatchDirectories;
         if (Object.keys(prevErrors).length) {
@@ -684,7 +684,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           ...prevErrors,
           misMatchDirectories: true,
         });
-        path_source_field.warnings = 'All selected entries must be at the same level i.e., must have the same parent directory.';
+        path_source_field.warnings = T('All selected entries must be at the same level i.e., must have the same parent directory.');
       } else {
         delete prevErrors.misMatchDirectories;
         if (Object.keys(prevErrors).length) {
