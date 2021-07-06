@@ -4,6 +4,8 @@ import { SortDirection } from '@angular/material/sort';
 import { format } from 'date-fns-tz';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
+import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { WebSocketService } from './ws.service';
@@ -12,13 +14,13 @@ import { WebSocketService } from './ws.service';
 export class StorageService {
   protected diskResource: 'disk.query' = 'disk.query';
 
-  ids: any;
-  diskNames: any;
-  hddStandby: any;
+  ids: string[];
+  diskNames: string[];
+  hddStandby: DiskStandby;
   diskToggleStatus: boolean;
-  SMARToptions: any;
-  advPowerMgt: any;
-  humanReadable: any;
+  SMARToptions: string;
+  advPowerMgt: DiskPowerLevel;
+  humanReadable: string;
   IECUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
   constructor(protected ws: WebSocketService) {}
@@ -187,7 +189,7 @@ export class StorageService {
       sorter = tempArr.sort(myCollator.compare);
     }
     // Rejoins the sorted keys with the rest of the row data
-    let v: any;
+    let v: number;
     // ascending or decending
     asc === 'asc' ? (v = 1) : (v = -1);
     arr.sort((a, b) => {
@@ -203,11 +205,11 @@ export class StorageService {
   }
 
   // This section passes data from disk-list to disk-bulk-edit form
-  diskIdsBucket(arr: any): void {
+  diskIdsBucket(arr: string[]): void {
     this.ids = arr;
   }
 
-  diskNamesBucket(arr: any): void {
+  diskNamesBucket(arr: string[]): void {
     this.diskNames = arr;
   }
 
@@ -384,8 +386,8 @@ export class StorageService {
   // Converts a number from bytes to the most natural human readable format
   convertBytestoHumanReadable(bytes: number, decimalPlaces?: number, min_units?: string, hideBytes?: boolean): string {
     let i = -1;
-    let dec; let
-      units;
+    let dec;
+    let units;
     decimalPlaces !== undefined ? dec = decimalPlaces : dec = 2;
     if (bytes >= 1024) {
       do {

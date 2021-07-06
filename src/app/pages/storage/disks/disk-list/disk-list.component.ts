@@ -6,8 +6,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as filesize from 'filesize';
 import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core.service';
+import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
+import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import helptext from 'app/helptext/storage/disks/disks';
+import { Choices } from 'app/interfaces/choices.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SmartManualTestParams } from 'app/interfaces/smart-test.interface';
@@ -30,7 +33,7 @@ import { T } from 'app/translate-marker';
   selector: 'disk-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class DiskListComponent implements EntityTableConfig {
+export class DiskListComponent implements EntityTableConfig<Disk> {
   title = T('Disks');
   queryCall: 'disk.query' = 'disk.query';
   queryCallOption: QueryParams<Disk, { extra: { pools: true } }> = [[], { extra: { pools: true } }];
@@ -51,7 +54,7 @@ export class DiskListComponent implements EntityTableConfig {
     { name: T('Enable S.M.A.R.T.'), prop: 'togglesmart', hidden: true },
     { name: T('S.M.A.R.T. extra options'), prop: 'smartoptions', hidden: true },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     multiSelect: true,
@@ -60,13 +63,13 @@ export class DiskListComponent implements EntityTableConfig {
       key_props: ['name'],
     },
   };
-  diskIds: any[] = [];
-  diskNames: any[] = [];
-  hddStandby: any[] = [];
-  advPowerMgt: any[] = [];
+  diskIds: string[] = [];
+  diskNames: string[] = [];
+  hddStandby: DiskStandby[] = [];
+  advPowerMgt: DiskPowerLevel[] = [];
   diskToggle: boolean;
-  SMARToptions: any[] = [];
-  private SMARTdiskChoices: any = {};
+  SMARToptions: string[] = [];
+  private SMARTdiskChoices: Choices = {};
 
   multiActions = [{
     id: 'medit',
@@ -74,7 +77,7 @@ export class DiskListComponent implements EntityTableConfig {
     icon: 'edit',
     enable: true,
     ttpos: 'above' as TooltipPosition,
-    onClick: (selected: any) => {
+    onClick: (selected: Disk[]) => {
       if (selected.length > 1) {
         for (const i of selected) {
           this.diskIds.push(i.identifier);
@@ -118,12 +121,12 @@ export class DiskListComponent implements EntityTableConfig {
     icon: 'play_arrow',
     enable: true,
     ttpos: 'above' as TooltipPosition,
-    onClick: (selected: any) => {
+    onClick: (selected: Disk[]) => {
       this.manualTest(selected);
     },
   }];
 
-  protected unused: any[] = [];
+  protected unused: Disk[] = [];
   constructor(
     protected ws: WebSocketService,
     protected router: Router,
@@ -144,13 +147,13 @@ export class DiskListComponent implements EntityTableConfig {
     );
   }
 
-  getActions(parentRow: any): EntityTableAction[] {
+  getActions(parentRow: Disk): EntityTableAction[] {
     const actions = [{
       id: parentRow.name,
       icon: 'edit',
       name: 'edit',
       label: T('Edit'),
-      onClick: (row: any) => {
+      onClick: (row: Disk) => {
         this.router.navigate(new Array('/').concat([
           'storage', 'disks', 'edit', row.identifier,
         ]));
@@ -160,7 +163,7 @@ export class DiskListComponent implements EntityTableConfig {
       icon: 'format_list_bulleted',
       name: 'manual_test',
       label: T('Manual Test'),
-      onClick: (row: any) => {
+      onClick: (row: Disk) => {
         this.manualTest(row);
       },
     }];
@@ -287,18 +290,17 @@ export class DiskListComponent implements EntityTableConfig {
       eventName: 'DisksChanged',
     }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt) {
-        (entityList as any).needTableResize = false;
         entityList.getData();
       }
     });
   }
 
-  resourceTransformIncomingRestData(data: any[]): any[] {
+  resourceTransformIncomingRestData(data: Disk[]): Disk[] {
     data.forEach((i) => i.pool = i.pool ? i.pool : 'N/A');
     return data;
   }
 
-  manualTest(selected: any): void {
+  manualTest(selected: Disk | Disk[]): void {
     const parent = this;
     const disks = Array.isArray(selected) ? selected.map((item) => item.name) : [selected.name];
     const disksIdentifier: SmartManualTestParams[] = Array.isArray(selected)

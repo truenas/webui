@@ -2158,7 +2158,6 @@
   " is required.": " wird benötigt.",
   " is still running,  the Guest OS did not respond as expected. It is possible to use <i>Power Off</i> or the <i>Force Stop  After Timeout</i> option to stop the VM.": " läuft noch, das Gastbetriebssystem hat nicht wie erwartet reagiert. Es ist möglich, die Option <i>Herunterfahren</i> oder <i>Stopp nach Zeitüberschreitung erzwingen</i> zu verwenden, um die VM zu stoppen.",
   " is the minimum recommended record size. Choosing a smaller size can reduce system performance.": " ist die kleinste empfohlene Datenspeichergröße. Ein kleinerer Werte kann die Systemperformance beeinträchtigen.",
-  " seconds": " Sekunden",
   " seconds.": " Sekunden.",
   " service has been enabled.": " Dienst wurde aktiviert.",
   " should be at least ": " sollte mindestens ",
