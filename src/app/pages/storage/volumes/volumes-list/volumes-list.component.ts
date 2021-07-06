@@ -28,8 +28,8 @@ import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { T } from '../../../../translate-marker';
-import { DatasetFormComponent } from '../datasets/dataset-form';
-import { ZvolFormComponent } from '../zvol/zvol-form';
+import { DatasetFormComponent } from '../datasets/dataset-form/dataset-form.component';
+import { ZvolFormComponent } from '../zvol/zvol-form/zvol-form.component';
 
 @UntilDestroy()
 @Component({
@@ -260,7 +260,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
               pool.children[0].has_encrypted_children = false;
               for (let i = 0; i < datasets.length; i++) {
                 const ds = datasets[i];
-                if (ds['id'].startsWith(pool.children[0].id) && ds.id !== pool.children[0].id && ds.encrypted) {
+                if (ds.id.startsWith(pool.children[0].id) && ds.id !== pool.children[0].id && ds.encrypted) {
                   pool.children[0].has_encrypted_children = true;
                   break;
                 }

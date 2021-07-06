@@ -81,7 +81,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
   data: ReportData;
   ready = false;
-  product_type = window.localStorage['product_type'] as ProductType;
+  product_type = window.localStorage.product_type as ProductType;
   private delay = 1000; // delayed report render time
 
   readonly ProductType = ProductType;
@@ -318,7 +318,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     } else if (direction == 'forward' && currentDate) {
       startDate = new Date(currentDate);
     } else {
-      throw 'A current date parameter must be specified when stepping forward in time!\n direction specified was ' + direction;
+      throw new Error(
+        'A current date parameter must be specified when stepping forward in time!\n direction specified was ' + direction,
+      );
     }
 
     switch (timespan) {

@@ -23,7 +23,7 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
@@ -86,10 +86,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
     protected http: HttpClient,
     protected validationService: ValidationService,
   ) {
-    if (typeof (this.classId) !== 'undefined' && this.classId !== '' && volumeData && volumeData['children']) {
+    if (typeof (this.classId) !== 'undefined' && this.classId !== '' && volumeData && volumeData.children) {
       this.tableData = [];
-      for (let i = 0; i < volumeData['children'].length; i++) {
-        const child = volumeData['children'][i];
+      for (let i = 0; i < volumeData.children.length; i++) {
+        const child = volumeData.children[i];
         child.parent = volumeData;
         this.tableData.push(this.dataHandler(child));
       }
@@ -372,12 +372,12 @@ export class VolumesListTableConfig implements EntityTableConfig {
         ],
         afterInit(entityDialog: EntityDialogComponent) {
           self.messageService.messageSourceHasNewMessage$.pipe(untilDestroyed(self, 'destroy')).subscribe((message) => {
-            entityDialog.formGroup.controls['key'].setValue(message);
+            entityDialog.formGroup.controls.key.setValue(message);
           });
           // these disabled booleans are here to prevent recursion errors, disabling only needs to happen once
           let keyDisabled = false;
           let passphraseDisabled = false;
-          entityDialog.formGroup.controls['passphrase'].valueChanges.pipe(untilDestroyed(self, 'destroy')).subscribe((passphrase) => {
+          entityDialog.formGroup.controls.passphrase.valueChanges.pipe(untilDestroyed(self, 'destroy')).subscribe((passphrase) => {
             if (!passphraseDisabled) {
               if (passphrase && passphrase !== '') {
                 keyDisabled = true;
@@ -388,7 +388,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
               }
             }
           });
-          entityDialog.formGroup.controls['key'].valueChanges.pipe(untilDestroyed(self, 'destroy')).subscribe((key) => {
+          entityDialog.formGroup.controls.key.valueChanges.pipe(untilDestroyed(self, 'destroy')).subscribe((key) => {
             if (!keyDisabled) {
               if (key && !passphraseDisabled) {
                 passphraseDisabled = true;
@@ -407,7 +407,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
             disableClose: true,
           });
           if (value.key) {
-            params[1]['recoverykey'] = true;
+            params[1].recoverykey = true;
             const formData: FormData = new FormData();
             formData.append('data', JSON.stringify({
               method: 'pool.unlock',
@@ -483,7 +483,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 const method = 'pool.update';
                 const body: any = {};
                 const payload = [row.id];
-                body['autotrim'] = (formValue.autotrim ? 'ON' : 'OFF');
+                body.autotrim = (formValue.autotrim ? 'ON' : 'OFF');
                 payload.push(body);
                 const dialogRef = self.mdDialog.open(EntityJobComponent, {
                   data: { title: helptext.pool_options_dialog.save_pool_options },
@@ -593,7 +593,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
           }
 
           async function doDetach(): Promise<void> {
-            const sysPool = await self.ws.call('systemdataset.config').pipe(map((res) => res['pool'])).toPromise();
+            const sysPool = await self.ws.call('systemdataset.config').pipe(map((res) => res.pool)).toPromise();
             const title = self.translate.instant(helptext.exportDialog.title);
             const warningA = self.translate.instant(helptext.exportDialog.warningA);
             const warningB = self.translate.instant(helptext.exportDialog.warningB);
@@ -709,7 +709,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 dialogRef.componentInstance.failure.pipe(untilDestroyed(self, 'destroy')).subscribe((res: any) => {
                   let conditionalErrMessage = '';
                   if (res.error) {
-                    if (res.exc_info.extra && res.exc_info.extra['code'] === 'control_services') {
+                    if (res.exc_info.extra && res.exc_info.extra.code === 'control_services') {
                       entityDialog.dialogRef.close(true);
                       dialogRef.close(true);
                       const stopMsg = self.translate.instant(helptext.exportMessages.onfail.stopServices);
@@ -743,10 +743,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
                         self.restartServices = true;
                         this.customSubmit(entityDialog);
                       });
-                    } else if (res.extra && res.extra['code'] === 'unstoppable_processes') {
+                    } else if (res.extra && res.extra.code === 'unstoppable_processes') {
                       entityDialog.dialogRef.close(true);
                       const msg = self.translate.instant(helptext.exportMessages.onfail.unableToTerminate);
-                      conditionalErrMessage = msg + res.extra['processes'];
+                      conditionalErrMessage = msg + res.extra.processes;
                       dialogRef.close(true);
                       self.dialogService.errorReport(helptext.exportError, conditionalErrMessage, res.exception);
                     } else {
@@ -898,7 +898,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
               parent.loader.open();
               const payload = [row1.id];
               if (entityDialog) {
-                payload.push({ geli: { passphrase: entityDialog.formValue['passphrase'] } });
+                payload.push({ geli: { passphrase: entityDialog.formValue.passphrase } });
               }
               parent.ws.job('pool.expand', payload).pipe(untilDestroyed(parent, 'destroy')).subscribe(
                 (res) => {
@@ -1201,7 +1201,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   parent.recursiveIsChecked = !parent.recursiveIsChecked;
                   parent.ws.call('vmware.dataset_has_vms', [row.id, parent.recursiveIsChecked]).pipe(untilDestroyed(parent, 'destroy')).subscribe((vmware_res: any) => {
                     parent.vmware_res_status = vmware_res;
-                    _.find(parent.dialogConf.fieldConfig, { name: 'vmware_sync' })['isHidden'] = !parent.vmware_res_status;
+                    _.find(parent.dialogConf.fieldConfig, { name: 'vmware_sync' }).isHidden = !parent.vmware_res_status;
                   });
                 },
               },
@@ -1225,7 +1225,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
       });
 
       const rowDataset = _.find(this.datasetData, { id: rowData.id });
-      if (rowDataset && rowDataset['origin'] && !!rowDataset['origin'].parsed) {
+      if (rowDataset && rowDataset.origin && !!rowDataset.origin.parsed) {
         actions.push({
           id: rowData.name,
           name: T('Promote Dataset'),
@@ -1279,7 +1279,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
             let key_child = false;
             for (let i = 0; i < this.datasetData.length; i++) {
               const ds = this.datasetData[i];
-              if (ds['id'].startsWith(row.id) && ds.id !== row.id
+              if (ds.id.startsWith(row.id) && ds.id !== row.id
                 && ds.encryption_root && (ds.id === ds.encryption_root)
                 && ds.key_format && ds.key_format.value && ds.key_format.value === 'HEX') {
                 key_child = true;
@@ -1385,10 +1385,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
               ],
               saveButtonText: helptext.encryption_options_dialog.save_button,
               afterInit(entityDialog: EntityDialogComponent) {
-                const inherit_encryption_fg = entityDialog.formGroup.controls['inherit_encryption'];
-                const encryption_type_fg = entityDialog.formGroup.controls['encryption_type'];
+                const inherit_encryption_fg = entityDialog.formGroup.controls.inherit_encryption;
+                const encryption_type_fg = entityDialog.formGroup.controls.encryption_type;
                 const encryption_type_fc = _.find(entityDialog.fieldConfig, { name: 'encryption_type' });
-                const generate_key_fg = entityDialog.formGroup.controls['generate_key'];
+                const generate_key_fg = entityDialog.formGroup.controls.generate_key;
 
                 const all_encryption_fields = ['encryption_type', 'passphrase', 'confirm_passphrase', 'pbkdf2iters', 'generate_key', 'key'];
 
@@ -1469,13 +1469,13 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   }
                 } else {
                   if (formValue.encryption_type === 'key') {
-                    body['generate_key'] = formValue.generate_key;
+                    body.generate_key = formValue.generate_key;
                     if (!formValue.generate_key) {
-                      body['key'] = formValue.key;
+                      body.key = formValue.key;
                     }
                   } else {
-                    body['passphrase'] = formValue.passphrase;
-                    body['pbkdf2iters'] = formValue.pbkdf2iters;
+                    body.passphrase = formValue.passphrase;
+                    body.pbkdf2iters = formValue.pbkdf2iters;
                   }
                   payload.push(body);
                   const dialogRef = self.mdDialog.open(EntityJobComponent, {

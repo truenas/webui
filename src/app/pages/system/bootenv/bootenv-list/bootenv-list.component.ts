@@ -8,7 +8,7 @@ import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';

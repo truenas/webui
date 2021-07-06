@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { forkJoin } from 'rxjs';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -72,8 +72,8 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
       this.iscsiService.getExtents(),
     ]).pipe(untilDestroyed(this)).subscribe(([targets, extents]) => {
       for (let i = 0; i < entityList.rows.length; i++) {
-        entityList.rows[i].target = _.find(targets, { id: entityList.rows[i].target })['name'];
-        entityList.rows[i].extent = _.find(extents, { id: entityList.rows[i].extent })['name'];
+        entityList.rows[i].target = _.find(targets, { id: entityList.rows[i].target }).name;
+        entityList.rows[i].extent = _.find(extents, { id: entityList.rows[i].extent }).name;
       }
     });
   }

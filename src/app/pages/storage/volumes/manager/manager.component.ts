@@ -15,14 +15,14 @@ import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { VDev } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { StorageService } from 'app/services/storage.service';
 import { T } from 'app/translate-marker';
-import { DiskComponent } from './disk';
-import { VdevComponent } from './vdev';
+import { DiskComponent } from './disk/disk.component';
+import { VdevComponent } from './vdev/vdev.component';
 
 @UntilDestroy()
 @Component({
@@ -192,7 +192,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           const vdev_values = { disks: [] as any, type: self.first_data_vdev_type };
           for (let j = 0; j < self.first_data_vdev_disknum; j++) {
             const disk = duplicable_disks.shift();
-            vdev_values['disks'].push(disk);
+            vdev_values.disks.push(disk);
             // remove disk from selected
             self.selected = _.remove(self.selected, (d) => d.devname !== disk.devname);
           }
@@ -217,8 +217,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
             + ' (' + size + ') ' + type + 's and leaving ' + remaining + ' of those drives unused.';
           copy_desc.paraText = paraText;
         };
-        setParatext(entityDialog.formGroup.controls['vdevs'].value);
-        entityDialog.formGroup.controls['vdevs'].valueChanges.pipe(untilDestroyed(this)).subscribe((vdevs) => {
+        setParatext(entityDialog.formGroup.controls.vdevs.value);
+        entityDialog.formGroup.controls.vdevs.valueChanges.pipe(untilDestroyed(this)).subscribe((vdevs) => {
           setParatext(vdevs);
         });
       },
@@ -306,8 +306,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.swapondrive = res.swapondrive;
     });
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      if (params['pk']) {
-        this.pk = parseInt(params['pk'], 10);
+      if (params.pk) {
+        this.pk = parseInt(params.pk, 10);
         this.isNew = false;
       }
     });
@@ -334,18 +334,18 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.loaderOpen = false;
       this.disks = [];
       for (const i in res) {
-        res[i]['real_capacity'] = res[i]['size'];
-        res[i]['capacity'] = filesize(res[i]['size'], { standard: 'iec' });
+        res[i].real_capacity = res[i].size;
+        res[i].capacity = filesize(res[i].size, { standard: 'iec' });
         const details = [];
-        if (res[i]['rotationrate']) {
-          details.push({ label: T('Rotation Rate'), value: res[i]['rotationrate'] });
+        if (res[i].rotationrate) {
+          details.push({ label: T('Rotation Rate'), value: res[i].rotationrate });
         }
-        details.push({ label: T('Model'), value: res[i]['model'] });
-        details.push({ label: T('Serial'), value: res[i]['serial'] });
-        if (res[i]['enclosure']) {
-          details.push({ label: T('Enclosure'), value: res[i]['enclosure']['number'] });
+        details.push({ label: T('Model'), value: res[i].model });
+        details.push({ label: T('Serial'), value: res[i].serial });
+        if (res[i].enclosure) {
+          details.push({ label: T('Enclosure'), value: res[i].enclosure.number });
         }
-        res[i]['details'] = details;
+        res[i].details = details;
         this.disks.push(res[i]);
       }
 
@@ -557,7 +557,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     if (!this.force) {
       let warnings = helptext.force_warning;
       if (this.vdevdisksSizeError) {
-        warnings = warnings + '<br/><br/>' + helptext.force_warnings['diskSizeWarning'];
+        warnings = warnings + '<br/><br/>' + helptext.force_warnings.diskSizeWarning;
       }
       if (this.stripeVdevTypeError) {
         warnings = warnings + '<br/><br/>' + this.stripeVdevTypeError;
@@ -605,7 +605,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         if (this.isNew) {
           body = { name: this.name, encryption: this.isEncrypted, topology: layout };
           if (this.isEncrypted) {
-            body['encryption_options'] = { generate_key: true, algorithm: this.encryption_algorithm };
+            body.encryption_options = { generate_key: true, algorithm: this.encryption_algorithm };
           }
         } else {
           body = { topology: layout };
@@ -749,7 +749,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.capacityFilterField = '';
     this.nameFilter = new RegExp('');
     this.capacityFilter = new RegExp('');
-    this.vdevs['data'].push({});
+    this.vdevs.data.push({});
     this.vdevComponents.first.estimateSize();
     this.disks = Array.from(this.original_disks);
     this.suggestable_disks = Array.from(this.orig_suggestable_disks);

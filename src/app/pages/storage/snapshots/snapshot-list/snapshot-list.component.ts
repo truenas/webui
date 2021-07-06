@@ -16,7 +16,7 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import {
   EntityTableAction,
   EntityTableConfig,
@@ -419,7 +419,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     if (recursive !== null) {
       data[recursive] = true;
     }
-    data['force'] = true;
+    data.force = true;
     parent.entityList.loader.open();
     parent.entityList.loaderOpen = true;
     parent.ws

@@ -13,7 +13,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard';
+import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard/zvol-wizard.component';
 import {
   WebSocketService, NetworkService, VmService, StorageService,
 } from 'app/services';
@@ -361,7 +361,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       for (const key in res) {
         resolution.options.push({ label: key, value: res[key] });
       }
-      this.displayFormGroup.controls['resolution'].setValue(res[Object.keys(res)[0]]);
+      this.displayFormGroup.controls.resolution.setValue(res[Object.keys(res)[0]]);
     });
 
     this.ws.call('vm.get_display_devices', [this.vmid]).pipe(untilDestroyed(this)).subscribe((devices) => {
@@ -381,7 +381,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       const pathField = _.find(this.diskFieldConfig, { name: 'path' });
       pathField.options.splice(pathField.options.findIndex((o) => o.value === 'new'), 0, newZvol);
 
-      this.diskFormGroup.controls['path'].setValue(newZvol.value);
+      this.diskFormGroup.controls.path.setValue(newZvol.value);
     });
     // nic
     this.networkService.getVmNicChoices().pipe(untilDestroyed(this)).subscribe((res) => {
@@ -409,8 +409,8 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.vmid = params['pk'];
-      this.vmname = params['name'];
+      this.vmid = params.pk;
+      this.vmname = params.name;
       this.route_success = ['vm', String(this.vmid), 'devices', this.vmname];
     });
 
@@ -446,13 +446,13 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.displayFormGroup = this.entityFormService.createFormGroup(this.displayFieldConfig);
 
     this.activeFormGroup = this.cdromFormGroup;
-    this.diskFormGroup.controls['path'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
+    this.diskFormGroup.controls.path.valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       if (res === 'new') {
-        this.diskFormGroup.controls['path'].setValue('');
+        this.diskFormGroup.controls.path.setValue('');
         this.addZvol();
       }
     });
-    this.formGroup.controls['dtype'].valueChanges.pipe(untilDestroyed(this)).subscribe((deviceType: VmDeviceType) => {
+    this.formGroup.controls.dtype.valueChanges.pipe(untilDestroyed(this)).subscribe((deviceType: VmDeviceType) => {
       this.selectedType = deviceType;
       switch (deviceType) {
         case VmDeviceType.Cdrom:
@@ -520,7 +520,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         } else {
           const typeField = _.find(this.displayFieldConfig, { name: 'type' });
           _.pull(typeField.options, _.find(typeField.options, { value: (vmDisplayDevices[0].attributes as any).type }));
-          this.displayFormGroup.controls['type'].setValue(typeField.options[0].value);
+          this.displayFormGroup.controls.type.setValue(typeField.options[0].value);
         }
       }
       // if type == 'Container Provider' and rawfile boot device exists, hide rootpwd and boot fields.
@@ -529,9 +529,9 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
           if (element.dtype === VmDeviceType.Raw) {
             if (element.attributes.boot) {
               this.rootpwd = _.find(this.rawfileFieldConfig, { name: 'rootpwd' });
-              this.rootpwd['isHidden'] = false;
+              this.rootpwd.isHidden = false;
               this.boot = _.find(this.rawfileFieldConfig, { name: 'boot' });
-              this.boot['isHidden'] = false;
+              this.boot.isHidden = false;
             }
           }
         });
@@ -545,7 +545,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         function: () => this.generateRandomMac(),
       },
     ];
-    this.displayFormGroup.controls['bind'].setValue('0.0.0.0');
+    this.displayFormGroup.controls.bind.setValue('0.0.0.0');
   }
 
   goBack(): void {
@@ -557,15 +557,15 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       const device = _.cloneDeep(this.formGroup.value);
       const deviceValue = _.cloneDeep(this.activeFormGroup.value);
-      const deviceOrder = deviceValue['order'];
+      const deviceOrder = deviceValue.order;
       delete deviceValue.order;
       // ui use sectorsize field for both physical_sectorsize and logical_sectorsize prop
-      deviceValue['physical_sectorsize'] = deviceValue['sectorsize'] === 0 ? null : deviceValue['sectorsize'];
-      deviceValue['logical_sectorsize'] = deviceValue['sectorsize'] === 0 ? null : deviceValue['sectorsize'];
-      delete deviceValue['sectorsize'];
+      deviceValue.physical_sectorsize = deviceValue.sectorsize === 0 ? null : deviceValue.sectorsize;
+      deviceValue.logical_sectorsize = deviceValue.sectorsize === 0 ? null : deviceValue.sectorsize;
+      delete deviceValue.sectorsize;
 
       const payload = {
-        vm: parseInt(params['pk'], 10),
+        vm: parseInt(params.pk, 10),
         dtype: device.dtype,
         attributes: deviceValue,
         order: deviceOrder,
@@ -611,7 +611,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
   private generateRandomMac(): void {
     this.ws.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((randomMac) => {
-      this.nicFormGroup.controls['mac'].setValue(randomMac);
+      this.nicFormGroup.controls.mac.setValue(randomMac);
     });
   }
 }

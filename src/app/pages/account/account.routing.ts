@@ -9,8 +9,8 @@ import { DirectoryservicesComponent } from '../directoryservice/directoryservice
 import { TwoFactorComponent } from '../system/two-factor/two-factor.component';
 import { MembersComponent } from './groups/members/members.component';
 import { ChangePasswordComponent } from './users/change-password/change-password.component';
-import { UserFormComponent } from './users/user-form';
-import { UserListComponent } from './users/user-list';
+import { UserFormComponent } from './users/user-form/user-form.component';
+import { UserListComponent } from './users/user-list/user-list.component';
 
 export const routes: Routes = [{
   path: '',

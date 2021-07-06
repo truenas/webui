@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/api-keys';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
@@ -65,7 +65,7 @@ export class ApiKeysComponent implements EntityTableConfig {
       const disableCheckbox = !this.parent.currItem;
       entityFrom.setDisabled('reset', disableCheckbox, disableCheckbox);
       if (this.parent.currItem) {
-        entityFrom.formGroup.controls['name'].setValue(this.parent.currItem.name);
+        entityFrom.formGroup.controls.name.setValue(this.parent.currItem.name);
       }
     },
     parent: this,
@@ -107,7 +107,7 @@ export class ApiKeysComponent implements EntityTableConfig {
   }
   resourceTransformIncomingRestData(data: any[]): any[] {
     return data.map((item) => {
-      item['created_time'] = this.localeService.formatDateTime(item.created_at.$date);
+      item.created_time = this.localeService.formatDateTime(item.created_at.$date);
       return item;
     });
   }

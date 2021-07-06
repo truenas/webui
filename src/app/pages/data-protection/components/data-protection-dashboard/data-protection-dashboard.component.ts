@@ -27,7 +27,7 @@ import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { AppTableAction, InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -143,11 +143,11 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
 
     this.modalService.message$.pipe(takeUntil(this.onDestroy$)).pipe(untilDestroyed(this)).subscribe((res: any) => {
-      if (res['action'] === 'open' && res['component'] === 'replicationForm') {
-        this.modalService.open('slide-in-form', this.replicationFormComponent, res['row']);
+      if (res.action === 'open' && res.component === 'replicationForm') {
+        this.modalService.open('slide-in-form', this.replicationFormComponent, res.row);
       }
-      if (res['action'] === 'open' && res['component'] === 'replicationWizard') {
-        this.modalService.open('slide-in-form', this.replicationWizardComponent, res['row']);
+      if (res.action === 'open' && res.component === 'replicationWizard') {
+        this.modalService.open('slide-in-form', this.replicationWizardComponent, res.row);
       }
     });
   }

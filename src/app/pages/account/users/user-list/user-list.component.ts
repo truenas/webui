@@ -7,7 +7,7 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/account/user-list';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -188,7 +188,7 @@ export class UserListComponent implements EntityTableConfig, OnInit {
 
   ableToDeleteGroup(id: any): boolean {
     const user = _.find(this.usr_lst[0], { id });
-    const group_users = _.find(this.grp_lst[0], { id: user.group.id })['users'];
+    const group_users = _.find(this.grp_lst[0], { id: user.group.id }).users;
     // Show checkbox if deleting the last member of a group
     if (group_users.length === 1) {
       return true;
@@ -206,12 +206,12 @@ export class UserListComponent implements EntityTableConfig, OnInit {
       data.forEach((user: any) => {
         const group = _.find(res, { gid: user.group.bsdgrp_gid });
         // user.group.bsdgrp_gid = group['gid'];
-        user.gid = group['gid'];
+        user.gid = group.gid;
       });
       const rows = data;
       for (let i = 0; i < rows.length; i++) {
         rows[i].details = [];
-        rows[i].details.push({ label: T('GID'), value: rows[i].group['bsdgrp_gid'] },
+        rows[i].details.push({ label: T('GID'), value: rows[i].group.bsdgrp_gid },
           { label: T('Home Directory'), value: rows[i].home },
           { label: T('Shell'), value: rows[i].shell },
           { label: T('Email'), value: rows[i].email });

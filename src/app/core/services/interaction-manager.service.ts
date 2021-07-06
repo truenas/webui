@@ -144,7 +144,7 @@ export class InteractionManagerService {
     if (registration.length == 0) {
       console.warn('DEBUG: The DisplayObject has not been registered');
     } else if (registration.length > 1) {
-      throw 'DisplayObject registered multiple times.';
+      throw new Error('DisplayObject registered multiple times.');
     } else {
       return registration[0].layout;
     }

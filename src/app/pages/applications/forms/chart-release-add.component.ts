@@ -14,8 +14,8 @@ import { Option } from 'app/interfaces/option.interface';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
-import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, ModalService } from 'app/services';
 
@@ -483,8 +483,8 @@ export class ChartReleaseAddComponent implements OnDestroy, WizardConfiguration 
       },
     }];
 
-    if (data['gpuConfiguration']) {
-      (payload[0] as any).values['gpuConfiguration'] = data['gpuConfiguration'];
+    if (data.gpuConfiguration) {
+      (payload[0] as any).values.gpuConfiguration = data.gpuConfiguration;
     }
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {

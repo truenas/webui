@@ -9,7 +9,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -150,7 +150,7 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
 
   updateImage(entityDialog: EntityDialogComponent): void {
     const self = entityDialog.parent;
-    const tag = entityDialog.formGroup.controls['tag'].value;
+    const tag = entityDialog.formGroup.controls.tag.value;
     const params = tag.split(':');
     const payload: [PullContainerImageParams] = [{
       from_image: params[0],
