@@ -24,6 +24,7 @@ module.exports = {
       "plugins": [
         "rxjs",
         "rxjs-angular",
+        "unicorn"
       ],
       "rules": {
         // TODO: Enable later when type information is available
@@ -139,6 +140,7 @@ module.exports = {
           argsIgnorePattern: "^_$"
         }],
         "@typescript-eslint/ban-types": ["error"],
+        "unicorn/filename-case": ["error", { case: "kebabCase"}],
 
         // RxJS rules
         "rxjs/no-unsafe-takeuntil": ["error", {

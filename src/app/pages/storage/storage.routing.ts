@@ -7,8 +7,6 @@ import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumech
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form';
 import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
 import { ViewEnclosureComponent } from 'app/pages/system/viewenclosure/view-enclosure.component';
-import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
-import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { DiskBulkEditComponent } from './disks/disk-bulk-edit';
 import { DiskFormComponent } from './disks/disk-form';
 import { DiskListComponent } from './disks/disk-list';
@@ -18,6 +16,8 @@ import { MultipathsComponent } from './multipaths/multipaths.component';
 import { SnapshotAddComponent } from './snapshots/snapshot-add';
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone';
 import { SnapshotListComponent } from './snapshots/snapshot-list';
+import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot';
+import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list';
 import { DatasetAclComponent } from './volumes/datasets/dataset-acl';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form';
 import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions';
@@ -174,17 +174,17 @@ export const routes: Routes = [
         children: [
           {
             path: '',
-            component: VMwareSnapshotListComponent,
+            component: VmwareSnapshotListComponent,
             data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots' },
           },
           {
             path: 'add',
-            component: VMwareSnapshotFormComponent,
+            component: VmwareSnapshotFormComponent,
             data: { title: 'Add', breadcrumb: 'Add' },
           },
           {
             path: 'edit/:pk',
-            component: VMwareSnapshotFormComponent,
+            component: VmwareSnapshotFormComponent,
             data: { title: 'Edit', breadcrumb: 'Edit' },
           },
 

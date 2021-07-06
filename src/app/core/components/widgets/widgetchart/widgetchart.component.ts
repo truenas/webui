@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
-import { ChartData } from 'app/core/components/viewchart/viewchart.component';
+import { ChartData } from 'app/core/components/view-chart/view-chart.component';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { T } from 'app/translate-marker';
 

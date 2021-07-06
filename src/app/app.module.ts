@@ -13,18 +13,18 @@ import {
   TranslateMessageFormatCompiler,
 } from 'ngx-translate-messageformat-compiler';
 import { NgxWebstorageModule } from 'ngx-webstorage';
+import { MaterialModule } from 'app/app-material.module';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
-import { CoreComponents } from 'app/core/components/corecomponents.module';
-import { setCoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { CoreServices } from 'app/core/services/coreservices.module';
+import { CoreComponents } from 'app/core/components/core-components.module';
+import { setCoreServiceInjector } from 'app/core/services/core-service-injector';
+import { CoreServices } from 'app/core/services/core-services.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { ErdService } from 'app/services/erd.service';
 import { NotificationsService } from 'app/services/notifications.service';
 import { ENV_PROVIDERS } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { rootRouterConfig } from './app.routes';
-import { MaterialModule } from './appMaterial.module';
 import { AppCommonModule } from './components/common/app-common.module';
 import { AboutModalDialog } from './components/common/dialog/about/about-dialog.component';
 import { ConsolePanelModalDialog } from './components/common/dialog/consolepanel/consolepanel-dialog.component';

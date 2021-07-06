@@ -8,7 +8,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { TreeTableModule } from 'primeng/treetable';
-import { MaterialModule } from 'app/appMaterial.module';
+import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { NfsPermissionsComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/nfs-permissions/nfs-permissions.component';
 import { PermissionsItemComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/permissions-item/permissions-item.component';
@@ -26,8 +26,6 @@ import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
 import { MessageService } from '../common/entity/entity-form/services/message.service';
 import { EntityModule } from '../common/entity/entity.module';
-import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
-import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from './disks/disk-form';
 import { DiskListComponent } from './disks/disk-list';
@@ -38,6 +36,8 @@ import { SnapshotAddComponent } from './snapshots/snapshot-add';
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone';
 import { SnapshotDetailsComponent, SnapshotListComponent } from './snapshots/snapshot-list';
 import { routing } from './storage.routing';
+import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot';
+import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list';
 import { DatasetAclComponent } from './volumes/datasets/dataset-acl';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form';
 import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions';
@@ -86,8 +86,8 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard';
     DatasetAclComponent,
     DatasetUnlockComponent,
     UnlockDialogComponent,
-    VMwareSnapshotFormComponent,
-    VMwareSnapshotListComponent,
+    VmwareSnapshotFormComponent,
+    VmwareSnapshotListComponent,
     DiskListComponent,
     VolumeStatusComponent,
     MultipathsComponent,

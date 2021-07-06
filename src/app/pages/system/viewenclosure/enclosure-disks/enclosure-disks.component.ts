@@ -21,7 +21,7 @@ import { ES12 } from 'app/core/classes/hardware/es12';
 import { ES24 } from 'app/core/classes/hardware/es24';
 import { ES60 } from 'app/core/classes/hardware/es60';
 import { M50 } from 'app/core/classes/hardware/m50';
-import { M50Rear } from 'app/core/classes/hardware/m50_rear';
+import { M50Rear } from 'app/core/classes/hardware/m50-rear';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
