@@ -92,7 +92,7 @@ export class WebSocketService {
   onclose(): void {
     this.connected = false;
     this.onCloseSubject$.next(true);
-    setTimeout(this.connect.bind(this), 5000);
+    setTimeout(() => this.connect(), 5000);
     if (!this.shuttingdown) {
       this._router.navigate(['/sessions/signin']);
     }
@@ -101,7 +101,7 @@ export class WebSocketService {
   ping(): void {
     if (this.connected) {
       this.socket.send(JSON.stringify({ msg: 'ping', id: UUID.UUID() }));
-      setTimeout(this.ping.bind(this), 20000);
+      setTimeout(() => this.ping(), 20000);
     }
   }
 
@@ -128,7 +128,7 @@ export class WebSocketService {
       }
     } else if (data.msg == 'connected') {
       this.connected = true;
-      setTimeout(this.ping.bind(this), 20000);
+      setTimeout(() => this.ping(), 20000);
       this.onconnect();
     } else if (data.msg == 'nosub') {
       console.warn(data);
@@ -289,8 +289,8 @@ export class WebSocketService {
     observer.complete();
   }
 
-  login_token(token: string): Observable<any> {
-    return Observable.create((observer: any) => {
+  login_token(token: string): Observable<boolean> {
+    return Observable.create((observer: Observer<boolean>) => {
       if (token) {
         this.call('auth.token', [token]).pipe(untilDestroyed(this)).subscribe((result) => {
           this.loginCallback(result, observer);

@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -98,7 +99,7 @@ export class SyslogFormComponent implements FormConfiguration {
   ];
 
   private entityForm: EntityFormComponent;
-  private configData: any;
+  private configData: SystemGeneralConfig;
   title = helptext_system_advanced.fieldset_syslog;
 
   constructor(
@@ -112,11 +113,9 @@ export class SyslogFormComponent implements FormConfiguration {
     private sysGeneralService: SystemGeneralService,
     private modalService: ModalService,
   ) {
-    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        this.configData = res;
-      },
-    );
+    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
+      this.configData = res;
+    });
   }
 
   reconnect(href: string): void {

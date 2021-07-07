@@ -1,7 +1,7 @@
 import { MatStepper } from '@angular/material/stepper';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 
 export interface WizardConfiguration {
   addWsCall?: ApiMethod;

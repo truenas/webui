@@ -11,6 +11,7 @@ import { TreeNode } from 'primeng/api';
 import { Observable } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
+import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -18,12 +19,13 @@ import { ProductType } from 'app/enums/product-type.enum';
 import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
@@ -119,7 +121,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
               let p1 = '';
               const self = this;
               this.loader.open();
-              this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res: any[]) => {
+              this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
                 if (res.length > 0) {
                   const servicesMsgA = self.translate.instant(helptext.encryptMsgA);
                   const servicesMsgB = self.translate.instant(helptext.encryptMsgB);
@@ -134,9 +136,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     });
                   });
                 }
-                this.ws.call('pool.processes', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res: any[]) => {
-                  const running_processes: any[] = [];
-                  const running_unknown_processes: any[] = [];
+                this.ws.call('pool.processes', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
+                  const running_processes: PoolProcess[] = [];
+                  const running_unknown_processes: PoolProcess[] = [];
                   if (res.length > 0) {
                     res.forEach((item) => {
                       if (!item.service) {
@@ -528,25 +530,25 @@ export class VolumesListTableConfig implements EntityTableConfig {
 
           if (rowData.is_decrypted && rowData.status !== 'UNKNOWN') {
             this.loader.open();
-            this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res: any[]) => {
+            this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
               if (res.length > 0) {
                 const a = self.translate.instant(helptext.exportMessages.servicesA);
                 const b = self.translate.instant(helptext.exportMessages.servicesB);
                 p1 = a + `<i>${row1.name}</i>` + b;
                 res.forEach((item) => {
                   p1 += `<br><b>${item.type}:</b>`;
-                  item.attachments.forEach((i: any) => {
+                  item.attachments.forEach((i) => {
                     const tempArr = i.split(',');
-                    tempArr.forEach((i: any) => {
+                    tempArr.forEach((i) => {
                       p1 += `<br> - ${i}`;
                     });
                   });
                 });
                 p1 += '<br /><br />';
               }
-              this.ws.call('pool.processes', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res: any[]) => {
-                const running_processes: any[] = [];
-                const running_unknown_processes: any[] = [];
+              this.ws.call('pool.processes', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
+                const running_processes: PoolProcess[] = [];
+                const running_unknown_processes: PoolProcess[] = [];
                 if (res.length > 0) {
                   res.forEach((item) => {
                     if (!item.service) {
@@ -1199,7 +1201,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 parent: this,
                 updater: (parent: any) => {
                   parent.recursiveIsChecked = !parent.recursiveIsChecked;
-                  parent.ws.call('vmware.dataset_has_vms', [row.id, parent.recursiveIsChecked]).pipe(untilDestroyed(parent, 'destroy')).subscribe((vmware_res: any) => {
+                  (parent.ws as WebSocketService).call('vmware.dataset_has_vms', [row.id, parent.recursiveIsChecked]).pipe(untilDestroyed(parent, 'destroy')).subscribe((vmware_res) => {
                     parent.vmware_res_status = vmware_res;
                     _.find(parent.dialogConf.fieldConfig, { name: 'vmware_sync' })['isHidden'] = !parent.vmware_res_status;
                   });
@@ -1287,7 +1289,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
               }
             }
             const can_inherit = (row.parent && row.parent.encrypted);
-            const passphrase_parent = (row.parent && row.parent.key_format && row.parent.key_format.value === 'PASSPHRASE');
+            const passphrase_parent = row.parent
+              && row.parent.key_format
+              && row.parent.key_format.value === DatasetEncryptionType.Passphrase;
             const is_key = (passphrase_parent ? false : (key_child ? true : !row.is_passphrase));
             let pbkdf2iters = 350000; // will pull from row when it has been added to the payload
             if (row.pbkdf2iters && row.pbkdf2iters && row.pbkdf2iters.rawvalue !== '0') {

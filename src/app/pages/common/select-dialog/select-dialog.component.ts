@@ -14,12 +14,12 @@ export class SelectDialogComponent {
   optionPlaceHolder: string;
   method: string;
   params: string;
-  DisplaySelection: string;
-  @Output() switchSelectionEmitter = new EventEmitter<any>();
+  displaySelection: string;
+  @Output() switchSelectionEmitter = new EventEmitter<string>();
 
-  constructor(public dialogRef: MatDialogRef < SelectDialogComponent >, protected translate: TranslateService) {}
+  constructor(public dialogRef: MatDialogRef<SelectDialogComponent>, protected translate: TranslateService) {}
 
   switchSelection(): void {
-    this.switchSelectionEmitter.emit(this.DisplaySelection);
+    this.switchSelectionEmitter.emit(this.displaySelection);
   }
 }

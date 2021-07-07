@@ -18,7 +18,7 @@ import { IdmapFormComponent } from './idmap/idmap-form.component';
 import { IdmapListComponent } from './idmap/idmap-list.component';
 import { KerberosSettingsComponent } from './kerberos-settings/kerberossettings.component';
 import { LdapComponent } from './ldap/ldap.component';
-import { NISComponent } from './nis';
+import { NISComponent } from './nis/nis.component';
 
 @NgModule({
   imports: [

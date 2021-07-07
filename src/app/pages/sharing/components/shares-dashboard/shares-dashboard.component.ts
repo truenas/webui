@@ -15,10 +15,10 @@ import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/ent
 import { ExpandableTableState, InputExpandableTableConf } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
 import { TableComponent, AppTableHeaderExtraAction } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
-import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form';
-import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form';
-import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form';
+import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
+import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
+import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
+import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
 import {
   AppLoaderService, DialogService, IscsiService, ModalService, NetworkService, SystemGeneralService, UserService,
   WebSocketService,

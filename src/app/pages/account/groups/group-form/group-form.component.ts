@@ -80,7 +80,7 @@ export class GroupFormComponent implements FormConfiguration {
     },
   ];
 
-  private bsdgrp_gid: any;
+  private bsdgrp_gid: FieldConfig;
 
   constructor(
     protected router: Router,

@@ -24,10 +24,11 @@ import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { SmartTestUi } from 'app/interfaces/smart-test.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { AppTableAction, InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -84,7 +85,7 @@ enum TaskCardId {
 export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
   dataCards: TaskCard[] = [];
   onDestroy$ = new Subject();
-  disks: any[] = [];
+  disks: Disk[] = [];
   parent: DataProtectionDashboardComponent;
 
   // Components included in this dashboard
@@ -535,8 +536,8 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
       } else if (test.disks.length) {
         test.disks = [
           test.disks
-            .map((identifier: any) => {
-              const fullDisk = this.parent.disks.find((item: any) => item.identifier === identifier);
+            .map((identifier) => {
+              const fullDisk = this.parent.disks.find((item) => item.identifier === identifier);
               if (fullDisk) {
                 identifier = fullDisk.devname;
               }

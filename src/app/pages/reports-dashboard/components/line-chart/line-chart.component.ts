@@ -45,7 +45,6 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   @Input() interactive = false;
 
   library = 'dygraph'; // dygraph or chart.js
-  ctx: any; // canvas context for chart.js
 
   chart: any;
   conf: any;

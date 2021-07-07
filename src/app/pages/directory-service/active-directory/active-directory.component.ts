@@ -348,7 +348,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' });
-      res.forEach((item: any) => {
+      res.forEach((item) => {
         this.kerberos_principal.options.push(
           { label: item, value: item },
         );

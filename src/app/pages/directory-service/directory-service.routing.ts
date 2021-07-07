@@ -7,7 +7,7 @@ import { KerberosRealmsListComponent } from 'app/pages/directory-service/kerbero
 import { IdmapListComponent } from './idmap/idmap-list.component';
 import { KerberosSettingsComponent } from './kerberos-settings/kerberossettings.component';
 import { LdapComponent } from './ldap/ldap.component';
-import { NISComponent } from './nis';
+import { NISComponent } from './nis/nis.component';
 
 export const routes: Routes = [{
   path: '',

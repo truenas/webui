@@ -24,7 +24,7 @@ import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/e
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { EntityTreeTable } from 'app/pages/common/entity/entity-tree-table/entity-tree-table.model';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { DiskFormComponent } from 'app/pages/storage/disks/disk-form';
+import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
 import {
   WebSocketService, AppLoaderService, DialogService,
 } from 'app/services';

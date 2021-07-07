@@ -12,6 +12,7 @@ import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.compo
 import { Display } from 'app/core/components/display/display.component';
 import { PageComponent } from 'app/core/components/page/page.component';
 import { ViewButtonComponent } from 'app/core/components/view-button/view-button.component';
+import { ViewChartAreaComponent } from 'app/core/components/view-chart-area/view-chart-area.component';
 import { ViewChartBarComponent } from 'app/core/components/view-chart-bar/view-chart-bar.component';
 import { ViewChartDonutComponent } from 'app/core/components/view-chart-donut/view-chart-donut.component';
 import { ViewChartGaugeComponent } from 'app/core/components/view-chart-gauge/view-chart-gauge.component';
@@ -27,6 +28,7 @@ import { WidgetCpuComponent } from 'app/core/components/widgets/widgetcpu/widget
 import { WidgetMemoryComponent } from 'app/core/components/widgets/widgetmemory/widgetmemory.component';
 import { WidgetNicComponent } from 'app/core/components/widgets/widgetnic/widgetnic.component';
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
+import { WidgetStorageComponent } from 'app/core/components/widgets/widgetstorage/widgetstorage.component';
 import { SimpleFailoverBtnComponent, SimpleFailoverBtnDialog } from 'app/core/components/widgets/widgetsysinfo/simple-failover-btn.component';
 import { WidgetSysInfoComponent } from 'app/core/components/widgets/widgetsysinfo/widgetsysinfo.component';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -71,6 +73,7 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     Display,
     ViewButtonComponent,
     ViewChartComponent,
+    ViewChartAreaComponent,
     ViewChartDonutComponent,
     ViewChartPieComponent,
     ViewChartGaugeComponent,
@@ -91,6 +94,7 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     SimpleFailoverBtnDialog,
     ConvertPipe,
     CopyButtonComponent,
+    WidgetStorageComponent,
   ],
   exports: [ // Modules and Components here
     CommonModule,
@@ -104,6 +108,7 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     PageComponent,
     ViewComponent,
     ViewChartComponent,
+    ViewChartAreaComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
     ViewChartBarComponent,
@@ -127,12 +132,14 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
     CopyButtonComponent,
+    WidgetStorageComponent,
   ],
   entryComponents: [
     ContextMenuComponent,
     CopyPasteMessageComponent,
     ViewComponent,
     ViewChartComponent,
+    ViewChartAreaComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
     ViewChartBarComponent,
@@ -154,6 +161,7 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
     CopyButtonComponent,
+    WidgetStorageComponent,
   ],
   providers: [
     StorageService,
