@@ -76,6 +76,8 @@ def input_account_name_as_name_select_amazon_s3_has_provider(driver, account_nam
 @then(parsers.parse('input "{key_id}" as for Access Key ID'))
 def input_key_id_as_for_access_key_id(driver, key_id):
     """input "{key_id}" as for Access Key ID."""
+    global keyid
+    keyid = key_id
     assert wait_on_element(driver, 5, '//input[@placeholder="Access Key ID"]')
     driver.find_element_by_xpath('//input[@placeholder="Access Key ID"]').send_keys(key_id)
 
@@ -83,7 +85,7 @@ def input_key_id_as_for_access_key_id(driver, key_id):
 @then(parsers.parse('input "{access_key}" as Secret Access Key'))
 def input_access_key_as_secret_access_key(driver, access_key):
     """input "{access_key}" as Secret Access Key."""
-    assert wait_on_element(driver, 5, '//input[@placeholder="Secret Access Key"]')
+    assert wait_on_element(driver, 5, '//input[@placeholder="Secret Access Key"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Secret Access Key"]').send_keys(access_key)
 
 
@@ -136,8 +138,8 @@ def click_verify_credential_to_verify_the_key_id_is_invalid(driver):
 @then('correct the Access Key ID then remove the last character from Secret Access Key')
 def correct_access_key_id_then_remove_the_last_character_from_secret_access_key(driver):
     """Correct Access Key ID then remove the last character from Secret Access Key."""
-    driver.refresh()
-    time.sleep(1)
+    assert wait_on_element(driver, 5, '//input[@placeholder="Access Key ID"]', 'inputable')
+    driver.find_element_by_xpath('//input[@placeholder="Access Key ID"]').send_keys(keyid)
     assert wait_on_element(driver, 10, '//input[@placeholder="Secret Access Key"]')
     driver.find_element_by_xpath('//input[@placeholder="Secret Access Key"]').send_keys(Keys.BACKSPACE)
 
