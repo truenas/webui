@@ -111,7 +111,7 @@ def pytest_runtest_makereport(item):
             screenshot_name = f'screenshot/{report.nodeid.replace("::", "_")}.png'
             screenshot_error_name = f'screenshot/{report.nodeid.replace("::", "_")}_error.png'
             # look if there is a Error window
-            if element_exist('//h1[normalize-space(text())="Error"]'):
+            if element_exist('//h1[normalize-space(text())="Error"]') or element_exist('//h1[normalize-space(text())="FAILED"]'):
                 web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
                 time.sleep(2)
                 traceback_name = f'screenshot/{report.nodeid.replace("::", "_")}.txt'
@@ -120,10 +120,10 @@ def pytest_runtest_makereport(item):
                 # Press CLOSE if exist only if there is an error box.
                 if element_exist('//button[@ix-auto="button__CLOSE"]'):
                     web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+            save_screenshot(screenshot_name)
             # To make sure we are not stuck on a combobox to stop other test to fail
             if element_exist('//mat-option'):
                 ActionChains(web_driver).send_keys(Keys.TAB).perform()
-            save_screenshot(screenshot_name)
             # if test that use disable failover make sure to enable failover back.
             if 'T0905' in screenshot_name or 'T0919' in screenshot_name or 'T0920' in screenshot_name or 'T0922' in screenshot_name:
                 if element_exist('//mat-icon[@svgicon="ha_disabled"]'):
