@@ -82,7 +82,7 @@ export class CoreService {
       } else if (reg.sender) {
         subscriptionType = 'Sender';
       }
-      // console.log(subscriptionType);
+
       if (subscriptionType == 'NameSender' && reg.eventName == evt.name && reg.sender == evt.sender) {
         reg.observable$.next(evt);
       } else if (subscriptionType == 'Name' && evt.name && reg.eventName == evt.name) {
