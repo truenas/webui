@@ -12,11 +12,11 @@ import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/kerber
 import { KerberosKeytabsListComponent } from 'app/pages/directory-service/kerberos-keytabs/kerberos-keytabs-list.component';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/kerberos-realms/kerberos-realms-form.component';
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/kerberos-realms/kerberos-realms-list.component';
+import { KerberosSettingsComponent } from 'app/pages/directory-service/kerberos-settings/kerberos-settings.component';
 import { SystemGeneralService } from 'app/services';
 import { EntityModule } from '../common/entity/entity.module';
 import { IdmapFormComponent } from './idmap/idmap-form.component';
 import { IdmapListComponent } from './idmap/idmap-list.component';
-import { KerberosSettingsComponent } from './kerberos-settings/kerberossettings.component';
 import { LdapComponent } from './ldap/ldap.component';
 import { NISComponent } from './nis/nis.component';
 

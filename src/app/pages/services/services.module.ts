@@ -9,9 +9,9 @@ import { ServiceDDNSComponent } from 'app/pages/services/components/service-dyna
 import { ServiceFTPComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceLLDPComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';
 import { ServiceNFSComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
-import { CconfigureRYSNCComponent } from 'app/pages/services/components/service-rsync/rsyncconfiguration/configure-rsync';
-import { RSYNCconfigurationListComponent } from 'app/pages/services/components/service-rsync/rsyncconfiguration/rsyncconfiguration-list/rsyncconfiguration-list.component';
-import { RYSNCConfigurationFormComponent } from 'app/pages/services/components/service-rsync/rsyncconfiguration/rsyncmodule/rsyncconfiguration-form.component';
+import { CconfigureRYSNCComponent } from 'app/pages/services/components/service-rsync/rsync-configuration/configure-rsync';
+import { RsyncConfigurationListComponent } from 'app/pages/services/components/service-rsync/rsync-configuration/rsync-configuration-list/rsync-configuration-list.component';
+import { RYSNCConfigurationFormComponent } from 'app/pages/services/components/service-rsync/rsync-configuration/rsyncmodule/rsync-configuration-form.component';
 import { ServiceRSYNCComponent } from 'app/pages/services/components/service-rsync/service-rsync.component';
 import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
 import { ServiceSMARTComponent } from 'app/pages/services/components/service-smart/service-smart.component';
@@ -46,7 +46,7 @@ import { routing } from './services.routing';
     ServiceLLDPComponent,
     ServiceRSYNCComponent,
     CconfigureRYSNCComponent,
-    RSYNCconfigurationListComponent,
+    RsyncConfigurationListComponent,
     RYSNCConfigurationFormComponent,
     ServiceSMARTComponent,
     ServiceNFSComponent,

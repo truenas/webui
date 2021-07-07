@@ -14,6 +14,8 @@ import {
 } from 'ngx-translate-messageformat-compiler';
 import { NgxWebstorageModule } from 'ngx-webstorage';
 import { MaterialModule } from 'app/app-material.module';
+import { ConsolePanelModalDialog } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
+import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
 import { CoreComponents } from 'app/core/components/core-components.module';
@@ -27,9 +29,7 @@ import { AppComponent } from './app.component';
 import { rootRouterConfig } from './app.routes';
 import { AppCommonModule } from './components/common/app-common.module';
 import { AboutModalDialog } from './components/common/dialog/about/about-dialog.component';
-import { ConsolePanelModalDialog } from './components/common/dialog/consolepanel/consolepanel-dialog.component';
 import { DirectoryServicesMonitorComponent } from './components/common/dialog/directory-services-monitor/directory-services-monitor.component';
-import { DownloadKeyModalDialog } from './components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { ResilverProgressDialogComponent } from './components/common/dialog/resilver-progress/resilver-progress.component';
 import { TaskManagerComponent } from './components/common/dialog/task-manager/task-manager.component';
 import { TruecommandComponent } from './components/common/dialog/truecommand/truecommand.component';

@@ -1,7 +1,7 @@
 import {
   Component,
 } from '@angular/core';
-import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
+import { GlobalAction } from 'app/components/common/page-title/page-title.component';
 
 @Component({
   selector: 'reports-global-controls',

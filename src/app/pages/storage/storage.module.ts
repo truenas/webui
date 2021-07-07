@@ -16,11 +16,11 @@ import { PosixPermissionsComponent } from 'app/pages/storage/volumes/permissions
 import { TrivialPermissionsComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/trivial-permissions/trivial-permissions.component';
 import { PermissionsSidebarComponent } from 'app/pages/storage/volumes/permissions-sidebar/permissions-sidebar.component';
 import { PermissionsSidebarStore } from 'app/pages/storage/volumes/permissions-sidebar/permissions-sidebar.store';
+import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volume-addkey-form/volume-addkey-form.component';
+import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volume-changekey-form/volume-changekey-form.component';
+import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volume-createkey-form/volume-createkey-form.component';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
-import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form/volumeaddkey-form.component';
-import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form/volumechangekey-form.component';
-import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form/volumecreatekey-form.component';
-import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form/volumerekey-form.component';
+import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volume-rekey-form/volume-rekey-form.component';
 import { JobService } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';

@@ -10,7 +10,7 @@ import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
-import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
+import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool } from 'app/interfaces/pool.interface';

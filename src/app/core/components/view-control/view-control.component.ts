@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ViewControl } from 'app/core/classes/viewcontrol';
+import { ViewControl } from 'app/core/classes/view-control';
 
 @Component({
   selector: 'viewcontrol',

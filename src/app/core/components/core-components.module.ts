@@ -22,15 +22,16 @@ import { ViewChartComponent } from 'app/core/components/view-chart/view-chart.co
 import { ViewControlComponent } from 'app/core/components/view-control/view-control.component';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { ViewComponent } from 'app/core/components/view/view.component';
+import { WidgetChartComponent } from 'app/core/components/widgets/widget-chart/widget-chart.component';
+import { WidgetControllerComponent } from 'app/core/components/widgets/widget-controller/widget-controller.component';
+import { WidgetCpuComponent } from 'app/core/components/widgets/widget-cpu/widget-cpu.component';
+import { WidgetMemoryComponent } from 'app/core/components/widgets/widget-memory/widget-memory.component';
+import { WidgetNicComponent } from 'app/core/components/widgets/widget-nic/widget-nic.component';
+import { WidgetPoolComponent } from 'app/core/components/widgets/widget-pool/widget-pool.component';
+import { WidgetStorageComponent } from 'app/core/components/widgets/widget-storage/widget-storage.component';
+import { SimpleFailoverBtnComponent, SimpleFailoverBtnDialog } from 'app/core/components/widgets/widget-sys-info/simple-failover-btn.component';
+import { WidgetSysInfoComponent } from 'app/core/components/widgets/widget-sys-info/widget-sys-info.component';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-import { WidgetChartComponent } from 'app/core/components/widgets/widgetchart/widgetchart.component';
-import { WidgetCpuComponent } from 'app/core/components/widgets/widgetcpu/widgetcpu.component';
-import { WidgetMemoryComponent } from 'app/core/components/widgets/widgetmemory/widgetmemory.component';
-import { WidgetNicComponent } from 'app/core/components/widgets/widgetnic/widgetnic.component';
-import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
-import { WidgetStorageComponent } from 'app/core/components/widgets/widgetstorage/widgetstorage.component';
-import { SimpleFailoverBtnComponent, SimpleFailoverBtnDialog } from 'app/core/components/widgets/widgetsysinfo/simple-failover-btn.component';
-import { WidgetSysInfoComponent } from 'app/core/components/widgets/widgetsysinfo/widgetsysinfo.component';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
@@ -40,7 +41,6 @@ import { HtmlTooltipDirective } from './directives/html-tooltip/html-tooltip.dir
 import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
 import { TextLimiterDirective } from './directives/text-limiter/text-limiter.directive';
 import { ConvertPipe } from './pipes/convert.pipe';
-import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcontroller.component';
 /*
  *
  * This is the Core Module. By importing this module you'll

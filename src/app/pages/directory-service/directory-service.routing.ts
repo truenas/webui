@@ -4,8 +4,8 @@ import { ActiveDirectoryComponent } from 'app/pages/directory-service/active-dir
 import { DirectoryServicesComponent } from 'app/pages/directory-service/directory-services.component';
 import { KerberosKeytabsListComponent } from 'app/pages/directory-service/kerberos-keytabs/kerberos-keytabs-list.component';
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/kerberos-realms/kerberos-realms-list.component';
+import { KerberosSettingsComponent } from 'app/pages/directory-service/kerberos-settings/kerberos-settings.component';
 import { IdmapListComponent } from './idmap/idmap-list.component';
-import { KerberosSettingsComponent } from './kerberos-settings/kerberossettings.component';
 import { LdapComponent } from './ldap/ldap.component';
 import { NISComponent } from './nis/nis.component';
 

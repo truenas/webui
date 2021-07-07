@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { LayoutContainer, LayoutChild } from 'app/core/classes/layouts';
-import { ViewController } from 'app/core/classes/viewcontroller';
+import { ViewController } from 'app/core/classes/view-controller';
 import { Display } from 'app/core/components/display/display.component';
 import { CoreServiceInjector } from 'app/core/services/core-service-injector';
 import { CoreService } from 'app/core/services/core.service';

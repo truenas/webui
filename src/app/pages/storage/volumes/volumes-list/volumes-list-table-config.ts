@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
 import { Observable } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
-import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
+import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { JobState } from 'app/enums/job-state.enum';

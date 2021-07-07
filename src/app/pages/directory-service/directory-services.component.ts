@@ -10,6 +10,7 @@ import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/active-directory/active-directory.component';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/kerberos-keytabs/kerberos-keytabs-form.component';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/kerberos-realms/kerberos-realms-form.component';
+import { KerberosSettingsComponent } from 'app/pages/directory-service/kerberos-settings/kerberos-settings.component';
 import {
   WebSocketService,
   SystemGeneralService,
@@ -23,7 +24,6 @@ import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 import { EmptyConfig } from '../common/entity/entity-empty/entity-empty.component';
 import { IdmapFormComponent } from './idmap/idmap-form.component';
-import { KerberosSettingsComponent } from './kerberos-settings/kerberossettings.component';
 import { LdapComponent } from './ldap/ldap.component';
 
 @UntilDestroy()
