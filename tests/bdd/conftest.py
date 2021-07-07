@@ -133,10 +133,8 @@ def pytest_runtest_makereport(item):
             elif 'T1013' in screenshot_name:
                 disable_ldap()
             else:
-                # To make sure we exit any combobox to stop other test to fail
-                ActionChains(web_driver).send_keys(Keys.ESCAPE).perform()
-                if not wait_on_element(2, '//span[contains(.,"root")]'):
-                    web_driver.refresh()
+                # To make sure we are not stuck on a combobox to stop other test to fail
+                ActionChains(web_driver).send_keys(Keys.TAB).perform()
 
 
 def save_screenshot(name):
