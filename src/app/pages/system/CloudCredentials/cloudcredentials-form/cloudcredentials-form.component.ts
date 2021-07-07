@@ -602,7 +602,7 @@ export class CloudCredentialsFormComponent {
               value: 3,
             },
           ],
-          value: '0',
+          value: 0,
           relation: [
             {
               action: 'SHOW',
