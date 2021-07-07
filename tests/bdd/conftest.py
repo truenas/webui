@@ -120,9 +120,11 @@ def pytest_runtest_makereport(item):
             # Press CLOSE if exist
             if element_exist('//button[@ix-auto="button__CLOSE"]'):
                 web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-            else:
-                if element_exist('//button[@ix-auto="button__I AGREE"]'):
-                    web_driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+            if element_exist('//button[@ix-auto="button__I AGREE"]'):
+                web_driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+            # To make sure we are not stuck on a combobox to stop other test to fail
+            if element_exist('//mat-option'):
+                ActionChains(web_driver).send_keys(Keys.TAB).perform()
             save_screenshot(screenshot_name)
             # if test that use disable failover make sure to enable failover back.
             if 'T0905' in screenshot_name or 'T0919' in screenshot_name or 'T0920' in screenshot_name or 'T0922' in screenshot_name:
@@ -132,9 +134,6 @@ def pytest_runtest_makereport(item):
                 disable_active_directory()
             elif 'T1013' in screenshot_name:
                 disable_ldap()
-            else:
-                # To make sure we are not stuck on a combobox to stop other test to fail
-                ActionChains(web_driver).send_keys(Keys.TAB).perform()
 
 
 def save_screenshot(name):
