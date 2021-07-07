@@ -18,7 +18,7 @@ import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-for
 import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list.component';
 import { KerberosSettingsComponent } from './kerberossettings/kerberossettings.component';
 import { LdapComponent } from './ldap/ldap.component';
-import { NISComponent } from './nis';
+import { NISComponent } from './nis/nis.component';
 
 @NgModule({
   imports: [

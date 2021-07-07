@@ -28,8 +28,8 @@ import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { T } from '../../../../translate-marker';
-import { DatasetFormComponent } from '../datasets/dataset-form';
-import { ZvolFormComponent } from '../zvol/zvol-form';
+import { DatasetFormComponent } from '../datasets/dataset-form/dataset-form.component';
+import { ZvolFormComponent } from '../zvol/zvol-form/zvol-form.component';
 
 @UntilDestroy()
 @Component({

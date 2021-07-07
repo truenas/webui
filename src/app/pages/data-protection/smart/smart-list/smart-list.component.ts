@@ -6,7 +6,7 @@ import helptext from 'app/helptext/data-protection/smart/smart';
 import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/smart-form.component';
 import { TaskService, WebSocketService } from 'app/services';

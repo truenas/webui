@@ -22,7 +22,7 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';

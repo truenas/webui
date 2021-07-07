@@ -635,7 +635,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     // Save
     this.ws.call('user.set_attribute', [1, 'dashState', clone]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (!res) {
-        throw 'Unable to save Dashboard State';
+        throw new Error('Unable to save Dashboard State');
       }
     });
   }
