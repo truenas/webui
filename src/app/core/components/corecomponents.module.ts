@@ -11,6 +11,7 @@ import { CardComponent } from 'app/core/components/card/card.component';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { Display } from 'app/core/components/display/display.component';
 import { PageComponent } from 'app/core/components/page/page.component';
+import { ViewChartAreaComponent } from 'app/core/components/view-chart-area/view-chart-area.component';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
@@ -72,6 +73,7 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     Display,
     ViewButtonComponent,
     ViewChartComponent,
+    ViewChartAreaComponent,
     ViewChartDonutComponent,
     ViewChartPieComponent,
     ViewChartGaugeComponent,
@@ -106,6 +108,7 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     PageComponent,
     ViewComponent,
     ViewChartComponent,
+    ViewChartAreaComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
     ViewChartBarComponent,
@@ -136,6 +139,7 @@ import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcont
     CopyPasteMessageComponent,
     ViewComponent,
     ViewChartComponent,
+    ViewChartAreaComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
     ViewChartBarComponent,

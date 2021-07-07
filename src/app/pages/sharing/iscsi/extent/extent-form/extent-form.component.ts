@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { Validators, FormControl, ValidationErrors } from '@angular/forms';
+import {
+  Validators, FormControl, ValidationErrors, AbstractControl,
+} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -248,15 +250,15 @@ export class ExtentFormComponent implements FormConfiguration {
     },
   ];
 
-  protected deviceFieldGroup: any[] = [
+  protected deviceFieldGroup = [
     'disk',
   ];
-  protected fileFieldGroup: any[] = [
+  protected fileFieldGroup = [
     'path',
     'filesize',
   ];
-  protected extent_type_control: any;
-  protected extent_disk_control: any;
+  protected extent_type_control: AbstractControl;
+  protected extent_disk_control: AbstractControl;
   pk: string;
   protected avail_threshold_field: FieldConfig;
   fieldConfig: FieldConfig[];
@@ -326,7 +328,7 @@ export class ExtentFormComponent implements FormConfiguration {
     const isDevice = type != 'FILE';
 
     this.fileFieldGroup.forEach((field) => {
-      const control: any = _.find(this.fieldConfig, { name: field });
+      const control = _.find(this.fieldConfig, { name: field });
       control['isHidden'] = isDevice;
       control.disabled = isDevice;
       if (isDevice) {
@@ -337,7 +339,7 @@ export class ExtentFormComponent implements FormConfiguration {
     });
 
     this.deviceFieldGroup.forEach((field) => {
-      const control: any = _.find(this.fieldConfig, { name: field });
+      const control = _.find(this.fieldConfig, { name: field });
       control['isHidden'] = !isDevice;
       control.disabled = !isDevice;
       if (!isDevice) {

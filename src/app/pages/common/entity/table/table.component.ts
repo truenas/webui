@@ -69,7 +69,6 @@ export interface InputTableConf {
   providers: [TableService],
 })
 export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
-  @ViewChild('apptable') apptable: any;
   @ViewChild('table') table: any;
 
   _tableConf: InputTableConf;

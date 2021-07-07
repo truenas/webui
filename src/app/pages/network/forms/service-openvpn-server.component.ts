@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { OpenvpnServerConfig } from 'app/interfaces/openvpn-server-config.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -23,7 +25,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
   protected serverAddress: string;
   protected entityEdit: EntityFormComponent;
   dialogConf: DialogFormConfiguration;
-  protected certOptions: any;
+  protected certOptions: Option[];
   title = helptext.server.formTitle;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
@@ -211,7 +213,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
     protected storageService: StorageService,
   ) { }
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: OpenvpnServerConfig): OpenvpnServerConfig {
     data.server = `${data.server}/${data.netmask}`;
     return data;
   }

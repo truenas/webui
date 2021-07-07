@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import helptext from 'app/helptext/apps/apps';
+import { CatalogAppVersion } from 'app/interfaces/catalog.interface';
 import { LocaleService } from 'app/services/locale.service';
 
 @Component({
@@ -17,7 +18,7 @@ export class CatalogSummaryDialog implements OnInit {
   statusOptions: string[] = ['All', 'Healthy', 'Unhealthy'];
   helptext = helptext;
   selectedStatus: string = this.statusOptions[0];
-  filteredVersions: any;
+  filteredVersions: { [version: string]: CatalogAppVersion };
 
   constructor(
     public dialogRef: MatDialogRef<CatalogSummaryDialog>,
@@ -51,7 +52,7 @@ export class CatalogSummaryDialog implements OnInit {
     return Object.keys(this.filteredVersions).length > 0;
   }
 
-  versionStatusLabel(version: any): string {
+  versionStatusLabel(version: { value: CatalogAppVersion }): string {
     let label = '';
     if (this.selectedStatus == this.statusOptions[0]) {
       if (version.value.healthy) {

@@ -23,8 +23,8 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
   username: any;
   category: any;
   screenshot: any;
-  password_fc: any;
-  username_fc: any;
+  password_fc: FieldConfig;
+  username_fc: FieldConfig;
   subs: any[];
   saveSubmitText = helptext.submitBtn;
   isEntity = true;

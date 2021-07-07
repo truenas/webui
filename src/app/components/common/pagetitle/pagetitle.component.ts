@@ -145,7 +145,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
     this.globalActions = this.viewcontroller.create(config.actionType);
 
     if (!this.globalActions.applyConfig) {
-      throw 'Components must implement GlobalAction Interface';
+      throw new Error('Components must implement GlobalAction Interface');
     }
 
     this.globalActions.applyConfig(config.actionConfig); // Passes entity object

@@ -13,7 +13,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard';
+import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard/zvol-wizard.component';
 import {
   WebSocketService, NetworkService, VmService, StorageService,
 } from 'app/services';
@@ -525,7 +525,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       }
       // if type == 'Container Provider' and rawfile boot device exists, hide rootpwd and boot fields.
       if (_.find(vm[0].devices, { dtype: VmDeviceType.Raw }) && (vm[0] as any).type === 'Container Provider') {
-        vm[0].devices.forEach((element: any) => {
+        vm[0].devices.forEach((element) => {
           if (element.dtype === VmDeviceType.Raw) {
             if (element.attributes.boot) {
               this.rootpwd = _.find(this.rawfileFieldConfig, { name: 'rootpwd' });

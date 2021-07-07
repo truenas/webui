@@ -56,7 +56,7 @@ export class ThemeUtils {
         return this.hexToRGB(hex);
         break;
       default:
-        throw 'Conversion from color format ' + valueType + ' is not currently supported.';
+        throw new Error('Conversion from color format ' + valueType + ' is not currently supported.');
         break;
     }
   }

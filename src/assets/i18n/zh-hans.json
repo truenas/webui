@@ -1036,7 +1036,6 @@
   " is required.": " 是必须的。",
   " is still running,  the Guest OS did not respond as expected. It is possible to use <i>Power Off</i> or the <i>Force Stop  After Timeout</i> option to stop the VM.": " 仍在运行，来宾操作系统未按预期响应。可以使用<i>关闭电源</i>或<i>超时后强制停止</i>选项来停止虚拟机。",
   " is the minimum recommended record size. Choosing a smaller size can reduce system performance.": " 是最小推荐记录数据大小。选择一个更小的大小可能会降低系统性能。",
-  " seconds": " 秒",
   " service has been enabled.": " 服务已启用。",
   " should be at least ": " 应该至少 ",
   " should be no more than ": " 应该不超过 ",

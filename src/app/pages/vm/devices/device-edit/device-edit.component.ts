@@ -196,9 +196,8 @@ export class DeviceEditComponent implements OnInit {
       inputType: 'number',
     },
   ];
-  protected nic_attach: any;
-  protected nicType: any;
-  protected nicMac: any;
+  protected nic_attach: FieldConfig;
+  protected nicType: FieldConfig;
 
   // rawfile
   rawfileFieldConfig: FieldConfig[] = [
@@ -278,7 +277,7 @@ export class DeviceEditComponent implements OnInit {
       inputType: 'number',
     },
   ];
-  protected pptdev: any;
+  protected pptdev: FieldConfig;
 
   // Display
   displayFieldConfig: FieldConfig[] = [

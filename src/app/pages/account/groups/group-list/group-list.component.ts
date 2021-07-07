@@ -5,9 +5,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/account/group-list';
+import { Group } from 'app/interfaces/group.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
@@ -22,7 +23,7 @@ import { GroupFormComponent } from '../group-form/group-form.component';
   selector: 'app-group-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class GroupListComponent implements EntityTableConfig, OnInit {
+export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
   title = 'Groups';
   queryCall: 'group.query' = 'group.query';
   wsDelete: 'group.delete' = 'group.delete';
@@ -73,10 +74,10 @@ export class GroupListComponent implements EntityTableConfig, OnInit {
     this.addComponent = new GroupFormComponent(this._router, this.ws, this.modalService);
   }
 
-  resourceTransformIncomingRestData(data: any[]): any[] {
+  resourceTransformIncomingRestData(data: Group[]): Group[] {
     // Default setting is to hide builtin groups
     if (this.prefService.preferences.hide_builtin_groups) {
-      const newData: any[] = [];
+      const newData: Group[] = [];
       data.forEach((item) => {
         if (!item.builtin) {
           newData.push(item);
@@ -100,23 +101,23 @@ export class GroupListComponent implements EntityTableConfig, OnInit {
     });
   }
 
-  isActionVisible(actionId: string, row: any): boolean {
+  isActionVisible(actionId: string, row: Group): boolean {
     if (actionId === 'delete' && row.builtin === true) {
       return false;
     }
     return true;
   }
 
-  getActions(row: any): EntityTableAction[] {
+  getActions(row: Group): EntityTableAction[] {
     const actions = [];
     actions.push({
       id: row.group,
       name: helptext.group_list_actions_id_member,
       label: helptext.group_list_actions_label_member,
       icon: 'people',
-      onClick: (members: any) => {
+      onClick: (members: Group) => {
         this._router.navigate(new Array('/').concat(
-          ['credentials', 'groups', 'members', members.id],
+          ['credentials', 'groups', 'members', String(members.id)],
         ));
       },
     });
@@ -126,7 +127,7 @@ export class GroupListComponent implements EntityTableConfig, OnInit {
         icon: 'edit',
         label: helptext.group_list_actions_label_edit,
         name: helptext.group_list_actions_id_edit,
-        onClick: (members_edit: any) => {
+        onClick: (members_edit: Group) => {
           this.modalService.open('slide-in-form', this.addComponent, members_edit.id);
         },
       });
@@ -135,7 +136,7 @@ export class GroupListComponent implements EntityTableConfig, OnInit {
         icon: 'delete',
         name: 'delete',
         label: helptext.group_list_actions_label_delete,
-        onClick: (members_delete: any) => {
+        onClick: (members_delete: Group) => {
           const self = this;
           this.loader.open();
           self.ws.call('user.query', [[['group.id', '=', members_delete.id]]]).pipe(untilDestroyed(this)).subscribe(
@@ -195,10 +196,6 @@ export class GroupListComponent implements EntityTableConfig, OnInit {
     }
 
     return actions as EntityTableAction[];
-  }
-
-  ableToDeleteAllMembers(group: any): boolean {
-    return group.users.length !== 0;
   }
 
   toggleBuiltins(): void {

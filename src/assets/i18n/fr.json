@@ -561,7 +561,6 @@
   " is still running,  the Guest OS did not respond as expected. It is possible to use <i>Power Off</i> or the <i>Force Stop  After Timeout</i> option to stop the VM.": " est toujours en cours d'exécution, le système d'exploitation invité n'a pas répondu comme prévu. Il est possible d'utiliser l'option \"<i>Power Off</i>\" ou \"<i>Force Stop After Timeout</i>\" pour arrêter la VM.",
   " is the minimum recommended record size. Choosing a smaller size can reduce system performance.": " est la taille d’enregistrement minimale recommandée. Le choix d’une taille plus petite peut réduire les performances du système.",
   " on pool ": " sur le volume ",
-  " seconds": " secondes",
   " seconds.": " secondes.",
   " service has been enabled.": " le service a été activé.",
   " should be at least ": " devrait être au moins ",
