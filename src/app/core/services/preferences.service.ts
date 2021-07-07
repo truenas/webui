@@ -6,7 +6,7 @@ import { UserDataEvent } from 'app/interfaces/events/user-data-event.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
 import { ApiService } from './api.service';
-import { CoreService } from './core.service';
+import { CoreService } from './core-service/core.service';
 
 interface PropertyReport {
   middlewareProperties: string[];

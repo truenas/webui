@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';

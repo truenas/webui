@@ -25,7 +25,7 @@ import { M50Rear } from 'app/core/classes/hardware/m50_rear';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { Temperature } from 'app/core/services/disk-temperature.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';

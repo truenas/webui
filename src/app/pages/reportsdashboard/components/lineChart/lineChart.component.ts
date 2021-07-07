@@ -9,7 +9,7 @@ import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
 import { BehaviorSubject } from 'rxjs';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ViewComponent } from 'app/core/components/view/view.component';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
 import { Report, ReportData } from '../report/report.component';
 

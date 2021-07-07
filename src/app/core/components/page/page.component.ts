@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 
 @Component({
