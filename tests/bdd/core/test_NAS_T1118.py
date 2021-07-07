@@ -139,6 +139,7 @@ def click_verify_credential_to_verify_the_key_id_is_invalid(driver):
 def correct_access_key_id_then_remove_the_last_character_from_secret_access_key(driver):
     """Correct Access Key ID then remove the last character from Secret Access Key."""
     assert wait_on_element(driver, 5, '//input[@placeholder="Access Key ID"]', 'inputable')
+    driver.find_element_by_xpath('//input[@placeholder="Access Key ID"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Access Key ID"]').send_keys(keyid)
     assert wait_on_element(driver, 10, '//input[@placeholder="Secret Access Key"]')
     driver.find_element_by_xpath('//input[@placeholder="Secret Access Key"]').send_keys(Keys.BACKSPACE)
