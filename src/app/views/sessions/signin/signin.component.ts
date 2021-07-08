@@ -14,7 +14,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { ApiService } from 'app/core/services/api.service';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';

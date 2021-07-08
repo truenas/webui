@@ -6,7 +6,7 @@ import {
 import { CoreEvent } from 'app/interfaces/events';
 import { DisplayObject } from '../classes/display-object';
 import { LayoutObject } from '../classes/layout-object';
-import { CoreService } from './core.service';
+import { CoreService } from './core-service/core.service';
 
 interface DisplayObjectRegistration {
   displayObject: DisplayObject;

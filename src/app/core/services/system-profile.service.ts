@@ -5,7 +5,7 @@ import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WebSocketService } from 'app/services';
 import { BaseService } from './base.service';
-import { CoreService } from './core.service';
+import { CoreService } from './core-service/core.service';
 
 interface InfoObject {
   version: string; // "TrueNAS-12.0-MASTER-202003160424"

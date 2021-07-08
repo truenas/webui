@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { ViewButtonComponent } from 'app/core/components/view-button/view-button.component';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { LocaleService } from 'app/services/locale.service';

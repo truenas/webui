@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { tween, styler } from 'popmotion';
 import { Subject, Subscription } from 'rxjs';
 import { DashConfigItem } from 'app/core/components/widgets/widget-controller/widget-controller.component';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';

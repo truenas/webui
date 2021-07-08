@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import { combineLatest, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import helptext from 'app/helptext/storage/volumes/volume-list';

@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout/admin-layout.component';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { CoreEvent } from 'app/interfaces/events';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
