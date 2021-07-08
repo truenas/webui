@@ -130,7 +130,7 @@
   width:100%;
 }
 
-.x-axis .start-time, 
+.x-axis .start-time,
 .x-axis .end-time{
     font-size: 75%;
     position: absolute;
@@ -199,9 +199,9 @@
   margin:16px 0;
 }
 
-.xs.widget .mobile .top{ 
+.xs.widget .mobile .top{
   /*border-bottom:solid 1px var(--fg1);*/
-  
+
   padding-bottom:24px;
 }
 
@@ -240,3 +240,7 @@
   font-weight:500;
 }
 
+.no-flicker {
+  -webkit-backface-visibility: hidden;
+  -webkit-transform: rotateY(0deg);
+}
