@@ -1,0 +1,22 @@
+:host {
+  display: block;
+  margin-left: -24px;
+  margin-right: -24px;
+  padding: 8px 24px;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--lines);
+  }
+}
+
+.job-progress {
+  margin: 3px 0;
+}
+
+.job-time {
+  opacity: 0.5;
+}
+
+.job-icon-failed {
+  color: var(--red);
+}
