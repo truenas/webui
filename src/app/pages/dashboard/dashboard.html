@@ -66,6 +66,15 @@
                 configurable="false">
               </widget-pool>
 
+              <widget-storage *ngSwitchCase="'storage'"
+                fxFlex="{{widgetWidth}}px"
+                fxFlex.xs="100"
+                [pools]="pools"
+                [volumeData]="volumeData"
+                [widgetSize]="medium"
+                configurable="false">
+              </widget-storage>
+
               <widget-nic *ngSwitchCase="'interface'"
                 fxFlex="{{widgetWidth}}px"
                 fxFlex.xs="100"
@@ -159,6 +168,16 @@
                   [widgetSize]="medium"
                   configurable="false">
                 </widget-pool>
+
+                <widget-storage *ngSwitchCase="'storage'"
+                  (back)="onMobileBack()"
+                  fxFlex="{{widgetWidth}}px"
+                  fxFlex.xs="100"
+                  [pools]="pools"
+                  [volumeData]="volumeData"
+                  [widgetSize]="medium"
+                  configurable="false">
+                </widget-storage>
 
                 <widget-nic *ngSwitchCase="'interface'"
                   (back)="onMobileBack()"

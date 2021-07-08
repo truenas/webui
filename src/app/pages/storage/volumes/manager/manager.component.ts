@@ -10,19 +10,21 @@ import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
-import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
+import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { Option } from 'app/interfaces/option.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { StorageService } from 'app/services/storage.service';
 import { T } from 'app/translate-marker';
-import { DiskComponent } from './disk';
-import { VdevComponent } from './vdev';
+import { DiskComponent } from './disk/disk.component';
+import { VdevComponent } from './vdev/vdev.component';
 
 @UntilDestroy()
 @Component({
@@ -39,7 +41,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   vdevs: any = {
     data: [{}], cache: [], spares: [], log: [], special: [], dedup: [],
   };
-  original_vdevs: any = {};
   original_disks: any[];
   orig_suggestable_disks: any[];
   error: string;
@@ -58,14 +59,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   vol_encrypt = 0;
   isEncrypted = false;
   encryption_algorithm = 'AES-256-GCM';
-  encryption_algorithm_options: any[] = [];
+  encryption_algorithm_options: Option[] = [];
   re_has_errors = false;
   nameFilter: RegExp;
   capacityFilter: RegExp;
   nameFilterField: string;
   capacityFilterField: string;
   dirty = false;
-  protected existing_pools: any[] = [];
+  protected existing_pools: Pool[] = [];
   poolError: string = null;
   loaderOpen = false;
   help = helptext;
@@ -73,13 +74,11 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   submitTitle = T('Create');
   protected extendedSubmitTitle = T('Add Vdevs');
 
-  protected current_layout: any;
-  protected existing_pool: any;
   protected needs_disk = true;
   protected needsDiskMessage = helptext.manager_needsDiskMessage;
   protected extendedNeedsDiskMessage = helptext.manager_extendedNeedsDiskMessage;
   size: string;
-  protected extendedAvailable: any;
+  protected extendedAvailable: number;
   sizeMessage = helptext.manager_sizeMessage;
   protected extendedSizeMessage = helptext.manager_extendedSizeMessage;
 
@@ -93,7 +92,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
   emptyDataVdev = true;
 
-  stripeVdevTypeError: any = null;
+  stripeVdevTypeError: string = null;
   stripeVdevTypeErrorMessage = helptext.manager_stripeVdevTypeErrorMessage;
 
   logVdevTypeWarning: string = null;
@@ -122,14 +121,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
   encryption_message = helptext.manager_encryption_message;
 
-  startingHeight: any;
-  expandedRows: any;
+  startingHeight: number;
+  expandedRows: number;
   swapondrive = 2;
 
   has_savable_errors = false;
   force = false;
 
-  protected mindisks: any = {
+  protected mindisks = {
     stripe: 1, mirror: 2, raidz: 3, raidz2: 4, raidz3: 5,
   };
 
@@ -192,7 +191,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           const vdev_values = { disks: [] as any, type: self.first_data_vdev_type };
           for (let j = 0; j < self.first_data_vdev_disknum; j++) {
             const disk = duplicable_disks.shift();
-            vdev_values['disks'].push(disk);
+            vdev_values.disks.push(disk);
             // remove disk from selected
             self.selected = _.remove(self.selected, (d) => d.devname !== disk.devname);
           }
@@ -232,13 +231,13 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     });
   }
 
-  getVdevTypeErrorMsg(type: any): void {
+  getVdevTypeErrorMsg(type: string): void {
     this.translate.get(this.vdevtypeErrorMessage).pipe(untilDestroyed(this)).subscribe((errorMessage) => {
       this.vdevtypeError = errorMessage + T(' First vdev is a ') + this.first_data_vdev_type + T(', new vdev is ') + type + '.';
     });
   }
 
-  getStripeVdevTypeErrorMsg(group: any): void {
+  getStripeVdevTypeErrorMsg(group: string): void {
     this.translate.get(this.stripeVdevTypeErrorMessage).pipe(untilDestroyed(this)).subscribe((errorMessage) => {
       const vdevType = group === 'special' ? 'metadata' : group;
       this.stripeVdevTypeError = `${T('A stripe')} ${vdevType} ${errorMessage}`;
@@ -334,8 +333,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.loaderOpen = false;
       this.disks = [];
       for (const i in res) {
-        res[i]['real_capacity'] = res[i]['size'];
-        res[i]['capacity'] = filesize(res[i]['size'], { standard: 'iec' });
+        (res[i] as any)['real_capacity'] = res[i]['size'];
+        (res[i] as any)['capacity'] = filesize(res[i]['size'], { standard: 'iec' });
         const details = [];
         if (res[i]['rotationrate']) {
           details.push({ label: T('Rotation Rate'), value: res[i]['rotationrate'] });
@@ -345,7 +344,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         if (res[i]['enclosure']) {
           details.push({ label: T('Enclosure'), value: res[i]['enclosure']['number'] });
         }
-        res[i]['details'] = details;
+        (res[i] as any)['details'] = details;
         this.disks.push(res[i]);
       }
 
@@ -375,7 +374,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     });
   }
 
-  addVdev(group: any, initial_values = {}): void {
+  addVdev(group: string, initial_values = {}): void {
     this.dirty = true;
     this.vdevs[group].push(initial_values);
     setTimeout(() => { // there appears to be a slight race condition with adding/removing
@@ -410,7 +409,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     let data_vdev_disknum = 0;
     let data_disk_found = false;
     let any_disk_found = false;
-    let data_vdev_type: any;
+    let data_vdev_type: string;
     this.disknumError = null;
     this.vdevtypeError = null;
     this.vdevdisksError = false;
@@ -529,7 +528,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     if (this.emptyDataVdev) {
       return false;
     }
-    if (this.disks.length < this.mindisks[this.first_data_vdev_type]) {
+    if (this.disks.length < this.mindisks[this.first_data_vdev_type as keyof ManagerComponent['mindisks']]) {
       return false;
     }
     return true;
@@ -789,7 +788,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     }
     this.table.rowDetail.toggleExpandRow(row);
     setTimeout(() => {
-      this.expandedRows = (document.querySelectorAll('.datatable-row-detail').length);
+      this.expandedRows = document.querySelectorAll('.datatable-row-detail').length;
       const newHeight = (this.expandedRows * 100) + this.startingHeight;
       const heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);

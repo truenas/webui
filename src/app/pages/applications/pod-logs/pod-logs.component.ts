@@ -7,10 +7,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { CoreService } from 'app/core/services/core.service';
 import helptext from 'app/helptext/apps/apps';
 import { CoreEvent } from 'app/interfaces/events';
+import { Option } from 'app/interfaces/option.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
@@ -42,13 +43,13 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   pod_name: string;
   container_name: string;
   protected tail_lines = 500;
-  protected podDetails: any;
-  protected tempPodDetails: Record<string, unknown>;
+  protected podDetails: Record<string, string[]>;
+  protected tempPodDetails: Record<string, string[]>;
   protected apps: string[] = [];
   protected route_success: string[] = ['apps'];
 
   choosePod: DialogFormConfiguration;
-  private podLogsChangedListener: any;
+  private podLogsChangedListener: Subscription;
   podLogs: PodLogEvent[];
 
   constructor(protected core: CoreService,
@@ -95,7 +96,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.podLogsChangedListener) {
-      this.podLogsChangedListener.complete();
+      this.podLogsChangedListener.unsubscribe();
     }
   }
 
@@ -103,7 +104,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   reconnect(): void {
     this.podLogs = [];
     if (this.podLogsChangedListener) {
-      this.podLogsChangedListener.complete();
+      this.podLogsChangedListener.unsubscribe();
     }
 
     const subName = `kubernetes.pod_log_follow:{"release_name":"${this.chart_release_name}", "pod_name":"${this.pod_name}", "container_name":"${this.container_name}", "tail_lines": ${this.tail_lines}}`;
@@ -174,10 +175,10 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   }
 
   updateChooseLogsDialog(isDownload = false): void {
-    let containerOptions = [];
+    let containerOptions: Option[] = [];
 
     if (this.pod_name && this.podDetails[this.pod_name]) {
-      containerOptions = this.podDetails[this.pod_name].map((item: any) => ({
+      containerOptions = this.podDetails[this.pod_name].map((item) => ({
         label: item,
         value: item,
       }));
@@ -281,7 +282,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   }
 
   afterLogsDialogInit(entityDialog: EntityDialogComponent): void {
-    const self = entityDialog.parent;
+    const self = entityDialog.parent as PodLogsComponent;
 
     const podFC = _.find(entityDialog.fieldConfig, { name: 'pods' });
     const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' });
@@ -292,7 +293,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
       containerFC.options = [];
 
       self.loader.open();
-      self.ws.call('chart.release.pod_logs_choices', [value]).pipe(untilDestroyed(this)).subscribe((res: any) => {
+      self.ws.call('chart.release.pod_logs_choices', [value]).pipe(untilDestroyed(this)).subscribe((res) => {
         self.loader.close();
         self.tempPodDetails = res;
         let pod_name;
@@ -315,7 +316,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
       if (value) {
         const containers = self.tempPodDetails[value];
 
-        containerFC.options = containers.map((item: any) => ({
+        containerFC.options = containers.map((item) => ({
           label: item,
           value: item,
         }));

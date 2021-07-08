@@ -17,8 +17,8 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { GpuDevice } from 'app/interfaces/gpu-device.interface';
 import { EmptyType, EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -417,7 +417,7 @@ export class AdvancedSettingsComponent implements OnInit {
         .Info(helptext_system_advanced.first_time.title, helptext_system_advanced.first_time.message)
         .pipe(untilDestroyed(this)).subscribe(() => {
           if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
-            this.sysGeneralService.sendConfigData(this.configData);
+            this.sysGeneralService.sendConfigData(this.configData as any);
           }
 
           this.modalService.open('slide-in-form', addComponent, id);
@@ -425,7 +425,7 @@ export class AdvancedSettingsComponent implements OnInit {
         });
     } else {
       if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
-        this.sysGeneralService.sendConfigData(this.configData);
+        this.sysGeneralService.sendConfigData(this.configData as any);
       }
       this.modalService.open('slide-in-form', addComponent, id);
     }

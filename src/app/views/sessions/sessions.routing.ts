@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
+import { LockScreenComponent } from 'app/views/sessions/lock-screen/lock-screen.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
-import { LockscreenComponent } from './lockscreen/lockscreen.component';
 import { SigninComponent } from './signin/signin.component';
 import { SignupComponent } from './signup/signup.component';
 
@@ -21,7 +21,7 @@ export const SessionsRoutes: Routes = [
       data: { title: 'Forgot password' },
     }, {
       path: 'lockscreen',
-      component: LockscreenComponent,
+      component: LockScreenComponent,
       data: { title: 'Lockscreen' },
     }],
   },

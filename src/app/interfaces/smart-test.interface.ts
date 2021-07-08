@@ -5,7 +5,7 @@ import { Schedule } from 'app/interfaces/schedule.interface';
 export interface SmartTest {
   all_disks: boolean;
   desc: string;
-  disks: any[];
+  disks: string[];
   id: number;
   schedule: Schedule;
   type: SmartTestType;

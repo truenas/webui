@@ -4,6 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/apps/apps';
+import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import {
@@ -24,13 +25,13 @@ import { CatalogEditFormComponent } from '../forms/catalog-edit-form.component';
   selector: 'app-manage-catalogs',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
+export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnInit {
   addComponent: CatalogAddFormComponent;
   editComponent: CatalogEditFormComponent;
   title = 'Catalogs';
   queryCall: 'catalog.query' = 'catalog.query';
   wsDelete: 'catalog.delete' = 'catalog.delete';
-  queryCallOption = [[] as any, { extra: { item_details: true } }];
+  queryCallOption: CatalogQueryParams = [[], { extra: { item_details: true } }];
   disableActionsConfig = true;
 
   columns = [
@@ -95,14 +96,14 @@ export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
     this.entityList = entityList;
   }
 
-  getActions(row: any): EntityTableAction[] {
+  getActions(row: Catalog): EntityTableAction[] {
     return [
       {
         id: row.id,
         icon: 'edit',
         label: helptext.manageCatalogs.menu.edit,
         name: 'edit',
-        onClick: (row: any) => {
+        onClick: (row: Catalog) => {
           this.edit(row);
         },
       },
@@ -111,7 +112,7 @@ export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
         icon: 'refresh',
         label: helptext.manageCatalogs.menu.refresh,
         name: 'refresh',
-        onClick: (row: any) => {
+        onClick: (row: Catalog) => {
           this.refreshRow(row);
         },
       },
@@ -121,7 +122,7 @@ export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
         label: helptext.manageCatalogs.menu.delete,
         name: 'delete',
         disabled: row.builtin,
-        onClick: (row: any) => {
+        onClick: (row: Catalog) => {
           this.entityList.doDelete(row);
         },
       },
@@ -130,14 +131,14 @@ export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
         icon: 'summary',
         label: helptext.manageCatalogs.menu.summary,
         name: 'summary',
-        onClick: (row: any) => {
+        onClick: (row: Catalog) => {
           this.showSummary(row);
         },
       },
-    ] as any[];
+    ];
   }
 
-  resourceTransformIncomingRestData(d: any): any {
+  resourceTransformIncomingRestData(d: Catalog[]): Catalog[] {
     const data = Object.assign([], d);
     return data;
   }
@@ -146,15 +147,15 @@ export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
     this.modalService.open('slide-in-form', this.addComponent);
   }
 
-  edit(row: any): void {
+  edit(row: Catalog): void {
     this.modalService.open('slide-in-form', this.editComponent, row.label);
   }
 
-  refreshRow(row: any): void {
+  refreshRow(row: Catalog): void {
     this.syncRow(row);
   }
 
-  showSummary(row: any): void {
+  showSummary(row: Catalog): void {
     this.mdDialog.open(ManageCatalogSummaryDialog, {
       width: '534px',
       data: row,
@@ -188,7 +189,7 @@ export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
     });
   }
 
-  syncRow(row: any): void {
+  syncRow(row: Catalog): void {
     const payload = [row.label];
     this.loader.open();
     this.ws.call('catalog.sync', payload).pipe(untilDestroyed(this)).subscribe(
@@ -203,7 +204,7 @@ export class ManageCatalogsComponent implements EntityTableConfig, OnInit {
     );
   }
 
-  onRowClick(row: any): void {
+  onRowClick(row: Catalog): void {
     this.showSummary(row);
   }
 }
