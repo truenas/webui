@@ -602,7 +602,7 @@ export class CloudCredentialsFormComponent {
               value: 3,
             },
           ],
-          value: '0',
+          value: 0,
           relation: [
             {
               action: 'SHOW',
@@ -893,7 +893,7 @@ export class CloudCredentialsFormComponent {
                 value: 'OPENSTACK_SWIFT',
               }, {
                 name: 'auth_version-OPENSTACK_SWIFT',
-                value: '3',
+                value: 3,
               }],
             },
           ],
@@ -912,7 +912,7 @@ export class CloudCredentialsFormComponent {
                 value: 'OPENSTACK_SWIFT',
               }, {
                 name: 'auth_version-OPENSTACK_SWIFT',
-                value: '3',
+                value: 3,
               }],
             },
           ],
@@ -963,7 +963,7 @@ export class CloudCredentialsFormComponent {
                 value: 'OPENSTACK_SWIFT',
               }, {
                 name: 'auth_version-OPENSTACK_SWIFT',
-                value: '3',
+                value: 3,
               }],
             },
           ],
@@ -1357,7 +1357,7 @@ export class CloudCredentialsFormComponent {
     const tenantIdCtrl = entityForm.formGroup.controls['tenant_id-OPENSTACK_SWIFT'];
     entityForm.formGroup.controls['auth_version-OPENSTACK_SWIFT'].valueChanges.subscribe(
       (res) => {
-        if (res === '1') {
+        if (res === 1) {
           this.setFieldRequired('tenant-OPENSTACK_SWIFT', false, entityForm);
           this.setFieldRequired('tenant_id-OPENSTACK_SWIFT', false, entityForm);
         } else if ((tenantCtrl.value === undefined || tenantCtrl.value === '')
@@ -1496,7 +1496,7 @@ export class CloudCredentialsFormComponent {
         field_name += '-' + provider;
       }
       if (entityForm.formGroup.controls[field_name]) {
-        entityForm.formGroup.controls[field_name].setValue(field_name == 'auth_version-OPENSTACK_SWIFT' ? entityForm.wsResponseIdx[i].toString() : entityForm.wsResponseIdx[i]);
+        entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
       }
     }
   }
