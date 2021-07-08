@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
-import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
+import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';

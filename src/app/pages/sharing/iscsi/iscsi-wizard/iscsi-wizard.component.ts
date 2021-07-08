@@ -18,7 +18,7 @@ import {
   IscsiService, WebSocketService, NetworkService, StorageService, DialogService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { CloudCredentialService } from 'app/services/cloudcredential.service';
+import { CloudCredentialService } from 'app/services/cloud-credential.service';
 
 @UntilDestroy()
 @Component({

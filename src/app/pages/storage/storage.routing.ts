@@ -2,13 +2,11 @@ import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DatasetQuotasGrouplistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { DatasetQuotasUserlistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
-import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form/volumeaddkey-form.component';
-import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form/volumechangekey-form.component';
-import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form/volumecreatekey-form.component';
-import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form/volumerekey-form.component';
-import { ViewEnclosureComponent } from 'app/pages/system/viewenclosure/view-enclosure.component';
-import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list/VMware-snapshot-list.component';
-import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot/VMware-snapshot-form.component';
+import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volume-addkey-form/volume-addkey-form.component';
+import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volume-changekey-form/volume-changekey-form.component';
+import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volume-createkey-form/volume-createkey-form.component';
+import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volume-rekey-form/volume-rekey-form.component';
+import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/view-enclosure.component';
 import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from './disks/disk-form/disk-form.component';
 import { DiskListComponent } from './disks/disk-list/disk-list.component';
@@ -18,6 +16,8 @@ import { MultipathsComponent } from './multipaths/multipaths.component';
 import { SnapshotAddComponent } from './snapshots/snapshot-add/snapshot-add.component';
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone/snapshot-clone.component';
 import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.component';
+import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot';
+import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list';
 import { DatasetAclComponent } from './volumes/datasets/dataset-acl/dataset-acl.component';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/dataset-form.component';
 import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/dataset-permissions.component';
@@ -174,17 +174,17 @@ export const routes: Routes = [
         children: [
           {
             path: '',
-            component: VMwareSnapshotListComponent,
+            component: VmwareSnapshotListComponent,
             data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots' },
           },
           {
             path: 'add',
-            component: VMwareSnapshotFormComponent,
+            component: VmwareSnapshotFormComponent,
             data: { title: 'Add', breadcrumb: 'Add' },
           },
           {
             path: 'edit/:pk',
-            component: VMwareSnapshotFormComponent,
+            component: VmwareSnapshotFormComponent,
             data: { title: 'Edit', breadcrumb: 'Edit' },
           },
 

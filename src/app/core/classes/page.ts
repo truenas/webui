@@ -1,6 +1,6 @@
 import { Subject } from 'rxjs';
+import { ViewController } from 'app/core/classes/view-controller';
 import { CoreEvent } from 'app/interfaces/events';
-import { ViewController } from './viewcontroller';
 
 export interface PageOptions {
   events$: Subject<CoreEvent>;

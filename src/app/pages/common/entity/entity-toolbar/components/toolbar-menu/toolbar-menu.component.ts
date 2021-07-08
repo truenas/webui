@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
+import { iXAbstractObject } from 'app/core/classes/ix-abstract-object';
 import { ControlConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.interface';
 

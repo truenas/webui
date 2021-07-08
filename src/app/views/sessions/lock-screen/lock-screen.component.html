@@ -1,0 +1,37 @@
+<div class="page-wrap height-100 mat-bg-primary">
+  <div class="session-form-hold session-lockscreen">
+    <mat-progress-bar mode="determinate" class="session-progress"></mat-progress-bar>
+    <mat-card>
+      <mat-card-content>
+        <div fxFlex="column" fxFlexWrap="wrap">
+          <div fxFlexWrap="wrap" class="lockscreen-user">
+            <img class="lockscreen-face" src="assets/images/face-3.jpg" alt="">
+            <h5 class="m-0 font-normal">John Doe</h5>
+            <small class="text-muted">Last seen 1 hour ago</small>
+          </div>
+          <form #lockscreenForm="ngForm" (ngSubmit)="unlock()">
+            <div class="">
+              <mat-form-field class="full-width">
+                <input 
+                  type="password"
+                  name="password"
+                  required
+                  matInput
+                  [(ngModel)]="lockscreenData.password"
+                  #password="ngModel"
+                  placeholder="Password">
+              </mat-form-field>
+              <small 
+                *ngIf="password['errors'] && (password.dirty || password.touched) && (password['errors'].required)" 
+                class="form-error-msg"> Password is required </small>
+            </div>
+            
+            <button mat-button class="mat-primary full-width mb-05" [disabled]="lockscreenForm.invalid">Unlock</button>
+            <button mat-button [routerLink]="['/sessions/signin']" color="accent" class="mat-primary full-width">It's not me!</button>
+          </form>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+

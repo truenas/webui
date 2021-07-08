@@ -47,9 +47,9 @@ import {
   WebSocketService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { CloudCredentialService } from 'app/services/cloudcredential.service';
+import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { JobService } from 'app/services/job.service';
-import { KeychainCredentialService } from 'app/services/keychaincredential.services';
+import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 

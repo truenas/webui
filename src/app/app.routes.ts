@@ -60,7 +60,7 @@ export const rootRouterConfig: Routes = [{
   },
   {
     path: 'directoryservice',
-    loadChildren: () => import('./pages/directoryservice/directoryservice.module').then((module) => module.DirectoryServiceModule),
+    loadChildren: () => import('app/pages/directory-service/directory-service.module').then((module) => module.DirectoryServiceModule),
     data: { title: 'Directory Services', breadcrumb: 'Directory Services' },
   },
   {
@@ -100,12 +100,12 @@ export const rootRouterConfig: Routes = [{
   },
   {
     path: 'reportsdashboard',
-    loadChildren: () => import('./pages/reportsdashboard/reportsdashboard.module').then((module) => module.ReportsDashboardModule),
+    loadChildren: () => import('app/pages/reports-dashboard/reports-dashboard.module').then((module) => module.ReportsDashboardModule),
     data: { title: 'Reporting', breadcrumb: 'Reporting' },
   },
   {
     path: 'systemprocesses',
-    loadChildren: () => import('./pages/systemprocesses/system-processes.module').then((module) => module.SystemProcessesModule),
+    loadChildren: () => import('./pages/system-processes/system-processes.module').then((module) => module.SystemProcessesModule),
     data: { title: 'System Processes', breadcrumb: 'System Processes' },
   },
   {

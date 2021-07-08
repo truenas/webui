@@ -6,7 +6,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
+import { GlobalAction } from 'app/components/common/page-title/page-title.component';
 import { CoreEvent } from 'app/interfaces/events';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ToolbarConfig } from './models/control-config.interface';

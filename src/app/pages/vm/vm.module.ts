@@ -3,8 +3,8 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { MaterialModule } from 'app/appMaterial.module';
-import { CoreComponents } from 'app/core/components/corecomponents.module';
+import { MaterialModule } from 'app/app-material.module';
+import { CoreComponents } from 'app/core/components/core-components.module';
 import {
   VmService, NetworkService, SystemGeneralService,
 } from 'app/services';

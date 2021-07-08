@@ -1,10 +1,10 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { RYSNCConfigurationFormComponent } from 'app/pages/services/components/service-rsync/rsync-configuration/rsyncmodule/rsync-configuration-form.component';
 import { ServiceDDNSComponent } from './components/service-dynamicdns/service-dynamicdns.component';
 import { ServiceFTPComponent } from './components/service-ftp/service-ftp.component';
 import { ServiceLLDPComponent } from './components/service-lldp/service-lldp.component';
 import { ServiceNFSComponent } from './components/service-nfs/service-nfs.component';
-import { RYSNCConfigurationFormComponent } from './components/service-rsync/rsyncconfiguration/rsyncmodule/rsyncconfiguration-form.component';
 import { ServiceRSYNCComponent } from './components/service-rsync/service-rsync.component';
 import { ServiceS3Component } from './components/service-s3/service-s3.component';
 import { ServiceSMARTComponent } from './components/service-smart/service-smart.component';

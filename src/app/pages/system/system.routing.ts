@@ -1,5 +1,7 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
+import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
 import { T } from 'app/translate-marker';
 import { Services } from '../services/services.component';
 import { ShellComponent } from '../shell/shell.component';
@@ -8,9 +10,8 @@ import { CronFormComponent } from './advanced/cron/cron-form/cron-form.component
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
 import { InitshutdownFormComponent } from './advanced/initshutdown/initshutdown-form/initshutdown-form.component';
 import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
+import { AlertServiceComponent } from './alert-service/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
-import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
-import { AlertServiceListComponent } from './alertservice/alertservice-list/alertservice-list.component';
 import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach/bootenv-attach-form.component';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/bootenv-clone.component';
 import { BootEnvironmentCreateComponent } from './bootenv/bootenv-create/bootenv-create.component';
@@ -26,9 +27,8 @@ import { SupportComponent } from './general-settings/support/support.component';
 import { TunableFormComponent } from './tunable/tunable-form/tunable-form.component';
 import { TunableListComponent } from './tunable/tunable-list/tunable-list.component';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
-import { ManualUpdateComponent } from './update/manualupdate/manualupdate.component';
 import { UpdateComponent } from './update/update.component';
-import { ViewEnclosureComponent } from './viewenclosure/view-enclosure.component';
+import { ViewEnclosureComponent } from './view-enclosure/view-enclosure.component';
 
 export const routes: Routes = [
   {
