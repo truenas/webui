@@ -28,8 +28,8 @@ interface NicInfoMap {
 @UntilDestroy()
 @Component({
   selector: 'widget-network',
-  templateUrl: './widgetnetwork.component.html',
-  styleUrls: ['./widgetnetwork.component.scss'],
+  templateUrl: './widget-network.component.html',
+  styleUrls: ['./widget-network.component.scss'],
 })
 export class WidgetNetworkComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
   @Input() stats: any;

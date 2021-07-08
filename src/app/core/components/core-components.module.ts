@@ -26,13 +26,13 @@ import { WidgetChartComponent } from 'app/core/components/widgets/widget-chart/w
 import { WidgetControllerComponent } from 'app/core/components/widgets/widget-controller/widget-controller.component';
 import { WidgetCpuComponent } from 'app/core/components/widgets/widget-cpu/widget-cpu.component';
 import { WidgetMemoryComponent } from 'app/core/components/widgets/widget-memory/widget-memory.component';
+import { WidgetNetworkComponent } from 'app/core/components/widgets/widget-network/widget-network.component';
 import { WidgetNicComponent } from 'app/core/components/widgets/widget-nic/widget-nic.component';
 import { WidgetPoolComponent } from 'app/core/components/widgets/widget-pool/widget-pool.component';
 import { WidgetStorageComponent } from 'app/core/components/widgets/widget-storage/widget-storage.component';
 import { SimpleFailoverBtnComponent, SimpleFailoverBtnDialog } from 'app/core/components/widgets/widget-sys-info/simple-failover-btn.component';
 import { WidgetSysInfoComponent } from 'app/core/components/widgets/widget-sys-info/widget-sys-info.component';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-import { WidgetNetworkComponent } from 'app/core/components/widgets/widgetnetwork/widgetnetwork.component';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
