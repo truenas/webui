@@ -73,7 +73,8 @@ def browser():
     # application/gzip is use for .tgz
     profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-tar,application/gzip,application/json")
     profile.set_preference("browser.download.manager.showWhenStarting", False)
-    profile.set_preference("browser.link.open_newwindow", 3)
+    # browser.link.open_newwindow is frozen 2 the only way to change it is like bellow
+    profile.DEFAULT_PREFERENCES["frozen"]["browser.link.open_newwindow"] = 3
     binary = '/usr/bin/firefox' if system() == "Linux" else '/usr/local/bin/firefox'
     firefox_capabilities = DesiredCapabilities.FIREFOX
     firefox_capabilities['marionette'] = True
@@ -94,8 +95,8 @@ def driver():
 
 
 # Close Firefox after all tests are completed
-def pytest_sessionfinish(session, exitstatus):
-    web_driver.quit()
+# def pytest_sessionfinish(session, exitstatus):
+#     web_driver.quit()
 
 
 @pytest.mark.hookwrapper
