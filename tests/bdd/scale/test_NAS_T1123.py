@@ -65,7 +65,7 @@ def the_windows_sharessmb_page_should_open_click_add(driver):
 
 
 @then(parsers.parse('Set Path to the ACL dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit'))
-def set_path_to_the_acl_dataset_mnttankmy_acl_dataset_input_mysmbshare_as_name_click_to_enable_input_my_smb_test_share_as_description_and_click_summit(driver, path, smbname, description):
+def set_path_to_the_acl_dataset_mntsystemkmy_acl_dataset_input_mysmbshare_as_name_click_to_enable_input_my_smb_test_share_as_description_and_click_summit(driver, path, smbname, description):
     """Set Path to the ACL dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit."""
     time.sleep(1)
     global smb_path
