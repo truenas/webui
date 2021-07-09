@@ -121,9 +121,8 @@ def pytest_runtest_makereport(item):
                 traceback_name = f'screenshot/{report.nodeid.replace("::", "_")}.txt'
                 save_traceback(traceback_name)
                 save_screenshot(screenshot_error_name)
-                # Press CLOSE if exist only if there is an error box.
-                if element_exist('//button[@ix-auto="button__CLOSE"]'):
-                    web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+                ActionChains(web_driver).send_keys(Keys.ESCAPE).perform()
+                # web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
             save_screenshot(screenshot_name)
             # To make sure we are not stuck on a combobox to stop other test to fail
             if element_exist('//mat-option'):
