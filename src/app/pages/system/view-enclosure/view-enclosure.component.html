@@ -1,16 +1,5 @@
 <ng-container *ngIf="errors.length == 0">
   <div *ngIf="system && system.enclosures && system_manufacturer && system_manufacturer == 'ixsystems'" class="page-viewport" fxLayout="row wrap" >
-    
-    <div fxFlex="100">
-      <nav class="view-nav-bar" >
-        <span *ngFor="let button of views; let i=index;">
-          <span *ngIf="button.showInNavbar" class="view-nav-btn mat-button mat-default" (click)="changeView(button.id)" [ngClass]="{'active': button.name == currentView.name}">
-            <div class="view-nav-btn-icon" ><mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-{{button.icon}}"></mat-icon></div>
-            <div class="view-nav-btn-label">{{button.name}}</div>
-          </span>
-        </span>
-      </nav>
-    </div>
   
   <!-- Persistent Visualizer -->
   <div class="main-content" fxFlex="calc(100% - {{ (system.enclosures.length * 240).toString() }}px )">
@@ -21,7 +10,7 @@
   
     <ng-container *ngIf="supportedHardware">
       <div *ngIf="!system.platform.includes('MINI'); else mini" style="padding:64px;">
-        <enclosure-disks style.padding="32px 0 0 0"  
+        <enclosure-disks 
           *ngIf="events && system && system.pools && selectedEnclosure" 
           [controller-events]="events" 
           [current-tab]="currentView" 
@@ -31,8 +20,8 @@
       </div>
   
       <ng-template #mini>
-        <div style="padding:64px;">
-          <enclosure-disks-mini style.padding="32px 0 0 0"  
+        <div>
+          <enclosure-disks-mini 
             *ngIf="events && system && system.pools && selectedEnclosure" 
             [controller-events]="events" 
             [current-tab]="currentView" 
