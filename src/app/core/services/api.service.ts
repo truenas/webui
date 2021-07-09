@@ -3,7 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { WebSocketService } from 'app/services/ws.service';
-import { CoreService } from './core.service';
+import { CoreService } from './core-service/core.service';
 
 export interface ApiCall {
   version: string;

@@ -24,6 +24,7 @@ module.exports = {
       "plugins": [
         "rxjs",
         "rxjs-angular",
+        "unicorn"
       ],
       "rules": {
         // TODO: Conflicts with ngx-translate-extract
@@ -134,6 +135,7 @@ module.exports = {
           argsIgnorePattern: "^_$"
         }],
         "@typescript-eslint/ban-types": ["error"],
+        "unicorn/filename-case": ["error", { case: "kebabCase"}],
 
         // RxJS rules
         "rxjs/no-unsafe-takeuntil": ["error", {

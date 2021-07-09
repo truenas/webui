@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { MaterialModule } from 'app/appMaterial.module';
+import { MaterialModule } from 'app/app-material.module';
 import { GuideComponent } from './guide.component';
 import { routing } from './guide.routing';
 

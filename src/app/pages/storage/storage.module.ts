@@ -8,7 +8,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { TreeTableModule } from 'primeng/treetable';
-import { MaterialModule } from 'app/appMaterial.module';
+import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { NfsPermissionsComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/nfs-permissions/nfs-permissions.component';
 import { PermissionsItemComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/permissions-item/permissions-item.component';
@@ -16,18 +16,16 @@ import { PosixPermissionsComponent } from 'app/pages/storage/volumes/permissions
 import { TrivialPermissionsComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/trivial-permissions/trivial-permissions.component';
 import { PermissionsSidebarComponent } from 'app/pages/storage/volumes/permissions-sidebar/permissions-sidebar.component';
 import { PermissionsSidebarStore } from 'app/pages/storage/volumes/permissions-sidebar/permissions-sidebar.store';
+import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volume-addkey-form/volume-addkey-form.component';
+import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volume-changekey-form/volume-changekey-form.component';
+import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volume-createkey-form/volume-createkey-form.component';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
-import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form/volumeaddkey-form.component';
-import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form/volumechangekey-form.component';
-import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form/volumecreatekey-form.component';
-import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form/volumerekey-form.component';
+import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volume-rekey-form/volume-rekey-form.component';
 import { JobService } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
 import { MessageService } from '../common/entity/entity-form/services/message.service';
 import { EntityModule } from '../common/entity/entity.module';
-import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list/VMware-snapshot-list.component';
-import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot/VMware-snapshot-form.component';
 import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from './disks/disk-form/disk-form.component';
 import { DiskListComponent } from './disks/disk-list/disk-list.component';
@@ -39,6 +37,8 @@ import { SnapshotCloneComponent } from './snapshots/snapshot-clone/snapshot-clon
 import { SnapshotDetailsComponent } from './snapshots/snapshot-list/components/snapshot-details.component';
 import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.component';
 import { routing } from './storage.routing';
+import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot';
+import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list';
 import { DatasetAclComponent } from './volumes/datasets/dataset-acl/dataset-acl.component';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/dataset-form.component';
 import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/dataset-permissions.component';
@@ -89,8 +89,8 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     DatasetAclComponent,
     DatasetUnlockComponent,
     UnlockDialogComponent,
-    VMwareSnapshotFormComponent,
-    VMwareSnapshotListComponent,
+    VmwareSnapshotFormComponent,
+    VmwareSnapshotListComponent,
     DiskListComponent,
     VolumeStatusComponent,
     MultipathsComponent,
