@@ -153,6 +153,7 @@ def under_transfer_mode_select_copy_click_save(driver):
     # assert wait_on_element(driver, 5, '//mat-select[contains(.,"COPY")]')
     # assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     # driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    # assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 
 @then('the new Cloud Sync Tasks should save without error')
@@ -216,6 +217,7 @@ def on_the_nas_tab_expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 15, '//button[contains(.,"SUCCESS")]')
 
 
 @then('verify the file is copied from the S3 bucket into the dataset')
@@ -248,19 +250,208 @@ def on_the_bucket_tab_create_a_folder_and_upload_a_file_in_it(driver):
     assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
 
 
+@then('on the NAS tad on the cloud sync task, click Run Now')
+def on_the_nas_tad_on_the_cloud_sync_task_click_run_now(driver):
+    """on the NAS tad on the cloud sync task, click Run Now."""
+    driver.switch_to.window(driver.window_handles[0])
+    assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
+    if not wait_on_element(driver, 1, '//button[@id="action_button___run_now"]', 'clickable'):
+        assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
+        driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
+    assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
+    driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 15, '//button[contains(.,"SUCCESS")]')
+
+
+@then('verify the folder and file is copied from the S3 bucket to the dataset')
+def verify_the_folder_and_file_is_copied_from_the_s3_bucket_to_the_dataset(driver, nas_ip):
+    """verify the folder and file is copied from the S3 bucket to the dataset."""
+    cmd = 'test -f /mnt/tank/aws_share/my_folder/cloud_test.txt'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True
+
+
 @then('delete the folder from the NAS dataset')
-def delete_the_folder_from_the_nas_dataset(driver):
+def delete_the_folder_from_the_nas_dataset(driver, nas_ip):
     """Delete the folder from the NAS dataset."""
+    cmd = 'rm -rf /mnt/tank/aws_share/my_folder'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True
+    cmd = 'rm -f /mnt/tank/aws_share/cloud_test.txt'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True
 
 
-@then('create a file in the directory of the dataset')
-def create_a_file_in_the_directory_of_the_dataset(driver):
-    """create a file in the directory of the dataset."""
+@then('on the cloud sync task and click Edit')
+def on_the_cloud_sync_task_and_click_edit(driver):
+    """on the cloud sync task and click Edit."""
+    driver.switch_to.window(driver.window_handles[0])
+    assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
+    assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
+    time.sleep(0.5)
+
+
+@then('under Transfer Mode, select MOVE, click Save')
+def under_transfer_mode_select_move_click_save(driver):
+    """under Transfer Mode, select MOVE, click Save."""
+    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Transfer Mode"]', 'clickable')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Transfer Mode"]').click()
+    assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Transfer Mode_MOVE"]', 'clickable')
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Transfer Mode_MOVE"]').click()
+    assert wait_on_element(driver, 5, '//mat-select[contains(.,"MOVE")]')
+    assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
+    driver.find_element_by_xpath('//button[@id="save_button"]').click()
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+
+
+@then('on the bucket add a file in the folder')
+def on_the_bucket_add_a_file_in_the_folder(driver):
+    """on the bucket add a file in the folder."""
+    driver.switch_to.window(driver.window_handles[1])
+    assert wait_on_element(driver, 5, '//h1[text()="my_folder/"]')
+    assert wait_on_element(driver, 5, f'//span[text()="{my_bucket}"]')
+    driver.find_element_by_xpath(f'//span[text()="{my_bucket}"]').click()
+    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    s3_client = boto3.client('s3')
+    s3_client.upload_file('cloud_test.txt', my_bucket, 'cloud_test.txt')
+    driver.refresh()
+    assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
+    s3_client = boto3.client('s3')
+    s3_client.upload_file('cloud_test.txt', my_bucket, 'my_folder/cloud_test.txt')
+    assert wait_on_element(driver, 5, '//span[text()="my_folder/"]', 'clickable')
+    driver.find_element_by_xpath('//span[text()="my_folder/"]').click()
+    assert wait_on_element(driver, 5, '//h1[text()="my_folder/"]')
+    assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
+
+
+@then('verify all files are moved from the S3 bucket to the dataset')
+def verify_all_files_are_moved_from_the_s3_bucket_to_the_dataset(driver, nas_ip):
+    """verify all files is moved from the S3 bucket to the dataset."""
+    cmd = 'test -f /mnt/tank/aws_share/cloud_test.txt'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True
+    cmd = 'test -f /mnt/tank/aws_share/my_folder/cloud_test.txt'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True
+    driver.switch_to.window(driver.window_handles[1])
+    driver.refresh()
+    assert wait_on_element(driver, 5, '//h1[text()="my_folder/"]')
+    assert wait_on_element(driver, 5, f'//span[text()="{my_bucket}"]')
+    assert not wait_on_element(driver, 1, '//span[text()="cloud_test.txt"]')
+    driver.find_element_by_xpath(f'//span[text()="{my_bucket}"]').click()
+    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert not wait_on_element(driver, 1, '//span[text()="cloud_test.txt"]', 'clickable')
+
+
+@then('under Transfer Mode, select SYNC, then click Save')
+def under_transfer_mode_select_sync_then_click_save(driver):
+    """under Transfer Mode, select SYNC, then click Save."""
+    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Transfer Mode"]', 'clickable')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Transfer Mode"]').click()
+    assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Transfer Mode_SYNC"]', 'clickable')
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Transfer Mode_SYNC"]').click()
+    assert wait_on_element(driver, 5, '//mat-select[contains(.,"SYNC")]')
+    assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
+    driver.find_element_by_xpath('//button[@id="save_button"]').click()
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+
+
+@then('on the bucket tab, upload a file')
+def on_the_bucket_tab_upload_a_file(driver):
+    """on the bucket tab, upload a file."""
+    driver.switch_to.window(driver.window_handles[1])
+    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, '//awsui-button[@id="upload-button"]', 'clickable')
+    s3_client = boto3.client('s3')
+    s3_client.upload_file('cloud_test.txt', my_bucket, 'cloud_test.txt')
+    driver.refresh()
+    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
+    time.sleep(0.5)
+
+
+@then('verify the file is sync from the S3 bucket to the dataset')
+def verify_the_file_is_sync_from_the_s3_bucket_to_the_dataset(driver, nas_ip):
+    """verify the file is sync from the S3 bucket to the dataset."""
+    cmd = 'test -f /mnt/tank/aws_share/cloud_test.txt'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True
+    driver.switch_to.window(driver.window_handles[1])
+    driver.refresh()
+    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
+
+
+@then('delete the file from the S3 bucket in the AWS web console')
+def delete_the_file_from_the_s3_bucket_in_the_aws_web_console(driver):
+    """delete the file from the S3 bucket in the AWS web console."""
+    driver.switch_to.window(driver.window_handles[1])
+    driver.refresh()
+    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
+    assert wait_on_element(driver, 5, '(//awsui-checkbox[contains(@class,"checkbox-index-all")])[2]', 'clickable')
+    driver.find_element_by_xpath('(//awsui-checkbox[contains(@class,"checkbox-index-all")])[2]').click()
+    assert wait_on_element(driver, 5, '//awsui-button[@id="delete-objects-button"]/button', 'clickable')
+    driver.find_element_by_xpath('//awsui-button[@id="delete-objects-button"]/button').click()
+    assert wait_on_element(driver, 5, '//div[contains(.,"Delete objects")]')
+    assert wait_on_element(driver, 5, '//input[@placeholder="permanently delete"]', 'inputable')
+    driver.find_element_by_xpath('//input[@placeholder="permanently delete"]').send_keys('permanently delete')
+    assert wait_on_element(driver, 5, '//awsui-button[@class="delete-objects__actions-submit"]', 'clickable')
+    driver.find_element_by_xpath('//awsui-button[@class="delete-objects__actions-submit"]').click()
+    assert wait_on_element(driver, 5, '//div[contains(.,"Delete objects: status")]')
+    time.sleep(0.5)
+    assert wait_on_element(driver, 5, '//awsui-button[@class="delete-objects__exit"]/button', 'clickable')
+    driver.find_element_by_xpath('//awsui-button[@class="delete-objects__exit"]/button').click()
+    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+
+
+@then('verify that the file is deleted on the NAS dataset')
+def verify_that_the_file_is_deleted_on_the_nas_dataset(driver, nas_ip):
+    """verify that the file is deleted on the NAS dataset."""
+    cmd = 'test -f /mnt/tank/aws_share/cloud_test.txt'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is False
 
 
 @then('create a folder, and upload a file in it')
 def create_a_folder_and_upload_a_file_in_it(driver):
     """create a folder, and upload a file in it."""
+    driver.switch_to.window(driver.window_handles[1])
+    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, '//awsui-button[@id="create-folder-button"]/button', 'clickable')
+    driver.find_element_by_xpath('//awsui-button[@id="create-folder-button"]/button').click()
+    assert wait_on_element(driver, 10, '//div[contains(.,"Create folder")]')
+    assert wait_on_element(driver, 10, '//input[@placeholder="Enter folder name"]', 'inputable')
+    driver.find_element_by_xpath('//input[@placeholder="Enter folder name"]').send_keys('my_folder')
+    assert wait_on_element(driver, 5, '//awsui-button[@class="createFolder-object-actions__actions-submit"]', 'clickable')
+    driver.find_element_by_xpath('//awsui-button[@class="createFolder-object-actions__actions-submit"]').click()
+    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, '//span[text()="my_folder/"]', 'clickable')
+    s3_client = boto3.client('s3')
+    s3_client.upload_file('cloud_test.txt', my_bucket, 'my_folder/cloud_test.txt')
+    assert wait_on_element(driver, 5, '//span[text()="my_folder/"]', 'clickable')
+    driver.find_element_by_xpath('//span[text()="my_folder/"]').click()
+    assert wait_on_element(driver, 5, '//h1[text()="my_folder/"]')
+    assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
+
+
+@then('verify the folder and file is moved from the S3 bucket to the dataset')
+def verify_the_folder_and_file_is_moved_from_the_s3_bucket_to_the_dataset(driver, nas_ip):
+    """verify the folder and file is moved from the S3 bucket to the dataset."""
+    cmd = 'test -f /mnt/tank/aws_share/my_folder/cloud_test.txt'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True
+
+
+@then('create a file in the directory of the dataset')
+def create_a_file_in_the_directory_of_the_dataset(driver):
+    """create a file in the directory of the dataset."""
 
 
 @then('create a sub-folder within the dataset folder and Move the previous file into it')
@@ -271,16 +462,6 @@ def create_a_subfolder_within_the_dataset_folder_and_move_the_previous_file_into
 @then('create a sub-folder within the dataset folder create a file into it')
 def create_a_subfolder_within_the_dataset_folder_create_a_file_into_it(driver):
     """create a sub-folder within the dataset folder create a file into it."""
-
-
-@then('delete the file from the S3 bucket in the AWS web console')
-def delete_the_file_from_the_s3_bucket_in_the_aws_web_console(driver):
-    """delete the file from the S3 bucket in the AWS web console."""
-
-
-@then('delete the file from the dataset and click Run Now')
-def delete_the_file_from_the_dataset_and_click_run_now(driver):
-    """delete the file from the dataset and click Run Now."""
 
 
 @then('delete the folder from the S3 bucket in the AWS web console')
@@ -318,24 +499,9 @@ def on_the_nas_tab_expand_the_task_and_click_run_now(driver):
     """on the NAS tab, expand the task and click Run Now."""
 
 
-@then('on the NAS tad on the cloud sync task, click Run Now')
-def on_the_nas_tad_on_the_cloud_sync_task_click_run_now(driver):
-    """on the NAS tad on the cloud sync task, click Run Now."""
-
-
 @then('on the NAS under the new task, click Run Now')
 def on_the_nas_under_the_new_task_click_run_now(driver):
     """on the NAS under the new task, click Run Now."""
-
-
-@then('on the bucket tab, upload a file')
-def on_the_bucket_tab_upload_a_file(driver):
-    """on the bucket tab, upload a file."""
-
-
-@then('on the bucket tab, verify the file is deleted')
-def on_the_bucket_tab_verify_the_file_is_deleted(driver):
-    """on the bucket tab, verify the file is deleted."""
 
 
 @then('on the bucket tab, verify the folder is deleted')
@@ -343,19 +509,9 @@ def on_the_bucket_tab_verify_the_folder_is_deleted(driver):
     """on the bucket tab, verify the folder is deleted."""
 
 
-@then('on the cloud sync task and click Edit')
-def on_the_cloud_sync_task_and_click_edit(driver):
-    """on the cloud sync task and click Edit."""
-
-
 @then('under Transfer Mode, select COPY, then click Save')
 def under_transfer_mode_select_copy_then_click_save(driver):
     """under Transfer Mode, select COPY, then click Save."""
-
-
-@then('under Transfer Mode, select MOVE, click Save')
-def under_transfer_mode_select_move_click_save(driver):
-    """under Transfer Mode, select MOVE, click Save."""
 
 
 @then('under Transfer Mode, select MOVE, then click Save')
@@ -363,19 +519,9 @@ def under_transfer_mode_select_move_then_click_save(driver):
     """under Transfer Mode, select MOVE, then click Save."""
 
 
-@then('under Transfer Mode, select SYNC, then click Save')
-def under_transfer_mode_select_sync_then_click_save(driver):
-    """under Transfer Mode, select SYNC, then click Save."""
-
-
 @then('under the new task and click Run Now')
 def under_the_new_task_and_click_run_now(driver):
     """under the new task and click Run Now."""
-
-
-@then('verify that the file is deleted on the NAS dataset')
-def verify_that_the_file_is_deleted_on_the_nas_dataset(driver):
-    """verify that the file is deleted on the NAS dataset."""
 
 
 @then('verify that the file is not deleted on the NAS')
@@ -408,21 +554,35 @@ def verify_the_file_is_moved_from_the_s3_bucket_to_the_dataset(driver):
     """verify the file is moved from the S3 bucket to the dataset."""
 
 
-@then('verify the file is sync from the S3 bucket to the dataset')
-def verify_the_file_is_sync_from_the_s3_bucket_to_the_dataset(driver):
-    """verify the file is sync from the S3 bucket to the dataset."""
-
-
-@then('verify the folder and file is copied from the S3 bucket to the dataset')
-def verify_the_folder_and_file_is_copied_from_the_s3_bucket_to_the_dataset(driver):
-    """verify the folder and file is copied from the S3 bucket to the dataset."""
-
-
-@then('verify the folder and file is moved from the S3 bucket to the dataset')
-def verify_the_folder_and_file_is_moved_from_the_s3_bucket_to_the_dataset(driver):
-    """verify the folder and file is moved from the S3 bucket to the dataset."""
-
-
 @then('verify the folder appear in the S3 bucket with the file')
 def verify_the_folder_appear_in_the_s3_bucket_with_the_file(driver):
     """verify the folder appear in the S3 bucket with the file."""
+
+
+@then('delete the file from the dataset and click Run Now')
+def delete_the_file_from_the_dataset_and_click_run_now(driver, nas_ip):
+    """delete the file from the dataset and click Run Now."""
+    driver.switch_to.window(driver.window_handles[0])
+    cmd = 'rm -rf /mnt/tank/aws_share/cloud_test.txt'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True
+    assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
+    if not wait_on_element(driver, 1, '//button[@id="action_button___run_now"]', 'clickable'):
+        assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
+        driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
+    assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
+    driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 15, '//button[contains(.,"SUCCESS")]')
+
+
+@then('on the bucket tab, verify the file is deleted')
+def on_the_bucket_tab_verify_the_file_is_deleted(driver):
+    """on the bucket tab, verify the file is deleted."""
+    driver.switch_to.window(driver.window_handles[1])
+    driver.refresh()
+    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert not wait_on_element(driver, 1, '//span[text()="cloud_test.txt"]', 'clickable')
