@@ -4,6 +4,7 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { ChartOptions } from 'chart.js';
 import { WidgetUtils } from 'app/core/components/widgets/widget-utils';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
@@ -46,6 +47,61 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   gap = 16;
   contentHeight = 400 - 56;
   rowHeight = 150;
+  chartData = {
+    labels: ['10:40', '10:41', '10:42', '10:43', '10:44', '10:45', '10:46', '10:47'],
+    datasets: [
+      {
+        label: 'in',
+        data: [1, 5, 10, 15, 20, 25, 10, 15],
+        borderColor: this.themeService.currentTheme().blue,
+        backgroundColor: this.themeService.currentTheme().blue,
+      },
+      {
+        label: 'out',
+        data: [-3, -15, -10, -25, -10, -5, -1, -10],
+        borderColor: this.themeService.currentTheme().orange,
+        backgroundColor: this.themeService.currentTheme().orange,
+      },
+    ],
+  };
+
+  chartOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    legend: {
+      align: 'end',
+      labels: {
+        usePointStyle: true,
+      },
+    },
+    scales: {
+      xAxes: [
+        {
+          ticks: {
+            callback: (value, index) => {
+              if (index % 2 == 0) {
+                return undefined;
+              }
+              return value;
+            },
+          },
+        },
+      ],
+      yAxes: [
+        {
+          position: 'right',
+          ticks: {
+            callback: (value, index) => {
+              if (index % 2 == 0) {
+                return undefined;
+              }
+              return value;
+            },
+          },
+        },
+      ],
+    },
+  };
 
   constructor(public router: Router, private tableService: TableService, public translate: TranslateService) {
     super(translate);

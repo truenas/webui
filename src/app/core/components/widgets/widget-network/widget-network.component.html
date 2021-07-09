@@ -66,9 +66,9 @@
                       </ul>
                     </div>
                   </div>
-                  <div class="nic-chart" fxFlex fxLayout="row" *ngIf="nics.length <= 3">
-                    <div class="chart-body" fxFill>
-                      chart
+                  <div class="nic-chart" fxFlex *ngIf="nics.length <= 3">
+                    <div class="chart-body">
+                      <view-chart-area [data]="chartData" [options]="chartOptions"></view-chart-area>
                     </div>
                   </div>
                 </div>

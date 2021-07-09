@@ -1,7 +1,7 @@
 import {
   Component, Input, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef,
 } from '@angular/core';
-import { Chart, ChartData } from 'chart.js';
+import { Chart, ChartData, ChartOptions } from 'chart.js';
 
 @Component({
   selector: 'view-chart-area',
@@ -11,6 +11,7 @@ import { Chart, ChartData } from 'chart.js';
 export class ViewChartAreaComponent implements OnDestroy, OnChanges {
   @ViewChild('canvas', { static: true }) canvas: ElementRef;
   @Input() data: ChartData;
+  @Input() options: ChartOptions;
 
   chart: Chart;
   maxSources = 8;
@@ -19,9 +20,7 @@ export class ViewChartAreaComponent implements OnDestroy, OnChanges {
     return {
       type: 'line',
       data,
-      options: {
-        responsive: true,
-      },
+      options: this.options,
     };
   }
 
