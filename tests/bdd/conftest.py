@@ -112,7 +112,10 @@ def pytest_runtest_makereport(item):
             screenshot_name = f'screenshot/{report.nodeid.replace("::", "_")}.png'
             screenshot_error_name = f'screenshot/{report.nodeid.replace("::", "_")}_error.png'
             # look if there is a Error window
-            if element_exist('//h1[normalize-space(text())="Error"]') or element_exist('//h1[normalize-space(text())="FAILED"]'):
+            error_xpath = '//h1[normalize-space(text())="Error"]'
+            failed_xpath = '//h1[normalize-space(text())="FAILED"]'
+            download_xpath = '//h1[normalize-space(text())="Error Downloading File"]'
+            if element_exist(error_xpath) or element_exist(failed_xpath) or element_exist(download_xpath):
                 web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
                 time.sleep(2)
                 traceback_name = f'screenshot/{report.nodeid.replace("::", "_")}.txt'
