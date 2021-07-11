@@ -36,6 +36,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
   addCall: 'keychaincredential.create' | 'keychaincredential.remote_ssh_semiautomatic_setup' = this.sshCalls['manual'];
   editCall: 'keychaincredential.update' = 'keychaincredential.update';
   isEntity = true;
+  keypairCount = 0;
   protected namesInUseConnection: string[] = [];
   protected namesInUse: string[] = [];
   title = helptext.formTitle;
@@ -371,8 +372,9 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     if (data['private_key'] == 'NEW') {
       await this.replicationService.genSSHKeypair().then(
         async (keyPair) => {
+          const keyCount = this.keypairCount++ > 0 ? this.keypairCount : '';
           const payload = {
-            name: data['name'] + ' Key',
+            name: data['name'] + ' Key' + keyCount,
             type: KeychainCredentialType.SshKeyPair,
             attributes: keyPair,
           };
