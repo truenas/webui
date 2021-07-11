@@ -23,7 +23,16 @@ export class BootEnvironmentCreateComponent implements FormConfiguration {
   isEntity = true;
   protected entityForm: EntityFormComponent;
 
-  fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[] = [
+    {
+      type: 'input',
+      name: 'name',
+      placeholder: helptext_system_bootenv.create_name_placeholder,
+      tooltip: helptext_system_bootenv.create_name_tooltip,
+      validation: [regexValidator(this.bootEnvService.bootenv_name_regex)],
+      required: true,
+    },
+  ];
 
   constructor(
     protected router: Router,
@@ -35,21 +44,8 @@ export class BootEnvironmentCreateComponent implements FormConfiguration {
   preInit(entityForm: EntityFormComponent): void {
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
-      this.fieldConfig = [
-        {
-          type: 'input',
-          name: 'name',
-          placeholder: helptext_system_bootenv.create_name_placeholder,
-          tooltip: helptext_system_bootenv.create_name_tooltip,
-          validation: [regexValidator(this.bootEnvService.bootenv_name_regex)],
-          required: true,
-        },
-      ];
     });
     this.entityForm = entityForm;
-  }
-
-  afterInit(entityForm: EntityFormComponent): void {
     entityForm.submitFunction = this.submitFunction;
   }
 
