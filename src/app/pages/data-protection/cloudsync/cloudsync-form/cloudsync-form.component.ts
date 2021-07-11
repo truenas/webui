@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { filter, take, tap } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
@@ -369,8 +369,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
           type: 'checkbox',
           name: 'xattr',
           value: false,
-          placeholder: helptext.xattr_placeholder,
-          tooltip: helptext.xattr_tooltip,
+          placeholder: helptext.xattr_pull_placeholder,
+          tooltip: helptext.xattr_pull_tooltip,
         },
       ],
     },
@@ -694,7 +694,18 @@ export class CloudsyncFormComponent implements FormConfiguration {
     // When user interacts with direction dropdown, change transfer_mode to COPY
     this.formGroup
       .get('direction')
-      .valueChanges.pipe(filter(() => this.formGroup.get('transfer_mode').value !== TransferMode.Copy))
+      .valueChanges
+      .pipe(tap((direction: string) => {
+        const xattr_fc = entityForm.fieldConfig.find((config: any) => config.name === 'xattr');
+        if (direction === Direction.Pull) {
+          xattr_fc.placeholder = helptext.xattr_pull_placeholder;
+          xattr_fc.tooltip = helptext.xattr_pull_tooltip;
+        } else {
+          xattr_fc.placeholder = helptext.xattr_push_placeholder;
+          xattr_fc.tooltip = helptext.xattr_push_tooltip;
+        }
+      }))
+      .pipe(filter(() => this.formGroup.get('transfer_mode').value !== TransferMode.Copy))
       .pipe(untilDestroyed(this)).subscribe(() => {
         this.dialog.Info(helptext.resetTransferModeDialog.title, helptext.resetTransferModeDialog.content, '500px', 'info', true);
         this.formGroup.get('transfer_mode').setValue(TransferMode.Copy);

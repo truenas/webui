@@ -153,8 +153,10 @@ export default {
  See <a href="https://rclone.org/docs/#bwlimit-bandwidth-spec"\
  target="_blank">rclone --bwlimit</a>.'),
 
-  xattr_placeholder: T('Dump xattrs'),
-  xattr_tooltip: T('Dump xattrs to .truenas-xattr-dump.xz in the cloud sync root to allow their future restore.'),
+  xattr_push_placeholder: T('Dump xattrs'),
+  xattr_pull_placeholder: T('Restore xattrs'),
+  xattr_push_tooltip: T('Dump xattrs to .truenas-xattr-dump.xz in the cloud sync root to allow their future restore.'),
+  xattr_pull_tooltip: T('Restore previously dumped xattrs from .truenas-xattr-dump.xz file in the cloud sync root.'),
 
   exclude_placeholder: T('Exclude'),
   exclude_tooltip: T('List of files and directories to exclude from sync.<br> \

@@ -446,6 +446,8 @@
   "Resilvering": "",
   "Restart Policy": "",
   "Restart/Update": "",
+  "Restore previously dumped xattrs from .truenas-xattr-dump.xz file in the cloud sync root.": "",
+  "Restore xattrs": "",
   "Restricted": "",
   "Roll Back": "",
   "Roll back": "",
