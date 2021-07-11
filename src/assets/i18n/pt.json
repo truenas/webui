@@ -1048,6 +1048,8 @@
   "Drives and IDs registered to the Microsoft account.  Selecting a drive also fills the <i>Drive ID</i> field.": "",
   "Dry Run": "",
   "Dry Run Cloud Sync Task": "",
+  "Dump xattrs": "",
+  "Dump xattrs to .truenas-xattr-dump.xz in the cloud sync root to allow their future restore.": "",
   "Dynamic DNS": "",
   "E-mail address that will receive SNMP service messages.": "",
   "EC Curve": "",

@@ -91,6 +91,8 @@
   "Directory Inherit": "",
   "Discard": "",
   "Disks with Errors": "",
+  "Dump xattrs": "",
+  "Dump xattrs to .truenas-xattr-dump.xz in the cloud sync root to allow their future restore.": "",
   "EMERGENCY": "",
   "ERROR": "",
   "Edit Dataset": "",

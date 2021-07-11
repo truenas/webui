@@ -365,6 +365,13 @@ export class CloudsyncFormComponent implements FormConfiguration {
           placeholder: helptext.bwlimit_placeholder,
           tooltip: helptext.bwlimit_tooltip,
         },
+        {
+          type: 'checkbox',
+          name: 'xattr',
+          value: false,
+          placeholder: helptext.xattr_placeholder,
+          tooltip: helptext.xattr_tooltip,
+        },
       ],
     },
     { name: 'divider', divider: true },

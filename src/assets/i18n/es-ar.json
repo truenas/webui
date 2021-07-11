@@ -152,6 +152,8 @@
   "Docker image repository": "",
   "Don't show this message again": "",
   "Download File": "",
+  "Dump xattrs": "",
+  "Dump xattrs to .truenas-xattr-dump.xz in the cloud sync root to allow their future restore.": "",
   "EMERGENCY": "",
   "ERROR": "",
   "EULA": "",
