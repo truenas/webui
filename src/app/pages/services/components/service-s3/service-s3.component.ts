@@ -163,7 +163,6 @@ export class ServiceS3Component implements OnDestroy {
     if (data.storage_path) {
       this.initial_path = data.storage_path;
     }
-    delete data['secret_key'];
 
     // If validIps is slow to load, skip check on load (It's still done on save)
     if (this.validBindIps.length > 0) {
