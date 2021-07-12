@@ -4,7 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { take } from 'rxjs/operators';
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
-import helptext from 'app/helptext/system/initshutdown';
+import helptext from 'app/helptext/system/init-shutdown';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';

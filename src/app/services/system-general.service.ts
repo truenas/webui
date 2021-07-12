@@ -6,6 +6,7 @@ import { CertificateAuthority } from 'app/interfaces/certificate-authority.inter
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WebSocketService } from './ws.service';
 
@@ -17,12 +18,12 @@ export class SystemGeneralService {
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
   updateIsDone$ = new Subject();
-  sendConfigData$ = new Subject();
+  sendConfigData$ = new Subject<SystemGeneralConfig>();
   refreshSysGeneral$ = new Subject();
 
   // Prevent repetitive api calls in a short time when data is already available
   generalConfigInfo: any;
-  getGeneralConfig = new Observable<any>((observer) => {
+  getGeneralConfig$ = new Observable<any>((observer) => {
     if (!this.ws.loggedIn) {
       return observer.next({});
     }
@@ -50,7 +51,7 @@ export class SystemGeneralService {
   });
 
   advancedConfigInfo: any;
-  getAdvancedConfig = new Observable<any>((observer) => {
+  getAdvancedConfig$ = new Observable<any>((observer) => {
     if ((!this.advancedConfigInfo || _.isEmpty(this.advancedConfigInfo))) {
       this.advancedConfigInfo = { waiting: true };
       this.ws.call('system.advanced.config').subscribe((advancedConfig) => {
@@ -71,7 +72,7 @@ export class SystemGeneralService {
   });
 
   productType = '';
-  getProductType = new Observable<string>((observer) => {
+  getProductType$ = new Observable<string>((observer) => {
     if (!this.productType) {
       this.productType = 'pending';
       this.ws.call('system.product_type').subscribe((res) => {
@@ -173,7 +174,7 @@ export class SystemGeneralService {
     this.updateIsDone$.next();
   }
 
-  sendConfigData(data: any): void {
+  sendConfigData(data: SystemGeneralConfig): void {
     this.sendConfigData$.next(data);
   }
 

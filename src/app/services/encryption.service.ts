@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
+import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import { WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Subject } from 'rxjs';
 import { View } from 'app/core/classes/view';
-import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
+import { CoreServiceInjector } from 'app/core/services/core-service-injector';
 import { CoreEvent } from 'app/interfaces/events';
 import { ThemeService } from 'app/services/theme/theme.service';
 

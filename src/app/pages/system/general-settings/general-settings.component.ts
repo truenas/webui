@@ -4,19 +4,22 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout/admin-layout.component';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { CoreEvent } from 'app/interfaces/events';
+import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
-  WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService,
+  WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService, ValidationService,
 }
   from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -24,7 +27,6 @@ import { LocaleService } from 'app/services/locale.service';
 import { ModalService } from 'app/services/modal.service';
 import { GuiFormComponent } from './gui-form/gui-form.component';
 import { LocalizationFormComponent } from './localization-form/localization-form.component';
-import { NTPServerFormComponent } from './ntpservers/ntpserver-form/ntpserver-form.component';
 
 @UntilDestroy()
 @Component({
@@ -38,15 +40,15 @@ export class GeneralSettingsComponent implements OnInit {
   localeData: DataCard;
   configData: any;
   displayedColumns: any;
-  dataSource: any;
-  formEvents: Subject<CoreEvent>;
+  dataSource: NtpServer[];
+  formEvent$: Subject<CoreEvent>;
 
   // Components included in this dashboard
   protected localizationComponent = new LocalizationFormComponent(this.language, this.ws, this.dialog, this.loader,
     this.sysGeneralService, this.localeService, this.modalService);
   protected guiComponent = new GuiFormComponent(this.router, this.language, this.ws, this.dialog, this.loader,
     this.http, this.storage, this.sysGeneralService, this.modalService, this.adminLayout);
-  protected NTPServerFormComponent = new NTPServerFormComponent(this.modalService);
+  protected NTPServerFormComponent = new NtpServerFormComponent(this.modalService, this.validationService);
 
   // Dialog forms and info for saving, uploading, resetting config
   protected saveConfigFieldConf: FieldConfig[] = [
@@ -115,7 +117,8 @@ export class GeneralSettingsComponent implements OnInit {
     private sysGeneralService: SystemGeneralService, private modalService: ModalService,
     private language: LanguageService, private dialog: DialogService, private loader: AppLoaderService,
     private router: Router, private http: HttpClient, private storage: StorageService,
-    public mdDialog: MatDialog, private core: CoreService, private adminLayout: AdminLayoutComponent) { }
+    public mdDialog: MatDialog, private core: CoreService, private adminLayout: AdminLayoutComponent,
+    private validationService: ValidationService) { }
 
   ngOnInit(): void {
     this.getDataCardData();
@@ -127,8 +130,8 @@ export class GeneralSettingsComponent implements OnInit {
       this.getNTPData();
     });
 
-    this.formEvents = new Subject();
-    this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.formEvent$ = new Subject();
+    this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       switch (evt.data.configFiles.value) {
         case 'save_config':
           this.dialog.dialogForm(this.saveConfigFormConf);
@@ -147,7 +150,7 @@ export class GeneralSettingsComponent implements OnInit {
     const actionsConfig = {
       actionType: EntityToolbarComponent,
       actionConfig: {
-        target: this.formEvents,
+        target: this.formEvent$,
         controls: [
           {
             name: 'configFiles',
@@ -168,7 +171,7 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   getDataCardData(): void {
-    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.configData = res;
       this.dataCards = [
         {
@@ -226,7 +229,9 @@ export class GeneralSettingsComponent implements OnInit {
         addComponent = this.guiComponent;
         break;
       case 'ntp':
-        addComponent = id ? this.NTPServerFormComponent : new NTPServerFormComponent(this.modalService);
+        addComponent = id
+          ? this.NTPServerFormComponent
+          : new NtpServerFormComponent(this.modalService, this.validationService);
         break;
       default:
         addComponent = this.localizationComponent;
@@ -236,18 +241,22 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   doNTPDelete(server: any): void {
-    this.dialog.confirm(helptext.deleteServer.title, `${helptext.deleteServer.message} ${server.address}?`,
-      false, helptext.deleteServer.message).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        this.loader.open();
-        this.ws.call('system.ntpserver.delete', [server.id]).pipe(untilDestroyed(this)).subscribe(() => {
-          this.loader.close();
-          this.getNTPData();
-        }, (err) => {
-          this.loader.close();
-          this.dialog.errorReport('Error', err.reason, err.trace.formatted);
-        });
-      }
+    this.dialog.confirm({
+      title: helptext.deleteServer.title,
+      message: `${helptext.deleteServer.message} ${server.address}?`,
+      buttonMsg: helptext.deleteServer.message,
+    }).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.loader.open();
+      this.ws.call('system.ntpserver.delete', [server.id]).pipe(untilDestroyed(this)).subscribe(() => {
+        this.loader.close();
+        this.getNTPData();
+      }, (err) => {
+        this.loader.close();
+        this.dialog.errorReport('Error', err.reason, err.trace.formatted);
+      });
     });
   }
 

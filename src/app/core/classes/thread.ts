@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
+import { iXAbstractObject } from 'app/core/classes/ix-abstract-object';
 
 export interface ProcessTask {
   responseEvent: string;

@@ -6,9 +6,11 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { BehaviorSubject } from 'rxjs';
+import { MailSecurity } from 'app/enums/mail-security.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptext_system_email } from 'app/helptext/system/email';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { MailConfig } from 'app/interfaces/mail-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -37,7 +39,7 @@ export class EmailComponent implements FormConfiguration {
   updateCall: 'mail.update' = 'mail.update';
   entityEdit: EntityFormComponent;
   rootEmail: string;
-  private oauthCreds: BehaviorSubject<OAuthData> = new BehaviorSubject({});
+  private oauthCreds$: BehaviorSubject<OAuthData> = new BehaviorSubject({});
   customSubmit = this.saveConfigSubmit;
   custActions = [{
     id: 'send_mail',
@@ -48,7 +50,7 @@ export class EmailComponent implements FormConfiguration {
         if (!value.send_mail_method) {
           delete value.pass;
           value.smtp = false;
-          value.oauth = this.oauthCreds.getValue();
+          value.oauth = this.oauthCreds$.getValue();
         } else {
           delete value.oauth;
         }
@@ -145,9 +147,9 @@ export class EmailComponent implements FormConfiguration {
           placeholder: helptext_system_email.security.placeholder,
           tooltip: helptext_system_email.security.tooltip,
           options: [
-            { label: T('Plain (No Encryption)'), value: 'PLAIN' },
-            { label: T('SSL (Implicit TLS)'), value: 'SSL' },
-            { label: T('TLS (STARTTLS)'), value: 'TLS' },
+            { label: T('Plain (No Encryption)'), value: MailSecurity.Plain },
+            { label: T('SSL (Implicit TLS)'), value: MailSecurity.Ssl },
+            { label: T('TLS (STARTTLS)'), value: MailSecurity.Tls },
           ],
         },
         {
@@ -213,7 +215,7 @@ export class EmailComponent implements FormConfiguration {
                 if (message.data.error) {
                   dialogService.errorReport(T('Error'), message.data.error);
                 } else {
-                  self.oauthCreds.next(message.data.result);
+                  self.oauthCreds$.next(message.data.result);
                   self.checkForOauthCreds();
                 }
               }
@@ -240,13 +242,13 @@ export class EmailComponent implements FormConfiguration {
     protected loader: AppLoaderService,
   ) {}
 
-  resourceTransformIncomingRestData(data: any): void {
+  resourceTransformIncomingRestData(data: MailConfig): any {
     if (_.isEmpty(data.oauth)) {
       this.sendMailMethod.setValue(true);
     } else {
       this.sendMailMethod.setValue(false);
     }
-    this.oauthCreds.next(data.oauth);
+    this.oauthCreds$.next(data.oauth);
     delete data.pass;
     return data;
   }
@@ -260,7 +262,7 @@ export class EmailComponent implements FormConfiguration {
     this.smtp = entityEdit.formGroup.controls['smtp'] as FormControl;
     this.sendMailMethod = entityEdit.formGroup.controls['send_mail_method'] as FormControl;
 
-    this.oauthCreds.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.oauthCreds$.pipe(untilDestroyed(this)).subscribe((value) => {
       this.sendMailMethod.setValue(!value.client_id);
     });
 
@@ -282,7 +284,7 @@ export class EmailComponent implements FormConfiguration {
   }
 
   checkForOauthCreds(): void {
-    if (this.oauthCreds.getValue().client_id) {
+    if (this.oauthCreds$.getValue().client_id) {
       this.entityEdit.setDisabled('oauth_applied', false, false);
       this.entityEdit.setDisabled('oauth_not_applied', true, true);
     } else {
@@ -311,11 +313,11 @@ export class EmailComponent implements FormConfiguration {
     if (emailConfig.pass && typeof emailConfig.pass === 'string' && emailConfig.pass.trim() === '') {
       delete emailConfig.pass;
     }
-    if (this.oauthCreds.getValue().client_id) {
+    if (this.oauthCreds$.getValue().client_id) {
       const oauth = {
-        client_id: this.oauthCreds.getValue().client_id,
-        client_secret: this.oauthCreds.getValue().client_secret,
-        refresh_token: this.oauthCreds.getValue().refresh_token,
+        client_id: this.oauthCreds$.getValue().client_id,
+        client_secret: this.oauthCreds$.getValue().client_secret,
+        refresh_token: this.oauthCreds$.getValue().refresh_token,
       };
       emailConfig.oauth = oauth;
 
@@ -331,7 +333,7 @@ export class EmailComponent implements FormConfiguration {
     if (is_smtp_method) {
       // switches from Gmail Oauth to SMTP method and remove oauth data
       emailConfig.oauth = null;
-      this.oauthCreds.next({});
+      this.oauthCreds$.next({});
     }
 
     if (emailConfig.oauth_applied) {

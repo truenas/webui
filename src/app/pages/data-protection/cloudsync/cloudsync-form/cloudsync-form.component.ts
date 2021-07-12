@@ -11,6 +11,7 @@ import { Direction } from 'app/enums/direction.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
@@ -405,7 +406,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
   protected bucket_input_field: FieldConfig;
   protected folder_field_destination: FieldConfig;
   protected folder_field_source: FieldConfig;
-  credentials_list: any[] = [];
+  credentials_list: CloudsyncCredential[] = [];
 
   formGroup: FormGroup;
   error: string;
@@ -605,8 +606,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.bucket_input_field = this.fieldSets.config('bucket_input');
     this.setDisabled('bucket', true, true);
     this.setDisabled('bucket_input', true, true);
-    this.cloudcredentialService.getCloudsyncCredentials().then((credentials) => {
-      credentials.forEach((item) => {
+    this.cloudcredentialService.getCloudsyncCredentials().then((credentials: any) => {
+      credentials.forEach((item: any) => {
         this.credentials.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
         this.credentials_list.push(item);
       });
@@ -780,7 +781,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
                   this.dialog.confirm(err.extra ? err.extra.excerpt : (T('Error: ') + err.error), err.reason, true, T('Fix Credential')).pipe(untilDestroyed(this)).subscribe(
                     (dialog_res: boolean) => {
                       if (dialog_res) {
-                        this.router.navigate(new Array('/').concat(['system', 'cloudcredentials', 'edit', item.id]));
+                        this.router.navigate(new Array('/').concat(['system', 'cloudcredentials', 'edit', String(item.id)]));
                       }
                     },
                   );

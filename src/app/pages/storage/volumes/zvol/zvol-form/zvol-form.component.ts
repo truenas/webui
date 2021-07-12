@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
@@ -350,19 +351,19 @@ export class ZvolFormComponent implements FormConfiguration {
     ],
   }];
 
-  encryption_fields: any[] = [
+  encryption_fields = [
     'encryption_type',
     'generate_key',
     'algorithm',
   ];
 
-  passphrase_fields: any[] = [
+  passphrase_fields = [
     'passphrase',
     'confirm_passphrase',
     'pbkdf2iters',
   ];
 
-  key_fields: any[] = [
+  key_fields = [
     'key',
   ];
 
@@ -443,7 +444,7 @@ export class ZvolFormComponent implements FormConfiguration {
 
       let inherit_encrypt_placeholder = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
       if (this.encrypted_parent) {
-        if (pk_dataset[0].key_format.value === 'PASSPHRASE') {
+        if (pk_dataset[0].key_format.value === DatasetEncryptionType.Passphrase) {
           this.passphrase_parent = true;
           // if parent is passphrase this dataset cannot be a key type
           this.encryption_type = 'passphrase';

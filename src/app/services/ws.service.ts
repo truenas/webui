@@ -17,9 +17,9 @@ import { environment } from '../../environments/environment';
 @UntilDestroy()
 @Injectable()
 export class WebSocketService {
-  private _authStatus: Subject<boolean>;
-  onCloseSubject: Subject<boolean>;
-  onOpenSubject: Subject<boolean>;
+  private authStatus$: Subject<boolean>;
+  onCloseSubject$: Subject<boolean>;
+  onOpenSubject$: Subject<boolean>;
   pendingCalls: any;
   pendingSubs: any = {};
   pendingMessages: any[] = [];
@@ -32,14 +32,14 @@ export class WebSocketService {
 
   protocol: string;
   remote: string;
-  private consoleSub: Observable<string>;
+  private consoleSub$: Observable<string>;
 
   subscriptions: Map<string, any[]> = new Map<string, any[]>();
 
   constructor(private _router: Router) {
-    this._authStatus = new Subject<boolean>();
-    this.onOpenSubject = new Subject();
-    this.onCloseSubject = new Subject();
+    this.authStatus$ = new Subject<boolean>();
+    this.onOpenSubject$ = new Subject();
+    this.onCloseSubject$ = new Subject();
     this.pendingCalls = new Map();
     this.protocol = window.location.protocol;
     this.remote = environment.remote;
@@ -47,17 +47,17 @@ export class WebSocketService {
   }
 
   get authStatus(): Observable<any> {
-    return this._authStatus.asObservable();
+    return this.authStatus$.asObservable();
   }
 
   get consoleMessages(): Observable<string> {
-    if (!this.consoleSub) {
-      this.consoleSub = this.sub('filesystem.file_tail_follow:/var/log/messages:499').pipe(
+    if (!this.consoleSub$) {
+      this.consoleSub$ = this.sub('filesystem.file_tail_follow:/var/log/messages:499').pipe(
         filter((res) => res && res.data && typeof res.data === 'string'),
         map((res) => res.data),
       );
     }
-    return this.consoleSub;
+    return this.consoleSub$;
   }
 
   reconnect(protocol = window.location.protocol, remote = environment.remote): void {
@@ -77,7 +77,7 @@ export class WebSocketService {
   }
 
   onopen(): void {
-    this.onOpenSubject.next(true);
+    this.onOpenSubject$.next(true);
     this.send({ msg: 'connect', version: '1', support: ['1'] });
   }
 
@@ -91,8 +91,8 @@ export class WebSocketService {
 
   onclose(): void {
     this.connected = false;
-    this.onCloseSubject.next(true);
-    setTimeout(this.connect.bind(this), 5000);
+    this.onCloseSubject$.next(true);
+    setTimeout(() => this.connect(), 5000);
     if (!this.shuttingdown) {
       this._router.navigate(['/sessions/signin']);
     }
@@ -101,7 +101,7 @@ export class WebSocketService {
   ping(): void {
     if (this.connected) {
       this.socket.send(JSON.stringify({ msg: 'ping', id: UUID.UUID() }));
-      setTimeout(this.ping.bind(this), 20000);
+      setTimeout(() => this.ping(), 20000);
     }
   }
 
@@ -128,7 +128,7 @@ export class WebSocketService {
       }
     } else if (data.msg == 'connected') {
       this.connected = true;
-      setTimeout(this.ping.bind(this), 20000);
+      setTimeout(() => this.ping(), 20000);
       this.onconnect();
     } else if (data.msg == 'nosub') {
       console.warn(data);
@@ -270,7 +270,7 @@ export class WebSocketService {
   loginCallback(result: boolean, observer: Observer<boolean>): void {
     if (result === true) {
       if (!this.loggedIn) {
-        this._authStatus.next(this.loggedIn);
+        this.authStatus$.next(this.loggedIn);
       }
 
       this.loggedIn = true;
@@ -283,14 +283,14 @@ export class WebSocketService {
       });
     } else {
       this.loggedIn = false;
-      this._authStatus.next(this.loggedIn);
+      this.authStatus$.next(this.loggedIn);
     }
     observer.next(result);
     observer.complete();
   }
 
-  login_token(token: string): Observable<any> {
-    return Observable.create((observer: any) => {
+  login_token(token: string): Observable<boolean> {
+    return Observable.create((observer: Observer<boolean>) => {
       if (token) {
         this.call('auth.token', [token]).pipe(untilDestroyed(this)).subscribe((result) => {
           this.loginCallback(result, observer);

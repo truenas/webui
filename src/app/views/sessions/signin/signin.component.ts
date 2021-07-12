@@ -14,7 +14,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { ApiService } from 'app/core/services/api.service';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -111,7 +111,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   checkSystemType(): void {
     if (!this.logo_ready) {
-      this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
+      this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
         this.logo_ready = true;
         this.product_type = res as ProductType;
         if (this.interval) {

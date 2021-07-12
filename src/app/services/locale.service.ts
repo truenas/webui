@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { format, utcToZonedTime } from 'date-fns-tz';
 import { Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
@@ -22,7 +22,7 @@ export class LocaleService {
 
   constructor(public prefService: PreferencesService, public sysGeneralService: SystemGeneralService,
     private core: CoreService) {
-    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.timeZone = res.timezone;
     });
     if (window.localStorage.dateFormat) {
@@ -79,7 +79,7 @@ export class LocaleService {
     ];
   }
 
-  formatDateTime(date: Date, tz?: string): string {
+  formatDateTime(date: Date | number, tz?: string): string {
     if (tz) {
       date = utcToZonedTime(date.valueOf(), tz);
     } else if (this.timeZone) {

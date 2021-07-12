@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 })
 export class ServiceRSYNCComponent implements OnInit {
   activedTab = 'configure';
-  navLinks: any[] = [{
+  navLinks = [{
     label: 'Configure',
     path: '/services/rsync/configure',
   },

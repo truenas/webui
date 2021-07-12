@@ -20,7 +20,7 @@ import {
 import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { JobState } from 'app/enums/job-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
@@ -61,7 +61,7 @@ export interface Command {
     ]),
   ],
 })
-export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
+export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, OnDestroy {
   @Input() title = '';
   @Input() conf: EntityTableConfig;
 
@@ -141,7 +141,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   // Global Actions in Page Title
   protected actionsConfig: any;
   loaderOpen = false;
-  protected toDeleteRow: any;
+  protected toDeleteRow: Row;
   private interval: Interval;
   excuteDeletion = false;
   needRefreshTable = false;
@@ -168,8 +168,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return result;
   }
 
-  hasDetails = (): boolean =>
-    this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
+  hasDetails = (): boolean => {
+    return Boolean(this.conf.rowDetailComponent)
+      || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
+  };
 
   isAllSelected = false;
 
@@ -748,18 +750,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return rows;
   }
 
-  trClass(row: any): string {
-    const classes = [];
-
-    classes.push('treegrid-' + row.id);
-    if (row._parent) {
-      classes.push('treegrid-parent-' + row._parent);
-    }
-
-    return classes.join(' ');
-  }
-
-  getActions(row: any): EntityTableAction[] {
+  getActions(row: Row): EntityTableAction[] {
     if (this.conf.getActions) {
       return this.conf.getActions(row);
     }
@@ -943,17 +934,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }),
         switchMap((jobId: number) => (jobId ? this.job.getJobStatus(jobId) : of(false))),
       );
-  }
-
-  /**
-   * some structure... should be the same as the other rows.
-   * which are field maps.
-   *
-   * this method can be called to externally push rows on to the tables.
-   */
-  pushNewRow(row: any): void {
-    this.rows.push(row);
-    this.currentRows = this.rows;
   }
 
   getMultiDeleteMessage(items: any): string {
@@ -1201,7 +1181,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return (item?.checkbox || item?.toggle || item?.button);
   }
 
-  doRowClick(element: any): void {
+  doRowClick(element: Row): void {
     if (this.conf.onRowClick) {
       this.conf.onRowClick(element);
     } else {

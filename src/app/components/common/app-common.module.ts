@@ -7,9 +7,10 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
 import { ChartistModule } from 'ng-chartist';
-import { MaterialModule } from 'app/appMaterial.module';
-import { CoreComponents } from 'app/core/components/corecomponents.module';
-import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { MaterialModule } from 'app/app-material.module';
+import { PageTitleComponent } from 'app/components/common/page-title/page-title.component';
+import { CoreComponents } from 'app/core/components/core-components.module';
+import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { DialogService } from 'app/services/dialog.service';
@@ -23,7 +24,6 @@ import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component
 import { ModalComponent } from './modal/modal.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { NotificationsComponent } from './notifications/notifications.component';
-import { PageTitleComponent } from './pagetitle/pagetitle.component';
 import { TopbarComponent } from './topbar/topbar.component';
 
 @NgModule({

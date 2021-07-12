@@ -25,7 +25,7 @@ export class DialogService {
 
   constructor(private dialog: MatDialog, private ws: WebSocketService, protected loader: AppLoaderService) {
     /* Close all open dialogs when websocket connection is dropped */
-    this.ws.onCloseSubject.pipe(
+    this.ws.onCloseSubject$.pipe(
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => this.closeAllDialogs());
@@ -155,7 +155,7 @@ export class DialogService {
     dialogRef.componentInstance.optionPlaceHolder = optionPlaceHolder;
     dialogRef.componentInstance.method = method;
 
-    dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: any) => {
+    dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection) => {
       if (selection === 'force') {
         data = { [selection]: true };
       } else {

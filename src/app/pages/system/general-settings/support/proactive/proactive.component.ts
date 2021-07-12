@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AbstractControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
@@ -21,7 +22,7 @@ export class ProactiveComponent implements FormConfiguration {
   entityEdit: EntityFormComponent;
   queryCall: 'support.config' = 'support.config';
   contacts: any;
-  controls: any;
+  controls: { [key: string]: AbstractControl };
   save_button_enabled: boolean;
   title = helptext.proactive.title;
   fieldConfig: FieldConfig[] = [];
@@ -181,7 +182,7 @@ export class ProactiveComponent implements FormConfiguration {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
-    const proactiveFields: any[] = [
+    const proactiveFields = [
       'enabled',
       'name',
       'title',
@@ -194,7 +195,7 @@ export class ProactiveComponent implements FormConfiguration {
       'proactive_title',
     ];
 
-    const proactiveParatext: any[] = [
+    const proactiveParatext = [
       'proactive_instructions',
       'proactive_title',
       'proactive_second_title',

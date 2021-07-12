@@ -10,11 +10,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
-import { CoreService } from 'app/core/services/core.service';
+import { GlobalAction } from 'app/components/common/page-title/page-title.component';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { VolumeImportWizardComponent } from 'app/pages/storage/volumes/volume-import-wizard';
+import { VolumeImportWizardComponent } from 'app/pages/storage/volumes/volume-import-wizard/volume-import-wizard.component';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
@@ -76,7 +76,7 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
       this.conf = config.conf;
       this.entity = config;
     } else {
-      throw 'This component requires an entity class for a config';
+      throw new Error('This component requires an entity class for a config');
     }
   }
 

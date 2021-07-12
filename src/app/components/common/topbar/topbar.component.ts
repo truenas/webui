@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription, Subject } from 'rxjs';
-import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { LayoutService } from 'app/core/services/layout.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
@@ -239,7 +239,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.hostname = evt.data.hostname;
     });
 
-    this.sysGenService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGenService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.systemType = res;
     });
 
@@ -253,7 +253,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
 
-    this.ws.onCloseSubject.pipe(untilDestroyed(this)).subscribe(() => {
+    this.ws.onCloseSubject$.pipe(untilDestroyed(this)).subscribe(() => {
       this.modalService.close('slide-in-form');
     });
   }
@@ -270,7 +270,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   checkLegacyUISetting(): void {
-    this.sysGenService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGenService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.legacy_ui) {
         this.exposeLegacyUI = res.legacy_ui;
         window.localStorage.setItem('exposeLegacyUI', res.legacy_ui);

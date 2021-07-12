@@ -57,7 +57,7 @@ export class AppComponent {
         path = 'assets/images/truenas_' + cachedType + '_ondark_favicon.png';
       }
     } else {
-      this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
+      this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
         path = 'assets/images/truenas_' + res.toLowerCase() + '_favicon.png';
         if (darkScheme) {
           path = 'assets/images/truenas_' + res.toLowerCase() + '_ondark_favicon.png';
@@ -92,7 +92,7 @@ export class AppComponent {
       }
     });
 
-    this.router.errorHandler = function (err: any) {
+    this.router.errorHandler = function (err: Error) {
       const chunkFailedMessage = /Loading chunk [\d]+ failed/;
 
       if (chunkFailedMessage.test(err.message)) {

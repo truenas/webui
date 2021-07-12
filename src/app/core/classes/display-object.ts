@@ -9,7 +9,7 @@ import {
 import { ColdSubscription } from 'popmotion/src/action/types';
 import { Subject } from 'rxjs';
 import { Styler } from 'stylefire/lib/styler/types';
-import { CoreService } from '../services/core.service';
+import { CoreService } from '../services/core-service/core.service';
 
 const transformMap = transform.transformMap;
 
@@ -44,7 +44,7 @@ export class DisplayObject {
   private _moveable: boolean;
   private _resizeable: boolean;
   target: any;
-  rawTarget: any;
+  rawTarget: HTMLElement;
   private pointerTracker: ColdSubscription;
   private focus: ColdSubscription;
   private moveHandle: Element;
@@ -71,8 +71,8 @@ export class DisplayObject {
   anchor: number;
   constrainX: boolean;
   constrainY: boolean;
-  updateStream: Subject<any>;
-  inputStream: Subject<any>;
+  updateStream$: Subject<any>;
+  inputStream$: Subject<any>;
   elevateOnSelect: boolean;
 
   constructor(el: Element, manager: any, messageBus: CoreService, moveHandle?: Element) {
@@ -81,8 +81,8 @@ export class DisplayObject {
     }
 
     // this.id = UUID.UUID();
-    this.updateStream = new Subject();
-    this.inputStream = new Subject();
+    this.updateStream$ = new Subject();
+    this.inputStream$ = new Subject();
     this.messageBus = messageBus;
     this.rawElement = el; // result of document.querySelector(...)
     this.element = styler(el, {});
@@ -275,7 +275,7 @@ export class DisplayObject {
 
     // this.pointerTracker = pointer(this.anchorXY.get()).start(this.anchorXY);
     const stream = (v: any): any => {
-      this.inputStream.next(v);
+      this.inputStream$.next(v);
       return v;
     };
     this.pointerTracker = pointer(this.anchorXY.get()).pipe(stream, transformMap({
@@ -283,7 +283,7 @@ export class DisplayObject {
       x: (v: any) => {
         // this.messageBus.emit({name:"Drag", sender:this}) // <-- this was too slow for high frequency stream
 
-        this.updateStream.next({ x: this.target.get('x'), y: this.target.get('y') });
+        this.updateStream$.next({ x: this.target.get('x'), y: this.target.get('y') });
         return this.constrainX ? startX : v;
       },
       preventDefault: () => true,

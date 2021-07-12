@@ -70,7 +70,7 @@ export class GlobalconfigurationComponent implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     entityForm.submitFunction = entityForm.editCall;
-    this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res === ProductType.Enterprise) {
         entityForm.setDisabled('alua', false, false);
       }

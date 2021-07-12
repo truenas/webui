@@ -12,8 +12,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { LockScreenComponent } from 'app/views/sessions/lock-screen/lock-screen.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
-import { LockscreenComponent } from './lockscreen/lockscreen.component';
 import { SessionsRoutes } from './sessions.routing';
 import { SigninComponent } from './signin/signin.component';
 import { SignupComponent } from './signup/signup.component';
@@ -35,6 +35,6 @@ import { SignupComponent } from './signup/signup.component';
     TranslateModule,
     RouterModule.forChild(SessionsRoutes),
   ],
-  declarations: [ForgotPasswordComponent, LockscreenComponent, SigninComponent, SignupComponent],
+  declarations: [ForgotPasswordComponent, LockScreenComponent, SigninComponent, SignupComponent],
 })
 export class SessionsModule { }

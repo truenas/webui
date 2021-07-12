@@ -22,7 +22,7 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class SupportFormLicensedComponent implements FormConfiguration {
   entityEdit: EntityFormComponent;
-  screenshot: any;
+  screenshot: FieldConfig;
   subs: any[];
   saveSubmitText = helptext.submitBtn;
   title = helptext.ticket;

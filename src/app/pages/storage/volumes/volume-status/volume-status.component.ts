@@ -8,7 +8,7 @@ import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
 import { Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { CoreEvent } from 'app/interfaces/events';
@@ -24,7 +24,7 @@ import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/e
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { EntityTreeTable } from 'app/pages/common/entity/entity-tree-table/entity-tree-table.model';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { DiskFormComponent } from 'app/pages/storage/disks/disk-form';
+import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
 import {
   WebSocketService, AppLoaderService, DialogService,
 } from 'app/services';
@@ -50,7 +50,7 @@ interface PoolDiskInfo {
   styleUrls: ['./volume-status.component.scss'],
 })
 export class VolumeStatusComponent implements OnInit, OnDestroy {
-  actionEvents: Subject<CoreEvent>;
+  actionEvents$: Subject<CoreEvent>;
   poolScan: PoolScan;
   timeRemaining = {
     days: 0,
@@ -229,15 +229,15 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Setup Global Actions
     const actionId = 'refreshBtn';
-    this.actionEvents = new Subject();
-    this.actionEvents.pipe(untilDestroyed(this)).subscribe((evt) => {
+    this.actionEvents$ = new Subject();
+    this.actionEvents$.pipe(untilDestroyed(this)).subscribe((evt) => {
       if (evt.data[actionId]) {
         this.refresh();
       }
     });
 
     const toolbarConfig: ToolbarConfig = {
-      target: this.actionEvents,
+      target: this.actionEvents$,
       controls: [
         {
           type: 'button',
@@ -260,7 +260,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.actionEvents.complete();
+    this.actionEvents$.complete();
     this.core.unregister({ observerClass: this });
   }
 

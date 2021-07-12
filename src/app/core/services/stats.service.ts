@@ -3,14 +3,13 @@ import { Subscription } from 'rxjs';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { WebSocketService } from 'app/services';
 import { BaseService } from './base.service';
-import { CoreService } from './core.service';
+import { CoreService } from './core-service/core.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StatsService extends BaseService {
   protected disks: any[] = [];
-  protected broadcast: any;
   protected subscribers = 0;
   protected realtimeEvents: Subscription;
   protected diskQueryEvents: Subscription;

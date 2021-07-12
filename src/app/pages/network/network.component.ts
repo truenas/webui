@@ -4,7 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as ipRegex from 'ip-regex';
 import { Subject } from 'rxjs';
-import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -45,7 +45,7 @@ import { StaticRouteFormComponent } from './forms/staticroute-form.component';
 export class NetworkComponent extends ViewControllerComponent implements OnInit, OnDestroy {
   protected summayCall: 'network.general.summary' = 'network.general.summary';
   protected configCall: 'network.configuration.config' = 'network.configuration.config';
-  formEvents: Subject<CoreEvent>;
+  formEvent$: Subject<CoreEvent>;
 
   ha_enabled = false;
   hasPendingChanges = false;
@@ -507,8 +507,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   ngOnDestroy(): void {
-    if (this.formEvents) {
-      this.formEvents.complete();
+    if (this.formEvent$) {
+      this.formEvent$.complete();
     }
     this.core.unregister({ observerClass: this });
   }
