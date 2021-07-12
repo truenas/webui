@@ -22,6 +22,11 @@ import { ES24 } from 'app/core/classes/hardware/es24';
 import { ES60 } from 'app/core/classes/hardware/es60';
 import { M50 } from 'app/core/classes/hardware/m50';
 import { M50Rear } from 'app/core/classes/hardware/m50-rear';
+import { R10 } from 'app/core/classes/hardware/r10';
+import { R20 } from 'app/core/classes/hardware/r20';
+import { R20A } from 'app/core/classes/hardware/r20a';
+import { R40 } from 'app/core/classes/hardware/r40';
+import { R50 } from 'app/core/classes/hardware/r50';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
@@ -55,6 +60,7 @@ export interface DiskFailure {
 })
 
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
+  showCaption = true;
   protected pendingDialog: any;
   protected aborted = false;
 
@@ -368,6 +374,23 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   createEnclosure(profile: any = this.selectedEnclosure): void {
     const enclosure = this.system.enclosures[profile.enclosureKey];
     switch (enclosure.model) {
+      case 'R10':
+        this.chassis = new R10();
+        break;
+      case 'TRUENAS-R20A':
+      case 'R20A':
+        this.chassis = new R20A(true);
+        break;
+      case 'R20':
+        this.chassis = new R20(true);
+        break;
+      case 'R40':
+        this.chassis = new R40();
+        break;
+      case 'R50':
+        this.chassis = new R50(true);
+        this.showCaption = false;
+        break;
       case 'M Series':
         this.chassis = new M50();
         break;
@@ -459,6 +482,23 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     let chassis: Chassis;
 
     switch (raw_enclosure.model) {
+      case 'R10':
+        this.chassis = new R10();
+        break;
+      case 'TRUENAS-R20A':
+      case 'R20A':
+        this.chassis = new R20A(true);
+        break;
+      case 'R20':
+        this.chassis = new R20(true);
+        break;
+      case 'R40':
+        this.chassis = new R40();
+        break;
+      case 'R50':
+        this.chassis = new R50(true);
+        this.showCaption = false;
+        break;
       case 'M Series':
         chassis = new M50();
         break;

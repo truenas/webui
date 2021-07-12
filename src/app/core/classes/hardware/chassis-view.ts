@@ -21,6 +21,16 @@ export interface Position {
   y?: number;
 }
 
+export interface LayoutGenerator {
+  generatePosition: (
+    displayObject: Container,
+    index: number,
+    xOffset?: number,
+    yOffset?: number,
+    orientation?: string
+  ) => Position;
+}
+
 export class ChassisView {
   /*
      * Don't use this class directly.
@@ -31,13 +41,17 @@ export class ChassisView {
   container: Container;
   events: Subject<CoreEvent>;
   model: string;
+  driveTray: DriveTray;
   driveTraysOffsetY = 0; // if drives don't start at top.
   driveTraysOffsetX = 0; // if drives don't start at top.
   driveTrays: any;
   driveTrayObjects: DriveTray[] = [];
+
   chassis: Sprite;
   chassisScale: Position;
-  driveTray: DriveTray;
+  chassisOffsetX = 0;
+  chassisOffsetY = 0;
+
   chassisPath: string;
   driveTrayBackgroundPath: string;
   driveTrayHandlePath: string;
@@ -50,6 +64,8 @@ export class ChassisView {
   slotRange: Range;
   rows: number;
   columns: number;
+  orientation = 'rows';
+  layout?: LayoutGenerator;
   vertical = false;
   filters: any[] = [];
   disabledOpacity = 0.25;
@@ -58,6 +74,8 @@ export class ChassisView {
   loader: PIXI.loaders.Loader;
   autoPosition = true;
   protected utils: ThemeUtils;
+  gapX = 10;
+  gapY = 2;
 
   constructor() {
     this.utils = new ThemeUtils();
@@ -132,6 +150,8 @@ export class ChassisView {
     this.chassis = PIXI.Sprite.from(this.loader.resources[this.model + '_chassis'].texture.baseTexture);
     this.chassis.name = this.model + '_chassis';
     this.chassis.alpha = 0;
+    this.chassis.x = this.chassisOffsetX;
+    this.chassis.y = this.chassisOffsetY;
     this.chassis.scale.x = this.chassisScale && this.chassisScale.x ? this.chassisScale.x : 1;
     this.chassis.scale.y = this.chassisScale && this.chassisScale.y ? this.chassisScale.y : 1;
     this.container.addChild(this.chassis);
@@ -300,5 +320,10 @@ export class ChassisView {
       // If chassis has already ben rendered to stage
       this.chassis.alpha = value;
     }
+  }
+
+  degreesToRadians(degrees: number): number {
+    const pi = Math.PI;
+    return degrees * (pi / 180);
   }
 }
