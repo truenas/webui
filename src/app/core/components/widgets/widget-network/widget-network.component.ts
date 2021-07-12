@@ -4,13 +4,16 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { ChartOptions } from 'chart.js';
+import { ChartData, ChartOptions } from 'chart.js';
+import { sub } from 'date-fns';
 import { WidgetUtils } from 'app/core/components/widgets/widget-utils';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { TableService } from 'app/pages/common/entity/table/table.service';
+import { WebSocketService } from 'app/services';
+import { LocaleService } from 'app/services/locale.service';
 import { T } from 'app/translate-marker';
 
 interface NicInfo {
@@ -20,6 +23,7 @@ interface NicInfo {
   out: string;
   lastSent: number;
   lastReceived: number;
+  chartData: ChartData;
 }
 
 interface NicInfoMap {
@@ -47,43 +51,38 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   gap = 16;
   contentHeight = 400 - 56;
   rowHeight = 150;
-  chartData = {
-    labels: ['10:40', '10:41', '10:42', '10:43', '10:44', '10:45', '10:46', '10:47'],
-    datasets: [
-      {
-        label: 'in',
-        data: [1, 5, 10, 15, 20, 25, 10, 15],
-        borderColor: this.themeService.currentTheme().blue,
-        backgroundColor: this.themeService.currentTheme().blue,
-      },
-      {
-        label: 'out',
-        data: [-3, -15, -10, -25, -10, -5, -1, -10],
-        borderColor: this.themeService.currentTheme().orange,
-        backgroundColor: this.themeService.currentTheme().orange,
-      },
-    ],
-  };
+  aspectRatio = 474 / 200;
+
+  chartData: ChartData = {};
 
   chartOptions: ChartOptions = {
     responsive: true,
-    maintainAspectRatio: false,
+    maintainAspectRatio: true,
+    aspectRatio: this.aspectRatio,
+    layout: {
+      padding: 0,
+    },
     legend: {
       align: 'end',
       labels: {
+        boxWidth: 8,
         usePointStyle: true,
       },
     },
     scales: {
       xAxes: [
         {
-          ticks: {
-            callback: (value, index) => {
-              if (index % 2 == 0) {
-                return undefined;
-              }
-              return value;
+          type: 'time',
+          time: {
+            unit: 'minute',
+            displayFormats: {
+              minute: 'HH:mm',
             },
+          },
+          ticks: {
+            beginAtZero: true,
+            maxTicksLimit: 3,
+            maxRotation: 0,
           },
         },
       ],
@@ -91,11 +90,9 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
         {
           position: 'right',
           ticks: {
-            callback: (value, index) => {
-              if (index % 2 == 0) {
-                return undefined;
-              }
-              return value;
+            maxTicksLimit: 8,
+            callback: (value) => {
+              return this.convertKMGT(value);
             },
           },
         },
@@ -103,7 +100,10 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     },
   };
 
-  constructor(public router: Router, private tableService: TableService, public translate: TranslateService) {
+  constructor(
+    public router: Router, private ws: WebSocketService, private locale: LocaleService,
+    private tableService: TableService, public translate: TranslateService,
+  ) {
     super(translate);
     this.configurable = false;
     this.utils = new WidgetUtils();
@@ -117,6 +117,10 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   ngAfterViewInit(): void {
     this.updateGridInfo();
     this.updateMapInfo();
+
+    this.nics.forEach((nic) => {
+      this.fetchReportData(nic);
+    });
 
     this.stats.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.name.startsWith('NetTraffic_')) {
@@ -170,22 +174,34 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
         out: '',
         lastSent: 0,
         lastReceived: 0,
+        chartData: null,
       };
     });
   }
 
   updateGridInfo(): void {
     const nicsCount = this.nics.length;
+    let maxTicksLimit = 5;
+
     if (nicsCount <= 3) {
       this.rows = nicsCount;
       if (nicsCount == 3) {
         this.paddingTop = 0;
         this.paddingBottom = 4;
         this.gap = 8;
+        this.aspectRatio = 336 / 100;
+        maxTicksLimit = 3;
       } else {
         this.paddingTop = 16;
         this.paddingBottom = 16;
         this.gap = 16;
+
+        if (nicsCount == 2) {
+          this.aspectRatio = 304 / 124;
+          maxTicksLimit = 3;
+        } else {
+          this.aspectRatio = 474 / 200;
+        }
       }
     } else {
       this.rows = 2;
@@ -201,6 +217,11 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     }
     const space = (this.rows - 1) * this.gap + this.paddingTop + this.paddingBottom;
     this.rowHeight = (this.contentHeight - space) / this.rows;
+
+    const newChartOptions = { ...this.chartOptions };
+    newChartOptions.scales.yAxes[0].ticks.maxTicksLimit = maxTicksLimit;
+    newChartOptions.aspectRatio = this.aspectRatio;
+    this.chartOptions = newChartOptions;
   }
 
   getIpAddress(nic: BaseNetworkInterface): string {
@@ -219,5 +240,93 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   getLinkState(nic: BaseNetworkInterface): string {
     if (!nic.state.aliases) { return ''; }
     return nic.state.link_state.replace(/_/g, ' ');
+  }
+
+  getServerTime(): Date {
+    const xmlHttp = new XMLHttpRequest();
+    xmlHttp.open('HEAD', window.location.origin.toString(), false);
+    xmlHttp.setRequestHeader('Content-Type', 'text/html');
+    xmlHttp.send('');
+    const serverTime = xmlHttp.getResponseHeader('Date');
+    const seconds = new Date(serverTime).getTime();
+    const secondsToTrim = 60;
+    const trimmed = new Date(seconds - (secondsToTrim * 1000));
+    return trimmed;
+  }
+
+  fetchReportData(nic: BaseNetworkInterface): void {
+    const params = {
+      identifier: nic.name,
+      name: 'interface',
+    };
+
+    const endDate = this.getServerTime();
+    const subOptions: Duration = {};
+    subOptions['hours'] = 2;
+    const startDate = sub(endDate, subOptions);
+
+    const timeFrame = {
+      start: Math.floor(startDate.getTime() / 1000),
+      end: Math.floor(endDate.getTime() / 1000),
+    };
+
+    this.ws.call('reporting.get_data', [[params], timeFrame]).pipe(untilDestroyed(this)).subscribe((res) => {
+      res = res[0];
+
+      const labels: number[] = [];
+      for (let i = 0; i <= res.data.length; i++) {
+        const label = (res.start + i * res.step) * 1000;
+        labels.push(label);
+      }
+
+      const chartData = {
+        // labels,
+        datasets: [
+          {
+            label: nic.name + '(in)',
+            data: res.data.map((item: number[], index: number) => ({ t: labels[index], y: item[0] })),
+            borderColor: this.themeService.currentTheme().blue,
+            backgroundColor: this.themeService.currentTheme().blue,
+            pointRadius: 0.2,
+          },
+          {
+            label: nic.name + '(out)',
+            data: res.data.map((item: number[], index: number) => ({ t: labels[index], y: -item[1] })),
+            borderColor: this.themeService.currentTheme().orange,
+            backgroundColor: this.themeService.currentTheme().orange,
+            pointRadius: 0.1,
+          },
+        ],
+      };
+
+      this.nicInfoMap[nic.name].chartData = chartData;
+    });
+  }
+
+  convertKMGT(value: number): string {
+    const kilo = 1024;
+    const mega = kilo * 1024;
+    const giga = mega * 1024;
+    const tera = giga * 1024;
+
+    let unit = '';
+    let output = 0;
+
+    const absValue = Math.abs(value);
+    if (absValue > tera) {
+      unit = 'T';
+      output = value / tera;
+    } else if (absValue < tera && absValue > giga) {
+      unit = 'G';
+      output = value / giga;
+    } else if (absValue < giga && absValue > mega) {
+      unit = 'M';
+      output = value / mega;
+    } else if (absValue < mega && absValue > kilo) {
+      unit = 'K';
+      output = value / kilo;
+    }
+
+    return output.toFixed(1) + unit;
   }
 }

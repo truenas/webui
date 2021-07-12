@@ -68,7 +68,7 @@
                   </div>
                   <div class="nic-chart" fxFlex *ngIf="nics.length <= 3">
                     <div class="chart-body">
-                      <view-chart-area [data]="chartData" [options]="chartOptions"></view-chart-area>
+                      <view-chart-area [data]="nicInfoMap[nic.state.name]?.chartData" [options]="chartOptions"></view-chart-area>
                     </div>
                   </div>
                 </div>

@@ -24,25 +24,30 @@ export class ViewChartAreaComponent implements OnDestroy, OnChanges {
     };
   }
 
-  render(data: ChartData): Chart {
-    if (data.datasets.length > this.maxSources) {
+  render(): Chart {
+    if (this.data.datasets.length > this.maxSources) {
       throw new Error('ERROR: Maximum Sources Exceeded. Line/Area charts have a hard limit of 8 data sources');
     }
 
     return new Chart(
       this.canvas.nativeElement,
-      this.makeConfig(data),
+      this.makeConfig(this.data),
     );
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.chart = this.render();
+
     if (changes.data) {
       if (changes.data.firstChange) {
-        this.chart = this.render(changes.data.currentValue);
+        this.chart = this.render();
       } else if (this.chart) {
-        this.chart.data = changes.data.currentValue;
         this.chart.update();
       }
+    }
+
+    if (changes.options) {
+      this.chart = this.render();
     }
   }
 
