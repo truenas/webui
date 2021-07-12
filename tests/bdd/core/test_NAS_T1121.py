@@ -58,43 +58,43 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
 @when('on the dashboard, click on Storage on the side menu, click on Pools')
 def on_the_dashboard_click_on_storage_on_the_side_menu_click_on_pools(driver):
     """on the dashboard, click on Storage on the side menu, click on Pools."""
-    # assert wait_on_element(driver, 10, '//li[contains(.,"Dashboard")]')
-    # assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    # driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    # assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Pools"]', 'clickable')
-    # driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Pools"]').click()
+    assert wait_on_element(driver, 10, '//li[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Pools"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Pools"]').click()
 
 
 @then('click on the tank pool three dots button, select Add Dataset')
 def click_on_the_tank_pool_three_dots_button_select_add_dataset(driver):
     """click on the tank pool three dots button, select Add Dataset."""
-    # assert wait_on_element(driver, 5, '//div[contains(.,"Pools")]')
-    # assert wait_on_element(driver, 5, '//mat-icon[@id="actions_menu_button__tank"]', 'clickable')
-    # driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__tank"]').click()
-    # assert wait_on_element(driver, 5, '//button[@ix-auto="action__tank_Add Dataset"]', 'clickable')
-    # driver.find_element_by_xpath('//button[@ix-auto="action__tank_Add Dataset"]').click()
-    # assert wait_on_element(driver, 5, '//h4[contains(.,"Name and Options")]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"Pools")]')
+    assert wait_on_element(driver, 5, '//mat-icon[@id="actions_menu_button__tank"]', 'clickable')
+    driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__tank"]').click()
+    assert wait_on_element(driver, 5, '//button[@ix-auto="action__tank_Add Dataset"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="action__tank_Add Dataset"]').click()
+    assert wait_on_element(driver, 5, '//h4[contains(.,"Name and Options")]')
 
 
 @then('input aws_share for Name, select Generic as Share Type and click Submit')
 def input_aws_share_for_name_select_generic_as_share_type_and_click_submit(driver):
     """input aws_share for Name, select Generic as Share Type and click Submit."""
-    # assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
-    # driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
-    # driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys('aws_share')
-    # assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Share Type"]', 'clickable')
-    # driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
-    # assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Share Type_Generic"]', 'clickable')
-    # driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_Generic"]').click()
-    # assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    # driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys('aws_share')
+    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Share Type"]', 'clickable')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
+    assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Share Type_Generic"]', 'clickable')
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_Generic"]').click()
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
 
 
 @then('the dataset should be created without error')
 def the_dataset_should_be_created_without_error(driver):
     """the dataset should be created without error."""
-    # assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    # assert wait_on_element(driver, 10, '//span[contains(.,"aws_share")]')
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"aws_share")]')
 
 
 @then('click Tasks on the left sidebar, then click on Cloud Sync Tasks')
@@ -110,50 +110,50 @@ def click_tasks_on_the_left_sidebar_then_click_on_cloud_sync_tasks(driver):
 def on_the_cloud_sync_tasks_click_add(driver):
     """on the Cloud Sync Tasks, click ADD."""
     assert wait_on_element(driver, 5, '//div[contains(.,"Cloud Sync Tasks")]')
-    # assert wait_on_element(driver, 5, '//button[@ix-auto="button__Cloud Sync Tasks_ADD"]', 'clickable')
-    # driver.find_element_by_xpath('//button[@ix-auto="button__Cloud Sync Tasks_ADD"]').click()
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__Cloud Sync Tasks_ADD"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__Cloud Sync Tasks_ADD"]').click()
 
 
 @then('input a description and ensure PULL is selected as the Direction')
 def input_a_description_and_ensure_pull_is_selected_as_the_direction(driver):
     """input a description and ensure PULL is selected as the Direction."""
-    # assert wait_on_element(driver, 5, '//input[@placeholder="Description"]', 'inputable')
-    # driver.find_element_by_xpath('//input[@placeholder="Description"]').clear()
-    # driver.find_element_by_xpath('//input[@placeholder="Description"]').send_keys('My S3 AWS Share')
-    # assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
+    assert wait_on_element(driver, 5, '//input[@placeholder="Description"]', 'inputable')
+    driver.find_element_by_xpath('//input[@placeholder="Description"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="Description"]').send_keys('My S3 AWS Share')
+    assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
 
 
 @then(parsers.parse('select "{selection}" under the Credential drop-down'))
 def select_selection_under_the_credential_dropdown(driver, selection):
     """select "selection" under the Credential drop-down."""
-    # assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Credential"]', 'clickable')
-    # driver.find_element_by_xpath('//mat-select[@ix-auto="select__Credential"]').click()
-    # assert wait_on_element(driver, 5, f'//mat-option[@ix-auto="option__Credential_{selection}"]', 'clickable')
-    # driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Credential_{selection}"]').click()
-    # time.sleep(0.5)
+    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Credential"]', 'clickable')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Credential"]').click()
+    assert wait_on_element(driver, 5, f'//mat-option[@ix-auto="option__Credential_{selection}"]', 'clickable')
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Credential_{selection}"]').click()
+    time.sleep(0.5)
 
 
 @then(parsers.parse('select the {bucket} bucket, then Under Directory/Files, choose aws_share'))
 def select_the_bucket_bucket_then_under_directoryfiles_choose_aws_share(driver, bucket):
+    """select the {bucket} bucket, then Under Directory/Files, choose aws_share."""
     global my_bucket
     my_bucket = bucket
-    """select the {bucket} bucket, then Under Directory/Files, choose aws_share."""
-    # assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Bucket"]', 'clickable')
-    # driver.find_element_by_xpath('//mat-select[@ix-auto="select__Bucket"]').click()
-    # assert wait_on_element(driver, 5, f'//mat-option[@ix-auto="option__Bucket_{bucket}"]', 'clickable')
-    # driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Bucket_{bucket}"]').click()
-    # assert wait_on_element(driver, 5, '//input[@placeholder="Directory/Files"]', 'inputable')
-    # driver.find_element_by_xpath('//input[@placeholder="Directory/Files"]').clear()
-    # driver.find_element_by_xpath('//input[@placeholder="Directory/Files"]').send_keys('/mnt/tank/aws_share')
+    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Bucket"]', 'clickable')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Bucket"]').click()
+    assert wait_on_element(driver, 5, f'//mat-option[@ix-auto="option__Bucket_{bucket}"]', 'clickable')
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Bucket_{bucket}"]').click()
+    assert wait_on_element(driver, 5, '//input[@placeholder="Directory/Files"]', 'inputable')
+    driver.find_element_by_xpath('//input[@placeholder="Directory/Files"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="Directory/Files"]').send_keys('/mnt/tank/aws_share')
 
 
 @then('under Transfer Mode, select COPY, click Save')
 def under_transfer_mode_select_copy_click_save(driver):
     """under Transfer Mode, select COPY, click Save."""
-    # assert wait_on_element(driver, 5, '//mat-select[contains(.,"COPY")]')
-    # assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    # driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    # assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 5, '//mat-select[contains(.,"COPY")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 
 @then('the new Cloud Sync Tasks should save without error')
@@ -291,10 +291,13 @@ def on_the_cloud_sync_task_and_click_edit(driver):
     """on the cloud sync task and click Edit."""
     driver.switch_to.window(driver.window_handles[0])
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
+    if not wait_on_element(driver, 1, '//button[@ix-auto="button___edit"]', 'clickable'):
+        assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
+        driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
-    time.sleep(0.5)
+    time.sleep(1)
 
 
 @then('under Transfer Mode, select MOVE, click Save')
@@ -449,114 +452,145 @@ def verify_the_folder_and_file_is_moved_from_the_s3_bucket_to_the_dataset(driver
     assert results['result'] is True
 
 
-@then('create a file in the directory of the dataset')
-def create_a_file_in_the_directory_of_the_dataset(driver):
-    """create a file in the directory of the dataset."""
-
-
-@then('create a sub-folder within the dataset folder and Move the previous file into it')
-def create_a_subfolder_within_the_dataset_folder_and_move_the_previous_file_into_it(driver):
-    """create a sub-folder within the dataset folder and Move the previous file into it."""
-
-
-@then('create a sub-folder within the dataset folder create a file into it')
-def create_a_subfolder_within_the_dataset_folder_create_a_file_into_it(driver):
-    """create a sub-folder within the dataset folder create a file into it."""
-
-
 @then('delete the folder from the S3 bucket in the AWS web console')
-def delete_the_folder_from_the_s3_bucket_in_the_aws_web_console(driver):
+def delete_the_folder_from_the_s3_bucket_in_the_aws_web_console(driver, nas_ip):
     """delete the folder from the S3 bucket in the AWS web console."""
+    driver.switch_to.window(driver.window_handles[1])
+    driver.refresh()
+    assert wait_on_element(driver, 5, '//h1[text()="my_folder/"]')
+    assert wait_on_element(driver, 5, f'//span[text()="{my_bucket}"]')
+    driver.find_element_by_xpath(f'//span[text()="{my_bucket}"]').click()
+    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, '(//awsui-checkbox[contains(@class,"checkbox-index-all")])[2]', 'clickable')
+    driver.find_element_by_xpath('(//awsui-checkbox[contains(@class,"checkbox-index-all")])[2]').click()
+    assert wait_on_element(driver, 5, '//awsui-button[@id="delete-objects-button"]/button', 'clickable')
+    driver.find_element_by_xpath('//awsui-button[@id="delete-objects-button"]/button').click()
+    assert wait_on_element(driver, 5, '//div[contains(.,"Delete objects")]')
+    assert wait_on_element(driver, 5, '//input[@placeholder="permanently delete"]', 'inputable')
+    driver.find_element_by_xpath('//input[@placeholder="permanently delete"]').send_keys('permanently delete')
+    assert wait_on_element(driver, 5, '//awsui-button[@class="delete-objects__actions-submit"]', 'clickable')
+    driver.find_element_by_xpath('//awsui-button[@class="delete-objects__actions-submit"]').click()
+    assert wait_on_element(driver, 5, '//div[contains(.,"Delete objects: status")]')
+    time.sleep(0.5)
+    assert wait_on_element(driver, 5, '//awsui-button[@class="delete-objects__exit"]/button', 'clickable')
+    driver.find_element_by_xpath('//awsui-button[@class="delete-objects__exit"]/button').click()
+    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    cmd = 'rm -r /mnt/tank/aws_share/my_folder'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True
 
 
-@then('delete the folder from the dataset then click Run Now')
-def delete_the_folder_from_the_dataset_then_click_run_now(driver):
-    """delete the folder from the dataset then click Run Now."""
+@then('verify that the folder is not on the NAS dataset')
+def verify_that_the_folder_is_not_on_the_nas_dataset(driver, nas_ip):
+    """verify that the folder is not on the NAS dataset."""
+    cmd = 'test -f /mnt/tank/aws_share/my_folder/cloud_test.txt'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is False
 
 
-@then('expand the new cloud sync task and click Edit')
-def expand_the_new_cloud_sync_task_and_click_edit(driver):
-    """expand the new cloud sync task and click Edit."""
+@then('select PUSH as the Direction then under Transfer Mode, select COPY')
+def select_push_as_the_direction_then_under_transfer_mode_select_copy(driver):
+    """select PUSH as the Direction then under Transfer Mode, select COPY."""
+    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Direction"]').click()
+    assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Direction_PUSH"]', 'clickable')
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Direction_PUSH"]').click()
+    assert wait_on_element(driver, 5, '//mat-select[contains(.,"PUSH")]')
+    assert wait_on_element(driver, 5, '//h1[contains(.,"Transfer Mode Reset")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 5, '//mat-select[contains(.,"COPY")]')
 
 
-@then('expand the new task and click Run Now')
-def expand_the_new_task_and_click_run_now(driver):
-    """expand the new task and click Run Now."""
+@then('click Save, the Cloud Sync Tasks should save without error')
+def click_save_the_cloud_sync_tasks_should_save_without_error(driver):
+    """click Save, the Cloud Sync Tasks should save without error."""
+    assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
+    driver.find_element_by_xpath('//button[@id="save_button"]').click()
+    assert wait_on_element_disappear(driver, 20, '//h1[contains(.,"Please wait")]')
 
 
-@then('input a description and select PUSH as the Direction')
-def input_a_description_and_select_push_as_the_direction(driver):
-    """input a description and select PUSH as the Direction."""
-
-
-@then('on the NAS tab, expand the new cloud sync task and click Edit')
-def on_the_nas_tab_expand_the_new_cloud_sync_task_and_click_edit(driver):
-    """on the NAS tab, expand the new cloud sync task and click Edit."""
+@then('create a file in the directory of the dataset')
+def create_a_file_in_the_directory_of_the_dataset(driver, nas_ip):
+    """create a file in the directory of the dataset."""
+    cmd = 'touch /mnt/tank/aws_share/cloud_test.txt'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True
+    cmd = 'test -f /mnt/tank/aws_share/cloud_test.txt'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True
 
 
 @then('on the NAS tab, expand the task and click Run Now')
 def on_the_nas_tab_expand_the_task_and_click_run_now(driver):
     """on the NAS tab, expand the task and click Run Now."""
-
-
-@then('on the NAS under the new task, click Run Now')
-def on_the_nas_under_the_new_task_click_run_now(driver):
-    """on the NAS under the new task, click Run Now."""
-
-
-@then('on the bucket tab, verify the folder is deleted')
-def on_the_bucket_tab_verify_the_folder_is_deleted(driver):
-    """on the bucket tab, verify the folder is deleted."""
-
-
-@then('under Transfer Mode, select COPY, then click Save')
-def under_transfer_mode_select_copy_then_click_save(driver):
-    """under Transfer Mode, select COPY, then click Save."""
-
-
-@then('under Transfer Mode, select MOVE, then click Save')
-def under_transfer_mode_select_move_then_click_save(driver):
-    """under Transfer Mode, select MOVE, then click Save."""
-
-
-@then('under the new task and click Run Now')
-def under_the_new_task_and_click_run_now(driver):
-    """under the new task and click Run Now."""
-
-
-@then('verify that the file is not deleted on the NAS')
-def verify_that_the_file_is_not_deleted_on_the_nas(driver):
-    """verify that the file is not deleted on the NAS."""
-
-
-@then('verify that the folder is not on the NAS dataset')
-def verify_that_the_folder_is_not_on_the_nas_dataset(driver):
-    """verify that the folder is not on the NAS dataset."""
+    driver.switch_to.window(driver.window_handles[0])
+    assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
+    if not wait_on_element(driver, 1, '//button[@id="action_button___run_now"]', 'clickable'):
+        assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
+        driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
+    assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
+    driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 15, '//button[contains(.,"SUCCESS")]')
 
 
 @then('verify the file appear in the S3 bucket')
 def verify_the_file_appear_in_the_s3_bucket(driver):
     """verify the file appear in the S3 bucket."""
+    driver.switch_to.window(driver.window_handles[1])
+    driver.refresh()
+    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
 
 
-@then('verify the file appear into the S3 bucket and is removed from the NAS')
-def verify_the_file_appear_into_the_s3_bucket_and_is_removed_from_the_nas(driver):
-    """verify the file appear into the S3 bucket and is removed from the NAS."""
+@then('verify that the file is not deleted on the NAS')
+def verify_that_the_file_is_not_deleted_on_the_nas(driver, nas_ip):
+    """verify that the file is not deleted on the NAS."""
+    cmd = 'test -f /mnt/tank/aws_share/cloud_test.txt'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True
 
 
-@then('verify the file is copied from the S3 bucket to the dataset')
-def verify_the_file_is_copied_from_the_s3_bucket_to_the_dataset(driver):
-    """verify the file is copied from the S3 bucket to the dataset."""
-
-
-@then('verify the file is moved from the S3 bucket to the dataset')
-def verify_the_file_is_moved_from_the_s3_bucket_to_the_dataset(driver):
-    """verify the file is moved from the S3 bucket to the dataset."""
+@then('create a sub-folder within the dataset folder create a file into it')
+def create_a_subfolder_within_the_dataset_folder_create_a_file_into_it(driver, nas_ip):
+    """create a sub-folder within the dataset folder create a file into it."""
+    cmd = 'mkdir /mnt/tank/aws_share/my_folder'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True
+    cmd = 'touch /mnt/tank/aws_share/my_folder/cloud_test.txt'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True
+    cmd = 'test -f /mnt/tank/aws_share/my_folder/cloud_test.txt'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True
 
 
 @then('verify the folder appear in the S3 bucket with the file')
 def verify_the_folder_appear_in_the_s3_bucket_with_the_file(driver):
     """verify the folder appear in the S3 bucket with the file."""
+    driver.switch_to.window(driver.window_handles[1])
+    driver.refresh()
+    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, '//span[text()="my_folder/"]', 'clickable')
+    driver.find_element_by_xpath('//span[text()="my_folder/"]').click()
+    assert wait_on_element(driver, 5, '//h1[text()="my_folder/"]')
+    assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
+
+
+@then('verify the file appear into the S3 bucket and is removed from the NAS')
+def verify_the_file_appear_into_the_s3_bucket_and_is_removed_from_the_nas(driver, nas_ip):
+    """verify the file appear into the S3 bucket and is removed from the NAS."""
+    driver.switch_to.window(driver.window_handles[1])
+    driver.refresh()
+    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
+    cmd = 'test -f /mnt/tank/aws_share/cloud_test.txt'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is False
 
 
 @then('delete the file from the dataset and click Run Now')
@@ -585,4 +619,39 @@ def on_the_bucket_tab_verify_the_file_is_deleted(driver):
     driver.switch_to.window(driver.window_handles[1])
     driver.refresh()
     assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
-    assert not wait_on_element(driver, 1, '//span[text()="cloud_test.txt"]', 'clickable')
+    assert not wait_on_element(driver, 2, '//span[text()="cloud_test.txt"]', 'clickable')
+
+
+@then('delete the folder from the dataset then click Run Now')
+def delete_the_folder_from_the_dataset_then_click_run_now(driver, nas_ip):
+    """delete the folder from the dataset then click Run Now."""
+    driver.switch_to.window(driver.window_handles[0])
+    cmd = 'rm -rf /mnt/tank/aws_share/my_folder'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is True
+    assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
+    if not wait_on_element(driver, 1, '//button[@id="action_button___run_now"]', 'clickable'):
+        assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
+        driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
+    assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
+    driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 15, '//button[contains(.,"SUCCESS")]')
+
+
+@then('on the bucket tab, verify the folder is deleted')
+def on_the_bucket_tab_verify_the_folder_is_deleted(driver):
+    """on the bucket tab, verify the folder is deleted."""
+    driver.switch_to.window(driver.window_handles[1])
+    assert wait_on_element(driver, 5, '//h1[text()="my_folder/"]')
+    assert wait_on_element(driver, 5, f'//span[text()="{my_bucket}"]')
+    driver.find_element_by_xpath(f'//span[text()="{my_bucket}"]').click()
+    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    driver.refresh()
+    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert not wait_on_element(driver, 1, '//span[text()="my_folder/"]', 'clickable')
+    driver.close()
+    driver.switch_to.window(driver.window_handles[0])
