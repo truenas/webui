@@ -23,5 +23,4 @@ export class FibreChannelPortsComponent implements EntityTableConfig {
   showActions = false;
   hasDetails = true;
   rowDetailComponent = FibreChannelPortComponent;
-  detailRowHeight = 350;
 }

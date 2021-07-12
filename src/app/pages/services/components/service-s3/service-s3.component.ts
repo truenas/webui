@@ -1,6 +1,7 @@
 import {
   ApplicationRef, Component, Injector,
 } from '@angular/core';
+import { AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -29,7 +30,7 @@ export class ServiceS3Component implements FormConfiguration {
   updateCall = 's3.update';
   route_success: string[] = ['services'];
   private certificate: FieldConfig;
-  private initial_path: any;
+  private initial_path: string;
   private warned = false;
   private validBindIps: string[] = [];
   title = helptext.formTitle;
@@ -110,7 +111,7 @@ export class ServiceS3Component implements FormConfiguration {
       name: 'divider',
       divider: true,
     }];
-  protected storage_path: any;
+  protected storage_path: AbstractControl;
 
   constructor(
     protected router: Router,

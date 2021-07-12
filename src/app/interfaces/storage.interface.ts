@@ -113,6 +113,12 @@ export interface DiskUpdate {
   enclosure?: EnclosureSlot;
 }
 
+export interface UnusedDisk extends Disk {
+  partitions: {
+    path: string;
+  }[];
+}
+
 /**
  * As returned by snapshot.query
  */

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -27,7 +27,7 @@ export class DatasetPermissionsComponent implements FormConfiguration {
   protected updateCall: 'pool.dataset.permission' = 'pool.dataset.permission';
   protected datasetPath: string;
   protected datasetId: string;
-  protected recursive: any;
+  protected recursive: AbstractControl;
   formGroup: FormGroup;
   error: string;
   route_success: string[] = ['storage'];

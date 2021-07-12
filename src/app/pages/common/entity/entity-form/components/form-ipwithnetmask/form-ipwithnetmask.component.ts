@@ -1,7 +1,7 @@
 import {
   Component, OnInit,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -28,7 +28,7 @@ export class FormIpWithNetmaskComponent implements Field, OnInit {
 
   private ipv6netmaskoptions = this.network.getV6PrefixLength();
   private ipv4netmaskoptions = this.network.getV4Netmasks();
-  private control: any;
+  private control: AbstractControl;
 
   constructor(public translate: TranslateService, private network: NetworkService) {
   }

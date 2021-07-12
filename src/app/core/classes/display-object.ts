@@ -9,7 +9,7 @@ import {
 import { ColdSubscription } from 'popmotion/src/action/types';
 import { Subject } from 'rxjs';
 import { Styler } from 'stylefire/lib/styler/types';
-import { CoreService } from '../services/core.service';
+import { CoreService } from '../services/core-service/core.service';
 
 const transformMap = transform.transformMap;
 
@@ -44,7 +44,7 @@ export class DisplayObject {
   private _moveable: boolean;
   private _resizeable: boolean;
   target: any;
-  rawTarget: any;
+  rawTarget: HTMLElement;
   private pointerTracker: ColdSubscription;
   private focus: ColdSubscription;
   private moveHandle: Element;

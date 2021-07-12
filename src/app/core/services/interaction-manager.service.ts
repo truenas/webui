@@ -6,7 +6,7 @@ import {
 import { CoreEvent } from 'app/interfaces/events';
 import { DisplayObject } from '../classes/display-object';
 import { LayoutObject } from '../classes/layout-object';
-import { CoreService } from './core.service';
+import { CoreService } from './core-service/core.service';
 
 interface DisplayObjectRegistration {
   displayObject: DisplayObject;
@@ -144,7 +144,7 @@ export class InteractionManagerService {
     if (registration.length == 0) {
       console.warn('DEBUG: The DisplayObject has not been registered');
     } else if (registration.length > 1) {
-      throw 'DisplayObject registered multiple times.';
+      throw new Error('DisplayObject registered multiple times.');
     } else {
       return registration[0].layout;
     }
@@ -175,7 +175,7 @@ export class InteractionManagerService {
   }
 
   // Collision Detection Goes Here...
-  private detectCollision(a: any, b: any): boolean {
+  private detectCollision(a: any, b: DisplayObject): boolean {
     return !(
       ((a.y + a.height) < (b.y))
           || (a.y > (b.y + b.height))

@@ -8,6 +8,7 @@ import { combineLatest, Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { AclMode, AclType } from 'app/enums/acl-type.enum';
 import { DatasetAclType } from 'app/enums/dataset-acl-type.enum';
+import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -1099,7 +1100,7 @@ export class DatasetFormComponent implements FormConfiguration {
           this.encrypted_parent = pk_dataset[0].encrypted;
           let inherit_encrypt_placeholder = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
           if (this.encrypted_parent) {
-            if (pk_dataset[0].key_format.value === 'PASSPHRASE') {
+            if (pk_dataset[0].key_format.value === DatasetEncryptionType.Passphrase) {
               this.passphrase_parent = true;
               // if parent is passphrase this dataset cannot be a key type
               this.encryption_type = 'passphrase';

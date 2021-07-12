@@ -2,7 +2,7 @@ import {
   Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { TaskService } from 'app/services';
 
 @UntilDestroy()

@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { ixChartApp, appImagePlaceholder } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
@@ -51,8 +51,8 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
   private chartReleaseChangedListener: Subscription;
 
   private selectedAppName: string;
-  private podList: any[] = [];
-  private podDetails: any = {};
+  private podList: string[] = [];
+  private podDetails: Record<string, string[]> = {};
   imagePlaceholder = appImagePlaceholder;
 
   emptyPageConf: EmptyConfig = {
@@ -588,7 +588,7 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
           value: item,
         }));
         this.choosePodForLogs.fieldConfig[1].value = this.podDetails[this.podList[0]][0];
-        this.choosePodForLogs.fieldConfig[1].options = this.podDetails[this.podList[0]].map((item: any) => ({
+        this.choosePodForLogs.fieldConfig[1].options = this.podDetails[this.podList[0]].map((item) => ({
           label: item,
           value: item,
         }));

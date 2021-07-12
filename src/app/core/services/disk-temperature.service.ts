@@ -4,7 +4,7 @@ import { Disk } from 'app/interfaces/storage.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebSocketService } from 'app/services';
 import { BaseService } from './base.service';
-import { CoreService } from './core.service';
+import { CoreService } from './core-service/core.service';
 
 export interface Temperature {
   keys: string[];

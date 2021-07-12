@@ -3,8 +3,9 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/api-keys';
+import { ApiKey } from 'app/interfaces/api-key.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
@@ -61,7 +62,7 @@ export class ApiKeysComponent implements EntityTableConfig {
     method_ws: this.addCall,
     saveButtonText: helptext.formDialog.add_button,
     customSubmit: this.doSubmit,
-    afterInit(entityFrom: any) {
+    afterInit(entityFrom: EntityDialogComponent) {
       const disableCheckbox = !this.parent.currItem;
       entityFrom.setDisabled('reset', disableCheckbox, disableCheckbox);
       if (this.parent.currItem) {
@@ -105,10 +106,12 @@ export class ApiKeysComponent implements EntityTableConfig {
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
   }
-  resourceTransformIncomingRestData(data: any[]): any[] {
+  resourceTransformIncomingRestData(data: ApiKey[]): any[] {
     return data.map((item) => {
-      item['created_time'] = this.localeService.formatDateTime(item.created_at.$date);
-      return item;
+      return {
+        ...item,
+        created_time: this.localeService.formatDateTime(item.created_at.$date as any),
+      };
     });
   }
 

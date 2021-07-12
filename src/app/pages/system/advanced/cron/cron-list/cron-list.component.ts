@@ -3,13 +3,15 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { Cronjob } from 'app/interfaces/cronjob.interface';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import {
   EntityTableAction,
   EntityTableConfig,
   EntityTableConfigConfig,
 } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import { DialogService, TaskService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { UserService } from 'app/services/user.service';
@@ -22,7 +24,7 @@ import { CronFormComponent } from '../cron-form/cron-form.component';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, UserService],
 })
-export class CronListComponent implements EntityTableConfig {
+export class CronListComponent implements EntityTableConfig<CronjobRow> {
   title = 'Cron Jobs';
   wsDelete: 'cronjob.delete' = 'cronjob.delete';
   queryCall: 'cronjob.query' = 'cronjob.query';
@@ -60,7 +62,6 @@ export class CronListComponent implements EntityTableConfig {
     },
   };
 
-  protected month_choice: any;
   constructor(
     public router: Router,
     protected ws: WebSocketService,
@@ -89,14 +90,14 @@ export class CronListComponent implements EntityTableConfig {
     this.doAdd(id);
   }
 
-  getActions(tableRow: any): EntityTableAction[] {
+  getActions(tableRow: CronjobRow): EntityTableAction[] {
     return [
       {
         name: this.config.name,
         label: T('Run Now'),
         id: 'run',
         icon: 'play_arrow',
-        onClick: (row: any) =>
+        onClick: (row: CronjobRow) =>
           this.dialog
             .confirm(T('Run Now'), T('Run this job now?'), true)
             .pipe(
@@ -124,25 +125,29 @@ export class CronListComponent implements EntityTableConfig {
         label: T('Edit'),
         icon: 'edit',
         id: 'edit',
-        onClick: (row: any) => this.doEdit(row.id),
+        onClick: (row: CronjobRow) => this.doEdit(row.id),
       },
       {
         id: tableRow.id,
         name: this.config.name,
         icon: 'delete',
         label: T('Delete'),
-        onClick: (row: any) => {
+        onClick: (row: CronjobRow) => {
           this.entityList.doDelete(row);
         },
       },
     ] as EntityTableAction[];
   }
 
-  resourceTransformIncomingRestData(data: any[]): any[] {
-    for (const job of data) {
-      job.cron_schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
-      job.next_run = this.taskService.getTaskNextRun(job.cron_schedule);
-    }
-    return data;
+  resourceTransformIncomingRestData(data: Cronjob[]): CronjobRow[] {
+    return data.map((job) => {
+      const cron_schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
+
+      return {
+        ...job,
+        cron_schedule,
+        next_run: this.taskService.getTaskNextRun(cron_schedule),
+      };
+    });
   }
 }

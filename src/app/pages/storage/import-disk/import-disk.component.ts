@@ -5,7 +5,7 @@ import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import helptext from 'app/helptext/storage/import-disk/import-disk';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -124,7 +124,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
       this.initialized = true;
     });
 
-    this.fs_type.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.fs_type.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       if (value === 'msdosfs') {
         this.msdosfs_locale['isHidden'] = false;
       } else {

@@ -17,6 +17,7 @@ export enum ServiceName {
   Tftp = 'tftp',
   Ups = 'ups',
   WebDav = 'webdav',
+  Http = 'http',
 }
 
 export const serviceNames = new Map<ServiceName, string>([
