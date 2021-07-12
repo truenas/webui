@@ -696,13 +696,13 @@ export class CloudsyncFormComponent implements FormConfiguration {
       .get('direction')
       .valueChanges
       .pipe(tap((direction: string) => {
-        const xattr_fc = entityForm.fieldConfig.find((config: any) => config.name === 'xattr');
+        const xattrFieldConfig = entityForm.fieldConfig.find((config: FieldConfig) => config.name === 'xattr');
         if (direction === Direction.Pull) {
-          xattr_fc.placeholder = helptext.xattr_pull_placeholder;
-          xattr_fc.tooltip = helptext.xattr_pull_tooltip;
+          xattrFieldConfig.placeholder = helptext.xattr_pull_placeholder;
+          xattrFieldConfig.tooltip = helptext.xattr_pull_tooltip;
         } else {
-          xattr_fc.placeholder = helptext.xattr_push_placeholder;
-          xattr_fc.tooltip = helptext.xattr_push_tooltip;
+          xattrFieldConfig.placeholder = helptext.xattr_push_placeholder;
+          xattrFieldConfig.tooltip = helptext.xattr_push_tooltip;
         }
       }))
       .pipe(filter(() => this.formGroup.get('transfer_mode').value !== TransferMode.Copy))
