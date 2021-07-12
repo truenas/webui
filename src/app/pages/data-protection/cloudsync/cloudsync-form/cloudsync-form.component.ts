@@ -93,6 +93,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           type: 'explorer',
           initial: '/mnt',
           explorerType: 'directory',
+          tristate: false,
           name: 'path_destination',
           placeholder: helptext.path_placeholder,
           value: '/mnt',
@@ -108,6 +109,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           placeholder: helptext.path_placeholder,
           value: '/mnt',
           multiple: true,
+          tristate: false,
           disabled: true,
           isHidden: true,
           tooltip: helptext.path_tooltip,
@@ -162,6 +164,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           tooltip: helptext.folder_tooltip,
           initial: '/',
           value: '/',
+          tristate: false,
           explorerType: 'directory',
           customTemplateStringOptions: {
             displayField: 'Path',
@@ -179,6 +182,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           type: 'explorer',
           multiple: true,
           name: 'folder_source',
+          tristate: false,
           placeholder: helptext.folder_placeholder,
           tooltip: helptext.folder_tooltip,
           initial: '/',
@@ -618,17 +622,14 @@ export class CloudsyncFormComponent implements FormConfiguration {
       if (!values.length) {
         return;
       }
-      const directories = values.map((value: string) => value.split('/'));
-      let allMatch = true;
-      const path_length = directories[0].length;
-      for (let i = 0; i < path_length - 1 && allMatch; i++) {
-        for (const directory of directories) {
-          if (directory[i] !== directories[0][i]) {
-            allMatch = false;
-            break;
-          }
-        }
-      }
+      const parentDirectories = values.map((value: string) => {
+        const split = value.split('/');
+        const sliced = split.slice(0, split.length - 1);
+        const joined = sliced.join('/');
+        return joined;
+      });
+      const allMatch = parentDirectories.every((v: string) => v === parentDirectories[0]);
+
       const folder_source_field = this.fieldSets.config('folder_source');
       const folder_source_fc = this.formGroup.get('folder_source');
       let prevErrors = folder_source_fc.errors;
@@ -640,7 +641,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           ...prevErrors,
           misMatchDirectories: true,
         });
-        folder_source_field.warnings = T('All selected entries must be at the same level i.e., must have the same parent directory.');
+        folder_source_field.warnings = T('All selected directories must be at the same level i.e., must have the same parent directory.');
       } else {
         delete prevErrors.misMatchDirectories;
         if (Object.keys(prevErrors).length) {
@@ -662,17 +663,15 @@ export class CloudsyncFormComponent implements FormConfiguration {
       if (!values.length) {
         return;
       }
-      const directories = values.map((value: string) => value.split('/'));
-      const path_length = directories[0].length;
-      let allMatch = true;
-      for (let i = 0; i < path_length - 1 && allMatch; i++) {
-        for (const directory of directories) {
-          if (directory[i] !== directories[0][i]) {
-            allMatch = false;
-            break;
-          }
-        }
-      }
+
+      const parentDirectories = values.map((value: string) => {
+        const split = value.split('/');
+        const sliced = split.slice(0, split.length - 1);
+        const joined = sliced.join('/');
+        return joined;
+      });
+      const allMatch = parentDirectories.every((v: string) => v === parentDirectories[0]);
+
       const path_source_field = this.fieldSets.config('path_source');
       const path_source_fc = this.formGroup.get('path_source');
       let prevErrors = path_source_fc.errors;
@@ -684,7 +683,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           ...prevErrors,
           misMatchDirectories: true,
         });
-        path_source_field.warnings = T('All selected entries must be at the same level i.e., must have the same parent directory.');
+        path_source_field.warnings = T('All selected directories must be at the same level i.e., must have the same parent directory.');
       } else {
         delete prevErrors.misMatchDirectories;
         if (Object.keys(prevErrors).length) {

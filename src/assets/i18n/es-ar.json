@@ -41,7 +41,7 @@
   "Add catalog to system even if some trains are unhealthy.": "",
   "Adjust Priority": "",
   "Alias": "",
-  "All selected entries must be at the same level i.e., must have the same parent directory.": "",
+  "All selected directories must be at the same level i.e., must have the same parent directory.": "",
   "Always pull image even if present on host.": "",
   "Always restart containers in a pod if they exit.": "",
   "App": "",
