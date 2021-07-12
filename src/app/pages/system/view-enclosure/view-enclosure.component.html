@@ -9,7 +9,7 @@
     </div>
   
     <ng-container *ngIf="supportedHardware">
-      <div *ngIf="!system.platform.includes('MINI'); else mini" style="padding:64px;">
+      <div *ngIf="!system.platform.includes('MINI'); else mini" style="padding:16px 64px;">
         <enclosure-disks 
           *ngIf="events && system && system.pools && selectedEnclosure" 
           [controller-events]="events" 

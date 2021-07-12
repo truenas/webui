@@ -30,7 +30,7 @@ interface ViewConfig {
 export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
   errors: ErrorMessage[] = [];
   events: Subject<CoreEvent> ;
-  formEvents: Subject<CoreEvent> ;
+  formEvent$: Subject<CoreEvent> ;
   @ViewChild('navigation', { static: false }) nav: ElementRef;
 
   // public currentView: ViewConfig
@@ -247,7 +247,9 @@ export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
     // Setup event listener
     if (this.views.length > 0) {
       this.formEvent$ = new Subject<CoreEvent>();
-      this.formEvent$.subscribe((evt: CoreEvent) => {
+      this.formEvent$.pipe(
+        untilDestroyed(this),
+      ).subscribe((evt: CoreEvent) => {
         const nextView = this.views.filter((view) => view.alias == evt.data.configFiles.value)[0];
         this.changeView(nextView.id);
       });
