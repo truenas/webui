@@ -10,21 +10,21 @@ import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
-import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
+import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { StorageService } from 'app/services/storage.service';
 import { T } from 'app/translate-marker';
-import { DiskComponent } from './disk';
-import { VdevComponent } from './vdev';
+import { DiskComponent } from './disk/disk.component';
+import { VdevComponent } from './vdev/vdev.component';
 
 @UntilDestroy()
 @Component({
@@ -191,7 +191,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           const vdev_values = { disks: [] as any, type: self.first_data_vdev_type };
           for (let j = 0; j < self.first_data_vdev_disknum; j++) {
             const disk = duplicable_disks.shift();
-            vdev_values['disks'].push(disk);
+            vdev_values.disks.push(disk);
             // remove disk from selected
             self.selected = _.remove(self.selected, (d) => d.devname !== disk.devname);
           }

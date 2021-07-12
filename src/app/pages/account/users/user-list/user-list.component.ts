@@ -10,7 +10,7 @@ import { User } from 'app/interfaces/user.interface';
 import { UserListRow } from 'app/pages/account/users/user-list/user-list-row.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -191,7 +191,7 @@ export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit
 
   ableToDeleteGroup(id: number): boolean {
     const user = _.find(this.usr_lst[0], { id });
-    const group_users = _.find(this.grp_lst[0], { id: user.group.id })['users'];
+    const group_users = _.find(this.grp_lst[0], { id: user.group.id }).users;
     // Show checkbox if deleting the last member of a group
     if (group_users.length === 1) {
       return true;

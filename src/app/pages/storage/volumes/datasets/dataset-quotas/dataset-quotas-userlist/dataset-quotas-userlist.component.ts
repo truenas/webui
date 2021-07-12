@@ -10,7 +10,7 @@ import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import {
   AppLoaderService, DialogService, StorageService, WebSocketService,

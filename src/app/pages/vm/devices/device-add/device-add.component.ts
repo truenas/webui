@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
@@ -13,7 +13,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard';
+import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard/zvol-wizard.component';
 import {
   WebSocketService, NetworkService, VmService, StorageService,
 } from 'app/services';

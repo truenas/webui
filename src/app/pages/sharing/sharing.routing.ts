@@ -2,20 +2,20 @@ import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
 import { T } from 'app/translate-marker';
-import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form';
-import { AuthorizedAccessFormComponent } from './iscsi/authorizedaccess/authorizedaccess-form';
-import { ExtentFormComponent } from './iscsi/extent/extent-form';
-import { InitiatorFormComponent } from './iscsi/initiator/initiator-form';
+import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form/associated-target-form.component';
+import { AuthorizedAccessFormComponent } from './iscsi/authorizedaccess/authorizedaccess-form/authorizedaccess-form.component';
+import { ExtentFormComponent } from './iscsi/extent/extent-form/extent-form.component';
+import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
 import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.component';
 import { ISCSI } from './iscsi/iscsi.component';
-import { PortalFormComponent } from './iscsi/portal/portal-form';
-import { TargetFormComponent } from './iscsi/target/target-form';
-import { NFSListComponent } from './nfs/nfs-list';
+import { PortalFormComponent } from './iscsi/portal/portal-form/portal-form.component';
+import { TargetFormComponent } from './iscsi/target/target-form/target-form.component';
+import { NFSListComponent } from './nfs/nfs-list/nfs-list.component';
 import { SMBAclComponent } from './smb/smb-acl/smb-acl.component';
-import { SMBFormComponent } from './smb/smb-form';
-import { SMBListComponent } from './smb/smb-list';
-import { WebdavFormComponent } from './webdav/webdav-form';
-import { WebdavListComponent } from './webdav/webdav-list';
+import { SMBFormComponent } from './smb/smb-form/smb-form.component';
+import { SMBListComponent } from './smb/smb-list/smb-list.component';
+import { WebdavFormComponent } from './webdav/webdav-form/webdav-form.component';
+import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component';
 
 export const routes: Routes = [
   {

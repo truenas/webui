@@ -4,7 +4,7 @@ import {
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
+import { iXAbstractObject } from 'app/core/classes/ix-abstract-object';
 
 @Component({
   selector: 'toolbar-checkbox',

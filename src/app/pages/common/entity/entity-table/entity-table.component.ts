@@ -20,7 +20,7 @@ import {
 import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { JobState } from 'app/enums/job-state.enum';
 import { CoreEvent } from 'app/interfaces/events';

@@ -5,8 +5,8 @@ import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { tween, styler } from 'popmotion';
 import { Subject, Subscription } from 'rxjs';
-import { DashConfigItem } from 'app/core/components/widgets/widgetcontroller/widgetcontroller.component';
-import { CoreService } from 'app/core/services/core.service';
+import { DashConfigItem } from 'app/core/components/widgets/widget-controller/widget-controller.component';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
@@ -635,7 +635,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     // Save
     this.ws.call('user.set_attribute', [1, 'dashState', clone]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (!res) {
-        throw 'Unable to save Dashboard State';
+        throw new Error('Unable to save Dashboard State');
       }
     });
   }

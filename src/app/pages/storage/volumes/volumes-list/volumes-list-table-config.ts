@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
 import { Observable } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
-import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
+import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -25,7 +25,7 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';

@@ -13,7 +13,7 @@ import {
 import { CoreEvent } from 'app/interfaces/events';
 import { Timeout } from 'app/interfaces/timeout.interface';
 import { DisplayObject } from '../classes/display-object';
-import { CoreService } from './core.service';
+import { CoreService } from './core-service/core.service';
 
 export interface AnimationConfig {
   animationTarget: DisplayObject; // Support DisplayObject

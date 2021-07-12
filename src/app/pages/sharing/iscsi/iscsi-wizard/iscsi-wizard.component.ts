@@ -12,13 +12,13 @@ import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
-import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   IscsiService, WebSocketService, NetworkService, StorageService, DialogService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { CloudCredentialService } from 'app/services/cloudcredential.service';
+import { CloudCredentialService } from 'app/services/cloud-credential.service';
 
 @UntilDestroy()
 @Component({

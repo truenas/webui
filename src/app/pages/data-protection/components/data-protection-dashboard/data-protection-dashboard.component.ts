@@ -28,7 +28,7 @@ import { Disk } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { AppTableAction, InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -47,9 +47,9 @@ import {
   WebSocketService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { CloudCredentialService } from 'app/services/cloudcredential.service';
+import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { JobService } from 'app/services/job.service';
-import { KeychainCredentialService } from 'app/services/keychaincredential.services';
+import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 
