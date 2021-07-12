@@ -13,7 +13,6 @@ from pytest_bdd import (
     scenario,
     then,
     when,
-    parsers
 )
 
 
