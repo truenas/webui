@@ -263,7 +263,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
         controls: [
           {
             name: 'configFiles',
-            label: 'Views',
+            label: 'Elements',
             type: 'menu',
             color: 'primary',
             options: this.views.map((view) => {
