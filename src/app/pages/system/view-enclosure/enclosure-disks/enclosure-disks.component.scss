@@ -292,10 +292,6 @@ div.vdev-disk {
   font-weight: 500;
 }
 
-.disks-overview-wrapper {
-  /*background:#000;*/
-}
-
 /* lt-lg */
 .view-card.md {
   width: 750px;
@@ -342,15 +338,6 @@ div.vdev-disk {
 }
 
 .view-card.mini .dom-overlay#visualizer { left: 0 !important; }
-
-.view-card.mini #legend,
-.view-card.mini #disks-overview,
-.view-card.mini #disks-details,
-.view-card.mini .dom-overlay#visualizer,
-.view-card.mini #general-overview,
-.view-card.mini #drive-temps {
-  /*background-color: var(--contrast-darker);*/
-}
 
 .view-card.mini #legend {
   padding: 16px;
