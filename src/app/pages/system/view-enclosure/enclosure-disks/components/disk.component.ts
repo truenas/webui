@@ -27,8 +27,8 @@ import {
 
     .disk-ui-name,
     .disk-ui-type{
-      background: var(--bg1);
-      color: var(--fg1);
+      background: var(--black);
+      color: var(--white);
       font-size:12px;
       text-align:center;
       padding:2px 0;
