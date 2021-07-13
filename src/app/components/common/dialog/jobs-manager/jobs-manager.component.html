@@ -3,8 +3,8 @@
     <h3>{{ 'Running Jobs' | translate }}</h3>
 
     <span *ngIf="jobs.length">
-      {{ '{n} in progress' | translate: { n: runningJobs } }},
-      {{ '{n} failed' | translate: { n: failedJobs } }}
+      {{ '{n} in progress' | translate: { n: numberOfRunningJobs$ | async } }},
+      {{ '{n} failed' | translate: { n: numberOfFailedJobs$ | async } }}
     </span>
   </div>
 
@@ -15,15 +15,18 @@
   </ng-template>
 
   <ng-template #items>
-    <ng-container *ngFor="let job of jobs">
-      <app-job-item [job]="job" (aborted)="onAbort(job)"></app-job-item>
-    </ng-container>
+    <div [@list]="jobs.length" class="jobs-list">
+      <app-job-item
+        *ngFor="let job of jobs"
+        [job]="job"
+        (aborted)="onAbort(job)"
+      ></app-job-item>
+    </div>
   </ng-template>
 
   <ng-template #empty>
     <entity-empty [conf]="emptyConfig"></entity-empty>
   </ng-template>
-
 </mat-dialog-content>
 <!-- TODO: NAS-111291 - Uncomment when job list is implemented
 <mat-dialog-actions>

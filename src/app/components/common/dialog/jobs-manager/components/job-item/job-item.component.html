@@ -30,6 +30,6 @@
   </button>
 
   <button mat-icon-button type="button" [disabled]="true" *ngIf="job.state === JobState.Failed">
-    <mat-icon class="job-icon-failed">warning</mat-icon>
+    <mat-icon [matTooltip]="job.error" matTooltipPosition="left" class="job-icon-failed">warning</mat-icon>
   </button>
 </div>

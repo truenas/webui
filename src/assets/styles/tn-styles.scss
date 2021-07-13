@@ -1682,6 +1682,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       padding-bottom: 8px;
       padding-top: 8px;
     }
+
+    .mat-dialog-content {
+      overflow: auto !important;
+    }
   }
 
 } // end of ix theme

@@ -1,4 +1,7 @@
 import {
+  trigger, animate, style, transition, query, stagger,
+} from '@angular/animations';
+import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
@@ -14,12 +17,24 @@ import { T } from 'app/translate-marker';
   templateUrl: './jobs-manager.component.html',
   styleUrls: ['./jobs-manager.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger('list', [
+      transition('* <=> *', [
+        query(':enter',
+          [style({ opacity: 0 }), stagger('60ms', animate('600ms ease-out', style({ opacity: 1 })))],
+          { optional: true }),
+        query(':leave',
+          animate('200ms', style({ opacity: 0 })),
+          { optional: true }),
+      ]),
+    ]),
+  ],
 })
 export class JobsManagerComponent implements OnInit {
   isLoading: boolean;
   jobs: Job[] = [];
-  runningJobs: number;
-  failedJobs: number;
+  numberOfRunningJobs$ = this.store.numberOfRunningJobs$;
+  numberOfFailedJobs$ = this.store.numberOfFailedJobs$;
   emptyConfig: EmptyConfig = {
     type: EmptyType.no_page_data,
     large: false,
@@ -48,8 +63,6 @@ export class JobsManagerComponent implements OnInit {
     this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.isLoading = state.isLoading;
       this.jobs = state.jobs;
-      this.runningJobs = state.runningJobs;
-      this.failedJobs = state.failedJobs;
       this.cdr.markForCheck();
     });
   }

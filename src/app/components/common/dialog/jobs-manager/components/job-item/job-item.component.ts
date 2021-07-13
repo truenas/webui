@@ -9,7 +9,6 @@ import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { T } from 'app/translate-marker';
 
 @UntilDestroy()
@@ -25,13 +24,13 @@ export class JobItemComponent {
   readonly JobState = JobState;
 
   constructor(
-    private ws: WebSocketService,
     private localeService: LocaleService,
     private dialogService: DialogService,
     private translate: TranslateService,
   ) {}
 
   getReadableDate(input: ApiTimestamp): string {
+    // TODO: Convert this method into pipe
     return this.localeService.formatDateTime(new Date(input.$date));
   }
 
@@ -47,12 +46,7 @@ export class JobItemComponent {
       })
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
-        this.ws
-          .call('core.job_abort', [job.id])
-          .pipe(untilDestroyed(this))
-          .subscribe(() => {
-            this.aborted.emit();
-          });
+        this.aborted.emit();
       });
   }
 }

@@ -12,23 +12,23 @@ import { DialogService, WebSocketService } from 'app/services';
 
 const initialState: JobsManagerState = {
   isLoading: false,
-  jobs: null,
-  runningJobs: null,
-  failedJobs: null,
+  jobs: [],
 };
 
 @Injectable()
 export class JobsManagerStore extends ComponentStore<JobsManagerState> {
-  readonly limit = 5;
-
   constructor(private ws: WebSocketService, private dialog: DialogService) {
     super(initialState);
 
     this.subscribeToUpdates();
   }
 
-  readonly jobs$: Observable<Job[]> = this.select((state: JobsManagerState) => state.jobs);
-  readonly runningJobs$: Observable<number> = this.select((state: JobsManagerState) => state.runningJobs);
+  readonly numberOfRunningJobs$: Observable<number> = this.select(
+    (state) => state.jobs.filter((job) => job.state === JobState.Running).length,
+  );
+  readonly numberOfFailedJobs$: Observable<number> = this.select(
+    (state) => state.jobs.filter((job) => job.state === JobState.Failed).length,
+  );
 
   readonly loadJobs = this.effect(() => {
     this.setState({
@@ -39,14 +39,12 @@ export class JobsManagerStore extends ComponentStore<JobsManagerState> {
     return this.ws
       .call('core.get_jobs', [
         [['state', 'in', [JobState.Running, JobState.Failed]]],
-        { order_by: ['-id'], limit: this.limit },
+        { order_by: ['-id'] },
       ])
       .pipe(
         tap((jobs: Job[]) => {
           this.patchState({
             jobs,
-            failedJobs: jobs.filter((job) => job.state === JobState.Failed).length,
-            runningJobs: jobs.filter((job) => job.state === JobState.Running).length,
             isLoading: false,
           });
         }),
@@ -64,47 +62,59 @@ export class JobsManagerStore extends ComponentStore<JobsManagerState> {
   });
 
   readonly subscribeToUpdates = this.effect(() => {
-    return this.ws
-      .subscribe('core.get_jobs')
-      .pipe(
-        tap((event) => {
-          this.addOrUpdate(event.fields);
-        }),
-        takeUntil(this.destroy$),
-      );
+    return this.ws.subscribe('core.get_jobs').pipe(
+      tap((event) => {
+        this.addOrUpdate(event.fields);
+      }),
+      takeUntil(this.destroy$),
+    );
   });
 
   addOrUpdate(job: Job): void {
     this.patchState((state) => {
-      let newJobs = [...state.jobs];
-      const jobExist = newJobs.find((item) => item.id === job.id);
+      let modifiedJobs = [...state.jobs];
+      const jobExist = modifiedJobs.find((item) => item.id === job.id);
 
-      if (jobExist && job.state === JobState.Failed) {
-        jobExist.state = job.state;
-      } else if (jobExist && job.state === JobState.Success) {
-        newJobs = newJobs.filter((item) => item.id !== job.id);
-      } else {
-        if (newJobs.length === this.limit) {
-          newJobs.pop();
-        }
-        newJobs = [job, ...state.jobs];
+      switch (job.state) {
+        case JobState.Running:
+          if (jobExist) {
+            jobExist.progress = job.progress;
+          } else {
+            modifiedJobs = [job, ...state.jobs];
+          }
+          break;
+        case JobState.Failed:
+          if (jobExist) {
+            jobExist.state = job.state;
+          } else {
+            modifiedJobs = [job, ...state.jobs];
+          }
+          break;
+        default:
+          if (jobExist) {
+            modifiedJobs = modifiedJobs.filter((item) => item.id !== job.id);
+          }
+          break;
       }
 
       return {
         ...state,
-        jobs: newJobs,
-        runningJobs: newJobs.filter((job) => job.state === JobState.Running).length,
+        jobs: modifiedJobs,
       };
     });
   }
 
   remove(job: Job): void {
-    this.patchState((state) => {
-      return {
-        ...state,
-        jobs: state.jobs.filter((item) => item.id !== job.id),
-        runningJobs: state.runningJobs - 1,
-      };
-    });
+    this.ws
+      .call('core.job_abort', [job.id])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.patchState((state) => {
+          return {
+            ...state,
+            jobs: state.jobs.filter((item) => item.id !== job.id),
+          };
+        });
+      });
   }
 }

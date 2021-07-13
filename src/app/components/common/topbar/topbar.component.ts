@@ -88,7 +88,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   isWaiting = false;
   target: Subject<CoreEvent> = new Subject();
   screenSize = 'waiting';
-  runningJobs$: Observable<number> = this.jobsManagerStore.runningJobs$;
+  numberOfRunningJobs$: Observable<number> = this.jobsManagerStore.numberOfRunningJobs$;
 
   protected dialogRef: any;
   protected tcConnected = false;
