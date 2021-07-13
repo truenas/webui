@@ -2,10 +2,14 @@
 """SCALE UI: feature tests."""
 
 import time
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
     attribute_value_exist,
+    run_cmd,
+    post
 )
 from pytest_bdd import (
     given,
@@ -81,20 +85,40 @@ def the_ldapsmbshare_should_be_added_to_the_shares_list_click_on_systemsettingss
     raise NotImplementedError
 
 
-@then('send a file to the share with ip/ldapsmbshare and "eturgeon" and "Need_4_testing"')
-def send_a_file_to_the_share_with_ipldapsmbshare_and_eturgeon_and_need_4_testing():
+@then('send a file to the share with ip/{ldapsmbshare} and "{ldap_user}" and "{ldap_password}"')
+def send_a_file_to_the_share_with_ipldapsmbshare_and_eturgeon_and_need_4_testing(ldapsmbshare, ldap_user, ldap_password):
     """send a file to the share with ip/ldapsmbshare and "eturgeon" and "Need_4_testing"."""
-    raise NotImplementedError
+    run_cmd('touch testfile.txt')
+    results = run_cmd(f'smbclient //{nas_ip}/{ldapsmbshare} -W AD01 -U {ldap_user}%{ldap_password} -c "put testfile.txt testfile.txt"')
+    assert results['result'], results['output']
+    run_cmd('rm testfile.txt')
 
 
 @then('verify that the file is on the NAS dataset')
-def verify_that_the_file_is_on_the_nas_dataset():
+def verify_that_the_file_is_on_the_nas_dataset(driver, nas_ip, root_password,):
     """verify that the file is on the NAS dataset."""
-    raise NotImplementedError
+    results = post(nas_ip, 'filesystem/stat/', ('root', root_password), f'{smb_path}/testfile.txt')
+    assert results.status_code == 200, results.text
+
 
 
 @then('click on Credentials/DirectoryServices, then LDAP Settings, then disable and click SAVE')
 def click_on_credentialsdirectoryservices_then_ldap_settings_then_disable_and_click_save():
     """click on Credentials/DirectoryServices, then LDAP Settings, then disable and click SAVE."""
-    raise NotImplementedError
-
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
+    time.sleep(2)
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
+    time.sleep(1)
+    assert wait_on_element(driver, 7, '//mat-card[contains(.,"LDAP")]//button[contains(.,"Settings")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card[contains(.,"LDAP")]//button[contains(.,"Settings")]').click()
+    time.sleep(2)
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable"]').click()
+    time.sleep(1)
+    wait_on_element(driver, 10, '//button[@ix-auto="button"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button"]').click()
+    ## return to dashboard
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    time.sleep(1)
