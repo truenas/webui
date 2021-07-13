@@ -88,7 +88,7 @@ def click_proceed_then_enter_the_login_user_name_and_password(driver, user_name,
     assert wait_on_element(driver, 10, '//img[@class="box_logo"]')
     assert wait_on_element(driver, 5, '//input[@placeholder="Email Address"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Email Address"]').send_keys(user_name)
-    driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(user_name)
+    driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
     assert wait_on_element(driver, 5, '//div[@class="login_submit_div"]', 'clickable')
     driver.find_element_by_xpath('//div[@class="login_submit_div"]').click()
 
@@ -96,6 +96,8 @@ def click_proceed_then_enter_the_login_user_name_and_password(driver, user_name,
 @then('click Authorize and then click Grant Access to Box')
 def click_authorize_and_then_click_grant_access_to_box(driver):
     """click Authorize and then click Grant Access to Box."""
+    assert wait_on_element(driver, 5, '//button[@id="consent_accept_button"]', 'clickable')
+    driver.find_element_by_xpath('//button[@id="consent_accept_button"]').click()
 
 
 @then('click Verify Credential to verify it is valid')

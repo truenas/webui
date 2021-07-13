@@ -599,7 +599,7 @@ def delete_the_file_from_the_dataset_and_click_run_now(driver, nas_ip):
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
-    if not wait_on_element(driver, 1, '//button[@id="action_button___run_now"]', 'clickable'):
+    if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
         driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
@@ -628,7 +628,7 @@ def delete_the_folder_from_the_dataset_then_click_run_now(driver, nas_ip):
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
-    if not wait_on_element(driver, 1, '//button[@id="action_button___run_now"]', 'clickable'):
+    if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
         driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
