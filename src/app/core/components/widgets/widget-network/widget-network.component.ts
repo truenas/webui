@@ -56,7 +56,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
 
   chartData: ChartData = {};
   interval: Interval;
-
+  availableNics: BaseNetworkInterface[] = [];
   chartOptions: ChartOptions = {
     responsive: true,
     maintainAspectRatio: true,
@@ -121,15 +121,21 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   }
 
   ngAfterViewInit(): void {
+    this.availableNics = this.nics.filter((nic) => nic.state.link_state === 'LINK_STATE_UP');
+
     this.updateGridInfo();
     this.updateMapInfo();
 
-    this.nics.forEach((nic) => {
+    this.availableNics.forEach((nic) => {
       this.fetchReportData(nic);
     });
 
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+
     this.interval = setInterval(() => {
-      this.nics.forEach((nic) => {
+      this.availableNics.forEach((nic) => {
         this.fetchReportData(nic);
       });
     }, 60000);
@@ -161,24 +167,24 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
 
   getColspan(index: number): number {
     let colSpan = 6;
-    if (this.nics.length <= 3) {
+    if (this.availableNics.length <= 3) {
       colSpan = 6;
-    } else if (this.nics.length == 4) {
+    } else if (this.availableNics.length == 4) {
       colSpan = 3;
-    } else if (this.nics.length == 5) {
+    } else if (this.availableNics.length == 5) {
       if (index < 2) {
         colSpan = 3;
       } else {
         colSpan = 2;
       }
-    } else if (this.nics.length >= 6) {
+    } else if (this.availableNics.length >= 6) {
       colSpan = 2;
     }
     return colSpan;
   }
 
   updateMapInfo(): void {
-    this.nics.forEach((nic: BaseNetworkInterface) => {
+    this.availableNics.forEach((nic: BaseNetworkInterface) => {
       this.nicInfoMap[nic.state.name] = {
         ip: this.getIpAddress(nic),
         state: this.getLinkState(nic),
@@ -192,7 +198,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   }
 
   updateGridInfo(): void {
-    const nicsCount = this.nics.length;
+    const nicsCount = this.availableNics.length;
     let maxTicksLimit = 5;
 
     if (nicsCount <= 3) {

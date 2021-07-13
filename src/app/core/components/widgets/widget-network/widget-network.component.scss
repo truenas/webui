@@ -127,8 +127,10 @@ mat-grid-list {
   }
 
   .detail-info {
+    border-left: solid 1px var(--fg2);
     font-size: 12px;
     padding-bottom: 2px;
+    padding-left: 20px;
   }
 
   span.icon {
