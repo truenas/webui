@@ -11,6 +11,7 @@ import { WidgetComponent } from 'app/core/components/widgets/widget/widget.compo
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
+import { Interval } from 'app/interfaces/timeout.interface';
 import { TableService } from 'app/pages/common/entity/table/table.service';
 import { WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
@@ -54,6 +55,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   aspectRatio = 474 / 200;
 
   chartData: ChartData = {};
+  interval: Interval;
 
   chartOptions: ChartOptions = {
     responsive: true,
@@ -112,6 +114,10 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   ngOnDestroy(): void {
     this.core.emit({ name: 'StatsRemoveListener', data: { name: 'NIC', obj: this } });
     this.core.unregister({ observerClass: this });
+
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
   }
 
   ngAfterViewInit(): void {
@@ -121,6 +127,12 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     this.nics.forEach((nic) => {
       this.fetchReportData(nic);
     });
+
+    this.interval = setInterval(() => {
+      this.nics.forEach((nic) => {
+        this.fetchReportData(nic);
+      });
+    }, 60000);
 
     this.stats.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.name.startsWith('NetTraffic_')) {
@@ -280,7 +292,6 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
       }
 
       const chartData = {
-        // labels,
         datasets: [
           {
             label: nic.name + '(in)',
