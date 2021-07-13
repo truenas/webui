@@ -3,7 +3,8 @@
 
 from function import (
     wait_on_element,
-    is_element_present
+    is_element_present,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
@@ -98,13 +99,31 @@ def click_authorize_and_then_click_grant_access_to_box(driver):
     """click Authorize and then click Grant Access to Box."""
     assert wait_on_element(driver, 5, '//button[@id="consent_accept_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="consent_accept_button"]').click()
+    driver.switch_to.window(driver.window_handles[0])
 
 
 @then('click Verify Credential to verify it is valid')
 def click_verify_credential_to_verify_it_is_valid(driver):
     """click Verify Credential to verify it is valid."""
+    assert wait_on_element(driver, 5, '//input[@placeholder="Access Token"]', 'inputable')
+    element1 = driver.find_element_by_xpath('//input[@placeholder="Access Token"]')
+    assert element1.get_attribute('value') != '', element1.get_attribute('value')
+    element2 = driver.find_element_by_xpath('//input[@placeholder="OAuth Client ID"]')
+    assert element2.get_attribute('value') != '', element2.get_attribute('value')
+    element3 = driver.find_element_by_xpath('//input[@placeholder="OAuth Client Secret"]')
+    assert element3.get_attribute('value') != '', element3.get_attribute('value')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__VERIFY CREDENTIAL"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__VERIFY CREDENTIAL"]').click()
+    assert wait_on_element(driver, 10, '//h1[normalize-space(text())="Valid"]')
+    assert wait_on_element(driver, 10, '//textarea[text()="The Credential is valid."]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then(parsers.parse('click Summit, {account_name} should be added to the list'))
 def click_summit_account_name_should_be_added_to_the_list(driver, account_name):
     """click Summit, account_name should be added to the list."""
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element_disappear(driver, 20, '//h1[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 5, f'//div[normalize-space(text())="{account_name}"]')
