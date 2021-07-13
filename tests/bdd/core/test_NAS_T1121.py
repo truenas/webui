@@ -11,8 +11,6 @@ aws_secret_access_key=ACCESS_KEY
 
 import boto3
 import time
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
