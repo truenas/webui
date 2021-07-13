@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { WebSocketService } from 'app/services/ws.service';
 

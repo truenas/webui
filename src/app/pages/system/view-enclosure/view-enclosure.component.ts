@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { ErrorMessage } from 'app/core/classes/ix-interfaces';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';

@@ -1425,13 +1425,14 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   logInToProvider(): void {
     window.open(this.oauthURL + '?origin=' + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
     const controls = this.entityForm.formGroup.controls;
-    const selectedProvider = this.selectedProvider;
     const dialogService = this.dialog;
     const getOnedriveList = this.getOnedriveList.bind(this);
 
-    window.addEventListener('message', doAuth, false);
+    const method = (message: any): void => doAuth(message, this.selectedProvider);
 
-    function doAuth(message: any): void {
+    window.addEventListener('message', method, false);
+
+    function doAuth(message: any, selectedProvider: string): void {
       if (message.data.oauth_portal) {
         if (message.data.error) {
           dialogService.errorReport(T('Error'), message.data.error);
@@ -1450,7 +1451,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           getOnedriveList(message.data);
         }
       }
-      window.removeEventListener('message', doAuth);
+      window.removeEventListener('message', method);
     }
   }
 

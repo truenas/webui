@@ -7,7 +7,7 @@ import { Point } from 'pixi.js';
 import { MINI } from 'app/core/classes/hardware/mini';
 import { MINIX } from 'app/core/classes/hardware/mini-x';
 import { MINIXLPLUS } from 'app/core/classes/hardware/mini-xl-plus';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { EnclosureDisksComponent } from './enclosure-disks.component';
 
