@@ -55,22 +55,24 @@ def on_the_dashboard_click_on_plugins_on_the_left_sidebar(driver):
 @then('when Choose Pool for Plugin and Jail Storage appears, select tank')
 def when_choose_pool_for_plugin_and_jail_storage_appears_select_tank(driver):
     """when Choose Pool for Plugin and Jail Storage appears, select tank."""
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Choose Pool for Plugin and Jail Storage")]')
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Choose a pool for plugin and jail storage."]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Choose a pool for plugin and jail storage."]').click()
-    assert wait_on_element(driver, 5, '//mat-option[contains(.,"tank")]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[contains(.,"tank")]').click()
+    assert wait_on_element(driver, 10, '//div[text()="Plugins"]')
+    if wait_on_element(driver, 2, '//h1[contains(.,"Choose Pool for Plugin and Jail Storage")]'):
+        assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Choose a pool for plugin and jail storage."]', 'clickable')
+        driver.find_element_by_xpath('//mat-select[@ix-auto="select__Choose a pool for plugin and jail storage."]').click()
+        assert wait_on_element(driver, 5, '//mat-option[contains(.,"tank")]', 'clickable')
+        driver.find_element_by_xpath('//mat-option[contains(.,"tank")]').click()
 
 
 @then('click chose, then Pool Chosen will appear, click CLOSE')
 def click_chose_then_pool_chosen_will_appear_click_close(driver):
     """click chose, then Pool Chosen will appear, click CLOSE."""
-    assert wait_on_element(driver, 5, '//button[@name="Choose_button"]', 'clickable')
-    driver.find_element_by_xpath('//button[@name="Choose_button"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Pool Chosen")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    if is_element_present(driver, '//h1[contains(.,"Choose Pool for Plugin and Jail Storage")]'):
+        assert wait_on_element(driver, 5, '//button[@name="Choose_button"]', 'clickable')
+        driver.find_element_by_xpath('//button[@name="Choose_button"]').click()
+        assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+        assert wait_on_element(driver, 10, '//h1[contains(.,"Pool Chosen")]')
+        assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then('on the Plugins page, iconik should be available to install')
