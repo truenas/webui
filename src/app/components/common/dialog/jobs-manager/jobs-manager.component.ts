@@ -8,7 +8,6 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
 import { Job } from 'app/interfaces/job.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { WebSocketService } from 'app/services/ws.service';
 import { T } from 'app/translate-marker';
 
 @UntilDestroy()
@@ -54,7 +53,6 @@ export class JobsManagerComponent implements OnInit {
 
   constructor(
     /* private router: Router, */
-    private ws: WebSocketService,
     private store: JobsManagerStore,
     private cdr: ChangeDetectorRef,
   ) {}
