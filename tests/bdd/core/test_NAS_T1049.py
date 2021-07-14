@@ -75,7 +75,7 @@ def verify_the_company_name_go_to_wwwixsystemscom(driver):
     driver.find_element_by_xpath('//a[@title="iXsystems, Inc."]').click()
     time.sleep(1)
     driver.switch_to.window(driver.window_handles[1])
-    assert wait_on_element(driver, 7, '//img[@id="logo"]')
+    assert wait_on_element(driver, 7, '//img[contains(@title,"ix_logo")]')
     assert driver.current_url == 'https://www.ixsystems.com/', driver.current_url
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
