@@ -1,7 +1,6 @@
 # coding=utf-8
 """Core UI feature tests."""
 
-import time
 from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,

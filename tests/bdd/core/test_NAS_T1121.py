@@ -594,10 +594,11 @@ def verify_the_file_appear_into_the_s3_bucket_and_is_removed_from_the_nas(driver
 @then('delete the file from the dataset and click Run Now')
 def delete_the_file_from_the_dataset_and_click_run_now(driver, nas_ip):
     """delete the file from the dataset and click Run Now."""
-    driver.switch_to.window(driver.window_handles[0])
     cmd = 'rm -rf /mnt/tank/aws_share/cloud_test.txt'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
+    driver.switch_to.window(driver.window_handles[0])
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
     if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
@@ -623,10 +624,11 @@ def on_the_bucket_tab_verify_the_file_is_deleted(driver):
 @then('delete the folder from the dataset then click Run Now')
 def delete_the_folder_from_the_dataset_then_click_run_now(driver, nas_ip):
     """delete the folder from the dataset then click Run Now."""
-    driver.switch_to.window(driver.window_handles[0])
     cmd = 'rm -rf /mnt/tank/aws_share/my_folder'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
+    driver.switch_to.window(driver.window_handles[0])
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
     if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
