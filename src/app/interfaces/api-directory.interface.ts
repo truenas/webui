@@ -47,6 +47,7 @@ import {
   DatasetEncryptionSummary,
 } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetHasVmsQueryParams } from 'app/interfaces/dataset-has-vms-query-params.interface';
+import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { DatasetQuota, DatasetQuotaQueryParams } from 'app/interfaces/dataset-quota.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import {
@@ -538,7 +539,7 @@ export type ApiDirectory = {
   'pool.scrub.create': { params: any; response: any };
   'pool.dataset.compression_choices': { params: void; response: Choices };
   'pool.dataset.encryption_algorithm_choices': { params: void; response: Choices };
-  'pool.dataset.permission': { params: any; response: any };
+  'pool.dataset.permission': { params: DatasetPermissionsUpdate; response: number };
   'pool.dataset.export_key': { params: any; response: any };
   'pool.offline': { params: any; response: any };
   'pool.online': { params: any; response: any };
