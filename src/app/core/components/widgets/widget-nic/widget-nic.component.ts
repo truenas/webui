@@ -10,7 +10,7 @@ import {
 } from 'popmotion';
 import { WidgetUtils } from 'app/core/components/widgets/widget-utils';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
+import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { T } from 'app/translate-marker';
 
@@ -40,7 +40,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   traffic: NetTraffic;
   currentSlide = '0';
   private utils: WidgetUtils;
-
+  nicLinkState = LinkState;
   get currentSlideName(): string {
     return this.path[parseInt(this.currentSlide)].name;
   }

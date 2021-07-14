@@ -8,7 +8,7 @@ import { ChartData, ChartOptions } from 'chart.js';
 import { sub } from 'date-fns';
 import { WidgetUtils } from 'app/core/components/widgets/widget-utils';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
+import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
@@ -42,6 +42,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   @Input() nics: BaseNetworkInterface[];
 
   private utils: WidgetUtils;
+  linkState = LinkState;
   title = T('Network');
   nicInfoMap: NicInfoMap = {};
   paddingX = 16;
@@ -121,7 +122,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   }
 
   ngAfterViewInit(): void {
-    this.availableNics = this.nics.filter((nic) => nic.state.link_state === 'LINK_STATE_UP');
+    this.availableNics = this.nics.filter((nic) => nic.state.link_state === LinkState.Up);
 
     this.updateGridInfo();
     this.updateMapInfo();
