@@ -13,6 +13,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { TableService } from 'app/pages/common/entity/table/table.service';
+import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { T } from 'app/translate-marker';
@@ -106,7 +107,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   };
 
   constructor(
-    public router: Router, private ws: WebSocketService, private locale: LocaleService,
+    public router: Router, private ws: WebSocketService,
+    private locale: LocaleService, private rs: ReportsService,
     private tableService: TableService, public translate: TranslateService,
   ) {
     super(translate);
@@ -263,25 +265,13 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     return nic.state.link_state.replace(/_/g, ' ');
   }
 
-  getServerTime(): Date {
-    const xmlHttp = new XMLHttpRequest();
-    xmlHttp.open('HEAD', window.location.origin.toString(), false);
-    xmlHttp.setRequestHeader('Content-Type', 'text/html');
-    xmlHttp.send('');
-    const serverTime = xmlHttp.getResponseHeader('Date');
-    const seconds = new Date(serverTime).getTime();
-    const secondsToTrim = 60;
-    const trimmed = new Date(seconds - (secondsToTrim * 1000));
-    return trimmed;
-  }
-
   fetchReportData(nic: BaseNetworkInterface): void {
     const params = {
       identifier: nic.name,
       name: 'interface',
     };
 
-    const endDate = this.getServerTime();
+    const endDate = this.rs.getServerTime();
     const subOptions: Duration = {};
     subOptions['hours'] = 2;
     const startDate = sub(endDate, subOptions);

@@ -110,4 +110,16 @@ export class ReportsService implements OnDestroy {
 
     return data;
   }
+
+  getServerTime(): Date {
+    const xmlHttp = new XMLHttpRequest();
+    xmlHttp.open('HEAD', window.location.origin.toString(), false);
+    xmlHttp.setRequestHeader('Content-Type', 'text/html');
+    xmlHttp.send('');
+    const serverTime = xmlHttp.getResponseHeader('Date');
+    const seconds = new Date(serverTime).getTime();
+    const secondsToTrim = 60;
+    const trimmed = new Date(seconds - (secondsToTrim * 1000));
+    return trimmed;
+  }
 }

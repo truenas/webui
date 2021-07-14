@@ -290,24 +290,12 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
-  getServerTime(): Date {
-    const xmlHttp = new XMLHttpRequest();
-    xmlHttp.open('HEAD', window.location.origin.toString(), false);
-    xmlHttp.setRequestHeader('Content-Type', 'text/html');
-    xmlHttp.send('');
-    const serverTime = xmlHttp.getResponseHeader('Date');
-    const seconds = new Date(serverTime).getTime();
-    const secondsToTrim = 60;
-    const trimmed = new Date(seconds - (secondsToTrim * 1000));
-    return trimmed;
-  }
-
   // Convert timespan to start/end options for RRDTool
   convertTimespan(timespan: any, direction = 'backward', currentDate?: number): TimeData {
     let durationUnit: keyof Duration;
     let value: number;
 
-    const now = this.getServerTime();
+    const now = this.rs.getServerTime();
 
     let startDate: Date;
     let endDate: Date;
