@@ -1,4 +1,3 @@
-import { Container } from 'pixi.js';
 import { Chassis } from './chassis';
 import { ChassisView } from './chassis-view';
 
@@ -23,28 +22,6 @@ export class R20A extends Chassis {
     this.front.driveTraysOffsetY = -65;
 
     this.front.disabledOpacity = 0.15;
-
-    this.front.layout = {
-      generatePosition: (
-        displayObject: Container,
-        index: number,
-        offsetX: number,
-        offsetY: number,
-      ) => {
-        const gapX = 8;
-        const gapY = 2;
-        const rows = 3;
-
-        const currentColumn = Math.floor(index / rows);
-        const goingDown: boolean = currentColumn % 2 == 0;
-        const currentRow: number = goingDown ? index % 3 : rows - (index % 3 + 1);
-
-        const nextPositionX = offsetX + (displayObject.width + gapX) * currentColumn;
-        const nextPositionY = offsetY + currentRow * (displayObject.height + gapY);
-
-        return { x: nextPositionX, y: nextPositionY };
-      },
-    };
 
     if (rearChassis) {
       this.rear = new ChassisView();

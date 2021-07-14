@@ -49,8 +49,8 @@ export class ChassisView {
 
   chassis: Sprite;
   chassisScale: Position;
-  chassisOffsetX = 0;
-  chassisOffsetY = 0;
+  chassisOffsetY = 0; // if drives don't start at top.
+  chassisOffsetX = 0; // if drives don't start at top.
 
   chassisPath: string;
   driveTrayBackgroundPath: string;
@@ -64,14 +64,14 @@ export class ChassisView {
   slotRange: Range;
   rows: number;
   columns: number;
-  orientation = 'rows';
+  orientation = 'rows'; // 'rows' || 'columns'
   layout?: LayoutGenerator;
   vertical = false;
   filters: any[] = [];
   disabledOpacity = 0.25;
   chassisOpacity = 0.25;
   initialized = false;
-  loader: PIXI.loaders.Loader;
+  loader: any;
   autoPosition = true;
   protected utils: ThemeUtils;
   gapX = 10;
@@ -99,7 +99,7 @@ export class ChassisView {
 
   requiredAssets(): { alias: string; path: string }[] {
     // Return a list of assets for the loader to fetch
-    const assets: { alias: string; path: string }[] = [];
+    const assets: any[] = [];
     assets.push({ alias: this.model + '_chassis', path: this.chassisPath });
     assets.push({ alias: this.model + '_drivetray_bg', path: this.driveTrayBackgroundPath });
     assets.push({ alias: this.model + '_drivetray_handle', path: this.driveTrayHandlePath });
@@ -136,7 +136,7 @@ export class ChassisView {
   }
 
   onLoaded(): void {
-    const bloomFilter = new PIXI.filters.AdvancedBloomFilter({
+    const bloomFilter: AdvancedBloomFilter = new PIXI.filters.AdvancedBloomFilter({
       threshold: 0.9,
       bloomScale: 1.5,
       brightness: 1.5,
@@ -147,13 +147,21 @@ export class ChassisView {
     this.filters = [bloomFilter];
 
     // Render Chassis
-    this.chassis = PIXI.Sprite.from(this.loader.resources[this.model + '_chassis'].texture.baseTexture);
+    this.chassis = PIXI.Sprite.from(
+      this.loader.resources[this.model + '_chassis'].texture.baseTexture,
+    );
+
     this.chassis.name = this.model + '_chassis';
     this.chassis.alpha = 0;
     this.chassis.x = this.chassisOffsetX;
     this.chassis.y = this.chassisOffsetY;
-    this.chassis.scale.x = this.chassisScale && this.chassisScale.x ? this.chassisScale.x : 1;
-    this.chassis.scale.y = this.chassisScale && this.chassisScale.y ? this.chassisScale.y : 1;
+
+    this.chassis.scale.x = this.chassisScale && this.chassisScale.x
+      ? this.chassisScale.x : 1;
+
+    this.chassis.scale.y = this.chassisScale && this.chassisScale.y
+      ? this.chassisScale.y : 1;
+
     this.container.addChild(this.chassis);
 
     // Render DriveTrays
@@ -164,8 +172,8 @@ export class ChassisView {
       const slot: number = this.slotRange.start + i;
 
       const dt = this.altDriveTraySlots.length > 0 && this.altDriveTraySlots.indexOf(slot) != -1
-        ? this.makeDriveTray(true)
-        : this.makeDriveTray();
+        ? this.makeDriveTray(true) : this.makeDriveTray();
+
       dt.id = slot.toString(); // Slot
 
       if (this.autoPosition) {
@@ -219,7 +227,7 @@ export class ChassisView {
     const delay = 50;
     const duration = 50;
 
-    setTimeout(() => {
+    setTimeout((): void => {
       const fade = (v: number): number => this.chassis.alpha = v;
       tween({
         from: 0,
@@ -230,7 +238,7 @@ export class ChassisView {
 
     this.driveTrayObjects.forEach((item, index) => {
       // Staggered handles fade in
-      setTimeout(() => {
+      setTimeout((): void => {
         const updateAlpha = (v: number): number => item.handle.alpha = v;
 
         tween({
@@ -238,9 +246,8 @@ export class ChassisView {
           to: item.enabled ? 1 : opacity,
           duration /* + 1000 */,
           ease: easing.backOut,
-          // flip: Infinity
         }).start({
-          update: (v: number) => { updateAlpha(v); },
+          update: (v: number) => updateAlpha(v),
           complete: () => {
             if (index == this.driveTrayObjects.length - 1) {
               this.events.next({ name: 'Ready' });
@@ -250,7 +257,7 @@ export class ChassisView {
       }, delay);
 
       // Staggered tray backgrounds fade in
-      setTimeout(() => {
+      setTimeout((): void => {
         const updateAlpha = (v: number): number => item.background.alpha = v;
 
         tween({
@@ -277,11 +284,13 @@ export class ChassisView {
   }
 
   generatePosition(displayObject: Container, index: number, xOffset = 0, yOffset = 0): Position {
-    const gapX = 10;
-    const gapY = 2;
+    if (this.layout) {
+      return this.layout.generatePosition(displayObject, index, xOffset, yOffset, this.orientation);
+    }
+
     const mod = index % this.columns;
-    const nextPositionX = mod * (displayObject.width + gapX) + xOffset;
-    const nextPositionY = Math.floor(index / this.columns) * (displayObject.height + gapY) + yOffset;
+    const nextPositionX = mod * (displayObject.width + this.gapX) + xOffset;
+    const nextPositionY = Math.floor(index / this.columns) * (displayObject.height + this.gapY) + yOffset;
 
     return { x: nextPositionX, y: nextPositionY };
   }

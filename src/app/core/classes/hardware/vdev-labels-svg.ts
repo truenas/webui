@@ -1,3 +1,4 @@
+import { ElementRef } from '@angular/core';
 import * as d3 from 'd3';
 import { Subject } from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
@@ -43,10 +44,11 @@ export class VDevLabelsSVG {
     this.app = app;
     this.mainStage = this.app.stage;
     this.d3Init();
+    // const paths = this.getParent().querySelectorAll('svg path');
 
     let tiles;
     this.events$ = new Subject<CoreEvent>();
-    this.events$.subscribe((evt: CoreEvent) => {
+    this.events$.subscribe((evt: CoreEvent): void => {
       switch (evt.name) {
         case 'ThemeChanged':
           const theme = evt.data;
@@ -102,6 +104,7 @@ export class VDevLabelsSVG {
       .attr('height', op.offsetHeight)
       .attr('style', 'position:absolute; top:0; left:0;');
 
+    /* const clickpad = */
     d3.select('#' + op.id).append('canvas') // This element will capture pointer for PIXI
       .attr('class', 'clickpad')
       .attr('width', op.offsetWidth)
@@ -115,10 +118,20 @@ export class VDevLabelsSVG {
     return this.app.renderer.view.offsetParent;
   }
 
-  createVdevLabelTile(x: number, y: number, w: number, h: number, className: string, diskName: string): void {
+  createVdevLabelTile(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    className: string,
+    diskName: string,
+  ): void {
     const color = diskName == this.selectedDisk.devname ? this.selectedDiskColor : this.color;
     let opacity = diskName == this.selectedDisk.devname ? 1 : 0.5;
     opacity = 1;
+
+    const style = 'fill-opacity:0.25; stroke-width:1';
+
     this.svg.append('rect')
       .attr('class', className)
       .attr('y', y)
@@ -128,12 +141,13 @@ export class VDevLabelsSVG {
       .attr('fill', color)
       .attr('stroke', color)
       .attr('stroke-opacity', opacity)
-      .attr('style', 'fill-opacity:0.25; stroke-width:1');
+      .attr('style', style);
   }
 
   createVdevLabels(vdev: any): void {
-    // NOTE: vdev.slots only has values for current enclosure
-    const disks = vdev.disks ? Object.keys(vdev.disks) : [this.selectedDisk.devname];
+    const disks = vdev.disks
+      ? Object.keys(vdev.disks)
+      : [this.selectedDisk.devname]; // NOTE: vdev.slots only has values for current enclosure
 
     disks.forEach((disk) => {
       const slot = typeof vdev.slots !== 'undefined' ? vdev.slots[disk] : this.selectedDisk.enclosure.slot;
@@ -145,25 +159,19 @@ export class VDevLabelsSVG {
         const tray = src.getGlobalPosition();
 
         const tileClass = 'tile tile_' + disk;
-        this.createVdevLabelTile(
-          tray.x,
-          tray.y,
-          src.width * this.chassis.container.scale.x,
-          src.height * this.chassis.container.scale.y,
-          tileClass,
-          disk,
-        );
+
+        const tileWidth = src.width * this.chassis.driveTrays.scale.x * this.chassis.container.scale.x;
+        const tileHeight = src.height * this.chassis.driveTrays.scale.y * this.chassis.container.scale.y;
+
+        this.createVdevLabelTile(tray.x, tray.y, tileWidth, tileHeight, tileClass, disk);
         this.trays[disk] = {
-          x: tray.x,
-          y: tray.y,
-          width: src.width * this.chassis.container.scale.x,
-          height: src.height * this.chassis.container.scale.y,
+          x: tray.x, y: tray.y, width: tileWidth, height: tileHeight,
         };
       }
     });
   }
 
-  calculateParentOffsets(el: any): { x: number; y: number } {
+  calculateParentOffsets(el: ElementRef): { x: number; y: number } {
     // Template uses CSS to center and align text so
     // we need to compensate with absolute positions
     // of wrapper elements
@@ -178,83 +186,6 @@ export class VDevLabelsSVG {
     const yOffset = el.nativeElement.offsetTop + legend.offsetTop + content.offsetTop;
 
     return { x: xOffset, y: yOffset - 6 };
-  }
-
-  traceElements(vdev: any, overlay: any, retrace?: boolean): void {
-    if (retrace) {
-      this.svg.selectAll('path').remove();
-    }
-
-    const disks = Object.keys(vdev.disks);// NOTE: vdev.slots only has values for current enclosure
-    disks.forEach((disk) => {
-      if (typeof vdev.slots[disk] !== 'undefined') {
-        // Create tile if the disk is in the current enclosure
-        const tray = this.trays[disk];
-
-        const el = overlay.nativeElement.querySelector('div.vdev-disk.' + disk);
-        const parentOffsets = this.calculateParentOffsets(overlay);
-        const startX = tray.x + tray.width;
-        const startY = tray.y + tray.height / 2;
-        const endX = el.offsetLeft + parentOffsets.x;// el.offsetParent.offsetLeft;
-        const endY = el.offsetTop + parentOffsets.y + (el.offsetHeight / 2);
-        this.createTrace(startX, startY, endX, endY, disk);
-      }
-    });
-  }
-
-  createTrace(startX: number, startY: number, endX: number, endY: number, diskName: string): void {
-    const color = diskName == this.selectedDisk.devname ? this.selectedDiskColor : this.color;
-    const opacity = diskName == this.selectedDisk.devname ? 1 : 0.25;
-
-    const svgPath = 'M' + startX + ' ' + startY + ' L' + endX + ' ' + endY + ' Z';
-
-    this.svg.append('path')
-      .attr('d', svgPath)
-      .attr('stroke', color)
-      .attr('stroke-opacity', opacity)
-      .attr('class', diskName);
-  }
-
-  highlightTrace(devname: string): void {
-    if (devname == this.selectedDisk.devname) { return; }
-
-    const targetEl = this.getParent().querySelector('svg path.' + devname);
-    targetEl.setAttribute('stroke-opacity', '1');
-  }
-
-  unhighlightTrace(devname: string): void {
-    if (devname == this.selectedDisk.devname) { return; }
-
-    const targetEl = this.getParent().querySelector('svg path.' + devname);
-    targetEl.setAttribute('stroke-opacity', '1');
-  }
-
-  unhighlightAllTraces(traces: any[], exceptions: string[]): void {
-    if (!exceptions) { exceptions = []; }
-
-    traces.forEach((item) => {
-      if (exceptions.includes(item.className.baseVal)) { return; }
-      item.setAttribute('stroke-opacity', 1);
-    });
-    const tiles = this.getParent().querySelectorAll('rect.tile');
-    this.showAllTiles(tiles);
-  }
-
-  showTrace(devname: string): void {
-    const paths = this.getParent().querySelectorAll('svg path');
-    this.hideAllTraces(paths, [this.selectedDisk.devname, devname]);
-    const op = this.getParent();
-    const targetEl: HTMLElement = op.querySelector('svg path.' + devname);
-    (targetEl.style as any)['stroke-opacity'] = 1;
-  }
-
-  hideAllTraces(traces: NodeListOf<any>, exceptions: string[]): void {
-    if (!exceptions) { exceptions = []; }
-
-    traces.forEach((item) => {
-      if (exceptions.includes(item.className.baseVal)) { return; }
-      item.style['stroke-opacity'] = 0;
-    });
   }
 
   showTile(devname: string): void {
@@ -273,13 +204,13 @@ export class VDevLabelsSVG {
 
   hideAllTiles(tiles: NodeListOf<any>): void {
     tiles.forEach((item) => {
-      item.style.opacity = 0;
+      item.style.opacity = '0';
     });
   }
 
   showAllTiles(tiles: NodeListOf<any>): void {
     tiles.forEach((item) => {
-      item.style.opacity = 1;
+      item.style.opacity = '1';
     });
   }
 

@@ -1,7 +1,8 @@
+import { Container } from 'pixi.js';
 import { Chassis } from './chassis';
-import { ChassisView, Position } from './chassis-view';
+import { ChassisView } from './chassis-view';
 
-interface ColumnTracker {
+interface LayoutColumn {
   start: number;
   count: number;
   iomGap: number;
@@ -36,11 +37,16 @@ export class R50 extends Chassis {
     this.front.driveTraysOffsetY = 0;
 
     this.front.layout = {
-      generatePosition: (displayObject, index, offsetX, offsetY): Position => {
-        const gapX = 4;// was 16
+      generatePosition: (
+        displayObject: Container,
+        index: number,
+        offsetX: number,
+        offsetY: number,
+      ) => {
+        const gapX = 4;
         const gapY = 8;
 
-        const cols: ColumnTracker[] = [
+        const cols: LayoutColumn[] = [
           {
             start: 0, count: 12, iomGap: 8, iomIndex: 6, reverse: true,
           },
@@ -65,7 +71,7 @@ export class R50 extends Chassis {
           return test.filter((v) => v !== undefined)[0];
         };
 
-        const currentColumn = getCurrentColumn();
+        const currentColumn: number = getCurrentColumn();
         const col = cols[currentColumn];
 
         const mod = (index - col.start) % col.count;
