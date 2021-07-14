@@ -55,6 +55,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   rowHeight = 150;
   aspectRatio = 474 / 200;
 
+  minSizeToActiveTrafficArrowIcon = 1024;
+
   chartData: ChartData = {};
   interval: Interval;
   availableNics: BaseNetworkInterface[] = [];
@@ -152,12 +154,12 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
           nicInfo.in = received.value + ' ' + received.units + '/s';
           nicInfo.out = sent.value + ' ' + sent.units + '/s';
 
-          if (evt.data.sent_bytes - nicInfo.lastSent > 1024) {
+          if (evt.data.sent_bytes - nicInfo.lastSent > this.minSizeToActiveTrafficArrowIcon) {
             nicInfo.lastSent = evt.data.sent_bytes;
             this.tableService.updateStateInfoIcon(nicName, 'sent');
           }
 
-          if (evt.data.received_bytes - nicInfo.lastReceived > 1024) {
+          if (evt.data.received_bytes - nicInfo.lastReceived > this.minSizeToActiveTrafficArrowIcon) {
             nicInfo.lastReceived = evt.data.received_bytes;
             this.tableService.updateStateInfoIcon(nicName, 'received');
           }
