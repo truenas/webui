@@ -25,23 +25,6 @@ export class R20A extends Chassis {
 
     this.front.disabledOpacity = 0.15;
 
-    this.front.layout = {
-      generatePosition: (displayObject: Container, index: number, offsetX: number, offsetY: number, orientation: string) => {
-        const gapX = 8;
-        const gapY = 2;
-        const rows = 3;
-
-        const currentColumn = Math.floor(index / rows);
-        const goingDown: boolean = currentColumn % 2 == 0;
-        const currentRow: number = goingDown ? index % 3 : rows - (index % 3 + 1);
-
-        const nextPositionX = offsetX + (displayObject.width + gapX) * currentColumn;
-        const nextPositionY = offsetY + currentRow * (displayObject.height + gapY);
-
-        return { x: nextPositionX, y: nextPositionY };
-      },
-    };
-
     if (rearChassis) {
       this.rear = new ChassisView();
       this.rear.totalDriveTrays = 2;
