@@ -133,6 +133,13 @@ def pytest_runtest_makereport(item):
             # To make sure we are not stuck on a combobox to stop other test to fail
             if element_exist('//mat-option'):
                 ActionChains(web_driver).send_keys(Keys.TAB).perform()
+            # If the current tab is not the initial tab close the tab
+            # and switch to initial tab
+            initial_tab = web_driver.window_handles[0]
+            current_tab = web_driver.current_window_handle
+            if initial_tab != current_tab:
+                web_driver.close()
+                web_driver.switch_to.window(initial_tab)
             # if test that use disable failover make sure to enable failover back.
             if 'T0905' in screenshot_name or 'T0919' in screenshot_name or 'T0920' in screenshot_name or 'T0922' in screenshot_name:
                 if element_exist('//mat-icon[@svgicon="ha_disabled"]'):
