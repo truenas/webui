@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
+import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { EMPTY, Observable } from 'rxjs';
-import {
-  catchError, takeUntil, tap,
-} from 'rxjs/operators';
+import { catchError, takeUntil, tap } from 'rxjs/operators';
 import { JobsManagerState } from 'app/components/common/dialog/jobs-manager/interfaces/jobs-manager-state.interface';
 import { JobState } from 'app/enums/job-state.enum';
+import { ApiEvent } from 'app/interfaces/api-event.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
@@ -15,12 +15,14 @@ const initialState: JobsManagerState = {
   jobs: [],
 };
 
+@UntilDestroy()
 @Injectable()
 export class JobsManagerStore extends ComponentStore<JobsManagerState> {
   constructor(private ws: WebSocketService, private dialog: DialogService) {
     super(initialState);
 
-    this.subscribeToUpdates();
+    this.initialLoadJobs().subscribe();
+    this.getJobUpdates().subscribe();
   }
 
   readonly numberOfRunningJobs$: Observable<number> = this.select(
@@ -30,17 +32,14 @@ export class JobsManagerStore extends ComponentStore<JobsManagerState> {
     (state) => state.jobs.filter((job) => job.state === JobState.Failed).length,
   );
 
-  readonly loadJobs = this.effect(() => {
+  initialLoadJobs(): Observable<Job[]> {
     this.setState({
       ...initialState,
       isLoading: true,
     });
 
     return this.ws
-      .call('core.get_jobs', [
-        [['state', 'in', [JobState.Running, JobState.Failed]]],
-        { order_by: ['-id'] },
-      ])
+      .call('core.get_jobs', [[['state', 'in', [JobState.Running, JobState.Failed]]], { order_by: ['-id'] }])
       .pipe(
         tap((jobs: Job[]) => {
           this.patchState({
@@ -57,20 +56,20 @@ export class JobsManagerStore extends ComponentStore<JobsManagerState> {
 
           return EMPTY;
         }),
-        takeUntil(this.destroy$),
+        untilDestroyed(this),
       );
-  });
+  }
 
-  readonly subscribeToUpdates = this.effect(() => {
+  getJobUpdates(): Observable<ApiEvent<Job>> {
     return this.ws.subscribe('core.get_jobs').pipe(
       tap((event) => {
-        this.addOrUpdate(event.fields);
+        this.handleUpdate(event.fields);
       }),
-      takeUntil(this.destroy$),
+      untilDestroyed(this),
     );
-  });
+  }
 
-  addOrUpdate(job: Job): void {
+  handleUpdate(job: Job): void {
     this.patchState((state) => {
       let modifiedJobs = [...state.jobs];
       const jobExist = modifiedJobs.find((item) => item.id === job.id);
