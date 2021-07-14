@@ -213,7 +213,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
   }
 
   updateGroupSearchOptions(value = '', parent: this): void {
-    parent.userService.groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
+    parent.userService.groupQueryDSCache(value).pipe(untilDestroyed(parent)).subscribe((groups) => {
       const groupOptions: Option[] = [];
       for (let i = 0; i < groups.length; i++) {
         groupOptions.push({ label: groups[i].group, value: groups[i].group });
@@ -223,7 +223,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
   }
 
   updateUserSearchOptions(value = '', parent: this): void {
-    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(parent)).subscribe((items) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -266,7 +266,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityForm.success = true;
       dialogRef.close();
-      this.router.navigate(['/', this.route_success]);
+      this.router.navigate(['/', ...this.route_success]);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
       console.error(err);
@@ -275,7 +275,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
 
   loadMoreOptions(length: number, parent: this, searchText: string): void {
     parent.userService.userQueryDSCache(searchText, length)
-      .pipe(untilDestroyed(this))
+      .pipe(untilDestroyed(parent))
       .subscribe((items) => {
         const users = [];
         for (let i = 0; i < items.length; i++) {
@@ -291,7 +291,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
 
   loadMoreGroupOptions(length: number, parent: this, searchText: string): void {
     parent.userService.groupQueryDSCache(searchText, false, length)
-      .pipe(untilDestroyed(this))
+      .pipe(untilDestroyed(parent))
       .subscribe((groups) => {
         const groupOptions: Option[] = [];
         for (let i = 0; i < groups.length; i++) {
