@@ -182,7 +182,7 @@ def on_the_dataset_folder_delete_a_file(driver):
     """on the dataset folder, delete a file."""
 
 
-@then('open a new tab navigate to <box_url> and input <account_id>')
+@then('open a new tab navigate to <box_url>')
 def open_a_new_tab_navigate_to_box_url_and_input_account_id(driver):
     """open a new tab navigate to <box_url> and input <account_id>."""
 
