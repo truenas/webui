@@ -1,7 +1,7 @@
 <div class="job-item" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="8px">
   <div fxFlex="100%">
     <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
-      <span>{{ job.method }}</span>
+      <span>{{ job.description ? job.description : job.method }}</span>
       <span *ngIf="!JobState.Failed">{{ job.progress.percent || 0 | number: '1.2-2' }}%</span>
     </div>
 
