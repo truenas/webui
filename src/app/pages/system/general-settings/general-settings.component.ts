@@ -19,7 +19,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
-  WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService,
+  WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService, ValidationService,
 }
   from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -48,7 +48,7 @@ export class GeneralSettingsComponent implements OnInit {
     this.sysGeneralService, this.localeService, this.modalService);
   protected guiComponent = new GuiFormComponent(this.router, this.language, this.ws, this.dialog, this.loader,
     this.http, this.storage, this.sysGeneralService, this.modalService, this.adminLayout);
-  protected NTPServerFormComponent = new NtpServerFormComponent(this.modalService);
+  protected NTPServerFormComponent = new NtpServerFormComponent(this.modalService, this.validationService);
 
   // Dialog forms and info for saving, uploading, resetting config
   protected saveConfigFieldConf: FieldConfig[] = [
@@ -117,7 +117,8 @@ export class GeneralSettingsComponent implements OnInit {
     private sysGeneralService: SystemGeneralService, private modalService: ModalService,
     private language: LanguageService, private dialog: DialogService, private loader: AppLoaderService,
     private router: Router, private http: HttpClient, private storage: StorageService,
-    public mdDialog: MatDialog, private core: CoreService, private adminLayout: AdminLayoutComponent) { }
+    public mdDialog: MatDialog, private core: CoreService, private adminLayout: AdminLayoutComponent,
+    private validationService: ValidationService) { }
 
   ngOnInit(): void {
     this.getDataCardData();
@@ -228,7 +229,9 @@ export class GeneralSettingsComponent implements OnInit {
         addComponent = this.guiComponent;
         break;
       case 'ntp':
-        addComponent = id ? this.NTPServerFormComponent : new NtpServerFormComponent(this.modalService);
+        addComponent = id
+          ? this.NTPServerFormComponent
+          : new NtpServerFormComponent(this.modalService, this.validationService);
         break;
       default:
         addComponent = this.localizationComponent;

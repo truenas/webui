@@ -498,7 +498,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         task.state = { state: JobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.parent.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: Job) => {
+        this.parent.job.getJobStatus(task.job.id).pipe(untilDestroyed(this.parent)).subscribe((job: Job) => {
           task.state = { state: job.state };
           task.job = job;
         });
@@ -516,7 +516,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
 
       if (task.job !== null) {
         task.state.state = task.job.state;
-        this.parent.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: Job) => {
+        this.parent.job.getJobStatus(task.job.id).pipe(untilDestroyed(this.parent)).subscribe((job: Job) => {
           task.state.state = job.state;
           task.job = job;
         });
@@ -571,7 +571,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         task.state = { state: JobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.parent.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: Job) => {
+        this.parent.job.getJobStatus(task.job.id).pipe(untilDestroyed(this.parent)).subscribe((job: Job) => {
           task.state = { state: job.state };
           task.job = job;
         });

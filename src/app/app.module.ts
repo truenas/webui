@@ -16,6 +16,9 @@ import { NgxWebstorageModule } from 'ngx-webstorage';
 import { MaterialModule } from 'app/app-material.module';
 import { ConsolePanelModalDialog } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
+import { JobItemComponent } from 'app/components/common/dialog/jobs-manager/components/job-item/job-item.component';
+import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/jobs-manager.component';
+import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
 import { CoreComponents } from 'app/core/components/core-components.module';
@@ -93,7 +96,8 @@ import { WebSocketService } from './services/ws.service';
     AppComponent,
     ConfirmDialog,
     PasswordDialog,
-    ErrorDialog, InfoDialog,
+    ErrorDialog,
+    InfoDialog,
     GeneralDialogComponent,
     AboutModalDialog,
     TaskManagerComponent,
@@ -103,6 +107,8 @@ import { WebSocketService } from './services/ws.service';
     DownloadKeyModalDialog,
     ResilverProgressDialogComponent,
     SelectDialogComponent,
+    JobsManagerComponent,
+    JobItemComponent,
   ],
   providers: [
     RoutePartsService,
@@ -112,6 +118,7 @@ import { WebSocketService } from './services/ws.service';
     AppLoaderService,
     NotificationsService,
     ErdService,
+    JobsManagerStore,
     ENV_PROVIDERS,
   ],
   bootstrap: [
@@ -137,6 +144,7 @@ import { WebSocketService } from './services/ws.service';
     FormInputComponent,
     FormSelectComponent,
     FormParagraphComponent,
+    JobsManagerComponent,
   ],
 })
 export class AppModule {
