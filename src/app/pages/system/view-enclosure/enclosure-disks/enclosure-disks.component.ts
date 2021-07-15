@@ -298,10 +298,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.selectedEnclosure) {
       // Enabled subenclosure functionality
-      /* this.subenclosure = this.selectedEnclosure.enclosureKey == this.system.headIndex && this.system.rearIndex
-        ? this.selectedEnclosure
-        : undefined; */
-      this.loadEnclosure(changes.selectedEnclosure.currentValue, EnclosureLocation.Front);
+      this.loadEnclosure(
+        changes.selectedEnclosure.currentValue,
+        EnclosureLocation.Front,
+        !changes.selectedEnclosure.firstChange,
+      );
     }
   }
 
