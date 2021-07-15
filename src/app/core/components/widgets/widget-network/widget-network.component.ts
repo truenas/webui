@@ -248,7 +248,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   }
 
   getIpAddress(nic: BaseNetworkInterface): string {
-    let ip = T('Unknown');
+    let ip = T('IP Addresses: 0');
     if (nic.aliases) {
       const filtered = nic.aliases.filter((item: NetworkInterfaceAlias) =>
         [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
