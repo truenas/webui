@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
@@ -20,7 +21,7 @@ export interface Command {
 export class ReportsService implements OnDestroy {
   private reportsUtils: Worker;
 
-  constructor(private ws: WebSocketService, private core: CoreService) {
+  constructor(private ws: WebSocketService, protected http: HttpClient, private core: CoreService) {
     this.reportsUtils = new Worker('./reports-utils.worker', { type: 'module' });
 
     core.register({ observerClass: this, eventName: 'ReportDataRequest' }).subscribe((evt: CoreEvent) => {
@@ -111,15 +112,20 @@ export class ReportsService implements OnDestroy {
     return data;
   }
 
-  getServerTime(): Date {
-    const xmlHttp = new XMLHttpRequest();
-    xmlHttp.open('HEAD', window.location.origin.toString(), false);
-    xmlHttp.setRequestHeader('Content-Type', 'text/html');
-    xmlHttp.send('');
-    const serverTime = xmlHttp.getResponseHeader('Date');
-    const seconds = new Date(serverTime).getTime();
-    const secondsToTrim = 60;
-    const trimmed = new Date(seconds - (secondsToTrim * 1000));
-    return trimmed;
+  async getServerTime(): Promise<Date> {
+    let date;
+    const options = {
+      observe: 'response' as const,
+      responseType: 'text' as const,
+    };
+    await this.http.get(window.location.origin.toString(), options).toPromise().then((resp) => {
+      const serverTime = resp.headers.get('Date');
+      const seconds = new Date(serverTime).getTime();
+      const secondsToTrim = 60;
+      const trimmed = new Date(seconds - (secondsToTrim * 1000));
+      date = trimmed;
+    });
+
+    return date;
   }
 }

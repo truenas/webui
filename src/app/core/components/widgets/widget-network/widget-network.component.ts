@@ -265,8 +265,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     return nic.state.link_state.replace(/_/g, ' ');
   }
 
-  fetchReportData(): void {
-    const endDate = this.rs.getServerTime();
+  async fetchReportData(): Promise<void> {
+    const endDate = await this.rs.getServerTime();
     const subOptions: Duration = {};
     subOptions['hours'] = 2;
     const startDate = sub(endDate, subOptions);
