@@ -97,7 +97,7 @@ export class SMBListComponent implements EntityTableConfig {
     const poolName = rowName.split('/')[0];
     let optionDisabled;
     rowName.includes('/') ? optionDisabled = false : optionDisabled = true;
-    const rows = [
+    return [
       {
         id: row.name,
         icon: 'edit',
@@ -167,12 +167,6 @@ export class SMBListComponent implements EntityTableConfig {
         onClick: (row: any) => this.entityList.doDelete(row),
       },
     ] as EntityTableAction[];
-    // Temporary: Drop from menu if SCALE
-    if (this.productType.includes(ProductType.Scale)) {
-      const shareAclRow = rows.find((row: any) => row.name === 'share_acl');
-      rows.splice(rows.indexOf(shareAclRow), 1);
-    }
-    return rows;
   }
 
   lockedPathDialog(path: string): void {
@@ -183,7 +177,7 @@ export class SMBListComponent implements EntityTableConfig {
 
   onCheckboxChange(row: SmbShare): void {
     this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
+      (res: any) => {
         row.enabled = res.enabled;
         if (!res) {
           row.enabled = !row.enabled;

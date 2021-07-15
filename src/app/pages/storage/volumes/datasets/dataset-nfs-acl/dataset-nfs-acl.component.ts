@@ -41,7 +41,7 @@ import { T } from 'app/translate-marker';
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [EntityFormService],
 })
-export class DatasetAclComponent implements FormConfiguration {
+export class DatasetNfsAclComponent implements FormConfiguration {
   queryCall: 'filesystem.getacl' = 'filesystem.getacl';
   updateCall: 'filesystem.setacl' = 'filesystem.setacl';
   isEntity = true;

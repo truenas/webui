@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { filter } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-permissions';
+import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -21,40 +22,23 @@ import { T } from 'app/translate-marker';
 @UntilDestroy()
 @Component({
   selector: 'app-dataset-permissions',
-  template: '<entity-form [conf]="this"></entity-form>',
+  templateUrl: './dataset-trivial-permissions.component.html',
+  styleUrls: ['./dataset-trivial-permissions.component.scss'],
 })
-export class DatasetPermissionsComponent implements FormConfiguration {
+export class DatasetTrivialPermissionsComponent implements FormConfiguration {
   protected updateCall: 'pool.dataset.permission' = 'pool.dataset.permission';
-  protected datasetPath: string;
+
+  datasetPath: string;
+
   protected datasetId: string;
-  protected recursive: AbstractControl;
   formGroup: FormGroup;
-  error: string;
   route_success: string[] = ['storage'];
   isEntity = true;
-  protected dialogRef: MatDialogRef<EntityJobComponent>;
   private entityForm: EntityFormComponent;
   protected userField: FieldConfig;
   protected groupField: FieldConfig;
 
   fieldSets: FieldSet[] = [
-    {
-      name: helptext.heading_dataset_path,
-      label: true,
-      config: [
-        {
-          type: 'input',
-          name: 'id',
-          placeholder: helptext.dataset_permissions_id_placeholder,
-          readonly: true,
-        },
-      ],
-      width: '100%',
-    },
-    {
-      name: 'divider',
-      divider: true,
-    },
     {
       name: helptext.heading_owner,
       label: true,
@@ -145,7 +129,7 @@ export class DatasetPermissionsComponent implements FormConfiguration {
 
   custActions = [
     {
-      id: 'use_acl',
+      id: 'cancel',
       name: helptext.acl_manager_button,
       function: () => {
         this.ws.call('filesystem.getacl', [this.datasetPath]).pipe(untilDestroyed(this)).subscribe((acl) => {
@@ -178,12 +162,10 @@ export class DatasetPermissionsComponent implements FormConfiguration {
   ) { }
 
   preInit(entityEdit: EntityFormComponent): void {
-    entityEdit.isNew = true; // remove me when we find a way to get the permissions
+    entityEdit.isNew = true;
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.datasetId = params['pk'];
       this.datasetPath = '/mnt/' + this.datasetId;
-      const idField = _.find(this.fieldSets.find((set) => set.name === helptext.heading_dataset_path).config, { name: 'id' });
-      idField.value = this.datasetPath;
     });
 
     this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
@@ -207,31 +189,31 @@ export class DatasetPermissionsComponent implements FormConfiguration {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
-    entityEdit.formGroup.get('id').setValue(this.datasetPath);
     this.storageService.filesystemStat(this.datasetPath).pipe(untilDestroyed(this)).subscribe((stat) => {
       this.datasetMode = stat.mode.toString(8).substring(2, 5);
       entityEdit.formGroup.controls['mode'].setValue(this.datasetMode);
       entityEdit.formGroup.controls['user'].setValue(stat.user);
       entityEdit.formGroup.controls['group'].setValue(stat.group);
     });
-    entityEdit.formGroup.controls['id'].setValue(this.datasetPath);
-    this.recursive = entityEdit.formGroup.controls['recursive'];
-    this.recursive.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+
+    const recursive = entityEdit.formGroup.controls['recursive'];
+    recursive.valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
       if (value === true) {
         this.dialog.confirm({
           title: T('Warning'),
           message: T('Setting permissions recursively will affect this directory and any others below it. This might make data inaccessible.'),
-        }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (!res) {
-            this.recursive.setValue(false);
-          }
+        }).pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe(() => {
+          recursive.setValue(false);
         });
       }
     });
   }
 
-  updateGroupSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
+  updateGroupSearchOptions(value = '', parent: this): void {
+    parent.userService.groupQueryDSCache(value).pipe(untilDestroyed(parent)).subscribe((groups) => {
       const groupOptions: Option[] = [];
       for (let i = 0; i < groups.length; i++) {
         groupOptions.push({ label: groups[i].group, value: groups[i].group });
@@ -240,8 +222,8 @@ export class DatasetPermissionsComponent implements FormConfiguration {
     });
   }
 
-  updateUserSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+  updateUserSearchOptions(value = '', parent: this): void {
+    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(parent)).subscribe((items) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -276,26 +258,24 @@ export class DatasetPermissionsComponent implements FormConfiguration {
     }
   }
 
-  customSubmit(data: any): void {
-    this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Saving Permissions') } });
-    this.dialogRef.componentInstance.setDescription(T('Saving Permissions...'));
-    this.dialogRef.componentInstance.setCall(this.updateCall, [this.datasetId, data]);
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+  customSubmit(data: DatasetPermissionsUpdate): void {
+    const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Saving Permissions') } });
+    dialogRef.componentInstance.setDescription(T('Saving Permissions...'));
+    dialogRef.componentInstance.setCall(this.updateCall, [this.datasetId, data]);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityForm.success = true;
-      this.dialogRef.close();
-      this.router.navigate(new Array('/').concat(
-        this.route_success,
-      ));
+      dialogRef.close();
+      this.router.navigate(['/', ...this.route_success]);
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
       console.error(err);
     });
   }
 
-  loadMoreOptions(length: number, parent: any, searchText: string): void {
-    (parent.userService as UserService).userQueryDSCache(searchText, length)
-      .pipe(untilDestroyed(this))
+  loadMoreOptions(length: number, parent: this, searchText: string): void {
+    parent.userService.userQueryDSCache(searchText, length)
+      .pipe(untilDestroyed(parent))
       .subscribe((items) => {
         const users = [];
         for (let i = 0; i < items.length; i++) {
@@ -309,9 +289,9 @@ export class DatasetPermissionsComponent implements FormConfiguration {
       });
   }
 
-  loadMoreGroupOptions(length: number, parent: any, searchText: string): void {
-    (parent.userService as UserService).groupQueryDSCache(searchText, false, length)
-      .pipe(untilDestroyed(this))
+  loadMoreGroupOptions(length: number, parent: this, searchText: string): void {
+    parent.userService.groupQueryDSCache(searchText, false, length)
+      .pipe(untilDestroyed(parent))
       .subscribe((groups) => {
         const groupOptions: Option[] = [];
         for (let i = 0; i < groups.length; i++) {
