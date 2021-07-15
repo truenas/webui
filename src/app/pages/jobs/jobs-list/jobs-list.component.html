@@ -1,0 +1,13 @@
+<div fxLayout="row" fxFlex="100">
+  <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedIndex" (selectedTabChange)="refresh($event)" fxFlex>
+    <mat-tab label="{{ 'All' | translate }}" ix-auto ix-auto-type="tab" ix-auto-identifier="all">
+      <entity-table [title]="title" [conf]="this"></entity-table>
+    </mat-tab>
+    <mat-tab label="{{ 'Active' | translate }}" ix-auto ix-auto-type="tab" ix-auto-identifier="active">
+      <entity-table [title]="title" [conf]="this"></entity-table>
+    </mat-tab>
+    <mat-tab label="{{ 'Inactive' | translate }}" ix-auto ix-auto-type="tab" ix-auto-identifier="inactive">
+      <entity-table [title]="title" [conf]="this"></entity-table>
+    </mat-tab>
+  </mat-tab-group>
+</div>

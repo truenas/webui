@@ -138,6 +138,11 @@ export const rootRouterConfig: Routes = [{
     loadChildren: () => import('./pages/credentials/credentials.module').then((module) => module.CredentialsModule),
     data: { title: 'Credentials', breadcrumb: 'Credentials' },
   },
+  {
+    path: 'jobs',
+    loadChildren: () => import('./pages/jobs/jobs.module').then((module) => module.JobsModule),
+    data: { title: 'Jobs', breadcrumb: 'Jobs' },
+  },
   ],
 },
 {
