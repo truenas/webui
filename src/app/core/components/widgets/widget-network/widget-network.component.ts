@@ -98,7 +98,12 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
           ticks: {
             maxTicksLimit: 8,
             callback: (value) => {
-              return this.convertKMGT(value);
+              if (value == 0) {
+                return 0;
+              }
+
+              const converted = this.utils.convert(value);
+              return parseFloat(converted.value).toFixed(1) + converted.units.charAt(0);
             },
           },
         },
@@ -311,32 +316,5 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
 
       this.nicInfoMap[nic.name].chartData = chartData;
     });
-  }
-
-  convertKMGT(value: number): string {
-    const kilo = 1024;
-    const mega = kilo * 1024;
-    const giga = mega * 1024;
-    const tera = giga * 1024;
-
-    let unit = '';
-    let output = 0;
-
-    const absValue = Math.abs(value);
-    if (absValue > tera) {
-      unit = 'T';
-      output = value / tera;
-    } else if (absValue < tera && absValue > giga) {
-      unit = 'G';
-      output = value / giga;
-    } else if (absValue < giga && absValue > mega) {
-      unit = 'M';
-      output = value / mega;
-    } else if (absValue < mega && absValue > kilo) {
-      unit = 'K';
-      output = value / kilo;
-    }
-
-    return output.toFixed(1) + unit;
   }
 }

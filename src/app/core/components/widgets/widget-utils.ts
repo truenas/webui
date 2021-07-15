@@ -42,6 +42,7 @@ export class WidgetUtils {
   }
 
   optimizeUnits(value: number): string {
+    value = Math.abs(value);
     let units = 'B';
     if (value > 1024 && value < (1024 * 1024)) {
       units = 'KB';

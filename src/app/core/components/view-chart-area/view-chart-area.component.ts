@@ -44,6 +44,7 @@ export class ViewChartAreaComponent implements OnDestroy, OnChanges {
       this.render();
     }
     if (changes.data && this.chart) {
+      this.chart.data = this.data;
       this.chart.update();
     }
   }
