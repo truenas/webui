@@ -135,19 +135,14 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
 
     this.updateGridInfo();
     this.updateMapInfo();
-
-    this.availableNics.forEach((nic) => {
-      this.fetchReportData(nic);
-    });
+    this.fetchReportData();
 
     if (this.interval) {
       clearInterval(this.interval);
     }
 
     this.interval = setInterval(() => {
-      this.availableNics.forEach((nic) => {
-        this.fetchReportData(nic);
-      });
+      this.fetchReportData();
     }, 60000);
 
     this.stats.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
@@ -270,12 +265,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     return nic.state.link_state.replace(/_/g, ' ');
   }
 
-  fetchReportData(nic: BaseNetworkInterface): void {
-    const params = {
-      identifier: nic.name,
-      name: 'interface',
-    };
-
+  fetchReportData(): void {
     const endDate = this.rs.getServerTime();
     const subOptions: Duration = {};
     subOptions['hours'] = 2;
@@ -286,35 +276,41 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
       end: Math.floor(endDate.getTime() / 1000),
     };
 
-    this.ws.call('reporting.get_data', [[params], timeFrame]).pipe(untilDestroyed(this)).subscribe((res) => {
-      res = res[0];
-
-      const labels: number[] = [];
-      for (let i = 0; i <= res.data.length; i++) {
-        const label = (res.start + i * res.step) * 1000;
-        labels.push(label);
-      }
-
-      const chartData = {
-        datasets: [
-          {
-            label: nic.name + '(in)',
-            data: res.data.map((item: number[], index: number) => ({ t: labels[index], y: item[0] })),
-            borderColor: this.themeService.currentTheme().blue,
-            backgroundColor: this.themeService.currentTheme().blue,
-            pointRadius: 0.2,
-          },
-          {
-            label: nic.name + '(out)',
-            data: res.data.map((item: number[], index: number) => ({ t: labels[index], y: -item[1] })),
-            borderColor: this.themeService.currentTheme().orange,
-            backgroundColor: this.themeService.currentTheme().orange,
-            pointRadius: 0.1,
-          },
-        ],
+    this.availableNics.forEach((nic) => {
+      const params = {
+        identifier: nic.name,
+        name: 'interface',
       };
+      this.ws.call('reporting.get_data', [[params], timeFrame]).pipe(untilDestroyed(this)).subscribe((res) => {
+        res = res[0];
 
-      this.nicInfoMap[nic.name].chartData = chartData;
+        const labels: number[] = [];
+        for (let i = 0; i <= res.data.length; i++) {
+          const label = (res.start + i * res.step) * 1000;
+          labels.push(label);
+        }
+
+        const chartData = {
+          datasets: [
+            {
+              label: nic.name + '(in)',
+              data: res.data.map((item: number[], index: number) => ({ t: labels[index], y: item[0] })),
+              borderColor: this.themeService.currentTheme().blue,
+              backgroundColor: this.themeService.currentTheme().blue,
+              pointRadius: 0.2,
+            },
+            {
+              label: nic.name + '(out)',
+              data: res.data.map((item: number[], index: number) => ({ t: labels[index], y: -item[1] })),
+              borderColor: this.themeService.currentTheme().orange,
+              backgroundColor: this.themeService.currentTheme().orange,
+              pointRadius: 0.1,
+            },
+          ],
+        };
+
+        this.nicInfoMap[nic.name].chartData = chartData;
+      });
     });
   }
 }
