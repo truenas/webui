@@ -301,6 +301,7 @@ def on_the_cloud_sync_task_and_click_edit(driver):
 @then('under Transfer Mode, select MOVE, click Save')
 def under_transfer_mode_select_move_click_save(driver):
     """under Transfer Mode, select MOVE, click Save."""
+    assert wait_on_element(driver, 5, '//mat-select[contains(.,"COPY")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Transfer Mode"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Transfer Mode"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Transfer Mode_MOVE"]', 'clickable')
@@ -353,6 +354,7 @@ def verify_all_files_are_moved_from_the_s3_bucket_to_the_dataset(driver, nas_ip)
 @then('under Transfer Mode, select SYNC, then click Save')
 def under_transfer_mode_select_sync_then_click_save(driver):
     """under Transfer Mode, select SYNC, then click Save."""
+    assert wait_on_element(driver, 5, '//mat-select[contains(.,"MOVE")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Transfer Mode"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Transfer Mode"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Transfer Mode_SYNC"]', 'clickable')
@@ -489,6 +491,7 @@ def verify_that_the_folder_is_not_on_the_nas_dataset(driver, nas_ip):
 @then('select PUSH as the Direction then under Transfer Mode, select COPY')
 def select_push_as_the_direction_then_under_transfer_mode_select_copy(driver):
     """select PUSH as the Direction then under Transfer Mode, select COPY."""
+    assert wait_on_element(driver, 5, '//mat-select[contains(.,"PUSH")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Direction"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Direction_PUSH"]', 'clickable')
