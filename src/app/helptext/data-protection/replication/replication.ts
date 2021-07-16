@@ -35,7 +35,16 @@ export default {
   ssh_credentials_placeholder: T('SSH Connection'),
   ssh_credentials_tooltip: T('Choose a connection that has been saved in \
  <b>System > SSH Connections</b>.'),
+  name_schema_or_regex_placeholder: T('Naming Schema or Snapshot Name Regular Expression'),
 
+  naming_schema_placeholder: T('Naming Schema'),
+  naming_schema_tooltip: T('Pattern of naming custom snapshots to be \
+ replicated. Enter the name and \
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" target="_blank">strftime(3)</a> \
+ <i>&percnt;Y</i>, <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i> strings that \
+ match the snapshots to include in the replication. Separate entries by \
+ pressing <code>Enter</code>. The number of snapshots matching the \
+ patterns are shown.'),
   netcat_active_side_placeholder: T('Netcat Active Side'),
   netcat_active_side_tooltip: T('Establishing a connection requires \
  that one of the connection systems has open TCP ports. Choose which \
@@ -119,14 +128,12 @@ from the source dataset.'),
  as the chosen periodic snapshot task. Selecting a periodic snapshot \
  schedule removes the <b>Schedule</b> field.'),
 
-  naming_schema_placeholder: T('Naming Schema'),
-  naming_schema_tooltip: T('Pattern of naming custom snapshots to be \
- replicated. Enter the name and \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" \
- target="_blank">strftime(3)</a> <i>&percnt;Y</i>, <i>&percnt;m</i>, <i>&percnt;d</i>, \
- <i>&percnt;H</i>, and <i>&percnt;M</i> strings that match the snapshots to include in \
- the replication. Separate entries by pressing <code>Enter</code>.'),
-
+  name_regex_placeholder: T('Snapshot Name Regular Expression'),
+  name_regex_tooltip: T('Using this option will replicate all snapshots \
+which names match specified regular expression. The \
+performance on the systems with large number of snapshots \
+will be lower, as snapshots metadata needs to be read in order \
+to determine snapshots creation order.'),
   also_include_naming_schema_placeholder: T('Also Include Naming Schema'),
   also_include_naming_schema_tooltip: T('Pattern of naming custom \
  snapshots to include in the replication with the periodic snapshot \
