@@ -166,13 +166,13 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
 @then('verify all files are copied from Box are into the dataset')
 def verify_all_files_are_copied_from_box_are_into_the_dataset(driver, nas_ip):
     """verify all files are copied from Box are into the dataset."""
-    cmd = r'test -f /mnt/system/box_cloud/Gloomy\ Forest\ wallpaper\ ForWallpapercom.jpg'
+    cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
     cmd = 'test -f /mnt/system/box_cloud/Explaining_BSD.pdf'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
-    cmd = r'test -f /mnt/system/box_cloud/music/Mr\ Smith\ -\ Pequeñas\ Guitarras.mp3'
+    cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
 
@@ -252,18 +252,18 @@ def verify_all_files_are_in_the_test_folder(driver):
     """verify all files are in the test folder."""
     assert wait_on_element(driver, 5, '//h1[text()="test"]')
     assert wait_on_element(driver, 5, '//a[text()="Explaining_BSD.pdf"]', 'clickable')
-    assert wait_on_element(driver, 5, '//a[text()="Gloomy Forest wallpaper ForWallpapercom.jpg"]', 'clickable')
+    assert wait_on_element(driver, 5, '//a[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]', 'clickable')
     assert wait_on_element(driver, 5, '//a[text()="music"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="music"]').click()
     assert wait_on_element(driver, 5, '//h1[text()="music"]')
-    assert wait_on_element(driver, 5, '//a[text()="Mr Smith - Pequeñas Guitarras.mp3"]', 'clickable')
+    assert wait_on_element(driver, 5, '//a[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="test"]').click()
 
 
 @then('remove all files from the dataset')
 def remove_all_files_from_the_dataset(driver, nas_ip):
     """remove all files from the dataset."""
-    cmd = r'rm -f /mnt/system/box_cloud/Gloomy\ Forest\ wallpaper\ ForWallpapercom.jpg'
+    cmd = 'rm -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
     cmd = 'rm -f /mnt/system/box_cloud/Explaining_BSD.pdf'
@@ -306,18 +306,18 @@ def verify_all_files_are_moved_from_the_box_test_folder_to_the_dataset(driver, n
     assert wait_on_element(driver, 5, '//h1[text()="test"]')
     assert wait_on_element(driver, 5, '//a[text()="music"]', 'clickable')
     assert not is_element_present(driver, '//a[text()="Explaining_BSD.pdf"]')
-    assert not is_element_present(driver, '//a[text()="Gloomy Forest wallpaper ForWallpapercom.jpg"]')
+    assert not is_element_present(driver, '//a[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')
     driver.find_element_by_xpath('//a[text()="music"]').click()
     assert wait_on_element(driver, 5, '//h1[text()="music"]')
-    assert not is_element_present(driver, '//a[text()="Mr Smith - Pequeñas Guitarras.mp3"]')
+    assert not is_element_present(driver, '//a[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]')
     driver.find_element_by_xpath('//a[text()="test"]').click()
-    cmd = r'test -f /mnt/system/box_cloud/Gloomy\ Forest\ wallpaper\ ForWallpapercom.jpg'
+    cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
     cmd = 'test -f /mnt/system/box_cloud/Explaining_BSD.pdf'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
-    cmd = r'test -f /mnt/system/box_cloud/music/Mr\ Smith\ -\ Pequeñas\ Guitarras.mp3'
+    cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
 
@@ -344,24 +344,24 @@ def select_push_as_the_direction_then_under_transfer_mode_select_move(driver):
 @then('verify all files are moved from the dataset to the Box test folder')
 def verify_all_files_are_moved_from_the_dataset_to_the_box_test_folder(driver, nas_ip):
     """verify all files are moved from the dataset to the Box test folder."""
-    cmd = r'test -f /mnt/system/box_cloud/Gloomy\ Forest\ wallpaper\ ForWallpapercom.jpg'
+    cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is False
     cmd = 'test -f /mnt/system/box_cloud/Explaining_BSD.pdf'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is False
-    cmd = r'test -f /mnt/system/box_cloud/music/Mr\ Smith\ -\ Pequeñas\ Guitarras.mp3'
+    cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is False
     driver.switch_to.window(driver.window_handles[1])
     driver.refresh()
     assert wait_on_element(driver, 5, '//h1[text()="test"]')
     assert wait_on_element(driver, 5, '//a[text()="Explaining_BSD.pdf"]', 'clickable')
-    assert wait_on_element(driver, 5, '//a[text()="Gloomy Forest wallpaper ForWallpapercom.jpg"]', 'clickable')
+    assert wait_on_element(driver, 5, '//a[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]', 'clickable')
     assert wait_on_element(driver, 5, '//a[text()="music"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="music"]').click()
     assert wait_on_element(driver, 5, '//h1[text()="music"]')
-    assert wait_on_element(driver, 5, '//a[text()="Mr Smith - Pequeñas Guitarras.mp3"]', 'clickable')
+    assert wait_on_element(driver, 5, '//a[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="test"]').click()
 
 
@@ -387,13 +387,13 @@ def select_pull_as_the_direction_then_under_transfer_mode_select_sync(driver):
 @then('verify all files are sync to the dataset folder')
 def verify_all_files_are_sync_to_the_dataset_folder(driver, nas_ip):
     """verify all files are sync to the dataset folder."""
-    cmd = r'test -f /mnt/system/box_cloud/Gloomy\ Forest\ wallpaper\ ForWallpapercom.jpg'
+    cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
     cmd = 'test -f /mnt/system/box_cloud/Explaining_BSD.pdf'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
-    cmd = r'test -f /mnt/system/box_cloud/music/Mr\ Smith\ -\ Pequeñas\ Guitarras.mp3'
+    cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
 
@@ -403,16 +403,16 @@ def on_the_box_test_folder_tab_delete_one_file(driver):
     """on the Box test folder tab, delete one file."""
     driver.switch_to.window(driver.window_handles[1])
     assert wait_on_element(driver, 5, '//h1[text()="test"]')
-    assert wait_on_element(driver, 5, '//a[text()="Gloomy Forest wallpaper ForWallpapercom.jpg"]')
+    assert wait_on_element(driver, 5, '//a[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')
     action = ActionChains(driver)
-    action.move_to_element(driver.find_element_by_xpath('//a[text()="Gloomy Forest wallpaper ForWallpapercom.jpg"]')).perform()
+    action.move_to_element(driver.find_element_by_xpath('//a[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')).perform()
     action.context_click().perform()
     assert wait_on_element(driver, 5, '//li[@class="menu-item TrashMenuItem" and contains(.,"Trash")]', 'clickable')
     driver.find_element_by_xpath('//li[@class="menu-item TrashMenuItem" and contains(.,"Trash")]').click()
     assert wait_on_element(driver, 5, '//h2[contains(.,"Delete Item")]')
     assert wait_on_element(driver, 5, '//button[@data-resin-target="primarybutton"]', 'clickable')
     driver.find_element_by_xpath('//button[@data-resin-target="primarybutton"]').click()
-    assert wait_on_element_disappear(driver, 5, '//a[text()="Gloomy Forest wallpaper ForWallpapercom.jpg"]')
+    assert wait_on_element_disappear(driver, 5, '//a[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')
 
 
 @then('on the NAS cloud sync task tab, click Run Now')
@@ -432,13 +432,13 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
 @then('verify the file is removed from the dataset folder')
 def verify_the_file_is_removed_from_the_dataset_folder(driver, nas_ip):
     """verify the file is removed from the dataset folder."""
-    cmd = r'test -f /mnt/system/box_cloud/Gloomy\ Forest\ wallpaper\ ForWallpapercom.jpg'
+    cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is False
     cmd = 'test -f /mnt/system/box_cloud/Explaining_BSD.pdf'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
-    cmd = r'test -f /mnt/system/box_cloud/music/Mr\ Smith\ -\ Pequeñas\ Guitarras.mp3'
+    cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
 
@@ -499,14 +499,14 @@ def verify_all_files_are_sync_to_the_Box_test_folder_tab(driver):
     assert wait_on_element(driver, 5, '//a[text()="music"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="music"]').click()
     assert wait_on_element(driver, 5, '//h1[text()="music"]')
-    assert wait_on_element(driver, 5, '//a[text()="Mr Smith - Pequeñas Guitarras.mp3"]', 'clickable')
+    assert wait_on_element(driver, 5, '//a[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="test"]').click()
 
 
 @then('on the dataset folder, delete a file')
 def on_the_dataset_folder_delete_a_file(driver, nas_ip):
     """on the dataset folder, delete a file."""
-    cmd = r'rm -rf /mnt/system/box_cloud/music'
+    cmd = 'rm -rf /mnt/system/box_cloud/music'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
 
