@@ -145,7 +145,7 @@ def pytest_runtest_makereport(item):
             web_driver.switch_to.window(initial_tab)
         elif initial_tab == current_tab and tab_number > 1:
             for handle in all_tab:
-                driver.switch_to.window(handle)
+                web_driver.switch_to.window(handle)
                 if handle != initial_tab:
                     driver.close()
             web_driver.switch_to.window(initial_tab)
