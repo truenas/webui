@@ -15,6 +15,7 @@ export interface FormConfiguration {
   isEntity?: boolean;
   addCall?: ApiMethod;
   editCall?: ApiMethod;
+  isCreateJob?: boolean;
   isEditJob?: boolean;
   queryCall?: ApiMethod;
   queryCallOption?: any[];
@@ -30,16 +31,8 @@ export interface FormConfiguration {
   route_delete?: string[];
   custom_edit_query?: string;
   custom_add_query?: string;
-  custActions?: {
-    id: string;
-    name: string;
-    function: () => void;
-  }[];
-  compactCustomActions?: {
-    id: string;
-    name: string;
-    function: () => void;
-  }[];
+  custActions?: FormCustomAction[];
+  compactCustomActions?: FormCompactCustomAction[];
   customFilter?: any[];
   confirmSubmit?: boolean;
   confirmSubmitDialog?: {
@@ -83,4 +76,20 @@ export interface FormConfiguration {
   customSubmit?: (value: any) => void;
   closeModalForm?(): Promise<boolean>;
   afterModalFormClosed?(): void; // function will called once the modal form closed
+}
+
+export interface FormCustomAction {
+  id: string;
+  name: string;
+  function?: () => void;
+  buttonColor?: string;
+  disabled?: boolean;
+  buttonType?: string;
+}
+
+export interface FormCompactCustomAction {
+  id: string;
+  name: string;
+  function: () => void;
+  disabled?: boolean;
 }

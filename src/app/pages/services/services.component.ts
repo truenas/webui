@@ -41,7 +41,7 @@ export class Services implements EntityTableConfig, OnInit {
     },
   ];
 
-  config: any = {
+  config = {
     paging: false,
     sorting: { columns: this.columns },
   };
@@ -70,7 +70,7 @@ export class Services implements EntityTableConfig, OnInit {
   }
 
   ngOnInit(): void {
-    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.isFooterConsoleOpen = res.consolemsg;
       }

@@ -48,7 +48,6 @@ export class VMWizardComponent implements WizardConfiguration {
   summary: any = {};
   isLinear = true;
   firstFormGroup: FormGroup;
-  protected dialogRef: any;
   summaryTitle = T('VM Summary');
   namesInUse: string[] = [];
   statSize: any;
@@ -492,7 +491,7 @@ export class VMWizardComponent implements WizardConfiguration {
       }
     });
 
-    this.systemGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.systemGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.isolatedGpuPciIds = res.isolated_gpu_pci_ids;
     });
   }

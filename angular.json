@@ -46,7 +46,6 @@
               ]
             },
             "styles": [
-              "src/assets/styles/reset.scss",
               "node_modules/dragula/dist/dragula.css",
               "node_modules/angular-calendar/css/angular-calendar.css",
               "node_modules/hopscotch/dist/css/hopscotch.min.css",
@@ -55,17 +54,11 @@
               "node_modules/angular-tree-component/dist/angular-tree-component.css",
               "node_modules/primeicons/primeicons.css",
               "node_modules/primeng/resources/primeng.min.css",
-              "src/assets/styles/fonts.scss",
-              "src/assets/styles/tn-styles.scss",
-              "src/assets/styles/fn-styles.scss",
-              "src/assets/styles/charts.scss",
-              "src/assets/styles/egret_overrides.scss",
-              "src/assets/styles/material-reduction.scss"
+              "src/assets/styles/index.scss"
             ],
             "scripts": [
               "node_modules/hopscotch/dist/js/hopscotch.min.js",
               "node_modules/hammerjs/hammer.js",
-              "src/vendor/Chart.min.js",
               "node_modules/element-resize-detector/dist/element-resize-detector.min.js",
               "node_modules/pixi.js/dist/pixi.min.js",
               "node_modules/pixi-filters/dist/pixi-filters.js"
@@ -123,6 +116,9 @@
   },
   "defaultProject": "truenas-scale-ui",
   "schematics": {
+    "@ngneat/spectator:spectator-component": {
+      "jest": true
+    },
     "@schematics/angular:component": {
       "prefix": "app",
       "style": "scss"

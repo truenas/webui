@@ -1,13 +1,15 @@
 import {
   Component, ElementRef, ViewChild,
 } from '@angular/core';
+import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
+import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
+import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
@@ -60,7 +62,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     { name: T('Space'), prop: 'rawspace' },
     { name: T('Keep'), prop: 'keep' },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     multiSelect: true,
@@ -71,13 +73,13 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   };
 
   preInit(): void {
-    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.scrub_interval = res.boot_scrub;
       this.updateBootState();
     });
   }
 
-  dataHandler(entityList: any): void {
+  dataHandler(entityList: EntityTableComponent): void {
     entityList.rows.forEach((row: any) => {
       if (row.active !== '-' && row.active !== '') {
         row.hideCheckbox = true;
@@ -86,7 +88,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     });
   }
 
-  rowValue(row: any, attr: string): any {
+  rowValue(row: Bootenv, attr: keyof Bootenv): unknown {
     if (attr === 'created') {
       return this.localeService.formatDateTime(row.created.$date);
     }
@@ -103,7 +105,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     return row[attr];
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
   }
 
@@ -191,12 +193,12 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     return actions as EntityTableAction[];
   }
 
-  multiActions: any[] = [{
+  multiActions = [{
     id: 'mdelete',
     label: T('Delete'),
     icon: 'delete',
     enable: true,
-    ttpos: 'above',
+    ttpos: 'above' as TooltipPosition,
     onClick: (selected: any) => {
       for (let i = selected.length - 1; i >= 0; i--) {
         if (selected[i].active !== '-' && selected[i].active !== '') {
@@ -244,19 +246,19 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   }
 
   updateBootState(): void {
-    this.ws.call('boot.get_state').pipe(untilDestroyed(this)).subscribe((wres) => {
-      if (wres.scan.end_time) {
-        this.scrub_msg = this.localeService.formatDateTime(wres.scan.end_time.$date);
+    this.ws.call('boot.get_state').pipe(untilDestroyed(this)).subscribe((state) => {
+      if (state.scan.end_time) {
+        this.scrub_msg = this.localeService.formatDateTime(state.scan.end_time.$date as any);
       } else {
         this.scrub_msg = T('Never');
       }
-      this.size_consumed = this.storage.convertBytestoHumanReadable(wres.properties.allocated.parsed);
-      this.condition = wres.properties.health.value;
+      this.size_consumed = this.storage.convertBytestoHumanReadable(state.properties.allocated.parsed);
+      this.condition = state.properties.health.value;
       if (this.condition === 'DEGRADED') {
         this.condition = this.condition + T(' Check Notifications for more details.');
       }
-      this.size_boot = this.storage.convertBytestoHumanReadable(wres.properties.size.parsed);
-      this.percentange = wres.properties.capacity.value;
+      this.size_boot = this.storage.convertBytestoHumanReadable(state.properties.size.parsed);
+      this.percentange = state.properties.capacity.value;
     });
   }
 
@@ -304,7 +306,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     return [{
       label: T('Stats/Settings'),
       onClick: () => {
-        this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+        this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
           this.scrub_interval = res.boot_scrub;
           const localWS = this.ws;
           const localDialog = this.dialog;

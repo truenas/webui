@@ -3,9 +3,10 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -98,7 +99,7 @@ export class SyslogFormComponent implements FormConfiguration {
   ];
 
   private entityForm: EntityFormComponent;
-  private configData: any;
+  private configData: SystemGeneralConfig;
   title = helptext_system_advanced.fieldset_syslog;
 
   constructor(
@@ -112,11 +113,9 @@ export class SyslogFormComponent implements FormConfiguration {
     private sysGeneralService: SystemGeneralService,
     private modalService: ModalService,
   ) {
-    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        this.configData = res;
-      },
-    );
+    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
+      this.configData = res;
+    });
   }
 
   reconnect(href: string): void {
@@ -144,15 +143,15 @@ export class SyslogFormComponent implements FormConfiguration {
     delete body.syslog;
 
     return this.ws.call('system.advanced.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.ws.job('systemdataset.update', [{ syslog: syslog_value }]).pipe(untilDestroyed(this)).subscribe((res) => {
-        if (res.error) {
+      this.ws.job('systemdataset.update', [{ syslog: syslog_value }]).pipe(untilDestroyed(this)).subscribe((job) => {
+        if (job.error) {
           this.loader.close();
-          if (res.exc_info && res.exc_info.extra) {
-            res.extra = res.exc_info.extra;
+          if (job.exc_info && job.exc_info.extra) {
+            (job as any).extra = job.exc_info.extra;
           }
-          new EntityUtils().handleWSError(this, res);
+          new EntityUtils().handleWSError(this, job);
         }
-        if (res.state === EntityJobState.Success) {
+        if (job.state === JobState.Success) {
           this.loader.close();
           this.entityForm.success = true;
           this.entityForm.formGroup.markAsPristine();

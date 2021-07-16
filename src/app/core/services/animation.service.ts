@@ -11,8 +11,9 @@ import {
   ColdSubscription,
 } from 'popmotion';
 import { CoreEvent } from 'app/interfaces/events';
+import { Timeout } from 'app/interfaces/timeout.interface';
 import { DisplayObject } from '../classes/display-object';
-import { CoreService } from './core.service';
+import { CoreService } from './core-service/core.service';
 
 export interface AnimationConfig {
   animationTarget: DisplayObject; // Support DisplayObject
@@ -30,7 +31,7 @@ export interface GroupAnimationConfig {
 @UntilDestroy()
 @Injectable()
 export class AnimationService {
-  private activeAnimations: any = {};
+  private activeAnimations: { [targetId: string]: { animation: Timeout; originalState: any } } = {};
 
   constructor(private core: CoreService) {
     this.core.register({ observerClass: this, eventName: 'ScrollTo' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
@@ -74,11 +75,12 @@ export class AnimationService {
   }
 
   private flipVertical(animationTarget: DisplayObject, finishState: string): void {
+    const parentNode = animationTarget.rawTarget.parentNode as HTMLElement;
     // Setup parent element so perspectives are properly set...
-    animationTarget.rawTarget.parentNode.style['perspective'] = (animationTarget.target.get('width') * 10) + 'px';
+    parentNode.style['perspective'] = (animationTarget.target.get('width') * 10) + 'px';
     // animationTarget.rawTarget.parentNode.style["perspective"] = '1520px'; // Hard coded value from FreeNAS
-    animationTarget.rawTarget.parentNode.style['perspective-origin'] = '50% 50%';
-    animationTarget.rawTarget.parentNode.style['transform-style'] = 'preserve-3d';
+    parentNode.style['perspectiveOrigin'] = '50% 50%';
+    parentNode.style['transformStyle'] = 'preserve-3d';
 
     let start: number;
     let finish: number;
@@ -100,9 +102,10 @@ export class AnimationService {
 
   private flipHorizontal(animationTarget: DisplayObject, finishState: string): void {
     // Setup parent element so perspectives are properly set...
-    animationTarget.rawTarget.parentNode.style['perspective'] = (animationTarget.target.get('height') * 80) + 'px';
-    animationTarget.rawTarget.parentNode.style['perspective-origin'] = 'center';
-    animationTarget.rawTarget.parentNode.style['transform-style'] = 'preserve-3d';
+    const parentNode = animationTarget.rawTarget.parentNode as HTMLElement;
+    parentNode.style['perspective'] = (animationTarget.target.get('height') * 80) + 'px';
+    parentNode.style['perspectiveOrigin'] = 'center';
+    parentNode.style['transformStyle'] = 'preserve-3d';
 
     let start: number;
     let finish: number;

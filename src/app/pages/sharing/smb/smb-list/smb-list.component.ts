@@ -6,7 +6,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
 import vol_helptext from 'app/helptext/storage/volumes/volume-list';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
@@ -50,7 +50,7 @@ export class SMBListComponent implements EntityTableConfig {
     { name: helptext_sharing_smb.column_enabled, prop: 'enabled', checkbox: true },
   ];
   rowIdentifier = 'cifs_name';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -97,7 +97,7 @@ export class SMBListComponent implements EntityTableConfig {
     const poolName = rowName.split('/')[0];
     let optionDisabled;
     rowName.includes('/') ? optionDisabled = false : optionDisabled = true;
-    const rows = [
+    return [
       {
         id: row.name,
         icon: 'edit',
@@ -167,12 +167,6 @@ export class SMBListComponent implements EntityTableConfig {
         onClick: (row: any) => this.entityList.doDelete(row),
       },
     ] as EntityTableAction[];
-    // Temporary: Drop from menu if SCALE
-    if (this.productType.includes(ProductType.Scale)) {
-      const shareAclRow = rows.find((row: any) => row.name === 'share_acl');
-      rows.splice(rows.indexOf(shareAclRow), 1);
-    }
-    return rows;
   }
 
   lockedPathDialog(path: string): void {
@@ -183,7 +177,7 @@ export class SMBListComponent implements EntityTableConfig {
 
   onCheckboxChange(row: SmbShare): void {
     this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
+      (res: any) => {
         row.enabled = res.enabled;
         if (!res) {
           row.enabled = !row.enabled;

@@ -9,14 +9,13 @@ import { FibreChannelPortComponent } from './fibre-channel-port/fibre-channel-po
 export class FibreChannelPortsComponent implements EntityTableConfig {
   title = 'Fibre Channel';
   queryCall: 'fcport.query' = 'fcport.query';
-  protected entityList: any;
 
   columns = [
     { name: 'Name', prop: 'name', always_display: true },
     { name: 'WWPN', prop: 'wwpn' },
     { name: 'State', prop: 'state' },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
   };
@@ -24,5 +23,4 @@ export class FibreChannelPortsComponent implements EntityTableConfig {
   showActions = false;
   hasDetails = true;
   rowDetailComponent = FibreChannelPortComponent;
-  detailRowHeight = 350;
 }

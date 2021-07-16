@@ -1,19 +1,22 @@
 import {
-  Component, Output, EventEmitter, OnInit,
+  Component, Output, EventEmitter, OnInit, OnDestroy,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { Subject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ixChartApp, appImagePlaceholder } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
+import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -31,7 +34,7 @@ import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component
   styleUrls: ['../applications.component.scss'],
 })
 
-export class ChartReleasesComponent implements OnInit {
+export class ChartReleasesComponent implements OnInit, OnDestroy {
   @Output() updateTab = new EventEmitter();
 
   filteredChartItems: any[] = [];
@@ -40,17 +43,16 @@ export class ChartReleasesComponent implements OnInit {
   chartItems: any = {};
   @Output() switchTab = new EventEmitter<string>();
 
-  private dialogRef: any;
+  private dialogRef: MatDialogRef<EntityJobComponent>;
   ixIcon = 'assets/images/ix-original.png';
   private rollbackChartName: string;
 
   protected utils: CommonUtils;
-  settingsEvent: Subject<CoreEvent>;
   private chartReleaseChangedListener: Subscription;
 
   private selectedAppName: string;
-  private podList: any[] = [];
-  private podDetails: any = {};
+  private podList: string[] = [];
+  private podDetails: Record<string, string[]> = {};
   imagePlaceholder = appImagePlaceholder;
 
   emptyPageConf: EmptyConfig = {
@@ -136,6 +138,8 @@ export class ChartReleasesComponent implements OnInit {
     afterInit: this.afterLogsDialogInit,
     parent: this,
   };
+
+  readonly ChartReleaseStatus = ChartReleaseStatus;
 
   constructor(private mdDialog: MatDialog, private appLoaderService: AppLoaderService,
     private dialogService: DialogService, private translate: TranslateService,
@@ -253,7 +257,7 @@ export class ChartReleasesComponent implements OnInit {
             this.appService.getChartReleases().pipe(untilDestroyed(this)).subscribe((charts) => {
               this.chartItems = {};
 
-              charts.forEach((chart: any) => {
+              charts.forEach((chart) => {
                 const chartObj = {
                   name: chart.name,
                   catalog: chart.catalog,
@@ -278,9 +282,9 @@ export class ChartReleasesComponent implements OnInit {
                   selected: false,
                 };
 
-                const ports: any[] = [];
+                const ports: string[] = [];
                 if (chart.used_ports) {
-                  chart.used_ports.forEach((item: any) => {
+                  chart.used_ports.forEach((item) => {
                     ports.push(`${item.port}\\${item.protocol}`);
                   });
                   (chartObj as any)['used_ports'] = ports.join(', ');
@@ -297,11 +301,11 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   refreshStatus(name: string): void {
-    this.appService.getChartReleases(name).pipe(untilDestroyed(this)).subscribe((res) => {
+    this.appService.getChartReleases(name).pipe(untilDestroyed(this)).subscribe((releases) => {
       const item = this.chartItems[name];
       if (item) {
-        item.status = res[0].status;
-        if (item.status === 'DEPLOYING') {
+        item.status = releases[0].status;
+        if (item.status === ChartReleaseStatus.Deploying) {
           setTimeout(() => {
             this.refreshStatus(name);
           }, 3000);
@@ -356,7 +360,7 @@ export class ChartReleasesComponent implements OnInit {
     this.dialogService.dialogForm(this.rollBackChart, true);
   }
 
-  doRollback(entityDialog: any): void {
+  doRollback(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     const form = entityDialog.formGroup.controls;
     const payload = {
@@ -497,7 +501,7 @@ export class ChartReleasesComponent implements OnInit {
         });
         this.dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', names.map((item) => [item])]);
         this.dialogRef.componentInstance.submit();
-        this.dialogRef.componentInstance.success.subscribe((res: any) => {
+        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
           this.dialogService.closeAllDialogs();
           let message = '';
           for (let i = 0; i < res.result.length; i++) {
@@ -584,7 +588,7 @@ export class ChartReleasesComponent implements OnInit {
           value: item,
         }));
         this.choosePodForLogs.fieldConfig[1].value = this.podDetails[this.podList[0]][0];
-        this.choosePodForLogs.fieldConfig[1].options = this.podDetails[this.podList[0]].map((item: any) => ({
+        this.choosePodForLogs.fieldConfig[1].options = this.podDetails[this.podList[0]].map((item) => ({
           label: item,
           value: item,
         }));
@@ -595,7 +599,7 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  doPodSelect(entityDialog: any): void {
+  doPodSelect(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     const pod = entityDialog.formGroup.controls['pods'].value;
     const command = entityDialog.formGroup.controls['command'].value;
@@ -603,7 +607,7 @@ export class ChartReleasesComponent implements OnInit {
     self.dialogService.closeAllDialogs();
   }
 
-  doPodSelectForLogs(entityDialog: any): void {
+  doPodSelectForLogs(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     const pod = entityDialog.formGroup.controls['pods'].value;
     const container = entityDialog.formGroup.controls['containers'].value;

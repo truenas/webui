@@ -1,5 +1,7 @@
 import { Directive, Attribute } from '@angular/core';
-import { Validator, AbstractControl, NG_VALIDATORS } from '@angular/forms';
+import {
+  Validator, AbstractControl, NG_VALIDATORS, ValidationErrors,
+} from '@angular/forms';
 
 @Directive({
   selector: '[appEqualValidator][ngModel]',
@@ -16,7 +18,7 @@ export class EqualValidatorDirective implements Validator {
     return this.reverse === 'true';
   }
 
-  validate(currentControl: AbstractControl): { [key: string]: any } {
+  validate(currentControl: AbstractControl): ValidationErrors {
     // self value
     const currentControlValue = currentControl.value;
 

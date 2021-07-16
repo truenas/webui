@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import helptext from 'app/helptext/system/ssh-connections';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -356,11 +357,12 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     );
   }
 
-  resourceTransformIncomingRestData(wsResponse: any): any {
+  resourceTransformIncomingRestData(wsResponse: KeychainCredential): any {
+    const transformed: any = { ...wsResponse };
     for (const item in wsResponse.attributes) {
-      wsResponse[item] = wsResponse.attributes[item];
+      transformed[item] = wsResponse.attributes[item as keyof KeychainCredential['attributes']];
     }
-    return wsResponse;
+    return transformed;
   }
 
   async customSubmit(data: any): Promise<any> {

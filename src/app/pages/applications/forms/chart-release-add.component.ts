@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -13,8 +14,8 @@ import { Option } from 'app/interfaces/option.interface';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
-import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, ModalService } from 'app/services';
 
@@ -28,7 +29,7 @@ export class ChartReleaseAddComponent implements OnDestroy, WizardConfiguration 
   addCall: 'chart.release.create' = 'chart.release.create';
 
   private title = helptext.chartForm.title;
-  private dialogRef: any;
+  private dialogRef: MatDialogRef<EntityJobComponent>;
   hideCancel = true;
   summary: any = {};
   summaryTitle = 'Chart Release Summary';

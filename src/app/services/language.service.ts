@@ -384,7 +384,7 @@ export class LanguageService {
   }
 
   setLanguageFromMiddleware(): Observable<boolean> {
-    return this.sysGeneralService.getGeneralConfig.pipe(switchMap((res) => {
+    return this.sysGeneralService.getGeneralConfig$.pipe(switchMap((res) => {
       if (res?.language) {
         return this.setLanguage(res.language);
       }
@@ -393,7 +393,7 @@ export class LanguageService {
     }));
   }
 
-  setMiddlewareLanguage(lang: any): void {
+  setMiddlewareLanguage(lang: string): void {
     this.ws.call(this.updateCall,
       [{ language: lang }]).pipe(untilDestroyed(this)).subscribe(
       () => {},

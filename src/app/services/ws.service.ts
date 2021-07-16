@@ -5,17 +5,21 @@ import { UUID } from 'angular2-uuid';
 import { LocalStorage } from 'ngx-webstorage';
 import { Observable, Observer, Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { ApiEventMessage } from 'app/enums/api-event-message.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
+import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
+import { ApiEvent } from 'app/interfaces/api-event.interface';
 import { LoginParams } from 'app/interfaces/auth.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { environment } from '../../environments/environment';
 
 @UntilDestroy()
 @Injectable()
 export class WebSocketService {
-  private _authStatus: Subject<boolean>;
-  onCloseSubject: Subject<boolean>;
-  onOpenSubject: Subject<boolean>;
+  private authStatus$: Subject<boolean>;
+  onCloseSubject$: Subject<boolean>;
+  onOpenSubject$: Subject<boolean>;
   pendingCalls: any;
   pendingSubs: any = {};
   pendingMessages: any[] = [];
@@ -28,14 +32,14 @@ export class WebSocketService {
 
   protocol: string;
   remote: string;
-  private consoleSub: Observable<string>;
+  private consoleSub$: Observable<string>;
 
   subscriptions: Map<string, any[]> = new Map<string, any[]>();
 
   constructor(private _router: Router) {
-    this._authStatus = new Subject<boolean>();
-    this.onOpenSubject = new Subject();
-    this.onCloseSubject = new Subject();
+    this.authStatus$ = new Subject<boolean>();
+    this.onOpenSubject$ = new Subject();
+    this.onCloseSubject$ = new Subject();
     this.pendingCalls = new Map();
     this.protocol = window.location.protocol;
     this.remote = environment.remote;
@@ -43,17 +47,17 @@ export class WebSocketService {
   }
 
   get authStatus(): Observable<any> {
-    return this._authStatus.asObservable();
+    return this.authStatus$.asObservable();
   }
 
   get consoleMessages(): Observable<string> {
-    if (!this.consoleSub) {
-      this.consoleSub = this.sub('filesystem.file_tail_follow:/var/log/messages:499').pipe(
+    if (!this.consoleSub$) {
+      this.consoleSub$ = this.sub('filesystem.file_tail_follow:/var/log/messages:499').pipe(
         filter((res) => res && res.data && typeof res.data === 'string'),
         map((res) => res.data),
       );
     }
-    return this.consoleSub;
+    return this.consoleSub$;
   }
 
   reconnect(protocol = window.location.protocol, remote = environment.remote): void {
@@ -73,7 +77,7 @@ export class WebSocketService {
   }
 
   onopen(): void {
-    this.onOpenSubject.next(true);
+    this.onOpenSubject$.next(true);
     this.send({ msg: 'connect', version: '1', support: ['1'] });
   }
 
@@ -87,8 +91,8 @@ export class WebSocketService {
 
   onclose(): void {
     this.connected = false;
-    this.onCloseSubject.next(true);
-    setTimeout(this.connect.bind(this), 5000);
+    this.onCloseSubject$.next(true);
+    setTimeout(() => this.connect(), 5000);
     if (!this.shuttingdown) {
       this._router.navigate(['/sessions/signin']);
     }
@@ -97,7 +101,7 @@ export class WebSocketService {
   ping(): void {
     if (this.connected) {
       this.socket.send(JSON.stringify({ msg: 'ping', id: UUID.UUID() }));
-      setTimeout(this.ping.bind(this), 20000);
+      setTimeout(() => this.ping(), 20000);
     }
   }
 
@@ -110,7 +114,7 @@ export class WebSocketService {
       return;
     }
 
-    if (data.msg == 'result') {
+    if (data.msg == ApiEventMessage.Result) {
       const call = this.pendingCalls.get(data.id);
 
       this.pendingCalls.delete(data.id);
@@ -124,11 +128,11 @@ export class WebSocketService {
       }
     } else if (data.msg == 'connected') {
       this.connected = true;
-      setTimeout(this.ping.bind(this), 20000);
+      setTimeout(() => this.ping(), 20000);
       this.onconnect();
     } else if (data.msg == 'nosub') {
       console.warn(data);
-    } else if (data.msg == 'added' || data.collection == 'disk.query') {
+    } else if (data.msg == ApiEventMessage.Added || data.collection == 'disk.query') {
       const nom = data.collection.replace('.', '_');
       if (this.pendingSubs[nom] && this.pendingSubs[nom].observers) {
         for (const uuid in this.pendingSubs[nom].observers) {
@@ -144,7 +148,7 @@ export class WebSocketService {
           }
         }
       }
-    } else if (data.msg == 'changed') {
+    } else if (data.msg == ApiEventMessage.Changed) {
       this.subscriptions.forEach((v, k) => {
         if (k == '*' || k == data.collection) {
           v.forEach((item) => { item.next(data); });
@@ -167,7 +171,7 @@ export class WebSocketService {
     }
   }
 
-  subscribe(name: string): Observable<any> {
+  subscribe<K extends keyof ApiEventDirectory>(name: K): Observable<ApiEvent<ApiEventDirectory[K]['response']>> {
     const source = Observable.create((observer: any) => {
       if (this.subscriptions.has(name)) {
         this.subscriptions.get(name).push(observer);
@@ -196,7 +200,7 @@ export class WebSocketService {
     };
 
     // Create the observable
-    const source = Observable.create((observer: any) => {
+    return new Observable((observer: any) => {
       this.pendingCalls.set(uuid, {
         method,
         args: params,
@@ -205,8 +209,6 @@ export class WebSocketService {
 
       this.send(payload);
     });
-
-    return source;
   }
 
   sub<T = any>(name: string): Observable<T> {
@@ -238,13 +240,13 @@ export class WebSocketService {
     return obs;
   }
 
-  job(method: any, params?: any): Observable<any> {
+  job<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<Job<ApiDirectory[K]['response']>> {
     const source = Observable.create((observer: any) => {
       this.call(method, params).pipe(untilDestroyed(this)).subscribe((job_id) => {
-        this.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((res) => {
-          if (res.id == job_id) {
-            observer.next(res.fields);
-            if (res.fields.state === EntityJobState.Success || res.fields.state == EntityJobState.Failed) {
+        this.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
+          if (event.id == job_id) {
+            observer.next(event.fields);
+            if (event.fields.state === JobState.Success || event.fields.state == JobState.Failed) {
               observer.complete();
             }
           }
@@ -268,7 +270,7 @@ export class WebSocketService {
   loginCallback(result: boolean, observer: Observer<boolean>): void {
     if (result === true) {
       if (!this.loggedIn) {
-        this._authStatus.next(this.loggedIn);
+        this.authStatus$.next(this.loggedIn);
       }
 
       this.loggedIn = true;
@@ -281,14 +283,14 @@ export class WebSocketService {
       });
     } else {
       this.loggedIn = false;
-      this._authStatus.next(this.loggedIn);
+      this.authStatus$.next(this.loggedIn);
     }
     observer.next(result);
     observer.complete();
   }
 
-  login_token(token: string): Observable<any> {
-    return Observable.create((observer: any) => {
+  login_token(token: string): Observable<boolean> {
+    return Observable.create((observer: Observer<boolean>) => {
       if (token) {
         this.call('auth.token', [token]).pipe(untilDestroyed(this)).subscribe((result) => {
           this.loginCallback(result, observer);

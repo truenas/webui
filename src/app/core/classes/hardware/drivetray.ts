@@ -7,7 +7,7 @@ export class DriveTray {
   model: string;
   id: string;
   vertical = false;
-  protected loader: any;
+  protected loader: PIXI.loaders.Loader;
 
   enabled = false;
 
@@ -19,7 +19,7 @@ export class DriveTray {
     this.colorize(value);
   }
 
-  constructor(model: string, loader: any) {
+  constructor(model: string, loader: PIXI.loaders.Loader) {
     this.model = model;
     this.loader = loader;
     this.container = new PIXI.Container();

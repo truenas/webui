@@ -103,7 +103,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     private appService: ApplicationsService) { }
 
   async prerequisite(): Promise<boolean> {
-    const setPoolControl = this.appService.getPoolList().pipe(
+    const setPoolControl$ = this.appService.getPoolList().pipe(
       tap((pools) => {
         const poolControl = _.find(this.fieldSets[0].config, { name: 'pool' });
         pools.forEach((pool) => {
@@ -112,7 +112,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
       }),
     );
 
-    const setNodeIpControl = this.appService.getBindIPChoices().pipe(
+    const setNodeIpControl$ = this.appService.getBindIPChoices().pipe(
       tap((ips) => {
         const nodeIpControl = _.find(this.fieldSets[0].config, { name: 'node_ip' });
         for (const ip in ips) {
@@ -121,8 +121,8 @@ export class KubernetesSettingsComponent implements FormConfiguration {
       }),
     );
 
-    const setV4InterfaceControl = this.appService.getInterfaces().pipe(
-      tap((interfaces: any[]) => {
+    const setV4InterfaceControl$ = this.appService.getInterfaces().pipe(
+      tap((interfaces) => {
         const v4InterfaceControl = _.find(this.fieldSets[1].config, { name: 'route_v4_interface' });
         interfaces.forEach((i) => {
           v4InterfaceControl.options.push({ label: i.name, value: i.name });
@@ -130,7 +130,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
       }),
     );
 
-    return forkJoin([setPoolControl, setNodeIpControl, setV4InterfaceControl]).pipe(
+    return forkJoin([setPoolControl$, setNodeIpControl$, setV4InterfaceControl$]).pipe(
       map(() => true),
       catchError((error) => {
         console.error(error);
@@ -163,11 +163,10 @@ export class KubernetesSettingsComponent implements FormConfiguration {
   customSubmit(data: any): void {
     this.loader.open();
 
-    const promises = [];
-    promises.push(this.ws.job(this.editCall, [data]).toPromise());
-    promises.push(this.appService.updateContainerConfig(this.newEnableContainerImageUpdate).toPromise());
-
-    Promise.all(promises).then(() => {
+    Promise.all([
+      this.ws.job(this.editCall, [data]).toPromise(),
+      this.appService.updateContainerConfig(this.newEnableContainerImageUpdate).toPromise(),
+    ]).then(() => {
       this.loader.close();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();

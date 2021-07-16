@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -129,7 +130,7 @@ export class PortalFormComponent implements FormConfiguration {
 
   fieldConfig: FieldConfig[];
   pk: any;
-  protected authgroup_field: any;
+  protected authgroup_field: FieldConfig;
   protected entityForm: EntityFormComponent;
   protected ip: any;
 
@@ -217,18 +218,23 @@ export class PortalFormComponent implements FormConfiguration {
     data['listen'] = this.ip;
   }
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: IscsiPortal): any {
     const ports = new Map() as any;
     const groupedIp = [];
-    for (let i = 0; i < data['listen'].length; i++) {
+    for (let i = 0; i < data.listen.length; i++) {
       // TODO: Incorrect usage of map. Update to .get
-      if (ports[data['listen'][i].port] === undefined) {
-        ports[data['listen'][i].port] = [];
-        groupedIp.push({ ip: ports[data['listen'][i].port], port: data['listen'][i].port });
+      if (ports[data.listen[i].port] === undefined) {
+        ports[data.listen[i].port] = [];
+        groupedIp.push({
+          ip: ports[data.listen[i].port],
+          port: data.listen[i].port,
+        });
       }
-      ports[data['listen'][i].port].push(data['listen'][i]['ip']);
+      ports[data.listen[i].port].push(data.listen[i]['ip']);
     }
-    data['listen'] = groupedIp;
-    return data;
+    return {
+      ...data,
+      listen: groupedIp,
+    };
   }
 }

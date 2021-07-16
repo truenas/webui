@@ -21,12 +21,10 @@ export class FormListComponent implements Field, OnInit {
   constructor(private entityFormService: EntityFormService, protected fieldRelationService: FieldRelationService) {}
 
   ngOnInit(): void {
-    setTimeout(() => {
-      this.listsFromArray = this.group.controls[this.config.name] as FormArray;
-      if (this.config.addInitialList && this.listsFromArray.length === 0) {
-        this.add();
-      }
-    }, 0);
+    this.listsFromArray = this.group.get(this.config.name) as FormArray;
+    if (this.config.addInitialList && this.listsFromArray.length === 0) {
+      this.add();
+    }
   }
 
   add(): void {

@@ -1,6 +1,6 @@
 import { CACreateType } from '../enums/ca-create-type.enum';
-import { CADigestAlgorithm } from '../enums/ca-digest-algorithm.enum';
-import { CAKeyType } from '../enums/ca-key-type.enum';
+import { CertificateDigestAlgorithm } from '../enums/ca-digest-algorithm.enum';
+import { CertificateKeyType } from '../enums/ca-key-type.enum';
 import { EcCurve } from '../enums/ec-curve.enum';
 import { ExtendedKeyUsages } from '../enums/extended-key-usages.enum';
 
@@ -61,7 +61,7 @@ export interface CertificateAuthorityUpdate {
   CSR: string;
   ec_curve: EcCurve;
   email: string;
-  key_type: CAKeyType;
+  key_type: CertificateKeyType;
   name: string;
   organization: string;
   organizational_unit: string;
@@ -69,9 +69,66 @@ export interface CertificateAuthorityUpdate {
   privatekey: string;
   state: string;
   create_type: CACreateType;
-  digest_algorithm: CADigestAlgorithm;
+  digest_algorithm: CertificateDigestAlgorithm;
   san: string[];
   cert_extensions: CertificateExtensions;
 }
 
 export interface CertificateAuthorityCreate extends CertificateAuthorityUpdate {}
+
+export interface CertificateAuthority {
+  CA_type_existing: boolean;
+  CA_type_intermediate: boolean;
+  CA_type_internal: boolean;
+  CSR: unknown;
+  DN: string;
+  cert_type: string; // Enum?
+  cert_type_CSR: boolean;
+  cert_type_existing: boolean;
+  cert_type_internal: boolean;
+  certificate: string;
+  certificate_path: string;
+  chain: boolean;
+  chain_list: string[];
+  city: string;
+  common: string;
+  country: string;
+  crl_path: string;
+  csr_path: string;
+  digest_algorithm: string;
+  email: string;
+  extensions: {
+    AuthorityKeyIdentifier: string;
+    BasicConstraints: string;
+    ExtendedKeyUsage: string;
+    KeyUsage: string;
+    SubjectAltName: string;
+    SubjectKeyIdentifier: string;
+  };
+  fingerprint: string;
+  from: string;
+  id: number;
+  internal: string;
+  issuer: string;
+  key_length: number;
+  key_type: string;
+  lifetime: number;
+  name: string;
+  organization: string;
+  organizational_unit: string;
+  parsed: boolean;
+  privatekey: string;
+  privatekey_path: string;
+  revoked: boolean;
+  revoked_certs: unknown[];
+  revoked_date: unknown;
+  root_path: string;
+  san: string[];
+  serial: number;
+  signed_certificates: number;
+  signedby: unknown;
+  state: string;
+  subject_name_hash: number;
+  type: number;
+  until: string;
+}

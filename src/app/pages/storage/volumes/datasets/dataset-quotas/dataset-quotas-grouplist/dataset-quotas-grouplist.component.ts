@@ -1,14 +1,19 @@
 import { Component, OnDestroy } from '@angular/core';
-import { ValidationErrors, FormControl } from '@angular/forms';
+import { FormControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { DatasetQuotaType } from 'app/enums/dataset-quota-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import {
-  WebSocketService, StorageService, DialogService, AppLoaderService,
+  AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
 import { T } from 'app/translate-marker';
 
@@ -20,10 +25,10 @@ import { T } from 'app/translate-marker';
 export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDestroy {
   pk: string;
   title = helptext.groups.table_title;
-  protected entityList: any;
+  protected entityList: EntityTableComponent;
   quotaValue: number;
-  protected fullFilter = [['OR', [['used_bytes', '>', 0], ['obj_used', '>', 0]]]];
-  protected emptyFilter: string[] = [];
+  protected fullFilter: QueryParams<DatasetQuota> = [['OR', [['used_bytes', '>', 0], ['obj_used', '>', 0]]]];
+  protected emptyFilter: QueryParams<DatasetQuota> = [];
   protected useFullFilter = true;
 
   columns = [
@@ -39,7 +44,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
     { name: T('OQ % Used'), prop: 'obj_used_percent', hidden: false },
   ];
   rowIdentifier = 'name';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -79,7 +84,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
       name: 'edit',
       onClick: () => {
         self.loader.open();
-        self.ws.call('pool.dataset.get_quota', [self.pk, 'GROUP', [['id', '=', row.id]]]).pipe(untilDestroyed(this)).subscribe((res) => {
+        self.ws.call('pool.dataset.get_quota', [self.pk, DatasetQuotaType.Group, [['id', '=', row.id]]]).pipe(untilDestroyed(this)).subscribe((res) => {
           self.loader.close();
           const conf: DialogFormConfiguration = {
             title: helptext.groups.dialog.title,
@@ -132,7 +137,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
             saveButtonText: helptext.shared.set,
             cancelButtonText: helptext.shared.cancel,
 
-            customSubmit(data: any) {
+            customSubmit(data: EntityDialogComponent) {
               const entryData = data.formValue;
               const payload = [];
               payload.push({
@@ -166,21 +171,21 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
     return actions as EntityTableAction[];
   }
 
-  preInit(entityList: any): void {
+  preInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
     const paramMap: any = (<any> this.aroute.params).getValue();
     this.pk = paramMap.pk;
     this.useFullFilter = window.localStorage.getItem('useFullFilter') !== 'false';
   }
 
-  callGetFunction(entityList: any): void {
+  callGetFunction(entityList: EntityTableComponent): void {
     const filter = this.useFullFilter ? this.fullFilter : this.emptyFilter;
-    this.ws.call('pool.dataset.get_quota', [this.pk, 'GROUP', filter]).pipe(untilDestroyed(this)).subscribe((res) => {
+    this.ws.call('pool.dataset.get_quota', [this.pk, DatasetQuotaType.Group, filter]).pipe(untilDestroyed(this)).subscribe((res) => {
       entityList.handleData(res, true);
     });
   }
 
-  dataHandler(data: any): void {
+  dataHandler(data: EntityTableComponent): void {
     this.translate.get(helptext.shared.nameErr).pipe(untilDestroyed(this)).subscribe((msg) => {
       data.rows.forEach((row: any) => {
         if (!row.name) {
@@ -214,7 +219,6 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
         this.entityList.loader.open();
         this.useFullFilter = !this.useFullFilter;
         window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
-        this.entityList.needTableResize = false;
         this.entityList.getData();
         this.loader.close();
       }

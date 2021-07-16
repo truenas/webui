@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
-import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { WebSocketService } from 'app/services';
@@ -23,9 +23,9 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
   menuList = document.getElementsByClassName('top-level');
   isHighlighted: string;
 
-  @Output('onStateChange') onStateChange: EventEmitter<any> = new EventEmitter();
-  @Output('onToggleMenu') onToggleMenu: EventEmitter<any> = new EventEmitter();
-  @Output('onCloseMenu') onCloseMenu: EventEmitter<any> = new EventEmitter();
+  @Output() stateChange: EventEmitter<any> = new EventEmitter();
+  @Output() menuToggled: EventEmitter<any> = new EventEmitter();
+  @Output() menuClosed: EventEmitter<any> = new EventEmitter();
 
   constructor(
     private navService: NavigationService, private router: Router, private ws: WebSocketService,
@@ -79,11 +79,11 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
   }
 
   toggleMenu(state: any, sub: any): void {
-    this.onToggleMenu.emit([state, sub]);
+    this.menuToggled.emit([state, sub]);
   }
 
   closeMenu(): void {
-    this.onCloseMenu.emit();
+    this.menuClosed.emit();
   }
 
   updateHighlightedClass(state: any): void {

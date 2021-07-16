@@ -1,3 +1,5 @@
+import { QueryParams } from 'app/interfaces/query-api.interface';
+
 export interface Catalog {
   branch: string;
   builtin: boolean;
@@ -20,6 +22,14 @@ export interface Catalog {
   };
   error: boolean;
 }
+
+export type CatalogQueryParams = QueryParams<Catalog, {
+  extra: {
+    item_details?: boolean;
+    cache?: boolean;
+    retrieve_versions?: boolean;
+  };
+}>;
 
 export interface CatalogTrain {
   [application: string]: CatalogApp;
@@ -59,6 +69,7 @@ export interface ChartMetadata {
   apiVersion: string;
   appVersion: string;
   dependencies: ChartMetadataDependency[];
+  latest_chart_version: string;
   description: string;
   home: string;
   icon: string;

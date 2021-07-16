@@ -3,12 +3,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import globalHelptext from 'app/helptext/global-helptext';
-import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
-import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { CloudSyncTask, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import {
@@ -34,7 +34,7 @@ import { T } from 'app/translate-marker';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [JobService, TaskService, CloudCredentialService],
 })
-export class CloudsyncListComponent implements EntityTableConfig {
+export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi> {
   title = T('Cloud Sync Tasks');
   queryCall: 'cloudsync.query' = 'cloudsync.query';
   route_add: string[] = ['tasks', 'cloudsync', 'add'];
@@ -70,7 +70,7 @@ export class CloudsyncListComponent implements EntityTableConfig {
     { name: T('Enabled'), prop: 'enabled' },
   ];
   rowIdentifier = 'description';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -100,28 +100,29 @@ export class CloudsyncListComponent implements EntityTableConfig {
     });
   }
 
-  resourceTransformIncomingRestData(data: CloudSyncTaskUi[]): CloudSyncTaskUi[] {
+  resourceTransformIncomingRestData(data: CloudSyncTask[]): CloudSyncTaskUi[] {
     return data.map((task) => {
-      task.credential = task.credentials.name;
-      task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
-      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
+      const transformed = { ...task } as CloudSyncTaskUi;
+      transformed.credential = task.credentials.name;
+      transformed.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
+      transformed.frequency = this.taskService.getTaskCronDescription(transformed.cron_schedule);
+      transformed.next_run = this.taskService.getTaskNextRun(transformed.cron_schedule);
 
       if (task.job === null) {
-        task.state = { state: EntityJobState.Pending };
+        transformed.state = { state: JobState.Pending };
       } else {
-        task.state = { state: task.job.state };
-        this.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
-          task.state = { state: job.state };
-          task.job = job;
+        transformed.state = { state: task.job.state };
+        this.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: Job) => {
+          transformed.state = { state: job.state };
+          transformed.job = job;
         });
       }
 
-      return task;
+      return transformed;
     });
   }
 
-  getActions(parentrow: any): EntityTableAction[] {
+  getActions(parentrow: CloudSyncTaskUi): EntityTableAction[] {
     return [
       {
         actionName: parentrow.description,
@@ -129,12 +130,12 @@ export class CloudsyncListComponent implements EntityTableConfig {
         label: T('Run Now'),
         icon: 'play_arrow',
         name: 'run',
-        onClick: (row: any) => {
+        onClick: (row: CloudSyncTaskUi) => {
           this.dialog
             .confirm({ title: T('Run Now'), message: T('Run this cloud sync now?'), hideCheckBox: true })
             .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
               if (res) {
-                row.state = { state: EntityJobState.Running };
+                row.state = { state: JobState.Running };
                 this.ws.call('cloudsync.sync', [row.id]).pipe(untilDestroyed(this)).subscribe(
                   (jobId: number) => {
                     this.dialog.Info(
@@ -144,7 +145,7 @@ export class CloudsyncListComponent implements EntityTableConfig {
                       'info',
                       true,
                     );
-                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
+                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
                       row.state = { state: job.state };
                       row.job = job;
                     });
@@ -163,7 +164,7 @@ export class CloudsyncListComponent implements EntityTableConfig {
         name: 'stop',
         label: T('Stop'),
         icon: 'stop',
-        onClick: (row: any) => {
+        onClick: (row: CloudSyncTaskUi) => {
           this.dialog
             .confirm({
               title: T('Stop'),
@@ -196,7 +197,7 @@ export class CloudsyncListComponent implements EntityTableConfig {
         name: 'dryrun',
         label: helptext.action_button_dry_run,
         icon: 'sync',
-        onClick: (row: any) => {
+        onClick: (row: CloudSyncTaskUi) => {
           this.dialog
             .confirm({
               title: helptext.dry_run_title,
@@ -214,7 +215,7 @@ export class CloudsyncListComponent implements EntityTableConfig {
                       'info',
                       true,
                     );
-                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
+                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
                       row.state = { state: job.state };
                       row.job = job;
                     });
@@ -233,7 +234,7 @@ export class CloudsyncListComponent implements EntityTableConfig {
         name: 'restore',
         label: T('Restore'),
         icon: 'restore',
-        onClick: (row: any) => {
+        onClick: (row: CloudSyncTaskUi) => {
           const parent = this;
           const conf: DialogFormConfiguration = {
             title: T('Restore Cloud Sync Task'),
@@ -314,7 +315,7 @@ export class CloudsyncListComponent implements EntityTableConfig {
         name: 'edit',
         icon: 'edit',
         label: T('Edit'),
-        onClick: (row: any) => {
+        onClick: (row: CloudSyncTaskUi) => {
           this.doEdit(row.id);
         },
       },
@@ -324,30 +325,30 @@ export class CloudsyncListComponent implements EntityTableConfig {
         name: 'delete',
         label: T('Delete'),
         icon: 'delete',
-        onClick: (row: any) => {
+        onClick: (row: CloudSyncTaskUi) => {
           this.entityList.doDelete(row);
         },
       },
     ];
   }
 
-  isActionVisible(actionId: string, row: any): boolean {
-    if (actionId === 'run_now' && row.job && row.job.state === EntityJobState.Running) {
+  isActionVisible(actionId: string, row: CloudSyncTaskUi): boolean {
+    if (actionId === 'run_now' && row.job && row.job.state === JobState.Running) {
       return false;
     }
-    if (actionId === 'stop' && (row.job ? row.job && row.job.state !== EntityJobState.Running : true)) {
+    if (actionId === 'stop' && (row.job ? row.job && row.job.state !== JobState.Running : true)) {
       return false;
     }
     return true;
   }
 
-  onButtonClick(row: any): void {
+  onButtonClick(row: CloudSyncTaskUi): void {
     this.stateButton(row);
   }
 
-  stateButton(row: any): void {
+  stateButton(row: CloudSyncTaskUi): void {
     if (row.job) {
-      if (row.state.state === EntityJobState.Running) {
+      if (row.state.state === JobState.Running) {
         this.entityList.runningStateButton(row.job.id);
       } else {
         this.job.showLogs(row.job);

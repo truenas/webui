@@ -1,4 +1,10 @@
-import { AclItemTag, AclPermission } from 'app/enums/acl-type.enum';
+import {
+  nfsAclTagLabels, nfsAclTypeLabels,
+  NfsAdvancedFlag, nfsAdvancedPermissionLabels,
+  NfsBasicFlag, nfsBasicPermissionLabels,
+} from 'app/enums/nfs-acl.enum';
+import { posixAclTagLabels, PosixPermission } from 'app/enums/posix-acl.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { T } from 'app/translate-marker';
 
 export default {
@@ -17,22 +23,13 @@ export default {
  <i>group@</i> to apply this entry to the group that owns the dataset,\
  or <i>everyone@</i> to apply this entry to all users and groups. See\
  <a href="https://www.freebsd.org/cgi/man.cgi?query=setfacl" target="_blank">setfacl(1) NFSv4 ACL ENTRIES</a>.'),
-  dataset_acl_tag_options: [
-    { label: T('User'), value: 'USER' },
-    { label: T('Group'), value: 'GROUP' },
-    { label: T('owner@'), value: 'owner@' },
-    { label: T('group@'), value: 'group@' },
-    { label: T('everyone@'), value: 'everyone@' },
-  ],
+  dataset_acl_tag_options: mapToOptions(nfsAclTagLabels),
 
   dataset_acl_type_placeholder: T('ACL Type'),
   dataset_acl_type_tooltip: T('How the <i>Permissions</i> are applied to\
  the chosen <i>Who</>. Choose <i>Allow</i> to grant the specified\
  permissions and <i>Deny</i> to restrict the specified permissions.'),
-  dataset_acl_type_options: [
-    { label: T('Allow'), value: 'ALLOW' },
-    { label: T('Deny'), value: 'DENY' },
-  ],
+  dataset_acl_type_options: mapToOptions(nfsAclTypeLabels),
 
   dataset_acl_perms_type_placeholder: T('Permissions Type'),
   dataset_acl_perms_type_tooltip: T('Choose the type of permissions.\
@@ -78,10 +75,7 @@ export default {
   dataset_acl_perms_tooltip: T('Select permissions to apply to the chosen\
  <i>Who</i>. Choices change depending on the <i>Permissions Type</i>.'),
   dataset_acl_basic_perms_options: [
-    { label: T('Read'), value: 'READ' },
-    { label: T('Modify'), value: 'MODIFY' },
-    { label: T('Traverse'), value: 'TRAVERSE' },
-    { label: T('Full Control'), value: 'FULL_CONTROL' },
+    ...mapToOptions(nfsBasicPermissionLabels),
     {
       label: T('Other (Too complicated to be displayed)'),
       value: 'OTHER',
@@ -90,22 +84,7 @@ export default {
     },
   ],
   dataset_acl_basic_perms_other_warning: T('These permissions are too complicated to be displayed and cannot be saved unless changed.'),
-  dataset_acl_advanced_perms_options: [
-    { label: T('Read Data'), value: 'READ_DATA' },
-    { label: T('Write Data'), value: 'WRITE_DATA' },
-    { label: T('Append Data'), value: 'APPEND_DATA' },
-    { label: T('Read Named Attributes'), value: 'READ_NAMED_ATTRS' },
-    { label: T('Write Named Attributes'), value: 'WRITE_NAMED_ATTRS' },
-    { label: T('Execute'), value: 'EXECUTE' },
-    { label: T('Delete Children'), value: 'DELETE_CHILD' },
-    { label: T('Read Attributes'), value: 'READ_ATTRIBUTES' },
-    { label: T('Write Attributes'), value: 'WRITE_ATTRIBUTES' },
-    { label: T('Delete'), value: 'DELETE' },
-    { label: T('Read ACL'), value: 'READ_ACL' },
-    { label: T('Write ACL'), value: 'WRITE_ACL' },
-    { label: T('Write Owner'), value: 'WRITE_OWNER' },
-    { label: T('Synchronize'), value: 'SYNCHRONIZE' },
-  ],
+  dataset_acl_advanced_perms_options: mapToOptions(nfsAdvancedPermissionLabels),
 
   dataset_acl_flags_type_placeholder: T('Flags Type'),
   dataset_acl_flags_type_tooltip: T('Select the set of ACE inheritance\
@@ -122,8 +101,9 @@ export default {
  directories and files within the dataset. Basic flags enable or disable\
  ACE inheritance. Advanced flags allow further control of how the ACE\
  is applied to files and directories in the dataset.'),
-  dataset_acl_basic_flags_options: [{ label: T('Inherit'), value: 'INHERIT' },
-    { label: T('No Inherit'), value: 'NOINHERIT' },
+  dataset_acl_basic_flags_options: [
+    { label: T('Inherit'), value: NfsBasicFlag.Inherit },
+    { label: T('No Inherit'), value: NfsBasicFlag.NoInherit },
     {
       label: T('Other (Too complicated to be displayed)'),
       value: 'OTHER',
@@ -132,11 +112,11 @@ export default {
     },
   ],
   dataset_acl_advanced_flags_options: [
-    { label: T('File Inherit'), value: 'FILE_INHERIT' },
-    { label: T('Directory Inherit'), value: 'DIRECTORY_INHERIT' },
-    { label: T('No Propagate Inherit'), value: 'NO_PROPAGATE_INHERIT' },
-    { label: T('Inherit Only'), value: 'INHERIT_ONLY' },
-    { label: T('Inherited'), value: 'INHERITED' },
+    { label: T('File Inherit'), value: NfsAdvancedFlag.FileInherit },
+    { label: T('Directory Inherit'), value: NfsAdvancedFlag.DirectoryInherit },
+    { label: T('No Propagate Inherit'), value: NfsAdvancedFlag.NoPropagateInherit },
+    { label: T('Inherit Only'), value: NfsAdvancedFlag.InheritOnly },
+    { label: T('Inherited'), value: NfsAdvancedFlag.Inherited },
   ],
 
   dataset_acl_recursive_placeholder: T('Apply permissions recursively'),
@@ -196,24 +176,16 @@ export default {
     placeholder: T('Permissions'),
     tooltip: T('Permissions'),
     options: [
-      { label: T('Read'), value: AclPermission.Read },
-      { label: T('Write'), value: AclPermission.Write },
-      { label: T('Execute'), value: AclPermission.Execute },
+      { label: T('Read'), value: PosixPermission.Read },
+      { label: T('Write'), value: PosixPermission.Write },
+      { label: T('Execute'), value: PosixPermission.Execute },
     ],
   },
 
   posix_tag: {
     placeholder: T('Who'),
     tooltip: T('Tag'),
-    options:
-  [
-    { label: T('User'), value: AclItemTag.User },
-    { label: T('Group'), value: AclItemTag.Group },
-    { label: T('Other'), value: AclItemTag.Other },
-    { label: T('Group Obj'), value: AclItemTag.GroupObject },
-    { label: T('User Obj'), value: AclItemTag.UserObject },
-    { label: T('Mask'), value: AclItemTag.Mask },
-  ],
+    options: mapToOptions(posixAclTagLabels),
   },
 
   posix_default: {

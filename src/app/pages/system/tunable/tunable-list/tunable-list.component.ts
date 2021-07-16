@@ -1,8 +1,10 @@
 import {
   ApplicationRef, Component, Injector,
 } from '@angular/core';
+import { TooltipPosition } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductType } from 'app/enums/product-type.enum';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { WebSocketService } from 'app/services';
 import { T } from 'app/translate-marker';
@@ -29,16 +31,16 @@ export class TunableListComponent implements EntityTableConfig {
 
   protected product_type: ProductType;
 
-  protected entityList: any;
+  protected entityList: EntityTableComponent;
 
   wsMultiDelete: 'core.bulk' = 'core.bulk';
-  multiActions: any[] = [
+  multiActions = [
     {
       id: 'mdelete',
       label: T('Delete'),
       icon: 'delete',
       enable: true,
-      ttpos: 'above',
+      ttpos: 'above' as TooltipPosition,
       onClick: (selected: any) => {
         this.entityList.doMultiDelete(selected);
       },
@@ -54,7 +56,7 @@ export class TunableListComponent implements EntityTableConfig {
   ];
   rowIdentifier = 'var';
 
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -70,7 +72,7 @@ export class TunableListComponent implements EntityTableConfig {
     protected _injector: Injector,
     protected _appRef: ApplicationRef) {}
 
-  preInit(entityList: any): void {
+  preInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
     this.product_type = window.localStorage.getItem('product_type') as ProductType;
     if (this.product_type === ProductType.Scale || this.product_type === ProductType.ScaleEnterprise) {

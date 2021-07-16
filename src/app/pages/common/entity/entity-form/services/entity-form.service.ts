@@ -7,6 +7,7 @@ import {
   FormGroup,
 } from '@angular/forms';
 import * as _ from 'lodash';
+import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { WebSocketService } from 'app/services/ws.service';
 import { FieldConfig, UnitType, InputUnitConfig } from '../models/field-config.interface';
 
@@ -69,7 +70,7 @@ export class EntityFormService {
       } else if (fieldConfig.type != 'label') {
         formControl = new FormControl(
           { value: fieldConfig.value, disabled: fieldConfig.disabled },
-          fieldConfig.type === 'input-list' ? [] : fieldConfig.validation, fieldConfig.asyncValidation,
+          fieldConfig.type === 'input-list' as FieldType ? [] : fieldConfig.validation, fieldConfig.asyncValidation,
         );
       }
     }
@@ -99,7 +100,7 @@ export class EntityFormService {
   getFilesystemListdirChildren(
     node: any,
     explorerType?: string,
-    hideDirs?: any,
+    hideDirs?: string,
     showHiddenFiles = false,
   ): Promise<any[]> {
     const children: any[] = [];

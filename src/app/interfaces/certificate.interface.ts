@@ -1,3 +1,7 @@
+import { CertificateDigestAlgorithm } from 'app/enums/ca-digest-algorithm.enum';
+import { CertificateKeyType } from 'app/enums/ca-key-type.enum';
+import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
+
 export interface Certificate {
   CA_type_existing: boolean;
   CA_type_intermediate: boolean;
@@ -38,9 +42,27 @@ export interface Certificate {
   root_path: string;
   san: string[];
   serial: number;
-  signedby: any;
+  signedby: CertificateAuthority;
   state: string;
   subject_name_hash: number;
   type: number;
   until: string;
+}
+
+export interface CertificateProfiles {
+  [name: string]: CertificateProfile;
+}
+
+export interface CertificateProfile {
+  cert_extensions: {
+    [extension: string]: any;
+  };
+  digest_algorithm: CertificateDigestAlgorithm;
+  key_length: number;
+  key_type: CertificateKeyType;
+  lifetime: number;
+}
+
+export interface ExtendedKeyUsageChoices {
+  [key: string]: string;
 }

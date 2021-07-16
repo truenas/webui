@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/account/groups';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Group } from 'app/interfaces/group.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -79,7 +80,7 @@ export class GroupFormComponent implements FormConfiguration {
     },
   ];
 
-  private bsdgrp_gid: any;
+  private bsdgrp_gid: FieldConfig;
 
   constructor(
     protected router: Router,
@@ -87,10 +88,12 @@ export class GroupFormComponent implements FormConfiguration {
     private modalService: ModalService,
   ) {}
 
-  resourceTransformIncomingRestData(data: any): any {
-    data['name'] = data['group'];
-    this.getNamesInUse(data['name']);
-    return data;
+  resourceTransformIncomingRestData(data: Group): any {
+    this.getNamesInUse(data.group);
+    return {
+      ...data,
+      name: data.group,
+    };
   }
 
   getNamesInUse(currentName?: string): void {

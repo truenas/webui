@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { CommonUtils } from 'app/core/classes/common-utils';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import helptext from 'app/helptext/apps/apps';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
@@ -35,7 +35,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   isSelectedOneMore = false;
   isSelectedAll = false;
   isSelectedPool = false;
-  settingsEvent: Subject<CoreEvent>;
+  settingsEvent$: Subject<CoreEvent>;
   filterString = '';
   toolbarConfig: ToolbarConfig;
   catalogOptions: Option[] = [];
@@ -70,8 +70,8 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   }
 
   setupToolbar(): void {
-    this.settingsEvent = new Subject();
-    this.settingsEvent.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.settingsEvent$ = new Subject();
+    this.settingsEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'filter') {
         this.filterString = evt.data.filter;
       }
@@ -86,7 +86,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
       this.dockerImagesTab.onToolbarAction(evt);
     });
 
-    const controls: any[] = [
+    const controls = [
       {
         name: 'filter',
         type: 'input',
@@ -95,7 +95,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
     ];
 
     const toolbarConfig = {
-      target: this.settingsEvent,
+      target: this.settingsEvent$,
       controls,
     };
     const settingsConfig = {

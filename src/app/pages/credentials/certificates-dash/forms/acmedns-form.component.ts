@@ -100,11 +100,12 @@ export class AcmednsFormComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: DnsAuthenticator): any {
+    const transformed: any = { ...data };
     for (const item in data.attributes) {
-      data[item] = data.attributes[item];
+      transformed[item] = data.attributes[item as keyof DnsAuthenticator['attributes']];
     }
-    return data;
+    return transformed;
   }
 
   afterInit(entityEdit: EntityFormComponent): void {

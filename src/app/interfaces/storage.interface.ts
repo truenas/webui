@@ -4,7 +4,7 @@ import { ZfsProperty } from './zfs-property.interface';
 
 // As returned by pool.query under topology[<vdevtype>]
 export interface VDev {
-  type: string;
+  type: string; // 'DISK'
   path: string;
   guid: string;
   status: string;
@@ -111,6 +111,12 @@ export interface DiskUpdate {
   difference?: number;
   informational?: number;
   enclosure?: EnclosureSlot;
+}
+
+export interface UnusedDisk extends Disk {
+  partitions: {
+    path: string;
+  }[];
 }
 
 /**

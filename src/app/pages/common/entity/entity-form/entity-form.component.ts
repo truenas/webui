@@ -54,15 +54,15 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   isNew = false;
   hasConf = true;
   wsResponse: any;
-  wsfg: any;
+  wsfg: FormControl;
   wsResponseIdx: any;
   queryResponse: any;
   saveSubmitText = T('Save');
   showPassword = false;
   successMessage = T('Settings saved.');
 
-  protected loaderOpen = false;
-  protected keepLoaderOpen = false;
+  loaderOpen = false;
+  keepLoaderOpen = false;
 
   get controls(): FieldConfig[] {
     return this.fieldConfig.filter(({ type }) => type !== 'button');
@@ -96,7 +96,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     private fb: FormBuilder,
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
-    protected loader: AppLoaderService,
+    public loader: AppLoaderService,
     private dialog: DialogService,
     public translate: TranslateService,
     private modalService: ModalService,
@@ -197,7 +197,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   async ngOnInit(): Promise<void> {
     // get system general setting
-    this.sysGeneralService.getAdvancedConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         if (this.conf.isBasicMode) {
           if (res.advancedmode) {
@@ -345,7 +345,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               this.conf.dataHandler(this);
             } else {
               for (const key in this.wsResponse) {
-                this.wsfg = this.formGroup.controls[key];
+                this.wsfg = this.formGroup.controls[key] as FormControl;
                 this.wsResponseIdx = this.wsResponse[key];
                 if (this.wsfg) {
                   const current_field = this.fieldConfig.find((control) => control.name === key);
@@ -415,6 +415,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     const payload = [];
     const call = this.conf.addCall;
     payload.push(body);
+
+    if (this.conf.isCreateJob) {
+      return this.ws.job(call, payload);
+    }
     return this.ws.call(call, payload);
   }
 
@@ -495,7 +499,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.loader.close();
             this.loaderOpen = false;
 
-            if (this.conf.isEditJob && res.error) {
+            if ((this.conf.isEditJob || this.conf.isCreateJob) && res.error) {
               if (res.exc_info && res.exc_info.extra) {
                 new EntityUtils().handleWSError(this, res);
               } else {

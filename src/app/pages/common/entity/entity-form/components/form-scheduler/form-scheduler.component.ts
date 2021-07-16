@@ -3,7 +3,7 @@ import {
   Component, OnInit, ViewChild, ElementRef, Renderer2,
   ChangeDetectorRef, AfterViewInit, AfterViewChecked,
 } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { MatMonthView } from '@angular/material/datepicker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -47,7 +47,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   @ViewChild('trigger', { static: false }) trigger: ElementRef;
   @ViewChild('preview', { static: false, read: ElementRef }) schedulePreview: ElementRef;
 
-  private control: any;
+  private control: AbstractControl;
 
   isOpen = false;
   formControl = new FormControl();
@@ -278,7 +278,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     // Set default value
     this._months = '*';
 
-    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.timezone = res.timezone;
       this.minDate = this.zonedTime;
       this.maxDate = dateFns.endOfMonth(this.minDate);

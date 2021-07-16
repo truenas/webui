@@ -3,7 +3,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { ConsolePanelModalDialog } from 'app/components/common/dialog/consolepanel/consolepanel-dialog.component';
+import { ConsolePanelModalDialog } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from '../ws.service';
 
@@ -30,7 +30,7 @@ export class AppLoaderComponent {
     private _dialog: MatDialog,
     private _ws: WebSocketService, private sysGeneralService: SystemGeneralService,
   ) {
-    this.sysGeneralService.getAdvancedConfig
+    this.sysGeneralService.getAdvancedConfig$
       .pipe(untilDestroyed(this))
       .subscribe((res) => {
         if (res.consolemsg) {

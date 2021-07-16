@@ -18,7 +18,7 @@ export class TooltipComponent {
   @ViewChild('tooltiptext', { static: true }) private tooltiptext: ElementRef;
 
   isShowTooltip: boolean;
-  tooltipMsgStyle: any;
+  tooltipMsgStyle: { [style: string]: string };
   isWizard = false;
   isSlideInForm = false;
 
@@ -82,7 +82,7 @@ export class TooltipComponent {
     }
   }
 
-  findParent(): any {
+  findParent(): HTMLElement {
     const formParent = this.tooltip.nativeElement.offsetParent;
     let card = formParent;
     if (this.tooltip.nativeElement.closest('mat-dialog-container')) {

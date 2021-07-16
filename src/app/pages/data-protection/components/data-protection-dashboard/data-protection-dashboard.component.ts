@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
@@ -18,16 +18,17 @@ import helptext_smart from 'app/helptext/data-protection/smart/smart';
 import globalHelptext from 'app/helptext/global-helptext';
 import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
-import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { SmartTestUi } from 'app/interfaces/smart-test.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { AppTableAction, InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -46,9 +47,9 @@ import {
   WebSocketService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { CloudCredentialService } from 'app/services/cloudcredential.service';
+import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { JobService } from 'app/services/job.service';
-import { KeychainCredentialService } from 'app/services/keychaincredential.services';
+import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 
@@ -84,7 +85,7 @@ enum TaskCardId {
 export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
   dataCards: TaskCard[] = [];
   onDestroy$ = new Subject();
-  disks: any[] = [];
+  disks: Disk[] = [];
   parent: DataProtectionDashboardComponent;
 
   // Components included in this dashboard
@@ -494,10 +495,10 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
       task.next_run = this.parent.taskService.getTaskNextRun(task.cron_schedule);
 
       if (task.job === null) {
-        task.state = { state: EntityJobState.Pending };
+        task.state = { state: JobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.parent.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
+        this.parent.job.getJobStatus(task.job.id).pipe(untilDestroyed(this.parent)).subscribe((job: Job) => {
           task.state = { state: job.state };
           task.job = job;
         });
@@ -515,7 +516,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
 
       if (task.job !== null) {
         task.state.state = task.job.state;
-        this.parent.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
+        this.parent.job.getJobStatus(task.job.id).pipe(untilDestroyed(this.parent)).subscribe((job: Job) => {
           task.state.state = job.state;
           task.job = job;
         });
@@ -535,8 +536,8 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
       } else if (test.disks.length) {
         test.disks = [
           test.disks
-            .map((identifier: any) => {
-              const fullDisk = this.parent.disks.find((item: any) => item.identifier === identifier);
+            .map((identifier) => {
+              const fullDisk = this.parent.disks.find((item) => item.identifier === identifier);
               if (fullDisk) {
                 identifier = fullDisk.devname;
               }
@@ -567,10 +568,10 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
       task.next_run = this.parent.taskService.getTaskNextRun(task.cron_schedule);
 
       if (task.job === null) {
-        task.state = { state: EntityJobState.Pending };
+        task.state = { state: JobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.parent.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
+        this.parent.job.getJobStatus(task.job.id).pipe(untilDestroyed(this.parent)).subscribe((job: Job) => {
           task.state = { state: job.state };
           task.job = job;
         });
@@ -597,7 +598,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             })
             .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
               if (res) {
-                row.state = { state: EntityJobState.Running };
+                row.state = { state: JobState.Running };
                 this.ws.call('replication.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
                   (jobId: number) => {
                     this.dialog.Info(
@@ -607,7 +608,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                       'info',
                       true,
                     );
-                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
+                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
                       row.state = { state: job.state };
                       row.job = job;
                     });
@@ -688,7 +689,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             })
             .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
               if (res) {
-                row.state = { state: EntityJobState.Running };
+                row.state = { state: JobState.Running };
                 this.ws.call('cloudsync.sync', [row.id]).pipe(untilDestroyed(this)).subscribe(
                   (jobId: number) => {
                     this.dialog.Info(
@@ -698,7 +699,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                       'info',
                       true,
                     );
-                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
+                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
                       row.state = { state: job.state };
                       row.job = job;
                     });
@@ -768,7 +769,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                       'info',
                       true,
                     );
-                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
+                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
                       row.state = { state: job.state };
                       row.job = job;
                     });
@@ -883,7 +884,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             })
             .pipe(untilDestroyed(this)).subscribe((run: boolean) => {
               if (run) {
-                row.state = { state: EntityJobState.Running };
+                row.state = { state: JobState.Running };
                 this.ws.call('rsynctask.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
                   (jobId: number) => {
                     this.dialog.Info(
@@ -893,7 +894,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                       'info',
                       true,
                     );
-                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
+                    this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
                       row.state = { state: job.state };
                       row.job = job;
                     });
@@ -910,10 +911,10 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
   }
 
   isActionVisible(name: string, row: any): boolean {
-    if (name === 'run' && row.job && row.job.state === EntityJobState.Running) {
+    if (name === 'run' && row.job && row.job.state === JobState.Running) {
       return false;
     }
-    if (name === 'stop' && (row.job ? row.job && row.job.state !== EntityJobState.Running : true)) {
+    if (name === 'stop' && (row.job ? row.job && row.job.state !== JobState.Running : true)) {
       return false;
     }
     return true;
@@ -936,7 +937,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
 
   stateButton(row: any): void {
     if (row.job) {
-      if (row.job.state === EntityJobState.Running) {
+      if (row.job.state === JobState.Running) {
         this.runningStateButton(row.job.id);
       } else {
         this.job.showLogs(row.job);

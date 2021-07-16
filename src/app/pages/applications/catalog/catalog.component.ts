@@ -5,12 +5,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
 import {
   chartsTrain, ixChartApp, officialCatalog, appImagePlaceholder,
 } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import helptext from 'app/helptext/apps/apps';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
@@ -44,7 +43,6 @@ export class CatalogComponent implements OnInit {
   filterString = '';
   private poolList: Option[] = [];
   private selectedPool = '';
-  settingsEvent: Subject<CoreEvent>;
   private kubernetesForm: KubernetesSettingsComponent;
   private chartReleaseForm: ChartReleaseAddComponent;
   private chartWizardComponent: ChartWizardComponent;
@@ -295,8 +293,7 @@ export class CatalogComponent implements OnInit {
     const pool = entityDialog.formGroup.controls['pools'].value;
     const dialogRef = self.mdDialog.open(EntityJobComponent, {
       data: {
-        title: (
-          helptext.choosePool.jobTitle),
+        title: (helptext.choosePool.jobTitle),
       },
       disableClose: true,
     });
@@ -311,7 +308,7 @@ export class CatalogComponent implements OnInit {
           '500px', 'info', true);
       });
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: string) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       new EntityUtils().handleWSError(self, err, self.dialogService);
     });
   }

@@ -2,12 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import { combineLatest, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import helptext from 'app/helptext/storage/volumes/volume-list';
@@ -28,9 +28,10 @@ import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { T } from '../../../../translate-marker';
-import { DatasetFormComponent } from '../datasets/dataset-form';
-import { ZvolFormComponent } from '../zvol/zvol-form';
+import { DatasetFormComponent } from '../datasets/dataset-form/dataset-form.component';
+import { ZvolFormComponent } from '../zvol/zvol-form/zvol-form.component';
 
+@UntilDestroy()
 @Component({
   selector: 'app-volumes-list',
   styleUrls: ['./volumes-list.component.scss'],
@@ -55,6 +56,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.http,
     this.validationService,
   );
+
+  viewingPermissionsForDataset: Dataset;
 
   actionComponent = {
     getActions: (row: Pool) => {
@@ -145,9 +148,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   constructor(
     protected core: CoreService,
     protected router: Router,
-    protected ws: WebSocketService,
-    protected dialogService: DialogService,
-    protected loader: AppLoaderService,
+    public ws: WebSocketService,
+    public dialogService: DialogService,
+    public loader: AppLoaderService,
     protected mdDialog: MatDialog,
     protected translate: TranslateService,
     public sorter: StorageService,
@@ -307,6 +310,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   }
 
   addZvol(id: string, isNew: boolean): void {
+    this.addZvolComponent = new ZvolFormComponent(this.router, this.aroute, this.ws, this.loader,
+      this.dialogService, this.storageService, this.translate, this.modalService);
     this.addZvolComponent.setParent(id);
     this.addZvolComponent.isNew = isNew;
     this.modalService.open('slide-in-form', this.addZvolComponent, id);
@@ -319,7 +324,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.modalService.open('slide-in-form', this.addDatasetFormComponent, id);
   }
 
-  editDataset(pool: any, id: string): void {
+  editDataset(pool: string, id: string): void {
     this.editDatasetFormComponent = new DatasetFormComponent(
       this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService,
     );
@@ -332,5 +337,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   createPool(): void {
     this.router.navigate(['/storage/manager']);
+  }
+
+  onPermissionsSidebarClosed(): void {
+    this.viewingPermissionsForDataset = null;
   }
 }

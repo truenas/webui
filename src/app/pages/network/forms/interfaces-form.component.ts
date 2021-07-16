@@ -1,14 +1,16 @@
 import { Component, OnDestroy } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import isCidr from 'is-cidr';
 import * as _ from 'lodash';
-import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -28,12 +30,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   queryKey = 'id';
   isEntity = true;
   protected is_ha = false;
-  private aliases_fc: any;
+  private aliases_fc: FieldConfig;
   protected ipPlaceholder: string;
   protected failoverPlaceholder: string;
   saveSubmitText = helptext.int_save_button;
   protected offload_warned = false;
-  protected offload_warning_sub: any;
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
@@ -286,24 +287,20 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   private lag_fieldset: FieldSet;
   private bridge_fieldset: FieldSet;
   private failover_fieldset: FieldSet;
-  private vlan_pcp: any;
-  private vlan_pint: any;
-  private lag_ports: any;
-  private lag_protocol: any;
-  private bridge_members: any;
-  private type: any;
-  private type_fg: any;
-  private type_subscription: any;
+  private vlan_pint: FieldConfig;
+  private lag_ports: FieldConfig;
+  private lag_protocol: FieldConfig;
+  private bridge_members: FieldConfig;
+  private type: FieldConfig;
+  private type_fg: FormControl;
   private entityForm: EntityFormComponent;
   //
-  protected ipListControl: any;
-  protected failover_group: any;
-  protected failover_vhid: any;
+  protected ipListControl: FieldConfig;
+  protected failover_group: FieldConfig;
+  protected failover_vhid: FieldConfig;
 
   save_button_enabled: boolean;
 
-  protected aliases_subscription: any;
-  //
   confirmSubmit = false;
   confirmSubmitDialog = {
     title: T('Save Network Interface Changes'),
@@ -320,7 +317,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     super();
   }
 
-  setType(type: string): void {
+  setType(type: NetworkInterfaceType): void {
     const is_vlan = (type === NetworkInterfaceType.Vlan);
     const is_bridge = (type === NetworkInterfaceType.Bridge);
     const is_lagg = (type === NetworkInterfaceType.LinkAggregation);
@@ -347,7 +344,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.vlan_pint = _.find(this.vlan_fieldset.config, { name: 'vlan_parent_interface' });
   }
 
-  afterInit(entityForm: any): void {
+  afterInit(entityForm: EntityFormComponent): void {
     if (entityForm.pk !== undefined) {
       this.vlan_pint.type = 'input';
       this.title = helptext.title_edit;
@@ -397,7 +394,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     }
     this.aliases_fc = _.find(this.fieldConfig, { name: 'aliases' });
 
-    this.offload_warning_sub = entityForm.formGroup.controls['disable_offload_capabilities'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['disable_offload_capabilities'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res && !this.offload_warned) {
         this.dialog.confirm({
           title: helptext.disable_offload_capabilities_warning_title,
@@ -422,7 +419,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           entityForm.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
         }
         if (is_ha) {
-          this.aliases_subscription = this.entityForm.formGroup.controls['aliases'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+          this.entityForm.formGroup.controls['aliases'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
             let v6_found = false;
             let mismatch_found = false;
             for (let i = 0; i < res.length; i++) {
@@ -460,18 +457,18 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       });
     }
     if (entityForm.isNew) {
-      this.type_fg = entityForm.formGroup.controls['type'];
-      this.type_subscription = this.type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((type: any) => {
+      this.type_fg = entityForm.formGroup.controls['type'] as FormControl;
+      this.type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((type: NetworkInterfaceType) => {
         this.setType(type);
       });
-      this.networkService.getVlanParentInterfaceChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-        for (const key in res) {
-          this.vlan_pint.options.push({ label: res[key], value: key });
+      this.networkService.getVlanParentInterfaceChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
+        for (const key in choices) {
+          this.vlan_pint.options.push({ label: choices[key], value: key });
         }
       });
-      this.networkService.getLaggPortsChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-        for (const key in res) {
-          this.lag_ports.options.push({ label: res[key], value: key });
+      this.networkService.getLaggPortsChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
+        for (const key in choices) {
+          this.lag_ports.options.push({ label: choices[key], value: key });
         }
       });
       this.networkService.getLaggProtocolChoices().pipe(untilDestroyed(this)).subscribe((res) => {
@@ -479,9 +476,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           this.lag_protocol.options.push({ label: res[i], value: res[i] });
         }
       });
-      this.networkService.getBridgeMembersChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-        for (const key in res) {
-          this.bridge_members.options.push({ label: res[key], value: key });
+      this.networkService.getBridgeMembersChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
+        for (const key in choices) {
+          this.bridge_members.options.push({ label: choices[key], value: key });
         }
       });
     } else {
@@ -535,30 +532,29 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     return data;
   }
 
-  resourceTransformIncomingRestData(data: any): any {
-    const aliases = data['aliases'];
-    const a: any[] = [];
-    const failover_aliases = data['failover_aliases'];
-    const failover_virtual_aliases = data['failover_virtual_aliases'];
+  resourceTransformIncomingRestData(data: NetworkInterface): any {
+    const aliases = data.aliases;
+    const transformedAliases: any[] = [];
+    const failover_aliases = data.failover_aliases;
+    const failover_virtual_aliases = data.failover_virtual_aliases;
     for (let i = 0; i < aliases.length; i++) {
-      a[i] = {};
-      a[i].address = aliases[i].address + '/' + aliases[i].netmask;
+      transformedAliases[i] = {};
+      transformedAliases[i].address = aliases[i].address + '/' + aliases[i].netmask;
       if (failover_aliases && failover_aliases[i]) {
-        a[i].failover_address = failover_aliases[i].address;
+        transformedAliases[i].failover_address = failover_aliases[i].address;
       }
       if (failover_virtual_aliases && failover_virtual_aliases[i]) {
-        a[i].failover_virtual_address = failover_virtual_aliases[i].address;
+        transformedAliases[i].failover_virtual_address = failover_virtual_aliases[i].address;
       }
     }
-    data['aliases'] = a;
 
-    const type = data['type'];
-    const id = data['id'];
+    const type = data.type;
+    const id = data.id;
     this.setType(type);
     if (type === NetworkInterfaceType.LinkAggregation) {
-      this.networkService.getLaggPortsChoices(id).pipe(untilDestroyed(this)).subscribe((res) => {
-        for (const key in res) {
-          this.lag_ports.options.push({ label: res[key], value: key });
+      this.networkService.getLaggPortsChoices(id).pipe(untilDestroyed(this)).subscribe((choices) => {
+        for (const key in choices) {
+          this.lag_ports.options.push({ label: choices[key], value: key });
         }
       });
 
@@ -568,28 +564,22 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         }
       });
     } else if (type === NetworkInterfaceType.Bridge) {
-      this.networkService.getBridgeMembersChoices(id).pipe(untilDestroyed(this)).subscribe((res) => {
-        for (const key in res) {
-          this.bridge_members.options.push({ label: res[key], value: key });
+      this.networkService.getBridgeMembersChoices(id).pipe(untilDestroyed(this)).subscribe((choices) => {
+        for (const key in choices) {
+          this.bridge_members.options.push({ label: choices[key], value: key });
         }
       });
     } else if (type === NetworkInterfaceType.Vlan) {
       this.entityForm.setDisabled('vlan_parent_interface', true);
     }
 
-    return data;
+    return {
+      ...data,
+      aliases: transformedAliases,
+    };
   }
 
   afterSave(): void {
     this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
-  }
-
-  ngOnDestroy(): void {
-    if (this.type_subscription) {
-      this.type_subscription.unsubscribe();
-    }
-    if (this.aliases_subscription) {
-      this.aliases_subscription.unsubscribe();
-    }
   }
 }

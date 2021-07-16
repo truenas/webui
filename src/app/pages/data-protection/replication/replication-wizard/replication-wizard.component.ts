@@ -9,10 +9,10 @@ import { take } from 'rxjs/operators';
 import { CipherType } from 'app/enums/cipher-type.enum';
 import { DatasetSource } from 'app/enums/dataset-source.enum';
 import { Direction } from 'app/enums/direction.enum';
-import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
+import { ReplicationEncryptionKeyFormat } from 'app/enums/replication-encryption-key-format.enum';
 import { SnapshotNamingOption } from 'app/enums/replication.interface';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
@@ -61,7 +61,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   saveSubmitText = T('START REPLICATION');
 
   protected entityWizard: EntityWizardComponent;
-  custActions: any[] = [{
+  custActions = [{
     id: 'advanced_add',
     name: T('Advanced Replication Creation'),
     function: () => {
@@ -362,10 +362,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.encryption_key_format_tooltip,
               options: [{
                 label: T('HEX'),
-                value: EncryptionKeyFormat.Hex,
+                value: ReplicationEncryptionKeyFormat.Hex,
               }, {
                 label: T('PASSPHRASE'),
-                value: EncryptionKeyFormat.Passphrase,
+                value: ReplicationEncryptionKeyFormat.Passphrase,
               }],
               relation: [{
                 action: RelationAction.Show,
@@ -389,7 +389,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                   value: true,
                 }, {
                   name: 'encryption_key_format',
-                  value: EncryptionKeyFormat.Hex,
+                  value: ReplicationEncryptionKeyFormat.Hex,
                 }],
               }],
             },
@@ -406,7 +406,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                   value: true,
                 }, {
                   name: 'encryption_key_format',
-                  value: EncryptionKeyFormat.Hex,
+                  value: ReplicationEncryptionKeyFormat.Hex,
                 }, {
                   name: 'encryption_key_generate',
                   value: false,
@@ -428,7 +428,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                   value: true,
                 }, {
                   name: 'encryption_key_format',
-                  value: EncryptionKeyFormat.Passphrase,
+                  value: ReplicationEncryptionKeyFormat.Passphrase,
                 }],
               }],
             },
@@ -639,7 +639,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     },
   ];
 
-  protected dialogFieldConfig = [
+  protected dialogFieldConfig: FieldConfig[] = [
     {
       type: 'input',
       name: 'name',
@@ -802,11 +802,9 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     private ws: WebSocketService, private replicationService: ReplicationService,
     private datePipe: DatePipe, private entityFormService: EntityFormService,
     private modalService: ModalService) {
-    this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe(
-      (res: any[]) => {
-        this.namesInUse.push(...res.map((replication) => replication.name));
-      },
-    );
+    this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe((res) => {
+      this.namesInUse.push(...res.map((replication) => replication.name));
+    });
     this.modalService.getRow$.pipe(
       take(1),
       untilDestroyed(this),
@@ -870,7 +868,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       ssh_credentials_source_field.options.push({ label: T('Create New'), value: 'NEW' });
       ssh_credentials_target_field.options.push({ label: T('Create New'), value: 'NEW' });
     });
-
+s
     this.entityWizard.formArray.get([0]).get('exist_replication').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value !== null) {
         this.loadOrClearReplicationTask(value);
@@ -1032,8 +1030,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     });
   }
 
-  setDisable(field: any, disabled: boolean, isHidden: boolean, stepIndex: number): void {
-    const control: any = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
+  setDisable(field: string, disabled: boolean, isHidden: boolean, stepIndex: number): void {
+    const control: FieldConfig = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
     control['isHidden'] = isHidden;
     control.disabled = disabled;
     disabled
@@ -1213,7 +1211,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       };
       if (payload.encryption) {
         payload['encryption_key_format'] = data['encryption_key_format'];
-        payload['encryption_key'] = data['encryption_key_format'] === EncryptionKeyFormat.Passphrase
+        payload['encryption_key'] = data['encryption_key_format'] === ReplicationEncryptionKeyFormat.Passphrase
           ? data['encryption_key_passphrase']
           : (data['encryption_key_generate']
             ? this.replicationService.generateEncryptionHexKey(64)
@@ -1268,12 +1266,12 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             }
           }
           if (hasBadSnapshots) {
-            return this.dialogService.confirm(
-              helptext.clearSnapshotDialog_title,
-              helptext.clearSnapshotDialog_content,
-            ).toPromise().then(
-              (dialog_res: any) => {
-                payload['allow_from_scratch'] = dialog_res;
+            return this.dialogService.confirm({
+              title: helptext.clearSnapshotDialog_title,
+              message: helptext.clearSnapshotDialog_content,
+            }).toPromise().then(
+              (dialogResult) => {
+                payload['allow_from_scratch'] = dialogResult;
                 return this.ws.call((this.createCalls as any)[item], [payload]).toPromise();
               },
             );
@@ -1283,7 +1281,6 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         () =>
         // show error ?
           this.ws.call((this.createCalls as any)[item], [payload]).toPromise(),
-
       );
     }
   }
@@ -1352,7 +1349,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
   }
 
-  createSSHConnection(activedField: any): void {
+  createSSHConnection(activedField: string): void {
     const self = this;
 
     const conf: DialogFormConfiguration = {

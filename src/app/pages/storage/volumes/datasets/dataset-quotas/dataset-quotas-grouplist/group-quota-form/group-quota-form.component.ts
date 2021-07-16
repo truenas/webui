@@ -1,4 +1,6 @@
-import { Component, IterableDiffers } from '@angular/core';
+import {
+  Component, DoCheck, IterableDiffer, IterableDiffers,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -17,7 +19,7 @@ import {
   selector: 'app-group-quota-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class GroupQuotaFormComponent implements FormConfiguration {
+export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
   isEntity = true;
   entityForm: EntityFormComponent;
   pk: string;
@@ -27,12 +29,12 @@ export class GroupQuotaFormComponent implements FormConfiguration {
   isNew = true;
   private dq: string;
   private oq: string;
-  private selectedEntriesField: any;
+  private selectedEntriesField: FieldConfig;
   private selectedEntriesValue: any;
   private entryErrs: any;
   private entryErrBool = false;
   save_button_enabled = false;
-  private differ: any;
+  private differ: IterableDiffer<unknown>;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
     {

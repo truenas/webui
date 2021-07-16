@@ -1,13 +1,13 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import {
   EntityAction,
   EntityRowDetails,
 } from 'app/pages/common/entity/entity-table/entity-row-details.interface';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { WebSocketService, StorageService, SystemGeneralService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { SnapshotListComponent } from '../snapshot-list.component';
@@ -19,7 +19,7 @@ import { SnapshotListComponent } from '../snapshot-list.component';
     <app-entity-row-details [conf]="this"></app-entity-row-details>
   `,
 })
-export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string }> {
+export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string }>, OnInit {
   readonly entityName: 'snapshot';
   // public locale: string;
   timezone: string;
@@ -34,7 +34,7 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
     protected storageService: StorageService, private sysGeneralService: SystemGeneralService) {}
 
   ngOnInit(): void {
-    this.sysGeneralService.getGeneralConfig.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.timezone = res.timezone;
       this._ws
         .call('zfs.snapshot.query', [[['id', '=', this.config.name]]])
@@ -53,11 +53,11 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
             },
             {
               label: 'Used',
-              value: this.storageService.convertBytestoHumanReadable(snapshot.used.rawvalue),
+              value: this.storageService.convertBytestoHumanReadable((snapshot as any).used.rawvalue),
             },
             {
               label: 'Referenced',
-              value: this.storageService.convertBytestoHumanReadable(snapshot.referenced.rawvalue),
+              value: this.storageService.convertBytestoHumanReadable((snapshot as any).referenced.rawvalue),
             },
           ];
         });

@@ -1,5 +1,5 @@
 import { Validators } from '@angular/forms';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
+import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 import { T } from 'app/translate-marker';
 
 export default {
@@ -39,6 +39,18 @@ export default {
   dataset_form_refquota_placeholder: T('Quota for this dataset'),
   dataset_form_refquota_tooltip: T('<i>0</i> disables quotas. Specify a maximum allowed\
  space for this dataset.'),
+
+  acl_type_change_warning: T('Changes to ACL type affect how on-disk ZFS ACL is \
+ written and read.\nWhen the ACL type is changed from POSIX to NFSv4, \
+ no migration is performed for default and access ACLs encoded in the \
+ posix1e acl extended attributes to native ZFS ACLs.\nWhen ACL type is \
+ changed from NFSv4 to POSIX, native ZFS ACLs are not converted to \
+ posix1e extended attributes, but the native ACL will be used internally \
+ by ZFS for access checks.\n\nThis means that the user must manually set \
+ new ACLs recursively on the dataset after ACL type changes in order to \
+ avoid unexpected permissions behavior.\n\nThis action will be destructive, \
+ and so it is advised to take a ZFS snapshot of the dataset prior to ACL \
+ type changes and permissions modifications.'),
 
   dataset_form_refquota_warning_placeholder: T('Quota warning alert at, %'),
   dataset_form_refquota_warning_tooltip: T('Apply the same quota warning \

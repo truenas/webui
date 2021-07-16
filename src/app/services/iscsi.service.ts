@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Choices } from 'app/interfaces/choices.interface';
 import {
   IscsiAuthAccess, IscsiExtent,
   IscsiInitiatorGroup,
-  IscsiIpChoices,
   IscsiPortal,
   IscsiTarget,
 } from 'app/interfaces/iscsi.interface';
@@ -15,7 +15,7 @@ export class IscsiService {
 
   constructor(protected ws: WebSocketService) {}
 
-  getIpChoices(): Observable<IscsiIpChoices> {
+  getIpChoices(): Observable<Choices> {
     return this.ws.call('iscsi.portal.listen_ip_choices');
   }
 
@@ -27,8 +27,8 @@ export class IscsiService {
     return this.ws.call('iscsi.initiator.query', []);
   }
 
-  getExtentDevices(): Observable<any[]> {
-    return this.ws.call('iscsi.extent.disk_choices', []);
+  getExtentDevices(): Observable<Choices> {
+    return this.ws.call('iscsi.extent.disk_choices');
   }
 
   getExtents(): Observable<IscsiExtent[]> {

@@ -1,19 +1,13 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { SmartPowerMode } from 'app/enums/smart-power.mode';
 import helptext from 'app/helptext/services/components/service-smart';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService } from 'app/services';
 import { T } from 'app/translate-marker';
-
-enum PowerMode {
-  Never = 'NEVER',
-  Sleep = 'SLEEP',
-  Standby = 'STANDBY',
-  Idle = 'IDLE',
-}
 
 @Component({
   selector: 'smart-edit',
@@ -44,10 +38,10 @@ export class ServiceSMARTComponent implements FormConfiguration {
           placeholder: helptext.smart_powermode_placeholder,
           tooltip: helptext.smart_powermode_tooltip,
           options: [
-            { label: T('Never'), value: PowerMode.Never },
-            { label: T('Sleep'), value: PowerMode.Sleep },
-            { label: T('Standby'), value: PowerMode.Standby },
-            { label: T('Idle'), value: PowerMode.Idle },
+            { label: T('Never'), value: SmartPowerMode.Never },
+            { label: T('Sleep'), value: SmartPowerMode.Sleep },
+            { label: T('Standby'), value: SmartPowerMode.Standby },
+            { label: T('Idle'), value: SmartPowerMode.Idle },
           ],
           required: true,
           validation: [Validators.required],

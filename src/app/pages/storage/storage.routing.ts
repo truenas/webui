@@ -1,35 +1,35 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { DatasetNfsAclComponent } from 'app/pages/storage/volumes/datasets/dataset-nfs-acl/dataset-nfs-acl.component';
 import { DatasetQuotasGrouplistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { DatasetQuotasUserlistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
-import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volumeaddkey-form';
-import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volumechangekey-form';
-import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volumecreatekey-form';
-import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volumerekey-form';
-import { ViewEnclosureComponent } from 'app/pages/system/viewenclosure/view-enclosure.component';
-import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
-import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
-import { DiskBulkEditComponent } from './disks/disk-bulk-edit';
-import { DiskFormComponent } from './disks/disk-form';
-import { DiskListComponent } from './disks/disk-list';
+import { DatasetTrivialPermissionsComponent } from 'app/pages/storage/volumes/datasets/dataset-trivial-permissions/dataset-trivial-permissions.component';
+import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volume-addkey-form/volume-addkey-form.component';
+import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volume-changekey-form/volume-changekey-form.component';
+import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volume-createkey-form/volume-createkey-form.component';
+import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volume-rekey-form/volume-rekey-form.component';
+import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/view-enclosure.component';
+import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
+import { DiskFormComponent } from './disks/disk-form/disk-form.component';
+import { DiskListComponent } from './disks/disk-list/disk-list.component';
 import { SmartResultsComponent } from './disks/smart-results/smart-results.component';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
 import { MultipathsComponent } from './multipaths/multipaths.component';
-import { SnapshotAddComponent } from './snapshots/snapshot-add';
-import { SnapshotCloneComponent } from './snapshots/snapshot-clone';
-import { SnapshotListComponent } from './snapshots/snapshot-list';
-import { DatasetAclComponent } from './volumes/datasets/dataset-acl';
-import { DatasetFormComponent } from './volumes/datasets/dataset-form';
-import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions';
-import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl';
+import { SnapshotAddComponent } from './snapshots/snapshot-add/snapshot-add.component';
+import { SnapshotCloneComponent } from './snapshots/snapshot-clone/snapshot-clone.component';
+import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.component';
+import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot';
+import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list';
+import { DatasetFormComponent } from './volumes/datasets/dataset-form/dataset-form.component';
+import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl/dataset-posix-acl.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
-import { DatasetUnlockComponent } from './volumes/datasets/dataset-unlock';
-import { ManagerComponent } from './volumes/manager';
-import { VolumeImportWizardComponent } from './volumes/volume-import-wizard';
-import { VolumeStatusComponent } from './volumes/volume-status';
+import { DatasetUnlockComponent } from './volumes/datasets/dataset-unlock/dataset-unlock.component';
+import { ManagerComponent } from './volumes/manager/manager.component';
+import { VolumeImportWizardComponent } from './volumes/volume-import-wizard/volume-import-wizard.component';
+import { VolumeStatusComponent } from './volumes/volume-status/volume-status.component';
 import { VolumesListComponent } from './volumes/volumes-list/volumes-list.component';
-import { ZvolFormComponent } from './volumes/zvol/zvol-form';
+import { ZvolFormComponent } from './volumes/zvol/zvol-form/zvol-form.component';
 
 export const routes: Routes = [
   {
@@ -67,7 +67,7 @@ export const routes: Routes = [
           },
           {
             path: 'permissions/:pk',
-            component: DatasetPermissionsComponent,
+            component: DatasetTrivialPermissionsComponent,
             data: { title: 'Edit Permissions', breadcrumb: 'Edit Permissions' },
           },
           {
@@ -92,7 +92,7 @@ export const routes: Routes = [
           },
           {
             path: 'id/:pk/dataset/acl/:path',
-            component: DatasetAclComponent,
+            component: DatasetNfsAclComponent,
             data: { title: 'Edit ACL', breadcrumb: 'Edit ACL' },
           },
           {
@@ -174,17 +174,17 @@ export const routes: Routes = [
         children: [
           {
             path: '',
-            component: VMwareSnapshotListComponent,
+            component: VmwareSnapshotListComponent,
             data: { title: 'VMware Snapshots', breadcrumb: 'VMware Snapshots' },
           },
           {
             path: 'add',
-            component: VMwareSnapshotFormComponent,
+            component: VmwareSnapshotFormComponent,
             data: { title: 'Add', breadcrumb: 'Add' },
           },
           {
             path: 'edit/:pk',
-            component: VMwareSnapshotFormComponent,
+            component: VmwareSnapshotFormComponent,
             data: { title: 'Edit', breadcrumb: 'Edit' },
           },
 

@@ -11,10 +11,11 @@ import { Subject, Observable } from 'rxjs';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import helptext from 'app/helptext/shell/shell';
 import { CoreEvent } from 'app/interfaces/events';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
@@ -41,10 +42,8 @@ export class PodShellComponent implements OnInit, OnDestroy {
   token: any;
   xterm: any;
   resize_terminal = true;
-  private shellSubscription: any;
-  private shellConnectedSubscription: any;
-  private fitAddon: any;
-  formEvents: Subject<CoreEvent>;
+  private fitAddon: FitAddon;
+  formEvent$: Subject<CoreEvent>;
 
   usage_tooltip = helptext.usage_tooltip;
 
@@ -55,7 +54,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
   protected pod_name: string;
   protected command: string;
   protected conatiner_name: string;
-  protected podDetails: any;
+  protected podDetails: Record<string, string[]>;
 
   protected route_success: string[] = ['apps'];
 
@@ -90,7 +89,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
           this.getAuthToken().pipe(untilDestroyed(this)).subscribe((token) => {
             this.initializeWebShell(token);
 
-            this.shellSubscription = this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe((value: any) => {
+            this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe((value: any) => {
               if (value !== undefined) {
                 if (_.trim(value) == 'logout') {
                   this.xterm.destroy();
@@ -108,18 +107,11 @@ export class PodShellComponent implements OnInit, OnDestroy {
     if (this.ss.connected) {
       this.ss.socket.close();
     }
-    if (this.shellSubscription) {
-      this.shellSubscription.unsubscribe();
-    }
-
-    if (this.shellConnectedSubscription) {
-      this.shellConnectedSubscription.unsubscribe();
-    }
   }
 
   refreshToolbarButtons(): void {
-    this.formEvents = new Subject();
-    this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.formEvent$ = new Subject();
+    this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'restore') {
         this.resetDefault();
         this.refreshToolbarButtons();
@@ -170,7 +162,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
     const actionsConfig = {
       actionType: EntityToolbarComponent,
       actionConfig: {
-        target: this.formEvents,
+        target: this.formEvent$,
         controls,
       },
     };
@@ -281,7 +273,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
     this.initializeTerminal();
     this.refreshToolbarButtons();
 
-    this.shellConnectedSubscription = this.ss.shellConnected.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.ss.shellConnected.pipe(untilDestroyed(this)).subscribe((res: any) => {
       this.shellConnected = res.connected;
       this.connectionId = res.id;
       this.updateTerminal();
@@ -323,7 +315,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
         placeholder: helptext.podConsole.chooseConatiner.placeholder,
         required: true,
         value: this.conatiner_name,
-        options: this.podDetails[this.pod_name].map((item: any) => ({
+        options: this.podDetails[this.pod_name].map((item) => ({
           label: item,
           value: item,
         })),
@@ -345,7 +337,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
     this.dialogService.dialogForm(this.choosePod, true);
   }
 
-  onChooseShell(entityDialog: any): void {
+  onChooseShell(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     self.pod_name = entityDialog.formGroup.controls['pods'].value;
     self.conatiner_name = entityDialog.formGroup.controls['containers'].value;

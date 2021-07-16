@@ -10,21 +10,22 @@ import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { GpuDevice } from 'app/interfaces/gpu-device.interface';
 import { EmptyType, EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { InitshutdownFormComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-form/initshutdown-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
+import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
   WebSocketService,
   SystemGeneralService,
@@ -60,7 +61,7 @@ enum CardId {
   providers: [DatePipe, UserService],
 })
 export class AdvancedSettingsComponent implements OnInit {
-  dataCards: any[] = [];
+  dataCards: DataCard[] = [];
   configData: AdvancedConfig;
   syslog: boolean;
   systemDatasetPool: string;
@@ -84,7 +85,7 @@ export class AdvancedSettingsComponent implements OnInit {
     message: T('To configure sysctls, click the "Add" button.'),
   };
   isHA = false;
-  formEvents: Subject<CoreEvent>;
+  formEvent$: Subject<CoreEvent>;
   actionsConfig: any;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
 
@@ -208,8 +209,8 @@ export class AdvancedSettingsComponent implements OnInit {
       this.refreshForms();
     });
 
-    this.formEvents = new Subject();
-    this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.formEvent$ = new Subject();
+    this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.save_debug) {
         this.saveDebug();
       }
@@ -219,7 +220,7 @@ export class AdvancedSettingsComponent implements OnInit {
     const actionsConfig = {
       actionType: EntityToolbarComponent,
       actionConfig: {
-        target: this.formEvents,
+        target: this.formEvent$,
         controls: [
           {
             name: 'save_debug',
@@ -416,7 +417,7 @@ export class AdvancedSettingsComponent implements OnInit {
         .Info(helptext_system_advanced.first_time.title, helptext_system_advanced.first_time.message)
         .pipe(untilDestroyed(this)).subscribe(() => {
           if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
-            this.sysGeneralService.sendConfigData(this.configData);
+            this.sysGeneralService.sendConfigData(this.configData as any);
           }
 
           this.modalService.open('slide-in-form', addComponent, id);
@@ -424,14 +425,14 @@ export class AdvancedSettingsComponent implements OnInit {
         });
     } else {
       if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
-        this.sysGeneralService.sendConfigData(this.configData);
+        this.sysGeneralService.sendConfigData(this.configData as any);
       }
       this.modalService.open('slide-in-form', addComponent, id);
     }
   }
 
   saveDebug(): void {
-    this.ws.call('system.info', []).pipe(untilDestroyed(this)).subscribe((systemInfo) => {
+    this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
       let fileName = '';
       let mimeType = 'application/gzip';
       if (systemInfo) {
@@ -456,7 +457,7 @@ export class AdvancedSettingsComponent implements OnInit {
           untilDestroyed(this),
         ).subscribe(() => {
           this.ws.call('core.download', ['system.debug', [], fileName]).pipe(untilDestroyed(this)).subscribe(
-            (res: any) => {
+            (res) => {
               const url = res[1];
               let failed = false;
               this.storage.streamDownloadFile(this.http, url, fileName, mimeType).pipe(untilDestroyed(this)).subscribe(

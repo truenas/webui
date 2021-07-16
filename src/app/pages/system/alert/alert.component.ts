@@ -3,9 +3,11 @@ import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { AlertLevel } from 'app/enums/alert-level.enum';
+import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import helptext from 'app/helptext/system/alert-settings';
+import { AlertCategory } from 'app/interfaces/alert.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
@@ -31,7 +33,7 @@ import { T } from 'app/translate-marker';
   providers: [EntityFormService],
 })
 export class AlertConfigComponent implements OnInit {
-  formEvents: Subject<CoreEvent>;
+  formEvent$: Subject<CoreEvent>;
   protected route_success = ['system', 'alertsettings'];
   protected queryCall: 'alertclasses.config' = 'alertclasses.config';
   protected editCall: 'alertclasses.update' = 'alertclasses.update';
@@ -64,14 +66,14 @@ export class AlertConfigComponent implements OnInit {
 
   ngOnInit(): void {
     this.loader.open();
-    this.ws.call('alert.list_policies', []).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        for (let i = 0; i < res.length; i++) {
-          let label = res[i];
-          if (res[i] === 'IMMEDIATELY') {
-            label = res[i] + ' (Default)';
+    this.ws.call('alert.list_policies').pipe(untilDestroyed(this)).subscribe(
+      (policies) => {
+        for (let i = 0; i < policies.length; i++) {
+          let label: string = policies[i];
+          if (policies[i] === AlertPolicy.Immediately) {
+            label = policies[i] + ' (Default)';
           }
-          this.settingOptions.push({ label, value: res[i] });
+          this.settingOptions.push({ label, value: policies[i] });
         }
       },
       (error) => {
@@ -87,8 +89,8 @@ export class AlertConfigComponent implements OnInit {
       .toPromise()
       .then((categories) => {
         this.addButtons(categories);
-        categories.forEach((category: any) => {
-          const config: any[] = [];
+        categories.forEach((category) => {
+          const config: FieldConfig[] = [];
           for (let i = 0; i < category.classes.length; i++) {
             const c = category.classes[i];
             const warningOptions = [];
@@ -117,11 +119,15 @@ export class AlertConfigComponent implements OnInit {
                 placeholder: T('Set Frequency'),
                 tooltip: helptext.policy_tooltip,
                 options: this.settingOptions,
-                value: 'IMMEDIATELY',
+                value: AlertPolicy.Immediately,
               },
             );
 
-            this.defaults.push({ id: c.id, level: c.level, policy: 'IMMEDIATELY' });
+            this.defaults.push({
+              id: c.id,
+              level: c.level,
+              policy: AlertPolicy.Immediately,
+            });
           }
 
           const fieldSet = {
@@ -165,13 +171,13 @@ export class AlertConfigComponent implements OnInit {
       });
   }
 
-  addButtons(categories: any[]): void {
+  addButtons(categories: AlertCategory[]): void {
     const options: Option[] = [];
     categories.forEach((category, index) => {
       options.push({ label: category.title, value: index });
     });
-    this.formEvents = new Subject();
-    this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.formEvent$ = new Subject();
+    this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'save') {
         this.onSubmit();
       } else {
@@ -183,7 +189,7 @@ export class AlertConfigComponent implements OnInit {
     const actionsConfig = {
       actionType: EntityToolbarComponent,
       actionConfig: {
-        target: this.formEvents,
+        target: this.formEvent$,
         controls: [
           {
             name: 'save',

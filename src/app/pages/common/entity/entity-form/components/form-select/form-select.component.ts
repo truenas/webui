@@ -1,13 +1,14 @@
 import {
   Component, ViewChild, AfterViewInit, AfterViewChecked, ChangeDetectorRef,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelect, MatSelectChange } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { EntityUtils, NULL_VALUE } from 'app/pages/common/entity/utils';
@@ -24,7 +25,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
-  control: any;
+  control: AbstractControl;
 
   @ViewChild('selectTrigger', { static: true }) matSelect: MatSelect;
   @ViewChild('field', { static: true }) field: MatFormField;
@@ -67,7 +68,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
 
     // When the default value is null, Change it to 'null_value' string
     if (this.control.value === null) {
-      this.control.value = NULL_VALUE;
+      (this.control as any).value = NULL_VALUE;
     }
 
     // if control has a value on init
@@ -85,7 +86,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((evt: any) => {
       // When set the value to null, Change it to 'null_value' string
       if (this.control.value === null) {
-        this.control.value = NULL_VALUE;
+        (this.control as any).value = NULL_VALUE;
       }
 
       if (evt) {
@@ -143,7 +144,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
         },
       ],
       saveButtonText: T('OK'),
-      customSubmit: (entityDialog: any) => {
+      customSubmit: (entityDialog: EntityDialogComponent) => {
         entityDialog.dialogRef.close(true);
         if (entityDialog.formValue.disable_alert) {
           this.disableAlert = true;

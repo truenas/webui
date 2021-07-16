@@ -19,18 +19,14 @@ module.exports = {
       },
       "extends": [
         "airbnb-typescript/base",
+        "plugin:@angular-eslint/recommended"
       ],
       "plugins": [
         "rxjs",
         "rxjs-angular",
+        "unicorn"
       ],
       "rules": {
-        // TODO: Enable later when type information is available
-        "@typescript-eslint/dot-notation": "off",
-        "@typescript-eslint/no-implied-eval": "off",
-        "@typescript-eslint/no-throw-literal": "off",
-        "@typescript-eslint/return-await": "off",
-
         // TODO: Conflicts with ngx-translate-extract
         "prefer-template": "off",
 
@@ -111,9 +107,16 @@ module.exports = {
         "no-async-promise-executor": "off",
         "no-bitwise": "off",
         "import/no-mutable-exports": "off",
+        "@typescript-eslint/member-ordering": "off",
+
+        // Other temporary disables
+        "@angular-eslint/component-class-suffix": "off",
+        "@angular-eslint/no-input-rename": "off",
+        "@typescript-eslint/dot-notation": "off",
 
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",
+        "@angular-eslint/use-lifecycle-interface": ["error"],
 
         // Extra rules
         "@typescript-eslint/array-type": "error",
@@ -126,8 +129,13 @@ module.exports = {
         "@typescript-eslint/explicit-function-return-type": ["error", { allowExpressions: true }],
         "@typescript-eslint/no-unused-vars": "off",
         "unused-imports/no-unused-imports": "error",
-        "unused-imports/no-unused-vars": ["error", { vars: "local", args: "after-used" }],
+        "unused-imports/no-unused-vars": ["error", {
+          vars: "local",
+          args: "after-used",
+          argsIgnorePattern: "^_$"
+        }],
         "@typescript-eslint/ban-types": ["error"],
+        "unicorn/filename-case": ["error", { case: "kebabCase"}],
 
         // RxJS rules
         "rxjs/no-unsafe-takeuntil": ["error", {
@@ -138,7 +146,14 @@ module.exports = {
           "checkComplete": false,
           "checkDecorators": ["Component"], // default
           "checkDestroy": false
-        }]
+        }],
+        "rxjs/finnish": ["error", {
+          "parameters": true,
+          "properties": false, // TODO: Should be true, hard to implement now.
+          "variables": true,
+          "functions": false,
+          "methods": false,
+        }],
       }
     },
     {

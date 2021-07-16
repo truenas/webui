@@ -8,7 +8,7 @@ import {
 } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
@@ -49,7 +49,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   protected path: string;
   queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   protected compression: any;
-  advanced_field: any[] = ['volblocksize'];
+  advanced_field = ['volblocksize'];
   isBasicMode = true;
   protected isNew = true;
   protected isEntity = true;
@@ -353,7 +353,8 @@ export class ZvolWizardComponent implements WizardConfiguration {
           const root = this.parent.split('/')[0];
           this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((res) => {
             zvolEntityForm.controls['volblocksize'].setValue(res);
-            this.minimum_recommended_zvol_volblocksize = res;
+            // TODO: Check if actual server response matches map
+            this.minimum_recommended_zvol_volblocksize = res as any;
           });
         } else {
           let parent_dataset: string | string[] = pk_dataset[0].name.split('/');

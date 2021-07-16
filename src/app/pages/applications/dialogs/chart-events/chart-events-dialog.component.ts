@@ -3,6 +3,8 @@ import {
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import helptext from 'app/helptext/apps/apps';
+import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
+import { ChartContainerImage } from 'app/interfaces/chart-release.interface';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -16,8 +18,8 @@ import { LocaleService } from 'app/services/locale.service';
 
 export class ChartEventsDialog implements OnInit {
   catalogApp: any;
-  containerImages: any[] = [];
-  chartEvents: any[] = [];
+  containerImages: { [key: string]: ChartContainerImage } = {};
+  chartEvents: ChartReleaseEvent[] = [];
   pods: any[] = [];
   deployments: any[] = [];
   statefulsets: any[] = [];
@@ -43,23 +45,23 @@ export class ChartEventsDialog implements OnInit {
 
     this.loader.open();
     Promise.all([chartQueryPromise, chartEventPromise]).then(
-      (res) => {
+      ([charts, events]) => {
         this.loader.close();
-        if (res[0]) {
-          this.containerImages = res[0][0].resources.container_images;
-          this.pods = res[0][0].resources.pods;
-          this.deployments = res[0][0].resources.deployments;
-          this.statefulsets = res[0][0].resources.statefulsets;
+        if (charts) {
+          this.containerImages = charts[0].resources.container_images;
+          this.pods = charts[0].resources.pods;
+          this.deployments = charts[0].resources.deployments;
+          this.statefulsets = charts[0].resources.statefulsets;
         }
-        if (res[1]) {
-          this.chartEvents = res[1];
+        if (events) {
+          this.chartEvents = events;
         }
       },
     );
   }
 
   // return the container image status
-  containerImageStatus(containerImage: any): string {
+  containerImageStatus(containerImage: { value: ChartContainerImage }): string {
     if (containerImage.value.update_available) {
       return helptext.chartEventDialog.statusUpdateAvailable;
     }
@@ -85,7 +87,7 @@ export class ChartEventsDialog implements OnInit {
     } else if (this.catalogApp.container_images_update_available) {
       label = helptext.chartEventDialog.containerImageStatusUpdateAvailableTo;
       const updateAvailableImages = Object.keys(this.containerImages)
-        .filter((imageName) => (this.containerImages as any)[imageName].update_available);
+        .filter((imageName) => this.containerImages[imageName].update_available);
       label += updateAvailableImages.join(',');
     }
 

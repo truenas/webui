@@ -6,6 +6,7 @@ import helptext from 'app/helptext/services/components/service-dynamic-dns';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService, ValidationService } from 'app/services';
 
 @UntilDestroy()
@@ -120,7 +121,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ]);
 
-  protected provider: any;
+  protected provider: FieldConfig;
 
   constructor(
     protected router: Router,
@@ -132,21 +133,21 @@ export class ServiceDDNSComponent implements FormConfiguration {
   ) {}
 
   afterInit(entityForm: EntityFormComponent): void {
-    this.ws.call('dyndns.config').pipe(untilDestroyed(this)).subscribe((res: any) => {
-      entityForm.formGroup.controls['provider'].setValue(res.provider);
-      entityForm.formGroup.controls['checkip_ssl'].setValue(res.checkip_ssl);
-      entityForm.formGroup.controls['checkip_server'].setValue(res.checkip_server);
-      entityForm.formGroup.controls['checkip_path'].setValue(res.checkip_path);
-      entityForm.formGroup.controls['ssl'].setValue(res.ssl);
-      entityForm.formGroup.controls['custom_ddns_server'].setValue(res.custom_ddns_server);
-      entityForm.formGroup.controls['custom_ddns_path'].setValue(res.custom_ddns_path);
-      if (!res.domain) {
+    this.ws.call('dyndns.config').pipe(untilDestroyed(this)).subscribe((config) => {
+      entityForm.formGroup.controls['provider'].setValue(config.provider);
+      entityForm.formGroup.controls['checkip_ssl'].setValue(config.checkip_ssl);
+      entityForm.formGroup.controls['checkip_server'].setValue(config.checkip_server);
+      entityForm.formGroup.controls['checkip_path'].setValue(config.checkip_path);
+      entityForm.formGroup.controls['ssl'].setValue(config.ssl);
+      entityForm.formGroup.controls['custom_ddns_server'].setValue(config.custom_ddns_server);
+      entityForm.formGroup.controls['custom_ddns_path'].setValue(config.custom_ddns_path);
+      if (!config.domain) {
         entityForm.formGroup.controls['domain'].setValue([]);
       } else {
-        entityForm.formGroup.controls['domain'].setValue(res.domain);
+        entityForm.formGroup.controls['domain'].setValue(config.domain);
       }
-      entityForm.formGroup.controls['username'].setValue(res.username);
-      entityForm.formGroup.controls['period'].setValue(res.period);
+      entityForm.formGroup.controls['username'].setValue(config.username);
+      entityForm.formGroup.controls['period'].setValue(config.period);
     });
     entityForm.submitFunction = this.submitFunction;
 
@@ -167,7 +168,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
     return value;
   }
 
-  submitFunction(this: any, entityForm: any): Observable<any> {
+  submitFunction(entityForm: any): Observable<any> {
     if (entityForm.domain.length === 0) {
       entityForm.domain = [];
     }
@@ -187,7 +188,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
     });
   }
 
-  hideField(fieldName: any, show: boolean, entity: any): void {
+  hideField(fieldName: string, show: boolean, entity: EntityFormComponent): void {
     this.fieldSets.config(fieldName).isHidden = show;
     entity.setDisabled(fieldName, show, show);
   }

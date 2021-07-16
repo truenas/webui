@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable } from 'rxjs';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { Observable, Observer } from 'rxjs';
+import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
+import { Job } from 'app/interfaces/job.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
 import { DialogService } from './dialog.service';
@@ -25,12 +26,12 @@ export class JobService {
     protected http: HttpClient,
   ) {}
 
-  getJobStatus(jobId: any): Observable<any> {
-    const source = Observable.create((observer: any) => {
-      this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((res) => {
-        if (res.id == jobId) {
-          observer.next(res.fields);
-          if (res.fields.state === EntityJobState.Success || res.fields.state === EntityJobState.Failed) {
+  getJobStatus(jobId: number): Observable<Job> {
+    const source = Observable.create((observer: Observer<Job>) => {
+      this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
+        if (event.id == jobId) {
+          observer.next(event.fields);
+          if (event.fields.state === JobState.Success || event.fields.state === JobState.Failed) {
             observer.complete();
           }
         }
@@ -39,9 +40,9 @@ export class JobService {
     return source;
   }
 
-  showLogs(job: any, title?: string, cancelMsg?: string): void {
-    let dialog_title; let
-      cancelButtonMsg;
+  showLogs(job: Job, title?: string, cancelMsg?: string): void {
+    let dialog_title;
+    let cancelButtonMsg;
     title ? dialog_title = title : dialog_title = T('Logs');
     cancelMsg ? cancelButtonMsg = cancelMsg : cancelButtonMsg = T('Close');
 

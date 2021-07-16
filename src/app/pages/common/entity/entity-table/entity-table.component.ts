@@ -5,6 +5,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import {
   AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -19,15 +20,15 @@ import {
 import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { Interval } from 'app/interfaces/timeout.interface';
 import {
   EntityTableAction,
   EntityTableColumn,
-  EntityTableConfig,
+  EntityTableConfig, EntityTableConfigConfig,
 } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService, JobService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -39,15 +40,6 @@ import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
 import { EntityUtils } from '../utils';
 import { EntityTableAddActionsComponent } from './entity-table-add-actions.component';
-
-export interface SortingConfig {
-  columns: any[];
-}
-
-export interface TableConfig {
-  paging: boolean;
-  sorting: SortingConfig;
-}
 
 export interface Command {
   command: string; // Use '|' or '--pipe' to use the output of previous command as input
@@ -69,7 +61,7 @@ export interface Command {
     ]),
   ],
 })
-export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
+export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, OnDestroy {
   @Input() title = '';
   @Input() conf: EntityTableConfig;
 
@@ -133,7 +125,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   rows: any[] = [];
   currentRows: any[] = []; // Rows applying filter
   getFunction: Observable<any>;
-  config: TableConfig = {
+  config: EntityTableConfigConfig = {
     paging: true,
     sorting: { columns: this.columns },
   };
@@ -145,14 +137,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   hasActions = true;
   sortKey: string;
   filterValue = ''; // the filter string filled in search input.
-  readonly EntityJobState = EntityJobState;
+  readonly EntityJobState = JobState;
   // Global Actions in Page Title
   protected actionsConfig: any;
-  protected loaderOpen = false;
-  protected toDeleteRow: any;
+  loaderOpen = false;
+  protected toDeleteRow: Row;
   private interval: Interval;
-  private excuteDeletion = false;
-  private needRefreshTable = false;
+  excuteDeletion = false;
+  needRefreshTable = false;
   private routeSub: Subscription;
   multiActionsIconsOnly = false;
 
@@ -176,19 +168,19 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return result;
   }
 
-  hasDetails = (): boolean =>
-    this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
+  hasDetails = (): boolean => {
+    return Boolean(this.conf.rowDetailComponent)
+      || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
+  };
 
-  get isAllSelected(): boolean {
-    return this.selection.selected.length === this.currentRows.length;
-  }
+  isAllSelected = false;
 
   constructor(
     protected core: CoreService,
     protected router: Router,
-    protected ws: WebSocketService,
-    protected dialogService: DialogService,
-    protected loader: AppLoaderService,
+    public ws: WebSocketService,
+    public dialogService: DialogService,
+    public loader: AppLoaderService,
     protected translate: TranslateService,
     public storageService: StorageService,
     protected job: JobService,
@@ -220,6 +212,40 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.routeSub.closed) {
       this.routeSub.unsubscribe();
     }
+  }
+
+  pageChanged(): void {
+    this.selection.clear();
+  }
+
+  get currentRowsThatAreOnScreenToo(): any[] {
+    let currentlyShowingRows = [...this.dataSource.filteredData];
+    if (this.dataSource.paginator) {
+      const start = this.dataSource.paginator.pageIndex * this.dataSource.paginator.pageSize;
+      const rowsCount = currentlyShowingRows.length < start + this.dataSource.paginator.pageSize
+        ? currentlyShowingRows.length - start : this.dataSource.paginator.pageSize;
+      currentlyShowingRows = currentlyShowingRows.splice(start, rowsCount);
+    }
+    const showingRows = currentlyShowingRows;
+    return this.currentRows.filter((row) => {
+      const index = showingRows.findIndex((showingRow: any) => {
+        return showingRow['multiselect_id'] === row['multiselect_id'];
+      });
+      return index >= 0;
+    });
+  }
+
+  toggleSelection(element: any): void {
+    this.selection.toggle(element);
+
+    const allShown = this.currentRowsThatAreOnScreenToo;
+    for (const row of allShown) {
+      if (!this.selection.isSelected(row)) {
+        this.isAllSelected = false;
+        return;
+      }
+    }
+    this.isAllSelected = true;
   }
 
   ngOnInit(): void {
@@ -373,6 +399,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.dataSource.paginator && this.conf.config.paging) {
       this.dataSource.paginator.firstPage();
     }
+    this.isAllSelected = false;
+    this.selection.clear();
   }
 
   configureEmptyTable(emptyType: EmptyType, error: any = null): void {
@@ -632,6 +660,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.configureEmptyTable(this.firstUse ? EmptyType.first_use : EmptyType.no_page_data);
     }
 
+    for (let i = 0; i < this.currentRows.length; i++) {
+      this.currentRows[i].multiselect_id = i;
+    }
     this.dataSource = new MatTableDataSource(this.currentRows);
     this.dataSource.sort = this.sort;
 
@@ -694,10 +725,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.conf.queryRes) {
         this.conf.queryRes = rows;
       }
-
-      if (this.conf.queryRes) {
-        this.conf.queryRes = rows;
-      }
     } else {
       for (let i = 0; i < this.currentRows.length; i++) {
         const index = _.findIndex(rows, { id: this.currentRows[i].id });
@@ -723,18 +750,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return rows;
   }
 
-  trClass(row: any): string {
-    const classes = [];
-
-    classes.push('treegrid-' + row.id);
-    if (row._parent) {
-      classes.push('treegrid-parent-' + row._parent);
-    }
-
-    return classes.join(' ');
-  }
-
-  getActions(row: any): EntityTableAction[] {
+  getActions(row: Row): EntityTableAction[] {
     if (this.conf.getActions) {
       return this.conf.getActions(row);
     }
@@ -879,7 +895,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  doDeleteJob(item: any): Observable<{ state: EntityJobState } | false> {
+  doDeleteJob(item: any): Observable<{ state: JobState } | boolean> {
     const deleteMsg = this.getDeleteMessage(item);
     let id: string;
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
@@ -916,19 +932,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
             }),
           );
         }),
-        switchMap((jobId: string) => (jobId ? this.job.getJobStatus(jobId) : of(false))),
+        switchMap((jobId: number) => (jobId ? this.job.getJobStatus(jobId) : of(false))),
       );
-  }
-
-  /**
-   * some structure... should be the same as the other rows.
-   * which are field maps.
-   *
-   * this method can be called to externally push rows on to the tables.
-   */
-  pushNewRow(row: any): void {
-    this.rows.push(row);
-    this.currentRows = this.rows;
   }
 
   getMultiDeleteMessage(items: any): string {
@@ -985,7 +990,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
             .pipe(untilDestroyed(this))
             .subscribe(
               (res1) => {
-                if (res1.state === EntityJobState.Success) {
+                if (res1.state === JobState.Success) {
                   this.loader.close();
                   this.loaderOpen = false;
                   this.getData();
@@ -1093,16 +1098,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
   }
 
-  getButtonClass(state: EntityJobState): string {
+  getButtonClass(state: JobState): string {
     switch (state) {
-      case EntityJobState.Pending: return 'fn-theme-orange';
-      case EntityJobState.Running: return 'fn-theme-orange';
-      case EntityJobState.Aborted: return 'fn-theme-orange';
-      case EntityJobState.Finished: return 'fn-theme-green';
-      case EntityJobState.Success: return 'fn-theme-green';
-      case EntityJobState.Error: return 'fn-theme-red';
-      case EntityJobState.Failed: return 'fn-theme-red';
-      case EntityJobState.Hold: return 'fn-theme-yellow';
+      case JobState.Pending: return 'fn-theme-orange';
+      case JobState.Running: return 'fn-theme-orange';
+      case JobState.Aborted: return 'fn-theme-orange';
+      case JobState.Finished: return 'fn-theme-green';
+      case JobState.Success: return 'fn-theme-green';
+      case JobState.Error: return 'fn-theme-red';
+      case JobState.Failed: return 'fn-theme-red';
+      case JobState.Hold: return 'fn-theme-yellow';
       default: return 'fn-theme-primary';
     }
   }
@@ -1111,7 +1116,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (colConfig.infoStates) {
       return _.indexOf(colConfig.infoStates, value) < 0;
     }
-    return value !== EntityJobState.Pending;
+    return value !== JobState.Pending;
   }
 
   runningStateButton(jobid: number): void {
@@ -1130,10 +1135,17 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.currentColumns.map((column) => column.prop);
   }
 
-  masterToggle(): void {
-    this.isAllSelected
-      ? this.selection.clear()
-      : this.currentRows.forEach((row) => this.selection.select(row));
+  masterToggle(event: MatCheckboxChange): void {
+    const showingRows = this.currentRowsThatAreOnScreenToo;
+    this.isAllSelected = event.checked;
+
+    if (event.checked) {
+      showingRows.forEach((row) => {
+        this.selection.select(row);
+      });
+    } else {
+      this.selection.clear();
+    }
   }
 
   getFirstKey(): string {
@@ -1169,7 +1181,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return (item?.checkbox || item?.toggle || item?.button);
   }
 
-  doRowClick(element: any): void {
+  doRowClick(element: Row): void {
     if (this.conf.onRowClick) {
       this.conf.onRowClick(element);
     } else {

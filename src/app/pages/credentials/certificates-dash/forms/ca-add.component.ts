@@ -498,7 +498,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     },
   ];
 
-  private internalcaFields: any[] = [
+  private internalcaFields = [
     'key_type',
     'ec_curve',
     'key_length',
@@ -513,7 +513,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     'common',
     'san',
   ];
-  private intermediatecaFields: any[] = [
+  private intermediatecaFields = [
     'signedby',
     'key_type',
     'ec_curve',
@@ -529,13 +529,13 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     'common',
     'san',
   ];
-  private importcaFields: any[] = [
+  private importcaFields = [
     'certificate',
     'privatekey',
     'passphrase',
     'passphrase2',
   ];
-  private extensionFields: any[] = [
+  private extensionFields = [
     'BasicConstraints-enabled',
     'BasicConstraints-path_length',
     'BasicConstraints',
@@ -548,7 +548,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     'KeyUsage',
   ];
 
-  private relationFields: any[] = [
+  private relationFields = [
     'create_type',
     'key_type',
     'BasicConstraints-enabled',
@@ -570,7 +570,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
   preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
-    this.systemGeneralService.getUnsignedCAs().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+    this.systemGeneralService.getUnsignedCAs().pipe(untilDestroyed(this)).subscribe((res) => {
       this.signedby = this.getTarget('signedby');
       res.forEach((item) => {
         this.signedby.options.push(
@@ -596,9 +596,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     });
 
     this.usageField = this.getTarget('ExtendedKeyUsage-usages');
-    this.ws.call('certificate.extended_key_usage_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      Object.keys(res).forEach((key) => {
-        this.usageField.options.push({ label: res[key], value: key });
+    this.ws.call('certificate.extended_key_usage_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
+      Object.keys(choices).forEach((key) => {
+        this.usageField.options.push({ label: choices[key], value: key });
       });
     });
 
@@ -615,7 +615,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     this.currentStep = stepper._selectedIndex;
   }
 
-  getSummaryValueLabel(fieldConfig: any, value: any): any {
+  getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
     if (fieldConfig.type == 'select') {
       const option = fieldConfig.options.find((option: any) => option.value == value);
       if (option) {
@@ -775,7 +775,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     this.setSummary();
   }
 
-  loadProfiels(value: any, reset?: any): void {
+  loadProfiels(value: any, reset?: boolean): void {
     if (value) {
       Object.keys(value).forEach((item) => {
         if (item === 'cert_extensions') {
@@ -815,7 +815,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     }
   }
 
-  getStep(fieldName: any): number {
+  getStep(fieldName: string): number {
     const stepNumber = this.wizardConfig.findIndex((step) => {
       const index = step.fieldConfig.findIndex((field) => fieldName == field.name);
       return index > -1;
@@ -824,7 +824,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     return stepNumber;
   }
 
-  getField(fieldName: any): AbstractControl {
+  getField(fieldName: string): AbstractControl {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
       const target = (<FormGroup> this.entityWizard.formArray.get([stepNumber])).controls[fieldName];
@@ -833,7 +833,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     return null;
   }
 
-  getTarget(fieldName: any): FieldConfig {
+  getTarget(fieldName: string): FieldConfig {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
       const target = _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName });
@@ -842,12 +842,12 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     return null;
   }
 
-  hideField(fieldName: any, show: boolean): void {
+  hideField(fieldName: string, show: boolean): void {
     this.getTarget(fieldName).isHidden = show;
     this.setDisabled(fieldName, show);
   }
 
-  setDisabled(fieldName: any, disable: boolean): void {
+  setDisabled(fieldName: string, disable: boolean): void {
     const target = this.getField(fieldName);
     if (disable) {
       target.disable();

@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { take } from 'rxjs/operators';
-import helptext from 'app/helptext/system/initshutdown';
+import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
+import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
+import helptext from 'app/helptext/system/init-shutdown';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -22,7 +25,7 @@ export class InitshutdownFormComponent implements FormConfiguration {
   protected entityForm: EntityFormComponent;
   isEntity = true;
   protected isOneColumnForm = true;
-  protected type_control: any;
+  protected type_control: FormControl;
   pk: any;
 
   fieldConfig: FieldConfig[] = [];
@@ -46,11 +49,11 @@ export class InitshutdownFormComponent implements FormConfiguration {
           options: [
             {
               label: 'Command',
-              value: 'COMMAND',
+              value: InitShutdownScriptType.Command,
             },
             {
               label: 'Script',
-              value: 'SCRIPT',
+              value: InitShutdownScriptType.Script,
             },
           ],
           value: 'COMMAND',
@@ -85,15 +88,15 @@ export class InitshutdownFormComponent implements FormConfiguration {
             },
             {
               label: 'Pre Init',
-              value: 'PREINIT',
+              value: InitShutdownScriptWhen.PreInit,
             },
             {
               label: 'Post Init',
-              value: 'POSTINIT',
+              value: InitShutdownScriptWhen.PostInit,
             },
             {
               label: 'Shutdown',
-              value: 'SHUTDOWN',
+              value: InitShutdownScriptWhen.Shutdown,
             },
           ],
           value: '',
@@ -129,7 +132,7 @@ export class InitshutdownFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     this.pk = entityForm.pk;
     this.title = entityForm.isNew ? helptext.ini_add : helptext.ini_edit;
-    this.type_control = entityForm.formGroup.controls['type'];
+    this.type_control = entityForm.formGroup.controls['type'] as FormControl;
     this.type_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       this.formUpdate(value);
     });

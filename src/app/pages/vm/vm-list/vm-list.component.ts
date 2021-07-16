@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -14,13 +15,17 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { VmDisplayAttributes } from 'app/interfaces/vm-device.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
 import {
   WebSocketService, StorageService, AppLoaderService, DialogService, VmService, NetworkService, SystemGeneralService,
 } from 'app/services';
@@ -44,17 +49,17 @@ interface DisplayWebUri {
   styleUrls: ['./vm-list.component.scss'],
   providers: [VmService, MessageService],
 })
-export class VMListComponent implements EntityTableConfig {
+export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, OnInit {
   title = 'Virtual Machines';
   queryCall: 'vm.query' = 'vm.query';
   wsDelete: 'vm.delete' = 'vm.delete';
   route_add: string[] = ['vm', 'wizard'];
   route_edit: string[] = ['vm', 'edit'];
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
   private productType = window.localStorage.getItem('product_type') as ProductType;
   addComponent: VMWizardComponent;
 
-  entityList: any;
+  entityList: EntityTableComponent;
   columns = [
     { name: T('Name'), prop: 'name', always_display: true },
     {
@@ -71,7 +76,7 @@ export class VMListComponent implements EntityTableConfig {
     { name: T('Description'), prop: 'description', hidden: true },
     { name: T('Shutdown Timeout'), prop: 'shutdown_timeout', hidden: true },
   ];
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -134,11 +139,11 @@ export class VMListComponent implements EntityTableConfig {
       this.translate, this.modalService, this.systemGeneralService);
   }
 
-  afterInit(entityList: any): void {
+  afterInit(entityList: EntityTableComponent): void {
     this.checkMemory();
     this.entityList = entityList;
     this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
-      const changedRow = (this.entityList.rows as any[]).find((o) => o.id === event.id);
+      const changedRow = (this.entityList.rows as VirtualMachineRow[]).find((o) => o.id === event.id);
       if (event.fields.state === ServiceStatus.Running) {
         changedRow.state = ServiceStatus.Running;
         changedRow.status.state = ServiceStatus.Running;
@@ -151,25 +156,30 @@ export class VMListComponent implements EntityTableConfig {
     });
   }
 
-  resourceTransformIncomingRestData(vms: any[]): any[] {
-    for (let vm_index = 0; vm_index < vms.length; vm_index++) {
-      vms[vm_index]['state'] = vms[vm_index]['status']['state'];
-      vms[vm_index]['com_port'] = `/dev/nmdm${vms[vm_index]['id']}B`;
-      vms[vm_index]['shutdown_timeout'] += T(' seconds');
-      if (this.checkDisplay(vms[vm_index])) {
-        vms[vm_index]['port'] = this.displayPort(vms[vm_index]);
+  resourceTransformIncomingRestData(vms: VirtualMachine[]): VirtualMachineRow[] {
+    return vms.map((vm) => {
+      const transformed = {
+        ...vm,
+        state: vm.status.state,
+        com_port: `/dev/nmdm${vm.id}B`,
+        shutdown_timeout: `${vm.shutdown_timeout} seconds`,
+        memory: this.storageService.convertBytestoHumanReadable(vm.memory * 1048576, 2),
+      } as VirtualMachineRow;
+
+      if (this.checkDisplay(vm)) {
+        transformed.port = this.displayPort(vm);
       } else {
-        vms[vm_index]['port'] = 'N/A';
-        if (vms[vm_index]['vm_type'] === 'Container Provider') {
-          vms[vm_index]['vm_type'] = globalHelptext.dockerhost;
+        transformed.port = 'N/A';
+        if (transformed.vm_type === 'Container Provider') {
+          transformed.vm_type = globalHelptext.dockerhost;
         }
       }
-      vms[vm_index]['memory'] = this.storageService.convertBytestoHumanReadable(vms[vm_index]['memory'] * 1048576, 2);
-    }
-    return vms;
+
+      return transformed;
+    });
   }
 
-  checkDisplay(vm: any): boolean {
+  checkDisplay(vm: VirtualMachine | VirtualMachineRow): boolean {
     const devices = vm.devices;
     if (!devices || devices.length === 0) {
       return false;
@@ -184,7 +194,7 @@ export class VMListComponent implements EntityTableConfig {
     }
   }
 
-  displayPort(vm: any): boolean {
+  displayPort(vm: VirtualMachine): boolean | number {
     const devices = vm.devices;
     if (!devices || devices.length === 0) {
       return false;
@@ -194,12 +204,12 @@ export class VMListComponent implements EntityTableConfig {
     }
     for (let i = 0; i < devices.length; i++) {
       if (devices && devices[i].dtype === VmDeviceType.Display) {
-        return devices[i].attributes.port;
+        return (devices[i].attributes as VmDisplayAttributes).port;
       }
     }
   }
 
-  onSliderChange(row: any): void {
+  onSliderChange(row: VirtualMachineRow): void {
     let method: ApiMethod;
     if (row['status']['state'] === ServiceStatus.Running) {
       method = this.wsMethods.stop;
@@ -232,7 +242,7 @@ export class VMListComponent implements EntityTableConfig {
     }
   }
 
-  onMemoryError(row: any): void {
+  onMemoryError(row: VirtualMachineRow): void {
     const memoryDialog = this.dialogService.confirm(
       helptext.memory_dialog.title,
       helptext.memory_dialog.message,
@@ -269,7 +279,7 @@ export class VMListComponent implements EntityTableConfig {
     return hostname;
   }
 
-  doRowAction(row: any, method: ApiMethod, params = [row.id], updateTable = false): void {
+  doRowAction(row: VirtualMachineRow, method: ApiMethod, params: any[] = [row.id], updateTable = false): void {
     if (method === 'vm.stop') {
       this.dialogRef = this.dialog.open(EntityJobComponent,
         { data: { title: T('Stopping ' + row.name) }, disableClose: false });
@@ -318,20 +328,20 @@ export class VMListComponent implements EntityTableConfig {
     }
   }
 
-  updateRows(rows: any[]): Promise<boolean> {
+  updateRows(rows: VirtualMachineRow[]): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe(
-        (res: any[]) => {
+        (res) => {
           for (const row of rows) {
             const targetIndex = _.findIndex(res, (o) => o['id'] === row.id);
             if (targetIndex === -1) {
               reject(false);
             }
             for (const i in row) {
-              row[i] = res[targetIndex][i];
+              (row[i as keyof VirtualMachineRow] as any) = res[targetIndex][i as keyof VirtualMachine];
             }
           }
-          this.resourceTransformIncomingRestData(rows);
+          this.resourceTransformIncomingRestData(rows as any);
           resolve(true);
         },
         (err) => {
@@ -342,17 +352,17 @@ export class VMListComponent implements EntityTableConfig {
     });
   }
 
-  onCheckboxChange(row: any): void {
+  onCheckboxChange(row: VirtualMachineRow): void {
     row.autostart = !row.autostart;
     this.doRowAction(row, this.wsMethods.update, [row.id, { autostart: row.autostart }]);
   }
 
-  getActions(row: any): EntityTableAction[] {
+  getActions(row: VirtualMachineRow): EntityTableAction[] {
     return [{
       id: 'START',
       icon: 'play_arrow',
       label: T('Start'),
-      onClick: (start_row: any) => {
+      onClick: (start_row: VirtualMachineRow) => {
         this.onSliderChange(start_row);
       },
     },
@@ -360,7 +370,7 @@ export class VMListComponent implements EntityTableConfig {
       id: 'RESTART',
       icon: 'replay',
       label: T('Restart'),
-      onClick: (restart_row: any) => {
+      onClick: (restart_row: VirtualMachineRow) => {
         this.doRowAction(restart_row, this.wsMethods.restart);
       },
     },
@@ -368,7 +378,7 @@ export class VMListComponent implements EntityTableConfig {
       id: 'POWER_OFF',
       icon: 'power_settings_new',
       label: T('Power Off'),
-      onClick: (power_off_row: any) => {
+      onClick: (power_off_row: VirtualMachineRow) => {
         this.doRowAction(row, this.wsMethods.poweroff, [power_off_row.id]);
       },
     },
@@ -376,7 +386,7 @@ export class VMListComponent implements EntityTableConfig {
       id: 'STOP',
       icon: 'stop',
       label: T('Stop'),
-      onClick: (stop_row: any) => {
+      onClick: (stop_row: VirtualMachineRow) => {
         this.onSliderChange(stop_row);
       },
     },
@@ -384,15 +394,15 @@ export class VMListComponent implements EntityTableConfig {
       id: 'EDIT',
       icon: 'edit',
       label: T('Edit'),
-      onClick: (edit_row: any) => {
-        this.router.navigate(new Array('').concat(['vm', 'edit', edit_row.id]));
+      onClick: (edit_row: VirtualMachineRow) => {
+        this.router.navigate(new Array('').concat(['vm', 'edit', String(edit_row.id)]));
       },
     },
     {
       id: 'DELETE',
       icon: 'delete',
       label: T('Delete'),
-      onClick: (delete_row: any) => {
+      onClick: (delete_row: VirtualMachineRow) => {
         const parent = this;
         const conf: DialogFormConfiguration = {
           title: T('Delete Virtual Machine'),
@@ -445,15 +455,15 @@ export class VMListComponent implements EntityTableConfig {
       id: 'DEVICES',
       icon: 'device_hub',
       label: T('Devices'),
-      onClick: (devices_row: any) => {
-        this.router.navigate(new Array('').concat(['vm', devices_row.id, 'devices', devices_row.name]));
+      onClick: (devices_row: VirtualMachineRow) => {
+        this.router.navigate(new Array('').concat(['vm', String(devices_row.id), 'devices', devices_row.name]));
       },
     },
     {
       id: 'CLONE',
       icon: 'filter_none',
       label: T('Clone'),
-      onClick: (clone_row: any) => {
+      onClick: (clone_row: VirtualMachineRow) => {
         const parent = this;
         const conf: DialogFormConfiguration = {
           title: T('Name'),
@@ -483,7 +493,7 @@ export class VMListComponent implements EntityTableConfig {
       id: 'DISPLAY',
       icon: 'settings_ethernet',
       label: T('Display'),
-      onClick: (display_vm: any) => {
+      onClick: (display_vm: VirtualMachineRow) => {
         this.loader.open();
         this.ws.call('vm.get_display_devices', [display_vm.id]).pipe(untilDestroyed(this)).subscribe((display_devices_res: any[]) => {
           if (display_devices_res.length === 1) {
@@ -560,15 +570,15 @@ export class VMListComponent implements EntityTableConfig {
       id: 'SERIAL',
       icon: 'keyboard_arrow_right',
       label: T('Serial'),
-      onClick: (vm: any) => {
-        this.router.navigate(new Array('').concat(['vm', 'serial', vm.id]));
+      onClick: (vm: VirtualMachineRow) => {
+        this.router.navigate(new Array('').concat(['vm', 'serial', String(vm.id)]));
       },
     },
     {
       id: 'LOGS',
       icon: 'content_paste',
       label: T('Download Logs'),
-      onClick: (vm: any) => {
+      onClick: (vm: VirtualMachineRow) => {
         const path = `/var/log/libvirt/bhyve/${vm.id}_${vm.name}.log`;
         const filename = `${vm.id}_${vm.name}.log`;
         this.ws.call('core.download', ['filesystem.get', [path], filename]).pipe(untilDestroyed(this)).subscribe(
@@ -591,7 +601,7 @@ export class VMListComponent implements EntityTableConfig {
     }] as EntityTableAction[];
   }
 
-  showPasswordDialog(display_vm: any, display_device: any): void {
+  showPasswordDialog(display_vm: VirtualMachineRow, display_device: any): void {
     const pass_conf: DialogFormConfiguration = {
       title: T('Enter password'),
       message: T('Enter password to unlock this display device'),
@@ -639,7 +649,7 @@ export class VMListComponent implements EntityTableConfig {
     this.dialogService.dialogForm(pass_conf);
   }
 
-  isActionVisible(actionId: string, row: any): boolean {
+  isActionVisible(actionId: string, row: VirtualMachineRow): boolean {
     if (actionId === 'DISPLAY' && (row['status']['state'] !== ServiceStatus.Running || !this.checkDisplay(row))) {
       return false;
     } if ((actionId === 'POWER_OFF' || actionId === 'STOP' || actionId === 'RESTART'

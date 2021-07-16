@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -45,21 +45,21 @@ interface Device {
 export class DeviceEditComponent implements OnInit {
   protected updateCall: 'vm.device.update' = 'vm.device.update';
   protected route_success: string[];
-  deviceid: any;
+  deviceid: number;
   vmname: any;
   fieldSets: any;
   isCustActionVisible = false;
-  protected ipAddress: any = [];
+  protected ipAddress: FieldConfig;
   selectedType = VmDeviceType.Cdrom;
-  formGroup: any;
-  activeFormGroup: any;
-  cdromFormGroup: any;
-  diskFormGroup: any;
-  nicFormGroup: any;
-  rawfileFormGroup: any;
-  pciFormGroup: any;
-  displayFormGroup: any;
-  rootpwd: any;
+  formGroup: FormGroup;
+  activeFormGroup: FormGroup;
+  cdromFormGroup: FormGroup;
+  diskFormGroup: FormGroup;
+  nicFormGroup: FormGroup;
+  rawfileFormGroup: FormGroup;
+  pciFormGroup: FormGroup;
+  displayFormGroup: FormGroup;
+  rootpwd: FieldConfig;
   vminfo: any;
   vmId: number;
   boot: any;
@@ -196,9 +196,8 @@ export class DeviceEditComponent implements OnInit {
       inputType: 'number',
     },
   ];
-  protected nic_attach: any;
-  protected nicType: any;
-  protected nicMac: any;
+  protected nic_attach: FieldConfig;
+  protected nicType: FieldConfig;
 
   // rawfile
   rawfileFieldConfig: FieldConfig[] = [
@@ -278,7 +277,7 @@ export class DeviceEditComponent implements OnInit {
       inputType: 'number',
     },
   ];
-  protected pptdev: any;
+  protected pptdev: FieldConfig;
 
   // Display
   displayFieldConfig: FieldConfig[] = [
@@ -402,7 +401,7 @@ export class DeviceEditComponent implements OnInit {
     });
   }
   // Setting values coming from backend and populating formgroup with it.
-  setgetValues(activeformgroup: FormGroup, deviceInformation: any[]): void {
+  setgetValues(activeformgroup: FormGroup, deviceInformation: any): void {
     for (const value in deviceInformation) {
       const fg = activeformgroup.controls[value];
       if (typeof fg !== 'undefined') {
@@ -456,12 +455,12 @@ export class DeviceEditComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((device) => {
         if (
-          device[0].attributes.physical_sectorsize !== undefined
-          && device[0].attributes.logical_sectorsize !== undefined
+          (device[0] as any).attributes.physical_sectorsize !== undefined
+          && (device[0] as any).attributes.logical_sectorsize !== undefined
         ) {
-          device[0].attributes['sectorsize'] = device[0].attributes.logical_sectorsize === null
+          (device[0] as any).attributes['sectorsize'] = (device[0] as any).attributes.logical_sectorsize === null
             ? 0
-            : device[0].attributes.logical_sectorsize;
+            : (device[0] as any).attributes.logical_sectorsize;
         }
         const deviceInformation = { ...device[0].attributes, ...{ order: device[0].order } };
         this.vminfo = device[0];

@@ -1,7 +1,7 @@
 import { Direction } from 'app/enums/direction.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { DataProtectionTaskState } from 'app/interfaces/data-protection-task-state.interface';
-import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 
 export interface CloudCredential {
@@ -32,7 +32,7 @@ export interface CloudSyncTask {
   follow_symlinks: boolean;
   id: number;
   include: string[];
-  job: EntityJob;
+  job: Job;
   locked: boolean;
   path: string;
   post_script: string;

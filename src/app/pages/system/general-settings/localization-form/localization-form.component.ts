@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -77,7 +78,7 @@ export class LocalizationFormComponent implements FormConfiguration {
   ];
 
   private entityForm: EntityFormComponent;
-  private configData: any;
+  private configData: SystemGeneralConfig;
 
   constructor(
     protected language: LanguageService,
@@ -192,7 +193,7 @@ export class LocalizationFormComponent implements FormConfiguration {
     });
   }
 
-  getKeyByValue(object: any, value: any): any {
+  getKeyByValue(object: { [key: string]: unknown }, value: unknown): string {
     return Object.keys(object).find((key) => object[key] === value);
   }
 }

@@ -9,7 +9,7 @@ import { Subject, Observable } from 'rxjs';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import helptext from 'app/helptext/shell/shell';
 import { CoreEvent } from 'app/interfaces/events';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
@@ -38,9 +38,8 @@ export class ShellComponent implements OnInit, OnDestroy {
   token: any;
   xterm: any;
   resize_terminal = true;
-  private shellSubscription: any;
-  private fitAddon: any;
-  formEvents: Subject<CoreEvent>;
+  private fitAddon: FitAddon;
+  formEvent$: Subject<CoreEvent>;
 
   usage_tooltip = helptext.usage_tooltip;
 
@@ -51,8 +50,7 @@ export class ShellComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getAuthToken().pipe(untilDestroyed(this)).subscribe((token) => {
       this.initializeWebShell(token);
-      this.shellSubscription = this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {
-      });
+      this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {});
       this.initializeTerminal();
     });
   }
@@ -61,16 +59,13 @@ export class ShellComponent implements OnInit, OnDestroy {
     if (this.ss.connected) {
       this.ss.socket.close();
     }
-    if (this.shellSubscription) {
-      this.shellSubscription.unsubscribe();
-    }
 
     this.core.unregister({ observerClass: this });
   }
 
   refreshToolbarButtons(): void {
-    this.formEvents = new Subject();
-    this.formEvents.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.formEvent$ = new Subject();
+    this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'restore') {
         this.resetDefault();
         this.refreshToolbarButtons();
@@ -121,7 +116,7 @@ export class ShellComponent implements OnInit, OnDestroy {
     const actionsConfig = {
       actionType: EntityToolbarComponent,
       actionConfig: {
-        target: this.formEvents,
+        target: this.formEvent$,
         controls,
       },
     };

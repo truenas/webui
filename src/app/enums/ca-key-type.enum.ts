@@ -1,4 +1,4 @@
-export enum CAKeyType {
+export enum CertificateKeyType {
   RSA = 'RSA',
   EC = 'EC',
 }

@@ -23,7 +23,7 @@ export class UserService {
   }
 
   listGroups(): Observable<Group[]> {
-    return this.ws.call(this.groupQuery, { limit: 50 });
+    return this.ws.call(this.groupQuery, { limit: 50 } as any);
   }
 
   groupQueryDSCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
@@ -83,7 +83,7 @@ export class UserService {
   }
 
   async shellChoices(userId?: number): Promise<Option[]> {
-    return await this.ws
+    return this.ws
       .call('user.shell_choices', userId ? [userId] : [])
       .pipe(
         map((choices) =>

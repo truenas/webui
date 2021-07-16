@@ -1,5 +1,6 @@
 import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
 import { Option } from 'app/interfaces/option.interface';
+import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { RelationGroup } from './field-relation.interface';
 
 export enum UnitType {
@@ -21,7 +22,7 @@ export interface FieldConfig {
   alert?: { message: string; forValues: any[] };
   asyncValidation?: AsyncValidatorFn | AsyncValidatorFn[];
   autocomplete?: boolean;
-  blurEvent?: any;
+  blurEvent?: (parent: any) => void;
   blurStatus?: boolean;
   box?: boolean;
   buttonClass?: string;
@@ -42,7 +43,7 @@ export interface FieldConfig {
   formarray?: any;
   hasErrors?: boolean;
   hideButton?: boolean;
-  hideDirs?: any;
+  hideDirs?: string;
   hideErrMsg?: boolean;
   hideOthersPermissions?: boolean;
   hint?: string;
@@ -88,7 +89,7 @@ export interface FieldConfig {
   tooltip?: string;
   tooltipPosition?: string;
   tristate?: boolean;
-  type: string;
+  type: FieldType;
   updateLocal?: boolean;
   updater?: any;
   validation?: any[] | ValidatorFn | ValidatorFn[];

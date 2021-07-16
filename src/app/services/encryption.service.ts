@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
+import { filter } from 'rxjs/operators';
+import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import { WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -24,7 +25,7 @@ export class EncryptionService {
     encryptKeyPassphrase: string,
     adminPassphrase: string,
     poolName: string,
-    route_success: any,
+    route_success: string[],
     addRecoveryKey?: boolean,
     downloadEncrytpKey?: boolean,
     success_message?: string,
@@ -44,7 +45,7 @@ export class EncryptionService {
     });
   }
 
-  openEncryptDialog(row: any, route_success: any, poolName: string, addRecoveryKey?: boolean): void {
+  openEncryptDialog(row: any, route_success: string[], poolName: string, addRecoveryKey?: boolean): void {
     const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
     dialogRef.componentInstance.volumeId = row;
     dialogRef.componentInstance.fileName = 'pool_' + poolName + '_encryption.key';
@@ -59,7 +60,7 @@ export class EncryptionService {
     });
   }
 
-  makeRecoveryKey(row: any, poolName: string, route_success: any): void {
+  makeRecoveryKey(row: any, poolName: string, route_success: string[]): void {
     this.loader.open();
     const fileName = 'pool_' + poolName + '_recovery.key';
     this.ws.call('core.download', ['pool.recoverykey_add', [parseInt(row)], fileName]).subscribe((res) => {
@@ -87,21 +88,25 @@ export class EncryptionService {
     });
   }
 
-  deleteRecoveryKey(row: any, adminPassphrase: string, poolName: string, route_success: any): void {
-    this.dialogService.confirm(helptext.delete_recovery_key_title, helptext.delete_recovery_key_message, true, T('Delete Key'))
-      .subscribe((res: boolean) => {
-        if (res) {
-          this.loader.open();
-          this.ws.call('pool.recoverykey_rm', [parseInt(row), { admin_password: adminPassphrase }]).subscribe(() => {
-            this.loader.close();
-            this.dialogService.Info(helptext.delete_recovery_key_title, T(`Recovery key deleted from pool <i>${poolName}</i>`), '300px', 'info', true);
-            this.router.navigate(new Array('/').concat(route_success));
-          },
-          (err) => {
-            this.loader.close();
-            this.dialogService.errorReport(T(`Error deleting recovery key for pool ${poolName}`), err.error.message, err.error.traceback);
-          });
-        }
+  deleteRecoveryKey(row: any, adminPassphrase: string, poolName: string, route_success: string[]): void {
+    this.dialogService.confirm({
+      title: helptext.delete_recovery_key_title,
+      message: helptext.delete_recovery_key_message,
+      hideCheckBox: true,
+      buttonMsg: T('Delete Key'),
+    })
+      .pipe(filter(Boolean))
+      .subscribe(() => {
+        this.loader.open();
+        this.ws.call('pool.recoverykey_rm', [parseInt(row), { admin_password: adminPassphrase }]).subscribe(() => {
+          this.loader.close();
+          this.dialogService.Info(helptext.delete_recovery_key_title, T(`Recovery key deleted from pool <i>${poolName}</i>`), '300px', 'info', true);
+          this.router.navigate(new Array('/').concat(route_success));
+        },
+        (err) => {
+          this.loader.close();
+          this.dialogService.errorReport(T(`Error deleting recovery key for pool ${poolName}`), err.error.message, err.error.traceback);
+        });
       });
   }
 }

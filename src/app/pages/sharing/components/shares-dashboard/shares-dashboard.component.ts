@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -15,10 +15,10 @@ import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/ent
 import { ExpandableTableState, InputExpandableTableConf } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
 import { TableComponent, AppTableHeaderExtraAction } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form';
-import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form';
-import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form';
-import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form';
+import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
+import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
+import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
+import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
 import {
   AppLoaderService, DialogService, IscsiService, ModalService, NetworkService, SystemGeneralService, UserService,
   WebSocketService,
@@ -39,7 +39,7 @@ enum ShareType {
   styleUrls: ['./shares-dashboard.component.scss'],
   providers: [IscsiService],
 })
-export class SharesDashboardComponent {
+export class SharesDashboardComponent implements AfterViewInit {
   webdavTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.WebDAV);
   nfsTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.NFS);
   smbTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.SMB);

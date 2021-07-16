@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -21,7 +22,7 @@ import { T } from 'app/translate-marker';
 export class ConfigResetComponent implements OnInit {
   product_type: ProductType;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
-  dialogRef: any;
+  dialogRef: MatDialogRef<EntityJobComponent>;
 
   readonly ProductType = ProductType;
 
@@ -30,7 +31,7 @@ export class ConfigResetComponent implements OnInit {
     protected dialogService: DialogService, protected dialog: MatDialog,
     private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
     this.ws = ws;
-    this.sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.product_type = res as ProductType;
     });
   }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as isCidr from 'is-cidr';
 import { Observable } from 'rxjs';
+import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebSocketService } from './ws.service';
 
@@ -23,24 +24,24 @@ export class NetworkService {
 
   constructor(protected ws: WebSocketService) {}
 
-  getVlanParentInterfaceChoices(): Observable<any[]> {
+  getVlanParentInterfaceChoices(): Observable<Choices> {
     return this.ws.call('interface.vlan_parent_interface_choices');
   }
 
-  getLaggPortsChoices(id: string = null): Observable<any[]> {
+  getLaggPortsChoices(id: string = null): Observable<Choices> {
     return this.ws.call('interface.lag_ports_choices', [id]);
   }
 
-  getLaggProtocolChoices(): Observable<any[]> {
-    return this.ws.call('interface.lag_supported_protocols', []);
+  getLaggProtocolChoices(): Observable<string[]> {
+    return this.ws.call('interface.lag_supported_protocols');
   }
 
-  getBridgeMembersChoices(id: string = null): Observable<any[]> {
+  getBridgeMembersChoices(id: string = null): Observable<Choices> {
     return this.ws.call('interface.bridge_members_choices', [id]);
   }
 
-  getVmNicChoices(): Observable<any[]> {
-    return this.ws.call('vm.device.nic_attach_choices', []);
+  getVmNicChoices(): Observable<Choices> {
+    return this.ws.call('vm.device.nic_attach_choices');
   }
 
   getV4Netmasks(): Option[] {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,7 +8,7 @@ import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
 import { Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { CoreEvent } from 'app/interfaces/events';
@@ -16,14 +16,15 @@ import { Option } from 'app/interfaces/option.interface';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
+import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { EntityTreeTable } from 'app/pages/common/entity/entity-tree-table/entity-tree-table.model';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { DiskFormComponent } from 'app/pages/storage/disks/disk-form';
+import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.component';
 import {
   WebSocketService, AppLoaderService, DialogService,
 } from 'app/services';
@@ -48,8 +49,8 @@ interface PoolDiskInfo {
   templateUrl: './volume-status.component.html',
   styleUrls: ['./volume-status.component.scss'],
 })
-export class VolumeStatusComponent implements OnInit {
-  actionEvents: Subject<CoreEvent>;
+export class VolumeStatusComponent implements OnInit, OnDestroy {
+  actionEvents$: Subject<CoreEvent>;
   poolScan: PoolScan;
   timeRemaining = {
     days: 0,
@@ -228,15 +229,15 @@ export class VolumeStatusComponent implements OnInit {
   ngOnInit(): void {
     // Setup Global Actions
     const actionId = 'refreshBtn';
-    this.actionEvents = new Subject();
-    this.actionEvents.pipe(untilDestroyed(this)).subscribe((evt) => {
+    this.actionEvents$ = new Subject();
+    this.actionEvents$.pipe(untilDestroyed(this)).subscribe((evt) => {
       if (evt.data[actionId]) {
         this.refresh();
       }
     });
 
     const toolbarConfig: ToolbarConfig = {
-      target: this.actionEvents,
+      target: this.actionEvents$,
       controls: [
         {
           type: 'button',
@@ -259,7 +260,7 @@ export class VolumeStatusComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.actionEvents.complete();
+    this.actionEvents$.complete();
     this.core.unregister({ observerClass: this });
   }
 
@@ -362,7 +363,7 @@ export class VolumeStatusComponent implements OnInit {
           fieldConfig: this.replaceDiskFormFields,
           saveButtonText: helptext.replace_disk.saveButtonText,
           parent: this,
-          customSubmit(entityDialog: any) {
+          customSubmit(entityDialog: EntityDialogComponent) {
             delete entityDialog.formValue['passphrase2'];
 
             const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {
@@ -491,7 +492,7 @@ export class VolumeStatusComponent implements OnInit {
           fieldConfig: this.extendVdevFormFields,
           saveButtonText: helptext.extend_disk.saveButtonText,
           parent: this,
-          customSubmit(entityDialog: any) {
+          customSubmit(entityDialog: EntityDialogComponent) {
             delete entityDialog.formValue['passphrase2'];
 
             const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {

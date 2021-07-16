@@ -3,15 +3,15 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/data-protection/replication/replication';
 import globalHelptext from 'app/helptext/global-helptext';
-import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -69,7 +69,7 @@ export class ReplicationListComponent implements EntityTableConfig {
     { name: T('Last Snapshot'), prop: 'task_last_snapshot' },
   ];
 
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -118,7 +118,7 @@ export class ReplicationListComponent implements EntityTableConfig {
         onClick: (row: any) => {
           this.dialog.confirm(T('Run Now'), T('Replicate <i>') + row.name + T('</i> now?'), true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
             if (res) {
-              row.state = { state: EntityJobState.Running };
+              row.state = { state: JobState.Running };
               this.ws.call('replication.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
                 (jobId: number) => {
                   this.dialog.Info(
@@ -128,7 +128,7 @@ export class ReplicationListComponent implements EntityTableConfig {
                     'info',
                     true,
                   );
-                  this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: EntityJob) => {
+                  this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
                     row.state = { state: job.state };
                     row.job = job;
                   });
@@ -215,9 +215,9 @@ export class ReplicationListComponent implements EntityTableConfig {
 
   stateButton(row: any): void {
     if (row.job) {
-      if (row.state.state === EntityJobState.Running) {
+      if (row.state.state === JobState.Running) {
         this.entityList.runningStateButton(row.job.id);
-      } else if (row.state.state === EntityJobState.Hold) {
+      } else if (row.state.state === JobState.Hold) {
         this.dialog.Info(T('Task is on hold'), row.state.reason, '500px', 'info', true);
       } else {
         this.dialog.errorReport(row.state.state, `<pre>${row.state.error}</pre>`);

@@ -1,24 +1,67 @@
 import {
-  AclItemTag, AclPermission, AclType, DAclFlagsBasic, DAclNfs4Tag, DAclPermissionsBasic, DAclType,
-} from 'app/enums/acl-type.enum';
+  AclType,
 
-export interface Acl {
-  acl: PosixAclItem[]; // TODO: There may be a different interface for NFS ACL
+} from 'app/enums/acl-type.enum';
+import {
+  NfsAclTag,
+  NfsAclType,
+  NfsAdvancedFlag,
+  NfsAdvancedPermission,
+  NfsBasicFlag,
+  NfsBasicPermission,
+} from 'app/enums/nfs-acl.enum';
+import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
+
+export type Acl = NfsAcl | PosixAcl;
+
+export interface BaseAcl {
   acltype: AclType;
-  flags: AclFlags;
   gid: number;
+  trivial: boolean;
   uid: number;
 }
+
+export interface NfsAcl extends BaseAcl {
+  acl: NfsAclItem[];
+  acltype: AclType.Nfs4;
+  nfs41_flags: Nfs41Flags;
+}
+
+export interface PosixAcl extends BaseAcl {
+  acl: PosixAclItem[];
+  acltype: AclType.Posix1e;
+  flags: AclFlags;
+}
+
+export type AclQueryParams = [
+  /* path */ string,
+  /* simplified */ boolean?,
+  /* resolve_ids */ boolean?,
+];
 
 export interface PosixAclItem {
   default: boolean;
   id: number;
-  perms: {
-    [AclPermission.Read]: boolean;
-    [AclPermission.Write]: boolean;
-    [AclPermission.Execute]: boolean;
-  };
-  tag: AclItemTag;
+  perms: PosixPermissions;
+  tag: PosixAclTag;
+
+  /**
+   * Present when queried with resolve_ids.
+   */
+  who?: string;
+}
+
+export interface NfsAclItem {
+  tag: NfsAclTag;
+  id: number;
+  type: NfsAclType;
+  perms: BasicNfsPermissions | AdvancedNfsPermissions;
+  flags: BasicNfsFlags | AdvancedNfsFlags;
+
+  /**
+   * Present when queried with resolve_ids.
+   */
+  who?: string;
 }
 
 export interface AclFlags {
@@ -27,52 +70,26 @@ export interface AclFlags {
   sticky: boolean;
 }
 
-export interface DAclPermissions {
-  READ_DATA: boolean;
-  WRITE_DATA: boolean;
-  APPEND_DATA: boolean;
-  READ_NAMED_ATTRS: boolean;
-  WRITE_NAMED_ATTRS: boolean;
-  EXECUTE: boolean;
-  DELETE_CHILD: boolean;
-  READ_ATTRIBUTES: boolean;
-  WRITE_ATTRIBUTES: boolean;
-  DELETE: boolean;
-  READ_ACL: boolean;
-  WRITE_ACL: boolean;
-  WRITE_OWNER: boolean;
-  SYNCHRONIZE: boolean;
-  BASIC: DAclPermissionsBasic;
+export type AdvancedNfsPermissions = {
+  [key in NfsAdvancedPermission]: boolean;
+};
+
+export interface BasicNfsPermissions {
+  BASIC: NfsBasicPermission;
 }
 
-export interface DAclFlags {
-  FILE_INHERIT: boolean;
-  DIRECTORY_INHERIT: boolean;
-  NO_PROPAGATE_INHERIT: boolean;
-  INHERIT_ONLY: boolean;
-  INHERITED: boolean;
-  BASIC: DAclFlagsBasic;
+export type AdvancedNfsFlags = {
+  [key in NfsAdvancedFlag]: boolean;
+};
+
+export interface BasicNfsFlags {
+  BASIC: NfsBasicFlag;
 }
 
-export interface DAclNfs4 {
-  tag: DAclNfs4Tag;
-  id: number;
-  type: DAclType;
-  perms: DAclPermissions;
-  flags: DAclFlags;
-}
-
-export interface DAclPosix1ePermissions {
-  READ: boolean;
-  WRITE: boolean;
-  EXECUTE: boolean;
-}
-
-export interface DAclPosix1e {
-  default: boolean;
-  tag: AclItemTag;
-  id: number;
-  perms: DAclPosix1ePermissions;
+export interface PosixPermissions {
+  [PosixPermission.Read]: boolean;
+  [PosixPermission.Write]: boolean;
+  [PosixPermission.Execute]: boolean;
 }
 
 export interface Nfs41Flags {
@@ -91,7 +108,7 @@ export interface SetAcl {
   path: string;
   uid: number;
   gid: number;
-  dacl: DAclNfs4[] | DAclPosix1e[];
+  dacl: NfsAclItem[] | PosixAclItem[];
   nfs41_flags: Nfs41Flags;
   acltype: AclType;
   options: SetAclOptions;

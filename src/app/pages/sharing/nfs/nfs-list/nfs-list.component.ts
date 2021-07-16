@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { shared, helptext_sharing_nfs } from 'app/helptext/sharing';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import {
   DialogService, NetworkService, WebSocketService, UserService, ModalService,
 } from 'app/services';
 import { T } from 'app/translate-marker';
-import { NFSFormComponent } from '../nfs-form';
+import { NFSFormComponent } from '../nfs-form/nfs-form.component';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +30,7 @@ export class NFSListComponent implements EntityTableConfig {
     { name: helptext_sharing_nfs.column_enabled, prop: 'enabled' },
   ];
   rowIdentifier = 'nfs_paths';
-  config: any = {
+  config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

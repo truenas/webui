@@ -6,6 +6,12 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { WebSocketService } from 'app/services';
 
+interface DirectoryServicesMonitorRow {
+  name: string;
+  state: string;
+  id: string;
+}
+
 @UntilDestroy()
 @Component({
   selector: 'app-directory-services-monitor',
@@ -22,7 +28,7 @@ import { WebSocketService } from 'app/services';
 })
 export class DirectoryServicesMonitorComponent implements OnInit {
   displayedColumns: string[] = ['icon', 'name', 'state'];
-  dataSource: any[] = [];
+  dataSource: DirectoryServicesMonitorRow[] = [];
   showSpinner = false;
 
   constructor(private ws: WebSocketService, private router: Router) {}
@@ -32,7 +38,7 @@ export class DirectoryServicesMonitorComponent implements OnInit {
   }
 
   getStatus(): void {
-    const tempArray: any[] = [];
+    const tempArray: DirectoryServicesMonitorRow[] = [];
     this.showSpinner = true;
     this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((res) => {
       this.showSpinner = false;

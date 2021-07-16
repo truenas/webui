@@ -1,5 +1,5 @@
-<div class="widgets-wrapper-container" (window:resize)="onMobileResize($event)">  
-  
+<div class="widgets-wrapper-container" (window:resize)="onMobileResize($event)">
+
   <div class="widgets-wrapper" *ngIf="screenType == 'Desktop' && dashStateReady && empty" fxLayout="column" fxLayoutAlign="center center">
     <entity-empty fxFlex="'320px'" fxFlex.xs="100" [conf]="emptyDashConf"></entity-empty>
   </div>
@@ -12,34 +12,34 @@
 
 
     <!-- SORTABLE WIDGETS -->
-    <ng-container  *ngIf="!empty && screenType == 'Desktop' && statsDataEvents && pools && nics && volumeData && sysinfoReady">
+    <ng-container  *ngIf="!empty && screenType == 'Desktop' && statsDataEvent$ && pools && nics && volumeData && sysinfoReady">
       <ng-container  *ngIf="dashState">
         <ng-container  *ngFor="let widget of dashState">
           <ng-container  *ngIf="widget.rendered">
             <ng-container [ngSwitch]="widget.name.toLowerCase()">
-              
-              <widget-sysinfo *ngSwitchCase="'system information'" 
-                id="active" 
-                fxFlex="{{widgetWidth}}px" 
+
+              <widget-sysinfo *ngSwitchCase="'system information'"
+                id="active"
+                fxFlex="{{widgetWidth}}px"
                 fxFlex.xs="100"
                 [enclosure]="systemInformation.features.enclosure"
-                [isHA]="isHA" 
-                [passive]="false" 
+                [isHA]="isHA"
+                [passive]="false"
                 [widgetSize]="medium">
               </widget-sysinfo>
 
-              <widget-sysinfo *ngSwitchCase="'system information(standby)'" 
-                id="passive" 
-                fxFlex="{{widgetWidth}}px" 
-                fxFlex.xs="100" 
+              <widget-sysinfo *ngSwitchCase="'system information(standby)'"
+                id="passive"
+                fxFlex="{{widgetWidth}}px"
+                fxFlex.xs="100"
                 [enclosure]="systemInformation.features.enclosure"
-                [isHA]="isHA" 
-                [passive]="true" 
+                [isHA]="isHA"
+                [passive]="true"
                 [widgetSize]="medium">
               </widget-sysinfo>
-              
 
-              <widget-cpu *ngSwitchCase="'cpu'" 
+
+              <widget-cpu *ngSwitchCase="'cpu'"
                 fxFlex="{{widgetWidth}}px"
                 fxFlex.xs="100"
                 [data]="dataFromConfig(widget)"
@@ -47,7 +47,7 @@
                 [widgetSize]="medium"
                 configurable="false">
               </widget-cpu>
-  
+
               <widget-memory *ngSwitchCase="'memory'"
                 fxFlex="{{widgetWidth}}px"
                 fxFlex.xs="100"
@@ -56,7 +56,7 @@
                 [widgetSize]="medium"
                 configurable="false">
               </widget-memory>
-              
+
               <widget-pool *ngSwitchCase="'pool'"
                 fxFlex="{{widgetWidth}}px"
                 fxFlex.xs="100"
@@ -65,16 +65,25 @@
                 [widgetSize]="medium"
                 configurable="false">
               </widget-pool>
-  
+
+              <widget-storage *ngSwitchCase="'storage'"
+                fxFlex="{{widgetWidth}}px"
+                fxFlex.xs="100"
+                [pools]="pools"
+                [volumeData]="volumeData"
+                [widgetSize]="medium"
+                configurable="false">
+              </widget-storage>
+
               <widget-nic *ngSwitchCase="'interface'"
                 fxFlex="{{widgetWidth}}px"
                 fxFlex.xs="100"
                 [nicState]="dataFromConfig(widget)"
-                [stats]="statsDataEvents"
+                [stats]="statsDataEvent$"
                 [widgetSize]="medium"
                 configurable="false">
               </widget-nic>
-  
+
             </ng-container>
           </ng-container>
         </ng-container>
@@ -95,23 +104,23 @@
     <!-- MOBILE WIDGETS -->
     <div class="mobile-viewport" [ngClass]="{'hidden': screenType == 'Desktop'}">
       <div class="carousel">
-        <widget-controller (launcher)="onMobileLaunch($event)" 
-          *ngIf="screenType == 'Mobile' && dashState && dashState.length > 0;"  
-          [renderedWidgets]="renderedWidgets" 
-          [dashState]="dashState" 
+        <widget-controller (launcher)="onMobileLaunch($event)"
+          *ngIf="screenType == 'Mobile' && dashState && dashState.length > 0;"
+          [renderedWidgets]="renderedWidgets"
+          [dashState]="dashState"
           [actionsConfig]="actionsConfig.actionConfig"
           [emptyConfig]="emptyDashConf"
-          [widgetSize]="medium"   
+          [widgetSize]="medium"
           configurable="false">
         </widget-controller>
-  
+
         <div class="mobile-widget-container">
-          <ng-container  *ngIf="screenType == 'Mobile' && statsDataEvents && pools && nics && volumeData && sysinfoReady">
+          <ng-container  *ngIf="screenType == 'Mobile' && statsDataEvent$ && pools && nics && volumeData && sysinfoReady">
             <ng-container  *ngFor="let widget of activeMobileWidget">
               <ng-container [ngSwitch]="widget.name.toLowerCase()">
-        
+
                 <widget-sysinfo *ngSwitchCase="'system information'"
-                  (back)="onMobileBack()" 
+                  (back)="onMobileBack()"
                   id="active"
                   [enclosure]="systemInformation.features.enclosure"
                   [isHA]="isHA"
@@ -127,7 +136,7 @@
                   [passive]="true"
                   [widgetSize]="medium">
                 </widget-sysinfo>
-      
+
                 <widget-cpu *ngSwitchCase="'cpu'"
                   (back)="onMobileBack()"
                   [data]="dataFromConfig(widget)"
@@ -135,14 +144,14 @@
                   [widgetSize]="medium"
                   configurable="false">
                 </widget-cpu>
-        
+
                 <widget-memory *ngSwitchCase="'memory'"
                   (back)="onMobileBack()"
                   [data]="dataFromConfig(widget)"
                   [widgetSize]="medium"
                   configurable="false">
                 </widget-memory>
-                
+
                 <widget-pool *ngSwitchCase="'pool'"
                   (back)="onMobileBack()"
                   [poolState]="dataFromConfig(widget)"
@@ -150,15 +159,25 @@
                   [widgetSize]="medium"
                   configurable="false">
                 </widget-pool>
-        
+
+                <widget-storage *ngSwitchCase="'storage'"
+                  (back)="onMobileBack()"
+                  fxFlex="{{widgetWidth}}px"
+                  fxFlex.xs="100"
+                  [pools]="pools"
+                  [volumeData]="volumeData"
+                  [widgetSize]="medium"
+                  configurable="false">
+                </widget-storage>
+
                 <widget-nic *ngSwitchCase="'interface'"
                   (back)="onMobileBack()"
                   [nicState]="dataFromConfig(widget)"
-                  [stats]="statsDataEvents"
+                  [stats]="statsDataEvent$"
                   [widgetSize]="medium"
                   configurable="false">
                 </widget-nic>
-        
+
               </ng-container>
             </ng-container>
           </ng-container>
@@ -166,5 +185,3 @@
         </div>
       </div>
     </div>
-
-

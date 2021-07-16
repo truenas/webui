@@ -1,0 +1,19 @@
+.ix-blue mat-card.card-square {
+  border: none;
+  border-radius: 0;
+
+  mat-card-header {
+    border-bottom: 1px solid var(--lines);
+  }
+
+  mat-card-title {
+    font-size: 1.4rem;
+    margin: 12px 10px 14px;
+  }
+
+  mat-card-footer {
+    border-top: 1px solid var(--lines);
+    box-sizing: border-box;
+    margin: 0;
+  }
+}

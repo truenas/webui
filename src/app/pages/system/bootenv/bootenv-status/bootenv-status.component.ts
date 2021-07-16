@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TreeNode } from 'primeng/api';
+import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
+import { VDev } from 'app/interfaces/storage.interface';
 import { EntityTreeTable } from 'app/pages/common/entity/entity-tree-table/entity-tree-table.model';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
@@ -26,8 +28,7 @@ interface PoolDiskInfo {
 })
 export class BootStatusListComponent implements OnInit {
   title = 'Boot Pool Status';
-  protected queryCall = 'boot.get_state';
-  protected entityList: any;
+  protected queryCall: 'boot.get_state' = 'boot.get_state';
   protected pk: number;
   poolScan: any;
   oneDisk = false;
@@ -40,11 +41,12 @@ export class BootStatusListComponent implements OnInit {
       { name: 'Write', prop: 'write' },
       { name: 'Checksum', prop: 'checksum' },
       { name: 'Status', prop: 'status' },
+      { name: T('Actions'), prop: 'actions' },
     ],
   };
 
   constructor(
-    private _router: Router,
+    private router: Router,
     private ws: WebSocketService,
     private dialog: DialogService,
     protected loader: AppLoaderService,
@@ -53,13 +55,12 @@ export class BootStatusListComponent implements OnInit {
 
   getData(): void {
     this.ws.call('boot.get_state').pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        if (res.groups.data[0].type === 'disk') {
+      (state) => {
+        if (state.groups.data[0].type === 'disk') {
           this.oneDisk = true;
         }
-        if (res) {
-          // this.poolScan = res.scan;
-          this.dataHandler(res);
+        if (state) {
+          this.dataHandler(state);
         }
       },
       (err) => {
@@ -81,7 +82,7 @@ export class BootStatusListComponent implements OnInit {
     this.ws.call('boot.detach', [disk]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
-        this._router.navigate(
+        this.router.navigate(
           new Array('').concat('system', 'boot'),
         );
         this.dialog.Info(T('Device detached '), T(`<i>${disk}</i> has been detached.`), '300px', 'info', true);
@@ -93,83 +94,92 @@ export class BootStatusListComponent implements OnInit {
     );
   }
 
-  parseData(data: any, category?: any, boot_pool_data?: any): any {
-    let stats: any = {
+  parseData(data: VDev | BootPoolState, category?: string, boot_pool_data?: VDev): any {
+    let stats = {
       read_errors: 0,
       write_errors: 0,
       checksum_errors: 0,
     };
 
-    if (data.stats) {
+    if ('stats' in data) {
       stats = data.stats;
     }
-    if (data.type && data.type != 'disk') {
-      data.name = data.type;
+
+    let name = (data as BootPoolState).name;
+    if ('type' in data && data.type != 'disk') {
+      name = data.type;
     }
     // use path as the device name if the device name is null
-    if (!data.device || data.device == null) {
-      data.device = data.path;
+    if (!(data as VDev).device) {
+      (data as VDev).device = (data as VDev).path;
     }
 
     const item: PoolDiskInfo = {
-      name: data.name ? data.name : data.device,
+      name: name || (data as VDev).device,
       read: stats.read_errors ? stats.read_errors : 0,
       write: stats.write_errors ? stats.write_errors : 0,
       checksum: stats.checksum_errors ? stats.checksum_errors : 0,
       status: data.status,
-      path: data.path,
+      path: (data as VDev).path,
     };
 
-    if (data.type && boot_pool_data && boot_pool_data.type === 'mirror' && data.path) {
-      item.actions = [{
+    let actions: any[] = [];
+
+    if ('type' in data && boot_pool_data && boot_pool_data.type === 'mirror' && data.path) {
+      actions = [{
+        id: 'edit',
         label: T('Detach'),
-        onClick: (row: any) => {
+        onClick: (row: PoolDiskInfo) => {
           this.detach(row.name);
         },
         isHidden: false,
       },
       {
         label: T('Replace'),
-        onClick: (row: any) => {
-          this._router.navigate(new Array('').concat(['system', 'boot', 'replace', row.name]));
+        onClick: (row: PoolDiskInfo) => {
+          this.router.navigate(new Array('').concat(['system', 'boot', 'replace', row.name]));
         },
         isHidden: false,
       }];
     }
 
-    if (data.type && boot_pool_data && boot_pool_data.type === 'disk' && data.path && !this.oneDisk) {
-      item.actions = [
+    if ('type' in data && boot_pool_data && boot_pool_data.type === 'disk' && data.path && !this.oneDisk) {
+      actions = [
         {
           label: T('Replace'),
-          onClick: (row: any) => {
-            this._router.navigate(new Array('').concat(['system', 'boot', 'replace', row.name]));
+          onClick: (row: PoolDiskInfo) => {
+            this.router.navigate(new Array('').concat(['system', 'boot', 'replace', row.name]));
           },
           isHidden: false,
         }];
     }
 
-    if (data.type && boot_pool_data && boot_pool_data.type === 'disk' && data.path && this.oneDisk) {
-      item.actions = [
+    if ('type' in data && boot_pool_data && boot_pool_data.type === 'disk' && data.path && this.oneDisk) {
+      actions = [
         {
           label: T('Attach'),
-          onClick: (row: any) => {
-            this._router.navigate(new Array('').concat(['system', 'boot', 'attach', row.name]));
+          onClick: (row: PoolDiskInfo) => {
+            this.router.navigate(new Array('').concat(['system', 'boot', 'attach', row.name]));
           },
           isHidden: false,
         },
         {
           label: T('Replace'),
-          onClick: (row: any) => {
-            this._router.navigate(new Array('').concat(['system', 'boot', 'replace', row.name]));
+          onClick: (row: PoolDiskInfo) => {
+            this.router.navigate(new Array('').concat(['system', 'boot', 'replace', row.name]));
           },
           isHidden: false,
         }];
     }
 
+    if (actions.length) {
+      item.actions = [{ actions, title: 'Actions' }];
+    }
+
     return item;
   }
 
-  parseTopolgy(data: any, category: any, parent?: any): TreeNode {
+  parseTopology(data: VDev, category: string, parent?: VDev): TreeNode {
     const node: TreeNode = {};
     node.data = this.parseData(data, category, parent);
     node.expanded = true;
@@ -177,22 +187,22 @@ export class BootStatusListComponent implements OnInit {
 
     if (data.children) {
       for (let i = 0; i < data.children.length; i++) {
-        node.children.push(this.parseTopolgy(data.children[i], category, parent));
+        node.children.push(this.parseTopology(data.children[i], category, parent));
       }
     }
     delete node.data.children;
     return node;
   }
 
-  dataHandler(pool: any): void {
+  dataHandler(pool: BootPoolState): void {
     this.treeTableConfig.tableData = [];
     const node: TreeNode = {};
-    node.data = this.parseData(pool);
+    node.data = this.parseData(pool as any);
     node.expanded = true;
     node.children = [];
 
     for (let i = 0; i < pool.groups.data.length; i++) {
-      node.children.push(this.parseTopolgy(pool.groups.data[i], 'data', pool.groups.data[i]));
+      node.children.push(this.parseTopology(pool.groups.data[i], 'data', pool.groups.data[i]));
     }
 
     delete node.data.children;

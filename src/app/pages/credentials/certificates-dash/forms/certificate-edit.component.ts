@@ -1,10 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -174,7 +176,7 @@ export class CertificateEditComponent implements FormConfiguration {
         },
         {
           type: 'paragraph',
-          name: 'signed_by',
+          name: 'signedby',
           paraText: helptext_system_certificates.edit_view.signed_by,
         },
         {
@@ -196,9 +198,9 @@ export class CertificateEditComponent implements FormConfiguration {
 
   private rowNum: any;
   protected entityForm: EntityFormComponent;
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
   private getRow = new Subscription();
-  private incomingData: any;
+  private incomingData: Certificate;
 
   constructor(protected ws: WebSocketService, protected matDialog: MatDialog,
     protected loader: AppLoaderService, protected dialog: DialogService,
@@ -210,7 +212,7 @@ export class CertificateEditComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: Certificate): Certificate {
     this.incomingData = data;
     if (data.cert_type_CSR) {
       this.isCSR = true;
@@ -245,17 +247,20 @@ export class CertificateEditComponent implements FormConfiguration {
   }
 
   setForm(): void {
-    const fields = ['country', 'state', 'city', 'organization', 'organizational_unit', 'email', 'common', 'DN', 'cert_type',
-      'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'revoked', 'signed_by', 'lifetime'];
+    const fields: (keyof Certificate)[] = [
+      'country', 'state', 'city', 'organization', 'organizational_unit', 'email', 'common', 'DN', 'cert_type',
+      'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'revoked', 'lifetime',
+    ];
     fields.forEach((field) => {
       const paragraph = _.find(this.fieldConfig, { name: field });
       this.incomingData[field] || this.incomingData[field] === false
         ? paragraph.paraText += this.incomingData[field] : paragraph.paraText += '---';
     });
     _.find(this.fieldConfig, { name: 'san' }).paraText += this.incomingData.san.join(',');
+    _.find(this.fieldConfig, { name: 'signedby' }).paraText += this.incomingData.signedby?.name || '---';
     const issuer = _.find(this.fieldConfig, { name: 'issuer' });
     if (_.isObject(this.incomingData.issuer)) {
-      issuer.paraText += this.incomingData.issuer.name;
+      issuer.paraText += (this.incomingData.issuer as any).name;
     } else {
       this.incomingData.issuer ? issuer.paraText += this.incomingData.issuer : issuer.paraText += '---';
     }

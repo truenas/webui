@@ -6,8 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ConsolePanelModalDialog } from 'app/components/common/dialog/consolepanel/consolepanel-dialog.component';
-import { CoreService } from 'app/core/services/core.service';
+import { ConsolePanelModalDialog } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { LayoutService } from 'app/core/services/layout.service';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
@@ -66,7 +66,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     private layoutService: LayoutService,
   ) {
     // detect server type
-    sysGeneralService.getProductType.pipe(untilDestroyed(this)).subscribe((res) => {
+    sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.product_type = res as ProductType;
     });
 
@@ -179,7 +179,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   checkIfConsoleMsgShows(): void {
-    this.sysGeneralService.getAdvancedConfig.pipe(
+    this.sysGeneralService.getAdvancedConfig$.pipe(
       untilDestroyed(this),
     ).subscribe((res) => this.onShowConsoleFooterBar(res.consolemsg));
   }

@@ -1,7 +1,7 @@
 import {
-  Component, OnInit, OnDestroy,
+  Component, OnInit,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -15,7 +15,7 @@ import { NetworkService } from 'app/services';
   templateUrl: './form-ipwithnetmask.component.html',
   styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })
-export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
+export class FormIpWithNetmaskComponent implements Field, OnInit {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
@@ -28,24 +28,19 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
 
   private ipv6netmaskoptions = this.network.getV6PrefixLength();
   private ipv4netmaskoptions = this.network.getV4Netmasks();
-  private valueSubscription: any;
-  private control: any;
+  private control: AbstractControl;
 
   constructor(public translate: TranslateService, private network: NetworkService) {
   }
 
   ngOnInit(): void {
     this.control = this.group.controls[this.config.name];
-    this.valueSubscription = this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
+    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.setAddressAndNetmask(res);
     });
     if (this.control.value) {
       this.setAddressAndNetmask(this.control.value);
     }
-  }
-
-  ngOnDestroy(): void {
-    this.valueSubscription.unsubscribe();
   }
 
   setAddress($event: FocusEvent): void {

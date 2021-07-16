@@ -1,5 +1,5 @@
 import { Validators } from '@angular/forms';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
+import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 import { T } from 'app/translate-marker';
 
 export default {
@@ -46,6 +46,9 @@ export default {
  Compressing data is generally recommended before using deduplication. Deduplicating data is \
  a one-way process. <b>Deduplicated data cannot be undeduplicated!</b>.'),
   zvol_deduplication_validation: [Validators.required],
+
+  zvol_readonly_placeholder: T('Read-only'),
+  zvol_readonly_tooltip: T('Set to prevent the zvol from being modified.'),
 
   zvol_sparse_placeholder: T('Sparse'),
   zvol_sparse_tooltip: T('Set to provide <a\

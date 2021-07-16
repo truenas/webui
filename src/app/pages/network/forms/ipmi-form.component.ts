@@ -42,7 +42,7 @@ export class IPMIFromComponent implements FormConfiguration {
     { label: '4 minute', value: 240 },
     { label: 'Turn OFF', value: 0 },
   ];
-  custActions: any[] = [
+  custActions = [
     {
       id: 'ipmi_identify',
       name: T('Identify Light'),
@@ -249,18 +249,18 @@ export class IPMIFromComponent implements FormConfiguration {
     }
   }
 
-  setErrorStatus(status: any, field: any): void {
+  setErrorStatus(status: any, field: FieldConfig): void {
     status === 'INVALID' ? field.hasErrors = true : field.hasErrors = false;
   }
 
   customSubmit(payload: any): Subscription {
-    let call = this.ws.call('ipmi.update', [this.channelValue, payload]);
+    let call$ = this.ws.call('ipmi.update', [this.channelValue, payload]);
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
-      call = this.ws.call('failover.call_remote', ['ipmi.update', [this.channelValue, payload]]);
+      call$ = this.ws.call('failover.call_remote', ['ipmi.update', [this.channelValue, payload]]);
     }
 
     this.loader.open();
-    return call.pipe(untilDestroyed(this)).subscribe(() => {
+    return call$.pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
       this.dialog.Info(T('Settings saved.'), '', '300px', 'info', true);
     }, (res) => {
@@ -270,11 +270,11 @@ export class IPMIFromComponent implements FormConfiguration {
   }
 
   loadData(filter: any[] = []): void {
-    let query = this.ws.call(this.queryCall, filter);
+    let query$ = this.ws.call(this.queryCall, filter);
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
-      query = this.ws.call('failover.call_remote', [this.queryCall, [filter]]);
+      query$ = this.ws.call('failover.call_remote', [this.queryCall, [filter]]);
     }
-    query.pipe(untilDestroyed(this)).subscribe((res) => {
+    query$.pipe(untilDestroyed(this)).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
         this.channelValue = res[i].channel;
         this.entityEdit.formGroup.controls['netmask'].setValue(res[i].netmask);

@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import { ProductType } from 'app/enums/product-type.enum';
 import global_helptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/services/components/service-smb';
+import { Choices } from 'app/interfaces/choices.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -34,15 +35,12 @@ export class ServiceSMBComponent implements FormConfiguration {
   protected targetDS = '5';
   isBasicMode = true;
 
-  private cifs_srv_bindip: any;
-  private cifs_srv_guest: any;
-  private cifs_srv_unixcharset: any;
-  private cifs_srv_admin_group: any;
-  protected defaultIdmap: any;
-  protected dialogRef: any;
-  protected idNumber: any;
+  private cifs_srv_bindip: FieldConfig;
+  private cifs_srv_guest: FieldConfig;
+  private cifs_srv_unixcharset: FieldConfig;
+  private cifs_srv_admin_group: FieldConfig;
   entityEdit: EntityFormComponent;
-  private validBindIps: any;
+  private validBindIps: Choices;
   title = helptext.formTitle;
 
   advanced_field = [
@@ -243,7 +241,7 @@ export class ServiceSMBComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  custActions: any[] = [
+  custActions = [
     {
       id: 'basic_mode',
       name: global_helptext.basic_options,

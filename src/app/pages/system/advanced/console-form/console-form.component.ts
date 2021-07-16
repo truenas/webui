@@ -5,6 +5,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -94,8 +96,8 @@ export class ConsoleFormComponent implements FormConfiguration {
     },
   ]);
 
-  private entityForm: any;
-  private configData: any;
+  private entityForm: EntityFormComponent;
+  private configData: SystemGeneralConfig;
   title = helptext_system_advanced.fieldset_console;
 
   constructor(
@@ -115,7 +117,7 @@ export class ConsoleFormComponent implements FormConfiguration {
   }
 
   reconnect(href: string): void {
-    if (this.entityForm.ws.connected) {
+    if (this.ws.connected) {
       this.loader.close();
       // ws is connected
       window.location.replace(href);
@@ -126,16 +128,16 @@ export class ConsoleFormComponent implements FormConfiguration {
     }
   }
 
-  afterInit(entityEdit: any): void {
+  afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
 
-    this.ws.call('system.advanced.serial_port_choices').pipe(untilDestroyed(this)).subscribe((serial_port_choices) => {
+    this.ws.call('system.advanced.serial_port_choices').pipe(untilDestroyed(this)).subscribe((serialPorts) => {
       const serialport = this.fieldSets.config('serialport');
       serialport.options = [];
 
-      for (const k in serial_port_choices) {
+      for (const k in serialPorts) {
         serialport.options.push({
-          label: k, value: serial_port_choices[k],
+          label: k, value: serialPorts[k],
         });
       }
     });

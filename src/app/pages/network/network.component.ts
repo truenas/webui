@@ -1,16 +1,18 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as ipRegex from 'ip-regex';
 import { Subject } from 'rxjs';
-import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
+import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { CoreEvent } from 'app/interfaces/events';
+import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
@@ -43,7 +45,7 @@ import { StaticRouteFormComponent } from './forms/staticroute-form.component';
 export class NetworkComponent extends ViewControllerComponent implements OnInit, OnDestroy {
   protected summayCall: 'network.general.summary' = 'network.general.summary';
   protected configCall: 'network.configuration.config' = 'network.configuration.config';
-  formEvents: Subject<CoreEvent>;
+  formEvent$: Subject<CoreEvent>;
 
   ha_enabled = false;
   hasPendingChanges = false;
@@ -55,7 +57,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   private affectedServices: string[] = [];
   checkin_interval: Interval;
 
-  private navigation: any;
+  private navigation: Navigation;
   helptext = helptext;
 
   interfaceTableConf = {
@@ -194,7 +196,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     },
   };
 
-  networkSummary: any;
+  networkSummary: NetworkSummary;
   impiEnabled: boolean;
 
   protected addComponent: ConfigurationComponent;
@@ -224,50 +226,50 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
 
   getGlobalSettings(): void {
     this.ws.call(this.configCall).pipe(untilDestroyed(this)).subscribe(
-      (config_res) => {
+      (networkConfig) => {
         this.ws.call(this.summayCall).pipe(untilDestroyed(this)).subscribe(
-          (res) => {
-            this.networkSummary = res;
-            this.globalSettingsWidget.data.nameserver = res.nameservers.map((item: any) => {
+          (summary) => {
+            this.networkSummary = summary;
+            this.globalSettingsWidget.data.nameserver = summary.nameservers.map((item) => {
               switch (item) {
-                case config_res.nameserver1:
+                case networkConfig.nameserver1:
                   return { label: 'Nameserver 1', value: item };
-                case config_res.nameserver2:
+                case networkConfig.nameserver2:
                   return { label: 'Nameserver 2', value: item };
-                case config_res.nameserver3:
+                case networkConfig.nameserver3:
                   return { label: 'Nameserver 3', value: item };
                 default:
                   return { label: 'Nameserver (DHCP)', value: item };
               }
             });
-            this.globalSettingsWidget.data.ipv4 = res.default_routes.filter((item: any) => ipRegex.v4().test(item));
-            this.globalSettingsWidget.data.ipv6 = res.default_routes.filter((item: any) => ipRegex.v6().test(item));
+            this.globalSettingsWidget.data.ipv4 = summary.default_routes.filter((item) => ipRegex.v4().test(item));
+            this.globalSettingsWidget.data.ipv6 = summary.default_routes.filter((item) => ipRegex.v6().test(item));
 
-            this.globalSettingsWidget.data.hostname = config_res.hostname;
-            this.globalSettingsWidget.data.domain = config_res.domain;
-            this.globalSettingsWidget.data.netwait = config_res.netwait_enabled ? T('ENABLED') : T('DISABLED');
+            this.globalSettingsWidget.data.hostname = networkConfig.hostname;
+            this.globalSettingsWidget.data.domain = networkConfig.domain;
+            this.globalSettingsWidget.data.netwait = networkConfig.netwait_enabled ? T('ENABLED') : T('DISABLED');
             const tempArr: string[] = [];
-            if (config_res.service_announcement.netbios) {
+            if (networkConfig.service_announcement.netbios) {
               tempArr.push(T('NETBIOS-NS'));
             }
-            if (config_res.service_announcement.mdns) {
+            if (networkConfig.service_announcement.mdns) {
               tempArr.push(T('mDNS'));
             }
-            if (config_res.service_announcement.wsd) {
+            if (networkConfig.service_announcement.wsd) {
               tempArr.push(T('WS-DISCOVERY'));
             }
             this.globalSettingsWidget.data.service_announcement = tempArr.join(', ');
-            this.globalSettingsWidget.data.additional_domains = config_res.domains.length > 0
-              ? config_res.domains.join(', ') : '---';
-            this.globalSettingsWidget.data.httpproxy = config_res.httpproxy !== '' ? config_res.httpproxy : '---';
-            this.globalSettingsWidget.data.hostnameDB = config_res.hosts !== '' ? config_res.hosts : '---';
+            this.globalSettingsWidget.data.additional_domains = networkConfig.domains.length > 0
+              ? networkConfig.domains.join(', ') : '---';
+            this.globalSettingsWidget.data.httpproxy = networkConfig.httpproxy !== '' ? networkConfig.httpproxy : '---';
+            this.globalSettingsWidget.data.hostnameDB = networkConfig.hosts !== '' ? networkConfig.hosts : '---';
 
-            if (config_res.activity.type === 'DENY') {
+            if (networkConfig.activity.type === NetworkActivityType.Deny) {
               this.globalSettingsWidget.data.outbound = T('Allow All');
-            } else if (config_res.activity.activities.length === 0) {
+            } else if (networkConfig.activity.activities.length === 0) {
               this.globalSettingsWidget.data.outbound = T('Deny All');
             } else {
-              this.globalSettingsWidget.data.outbound = T('Allow ') + config_res.activity.activities.join(', ');
+              this.globalSettingsWidget.data.outbound = T('Allow ') + networkConfig.activity.activities.join(', ');
             }
           },
         );
@@ -505,8 +507,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   ngOnDestroy(): void {
-    if (this.formEvents) {
-      this.formEvents.complete();
+    if (this.formEvent$) {
+      this.formEvent$.complete();
     }
     this.core.unregister({ observerClass: this });
   }

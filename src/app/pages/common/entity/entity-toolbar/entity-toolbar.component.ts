@@ -6,7 +6,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
+import { GlobalAction } from 'app/components/common/page-title/page-title.component';
 import { CoreEvent } from 'app/interfaces/events';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ToolbarConfig } from './models/control-config.interface';
@@ -21,18 +21,18 @@ import { Control } from './models/control.interface';
 export class EntityToolbarComponent implements OnChanges, GlobalAction {
   @Input('conf') conf: ToolbarConfig; // ControlConfig[];
   config: any;
-  controller: Subject<Control>;
+  controller$: Subject<Control>;
   values: any;
 
   constructor(
     protected loader: AppLoaderService,
     public translate: TranslateService,
   ) {
-    this.controller = new Subject();
+    this.controller$ = new Subject();
   }
 
   init(): void {
-    this.controller.pipe(untilDestroyed(this)).subscribe((evt: Control) => {
+    this.controller$.pipe(untilDestroyed(this)).subscribe((evt: Control) => {
       const clone = Object.assign([], this.values);
       clone[evt.name] = evt.value;
       this.values = clone;

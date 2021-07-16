@@ -1,6 +1,7 @@
 import {
-  ApplicationRef, Component, Injector, OnDestroy,
+  ApplicationRef, Component, Injector,
 } from '@angular/core';
+import { AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -8,6 +9,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/services/components/service-s3';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { S3Config, S3ConfigUpdate } from 'app/interfaces/s3-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -22,14 +24,13 @@ import {
   providers: [SystemGeneralService],
 })
 
-export class ServiceS3Component implements FormConfiguration, OnDestroy {
+export class ServiceS3Component implements FormConfiguration {
   // protected resource_name: string = 'services/s3';
   queryCall: 's3.config' = 's3.config';
   updateCall = 's3.update';
   route_success: string[] = ['services'];
-  private certificate: any;
-  private ip_address: any;
-  private initial_path: any;
+  private certificate: FieldConfig;
+  private initial_path: string;
   private warned = false;
   private validBindIps: string[] = [];
   title = helptext.formTitle;
@@ -110,8 +111,7 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
       name: 'divider',
       divider: true,
     }];
-  protected storage_path: any;
-  protected storage_path_subscription: any;
+  protected storage_path: AbstractControl;
 
   constructor(
     protected router: Router,
@@ -123,13 +123,9 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
     private dialog: DialogService,
   ) {}
 
-  ngOnDestroy(): void {
-    this.storage_path_subscription.unsubscribe();
-  }
-
   afterInit(entityForm: EntityFormComponent): void {
     this.storage_path = entityForm.formGroup.controls['storage_path'];
-    this.storage_path_subscription = this.storage_path.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.storage_path.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res && res != this.initial_path && !this.warned) {
         this.dialog
           .confirm({
@@ -146,7 +142,7 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
           });
       }
     });
-    this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res: any[]) => {
+    this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
       this.certificate = _.find(this.fieldConfig, { name: 'certificate' });
       if (res.length > 0) {
         res.forEach((item) => {
@@ -155,7 +151,7 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
       }
     });
     this.ws
-      .call('s3.bindip_choices', [])
+      .call('s3.bindip_choices')
       .pipe(
         map((response) =>
           Object.keys(response || {}).map((key) => ({
@@ -179,7 +175,6 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
     if (data.storage_path) {
       this.initial_path = data.storage_path;
     }
-    delete data['secret_key'];
 
     // If validIps is slow to load, skip check on load (It's still done on save)
     if (this.validBindIps.length > 0) {
@@ -197,8 +192,8 @@ export class ServiceS3Component implements FormConfiguration, OnDestroy {
     return data;
   }
 
-  submitFunction(this: any, entityForm: any): Observable<any> {
-    return this.ws.call('s3.update', [entityForm]);
+  submitFunction(configUpdate: S3ConfigUpdate): Observable<S3Config> {
+    return this.ws.call('s3.update', [configUpdate]);
   }
 
   beforeSubmit(data: any): void {

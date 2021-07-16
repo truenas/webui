@@ -1,17 +1,20 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core.service';
-import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { CoreService } from 'app/core/services/core-service/core.service';
+import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
+import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -38,8 +41,8 @@ export class UpdateComponent implements OnInit {
   error: string;
   autoCheck = false;
   train: string;
-  trains: any[] = [];
-  selectedTrain: any;
+  trains: { name: string; description: string }[] = [];
+  selectedTrain: string;
   general_update_error: string;
   update_downloaded = false;
   release_train: boolean;
@@ -48,7 +51,7 @@ export class UpdateComponent implements OnInit {
   updates_available = false;
   currentTrainDescription: string;
   trainDescriptionOnPageLoad: string;
-  fullTrainList: any[];
+  fullTrainList: { [name: string]: SystemUpdateTrain };
   isUpdateRunning = false;
   updateMethod = 'update.update';
   is_ha = false;
@@ -93,7 +96,7 @@ export class UpdateComponent implements OnInit {
     parent: this,
   };
 
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
 
   readonly ProductType = ProductType;
   readonly SystemUpdateStatus = SystemUpdateStatus;
@@ -197,11 +200,11 @@ export class UpdateComponent implements OnInit {
   }
 
   checkForUpdateRunning(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        if (res && res.length > 0) {
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
+      (jobs) => {
+        if (jobs && jobs.length > 0) {
           this.isUpdateRunning = true;
-          this.showRunningUpdate(res[0].id);
+          this.showRunningUpdate(jobs[0].id);
         }
       },
       (err) => {
@@ -378,7 +381,7 @@ export class UpdateComponent implements OnInit {
   }
 
   // Shows an update in progress as a job dialog on the update page
-  showRunningUpdate(jobId: string): void {
+  showRunningUpdate(jobId: number): void {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Update' }, disableClose: true });
     if (this.is_ha) {
       this.dialogRef.componentInstance.disableProgressValue(true);
@@ -397,10 +400,10 @@ export class UpdateComponent implements OnInit {
 
   // Buttons in the template activate these three functions
   downloadUpdate(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', EntityJobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        if (res[0]) {
-          this.showRunningUpdate(res[0].id);
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe(
+      (jobs) => {
+        if (jobs[0]) {
+          this.showRunningUpdate(jobs[0].id);
         } else {
           this.startUpdate();
         }
@@ -574,8 +577,7 @@ export class UpdateComponent implements OnInit {
   }
 
   // Save Config dialog
-  saveConfigSubmit(entityDialog: any): void {
-    parent = entityDialog.parent;
+  saveConfigSubmit(entityDialog: EntityDialogComponent<this>): void {
     let fileName = '';
     let mimetype: string;
     if (entityDialog.parent.sysInfo) {
