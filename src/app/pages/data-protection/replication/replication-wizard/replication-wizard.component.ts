@@ -868,7 +868,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       ssh_credentials_source_field.options.push({ label: T('Create New'), value: 'NEW' });
       ssh_credentials_target_field.options.push({ label: T('Create New'), value: 'NEW' });
     });
-s
+
     this.entityWizard.formArray.get([0]).get('exist_replication').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
       if (value !== null) {
         this.loadOrClearReplicationTask(value);
