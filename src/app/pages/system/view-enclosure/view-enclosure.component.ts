@@ -296,6 +296,6 @@ export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
       },
     };
 
-    this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
+    if (this.views && this.views.length > 1) this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
   }
 }
