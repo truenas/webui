@@ -909,29 +909,29 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   setDisksPoolState(): void {
-    const selectedEnclosure: any = this.getSelectedEnclosure();
+    const selectedEnclosure: EnclosureMetadata = this.getSelectedEnclosure();
     this.setDisksDisabled();
 
-    const keys: any[] = Object.keys(selectedEnclosure.poolKeys);
-    if (keys.length > 0) {
-      selectedEnclosure.disks.forEach((disk: any): void => {
-        if (
-          disk.enclosure.slot < this.enclosure.slotRange.start
-          || disk.enclosure.slot > this.enclosure.slotRange.end
-        ) {
-          return;
-        }
-        if (!disk.vdev) {
-          this.enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: disk.enclosure.slot, color: '#999999' } });
-          return;
-        }
-        const pIndex = disk.vdev.poolIndex;
-        this.enclosure.events.next({
-          name: 'ChangeDriveTrayColor',
-          data: { id: disk.enclosure.slot, color: this.theme[this.theme.accentColors[pIndex]] },
-        });
+    selectedEnclosure.disks.forEach((disk: any): void => {
+      if (
+        disk.enclosure.slot < this.enclosure.slotRange.start
+        || disk.enclosure.slot > this.enclosure.slotRange.end
+      ) {
+        return;
+      }
+
+      if (!disk.vdev) {
+        this.enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: disk.enclosure.slot, color: '#999999' } });
+        return;
+      }
+
+      const pIndex = disk.vdev.poolIndex;
+
+      this.enclosure.events.next({
+        name: 'ChangeDriveTrayColor',
+        data: { id: disk.enclosure.slot, color: this.theme[this.theme.accentColors[pIndex]] },
       });
-    }
+    });
   }
 
   converter(size: number): string {
