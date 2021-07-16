@@ -5,8 +5,8 @@ import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import {
   PermissionItem,
   PermissionsItemType,
-} from 'app/pages/storage/volumes/permissions-sidebar/interfaces/permission-item.interface';
-import { posixPermissionsToDescription } from 'app/pages/storage/volumes/permissions-sidebar/utils/permissions-to-description.utils';
+} from 'app/pages/storage/volumes/permissions/interfaces/permission-item.interface';
+import { posixPermissionsToDescription } from 'app/pages/storage/volumes/permissions/utils/permissions-to-description.utils';
 
 @Component({
   selector: 'app-trivial-permissions',

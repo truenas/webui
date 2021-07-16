@@ -35,6 +35,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { UserService } from 'app/services/user.service';
 import { T } from 'app/translate-marker';
 
+// TODO: Bye bye
 @UntilDestroy()
 @Component({
   selector: 'app-dataset-acl',
@@ -127,6 +128,8 @@ export class DatasetNfsAclComponent implements FormConfiguration {
         },
       ],
     },
+    // TODO: ----
+
     {
       name: helptext.dataset_acl_title_list,
       label: true,
@@ -243,6 +246,8 @@ export class DatasetNfsAclComponent implements FormConfiguration {
         },
       ],
     },
+
+    // TODO: OLD
     {
       name: 'divider',
       divider: true,
@@ -766,7 +771,7 @@ export class DatasetNfsAclComponent implements FormConfiguration {
     this.dialogRef.componentInstance.setDescription(helptext.save_dialog.message);
     const dacl = body.dacl;
 
-    await this.userService.getUserByName(body.uid).toPromise().then((userObj: any) => {
+    await this.userService.getUserByName(body.uid).toPromise().then((userObj) => {
       if (userObj && userObj.hasOwnProperty('pw_uid')) {
         body.uid = userObj.pw_uid;
       }
@@ -774,7 +779,7 @@ export class DatasetNfsAclComponent implements FormConfiguration {
       console.error(err);
     });
 
-    await this.userService.getGroupByName(body.gid).toPromise().then((groupObj: any) => {
+    await this.userService.getGroupByName(body.gid).toPromise().then((groupObj) => {
       if (groupObj && groupObj.hasOwnProperty('gr_gid')) {
         body.gid = groupObj.gr_gid;
       }
@@ -784,7 +789,7 @@ export class DatasetNfsAclComponent implements FormConfiguration {
 
     for (let i = 0; i < dacl.length; i++) {
       if (dacl[i].tag === PosixAclTag.User) {
-        await this.userService.getUserByName(dacl[i].id).toPromise().then((userObj: any) => {
+        await this.userService.getUserByName(dacl[i].id).toPromise().then((userObj) => {
           if (userObj && userObj.hasOwnProperty('pw_uid')) {
             dacl[i]['id'] = userObj.pw_uid;
           }
@@ -792,7 +797,7 @@ export class DatasetNfsAclComponent implements FormConfiguration {
           console.error(err);
         });
       } else if (dacl[i].tag === PosixAclTag.Group) {
-        await this.userService.getGroupByName(dacl[i].id).toPromise().then((groupObj: any) => {
+        await this.userService.getGroupByName(dacl[i].id).toPromise().then((groupObj) => {
           if (groupObj && groupObj.hasOwnProperty('gr_gid')) {
             dacl[i]['id'] = groupObj.gr_gid;
           }

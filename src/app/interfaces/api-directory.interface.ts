@@ -55,6 +55,7 @@ import {
   CreateDnsAuthenticator,
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
+import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { DynamicDnsConfig, DynamicDnsUpdate } from 'app/interfaces/dynamic-dns.interface';
 import { FailoverUpdate } from 'app/interfaces/failover.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
@@ -348,8 +349,8 @@ export type ApiDirectory = {
   'fcport.update': { params: any; response: any };
 
   // DS Cache
-  'dscache.get_uncached_group': { params: any; response: any };
-  'dscache.get_uncached_user': { params: any; response: any };
+  'dscache.get_uncached_group': { params: [/* groupname */ string]; response: DsUncachedGroup };
+  'dscache.get_uncached_user': { params: [/* username */ string]; response: DsUncachedUser };
 
   // Keychain Credential
   'keychaincredential.create': { params: any; response: any };

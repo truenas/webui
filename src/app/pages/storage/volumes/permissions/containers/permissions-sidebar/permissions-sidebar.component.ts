@@ -6,7 +6,7 @@ import { AclType } from 'app/enums/acl-type.enum';
 import { Acl } from 'app/interfaces/acl.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
-import { PermissionsSidebarStore } from 'app/pages/storage/volumes/permissions-sidebar/permissions-sidebar.store';
+import { PermissionsSidebarStore } from 'app/pages/storage/volumes/permissions/stores/permissions-sidebar.store';
 
 @UntilDestroy()
 @Component({
@@ -41,6 +41,11 @@ export class PermissionsSidebarComponent implements OnInit, OnChanges {
     }
 
     return ['/storage/id', this.dataset.pool, 'dataset', 'acl', this.dataset.id];
+  }
+
+  // TODO
+  get editPermissionsUrl2(): string[] {
+    return ['/storage/id', this.dataset.pool, 'dataset', 'new-acl', this.dataset.id];
   }
 
   ngOnInit(): void {
