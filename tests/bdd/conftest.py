@@ -107,7 +107,7 @@ def pytest_runtest_makereport(item):
     """
     outcome = yield
     report = outcome.get_result()
-    if report.when == 'call' or report.failed is True:
+    if report.when == 'call' and report.failed is True:
         screenshot_name = f'screenshot/{report.nodeid.replace("::", "_")}.png'
         screenshot_error_name = f'screenshot/{report.nodeid.replace("::", "_")}_error.png'
         # look if there is a Error window
