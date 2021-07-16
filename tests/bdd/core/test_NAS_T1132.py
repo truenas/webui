@@ -161,6 +161,7 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 20, '//button[contains(.,"SUCCESS")]')
+    time.sleep(1)
 
 
 @then('verify all files are copied from Box are into the dataset')
@@ -168,13 +169,13 @@ def verify_all_files_are_copied_from_box_are_into_the_dataset(driver, nas_ip):
     """verify all files are copied from Box are into the dataset."""
     cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True
+    assert results['result'] is True, results['output']
     cmd = 'test -f /mnt/system/box_cloud/Explaining_BSD.pdf'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True
+    assert results['result'] is True, results['output']
     cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True
+    assert results['result'] is True, results['output']
 
 
 @then('on the NAS cloud sync task tab, click Edit')
@@ -265,13 +266,13 @@ def remove_all_files_from_the_dataset(driver, nas_ip):
     """remove all files from the dataset."""
     cmd = 'rm -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True
+    assert results['result'] is True, results['output']
     cmd = 'rm -f /mnt/system/box_cloud/Explaining_BSD.pdf'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True
+    assert results['result'] is True, results['output']
     cmd = 'rm -rf /mnt/system/box_cloud/music'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True
+    assert results['result'] is True, results['output']
 
 
 @then('select PULL as the Direction then under Transfer Mode, select MOVE')
@@ -313,13 +314,13 @@ def verify_all_files_are_moved_from_the_box_test_folder_to_the_dataset(driver, n
     driver.find_element_by_xpath('//a[text()="test"]').click()
     cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True
+    assert results['result'] is True, results['output']
     cmd = 'test -f /mnt/system/box_cloud/Explaining_BSD.pdf'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True
+    assert results['result'] is True, results['output']
     cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True
+    assert results['result'] is True, results['output']
 
 
 @then('select PUSH as the Direction then under Transfer Mode, select MOVE')
@@ -346,13 +347,13 @@ def verify_all_files_are_moved_from_the_dataset_to_the_box_test_folder(driver, n
     """verify all files are moved from the dataset to the Box test folder."""
     cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is False
+    assert results['result'] is False, results['output']
     cmd = 'test -f /mnt/system/box_cloud/Explaining_BSD.pdf'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is False
+    assert results['result'] is False, results['output']
     cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is False
+    assert results['result'] is False, results['output']
     driver.switch_to.window(driver.window_handles[1])
     driver.refresh()
     assert wait_on_element(driver, 5, '//h1[text()="test"]')
@@ -389,13 +390,13 @@ def verify_all_files_are_sync_to_the_dataset_folder(driver, nas_ip):
     """verify all files are sync to the dataset folder."""
     cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True
+    assert results['result'] is True, results['output']
     cmd = 'test -f /mnt/system/box_cloud/Explaining_BSD.pdf'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True
+    assert results['result'] is True, results['output']
     cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True
+    assert results['result'] is True, results['output']
 
 
 @then('on the Box test folder tab, delete one file')
@@ -427,6 +428,7 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 20, '//button[contains(.,"SUCCESS")]')
+    time.sleep(1)
 
 
 @then('verify the file is removed from the dataset folder')
@@ -434,13 +436,13 @@ def verify_the_file_is_removed_from_the_dataset_folder(driver, nas_ip):
     """verify the file is removed from the dataset folder."""
     cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is False
+    assert results['result'] is False, results['output']
     cmd = 'test -f /mnt/system/box_cloud/Explaining_BSD.pdf'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True
+    assert results['result'] is True, results['output']
     cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True
+    assert results['result'] is True, results['output']
 
 
 @then('on the Box test folder tab, delete all file')
@@ -508,7 +510,7 @@ def on_the_dataset_folder_delete_a_file(driver, nas_ip):
     """on the dataset folder, delete a file."""
     cmd = 'rm -rf /mnt/system/box_cloud/music'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is True
+    assert results['result'] is True, results['output']
 
 
 @then('verify the file is removed from the Box test folder tab')
