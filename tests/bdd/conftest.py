@@ -108,8 +108,12 @@ def pytest_runtest_makereport(item):
     outcome = yield
     report = outcome.get_result()
     if report.when == 'call' and report.failed is True:
-        screenshot_name = f'screenshot/{report.nodeid.replace("::", "_")}.png'
-        screenshot_error_name = f'screenshot/{report.nodeid.replace("::", "_")}_error.png'
+        folder = report.nodeid.partition('/')[0]
+        raw_name = report.nodeid.replace("::", "_").partition('/')[2]
+        filename = raw_name.replace('://', '_').replace('/', '_').replace(':', '')
+        screenshot_name = f'screenshot/{folder}/{filename}.png'
+        screenshot_error_name = f'screenshot/{folder}/{filename}_error.png'
+        traceback_name = f'screenshot/{folder}/{filename}.txt'
         # look if there is a Error window
         error_xpath = '//h1[normalize-space(text())="Error"]'
         failed_xpath = '//h1[normalize-space(text())="FAILED"]'
@@ -117,7 +121,6 @@ def pytest_runtest_makereport(item):
         if element_exist(error_xpath) or element_exist(failed_xpath) or element_exist(download_xpath):
             web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
             time.sleep(2)
-            traceback_name = f'screenshot/{report.nodeid.replace("::", "_")}.txt'
             save_traceback(traceback_name)
             save_screenshot(screenshot_error_name)
             # Press CLOSE if exist only if there is an error box.
@@ -127,7 +130,6 @@ def pytest_runtest_makereport(item):
             except ElementClickInterceptedException:
                 # if can't click Close ESCAPE
                 ActionChains(web_driver).send_keys(Keys.ESCAPE).perform()
-        print('screenshot will be taken')
         save_screenshot(screenshot_name)
         # To make sure we are not stuck on a combobox to stop other test to fail
         if element_exist('//mat-option'):
