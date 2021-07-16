@@ -1,5 +1,5 @@
 import {
-  Component, AfterContentInit, OnDestroy, ViewChild, ElementRef,
+  Component, OnDestroy, ViewChild, ElementRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -27,7 +27,7 @@ interface ViewConfig {
   templateUrl: './view-enclosure.component.html',
   styleUrls: ['./view-enclosure.component.scss'],
 })
-export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
+export class ViewEnclosureComponent implements OnDestroy {
   errors: ErrorMessage[] = [];
   events: Subject<CoreEvent> ;
   formEvent$: Subject<CoreEvent> ;
@@ -173,14 +173,8 @@ export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
     this.core.emit({ name: 'DisksRequest', sender: this });
   }
 
-  ngAfterContentInit(): void {
-    this.scrollContainer = document.querySelector('.rightside-content-hold');
-    this.scrollContainer.style.overflow = 'hidden';
-  }
-
   ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
-    this.scrollContainer.style.overflow = 'auto';
   }
 
   selectEnclosure(index: number): void {
