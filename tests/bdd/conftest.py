@@ -138,8 +138,17 @@ def pytest_runtest_makereport(item):
         # and switch to initial tab
         initial_tab = web_driver.window_handles[0]
         current_tab = web_driver.current_window_handle
+        all_tab = driver.window_handles
+        tab_number = len(all_tab)
+
         if initial_tab != current_tab:
             web_driver.close()
+            web_driver.switch_to.window(initial_tab)
+        elif initial_tab == current_tab and tab_number > 1:
+            for handle in all_tab:
+                driver.switch_to.window(handle)
+                if handle != initial_tab:
+                    driver.close()
             web_driver.switch_to.window(initial_tab)
         # if test that use disable failover make sure to enable failover back.
         if 'T0905' in screenshot_name or 'T0919' in screenshot_name or 'T0920' in screenshot_name or 'T0922' in screenshot_name:
