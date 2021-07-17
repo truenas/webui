@@ -189,7 +189,8 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
-    time.sleep(1)
+    # give time to the system to be ready.
+    time.sleep(5)
 
 
 @then('select PUSH as the Direction then under Transfer Mode, select COPY')
@@ -435,7 +436,8 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 20, '//button[contains(.,"SUCCESS")]')
-    time.sleep(2)
+    # give time to the system to be ready.
+    time.sleep(5)
 
 
 @then('verify the file is removed from the dataset folder')
