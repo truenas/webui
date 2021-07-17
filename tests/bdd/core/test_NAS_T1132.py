@@ -351,15 +351,6 @@ def select_push_as_the_direction_then_under_transfer_mode_select_move(driver):
 @then('verify all files are moved from the dataset to the Box test folder')
 def verify_all_files_are_moved_from_the_dataset_to_the_box_test_folder(driver, nas_ip):
     """verify all files are moved from the dataset to the Box test folder."""
-    cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is False, results['output']
-    cmd = 'test -f /mnt/system/box_cloud/Explaining_BSD.pdf'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is False, results['output']
-    cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is False, results['output']
     driver.switch_to.window(driver.window_handles[1])
     driver.refresh()
     assert wait_on_element(driver, 5, '//h1[text()="test"]')
@@ -370,6 +361,15 @@ def verify_all_files_are_moved_from_the_dataset_to_the_box_test_folder(driver, n
     assert wait_on_element(driver, 5, '//h1[text()="music"]')
     assert wait_on_element(driver, 5, '//a[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="test"]').click()
+    cmd = 'test -f /mnt/system/box_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is False, results['output']
+    cmd = 'test -f /mnt/system/box_cloud/Explaining_BSD.pdf'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is False, results['output']
+    cmd = 'test -f /mnt/system/box_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is False, results['output']
 
 
 @then('select PULL as the Direction then under Transfer Mode, select SYNC')
