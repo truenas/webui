@@ -368,7 +368,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       _.find(this.fieldConfig, { name: 'bindpw' })['required'] = res;
     });
 
-    entityEdit.formGroup.controls['kerberos_principal'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityEdit.formGroup.controls['kerberos_principal'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       if (res) {
         entityEdit.setDisabled('bindname', true);
         entityEdit.setDisabled('bindpw', true);

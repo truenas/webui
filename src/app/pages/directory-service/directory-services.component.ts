@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/directory-service/dashboard';
 import idmapHelptext from 'app/helptext/directory-service/idmap';
 import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { InputTableConf } from 'app/pages/common/entity/table/table.component';
+import { AppTableConfig } from 'app/pages/common/entity/table/table.component';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/active-directory/active-directory.component';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/kerberos-keytabs/kerberos-keytabs-form.component';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/kerberos-realms/kerberos-realms-form.component';
@@ -51,7 +51,7 @@ export class DirectoryServicesComponent implements OnInit {
     message: T('To configure sysctls, click the "Add" button.'),
   };
 
-  idmapTableConf: InputTableConf = {
+  idmapTableConf: AppTableConfig = {
     title: helptext.idmap.title,
     titleHref: '/directoryservice/idmap',
     queryCall: 'idmap.query',
@@ -80,7 +80,7 @@ export class DirectoryServicesComponent implements OnInit {
     },
   };
 
-  kerberosRealmsTableConf: InputTableConf = {
+  kerberosRealmsTableConf: AppTableConfig = {
     title: helptext.kerberosRealms.title,
     titleHref: '/directoryservice/kerberosrealms',
     queryCall: 'kerberos.realm.query',
@@ -105,7 +105,7 @@ export class DirectoryServicesComponent implements OnInit {
     },
   };
 
-  kerberosKeytabTableConf: InputTableConf = {
+  kerberosKeytabTableConf: AppTableConfig = {
     title: helptext.kerberosKeytab.title,
     titleHref: '/directoryservice/kerberoskeytabs',
     queryCall: 'kerberos.keytab.query',

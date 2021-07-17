@@ -20,7 +20,7 @@ import { EmptyType, EmptyConfig } from 'app/pages/common/entity/entity-empty/ent
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { InputTableConf } from 'app/pages/common/entity/table/table.component';
+import { AppTableConfig } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { InitshutdownFormComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-form/initshutdown-form.component';
@@ -89,7 +89,7 @@ export class AdvancedSettingsComponent implements OnInit {
   actionsConfig: any;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
 
-  cronTableConf: InputTableConf = {
+  cronTableConf: AppTableConfig = {
     title: helptext_system_advanced.fieldset_cron,
     titleHref: '/system/cron',
     queryCall: 'cronjob.query',
@@ -117,7 +117,7 @@ export class AdvancedSettingsComponent implements OnInit {
     },
   };
 
-  initShutdownTableConf: InputTableConf = {
+  initShutdownTableConf: AppTableConfig = {
     title: helptext_system_advanced.fieldset_initshutdown,
     titleHref: '/system/initshutdown',
     queryCall: 'initshutdownscript.query',
@@ -145,7 +145,7 @@ export class AdvancedSettingsComponent implements OnInit {
     },
   };
 
-  sysctlTableConf: InputTableConf = {
+  sysctlTableConf: AppTableConfig = {
     title: helptext_system_advanced.fieldset_sysctl,
     queryCall: 'tunable.query',
     deleteCall: 'tunable.delete',

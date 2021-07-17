@@ -8,6 +8,7 @@ import { filter } from 'rxjs/operators';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
+import { MenuItem, SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { WebSocketService } from 'app/services';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 
@@ -19,13 +20,12 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
 export class NavigationComponent extends ViewControllerComponent implements OnInit {
   hasIconTypeMenuItem: boolean;
   iconTypeMenuTitle: string;
-  menuItems: any[];
+  menuItems: MenuItem[];
   menuList = document.getElementsByClassName('top-level');
   isHighlighted: string;
 
-  @Output() stateChange: EventEmitter<any> = new EventEmitter();
-  @Output() menuToggled: EventEmitter<any> = new EventEmitter();
-  @Output() menuClosed: EventEmitter<any> = new EventEmitter();
+  @Output() menuToggled: EventEmitter<[string, SubMenuItem[]]> = new EventEmitter();
+  @Output() menuClosed: EventEmitter<void> = new EventEmitter();
 
   constructor(
     private navService: NavigationService, private router: Router, private ws: WebSocketService,
@@ -78,7 +78,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
     });
   }
 
-  toggleMenu(state: any, sub: any): void {
+  toggleMenu(state: string, sub: SubMenuItem[]): void {
     this.menuToggled.emit([state, sub]);
   }
 
