@@ -421,7 +421,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
             dialogRef.componentInstance.setCall('pool.unlock', params);
             dialogRef.componentInstance.submit();
           }
-          dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
+          dialogRef.componentInstance.success.pipe(untilDestroyed(self, 'destroy')).subscribe(() => {
             if (!done) {
               dialogRef.close(false);
               entityDialog.dialogRef.close(true);
@@ -431,7 +431,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
               done = true;
             }
           });
-          dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((res: any) => {
+          dialogRef.componentInstance.failure.pipe(untilDestroyed(self, 'destroy')).subscribe((res: any) => {
             dialogRef.close(false);
             new EntityUtils().handleWSError(self, res, self.dialogService);
           });
@@ -909,7 +909,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     if (res.exc_info && res.exc_info.extra) {
                       (res as any).extra = res.exc_info.extra;
                     }
-                    new EntityUtils().handleWSError(this, res, parent.dialogService, conf.fieldConfig);
+                    new EntityUtils().handleWSError(parent, res, parent.dialogService, conf.fieldConfig);
                   }
                   if (res.state === JobState.Success) {
                     if (entityDialog) {
@@ -926,7 +926,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 },
                 (err) => {
                   parent.loader.close();
-                  new EntityUtils().handleWSError(this, err, parent.dialogService);
+                  new EntityUtils().handleWSError(parent, err, parent.dialogService);
                 },
               );
             }
