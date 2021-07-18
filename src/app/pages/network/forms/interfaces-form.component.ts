@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import isCidr from 'is-cidr';
 import * as _ from 'lodash';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
-import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { LACPDURate, NetworkInterfaceType, XmitHashPolicy } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
@@ -366,7 +366,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       for (const key in choices) {
         xmitHashPolicyFieldConfig.options.push({ label: key, value: key });
       }
-      this.entityForm.formGroup.get('xmit_hash_policy').setValue('LAYER2+3');
+      this.entityForm.formGroup.get('xmit_hash_policy').setValue(XmitHashPolicy.Layer2Plus3);
     });
 
     this.ws.call('interface.lacpdu_rate_choices', []).pipe(untilDestroyed(this)).subscribe((choices) => {
@@ -375,7 +375,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       for (const key in choices) {
         lacpduRateFieldConfig.options.push({ label: key, value: key });
       }
-      this.entityForm.formGroup.get('lacpdu_rate').setValue('SLOW');
+      this.entityForm.formGroup.get('lacpdu_rate').setValue(LACPDURate.Slow);
     });
   }
 

@@ -1,6 +1,7 @@
 import { DefaultAclType } from 'app/enums/acl-type.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { LACPDURate, XmitHashPolicy } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import {
@@ -397,8 +398,8 @@ export type ApiDirectory = {
   'interface.checkin_waiting': { params: void; response: any };
   'interface.checkin': { params: any; response: any };
   'interface.websocket_interface': { params: any; response: any };
-  'interface.xmit_hash_policy_choices': { params: any; response: any };
-  'interface.lacpdu_rate_choices': { params: any; response: any };
+  'interface.xmit_hash_policy_choices': { params: any; response: { [key: string]: keyof XmitHashPolicy } };
+  'interface.lacpdu_rate_choices': { params: any; response: { [key: string]: keyof LACPDURate } };
 
   // iSCSI
   'iscsi.initiator.query': { params: any; response: IscsiInitiatorGroup[] };
