@@ -116,6 +116,24 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         },
         {
           type: 'select',
+          name: 'xmit_hash_policy',
+          placeholder: helptext.xmit_hash_policy_placeholder,
+          options: [],
+          required: true,
+          isHidden: true,
+          disabled: true,
+        },
+        {
+          type: 'select',
+          name: 'lacpdu_rate',
+          placeholder: helptext.lacpdu_rate_placeholder,
+          options: [],
+          required: true,
+          isHidden: true,
+          disabled: true,
+        },
+        {
+          type: 'select',
           name: 'lag_ports',
           placeholder: helptext.lagg_interfaces_placeholder,
           tooltip: helptext.lagg_interfaces_tooltip,
@@ -342,6 +360,23 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.bridge_fieldset = _.find(this.fieldSets, { class: 'bridge_settings' });
     this.failover_fieldset = _.find(this.fieldSets, { class: 'failover_settings' });
     this.vlan_pint = _.find(this.vlan_fieldset.config, { name: 'vlan_parent_interface' });
+    this.ws.call('interface.xmit_hash_policy_choices', []).pipe(untilDestroyed(this)).subscribe((choices) => {
+      const xmitHashPolicyFieldConfig = _.find(this.fieldConfig, { name: 'xmit_hash_policy' });
+      xmitHashPolicyFieldConfig.options = [];
+      for (const key in choices) {
+        xmitHashPolicyFieldConfig.options.push({ label: key, value: key });
+      }
+      this.entityForm.formGroup.get('xmit_hash_policy').setValue('LAYER2+3');
+    });
+
+    this.ws.call('interface.lacpdu_rate_choices', []).pipe(untilDestroyed(this)).subscribe((choices) => {
+      const lacpduRateFieldConfig = _.find(this.fieldConfig, { name: 'lacpdu_rate' });
+      lacpduRateFieldConfig.options = [];
+      for (const key in choices) {
+        lacpduRateFieldConfig.options.push({ label: key, value: key });
+      }
+      this.entityForm.formGroup.get('lacpdu_rate').setValue('SLOW');
+    });
   }
 
   afterInit(entityForm: EntityFormComponent): void {
@@ -485,6 +520,22 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       entityForm.setDisabled('name', true);
       entityForm.setDisabled('type', true, true);
     }
+
+    this.entityForm.formGroup.get('lag_protocol').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
+      const enabled = false;
+      const disabled = true;
+
+      if (value === 'LACP') {
+        this.entityForm.setDisabled('xmit_hash_policy', enabled, enabled);
+        this.entityForm.setDisabled('lacpdu_rate', enabled, enabled);
+      } else if (value === 'LOADBALANCE') {
+        this.entityForm.setDisabled('xmit_hash_policy', enabled, enabled);
+        this.entityForm.setDisabled('lacpdu_rate', disabled, disabled);
+      } else {
+        this.entityForm.setDisabled('lacpdu_rate', disabled, disabled);
+        this.entityForm.setDisabled('xmit_hash_policy', disabled, disabled);
+      }
+    });
   }
 
   clean(data: any): any {
@@ -562,6 +613,24 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         for (let i = 0; i < res.length; i++) {
           this.lag_protocol.options.push({ label: res[i], value: res[i] });
         }
+      });
+
+      this.ws.call('interface.xmit_hash_policy_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
+        const xmitHashPolicyFieldConfig = _.find(this.fieldConfig, { name: 'xmit_hash_policy' });
+        xmitHashPolicyFieldConfig.options = [];
+        for (const key in choices) {
+          xmitHashPolicyFieldConfig.options.push({ label: key, value: key });
+        }
+        this.entityForm.formGroup.get('xmit_hash_policy').setValue('LAYER2+3');
+      });
+
+      this.ws.call('interface.lacpdu_rate_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
+        const lacpduRateFieldConfig = _.find(this.fieldConfig, { name: 'lacpdu_rate' });
+        lacpduRateFieldConfig.options = [];
+        for (const key in choices) {
+          lacpduRateFieldConfig.options.push({ label: key, value: key });
+        }
+        this.entityForm.formGroup.get('lacpdu_rate').setValue('SLOW');
       });
     } else if (type === NetworkInterfaceType.Bridge) {
       this.networkService.getBridgeMembersChoices(id).pipe(untilDestroyed(this)).subscribe((choices) => {

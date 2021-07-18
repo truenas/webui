@@ -397,6 +397,8 @@ export type ApiDirectory = {
   'interface.checkin_waiting': { params: void; response: any };
   'interface.checkin': { params: any; response: any };
   'interface.websocket_interface': { params: any; response: any };
+  'interface.xmit_hash_policy_choices': { params: any; response: any };
+  'interface.lacpdu_rate_choices': { params: any; response: any };
 
   // iSCSI
   'iscsi.initiator.query': { params: any; response: IscsiInitiatorGroup[] };
