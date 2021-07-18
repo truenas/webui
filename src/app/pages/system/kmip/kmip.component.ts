@@ -196,10 +196,10 @@ export class KmipComponent {
       this.entityForm.success = true;
       this.entityForm.formGroup.markAsPristine();
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       dialogRef.close(true);
       if (err.exc_info && err.exc_info.extra) {
-        err.extra = err.exc_info.extra;
+        (err as any).extra = err.exc_info.extra;
       }
       new EntityUtils().handleWSError(this, err, this.dialogService);
     });

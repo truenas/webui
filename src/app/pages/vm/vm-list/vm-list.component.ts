@@ -297,7 +297,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
  After Timeout</i> option to stop the VM.')), '450px', 'info', true);
         this.checkMemory();
       });
-      this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+      this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
         new EntityUtils().handleWSError(this, err, this.dialogService);
       });
     } else {

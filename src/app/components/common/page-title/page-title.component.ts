@@ -12,7 +12,7 @@ import { CoreService } from 'app/core/services/core-service/core.service';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { LocaleService } from 'app/services/locale.service';
-import { RoutePartsService } from 'app/services/route-parts/route-parts.service';
+import { RoutePart, RoutePartsService } from 'app/services/route-parts/route-parts.service';
 
 export interface GlobalAction {
   applyConfig(config: any): any;
@@ -33,7 +33,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   private globalActionsConfig: any;
   private globalActions: any;
 
-  routeParts: any[];
+  routeParts: (RoutePart & { disabled?: boolean })[];
   isEnabled = true;
   constructor(private router: Router,
     private routePartsService: RoutePartsService,
