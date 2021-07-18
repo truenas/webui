@@ -160,8 +160,9 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    time.sleep(1)
     assert wait_on_element(driver, 20, '//button[contains(.,"SUCCESS")]')
-    time.sleep(2)
+    time.sleep(5)
 
 
 @then('verify all files are copied from Box are into the dataset')
@@ -190,7 +191,7 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
     # give time to the system to be ready.
-    time.sleep(5)
+    time.sleep(1)
 
 
 @then('select PUSH as the Direction then under Transfer Mode, select COPY')
@@ -435,6 +436,7 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    time.sleep(1)
     assert wait_on_element(driver, 20, '//button[contains(.,"SUCCESS")]')
     # give time to the system to be ready.
     time.sleep(5)
@@ -506,6 +508,7 @@ def select_push_as_the_direction_then_under_transfer_mode_select_sync(driver):
 def verify_all_files_are_sync_to_the_Box_test_folder_tab(driver):
     """verify all files are sync to the Box test folder tab."""
     driver.switch_to.window(driver.window_handles[1])
+    time.sleep(1)
     driver.refresh()
     assert wait_on_element(driver, 5, '//h1[text()="test"]')
     assert wait_on_element(driver, 5, '//a[text()="Explaining_BSD.pdf"]', 'clickable')
@@ -528,6 +531,7 @@ def on_the_dataset_folder_delete_a_file(driver, nas_ip):
 def verify_the_file_is_removed_from_the_box_test_folder_tab(driver):
     """verify the file is removed from the Box test folder tab."""
     driver.switch_to.window(driver.window_handles[1])
+    time.sleep(1)
     driver.refresh()
     assert wait_on_element(driver, 5, '//h1[text()="test"]')
     assert wait_on_element(driver, 5, '//a[text()="Explaining_BSD.pdf"]', 'clickable')
