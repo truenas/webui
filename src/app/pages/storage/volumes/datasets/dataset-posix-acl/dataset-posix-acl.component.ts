@@ -654,7 +654,7 @@ export class DatasetPosixAclComponent implements FormConfiguration {
             this.route_success,
           ));
         });
-        this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+        this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
           new EntityUtils().handleWSError(this.entityForm, err);
         });
       },

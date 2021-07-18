@@ -16,7 +16,7 @@ import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { AppTableAction } from 'app/pages/common/entity/table/table.component';
+import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
 import {
   AppLoaderService,
   DialogService,
@@ -72,7 +72,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     dataSourceHelper: this.interfaceDataSourceHelper,
     getInOutInfo: this.getInterfaceInOutInfo.bind(this),
     parent: this,
-    tableComponent: undefined as any,
+    tableComponent: undefined,
     add() {
       this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent);
     },
@@ -113,7 +113,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       },
       message: helptext.delete_dialog_text,
     },
-  };
+  } as AppTableConfig;
 
   staticRoutesTableConf = {
     title: T('Static Routes'),
@@ -125,7 +125,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       { name: T('Gateway'), prop: 'gateway' },
     ],
     parent: this,
-    tableComponent: undefined as any,
+    tableComponent: undefined,
     add() {
       this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent);
     },
@@ -136,7 +136,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       title: 'static route',
       key_props: ['destination', 'gateway'],
     },
-  };
+  } as AppTableConfig;
 
   globalSettingsWidget: CardWidgetConf = {
     title: T('Global Configuration'),
@@ -178,7 +178,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
           : this.parent.modalService.open('slide-in-form', this.parent.openvpnServerComponent);
       }
     },
-  };
+  } as AppTableConfig;
 
   ipmiTableConf = {
     title: 'IPMI',
@@ -194,7 +194,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     edit(row: any) {
       this.parent.modalService.open('slide-in-form', this.parent.impiFormComponent, row.id);
     },
-  };
+  } as AppTableConfig;
 
   networkSummary: NetworkSummary;
   impiEnabled: boolean;
@@ -493,7 +493,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.interfaceComponent.afterModalFormClosed = this.checkInterfacePendingChanges.bind(this);
     this.staticRouteFormComponent = new StaticRouteFormComponent(this.aroute, this.ws, this.networkService);
     if (this.staticRoutesTableConf.tableComponent) {
-      this.staticRouteFormComponent.afterModalFormClosed = this.staticRoutesTableConf.tableComponent.getData();
+      this.staticRouteFormComponent.afterModalFormClosed = () => this.staticRoutesTableConf.tableComponent.getData();
     }
     this.openvpnClientComponent = new OpenvpnClientComponent(this.servicesService);
     this.openvpnServerComponent = new OpenvpnServerComponent(

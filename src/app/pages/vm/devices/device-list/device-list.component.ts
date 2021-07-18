@@ -158,7 +158,7 @@ export class DeviceListComponent implements EntityTableConfig {
           this.loader.open();
           this.loaderOpen = true;
           if (this.wsDelete) {
-            this.ws.call(this.wsDelete, ['vm.device', row.id]).pipe(untilDestroyed(this)).subscribe(
+            this.ws.call(this.wsDelete, ['vm.device', row.id + 55765]).pipe(untilDestroyed(this)).subscribe(
               () => {
                 this.entityList.getData();
                 this.loader.close();

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { shared, helptext_sharing_nfs } from 'app/helptext/sharing';
+import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import {
@@ -14,7 +15,7 @@ import { NFSFormComponent } from '../nfs-form/nfs-form.component';
   selector: 'app-nfs-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class NFSListComponent implements EntityTableConfig {
+export class NFSListComponent implements EntityTableConfig<NfsShare> {
   title = 'NFS';
   queryCall: 'sharing.nfs.query' = 'sharing.nfs.query';
   wsDelete: 'sharing.nfs.delete' = 'sharing.nfs.delete';
@@ -59,7 +60,7 @@ export class NFSListComponent implements EntityTableConfig {
     message: shared.delete_share_message,
     isMessageComplete: true,
     button: T('Unshare'),
-    buildTitle: (share: any) => `${T('Unshare')} ${share.paths.join(', ')}`,
+    buildTitle: (share: NfsShare) => `${T('Unshare')} ${share.paths.join(', ')}`,
   };
 
   doAdd(id?: number): void {

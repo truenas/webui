@@ -55,6 +55,7 @@ import {
   CreateDnsAuthenticator,
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
+import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { DynamicDnsConfig, DynamicDnsUpdate } from 'app/interfaces/dynamic-dns.interface';
 import { FailoverUpdate } from 'app/interfaces/failover.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
@@ -348,8 +349,8 @@ export type ApiDirectory = {
   'fcport.update': { params: any; response: any };
 
   // DS Cache
-  'dscache.get_uncached_group': { params: any; response: any };
-  'dscache.get_uncached_user': { params: any; response: any };
+  'dscache.get_uncached_group': { params: [/* groupname */ string]; response: DsUncachedGroup };
+  'dscache.get_uncached_user': { params: [/* username */ string]; response: DsUncachedUser };
 
   // Keychain Credential
   'keychaincredential.create': { params: any; response: any };
@@ -383,9 +384,9 @@ export type ApiDirectory = {
 
   // Interface
   'interface.websocket_local_ip': { params: any; response: any };
-  'interface.commit': { params: any; response: any };
+  'interface.commit': { params: [{ checkin_timeout: number }]; response: void };
   'interface.services_restarted_on_sync': { params: any; response: any };
-  'interface.rollback': { params: any; response: any };
+  'interface.rollback': { params: void; response: any };
   'interface.bridge_members_choices': { params: any; response: Choices };
   'interface.lag_supported_protocols': { params: void; response: string[] };
   'interface.lag_ports_choices': { params: any; response: Choices };
@@ -401,13 +402,13 @@ export type ApiDirectory = {
   // iSCSI
   'iscsi.initiator.query': { params: any; response: IscsiInitiatorGroup[] };
   'iscsi.initiator.delete': { params: any; response: any };
-  'iscsi.target.query': { params: any; response: IscsiTarget[] };
+  'iscsi.target.query': { params: QueryParams<IscsiTarget>; response: IscsiTarget[] };
   'iscsi.extent.disk_choices': { params: void; response: Choices };
   'iscsi.extent.query': { params: QueryParams<IscsiExtent>; response: IscsiExtent[] };
   'iscsi.extent.create': { params: any; response: any };
   'iscsi.extent.update': { params: any; response: any };
   'iscsi.extent.delete': { params: any; response: any };
-  'iscsi.auth.query': { params: any; response: IscsiAuthAccess[] };
+  'iscsi.auth.query': { params: QueryParams<IscsiAuthAccess>; response: IscsiAuthAccess[] };
   'iscsi.auth.delete': { params: any; response: any };
   'iscsi.global.sessions': { params: any; response: any };
   'iscsi.global.config': { params: void; response: IscsiGlobalConfig };
@@ -690,11 +691,11 @@ export type ApiDirectory = {
   'sharing.smb.update': { params: any; response: any };
   'sharing.smb.delete': { params: any; response: any };
   'sharing.smb.presets': { params: any; response: any };
-  'sharing.nfs.query': { params: any; response: NfsShare[] };
+  'sharing.nfs.query': { params: QueryParams<NfsShare>; response: NfsShare[] };
   'sharing.nfs.update': { params: any; response: any };
   'sharing.nfs.create': { params: any; response: any };
   'sharing.nfs.delete': { params: any; response: any };
-  'sharing.webdav.query': { params: any; response: WebDavShare[] };
+  'sharing.webdav.query': { params: QueryParams<WebDavShare>; response: WebDavShare[] };
   'sharing.webdav.update': { params: any; response: any };
   'sharing.webdav.create': { params: any; response: any };
   'sharing.webdav.delete': { params: any; response: any };

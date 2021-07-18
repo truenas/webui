@@ -10,6 +10,7 @@ import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { CoreEvent } from 'app/interfaces/events';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -296,21 +297,21 @@ export class GeneralSettingsComponent implements OnInit {
                 entityDialog.loader.close();
                 entityDialog.dialogRef.close();
                 entityDialog.parent.storage.downloadBlob(file, fileName);
-              }, (err: any) => {
+              }, (err: Error) => {
                 entityDialog.loader.close();
                 entityDialog.dialogRef.close();
                 entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title,
                   helptext.config_download.failed_message, err.message);
               });
           },
-          (err: any) => {
+          (err: WebsocketError) => {
             entityDialog.loader.close();
             entityDialog.dialogRef.close();
             new EntityUtils().handleWSError(entityDialog, err, this.dialog);
           },
         );
     },
-    (err: any) => {
+    (err: WebsocketError) => {
       entityDialog.loader.close();
       entityDialog.dialogRef.close();
       new EntityUtils().handleWSError(entityDialog, err, this.dialog);

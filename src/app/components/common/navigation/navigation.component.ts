@@ -86,7 +86,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
     this.menuClosed.emit();
   }
 
-  updateHighlightedClass(state: any): void {
+  updateHighlightedClass(state: string): void {
     this.isHighlighted = state;
   }
 }
