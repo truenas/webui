@@ -484,7 +484,7 @@ def on_the_box_test_folder_tab_delete_all_file(driver):
 @then('select PUSH as the Direction then under Transfer Mode, select SYNC')
 def select_push_as_the_direction_then_under_transfer_mode_select_sync(driver):
     """select PUSH as the Direction then under Transfer Mode, select SYNC."""
-    assert wait_on_element(driver, 5, '//mat-select[contains(.,"PUSH")]')
+    assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"SYNC")]')
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Direction"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Direction"]').click()
