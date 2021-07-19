@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { appImagePlaceholder } from 'app/constants/catalog.constants';
+import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
@@ -389,7 +389,11 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
       this.modalService,
       this.appService,
     );
-    chartFormComponent.setTitle(catalogApp.chart_name);
+    if (catalogApp.chart_name == ixChartApp) {
+      chartFormComponent.setTitle(helptext.launch);
+    } else {
+      chartFormComponent.setTitle(catalogApp.chart_name);
+    }
     this.modalService.open('slide-in-form', chartFormComponent, name);
   }
 
