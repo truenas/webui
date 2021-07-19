@@ -43,7 +43,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   @Input() nics: BaseNetworkInterface[];
 
   private utils: WidgetUtils;
-  linkState = LinkState;
+  LinkState = LinkState;
   title = T('Network');
   nicInfoMap: NicInfoMap = {};
   paddingX = 16;
