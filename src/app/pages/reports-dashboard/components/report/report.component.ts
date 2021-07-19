@@ -164,7 +164,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
   constructor(public router: Router,
     public translate: TranslateService,
-    private rs: ReportsService,
+    private reportsService: ReportsService,
     private ws: WebSocketService,
     protected localeService: LocaleService, private sysGeneralService: SystemGeneralService) {
     super(translate);
@@ -295,7 +295,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     let durationUnit: keyof Duration;
     let value: number;
 
-    const now = await this.rs.getServerTime();
+    const now = await this.reportsService.getServerTime();
 
     let startDate: Date;
     let endDate: Date;

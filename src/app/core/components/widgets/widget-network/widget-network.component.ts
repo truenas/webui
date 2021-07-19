@@ -113,7 +113,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
 
   constructor(
     public router: Router, private ws: WebSocketService,
-    private locale: LocaleService, private rs: ReportsService,
+    private locale: LocaleService, private reportsService: ReportsService,
     private tableService: TableService, public translate: TranslateService,
   ) {
     super(translate);
@@ -266,7 +266,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   }
 
   async fetchReportData(): Promise<void> {
-    const endDate = await this.rs.getServerTime();
+    const endDate = await this.reportsService.getServerTime();
     const subOptions: Duration = {};
     subOptions['hours'] = 2;
     const startDate = sub(endDate, subOptions);
