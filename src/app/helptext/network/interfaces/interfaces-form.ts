@@ -7,6 +7,9 @@ export default {
   title_add: T('Add Interface'),
   title_edit: T('Edit Interface'),
 
+  xmit_hash_policy_placeholder: T('Transmit Hash Policy'),
+  lacpdu_rate_placeholder: T('LACPDU Rate'),
+
   int_type_placeholder: T('Type'),
   int_type_tooltip: T('Choose the\
  type of interface. <i>Bridge</i> creates a logical link between\

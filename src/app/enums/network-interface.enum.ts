@@ -24,3 +24,14 @@ export enum LinkAggregationProtocol {
   RoundRobin = 'ROUNDROBIN',
   None = 'NONE',
 }
+
+export enum XmitHashPolicy {
+  Layer2 = 'LAYER2',
+  Layer2Plus3 = 'LAYER2+3',
+  Layer3Plus4 = 'LAYER3+4',
+}
+
+export enum LACPDURate {
+  Slow = 'SLOW',
+  Fast = 'FAST',
+}
