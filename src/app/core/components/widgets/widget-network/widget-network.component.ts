@@ -65,6 +65,9 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     responsive: true,
     maintainAspectRatio: true,
     aspectRatio: this.aspectRatio,
+    animation: {
+      duration: 0,
+    },
     layout: {
       padding: 0,
     },
@@ -143,7 +146,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
 
     this.interval = setInterval(() => {
       this.fetchReportData();
-    }, 60000);
+    }, 2000);
 
     this.stats.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.name.startsWith('NetTraffic_')) {
@@ -268,7 +271,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   async fetchReportData(): Promise<void> {
     const endDate = await this.reportsService.getServerTime();
     const subOptions: Duration = {};
-    subOptions['hours'] = 2;
+    subOptions['hours'] = 1;
     const startDate = sub(endDate, subOptions);
 
     const timeFrame = {
