@@ -1675,4 +1675,17 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
+  .topbar-panel {
+    .mat-dialog-container {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      padding-bottom: 8px;
+      padding-top: 8px;
+    }
+
+    .mat-dialog-content {
+      overflow: auto !important;
+    }
+  }
+
 } // end of ix theme
