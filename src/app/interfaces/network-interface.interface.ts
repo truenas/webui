@@ -1,5 +1,6 @@
 import {
   LinkAggregationProtocol,
+  LinkState,
   NetworkInterfaceAliasType,
   NetworkInterfaceFlags,
   NetworkInterfaceType,
@@ -71,7 +72,7 @@ export interface NetworkInterfaceState {
   description: string;
   flags: NetworkInterfaceFlags[];
   link_address: string;
-  link_state: string; // Probably a enum: LINK_STATE_UP
+  link_state: LinkState;
   media_options: unknown;
   media_subtype: string;
   media_type: string;
