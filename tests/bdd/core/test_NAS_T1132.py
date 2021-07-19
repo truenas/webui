@@ -83,7 +83,7 @@ def input_box_cloud_for_name_select_generic_as_share_type_and_click_submit(drive
 @then('the dataset should be created without error')
 def the_dataset_should_be_created_without_error(driver):
     """the dataset should be created without error."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//span[contains(.,"box_cloud")]')
 
 
@@ -140,7 +140,7 @@ def under_transfer_mode_select_copy_click_save(driver):
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"COPY")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
 
 @then('the Box tasks should save without error')
@@ -161,7 +161,7 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 20, '//button[contains(.,"SUCCESS")]')
+    assert wait_on_element(driver, 30, '//button[contains(.,"SUCCESS")]')
     time.sleep(5)
 
 
@@ -215,7 +215,7 @@ def select_the_path_folder_and_click_save(driver, path):
     driver.find_element_by_xpath('//input[@placeholder="Folder"]').send_keys(path)
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h1[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Please wait")]')
 
 
 @then('open a new tab navigate to <box_url>')
@@ -301,7 +301,7 @@ def click_save_the_box_tasks_should_save_without_error(driver):
     """click Save, the Box tasks should save without error."""
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"My BOX Cloud task")]')
 
 
@@ -438,7 +438,7 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 20, '//button[contains(.,"SUCCESS")]')
+    assert wait_on_element(driver, 30, '//button[contains(.,"SUCCESS")]')
     # give time to the system to be ready.
     time.sleep(5)
 
