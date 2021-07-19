@@ -44,6 +44,7 @@ export class AboutModalDialog {
   }
 
   turnOffWelcomeDialog(): void {
+    window.localStorage.setItem('setupComplete', 'true');
     this.core.emit({ name: 'ChangePreference', data: { key: 'showWelcomeDialog', value: false }, sender: this });
   }
 }
