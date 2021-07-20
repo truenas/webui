@@ -2,14 +2,17 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
-import { AclType } from 'app/enums/acl-type.enum';
+import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl } from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { SelectPresetModalComponent } from 'app/pages/storage/volumes/permissions/components/select-preset-modal/select-preset-modal.component';
+import { SelectPresetModalConfig } from 'app/pages/storage/volumes/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/stores/dataset-acl-editor.store';
 import { DialogService } from 'app/services';
 
@@ -51,11 +54,16 @@ export class DatasetAclEditorComponent implements OnInit {
     return this.acl.acltype === AclType.Nfs4;
   }
 
+  get isHomeShare(): boolean {
+    return Boolean(this.route.snapshot.queryParams['homeShare']);
+  }
+
   constructor(
     private store: DatasetAclEditorStore,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
+    private matDialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -65,11 +73,16 @@ export class DatasetAclEditorComponent implements OnInit {
     this.store.state$
       .pipe(untilDestroyed(this))
       .subscribe((state) => {
+        const isFirstLoad = !this.acl && state.acl;
         this.isLoading = state.isLoading;
         this.acl = state.acl;
         this.selectedAceIndex = state.selectedAceIndex;
         this.acesWithError = state.acesWithError;
         this.stat = state.stat;
+
+        if (isFirstLoad) {
+          this.onFirstLoad();
+        }
 
         this.cdr.markForCheck();
       });
@@ -103,6 +116,41 @@ export class DatasetAclEditorComponent implements OnInit {
     this.store.saveAcl({
       recursive: this.recursiveFieldConfig.value,
       traverse: this.recursiveFieldConfig.value && this.traverseFieldConfig.value,
+    });
+  }
+
+  onUsePresetPressed(): void {
+    this.matDialog.open(SelectPresetModalComponent, {
+      data: {
+        allowCustom: false,
+        isNfsAcl: this.isNfsAcl,
+      } as SelectPresetModalConfig,
+    });
+  }
+
+  private onFirstLoad(): void {
+    if (this.isHomeShare) {
+      this.store.usePreset(DefaultAclType.Home);
+    } else {
+      this.showPresetModalIfNeeded();
+    }
+  }
+
+  /**
+   * Prompt for empty acl, user navigating from trivial form
+   */
+  private showPresetModalIfNeeded(): void {
+    const needModal = !this.acl.acl.length || this.acl.trivial;
+
+    if (!needModal) {
+      return;
+    }
+
+    this.matDialog.open(SelectPresetModalComponent, {
+      data: {
+        allowCustom: true,
+        isNfsAcl: this.isNfsAcl,
+      } as SelectPresetModalConfig,
     });
   }
 }

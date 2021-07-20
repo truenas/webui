@@ -147,7 +147,6 @@ export class EditNfsAceComponent implements FormConfiguration, OnChanges {
   private formValuesToAce(): NfsAclItem {
     const formValues = this.formGroup.value as EditNfsAceFormValues;
 
-    // TODO: Incorrect who when it's owner@ or group@
     const ace = {
       tag: formValues.tag,
       type: formValues.type,

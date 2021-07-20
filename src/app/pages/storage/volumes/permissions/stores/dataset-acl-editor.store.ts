@@ -10,7 +10,7 @@ import {
 import {
   catchError, filter, map, switchMap, takeUntil, tap, withLatestFrom,
 } from 'rxjs/operators';
-import { AclType } from 'app/enums/acl-type.enum';
+import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
@@ -84,7 +84,6 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
 
             return EMPTY;
           }),
-          takeUntil(this.destroy$),
         );
       }),
     );
@@ -252,6 +251,57 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
           dialogRef.close();
           new EntityUtils().errorReport(err, this.dialog);
         });
+      }),
+    );
+  });
+
+  usePreset = this.effect((preset$: Observable<DefaultAclType>) => {
+    return preset$.pipe(
+      tap(() => {
+        this.patchState({
+          isLoading: true,
+        });
+      }),
+      switchMap((preset) => {
+        return this.ws.call('filesystem.get_default_acl', [preset]).pipe(
+          map((aclItems) => {
+            const state = this.get();
+            // TODO: Working around backend https://jira.ixsystems.com/browse/NAS-111464
+            const newAclItems = (aclItems as unknown[]).map((ace: NfsAclItem | PosixAclItem) => {
+              let who = '';
+              if ([NfsAclTag.Owner, PosixAclTag.UserObject].includes(ace.tag)) {
+                who = state.stat.user;
+              } else if ([NfsAclTag.Group, PosixAclTag.GroupObject].includes(ace.tag)) {
+                who = state.stat.group;
+              }
+
+              return {
+                ...ace,
+                who,
+              };
+            });
+
+            this.patchState({
+              ...state,
+              acl: {
+                ...state.acl,
+                acl: newAclItems,
+              } as Acl,
+              isLoading: false,
+              acesWithError: [],
+              selectedAceIndex: 0,
+            });
+          }),
+          catchError((error) => {
+            new EntityUtils().errorReport(error, this.dialog);
+
+            this.patchState({
+              isLoading: true,
+            });
+
+            return EMPTY;
+          }),
+        );
       }),
     );
   });

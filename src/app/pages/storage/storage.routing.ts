@@ -1,6 +1,5 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DatasetNfsAclComponent } from 'app/pages/storage/volumes/datasets/dataset-nfs-acl/dataset-nfs-acl.component';
 import { DatasetQuotasGrouplistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { DatasetQuotasUserlistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
 import { DatasetAclEditorComponent } from 'app/pages/storage/volumes/permissions/containers/dataset-acl-editor/dataset-acl-editor.component';
@@ -93,11 +92,6 @@ export const routes: Routes = [
           },
           {
             path: 'id/:pk/dataset/acl/:path',
-            component: DatasetNfsAclComponent,
-            data: { title: 'Edit ACL', breadcrumb: 'Edit ACL' },
-          },
-          {
-            path: 'id/:pk/dataset/new-acl/:path',
             component: DatasetAclEditorComponent,
             data: { title: 'Edit ACL', breadcrumb: 'Edit ACL' },
           },

@@ -59,6 +59,16 @@
               <div class="control-buttons">
                 <button
                   mat-button
+                  class="action"
+                  (click)="onUsePresetPressed()"
+                >
+                  {{ 'Use ACL Preset' | translate }}
+                </button>
+              </div>
+
+              <div class="control-buttons">
+                <button
+                  mat-button
                   color="primary"
                   class="action"
                   [disabled]="acesWithError.length > 0 || !acl.acl.length"

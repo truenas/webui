@@ -11,15 +11,6 @@
       <mat-icon>edit</mat-icon>
     </a>
 
-    <a
-      *ngIf="acl"
-      class="action"
-      [attr.title]="'Edit permissions' | translate"
-      [routerLink]="editPermissionsUrl2"
-    >
-      <mat-icon>edit</mat-icon>
-    </a>
-
     <span class="action" [attr.title]="'Close' | translate" (click)="onCloseClicked()">
       <mat-icon>cancel</mat-icon>
     </span>

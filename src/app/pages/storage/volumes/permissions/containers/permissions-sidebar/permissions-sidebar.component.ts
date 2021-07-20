@@ -43,11 +43,6 @@ export class PermissionsSidebarComponent implements OnInit, OnChanges {
     return ['/storage/id', this.dataset.pool, 'dataset', 'acl', this.dataset.id];
   }
 
-  // TODO
-  get editPermissionsUrl2(): string[] {
-    return ['/storage/id', this.dataset.pool, 'dataset', 'new-acl', this.dataset.id];
-  }
-
   ngOnInit(): void {
     this.store.state$
       .pipe(untilDestroyed(this))
