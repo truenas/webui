@@ -33,7 +33,7 @@ import {
 const initialState: DatasetAclEditorState = {
   isLoading: false,
   isSaving: false,
-  mountpoint: null, // TODO: May not be needed.
+  mountpoint: null,
   acl: null,
   stat: null,
   selectedAceIndex: 0,

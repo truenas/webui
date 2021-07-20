@@ -88,7 +88,6 @@ export class SelectPresetModalComponent implements OnInit {
     this.fieldRelationService.setRelation(this.presetFieldConfig, this.formGroup);
   }
 
-  // TODO: Can be moved to a store.
   private loadOptions(): void {
     this.ws.call('filesystem.default_acl_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
       this.presetFieldConfig.options = choices
