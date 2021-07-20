@@ -44,7 +44,6 @@ export class VDevLabelsSVG {
     this.app = app;
     this.mainStage = this.app.stage;
     this.d3Init();
-    // const paths = this.getParent().querySelectorAll('svg path');
 
     let tiles;
     this.events$ = new Subject<CoreEvent>();

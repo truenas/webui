@@ -71,7 +71,7 @@ export class ChassisView {
   disabledOpacity = 0.25;
   chassisOpacity = 0.25;
   initialized = false;
-  loader: any;
+  loader: PIXI.loaders.Loader;
   autoPosition = true;
   protected utils: ThemeUtils;
   gapX = 10;
@@ -99,7 +99,7 @@ export class ChassisView {
 
   requiredAssets(): { alias: string; path: string }[] {
     // Return a list of assets for the loader to fetch
-    const assets: any[] = [];
+    const assets: { alias: string; path: string }[] = [];
     assets.push({ alias: this.model + '_chassis', path: this.chassisPath });
     assets.push({ alias: this.model + '_drivetray_bg', path: this.driveTrayBackgroundPath });
     assets.push({ alias: this.model + '_drivetray_handle', path: this.driveTrayHandlePath });

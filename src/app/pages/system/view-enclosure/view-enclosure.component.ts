@@ -33,7 +33,6 @@ export class ViewEnclosureComponent implements OnDestroy {
   formEvent$: Subject<CoreEvent> ;
   @ViewChild('navigation', { static: false }) nav: ElementRef;
 
-  // public currentView: ViewConfig
   currentView: ViewConfig = {
     name: 'Disks',
     alias: 'Disks',

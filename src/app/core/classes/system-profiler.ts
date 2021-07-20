@@ -44,7 +44,7 @@ export class SystemProfiler {
     this._diskData = null;
     this._diskData = obj;
     this.parseDiskData(obj);
-    this.parseEnclosures(/* this._enclosures */);
+    this.parseEnclosures();
   }
 
   private _enclosures: Enclosure[];
@@ -289,7 +289,7 @@ export class SystemProfiler {
 
   getEnclosureNumber(diskName: string): number {
     // To be deprecated when middleware includes enclosure number with disk info
-    let result;
+    let result: number;
     this.profile.forEach((enclosure, index) => {
       if (typeof enclosure.diskKeys[diskName] !== 'undefined') {
         result = index;

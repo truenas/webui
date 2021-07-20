@@ -124,7 +124,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   get enclosurePools(): any {
     const selectedEnclosure = this.getSelectedEnclosure();
     return Object.keys(selectedEnclosure.poolKeys);
-    // return Object.keys(this.subenclosure ? this.subenclosure.poolKeys : this.selectedEnclosure.poolKeys);
   }
 
   selectedVdevDisks: string[];
