@@ -1568,25 +1568,23 @@ export class ReplicationFormComponent implements FormConfiguration {
 
   toggleNamingSchemaOrRegex(): void {
     const directionValue = this.entityForm.formGroup.controls['direction'].value;
-    const disabled = true;
-    const enabled = false;
     const schemaOrRegexValue = this.entityForm.formGroup.controls['schema_or_regex'].value;
     if (schemaOrRegexValue === SnapshotNamingOption.NamingSchema) {
-      this.entityForm.setDisabled('name_regex', disabled, disabled);
+      this.entityForm.setDisabled('name_regex', true, true);
       if (directionValue === Direction.Push) {
-        this.entityForm.setDisabled('naming_schema', disabled, disabled);
+        this.entityForm.setDisabled('naming_schema', true, true);
       } else {
-        this.entityForm.setDisabled('naming_schema', enabled, enabled);
+        this.entityForm.setDisabled('naming_schema', false, false);
       }
       if (directionValue === Direction.Pull) {
-        this.entityForm.setDisabled('also_include_naming_schema', disabled, disabled);
+        this.entityForm.setDisabled('also_include_naming_schema', true, true);
       } else {
-        this.entityForm.setDisabled('also_include_naming_schema', enabled, enabled);
+        this.entityForm.setDisabled('also_include_naming_schema', false, false);
       }
     } else {
-      this.entityForm.setDisabled('name_regex', enabled, enabled);
-      this.entityForm.setDisabled('naming_schema', disabled, disabled);
-      this.entityForm.setDisabled('also_include_naming_schema', disabled, disabled);
+      this.entityForm.setDisabled('name_regex', false, false);
+      this.entityForm.setDisabled('naming_schema', true, true);
+      this.entityForm.setDisabled('also_include_naming_schema', true, true);
     }
   }
 }

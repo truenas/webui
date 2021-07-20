@@ -1503,26 +1503,23 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     const sourceDatasetsFromValue = this.entityWizard.formArray.get([0]).get('source_datasets_from').value;
     const schemaOrRegexFormControl = this.entityWizard.formArray.get([0]).get('schema_or_regex');
 
-    const disabled = true;
-    const enabled = false;
-
     if (customSnapshotsValue || sourceDatasetsFromValue === DatasetSource.Remote) {
       if (schemaOrRegexFormControl.disabled) {
-        this.setDisable('schema_or_regex', enabled, enabled, 0);
+        this.setDisable('schema_or_regex', false, false, 0);
       }
       if (schemaOrRegexFormControl.value === SnapshotNamingOption.NamingSchema) {
-        this.setDisable('naming_schema', enabled, enabled, 0);
-        this.setDisable('name_regex', disabled, disabled, 0);
+        this.setDisable('naming_schema', false, false, 0);
+        this.setDisable('name_regex', true, true, 0);
       } else {
-        this.setDisable('naming_schema', disabled, disabled, 0);
-        this.setDisable('name_regex', enabled, enabled, 0);
+        this.setDisable('naming_schema', true, true, 0);
+        this.setDisable('name_regex', false, false, 0);
       }
     } else {
-      this.setDisable('naming_schema', disabled, disabled, 0);
+      this.setDisable('naming_schema', true, true, 0);
       if (!schemaOrRegexFormControl.disabled) {
-        this.setDisable('schema_or_regex', disabled, disabled, 0);
+        this.setDisable('schema_or_regex', true, true, 0);
       }
-      this.setDisable('name_regex', disabled, disabled, 0);
+      this.setDisable('name_regex', true, true, 0);
     }
   }
 }
