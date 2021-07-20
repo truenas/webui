@@ -88,7 +88,7 @@
             [stat]="stat"
           ></app-edit-nfs-ace>
           <ng-template #posixAcl>
-            <app-edit-posix-ace [selectedAce]="selectedAce"></app-edit-posix-ace>
+            <app-edit-posix-ace [ace]="selectedAce" [stat]="stat"></app-edit-posix-ace>
           </ng-template>
         </ng-container>
       </div>
