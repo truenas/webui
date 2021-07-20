@@ -146,7 +146,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
 
     this.interval = setInterval(() => {
       this.fetchReportData();
-    }, 2000);
+    }, 10000);
 
     this.stats.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.name.startsWith('NetTraffic_')) {
