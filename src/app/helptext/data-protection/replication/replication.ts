@@ -35,9 +35,9 @@ export default {
   ssh_credentials_placeholder: T('SSH Connection'),
   ssh_credentials_tooltip: T('Choose a connection that has been saved in \
  <b>System > SSH Connections</b>.'),
-  name_schema_or_regex_placeholder: T('Naming Schema or Snapshot Name Regular Expression'),
+  name_schema_or_regex_placeholder: T('Also include snapshots with the name'),
 
-  naming_schema_placeholder: T('Naming Schema'),
+  naming_schema_placeholder: T('Matching naming schema'),
   naming_schema_tooltip: T('Pattern of naming custom snapshots to be \
  replicated. Enter the name and \
  <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" target="_blank">strftime(3)</a> \
@@ -128,7 +128,7 @@ from the source dataset.'),
  as the chosen periodic snapshot task. Selecting a periodic snapshot \
  schedule removes the <b>Schedule</b> field.'),
 
-  name_regex_placeholder: T('Snapshot Name Regular Expression'),
+  name_regex_placeholder: T('Matching regular expression'),
   name_regex_tooltip: T('Using this option will replicate all snapshots \
 which names match specified regular expression. The \
 performance on the systems with large number of snapshots \

@@ -1365,6 +1365,12 @@ export class ReplicationFormComponent implements FormConfiguration {
       wsResponse.encryption_key_passphrase = wsResponse.encryption_key;
     }
 
+    if (wsResponse.name_regex) {
+      this.entityForm.formGroup.get('schema_or_regex').setValue(SnapshotNamingOption.NameRegex);
+    } else {
+      this.entityForm.formGroup.get('schema_or_regex').setValue(SnapshotNamingOption.NamingSchema);
+    }
+
     return wsResponse;
   }
 
