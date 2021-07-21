@@ -78,7 +78,9 @@ export default {
   custom_snapshots_tooltip: T('Replicate snapshots that have not been \
  created by an automated snapshot task. Requires setting a naming schema \
  for the custom snapshots.'),
-  name_schema_or_regex_placeholder: T('Naming Schema or Snapshot Name Regular Expression'),
+  name_schema_or_regex_placeholder_push: T('Also include snapshots with the name'),
+  name_schema_or_regex_placeholder_pull: T('Include snapshots with the name'),
+
   name_regex_placeholder: T('Snapshot Name Regular Expression'),
   naming_schema_placeholder: T('Naming Schema'),
   naming_schema_tooltip: T('Pattern of naming custom snapshots to be \

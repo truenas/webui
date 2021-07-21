@@ -216,7 +216,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             {
               type: 'radio',
               name: 'schema_or_regex',
-              placeholder: helptext.name_schema_or_regex_placeholder,
+              placeholder: helptext.name_schema_or_regex_placeholder_pull,
               options: [
                 { label: helptext.naming_schema_placeholder, value: SnapshotNamingOption.NamingSchema },
                 { label: helptext.name_regex_placeholder, value: SnapshotNamingOption.NameRegex },
@@ -872,6 +872,13 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           this.toggleNamingSchemaOrRegex();
           if (value === DatasetSource.Remote) {
             if (datasetFrom === 'source_datasets_from') {
+              const direction = value === DatasetSource.Remote ? Direction.Pull : Direction.Push;
+              if (direction === Direction.Pull) {
+                _.find(this.wizardConfig[0].fieldConfig, { name: 'schema_or_regex' }).label = helptext.name_schema_or_regex_placeholder_pull;
+              } else {
+                _.find(this.wizardConfig[0].fieldConfig, { name: 'schema_or_regex' }).label = helptext.name_schema_or_regex_placeholder_push;
+              }
+
               this.entityWizard.formArray.get([0]).get('target_dataset_from').setValue(DatasetSource.Local);
               this.setDisable('target_dataset_from', true, false, 0);
             }

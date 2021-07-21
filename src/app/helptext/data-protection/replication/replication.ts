@@ -35,7 +35,8 @@ export default {
   ssh_credentials_placeholder: T('SSH Connection'),
   ssh_credentials_tooltip: T('Choose a connection that has been saved in \
  <b>System > SSH Connections</b>.'),
-  name_schema_or_regex_placeholder: T('Also include snapshots with the name'),
+  name_schema_or_regex_placeholder_push: T('Also include snapshots with the name'),
+  name_schema_or_regex_placeholder_pull: T('Include snapshots with the name'),
 
   naming_schema_placeholder: T('Matching naming schema'),
   naming_schema_tooltip: T('Pattern of naming custom snapshots to be \
