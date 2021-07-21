@@ -41,7 +41,7 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 
 
 @when('you should be on the dashboard, click on credentials and local accounts')
-def you_should_be_on_the_dashboard_click_on_credentials_and_local_accounts():
+def you_should_be_on_the_dashboard_click_on_credentials_and_local_accounts(driver):
     """you should be on the dashboard, click on credentials and local accounts."""
     time.sleep(1)
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
@@ -53,7 +53,7 @@ def you_should_be_on_the_dashboard_click_on_credentials_and_local_accounts():
 
 
 @then('the users page should open, click add and the add page will open.')
-def the_users_page_should_open_click_add_and_the_add_page_will_open():
+def the_users_page_should_open_click_add_and_the_add_page_will_open(driver):
     """the users page should open, click add and the add page will open.."""
     time.sleep(3)
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
@@ -63,7 +63,7 @@ def the_users_page_should_open_click_add_and_the_add_page_will_open():
 
 
 @then('Input fullname, username, password, confirmpassword, and click save')
-def input_fullname_username_password_confirmpassword_and_click_save():
+def input_fullname_username_password_confirmpassword_and_click_save(driver):
     """Input fullname, username, password, confirmpassword, and click save."""
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Full Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').clear()
@@ -78,7 +78,7 @@ def input_fullname_username_password_confirmpassword_and_click_save():
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 @then('the new user should be created and added to the user list.')
-def the_new_user_should_be_created_and_added_to_the_user_list():
+def the_new_user_should_be_created_and_added_to_the_user_list(driver):
     """the new user should be created and added to the user list.."""
     time.sleep(4)
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
