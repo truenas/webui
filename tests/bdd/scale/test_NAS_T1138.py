@@ -17,7 +17,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1139.feature', 'Create a 1gb zvol call nopeer1 for the no peer iscsi test case')
+@scenario('features/NAS-T1138.feature', 'Create a 1gb zvol call nopeer1 for the no peer iscsi test case')
 def test_create_a_1gb_zvol_call_nopeer1_for_the_no_peer_iscsi_test_case():
     """Create a 1gb zvol call nopeer1 for the no peer iscsi test case."""
 
