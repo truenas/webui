@@ -127,6 +127,11 @@ export class EditNfsAceComponent implements FormConfiguration, OnChanges {
     }
 
     this.formGroup.reset(formValues, { emitEvent: false });
+
+    // TODO: This is a workaround for form components relying on valueChanges instead of control-value-accessor.
+    this.formGroup.get('advancedPermissions').setValue(formValues.advancedPermissions, { onlySelf: true });
+    this.formGroup.get('advancedFlags').setValue(formValues.advancedFlags, { onlySelf: true });
+
     this.fieldConfig.forEach((config) => {
       return this.relationService.refreshRelations(config, this.formGroup, { emitEvent: false });
     });
