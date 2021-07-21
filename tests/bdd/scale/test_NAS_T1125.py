@@ -68,8 +68,6 @@ def the_directory_services_page_should_open_then_click_ldap_settings_button(driv
 def input_hostname_for_hostname_base_DN_base_dn_input_bind_DN_for_bind_dn_and_input_bind_password_for_bind_password(driver, hostname, base_DN, bind_DN, bind_password):
     """input {hostname} for Hostname, "{base_DN}" Base DN, input "{bind_DN}" for Bind DN, and input {bind_password} for Bind Password."""
     time.sleep(2)
-    assert wait_on_element(driver, 10, '//input[contains(.,"Hostname")]')
-    driver.find_element_by_xpath('//input[@placeholder="Hostname"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Hostname"]').send_keys(hostname)
     driver.find_element_by_xpath('//input[@ix-auto="input__Base DN"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Base DN"]').send_keys(base_DN)
