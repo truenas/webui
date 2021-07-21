@@ -1,0 +1,35 @@
+<div class="job-item" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="8px">
+  <div fxFlex="100%">
+    <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
+      <span>{{ job.description ? job.description : job.method }}</span>
+      <span *ngIf="!JobState.Failed">{{ job.progress.percent || 0 | number: '1.2-2' }}%</span>
+    </div>
+
+    <mat-progress-bar
+      *ngIf="job.state === JobState.Running"
+      [value]="job.progress.percent"
+      mode="buffer"
+      class="job-progress"
+    ></mat-progress-bar>
+
+    <div class="job-time">
+      <ng-container *ngIf="job.state === JobState.Running; then started; else stopped"></ng-container>
+
+      <ng-template #started>
+        {{ 'Started' | translate }}: <strong>{{ getReadableDate(job.time_started) }}</strong>
+      </ng-template>
+
+      <ng-template #stopped>
+        {{ 'Stopped' | translate }}: <strong>{{ getReadableDate(job.time_finished) }}</strong>
+      </ng-template>
+    </div>
+  </div>
+
+  <button mat-icon-button type="button" (click)="abort(job)" *ngIf="job.state === JobState.Running && job.abortable">
+    <mat-icon fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+  </button>
+
+  <button mat-icon-button type="button" [disabled]="true" *ngIf="job.state === JobState.Failed">
+    <mat-icon [matTooltip]="job.error" matTooltipPosition="left" class="job-icon-failed">warning</mat-icon>
+  </button>
+</div>

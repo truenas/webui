@@ -278,12 +278,21 @@ export class EntityUtils {
     const name = schemaConfig.variable;
 
     const fieldConfig: any = {
-      required: schemaConfig.schema.required,
-      value: schemaConfig.schema.default,
-      tooltip: schemaConfig.description,
-      placeholder: schemaConfig.label,
       name,
     };
+
+    if (schemaConfig.schema.required !== undefined) {
+      fieldConfig.required = schemaConfig.schema.required;
+    }
+    if (schemaConfig.schema.default !== undefined) {
+      fieldConfig.value = schemaConfig.schema.default;
+    }
+    if (schemaConfig.description !== undefined) {
+      fieldConfig.tooltip = schemaConfig.description;
+    }
+    if (schemaConfig.label !== undefined) {
+      fieldConfig.placeholder = schemaConfig.label;
+    }
 
     let relations: Relation[] = null;
     if (schemaConfig.schema.show_if) {

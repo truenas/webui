@@ -1,7 +1,9 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { DatasetNfsAclComponent } from 'app/pages/storage/volumes/datasets/dataset-nfs-acl/dataset-nfs-acl.component';
 import { DatasetQuotasGrouplistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { DatasetQuotasUserlistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
+import { DatasetTrivialPermissionsComponent } from 'app/pages/storage/volumes/datasets/dataset-trivial-permissions/dataset-trivial-permissions.component';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volume-addkey-form/volume-addkey-form.component';
 import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volume-changekey-form/volume-changekey-form.component';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volume-createkey-form/volume-createkey-form.component';
@@ -18,9 +20,7 @@ import { SnapshotCloneComponent } from './snapshots/snapshot-clone/snapshot-clon
 import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.component';
 import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot';
 import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list';
-import { DatasetAclComponent } from './volumes/datasets/dataset-acl/dataset-acl.component';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/dataset-form.component';
-import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/dataset-permissions.component';
 import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl/dataset-posix-acl.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
@@ -67,7 +67,7 @@ export const routes: Routes = [
           },
           {
             path: 'permissions/:pk',
-            component: DatasetPermissionsComponent,
+            component: DatasetTrivialPermissionsComponent,
             data: { title: 'Edit Permissions', breadcrumb: 'Edit Permissions' },
           },
           {
@@ -92,7 +92,7 @@ export const routes: Routes = [
           },
           {
             path: 'id/:pk/dataset/acl/:path',
-            component: DatasetAclComponent,
+            component: DatasetNfsAclComponent,
             data: { title: 'Edit ACL', breadcrumb: 'Edit ACL' },
           },
           {

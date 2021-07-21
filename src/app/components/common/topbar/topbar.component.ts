@@ -7,7 +7,9 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription, Subject } from 'rxjs';
+import { Subscription, Subject, Observable } from 'rxjs';
+import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/jobs-manager.component';
+import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { LayoutService } from 'app/core/services/layout.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
@@ -37,7 +39,6 @@ import { T } from 'app/translate-marker';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { ResilverProgressDialogComponent } from '../dialog/resilver-progress/resilver-progress.component';
-import { TaskManagerComponent } from '../dialog/task-manager/task-manager.component';
 import { TruecommandComponent } from '../dialog/truecommand/truecommand.component';
 
 @UntilDestroy()
@@ -63,7 +64,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   currentTheme = 'ix-blue';
   isTaskMangerOpened = false;
   isDirServicesMonitorOpened = false;
-  taskDialogRef: MatDialogRef<TaskManagerComponent>;
+  taskDialogRef: MatDialogRef<JobsManagerComponent>;
   dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
   dirServicesStatus: any[] = [];
   showDirServicesIcon = false;
@@ -87,6 +88,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   isWaiting = false;
   target: Subject<CoreEvent> = new Subject();
   screenSize = 'waiting';
+  numberOfRunningJobs$: Observable<number> = this.jobsManagerStore.numberOfRunningJobs$;
 
   protected dialogRef: any;
   protected tcConnected = false;
@@ -113,6 +115,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     protected loader: AppLoaderService,
     public mediaObserver: MediaObserver,
     private layoutService: LayoutService,
+    private jobsManagerStore: JobsManagerStore,
   ) {
     super();
     this.sysGenService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
@@ -472,13 +475,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.taskDialogRef.close(true);
     } else {
       this.isTaskMangerOpened = true;
-      this.taskDialogRef = this.dialog.open(TaskManagerComponent, {
+      this.taskDialogRef = this.dialog.open(JobsManagerComponent, {
         disableClose: false,
         width: '400px',
         hasBackdrop: true,
+        panelClass: 'topbar-panel',
         position: {
           top: '48px',
-          right: '0px',
+          right: '16px',
         },
       });
     }
