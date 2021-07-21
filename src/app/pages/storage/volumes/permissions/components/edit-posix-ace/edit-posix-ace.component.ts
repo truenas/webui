@@ -90,6 +90,10 @@ export class EditPosixAceComponent implements FormConfiguration, OnChanges {
     } as EditPosixAceFormValues;
 
     this.formGroup.reset(formValues, { emitEvent: false });
+
+    // TODO: This is a workaround for form components relying on valueChanges instead of control-value-accessor.
+    this.formGroup.get('permissions').setValue(formValues.permissions, { onlySelf: true });
+
     this.fieldConfig.forEach((config) => {
       return this.relationService.refreshRelations(config, this.formGroup, { emitEvent: false });
     });

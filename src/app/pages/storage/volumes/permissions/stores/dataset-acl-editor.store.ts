@@ -296,7 +296,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
             new EntityUtils().errorReport(error, this.dialog);
 
             this.patchState({
-              isLoading: true,
+              isLoading: false,
             });
 
             return EMPTY;
@@ -349,7 +349,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
 
       return of({
         ...aceAttributes,
-        id: null,
+        id: -1, // -1 is effectively null for middleware
       });
     });
 
