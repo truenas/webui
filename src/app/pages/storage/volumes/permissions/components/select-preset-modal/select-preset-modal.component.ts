@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { DefaultAclType } from 'app/enums/acl-type.enum';
@@ -22,8 +22,8 @@ const presetFieldName = 'preset';
 })
 export class SelectPresetModalComponent implements OnInit {
   formGroup = new FormGroup({
-    [presetFieldName]: new FormControl(),
-    [usePresetFieldName]: new FormControl(),
+    [presetFieldName]: new FormControl('', Validators.required),
+    [usePresetFieldName]: new FormControl('', Validators.required),
   });
 
   readonly helptext = helptext.type_dialog;
