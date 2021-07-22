@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/api-keys';
 import { ApiKey } from 'app/interfaces/api-key.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
@@ -12,6 +13,7 @@ import { LocaleService } from 'app/services/locale.service';
 import { ConfirmDialog } from '../common/confirm-dialog/confirm-dialog.component';
 import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityUtils } from '../common/entity/utils';
+import { ApiKeysRow } from './api-keys-row.interface';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +29,7 @@ export class ApiKeysComponent implements EntityTableConfig {
   addCall: 'api_key.create' = 'api_key.create';
   editCall: 'api_key.update' = 'api_key.update';
 
-  currItem: any;
+  currItem: ApiKeysRow;
   entityList: EntityTableComponent;
 
   columns = [
@@ -106,11 +108,11 @@ export class ApiKeysComponent implements EntityTableConfig {
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
   }
-  resourceTransformIncomingRestData(data: ApiKey[]): any[] {
+  resourceTransformIncomingRestData(data: ApiKey[]): ApiKeysRow[] {
     return data.map((item) => {
       return {
         ...item,
-        created_time: this.localeService.formatDateTime(item.created_at.$date as any),
+        created_time: this.localeService.formatDateTime(item.created_at.$date),
       };
     });
   }
@@ -119,25 +121,25 @@ export class ApiKeysComponent implements EntityTableConfig {
     const that = entityDialogForm.parent;
     if (that.currItem) {
       that.ws.call(that.editCall, [that.currItem.id, entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
-        (res: any) => {
+        (res) => {
           entityDialogForm.dialogRef.close(true);
           if (res.key) {
             that.displayKey(res.key);
           }
           that.entityList.getData();
         },
-        (err: any) => {
-          new EntityUtils().handleWSError(that, err, that.apikeysFormConf.fieldConfig);
+        (err: WebsocketError) => {
+          new EntityUtils().handleWSError(that, err, that.dialogService, that.apikeysFormConf.fieldConfig);
         },
       );
     } else {
       that.ws.call(that.addCall, [entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
-        (res: any) => {
+        (res) => {
           entityDialogForm.dialogRef.close(true);
           that.displayKey(res.key);
           that.entityList.getData();
         },
-        (err: any) => {
+        (err: WebsocketError) => {
           new EntityUtils().handleWSError(this, err, that.dialogService, that.apikeysFormConf.fieldConfig);
         },
       );
@@ -160,13 +162,13 @@ export class ApiKeysComponent implements EntityTableConfig {
     };
   }
 
-  getActions(): EntityTableAction[] {
+  getActions(): EntityTableAction<ApiKeysRow>[] {
     return [{
       name: helptext.action_edit,
       id: 'edit',
       icon: 'edit',
       label: 'Edit',
-      onClick: (rowinner: any) => {
+      onClick: (rowinner: ApiKeysRow) => {
         this.apikeysFormConf.title = helptext.formDialog.edit_title;
         this.apikeysFormConf.saveButtonText = helptext.formDialog.edit_button;
         this.apikeysFormConf.method_ws = this.editCall;
@@ -178,7 +180,7 @@ export class ApiKeysComponent implements EntityTableConfig {
       id: 'delete',
       icon: 'delete',
       label: 'Delete',
-      onClick: (rowinner: any) => {
+      onClick: (rowinner: ApiKeysRow) => {
         this.entityList.doDelete(rowinner);
       },
     }] as EntityTableAction[];

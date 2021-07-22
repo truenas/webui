@@ -19,6 +19,7 @@ import { NfsAclItem } from 'app/interfaces/acl.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -398,9 +399,9 @@ export class DatasetNfsAclComponent implements FormConfiguration {
       }
     });
 
-    this.ws.call('filesystem.acl_is_trivial', [this.path]).pipe(untilDestroyed(this)).subscribe((aclIsTrivial: any) => {
+    this.ws.call('filesystem.acl_is_trivial', [this.path]).pipe(untilDestroyed(this)).subscribe((aclIsTrivial) => {
       this.aclIsTrivial = aclIsTrivial;
-    }, (err: any) => {
+    }, (err: WebsocketError) => {
       new EntityUtils().handleWSError(this.entityForm, err);
     });
 
@@ -766,37 +767,37 @@ export class DatasetNfsAclComponent implements FormConfiguration {
     this.dialogRef.componentInstance.setDescription(helptext.save_dialog.message);
     const dacl = body.dacl;
 
-    await this.userService.getUserByName(body.uid).toPromise().then((userObj: any) => {
+    await this.userService.getUserByName(body.uid).toPromise().then((userObj) => {
       if (userObj && userObj.hasOwnProperty('pw_uid')) {
         body.uid = userObj.pw_uid;
       }
-    }, (err: any) => {
+    }, (err: WebsocketError) => {
       console.error(err);
     });
 
-    await this.userService.getGroupByName(body.gid).toPromise().then((groupObj: any) => {
+    await this.userService.getGroupByName(body.gid).toPromise().then((groupObj) => {
       if (groupObj && groupObj.hasOwnProperty('gr_gid')) {
         body.gid = groupObj.gr_gid;
       }
-    }, (err: any) => {
+    }, (err: WebsocketError) => {
       console.error(err);
     });
 
     for (let i = 0; i < dacl.length; i++) {
       if (dacl[i].tag === PosixAclTag.User) {
-        await this.userService.getUserByName(dacl[i].id).toPromise().then((userObj: any) => {
+        await this.userService.getUserByName(dacl[i].id).toPromise().then((userObj) => {
           if (userObj && userObj.hasOwnProperty('pw_uid')) {
             dacl[i]['id'] = userObj.pw_uid;
           }
-        }, (err: any) => {
+        }, (err: WebsocketError) => {
           console.error(err);
         });
       } else if (dacl[i].tag === PosixAclTag.Group) {
-        await this.userService.getGroupByName(dacl[i].id).toPromise().then((groupObj: any) => {
+        await this.userService.getGroupByName(dacl[i].id).toPromise().then((groupObj) => {
           if (groupObj && groupObj.hasOwnProperty('gr_gid')) {
             dacl[i]['id'] = groupObj.gr_gid;
           }
-        }, (err: any) => {
+        }, (err: WebsocketError) => {
           console.error(err);
         });
       }
@@ -882,7 +883,7 @@ export class DatasetNfsAclComponent implements FormConfiguration {
             this.route_success,
           ));
         });
-        this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+        this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
           new EntityUtils().handleWSError(this.entityForm, err);
         });
       },

@@ -3,8 +3,9 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { forkJoin } from 'rxjs';
+import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   AppLoaderService, DialogService, IscsiService, WebSocketService,
@@ -78,7 +79,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
     });
   }
 
-  getActions(row: any): any[] {
+  getActions(row: IscsiTargetExtent): EntityTableAction[] {
     return [{
       id: row.target,
       name: 'edit',
@@ -90,7 +91,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
       name: 'delete',
       icon: 'delete',
       label: T('Delete'),
-      onClick: (rowinner: any) => {
+      onClick: (rowinner: IscsiTargetExtent) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
         this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
           (res) => {
