@@ -9,8 +9,10 @@ import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
+import { Job } from 'app/interfaces/job.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Snapshot } from 'app/interfaces/storage.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -241,8 +243,8 @@ export class SnapshotListComponent implements EntityTableConfig {
         .subscribe((snapshot) => {
           entityList.handleData(snapshot, true);
         },
-        () => {
-          new EntityUtils().handleWSError(this, config, entityList.dialogService);
+        (error) => {
+          new EntityUtils().handleWSError(this, error, entityList.dialogService);
         });
     });
   }
@@ -351,11 +353,11 @@ export class SnapshotListComponent implements EntityTableConfig {
     dialogRef.componentInstance.setCall(this.wsMultiDelete, params);
     dialogRef.componentInstance.submit();
 
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job_res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job_res: Job<any[]>) => {
       const jobErrors: string[] = [];
       const jobSuccess: any[] = [];
 
-      job_res.result.forEach((item: any) => {
+      job_res.result.forEach((item) => {
         if (item.error) {
           jobErrors.push(item.error);
         } else {
@@ -429,7 +431,7 @@ export class SnapshotListComponent implements EntityTableConfig {
           entityDialog.dialogRef.close();
           parent.entityList.getData();
         },
-        (err: any) => {
+        (err: WebsocketError) => {
           parent.entityList.loaderOpen = false;
           parent.entityList.loader.close();
           entityDialog.dialogRef.close();

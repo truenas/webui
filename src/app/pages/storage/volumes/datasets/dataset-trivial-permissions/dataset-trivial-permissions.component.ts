@@ -268,7 +268,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
       dialogRef.close();
       this.router.navigate(['/', ...this.route_success]);
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       console.error(err);
     });
   }

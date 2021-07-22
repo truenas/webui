@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/api-keys';
 import { ApiKey } from 'app/interfaces/api-key.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
@@ -127,8 +128,8 @@ export class ApiKeysComponent implements EntityTableConfig {
           }
           that.entityList.getData();
         },
-        (err: any) => {
-          new EntityUtils().handleWSError(that, err, that.apikeysFormConf.fieldConfig);
+        (err: WebsocketError) => {
+          new EntityUtils().handleWSError(that, err, that.dialogService, that.apikeysFormConf.fieldConfig);
         },
       );
     } else {
@@ -138,7 +139,7 @@ export class ApiKeysComponent implements EntityTableConfig {
           that.displayKey(res.key);
           that.entityList.getData();
         },
-        (err: any) => {
+        (err: WebsocketError) => {
           new EntityUtils().handleWSError(this, err, that.dialogService, that.apikeysFormConf.fieldConfig);
         },
       );

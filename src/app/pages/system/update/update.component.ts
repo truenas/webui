@@ -391,7 +391,7 @@ export class UpdateComponent implements OnInit {
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.router.navigate(['/others/reboot']);
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       new EntityUtils().handleWSError(this, err, this.dialogService);
     });
   }
@@ -534,7 +534,7 @@ export class UpdateComponent implements OnInit {
             this.dialogService.Info(T('Updates successfully downloaded'), '', '450px', 'info', true);
             this.pendingupdates();
           });
-          this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+          this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
             new EntityUtils().handleWSError(this, err, this.dialogService);
           });
         } else {
@@ -569,7 +569,7 @@ export class UpdateComponent implements OnInit {
             helptext.ha_update.complete_action, false, '', '', '', '', true).pipe(untilDestroyed(this)).subscribe(() => {
           });
         });
-        this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+        this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
           new EntityUtils().handleWSError(this, err, this.dialogService);
         });
       });

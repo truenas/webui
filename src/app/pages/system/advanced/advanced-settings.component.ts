@@ -527,7 +527,7 @@ export class AdvancedSettingsComponent implements OnInit {
                 this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
                   this.dialogRef.close();
                 });
-                this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((saveDebugErr: any) => {
+                this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((saveDebugErr) => {
                   this.dialogRef.close();
                   if (!reported) {
                     new EntityUtils().handleWSError(this, saveDebugErr, this.dialog);

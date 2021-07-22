@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -112,7 +113,7 @@ export class ExtentListComponent implements EntityTableConfig {
             entityTable.getData();
             entityTable.excuteDeletion = true;
           },
-          (err: any) => {
+          (err: WebsocketError) => {
             entityTable.loader.close();
             new EntityUtils().handleWSError(entityTable, err, entityTable.dialogService);
           },

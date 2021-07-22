@@ -349,7 +349,7 @@ export class CertificateEditComponent implements FormConfiguration {
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       this.matDialog.closeAll();
       this.modalService.refreshTable();
       new EntityUtils().handleWSError(this.entityForm, res);

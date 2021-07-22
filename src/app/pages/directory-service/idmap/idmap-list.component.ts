@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/directory-service/idmap';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -124,7 +125,7 @@ export class IdmapListComponent implements EntityTableConfig {
         onClick: (row: any) => {
           this.entityList.doDeleteJob(row).pipe(untilDestroyed(this)).subscribe(
             () => {},
-            (err: any) => {
+            (err: WebsocketError) => {
               new EntityUtils().handleWSError(this.entityList, err);
             },
             () => {

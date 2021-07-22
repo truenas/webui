@@ -8,6 +8,7 @@ import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -269,7 +270,7 @@ export class CertificatesDashComponent implements OnInit {
               });
           },
           (err) => {
-            new EntityUtils().handleWSError(this, err, this.dialog);
+            new EntityUtils().handleWSError(this, err, this.dialogService);
           },
         );
         const keyName = rowinner.name + '.key';
@@ -287,7 +288,7 @@ export class CertificatesDashComponent implements OnInit {
               });
           },
           (err) => {
-            new EntityUtils().handleWSError(this, err, this.dialog);
+            new EntityUtils().handleWSError(this, err, this.dialogService);
           },
         );
         event.stopPropagation();
@@ -371,7 +372,7 @@ export class CertificatesDashComponent implements OnInit {
       entityDialog.loader.close();
       self.dialogService.closeAllDialogs();
       self.getCards();
-    }, (err: any) => {
+    }, (err: WebsocketError) => {
       entityDialog.loader.close();
       self.dialogService.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
     });
