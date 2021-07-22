@@ -404,7 +404,7 @@ export type ApiDirectory = {
   'iscsi.initiator.delete': { params: any; response: any };
   'iscsi.target.query': { params: any; response: IscsiTarget[] };
   'iscsi.extent.disk_choices': { params: void; response: Choices };
-  'iscsi.extent.query': { params: any; response: IscsiExtent[] };
+  'iscsi.extent.query': { params: QueryParams<IscsiExtent>; response: IscsiExtent[] };
   'iscsi.extent.create': { params: any; response: any };
   'iscsi.extent.update': { params: any; response: any };
   'iscsi.extent.delete': { params: any; response: any };
@@ -672,7 +672,7 @@ export type ApiDirectory = {
   'systemdataset.update': { params: [{ [poolName: string]: string }]; response: any };
 
   // Service
-  'service.started': { params: any; response: any };
+  'service.started': { params: [ServiceName]; response: boolean };
   'service.query': { params: QueryParams<Service>; response: Service[] };
   'service.update': { params: [number, Partial<Service>]; response: number };
   'service.start': { params: [ServiceName]; response: boolean };

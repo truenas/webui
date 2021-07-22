@@ -797,12 +797,12 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     // this.modalService.open('slide-in-form', this.conf.addComponent);
   }
 
-  doEdit(id: string): void {
+  doEdit(id: string | number): void {
     if (this.conf.doEdit) {
       this.conf.doEdit(id, this);
     } else {
       this.router.navigate(
-        new Array('/').concat(this.conf.route_edit).concat(id),
+        new Array('/').concat(this.conf.route_edit).concat(id as any),
       );
     }
   }

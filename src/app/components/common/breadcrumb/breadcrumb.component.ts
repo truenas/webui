@@ -8,7 +8,7 @@ import { CoreService } from 'app/core/services/core-service/core.service';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { LocaleService } from 'app/services/locale.service';
-import { RoutePartsService } from 'app/services/route-parts/route-parts.service';
+import { RoutePartsService, RoutePart } from 'app/services/route-parts/route-parts.service';
 
 @UntilDestroy()
 @Component({
@@ -20,7 +20,7 @@ export class BreadcrumbComponent implements OnInit {
   @Input() product_type: ProductType;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
-  routeParts: any[];
+  routeParts: (RoutePart & { disabled?: boolean })[];
   isEnabled = true;
   constructor(private router: Router,
     private routePartsService: RoutePartsService,
