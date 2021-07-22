@@ -53,6 +53,7 @@ nav.view-nav-bar {
 
 .view-card #disks-details {
   height: 250px;
+  padding: 0;
 }
 
 .view-card #disks-details-header {
@@ -292,10 +293,6 @@ div.vdev-disk {
   font-weight: 500;
 }
 
-.disks-overview-wrapper {
-  /*background:#000;*/
-}
-
 /* lt-lg */
 .view-card.md {
   width: 750px;
@@ -342,15 +339,6 @@ div.vdev-disk {
 }
 
 .view-card.mini .dom-overlay#visualizer { left: 0 !important; }
-
-.view-card.mini #legend,
-.view-card.mini #disks-overview,
-.view-card.mini #disks-details,
-.view-card.mini .dom-overlay#visualizer,
-.view-card.mini #general-overview,
-.view-card.mini #drive-temps {
-  /*background-color: var(--contrast-darker);*/
-}
 
 .view-card.mini #legend {
   padding: 16px;
@@ -406,7 +394,11 @@ div.vdev-disk {
 }
 
 .view-card.mini #disks-details li {
-  margin: 6px 0;
+  margin: 8px 0 6px;
+}
+
+.view-card.mini #disks-details li:first-child {
+  margin: 16px 0 6px;
 }
 
 .mini div.header-container {
@@ -441,7 +433,8 @@ div.vdev-disk {
   padding: 8px;
 }
 
-.mini .overlay {
+.mini .disks-overlay {
+  display: unset;
   height: 100%;
   min-width: 25%;
   position: absolute;
@@ -456,24 +449,43 @@ div.vdev-disk {
   min-width: 30%;
 }
 
-.mini .overlay.status .status-text {
-  bottom: 26px;
-  display: block;
+.mini .disks-overlay.status .status-icon,
+.mini .disks-overlay.status .status-text {
+  display: inline;
+}
+
+.mini .disks-overlay.status .status-text {
   left: 32px;
-  position: relative;
+  position: absolute;
+  top: 2px;
 }
 
 .mini .no-temp {
   margin-top: 8px;
 }
 
+.mini .slot-value {
+  //padding: 2px 0 0 8px;
+  position: absolute;
+  top: -1.5px;
+}
+
 .mini .slot-label {
   border-radius: 50%;
   font-size: 0.65rem;
-  height: 18px;
-  padding: 2px 0 16px;
+  height: 20px;
+  padding: 3px 5px;
   text-align: center;
-  width: 18px;
+  width: 20px;
+}
+
+.mini .disks-overlay.status > div,
+.mini .slot-label-wrapper > div {
+  display: table-cell;
+}
+
+.mini .slot-label-wrapper > div {
+  padding: 0 6px;
 }
 
 .mini .mat-card-content {
@@ -481,6 +493,11 @@ div.vdev-disk {
   background-color: var(--contrast-darker);
   height: 600px;
   min-height: 600px;
+}
+
+.mini .mat-card-content #chassis {
+  padding-left: 8px;
+  padding-top: 0;
 }
 
 /* END MINI OVERRIDES */

@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
@@ -20,7 +20,7 @@ import { EmptyType, EmptyConfig } from 'app/pages/common/entity/entity-empty/ent
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { AppTableConfig } from 'app/pages/common/entity/table/table.component';
+import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { InitshutdownFormComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-form/initshutdown-form.component';
@@ -97,6 +97,38 @@ export class AdvancedSettingsComponent implements OnInit {
     deleteMsg: {
       title: T('Cron Job'),
       key_props: ['user', 'command', 'description'],
+    },
+    getActions: (): AppTableAction[] => {
+      return [
+        {
+          name: 'play',
+          icon: 'play_arrow',
+          matTooltip: T('Run job'),
+          onClick: (row: any): void => {
+            this.dialog
+              .confirm({ title: T('Run Now'), message: T('Run this job now?'), hideCheckBox: true })
+              .pipe(
+                filter((run) => !!run),
+                switchMap(() => this.ws.call('cronjob.run', [row.id])),
+              )
+              .pipe(untilDestroyed(this)).subscribe(
+                () => {
+                  const message = row.enabled == true
+                    ? T('This job is scheduled to run again ' + row.next_run + '.')
+                    : T('This job will not run again until it is enabled.');
+                  this.dialog.Info(
+                    T('Job ' + row.description + ' Completed Successfully'),
+                    message,
+                    '500px',
+                    'info',
+                    true,
+                  );
+                },
+                (err: any) => new EntityUtils().handleError(this, err),
+              );
+          },
+        },
+      ];
     },
     emptyEntityLarge: false,
     parent: this,

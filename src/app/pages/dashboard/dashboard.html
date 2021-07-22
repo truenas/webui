@@ -84,6 +84,15 @@
                 configurable="false">
               </widget-nic>
 
+              <widget-network *ngSwitchCase="'network'"
+                fxFlex="{{widgetWidth}}px"
+                fxFlex.xs="100"
+                [nics]="nics"
+                [stats]="statsDataEvent$"
+                [widgetSize]="medium"
+                configurable="false">
+              </widget-network>
+
             </ng-container>
           </ng-container>
         </ng-container>
@@ -177,6 +186,14 @@
                   [widgetSize]="medium"
                   configurable="false">
                 </widget-nic>
+
+                <widget-network *ngSwitchCase="'network'"
+                  (back)="onMobileBack()"
+                  [nics]="nics"
+                  [stats]="statsDataEvent$"
+                  [widgetSize]="medium"
+                  configurable="false">
+                </widget-network>
 
               </ng-container>
             </ng-container>

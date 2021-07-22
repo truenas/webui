@@ -1,5 +1,5 @@
 import {
-  Component, AfterContentInit, OnDestroy, ViewChild, ElementRef,
+  Component, OnDestroy, ViewChild, ElementRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,6 +10,7 @@ import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 
 interface ViewConfig {
   name: string;
@@ -26,12 +27,12 @@ interface ViewConfig {
   templateUrl: './view-enclosure.component.html',
   styleUrls: ['./view-enclosure.component.scss'],
 })
-export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
+export class ViewEnclosureComponent implements OnDestroy {
   errors: ErrorMessage[] = [];
   events: Subject<CoreEvent> ;
+  formEvent$: Subject<CoreEvent> ;
   @ViewChild('navigation', { static: false }) nav: ElementRef;
 
-  // public currentView: ViewConfig
   currentView: ViewConfig = {
     name: 'Disks',
     alias: 'Disks',
@@ -47,6 +48,26 @@ export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
   spinner = true;
 
   supportedHardware = false;
+
+  get showEnclosureSelector(): boolean {
+    if (
+      !this.system
+      || !this.events
+      || !this.system.pools
+      || !this.system.enclosures
+      || this.supportedHardware !== true
+    ) return false;
+
+    // These conditions are here because M series actually reports a separate chassis for
+    // the rear bays. SystemProfiler will store a rearIndex value for those machines.
+    if (this.system && this.system.rearIndex && this.system.profile.length > 2) {
+      return true;
+    } if (this.system && !this.system.rearIndex && this.system.profile.length > 1) {
+      return true;
+    }
+    return false;
+  }
+
   system_manufacturer: string;
   private _system_product: string;
   get system_product(): string {
@@ -151,14 +172,8 @@ export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
     this.core.emit({ name: 'DisksRequest', sender: this });
   }
 
-  ngAfterContentInit(): void {
-    this.scrollContainer = document.querySelector('.rightside-content-hold');
-    this.scrollContainer.style.overflow = 'hidden';
-  }
-
   ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
-    this.scrollContainer.style.overflow = 'auto';
   }
 
   selectEnclosure(index: number): void {
@@ -167,12 +182,14 @@ export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
   }
 
   extractVisualizations(): void {
-    this.system.profile.forEach((item, index) => {
-      if (this.system.rearIndex && item.enclosureKey == this.system.rearIndex) { return; }
-      if (this.system.profile) {
-        this.events.next({ name: 'CanvasExtract', data: this.system.profile[index], sender: this });
-      }
-    });
+    if (this.showEnclosureSelector) {
+      this.system.profile.forEach((item, index) => {
+        if (this.system.rearIndex && item.enclosureKey == this.system.rearIndex) { return; }
+        if (this.system.profile) {
+          this.events.next({ name: 'CanvasExtract', data: this.system.profile[index], sender: this });
+        }
+      });
+    }
   }
 
   addViews(): void {
@@ -241,5 +258,37 @@ export class ViewEnclosureComponent implements AfterContentInit, OnDestroy {
     } else {
       this.currentView = disks;
     }
+
+    // Setup event listener
+    if (this.views.length > 0) {
+      this.formEvent$ = new Subject<CoreEvent>();
+      this.formEvent$.pipe(
+        untilDestroyed(this),
+      ).subscribe((evt: CoreEvent) => {
+        const nextView = this.views.filter((view) => view.alias == evt.data.configFiles.value)[0];
+        this.changeView(nextView.id);
+      });
+    }
+
+    // Setup/update ViewActions that live in page title component
+    const actionsConfig = {
+      actionType: EntityToolbarComponent,
+      actionConfig: {
+        target: this.formEvent$,
+        controls: [
+          {
+            name: 'configFiles',
+            label: 'Elements',
+            type: 'menu',
+            color: 'primary',
+            options: this.views.map((view) => {
+              return { label: view.alias, value: view.alias };
+            }),
+          },
+        ],
+      },
+    };
+
+    if (this.views && this.views.length > 1) this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
   }
 }
