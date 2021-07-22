@@ -117,6 +117,7 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemUpdate, SystemUpdateChange, SystemUpdateTrains } from 'app/interfaces/system-update.interface';
 import { TftpConfig } from 'app/interfaces/tftp-config.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
+import { Tunable, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig } from 'app/interfaces/ups-config.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -705,10 +706,10 @@ export type ApiDirectory = {
 
   // Tunable
   'tunable.tunable_type_choices': { params: void; response: Choices };
-  'tunable.query': { params: any; response: any };
-  'tunable.update': { params: any; response: any };
-  'tunable.create': { params: any; response: any };
-  'tunable.delete': { params: any; response: any };
+  'tunable.query': { params: QueryParams<Tunable>; response: Tunable };
+  'tunable.update': { params: TunableUpdate; response: Tunable };
+  'tunable.create': { params: TunableUpdate; response: Tunable };
+  'tunable.delete': { params: [/* id */ number]; response: true };
 
   // TFTP
   'tftp.update': { params: any; response: any };
