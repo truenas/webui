@@ -902,7 +902,7 @@ export class VMWizardComponent implements WizardConfiguration {
 
         if (errors) {
           config.hasErrors = true;
-          self.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(this)).subscribe((warning) => {
+          self.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(self)).subscribe((warning) => {
             config.warnings = warning + ` ${self.maxVCPUs}.`;
           });
         } else {
@@ -927,8 +927,8 @@ export class VMWizardComponent implements WizardConfiguration {
 
         if (errors) {
           config.hasErrors = true;
-          self.translate.get('Cannot allocate').pipe(untilDestroyed(this)).subscribe((msg) => {
-            self.translate.get('to storage for this virtual machine.').pipe(untilDestroyed(this)).subscribe((msg2) => {
+          self.translate.get('Cannot allocate').pipe(untilDestroyed(self)).subscribe((msg) => {
+            self.translate.get('to storage for this virtual machine.').pipe(untilDestroyed(self)).subscribe((msg2) => {
               config.warnings = `${msg} ${self.storageService.humanReadable} ${msg2}`;
             });
           });
