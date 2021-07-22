@@ -1,0 +1,18 @@
+.jobs-header {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--lines);
+  margin-left: -24px;
+  margin-right: -24px;
+  padding: 4px 24px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.jobs-list {
+  height: 100%;
+  margin-left: -24px;
+  margin-right: -24px;
+  overflow-y: auto;
+  padding: 0;
+}

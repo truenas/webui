@@ -22,13 +22,13 @@ import {
       cursor:default;
       background: #fff;
       width:50px;
-      border:solid 1px var(--bg1);
+      border:solid 1px var(--lines);
     }
 
     .disk-ui-name,
     .disk-ui-type{
-      background: var(--bg1);
-      color: var(--fg1);
+      background: var(--black);
+      color: var(--white);
       font-size:12px;
       text-align:center;
       padding:2px 0;
@@ -43,7 +43,9 @@ import {
 
     .disk-ui-icon mat-icon{
       position:relative;
-      left:-5px;
+      top: -1px;
+      left: -2px;
+      font-size: 52px;
     }
   `],
 })

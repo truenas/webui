@@ -8,8 +8,9 @@ import {
   tween,
   styler,
 } from 'popmotion';
+import { WidgetUtils } from 'app/core/components/widgets/widget-utils';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
-import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
+import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { T } from 'app/translate-marker';
 
@@ -18,11 +19,6 @@ interface NetTraffic {
   sentUnits: string;
   received: string;
   receivedUnits: string;
-}
-
-interface Converted {
-  value: string;
-  units: string;
 }
 
 interface Slide {
@@ -43,7 +39,8 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef;
   traffic: NetTraffic;
   currentSlide = '0';
-
+  private utils: WidgetUtils;
+  LinkState = LinkState;
   get currentSlideName(): string {
     return this.path[parseInt(this.currentSlide)].name;
   }
@@ -84,6 +81,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   constructor(public router: Router, public translate: TranslateService) {
     super(translate);
     this.configurable = false;
+    this.utils = new WidgetUtils();
   }
 
   ngOnDestroy(): void {
@@ -100,8 +98,8 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   ngAfterViewInit(): void {
     this.stats.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       if (evt.name == 'NetTraffic_' + this.nicState.name) {
-        const sent: Converted = this.convert(evt.data.sent_bytes_rate);
-        const received: Converted = this.convert(evt.data.received_bytes_rate);
+        const sent = this.utils.convert(evt.data.sent_bytes_rate);
+        const received = this.utils.convert(evt.data.received_bytes_rate);
 
         this.traffic = {
           sent: sent.value,
@@ -163,56 +161,6 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
       return result.toFixed(4);
     }
     return -1;
-  }
-
-  convert(value: number): Converted {
-    let result: number;
-    let units: string;
-
-    // uppercase so we handle bits and bytes...
-    switch (this.optimizeUnits(value)) {
-      case 'B':
-      case 'KB':
-        units = T('KiB');
-        result = value / 1024;
-        break;
-      case 'MB':
-        units = T('MiB');
-        result = value / 1024 / 1024;
-        break;
-      case 'GB':
-        units = T('GiB');
-        result = value / 1024 / 1024 / 1024;
-        break;
-      case 'TB':
-        units = T('TiB');
-        result = value / 1024 / 1024 / 1024 / 1024;
-        break;
-      case 'PB':
-        units = T('PiB');
-        result = value / 1024 / 1024 / 1024 / 1024 / 1024;
-        break;
-      default:
-        units = T('KiB');
-        result = 0.00;
-    }
-
-    return result ? { value: result.toFixed(2), units } : { value: '0.00', units };
-  }
-
-  optimizeUnits(value: number): string {
-    let units = 'B';
-    if (value > 1024 && value < (1024 * 1024)) {
-      units = 'KB';
-    } else if (value >= (1024 * 1024) && value < (1024 * 1024 * 1024)) {
-      units = 'MB';
-    } else if (value >= (1024 * 1024 * 1024) && value < (1024 * 1024 * 1024 * 1024)) {
-      units = 'GB';
-    } else if (value >= (1024 * 1024 * 1024 * 1024) && value < (1024 * 1024 * 1024 * 1024 * 1024)) {
-      units = 'TB';
-    }
-
-    return units;
   }
 
   manageInterface(_interface: any): void {

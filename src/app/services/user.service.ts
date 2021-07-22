@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
@@ -43,7 +44,7 @@ export class UserService {
     return this.ws.call(this.groupQuery, [[['gid', '=', gid]], this.queryOptions]);
   }
 
-  getGroupByName(group: string): Observable<any> {
+  getGroupByName(group: string): Observable<DsUncachedGroup> {
     return this.ws.call(this.uncachedGroupQuery, [group]);
   }
 
@@ -60,7 +61,7 @@ export class UserService {
     return this.ws.call(this.userQuery, [[['uid', '=', uid]], this.queryOptions]);
   }
 
-  getUserByName(username: string): Observable<any> {
+  getUserByName(username: string): Observable<DsUncachedUser> {
     return this.ws.call(this.uncachedUserQuery, [username]);
   }
 
@@ -83,7 +84,7 @@ export class UserService {
   }
 
   async shellChoices(userId?: number): Promise<Option[]> {
-    return await this.ws
+    return this.ws
       .call('user.shell_choices', userId ? [userId] : [])
       .pipe(
         map((choices) =>

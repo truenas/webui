@@ -3,9 +3,9 @@ import {
   Component, ElementRef, Input, OnInit, ViewChild,
 } from '@angular/core';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { InputTableConf } from 'app/pages/common/entity/table/table.component';
+import { AppTableConfig } from 'app/pages/common/entity/table/table.component';
 
-export interface InputExpandableTableConf extends InputTableConf {
+export interface InputExpandableTableConf extends AppTableConfig {
   detailsHref?: string;
   expandableTableComponent?: ExpandableTableComponent;
   limitRows?: number;

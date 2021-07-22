@@ -21,9 +21,13 @@ import { ES12 } from 'app/core/classes/hardware/es12';
 import { ES24 } from 'app/core/classes/hardware/es24';
 import { ES60 } from 'app/core/classes/hardware/es60';
 import { M50 } from 'app/core/classes/hardware/m50';
-import { M50Rear } from 'app/core/classes/hardware/m50-rear';
+import { R10 } from 'app/core/classes/hardware/r10';
+import { R20 } from 'app/core/classes/hardware/r20';
+import { R20A } from 'app/core/classes/hardware/r20a';
+import { R40 } from 'app/core/classes/hardware/r40';
+import { R50 } from 'app/core/classes/hardware/r50';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
-import { SystemProfiler } from 'app/core/classes/system-profiler';
+import { SystemProfiler, EnclosureMetadata } from 'app/core/classes/system-profiler';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { Temperature } from 'app/core/services/disk-temperature.service';
@@ -55,6 +59,7 @@ export interface DiskFailure {
 })
 
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
+  showCaption = true;
   protected pendingDialog: any;
   protected aborted = false;
 
@@ -77,7 +82,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   subenclosure: any; // Declare rear and internal enclosure visualizations here
 
   chassis: Chassis;
-  view: EnclosureLocation = EnclosureLocation.Front;
+  view: string = EnclosureLocation.Front;
   protected _enclosure: ChassisView; // Visualization
   get enclosure(): ChassisView {
     if (!this.chassis) return null;
@@ -117,7 +122,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   get enclosurePools(): any {
-    return Object.keys(this.subenclosure ? this.subenclosure.poolKeys : this.selectedEnclosure.poolKeys);
+    const selectedEnclosure = this.getSelectedEnclosure();
+    return Object.keys(selectedEnclosure.poolKeys);
   }
 
   selectedVdevDisks: string[];
@@ -291,10 +297,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.selectedEnclosure) {
       // Enabled subenclosure functionality
-      this.subenclosure = this.selectedEnclosure.enclosureKey == this.system.headIndex && this.system.rearIndex
-        ? this.selectedEnclosure
-        : undefined;
-      this.loadEnclosure(this.selectedEnclosure, EnclosureLocation.Front);
+      this.loadEnclosure(
+        changes.selectedEnclosure.currentValue,
+        EnclosureLocation.Front,
+        !changes.selectedEnclosure.firstChange,
+      );
     }
   }
 
@@ -306,7 +313,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.app.destroy(true);
   }
 
-  loadEnclosure(enclosure: any, view?: EnclosureLocation, update?: boolean): void {
+  loadEnclosure(enclosure: any, view?: string, update?: boolean): void {
+    if (this.selectedDisk) {
+      this.selectedDisk = null;
+      this.clearDisk();
+    }
+
     this.destroyEnclosure();
 
     if (view) {
@@ -366,13 +378,31 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   createEnclosure(profile: any = this.selectedEnclosure): void {
+    if (this.currentView == 'details') {
+      this.clearDisk();
+    }
     const enclosure = this.system.enclosures[profile.enclosureKey];
     switch (enclosure.model) {
-      case 'M Series':
-        this.chassis = new M50();
+      case 'R10':
+        this.chassis = new R10();
         break;
-      case 'M Series Rear Bays':
-        this.chassis = new M50Rear();
+      case 'TRUENAS-R20A':
+      case 'R20A':
+        this.chassis = new R20A(true);
+        break;
+      case 'R20':
+        this.chassis = new R20(true);
+        break;
+      case 'R40':
+        this.chassis = new R40();
+        break;
+      case 'R50':
+        this.chassis = new R50(true);
+        this.showCaption = false;
+        break;
+      case 'M Series':
+        const rearChassis = !!this.system.rearIndex;
+        this.chassis = new M50(rearChassis);
         break;
       case 'X Series':
       case 'ES12':
@@ -459,6 +489,23 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     let chassis: Chassis;
 
     switch (raw_enclosure.model) {
+      case 'R10':
+        this.chassis = new R10();
+        break;
+      case 'TRUENAS-R20A':
+      case 'R20A':
+        this.chassis = new R20A(true);
+        break;
+      case 'R20':
+        this.chassis = new R20(true);
+        break;
+      case 'R40':
+        this.chassis = new R40();
+        break;
+      case 'R50':
+        this.chassis = new R50(true);
+        this.showCaption = false;
+        break;
       case 'M Series':
         chassis = new M50();
         break;
@@ -714,20 +761,20 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   setDisksEnabledState(enclosure?: ChassisView): void {
     if (!enclosure) { enclosure = this.enclosure; }
     enclosure.driveTrayObjects.forEach((dt) => {
-      // let disk = this.findDiskBySlotNumber(index + 1);
       const disk = this.findDiskBySlotNumber(Number(dt.id));
       dt.enabled = !!disk;
     });
   }
 
   setDisksDisabled(): void {
-    this.enclosure.driveTrayObjects.forEach((dt: any) => {
+    this.enclosure.driveTrayObjects.forEach((dt) => {
       this.enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: dt.id, color: 'none' } });
     });
   }
 
   setDisksHealthState(disk?: any): void { // Give it a disk and it will only change that slot
-    const selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
+    const selectedEnclosure = this.getSelectedEnclosure();
+
     if (disk || typeof disk !== 'undefined') {
       this.setDiskHealthState(disk);
       return;
@@ -803,7 +850,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   getDiskFailures(): void {
     const failedDisks: any[] = [];
-    const selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
+    const selectedEnclosure = this.getSelectedEnclosure();
 
     const analyze = (disk: any): void => {
       let failed = false;
@@ -854,30 +901,36 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.failedDisks = failedDisks;
   }
 
+  getSelectedEnclosure(): EnclosureMetadata {
+    return this.view == EnclosureLocation.Rear && this.system.rearIndex
+      ? this.system.profile[this.system.rearIndex]
+      : this.selectedEnclosure;
+  }
+
   setDisksPoolState(): void {
-    const selectedEnclosure: any = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
+    const selectedEnclosure: EnclosureMetadata = this.getSelectedEnclosure();
     this.setDisksDisabled();
 
-    const keys: any[] = Object.keys(selectedEnclosure.poolKeys);
-    if (keys.length > 0) {
-      selectedEnclosure.disks.forEach((disk: any) => {
-        if (
-          disk.enclosure.slot < this.enclosure.slotRange.start
-          || disk.enclosure.slot > this.enclosure.slotRange.end
-        ) {
-          return;
-        }
-        if (!disk.vdev) {
-          this.enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: disk.enclosure.slot, color: '#999999' } });
-          return;
-        }
-        const pIndex = disk.vdev.poolIndex;
-        this.enclosure.events.next({
-          name: 'ChangeDriveTrayColor',
-          data: { id: disk.enclosure.slot, color: this.theme[this.theme.accentColors[pIndex]] },
-        });
+    selectedEnclosure.disks.forEach((disk: any): void => {
+      if (
+        disk.enclosure.slot < this.enclosure.slotRange.start
+        || disk.enclosure.slot > this.enclosure.slotRange.end
+      ) {
+        return;
+      }
+
+      if (!disk.vdev) {
+        this.enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: disk.enclosure.slot, color: '#999999' } });
+        return;
+      }
+
+      const pIndex = disk.vdev.poolIndex;
+
+      this.enclosure.events.next({
+        name: 'ChangeDriveTrayColor',
+        data: { id: disk.enclosure.slot, color: this.theme[this.theme.accentColors[pIndex]] },
       });
-    }
+    });
   }
 
   converter(size: number): string {
@@ -890,7 +943,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   findDiskBySlotNumber(slot: number): any {
-    const selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
+    const selectedEnclosure = this.getSelectedEnclosure();
     let disk;
     for (const i in selectedEnclosure.disks) {
       if (selectedEnclosure.disks[i].enclosure.slot == slot) {
@@ -945,7 +998,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   toggleSlotStatus(kill?: boolean): void {
-    const selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
+    const selectedEnclosure = this.getSelectedEnclosure();
     const enclosure_id = this.system.enclosures[selectedEnclosure.enclosureKey].id;
     const slot = this.selectedDisk.enclosure.slot;
     const status = !this.identifyBtnRef && !kill ? 'IDENTIFY' : 'CLEAR';
@@ -1028,9 +1081,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }, 50);
   }
 
-  enclosureOverride(view: EnclosureLocation): void {
+  enclosureOverride(view: string): void {
     if (view !== this.view) {
-      this.loadEnclosure(this.selectedEnclosure, view);
+      this.selectedDisk = null;
+      this.clearDisk();
+      this.loadEnclosure(this.selectedEnclosure, view, true);
     }
   }
 

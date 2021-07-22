@@ -4,6 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import {
   EntityTableAction,
@@ -117,7 +118,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
                   true,
                 );
               },
-              (err: any) => new EntityUtils().handleError(this, err),
+              (err: WebsocketError) => new EntityUtils().handleError(this, err),
             ),
       },
       {

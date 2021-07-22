@@ -10,6 +10,9 @@ import { NgxFilesizeModule } from 'ngx-filesize';
 import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
+import { DatasetNfsAclComponent } from 'app/pages/storage/volumes/datasets/dataset-nfs-acl/dataset-nfs-acl.component';
+import { DatasetTrivialPermissionsComponent } from 'app/pages/storage/volumes/datasets/dataset-trivial-permissions/dataset-trivial-permissions.component';
 import { NfsPermissionsComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/nfs-permissions/nfs-permissions.component';
 import { PermissionsItemComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/permissions-item/permissions-item.component';
 import { PosixPermissionsComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/posix-permissions/posix-permissions.component';
@@ -39,9 +42,6 @@ import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.c
 import { routing } from './storage.routing';
 import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot';
 import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list';
-import { DatasetAclComponent } from './volumes/datasets/dataset-acl/dataset-acl.component';
-import { DatasetFormComponent } from './volumes/datasets/dataset-form/dataset-form.component';
-import { DatasetPermissionsComponent } from './volumes/datasets/dataset-permissions/dataset-permissions.component';
 import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl/dataset-posix-acl.component';
 import { DatasetQuotasGrouplistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
@@ -72,7 +72,6 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     DiskComponent,
     VdevComponent,
     DatasetFormComponent,
-    // VolumesEditComponent,
     VolumeRekeyFormComponent,
     VolumeAddkeyFormComponent,
     VolumeCreatekeyFormComponent,
@@ -85,8 +84,8 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     SnapshotCloneComponent,
     SnapshotAddComponent,
     ImportDiskComponent,
-    DatasetPermissionsComponent,
-    DatasetAclComponent,
+    DatasetTrivialPermissionsComponent,
+    DatasetNfsAclComponent,
     DatasetUnlockComponent,
     UnlockDialogComponent,
     VmwareSnapshotFormComponent,

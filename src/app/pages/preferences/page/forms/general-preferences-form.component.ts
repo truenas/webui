@@ -11,7 +11,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
-import { EntityFormEmbeddedComponent } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
+import {
+  EmbeddedFormConfig,
+  EntityFormEmbeddedComponent,
+} from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService } from 'app/services/';
@@ -34,7 +37,7 @@ interface UserPreferences {
   selector: 'general-preferences-form',
   template: '<entity-form-embedded *ngIf="preferences" #embeddedForm fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>',
 })
-export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
+export class GeneralPreferencesFormComponent implements EmbeddedFormConfig, OnInit, OnDestroy {
   @ViewChild('embeddedForm', { static: false }) embeddedForm: EntityFormEmbeddedComponent;
   target: Subject<CoreEvent> = new Subject();
   isWaiting = false;
@@ -42,7 +45,7 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
   preferences: UserPreferences;
   saveSubmitText = T('Update Preferences');
   multiStateSubmit = true;
-  protected isEntity = true; // was true
+  isEntity = true; // was true
   private themeOptions: any[] = [];
   fieldConfig: FieldConfig[] = [];
   fieldSetDisplay = 'no-margins';// default | carousel | stepper
