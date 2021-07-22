@@ -109,7 +109,7 @@ def input_a_description_and_ensure_pull_is_selected_as_the_direction(driver):
     """input a description and ensure PULL is selected as the Direction."""
     assert wait_on_element(driver, 5, '//input[@placeholder="Description"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Description"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Description"]').send_keys('My BOX Cloud task')
+    driver.find_element_by_xpath('//input[@placeholder="Description"]').send_keys('My Dropbox task')
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"PULL")]')
 
 
@@ -146,14 +146,14 @@ def under_transfer_mode_select_copy_click_save(driver):
 @then('the Dropbox tasks should save without error')
 def the_dropbox_tasks_should_save_without_error(driver):
     """the Dropbox tasks should save without error."""
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My BOX Cloud task")]')
+    assert wait_on_element(driver, 5, '//div[contains(text(),"My Dropbox task")]')
 
 
 @then('expand the task on the NAS UI and click Run Now')
 def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     """expand the task on the NAS UI and click Run Now."""
-    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My BOX Cloud task"]', 'clickable')
-    driver.find_element_by_xpath('//a[@ix-auto="expander__My BOX Cloud task"]').click()
+    assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Dropbox task"]', 'clickable')
+    driver.find_element_by_xpath('//a[@ix-auto="expander__My Dropbox task"]').click()
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
@@ -183,10 +183,10 @@ def verify_all_files_are_copied_from_dropbox_are_into_the_dataset(driver, nas_ip
 def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     """on the NAS cloud sync task tab, click Edit."""
     driver.switch_to.window(driver.window_handles[0])
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My BOX Cloud task")]')
+    assert wait_on_element(driver, 5, '//div[contains(text(),"My Dropbox task")]')
     if not wait_on_element(driver, 1, '//button[@ix-auto="button___edit"]', 'clickable'):
-        assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My BOX Cloud task"]', 'clickable')
-        driver.find_element_by_xpath('//a[@ix-auto="expander__My BOX Cloud task"]').click()
+        assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Dropbox task"]', 'clickable')
+        driver.find_element_by_xpath('//a[@ix-auto="expander__My Dropbox task"]').click()
     time.sleep(0.5)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
@@ -313,7 +313,7 @@ def click_save_the_dropbox_tasks_should_save_without_error(driver):
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My BOX Cloud task")]')
+    assert wait_on_element(driver, 5, '//div[contains(text(),"My Dropbox task")]')
 
 
 @then('verify all files are moved from the Dropbox test folder to the dataset')
@@ -444,7 +444,7 @@ def on_the_dropbox_test_folder_tab_delete_one_file(driver):
 def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     """on the NAS cloud sync task tab, click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
-    assert wait_on_element(driver, 5, '//div[contains(text(),"My BOX Cloud task")]')
+    assert wait_on_element(driver, 5, '//div[contains(text(),"My Dropbox task")]')
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
