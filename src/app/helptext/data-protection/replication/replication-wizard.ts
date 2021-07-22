@@ -78,7 +78,10 @@ export default {
   custom_snapshots_tooltip: T('Replicate snapshots that have not been \
  created by an automated snapshot task. Requires setting a naming schema \
  for the custom snapshots.'),
+  name_schema_or_regex_placeholder_push: T('Also include snapshots with the name'),
+  name_schema_or_regex_placeholder_pull: T('Include snapshots with the name'),
 
+  name_regex_placeholder: T('Snapshot Name Regular Expression'),
   naming_schema_placeholder: T('Naming Schema'),
   naming_schema_tooltip: T('Pattern of naming custom snapshots to be \
  replicated. Enter the name and \
@@ -87,7 +90,11 @@ export default {
  match the snapshots to include in the replication. Separate entries by \
  pressing <code>Enter</code>. The number of snapshots matching the \
  patterns are shown.'),
-
+  name_regex_tooltip: T('Using this option will replicate all snapshots \
+ which names match specified regular expression. The \
+ performance on the systems with large number of snapshots \
+ will be lower, as snapshots metadata needs to be read in order \
+ to determine snapshots creation order.'),
   transport_placeholder: T('SSH Transfer Security'),
   transport_tooltip: T('Data transfer security. The connection is \
  authenticated with SSH. Data can be encrypted during transfer for \
