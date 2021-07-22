@@ -96,8 +96,8 @@ def driver():
 
 
 # Close Firefox after all tests are completed
-def pytest_sessionfinish(session, exitstatus):
-    web_driver.quit()
+# def pytest_sessionfinish(session, exitstatus):
+#     web_driver.quit()
 
 
 @pytest.mark.hookwrapper
