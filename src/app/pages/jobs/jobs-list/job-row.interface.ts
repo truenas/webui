@@ -1,7 +1,6 @@
 import { Job } from 'app/interfaces/job.interface';
 
-export interface JobRow extends Omit<Job, 'shutdown_timeout'> {
-  name: string;
+export interface JobRow extends Job {
   date_started: string;
   date_finished: string;
 }

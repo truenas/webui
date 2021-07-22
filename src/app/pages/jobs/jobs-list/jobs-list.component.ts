@@ -1,36 +1,39 @@
-import { Component, OnInit } from '@angular/core';
-import { MatTabChangeEvent } from '@angular/material/tabs';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Component } from '@angular/core';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Job } from 'app/interfaces/job.interface';
-import { QueryParams } from 'app/interfaces/query-api.interface';
+import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { JobRow } from 'app/pages/jobs/jobs-list/job-row.interface';
 import { LocaleService } from 'app/services/locale.service';
 import { T } from 'app/translate-marker';
-import { ModalService } from '../../../services/modal.service';
 import { EntityTableConfig } from '../../common/entity/entity-table/entity-table.interface';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './jobs-list.component.html',
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   styleUrls: ['./jobs-list.component.scss'],
 })
-export class JobsListComponent implements OnInit, EntityTableConfig {
+export class JobsListComponent implements EntityTableConfig<JobRow> {
   title = this.translate.instant(T('Job Log'));
   queryCall: 'core.get_jobs' = 'core.get_jobs';
-  queryCallOption: QueryParams<Job> = [[], { order_by: ['-id'] }];
   entityList: EntityTableComponent;
-  selectedIndex = 0;
 
   columns = [
-    { name: T('Name'), prop: 'method', always_display: true },
+    {
+      name: T('Name'),
+      prop: 'method',
+      always_display: true,
+      job: true,
+      widget: {
+        component: 'JobItemComponent',
+        icon: 'assignment',
+      },
+    },
     { name: T('Logs/Errors'), prop: 'logs_excerpt' },
-    { name: T('ID'), prop: 'id' },
+    { name: T('ID'), prop: 'id', sort: 'desc' },
     { name: T('Started'), prop: 'date_started' },
     { name: T('Finished'), prop: 'date_finished' },
     { name: T('Abortable'), prop: 'abortable' },
-    { name: T('Result'), prop: 'result' },
     { name: T('State'), prop: 'state' },
   ];
   config = {
@@ -45,38 +48,30 @@ export class JobsListComponent implements OnInit, EntityTableConfig {
   constructor(
     private translate: TranslateService,
     private localeService: LocaleService,
-    private modalService: ModalService,
-  ) {
-    console.info('Job Log init');
+    private store: JobsManagerStore,
+  ) {}
+
+  preInit(entityList: EntityTableComponent): void {
+    this.entityList = entityList;
   }
 
-  ngOnInit(): void {
-    console.info('Job Log ngOnInit');
-
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshTab();
-    });
+  resourceTransformIncomingRestData(data: JobRow[]): JobRow[] {
+    return data.map((item) => this.transformJob(item));
   }
 
-  dataHandler(entityList: EntityTableComponent): void {
-    console.info('rows', entityList.rows);
-    entityList.rows.forEach((row: JobRow) => {
-      row.name = row.description ? row.description : row.method;
-      row.logs_excerpt = row.logs_excerpt ? 'View Info' : 'None';
-      row.date_started = row.time_started ? this.localeService.formatDateTime(new Date(row.time_started.$date)) : '–';
-      row.date_finished = row.time_finished
-        ? this.localeService.formatDateTime(new Date(row.time_finished.$date))
-        : '–';
-      // row.abortable = row.abortable.toString().toUpperCase();
-    });
+  transformJob(job: JobRow): JobRow {
+    const transformed = { ...job };
+    transformed.logs_excerpt = job.logs_excerpt ? 'View Info' : 'None';
+    transformed.date_started = job.time_started
+      ? this.localeService.formatDateTime(new Date(job.time_started.$date))
+      : '–';
+    transformed.date_finished = job.time_finished
+      ? this.localeService.formatDateTime(new Date(job.time_finished.$date))
+      : '–';
+    return transformed;
   }
 
-  refreshTab(): void {
-    console.info('update');
-  }
-
-  refresh(event: MatTabChangeEvent): void {
-    this.selectedIndex = event.index;
-    this.refreshTab();
+  onAborted(job: JobRow): void {
+    this.store.remove(job);
   }
 }
