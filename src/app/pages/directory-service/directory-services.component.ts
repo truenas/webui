@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/directory-service/dashboard';
 import idmapHelptext from 'app/helptext/directory-service/idmap';
+import { Option } from 'app/interfaces/option.interface';
 import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { AppTableConfig } from 'app/pages/common/entity/table/table.component';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/active-directory/active-directory.component';
@@ -33,8 +34,8 @@ import { LdapComponent } from './ldap/ldap.component';
   providers: [DatePipe, UserService],
 })
 export class DirectoryServicesComponent implements OnInit {
-  dataCards: any[] = [];
-  tableCards: any[] = [];
+  dataCards: { id: string; title: string; items: Option[] }[] = [];
+  tableCards: { id: string; tableConf: AppTableConfig }[] = [];
 
   // Components included in this dashboard
   protected ldapFormComponent: LdapComponent;
@@ -146,17 +147,14 @@ export class DirectoryServicesComponent implements OnInit {
     this.tableCards = [
       {
         id: 'idmap',
-        title: helptext.idmap.title,
         tableConf: this.idmapTableConf,
       },
       {
         id: 'kerberos_realms',
-        title: helptext.kerberosRealms.title,
         tableConf: this.kerberosRealmsTableConf,
       },
       {
         id: 'kerberos_keytab',
-        title: helptext.kerberosKeytab.title,
         tableConf: this.kerberosKeytabTableConf,
       },
     ];

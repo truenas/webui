@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
+import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/services/components/service-nfs';
 import { FormConfiguration, FormCustomAction } from 'app/interfaces/entity-form.interface';
@@ -27,7 +28,7 @@ export class ServiceNFSComponent implements FormConfiguration {
   title = helptext.formTitle;
   private v4krbValue: boolean;
   private hasNfsStatus: boolean;
-  private adHealth = '';
+  private adHealth: DirectoryServiceState;
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
@@ -194,8 +195,10 @@ export class ServiceNFSComponent implements FormConfiguration {
   }
 
   isCustActionVisible(actionname: string): boolean {
-    if (actionname === 'has_nfs_status' && (!this.hasNfsStatus && this.v4krbValue
-      && this.adHealth === 'HEALTHY')) {
+    if (
+      actionname === 'has_nfs_status'
+      && (!this.hasNfsStatus && this.v4krbValue && this.adHealth === DirectoryServiceState.Healthy)
+    ) {
       return true;
     }
     return false;
@@ -275,7 +278,7 @@ export class ServiceNFSComponent implements FormConfiguration {
 
   addSPN(): void {
     const that = this;
-    if (!this.hasNfsStatus && this.adHealth === 'HEALTHY') {
+    if (!this.hasNfsStatus && this.adHealth === DirectoryServiceState.Healthy) {
       this.dialog.confirm(helptext.add_principal_prompt.title,
         helptext.add_principal_prompt.message, true, helptext.add_principal_prompt.affirmative,
         false, '', '', '', '', false, helptext.add_principal_prompt.negative).pipe(untilDestroyed(this)).subscribe((res: boolean) => {

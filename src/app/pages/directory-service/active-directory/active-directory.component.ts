@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
+import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/directory-service/active-directory';
 import global_helptext from 'app/helptext/global-helptext';
@@ -16,7 +17,7 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { SystemGeneralService, WebSocketService, DialogService } from 'app/services';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -331,7 +332,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       });
     }
     this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((res) => {
-      res.activedirectory === 'HEALTHY' ? this.adStatus = true : this.adStatus = false;
+      this.adStatus = res.activedirectory === DirectoryServiceState.Healthy;
     });
   }
 

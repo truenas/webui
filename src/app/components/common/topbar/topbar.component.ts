@@ -7,12 +7,13 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription, Subject, Observable } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/jobs-manager.component';
 import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { LayoutService } from 'app/core/services/layout.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -66,7 +67,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   isDirServicesMonitorOpened = false;
   taskDialogRef: MatDialogRef<JobsManagerComponent>;
   dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
-  dirServicesStatus: any[] = [];
+  dirServicesStatus: DirectoryServiceState[] = [];
   showDirServicesIcon = false;
   exposeLegacyUI = false;
   ha_status_text: string;
@@ -594,16 +595,11 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   getDirServicesStatus(): void {
     this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((res) => {
-      for (const i in res) {
-        this.dirServicesStatus.push(res[i]);
-      }
+      this.dirServicesStatus = Object.values(res);
       this.showDSIcon();
     });
     this.ws.subscribe('directoryservices.status').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.dirServicesStatus = [];
-      for (const i in res.fields) {
-        this.dirServicesStatus.push(res.fields[i]);
-      }
+      this.dirServicesStatus = Object.values(res);
       this.showDSIcon();
     });
   }
@@ -611,7 +607,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   showDSIcon(): void {
     this.showDirServicesIcon = false;
     this.dirServicesStatus.forEach((item) => {
-      if (item !== 'DISABLED') {
+      if (item !== DirectoryServiceState.Disabled) {
         this.showDirServicesIcon = true;
       }
     });

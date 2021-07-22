@@ -50,6 +50,7 @@ import { DatasetHasVmsQueryParams } from 'app/interfaces/dataset-has-vms-query-p
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { DatasetQuota, DatasetQuotaQueryParams } from 'app/interfaces/dataset-quota.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
+import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import {
   AuthenticatorSchema,
   CreateDnsAuthenticator,
@@ -61,6 +62,7 @@ import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { FtpConfig } from 'app/interfaces/ftp-config.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
+import { Idmap } from 'app/interfaces/idmap.interface';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface';
 import {
@@ -304,7 +306,7 @@ export type ApiDirectory = {
 
   // Directory Services
   'directoryservices.cache_refresh': { params: void; response: any };
-  'directoryservices.get_state': { params: any; response: any };
+  'directoryservices.get_state': { params: void; response: DirectoryServicesState };
 
   // Enclosure
   'enclosure.query': { params: any; response: any };
@@ -376,7 +378,7 @@ export type ApiDirectory = {
 
   // idmap
   'idmap.backend_options': { params: void; response: IdmapBackendOptions };
-  'idmap.query': { params: any; response: any };
+  'idmap.query': { params: QueryParams<Idmap>; response: Idmap[] };
   'idmap.create': { params: any; response: any };
   'idmap.update': { params: any; response: any };
   'idmap.delete': { params: any; response: any };
