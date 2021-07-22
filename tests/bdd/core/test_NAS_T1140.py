@@ -88,26 +88,29 @@ def click_proceed_then_enter_the_user_name_click_next_and_ever_the_password(driv
     assert wait_on_element(driver, 10, '//a[text()="Proceed"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="Proceed"]').click()
     assert wait_on_element(driver, 10, '//div[text()="Sign in with Google"]')
-    assert wait_on_element(driver, 5, '//span[text()="Sign in"]')
-    assert wait_on_element(driver, 5, '//input[@id="identifierId"]', 'inputable')
-    driver.find_element_by_xpath('//input[@id="identifierId"]').send_keys(user_name)
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//button[contains(.,"Next")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Next")]').click()
-    assert wait_on_element(driver, 10, '//div[text()="Sign in with Google"]')
-    assert wait_on_element(driver, 5, '//span[text()="Welcome"]')
-    assert wait_on_element(driver, 5, '//input[@type="password"]', 'inputable')
-    driver.find_element_by_xpath('//input[@type="password"]').send_keys(password)
-    time.sleep(1)
+    if wait_on_element(driver, 2, '//span[text()="Choose an account"]'):
+        assert wait_on_element(driver, 5, '//span[text()="Choose an account"]', 'clickable')
+        driver.find_element_by_xpath('//li[contains(.,"QA testing")]').click()
+    else:
+        assert wait_on_element(driver, 5, '//input[@id="identifierId"]', 'inputable')
+        driver.find_element_by_xpath('//input[@id="identifierId"]').send_keys(user_name)
+        time.sleep(1)
+        assert wait_on_element(driver, 5, '//button[contains(.,"Next")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(.,"Next")]').click()
+        assert wait_on_element(driver, 10, '//div[text()="Sign in with Google"]')
+        assert wait_on_element(driver, 5, '//span[text()="Welcome"]')
+        assert wait_on_element(driver, 5, '//input[@type="password"]', 'inputable')
+        driver.find_element_by_xpath('//input[@type="password"]').send_keys(password)
+        time.sleep(1)
+        assert wait_on_element(driver, 5, '//button[contains(.,"Next")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(.,"Next")]').click()
 
 
 @then('click Next and click Allow to trust TrueNAS')
 def click_next_and_click_allow_to_trust_truenas(driver):
     """click Next and click Allow to trust TrueNAS."""
-    assert wait_on_element(driver, 5, '//button[contains(.,"Next")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Next")]').click()
     assert wait_on_element(driver, 10, '//div[text()="Sign in with Google"]')
-    assert wait_on_element(driver, 5, '//span[text()="Make sure you trust TrueNAS"]')
+    assert wait_on_element(driver, 5, '//span[text()="Make sure that you trust TrueNAS"]')
     assert wait_on_element(driver, 5, '//button[contains(.,"Allow")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Allow")]').click()
     while len(driver.window_handles) != 1:
