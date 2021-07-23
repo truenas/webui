@@ -66,9 +66,8 @@ describe('ViewChartAreaComponent', () => {
 
   it('should not handle more than 8 data points', () => {
     const data: ChartData = generateChartData(9, 2);
-
     expect(spectator.component.maxSources).toBe(8);
-    expect(() => spectator.component.render(data)).toThrow();
+    expect(() => spectator.setInput('data', data)).toThrow();
   });
 
   it('should render chart when data arrives', () => {

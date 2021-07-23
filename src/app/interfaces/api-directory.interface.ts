@@ -118,6 +118,7 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemUpdate, SystemUpdateChange, SystemUpdateTrains } from 'app/interfaces/system-update.interface';
 import { TftpConfig } from 'app/interfaces/tftp-config.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
+import { Tunable, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig } from 'app/interfaces/ups-config.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -384,9 +385,9 @@ export type ApiDirectory = {
 
   // Interface
   'interface.websocket_local_ip': { params: any; response: any };
-  'interface.commit': { params: any; response: any };
+  'interface.commit': { params: [{ checkin_timeout: number }]; response: void };
   'interface.services_restarted_on_sync': { params: any; response: any };
-  'interface.rollback': { params: any; response: any };
+  'interface.rollback': { params: void; response: any };
   'interface.bridge_members_choices': { params: any; response: Choices };
   'interface.lag_supported_protocols': { params: void; response: string[] };
   'interface.lag_ports_choices': { params: any; response: Choices };
@@ -402,13 +403,13 @@ export type ApiDirectory = {
   // iSCSI
   'iscsi.initiator.query': { params: any; response: IscsiInitiatorGroup[] };
   'iscsi.initiator.delete': { params: any; response: any };
-  'iscsi.target.query': { params: any; response: IscsiTarget[] };
+  'iscsi.target.query': { params: QueryParams<IscsiTarget>; response: IscsiTarget[] };
   'iscsi.extent.disk_choices': { params: void; response: Choices };
-  'iscsi.extent.query': { params: any; response: IscsiExtent[] };
+  'iscsi.extent.query': { params: QueryParams<IscsiExtent>; response: IscsiExtent[] };
   'iscsi.extent.create': { params: any; response: any };
   'iscsi.extent.update': { params: any; response: any };
   'iscsi.extent.delete': { params: any; response: any };
-  'iscsi.auth.query': { params: any; response: IscsiAuthAccess[] };
+  'iscsi.auth.query': { params: QueryParams<IscsiAuthAccess>; response: IscsiAuthAccess[] };
   'iscsi.auth.delete': { params: any; response: any };
   'iscsi.global.sessions': { params: any; response: any };
   'iscsi.global.config': { params: void; response: IscsiGlobalConfig };
@@ -672,7 +673,7 @@ export type ApiDirectory = {
   'systemdataset.update': { params: [{ [poolName: string]: string }]; response: any };
 
   // Service
-  'service.started': { params: any; response: any };
+  'service.started': { params: [ServiceName]; response: boolean };
   'service.query': { params: QueryParams<Service>; response: Service[] };
   'service.update': { params: [number, Partial<Service>]; response: number };
   'service.start': { params: [ServiceName]; response: boolean };
@@ -691,11 +692,11 @@ export type ApiDirectory = {
   'sharing.smb.update': { params: any; response: any };
   'sharing.smb.delete': { params: any; response: any };
   'sharing.smb.presets': { params: any; response: any };
-  'sharing.nfs.query': { params: any; response: NfsShare[] };
+  'sharing.nfs.query': { params: QueryParams<NfsShare>; response: NfsShare[] };
   'sharing.nfs.update': { params: any; response: any };
   'sharing.nfs.create': { params: any; response: any };
   'sharing.nfs.delete': { params: any; response: any };
-  'sharing.webdav.query': { params: any; response: WebDavShare[] };
+  'sharing.webdav.query': { params: QueryParams<WebDavShare>; response: WebDavShare[] };
   'sharing.webdav.update': { params: any; response: any };
   'sharing.webdav.create': { params: any; response: any };
   'sharing.webdav.delete': { params: any; response: any };
@@ -706,10 +707,10 @@ export type ApiDirectory = {
 
   // Tunable
   'tunable.tunable_type_choices': { params: void; response: Choices };
-  'tunable.query': { params: any; response: any };
-  'tunable.update': { params: any; response: any };
-  'tunable.create': { params: any; response: any };
-  'tunable.delete': { params: any; response: any };
+  'tunable.query': { params: QueryParams<Tunable>; response: Tunable };
+  'tunable.update': { params: TunableUpdate; response: Tunable };
+  'tunable.create': { params: TunableUpdate; response: Tunable };
+  'tunable.delete': { params: [/* id */ number]; response: true };
 
   // TFTP
   'tftp.update': { params: any; response: any };

@@ -117,7 +117,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
     },
   ];
 
-  pk: any;
+  pk: string;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected loader: AppLoaderService,
     protected ws: WebSocketService) {}
