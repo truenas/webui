@@ -3,6 +3,7 @@ import { TooltipPosition } from '@angular/material/tooltip';
 import { Observable } from 'rxjs';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { JobRow } from 'app/pages/jobs/jobs-list/job-row.interface';
 
 export interface EntityTableConfig<Row = any> {
   columns: EntityTableColumn[];
@@ -63,6 +64,7 @@ export interface EntityTableConfig<Row = any> {
   onSliderChange?: (row: Row) => void;
   onButtonClick?: (row: Row) => void;
   callGetFunction?: (entity: EntityTableComponent) => void;
+  onAborted?: (job: JobRow) => void;
   prerequisiteFailedHandler?: (entity: EntityTableComponent) => void;
   afterDelete?(): void;
 
@@ -110,7 +112,7 @@ export interface EntityTableConfigConfig {
   sorting?: {
     columns: {
       name: string;
-      sort?: 'asc' | 'desc';
+      sort?: string;
     }[];
   };
 }
@@ -125,6 +127,7 @@ export interface EntityTableColumn {
   checkbox?: boolean;
   toggle?: boolean;
   button?: boolean;
+  job?: boolean;
   enableMatTooltip?: boolean;
 
   icon?: string;
