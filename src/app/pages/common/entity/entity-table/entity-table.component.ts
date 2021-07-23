@@ -28,7 +28,7 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import {
   EntityTableAction,
   EntityTableColumn,
-  EntityTableConfig, EntityTableConfigConfig,
+  EntityTableConfig, EntityTableConfigConfig, EntityTableConfirmDialog,
 } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService, JobService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -797,12 +797,12 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     // this.modalService.open('slide-in-form', this.conf.addComponent);
   }
 
-  doEdit(id: string): void {
+  doEdit(id: string | number): void {
     if (this.conf.doEdit) {
       this.conf.doEdit(id, this);
     } else {
       this.router.navigate(
-        new Array('/').concat(this.conf.route_edit).concat(id),
+        new Array('/').concat(this.conf.route_edit).concat(id as any),
       );
     }
   }
@@ -903,7 +903,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     } else {
       id = item.id;
     }
-    let dialog: any = {};
+    let dialog: EntityTableConfirmDialog = {};
     if (this.conf.confirmDeleteDialog) {
       dialog = this.conf.confirmDeleteDialog;
     }

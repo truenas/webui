@@ -270,7 +270,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
           condition = (report.name == 'interface');
           break;
         case 'NFS':
-          condition = (report.name == 'nfsstat');
+          condition = (report.name == 'nfsstat' || report.name == 'nfsstatbytes');
           break;
         case 'Partition':
           condition = (report.name == 'df');

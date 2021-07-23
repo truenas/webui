@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { Choices } from 'app/interfaces/choices.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
@@ -25,7 +26,7 @@ import { ModalService } from 'app/services/modal.service';
 export class LocalizationFormComponent implements FormConfiguration {
   protected updateCall = 'system.general.update';
   sortLanguagesByName = true;
-  languageList: any = [];
+  languageList: Choices;
   languageKey: string;
   title = helptext.localeTitle;
   protected isOneColumnForm = true;
@@ -119,7 +120,7 @@ export class LocalizationFormComponent implements FormConfiguration {
       this.getDateTimeFormats();
     });
 
-    entityEdit.formGroup.controls['language'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityEdit.formGroup.controls['language'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.languageKey = this.getKeyByValue(this.languageList, res);
       if (this.languageList[res]) {
         entityEdit.formGroup.controls['language'].setValue(`${this.languageList[res]}`);

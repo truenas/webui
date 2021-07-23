@@ -26,7 +26,7 @@ export interface EntityTableConfig<Row = any> {
   multiActionsIconsOnly?: boolean;
   noActions?: boolean;
   config?: EntityTableConfigConfig;
-  confirmDeleteDialog?: any;
+  confirmDeleteDialog?: EntityTableConfirmDialog<Row>;
   hasDetails?: boolean;
   rowDetailComponent?: Type<unknown>;
   cardHeaderComponent?: Type<unknown>;
@@ -56,8 +56,8 @@ export interface EntityTableConfig<Row = any> {
   getActions?: (row: Row) => EntityTableAction<Row>[];
   getAddActions?: () => any[];
   rowValue?: (row: unknown, attr: string) => unknown;
-  wsMultiDeleteParams?: (selected: any) => any;
-  updateMultiAction?: (selected: any) => any;
+  wsMultiDeleteParams?: (selected: Row[]) => any;
+  updateMultiAction?: (selected: Row[]) => any;
   doAdd?: (id?: string | number, tableComponent?: EntityTableComponent) => void;
   doEdit?: (id?: string | number, tableComponent?: EntityTableComponent) => void;
   onCheckboxChange?: (row: Row) => void;
@@ -156,4 +156,14 @@ export interface EntityTableGlobalConfig {
   tooltip?: string;
   icon?: string;
   onClick: () => void;
+}
+
+export interface EntityTableConfirmDialog<Row = unknown> {
+  title?: string;
+  message?: string;
+  hideCheckbox?: boolean;
+  button?: string;
+  isMessageComplete?: boolean;
+  buildTitle?: (row: Row) => string;
+  buttonMsg?: (row: Row) => string;
 }

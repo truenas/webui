@@ -24,3 +24,8 @@ export enum LinkAggregationProtocol {
   RoundRobin = 'ROUNDROBIN',
   None = 'NONE',
 }
+
+export enum LinkState {
+  Up = 'LINK_STATE_UP',
+  Down = 'LINK_STATE_DOWN',
+}

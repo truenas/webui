@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
@@ -23,8 +24,8 @@ export class ApplicationsService {
     return this.ws.call('kubernetes.config');
   }
 
-  getKubernetesServiceStarted(): Observable<any> {
-    return this.ws.call('service.started', ['kubernetes']);
+  getKubernetesServiceStarted(): Observable<boolean> {
+    return this.ws.call('service.started', [ServiceName.Kubernetes]);
   }
 
   getAllCatalogItems(): Observable<Catalog[]> {

@@ -5,19 +5,22 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
+import { Certificate } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { AppTableAction } from 'app/pages/common/entity/table/table.component';
+import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form.component';
 import {
   SystemGeneralService, WebSocketService, AppLoaderService, DialogService, StorageService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-import { AcmednsFormComponent } from './forms/acmedns-form.component';
 import { CertificateAuthorityAddComponent } from './forms/ca-add.component';
 import { CertificateAuthorityEditComponent } from './forms/ca-edit.component';
 import { CertificateAcmeAddComponent } from './forms/certificate-acme-add.component';
@@ -31,7 +34,7 @@ import { CertificateEditComponent } from './forms/certificate-edit.component';
   providers: [EntityFormService],
 })
 export class CertificatesDashComponent implements OnInit {
-  cards: any;
+  cards: { name: string; tableConf: AppTableConfig }[];
 
   protected certificateAddComponent: CertificateAddComponent;
   protected certificateEditComponent: CertificateEditComponent;
@@ -105,7 +108,7 @@ export class CertificatesDashComponent implements OnInit {
           add() {
             this.parent.modalService.open('slide-in-form', this.parent.certificateAddComponent);
           },
-          edit(row: any) {
+          edit(row: Certificate) {
             this.parent.modalService.open('slide-in-form', this.parent.certificateEditComponent, row.id);
           },
         },
@@ -132,7 +135,7 @@ export class CertificatesDashComponent implements OnInit {
           add() {
             this.parent.modalService.open('slide-in-form', this.parent.certificateAddComponent, 'csr');
           },
-          edit(row: any) {
+          edit(row: Certificate) {
             this.parent.modalService.open('slide-in-form', this.parent.certificateEditComponent, row.id);
           },
         },
@@ -161,10 +164,10 @@ export class CertificatesDashComponent implements OnInit {
           add() {
             this.parent.modalService.open('slide-in-form', this.parent.certificateAuthorityAddComponent);
           },
-          edit(row: any) {
+          edit(row: CertificateAuthority) {
             this.parent.modalService.open('slide-in-form', this.parent.certificateAuthorityEditComponent, row.id);
           },
-          delete(row: any, table: any) {
+          delete(row: CertificateAuthority, table: any) {
             if (row.signed_certificates > 0) {
               (this.parent.dialogService as DialogService).confirm({
                 title: helptext_system_ca.delete_error.title,
@@ -194,7 +197,7 @@ export class CertificatesDashComponent implements OnInit {
           add() {
             this.parent.modalService.open('slide-in-form', this.parent.acmeDNSComponent);
           },
-          edit(row: any) {
+          edit(row: CertificateAuthority) {
             this.parent.modalService.open('slide-in-form', this.parent.acmeDNSComponent, row.id);
           },
         },
@@ -211,7 +214,7 @@ export class CertificatesDashComponent implements OnInit {
     return res.filter((item) => item.certificate !== null);
   }
 
-  csrDataSourceHelper(res: any[]): any[] {
+  csrDataSourceHelper(res: Certificate[]): Certificate[] {
     return res.filter((item) => item.CSR !== null);
   }
 
@@ -250,7 +253,7 @@ export class CertificatesDashComponent implements OnInit {
       icon: 'save_alt',
       name: 'download',
 
-      onClick: (rowinner: any) => {
+      onClick: (rowinner: Certificate) => {
         const path = rowinner.CSR ? rowinner.csr_path : rowinner.certificate_path;
         const fileName = rowinner.name + '.crt'; // what about for a csr?
         this.ws.call('core.download', ['filesystem.get', [path], fileName]).pipe(untilDestroyed(this)).subscribe(
@@ -267,7 +270,7 @@ export class CertificatesDashComponent implements OnInit {
               });
           },
           (err) => {
-            new EntityUtils().handleWSError(this, err, this.dialog);
+            new EntityUtils().handleWSError(this, err, this.dialogService);
           },
         );
         const keyName = rowinner.name + '.key';
@@ -285,7 +288,7 @@ export class CertificatesDashComponent implements OnInit {
               });
           },
           (err) => {
-            new EntityUtils().handleWSError(this, err, this.dialog);
+            new EntityUtils().handleWSError(this, err, this.dialogService);
           },
         );
         event.stopPropagation();
@@ -294,13 +297,13 @@ export class CertificatesDashComponent implements OnInit {
     return this.downloadActions;
   }
 
-  csrActions(): AppTableAction[] {
+  csrActions(): AppTableAction<Certificate>[] {
     const csrRowActions = [...this.downloadActions];
     const acmeAction = {
       icon: 'build',
       name: 'create_ACME',
       matTooltip: T('Create ACME Certificate'),
-      onClick: (rowinner: any) => {
+      onClick: (rowinner: Certificate) => {
         this.modalService.open('slide-in-form', this.acmeAddComponent, rowinner.id);
         event.stopPropagation();
       },
@@ -309,13 +312,13 @@ export class CertificatesDashComponent implements OnInit {
     return csrRowActions;
   }
 
-  caActions(): AppTableAction[] {
+  caActions(): AppTableAction<CertificateAuthority>[] {
     const caRowActions = [...this.downloadActions];
     const acmeAction = {
       icon: 'beenhere',
       name: 'sign_CSR',
       matTooltip: helptext_system_ca.list.action_sign,
-      onClick: (rowinner: any) => {
+      onClick: (rowinner: CertificateAuthority) => {
         this.dialogService.dialogForm(this.signCSRFormConf);
         this.caId = rowinner.id;
         event.stopPropagation();
@@ -325,7 +328,7 @@ export class CertificatesDashComponent implements OnInit {
     return caRowActions;
   }
 
-  openForm(component: any, id: any): void {
+  openForm(component: CertificateAcmeAddComponent, id: any): void {
     setTimeout(() => {
       this.modalService.open('slide-in-form', component, id);
     }, 200);
@@ -369,7 +372,7 @@ export class CertificatesDashComponent implements OnInit {
       entityDialog.loader.close();
       self.dialogService.closeAllDialogs();
       self.getCards();
-    }, (err: any) => {
+    }, (err: WebsocketError) => {
       entityDialog.loader.close();
       self.dialogService.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
     });

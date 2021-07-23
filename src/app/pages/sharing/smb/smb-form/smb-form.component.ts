@@ -428,6 +428,7 @@ export class SMBFormComponent implements FormConfiguration {
     const datasetId = sharePath.replace('/mnt/', '');
     const poolName = datasetId.split('/')[0];
     const homeShare = entityForm.formGroup.get('home').value;
+    // TODO: Incorrect url https://jira.ixsystems.com/browse/NAS-111465
     const ACLRoute = ['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId];
 
     if (homeShare && entityForm.isNew) {

@@ -78,12 +78,22 @@ export interface BasicNfsPermissions {
   BASIC: NfsBasicPermission;
 }
 
+export function areNfsPermissionsBasic(
+  permissions: BasicNfsPermissions | AdvancedNfsPermissions,
+): permissions is BasicNfsPermissions {
+  return 'BASIC' in permissions;
+}
+
 export type AdvancedNfsFlags = {
   [key in NfsAdvancedFlag]: boolean;
 };
 
 export interface BasicNfsFlags {
   BASIC: NfsBasicFlag;
+}
+
+export function areNfsFlagsBasic(flags: BasicNfsFlags | AdvancedNfsFlags): flags is BasicNfsFlags {
+  return 'BASIC' in flags;
 }
 
 export interface PosixPermissions {
@@ -98,10 +108,10 @@ export interface Nfs41Flags {
 }
 
 export interface SetAclOptions {
-  stripacl: boolean;
-  recursive: boolean;
-  traverse: boolean;
-  canonicalize: boolean;
+  stripacl?: boolean;
+  recursive?: boolean;
+  traverse?: boolean;
+  canonicalize?: boolean;
 }
 
 export interface SetAcl {
@@ -109,7 +119,7 @@ export interface SetAcl {
   uid: number;
   gid: number;
   dacl: NfsAclItem[] | PosixAclItem[];
-  nfs41_flags: Nfs41Flags;
+  nfs41_flags?: Nfs41Flags;
   acltype: AclType;
   options: SetAclOptions;
 }

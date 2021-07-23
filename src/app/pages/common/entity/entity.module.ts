@@ -87,6 +87,7 @@ import { EntityTreeTableComponent } from './entity-tree-table/entity-tree-table.
 import { EntityWizardComponent } from './entity-wizard/entity-wizard.component';
 import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
 import { TableComponent } from './table/table.component';
+import { TableService } from './table/table.service';
 
 @NgModule({
   imports: [
@@ -241,6 +242,7 @@ import { TableComponent } from './table/table.component';
     AppLoaderService,
     DocsService,
     JobService,
+    TableService,
   ],
 })
 export class EntityModule {}

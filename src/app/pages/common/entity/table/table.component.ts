@@ -2,17 +2,16 @@ import {
   Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatCellDef } from '@angular/material/table/cell';
 import { JobState } from 'app/enums/job-state.enum';
 import { WebSocketService } from 'app/services';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { TableService } from './table.service';
 
-export interface AppTableAction {
+export interface AppTableAction<Row = any> {
   name: string;
   icon: string;
   matTooltip?: string;
-  onClick: (element: MatCellDef) => void;
+  onClick: (row: Row) => void;
 }
 
 export interface AppTableHeaderAction {
@@ -22,7 +21,7 @@ export interface AppTableHeaderAction {
 
 export interface AppTableHeaderExtraAction extends AppTableHeaderAction {}
 
-export interface InputTableConf {
+export interface AppTableConfig {
   title?: string;
   titleHref?: string;
   columns: any[];
@@ -71,7 +70,7 @@ export interface InputTableConf {
 export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   @ViewChild('table') table: any;
 
-  _tableConf: InputTableConf;
+  _tableConf: AppTableConfig;
   title = '';
   titleHref: string;
   dataSource: any[];
@@ -94,11 +93,11 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   private entityEmptyLarge = false;
   private enableViewMore = false;
 
-  get tableConf(): InputTableConf {
+  get tableConf(): AppTableConfig {
     return this._tableConf;
   }
 
-  @Input('conf') set tableConf(conf: InputTableConf) {
+  @Input('conf') set tableConf(conf: AppTableConfig) {
     if (!this._tableConf) {
       this._tableConf = conf;
     } else {

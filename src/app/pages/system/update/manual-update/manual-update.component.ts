@@ -244,7 +244,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.router.navigate(['/others/reboot']);
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       new EntityUtils().handleWSError(this, err, this.dialogService);
     });
   }

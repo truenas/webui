@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { ProductType } from 'app/enums/product-type.enum';
+import { TunableType } from 'app/enums/tunable-type.enum';
 import { helptext_system_tunable as helptext } from 'app/helptext/system/tunable';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
@@ -59,7 +60,7 @@ export class TunableFormComponent implements FormConfiguration {
           tooltip: helptext.type.tooltip,
           required: false,
           options: [],
-          value: 'LOADER',
+          value: TunableType.Sysctl,
         },
         {
           type: 'input',
@@ -92,7 +93,7 @@ export class TunableFormComponent implements FormConfiguration {
     });
     this.product_type = window.localStorage.getItem('product_type') as ProductType;
     if (this.product_type === ProductType.Scale || this.product_type === ProductType.ScaleEnterprise) {
-      this.type_fc.value = 'SYSCTL';
+      this.type_fc.value = TunableType.Sysctl;
       this.type_fc.isHidden = true;
       this.fieldSets[0].name = helptext.metadata.fieldsets_scale[0];
     }

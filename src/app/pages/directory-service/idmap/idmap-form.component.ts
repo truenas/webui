@@ -410,7 +410,7 @@ export class IdmapFormComponent implements FormConfiguration {
             this.dialogService.Info(helptext.idmap.clear_cache_dialog.success_title,
               helptext.idmap.clear_cache_dialog.success_msg, '250px', '', true);
           });
-          this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+          this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
             this.dialog.closeAll();
             new EntityUtils().handleWSError(this.entityForm, res);
           });
