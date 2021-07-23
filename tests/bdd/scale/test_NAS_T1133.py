@@ -2,6 +2,7 @@
 """SCALE UI: feature tests."""
 
 import time
+from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
@@ -55,57 +56,64 @@ def you_should_be_on_the_dashboard_click_on_sharing_then_windows_sharessmb(drive
 @then('The Windows Shares(SMB) page should open, Click Add')
 def the_windows_sharessmb_page_should_open_click_add(driver):
     """The Windows Shares(SMB) page should open, Click Add."""
-    assert wait_on_element(driver, 5, '//div[contains(.,"Windows (SMB) Shares")]')
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//mat-card[contains(.,"SMB")]//button[contains(.,"Add")]')
-    driver.find_element_by_xpath('//mat-card[contains(.,"SMB")]//button[contains(.,"Add")]').click()
-    assert wait_on_element(driver, 5, '//h3[contains(.,"Add SMB")]')  
+    #assert wait_on_element(driver, 5, '//div[contains(.,"Windows (SMB) Shares")]')
+    #time.sleep(1)
+    #assert wait_on_element(driver, 5, '//mat-card[contains(.,"SMB")]//button[contains(.,"Add")]')
+    #driver.find_element_by_xpath('//mat-card[contains(.,"SMB")]//button[contains(.,"Add")]').click()
+    #assert wait_on_element(driver, 5, '//h3[contains(.,"Add SMB")]')  
 
 
 @then(parsers.parse('Set Path to the LDAP dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit'))
 def set_path_to_the_ldap_dataset_mnttankwheel_dataset_input_wheelsmbshare_as_name_click_to_enable_input_test_wheel_smb_share_as_description_and_click_summit(driver, path, smbname, description):
     """Set Path to the LDAP dataset {path}, Input {smbname} as name, Click to enable, Input {description} as description, and Click Summit."""
-    time.sleep(1)
-    global smb_path
+    #time.sleep(1)
+    #global smb_path
     """Set Path to the ACL dataset "/mnt/dozer/my_acl_dataset"."""
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__path"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys(path)
-    time.sleep(1)
+    #assert wait_on_element(driver, 5, '//input[@ix-auto="input__path"]')
+    #driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
+    #driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys(path)
+    #time.sleep(1)
 
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(smbname)
-    checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
-    if not checkbox_checked:
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enabled"]').click()
-    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
-    time.sleep(1)
+    #assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]')
+    #driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
+    #driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(smbname)
+    #checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
+    #if not checkbox_checked:
+    #    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enabled"]').click()
+    #assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
+    #time.sleep(1)
 
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Description"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
-    time.sleep(1)
+    #assert wait_on_element(driver, 5, '//input[@ix-auto="input__Description"]')
+    #driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
+    #driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
+    #time.sleep(1)
 
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    time.sleep(4)
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Enable Service")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__ENABLE SERVICE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__ENABLE SERVICE"]').click()
+    #assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]')
+    #driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    #time.sleep(4)
+    #assert wait_on_element(driver, 10, '//div[contains(.,"Enable this service to start automatically.")]')
+    #assert wait_on_element(driver, 7, '//button[@ix-auto="button__CANCEL"]', 'clickable')
+    #driver.find_element_by_xpath('//button[@ix-auto="button__CANCEL"]').click()
+    #time.sleep(2)
 
+    #assert wait_on_element(driver, 5, f'//mat-icon[text()="info"]')
+    #assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    #driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    #driver.find_element_by_xpath('//div[contains(.,"Windows (SMB) Shares")]').send_keys(Keys.ESCAPE)
 
 
 @then(parsers.parse('"{smbname}" should be added, Click on service and the Service page should open'))
 def test_wheel_smb_share_should_be_added_click_on_service_and_the_service_page_should_open(driver, smbname):
     """"{smbname}" should be added, Click on service and the Service page should open."""
+    #time.sleep(2)
+    #assert wait_on_element(driver, 5, '//div[contains(.,"Windows (SMB) Shares")]')
+    #assert wait_on_element(driver, 5, f'//div[contains(.,"{smbname}")]')
+    time.sleep(2)
+    
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//div[contains(.,"Windows (SMB) Shares")]')
-    driver.find_element_by_xpath('//a[contains("Windows (SMB) Shares")]').click()
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//div[contains(.,"Samba")]')
-    assert wait_on_element(driver, 5, f'//div[contains(.,"{smbname}")]')
-    time.sleep(1)
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Services"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
     time.sleep(1)
     assert wait_on_element(driver, 5, '//services')
@@ -116,19 +124,17 @@ def if_the_smb_serivce_is_not_started_start_the_service_and_click_on_smb_start_a
     """If the SMB serivce is not started start the service, and click on SMB Start Automatically checkbox."""
     time.sleep(1)
     assert wait_on_element(driver, 5, '//services')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__S3_Actions"]')
     # Scroll to SMB service
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
+    element = driver.find_element_by_xpath('//button[@ix-auto="action__Configure_S3"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(1)
-    driver.find_element_by_xpath('//div[@ix-auto="value__SMB"]')
-    value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__SMB_Running"]', 'class', 'mat-checked')
+    value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__state__SMB"]', 'class', 'mat-checked')
     if not value_exist:
-        driver.find_element_by_xpath('//div[@ix-auto="overlay__SMB_Running"]').click()
+        driver.find_element_by_xpath('//div[@ix-auto="overlay__stateSMB"]').click()
     time.sleep(2)
-    value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__SMB_Start Automatically"]', 'class', 'mat-checkbox-checked')
+    value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__enable__SMB"]', 'class', 'mat-checkbox-checked')
     if not value_exist:
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__SMB_Start Automatically"]').click()
+        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__enable__SMB"]').click()
 
 
 @then(parsers.parse('Send a file to the share with nas_IP/{smbname} and {user} and {password}'))
