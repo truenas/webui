@@ -110,7 +110,7 @@ def click_proceed_then_enter_the_user_name_click_next_and_ever_the_password(driv
 def click_next_and_click_allow_to_trust_truenas(driver):
     """click Next and click Allow to trust TrueNAS."""
     assert wait_on_element(driver, 10, '//div[text()="Sign in with Google"]')
-    assert wait_on_element(driver, 5, '//span[text()="Make sure you trust TrueNAS"]')
+    assert wait_on_element(driver, 5, '//span[contains(text(),"you trust TrueNAS")]')
     assert wait_on_element(driver, 5, '//button[contains(.,"Allow")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Allow")]').click()
     while len(driver.window_handles) != 1:
