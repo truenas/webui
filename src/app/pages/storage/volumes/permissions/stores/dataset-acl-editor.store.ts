@@ -324,25 +324,21 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       const aceAttributes = _.omit(ace, ['who']);
       if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {
         return this.userService.getUserByName(ace.who).pipe(
-          map((user) => {
-            if (!user?.pw_uid) {
-              markAceAsHavingErrors(index);
-              return aceAttributes;
-            }
-
-            return { ...aceAttributes, id: user.pw_uid };
+          map((user) => ({ ...aceAttributes, id: user.pw_uid })),
+          catchError((error) => {
+            new EntityUtils().errorReport(error, this.dialog);
+            markAceAsHavingErrors(index);
+            return of(aceAttributes);
           }),
         );
       }
       if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag)) {
         return this.userService.getGroupByName(ace.who).pipe(
-          map((group) => {
-            if (!group?.gr_gid) {
-              markAceAsHavingErrors(index);
-              return aceAttributes;
-            }
-
-            return { ...aceAttributes, id: group.gr_gid };
+          map((group) => ({ ...aceAttributes, id: group.gr_gid })),
+          catchError((error) => {
+            new EntityUtils().errorReport(error, this.dialog);
+            markAceAsHavingErrors(index);
+            return of(aceAttributes);
           }),
         );
       }

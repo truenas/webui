@@ -68,7 +68,7 @@ export class ConfigResetComponent implements OnInit {
         this.isWSConnected();
       }, 15000);
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       this.dialogRef.close();
       this.dialogService.errorReport(res.error, res.state, res.exception);
     });

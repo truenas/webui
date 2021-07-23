@@ -8,6 +8,7 @@ import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum'
 import helptext from 'app/helptext/system/ssh-connections';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -412,7 +413,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
         this.modalService.close('slide-in-form');
         this.modalService.refreshTable();
       },
-      (err: any) => {
+      (err: WebsocketError) => {
         this.loader.close();
         this.modalService.refreshTable();
         if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace'))) {
