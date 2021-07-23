@@ -1,10 +1,15 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { forkJoin, of } from 'rxjs';
-import { tap, map, catchError } from 'rxjs/operators';
+import {
+  EMPTY, forkJoin, of,
+} from 'rxjs';
+import {
+  tap, map, catchError, switchMap, filter,
+} from 'rxjs/operators';
 import helptext from 'app/helptext/apps/apps';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -27,6 +32,8 @@ export class KubernetesSettingsComponent implements FormConfiguration {
   private newEnableContainerImageUpdate = true;
   title = helptext.kubForm.title;
   private entityEdit: EntityFormComponent;
+  private oldConfig: KubernetesConfig;
+
   fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
@@ -39,27 +46,6 @@ export class KubernetesSettingsComponent implements FormConfiguration {
           placeholder: helptext.kubForm.pool.placeholder,
           tooltip: helptext.kubForm.pool.tooltip,
           options: [],
-          required: true,
-        },
-        {
-          type: 'input',
-          name: 'cluster_cidr',
-          placeholder: helptext.kubForm.cluster_cidr.placeholder,
-          tooltip: helptext.kubForm.cluster_cidr.tooltip,
-          required: true,
-        },
-        {
-          type: 'input',
-          name: 'service_cidr',
-          placeholder: helptext.kubForm.service_cidr.placeholder,
-          tooltip: helptext.kubForm.service_cidr.tooltip,
-          required: true,
-        },
-        {
-          type: 'input',
-          name: 'cluster_dns_ip',
-          placeholder: helptext.kubForm.cluster_dns_ip.placeholder,
-          tooltip: helptext.kubForm.cluster_dns_ip.tooltip,
           required: true,
         },
         {
@@ -96,11 +82,54 @@ export class KubernetesSettingsComponent implements FormConfiguration {
         },
       ],
     },
+    {
+      name: helptext.kubForm.reInit.title,
+      label: true,
+      width: '50%',
+      config: [
+        {
+          type: 'label',
+          name: 'warning',
+          label: helptext.kubForm.reInit.formWarning,
+        },
+        {
+          type: 'input',
+          name: 'cluster_cidr',
+
+          placeholder: helptext.kubForm.cluster_cidr.placeholder,
+          tooltip: helptext.kubForm.cluster_cidr.tooltip,
+          required: true,
+        },
+        {
+          type: 'input',
+          name: 'service_cidr',
+          placeholder: helptext.kubForm.service_cidr.placeholder,
+          tooltip: helptext.kubForm.service_cidr.tooltip,
+          required: true,
+        },
+        {
+          type: 'input',
+          name: 'cluster_dns_ip',
+          placeholder: helptext.kubForm.cluster_dns_ip.placeholder,
+          tooltip: helptext.kubForm.cluster_dns_ip.tooltip,
+          required: true,
+        },
+      ],
+    },
+    {
+      name: 'spacer',
+      width: '50%',
+      config: [],
+    },
   ];
 
-  constructor(protected ws: WebSocketService, private loader: AppLoaderService,
-    private dialogService: DialogService, private modalService: ModalService,
-    private appService: ApplicationsService) { }
+  constructor(
+    protected ws: WebSocketService,
+    private loader: AppLoaderService,
+    private dialogService: DialogService,
+    private modalService: ModalService,
+    private appService: ApplicationsService,
+  ) { }
 
   async prerequisite(): Promise<boolean> {
     const setPoolControl$ = this.appService.getPoolList().pipe(
@@ -148,6 +177,11 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     });
   }
 
+  resourceTransformIncomingRestData(config: KubernetesConfig): KubernetesConfig {
+    this.oldConfig = config;
+    return config;
+  }
+
   beforeSubmit(data: any): void {
     if (data.route_v4_gateway === '') {
       data.route_v4_gateway = null;
@@ -160,19 +194,41 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     delete data.enable_container_image_update;
   }
 
-  customSubmit(data: any): void {
-    this.loader.open();
+  customSubmit(config: KubernetesConfigUpdate): void {
+    (
+      this.wereReInitFieldsChanged(config)
+        ? this.dialogService.confirm({
+          title: helptext.kubForm.reInit.title,
+          message: helptext.kubForm.reInit.modalWarning,
+        })
+        : of(true)
+    ).pipe(
+      filter(Boolean),
+      switchMap(() => {
+        this.loader.open();
+        return forkJoin([
+          this.ws.job(this.editCall, [config]),
+          this.appService.updateContainerConfig(this.newEnableContainerImageUpdate),
+        ]).pipe(
+          tap(() => {
+            this.loader.close();
+            this.modalService.close('slide-in-form');
+            this.modalService.refreshTable();
+          }),
+          catchError((err) => {
+            this.loader.close();
+            new EntityUtils().handleWSError(this, err, this.dialogService);
+            return EMPTY;
+          }),
+        );
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+  }
 
-    Promise.all([
-      this.ws.job(this.editCall, [data]).toPromise(),
-      this.appService.updateContainerConfig(this.newEnableContainerImageUpdate).toPromise(),
-    ]).then(() => {
-      this.loader.close();
-      this.modalService.close('slide-in-form');
-      this.modalService.refreshTable();
-    }, (err) => {
-      this.loader.close();
-      new EntityUtils().handleWSError(this, err, this.dialogService);
-    });
+  private wereReInitFieldsChanged(config: KubernetesConfigUpdate): boolean {
+    const reInitFields: (keyof KubernetesConfigUpdate)[] = ['cluster_cidr', 'service_cidr', 'cluster_dns_ip'];
+
+    return reInitFields.some((field) => config[field] !== this.oldConfig[field]);
   }
 }

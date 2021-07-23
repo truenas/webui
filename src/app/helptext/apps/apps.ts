@@ -108,6 +108,11 @@ export default {
       placeholder: T('Pool'),
       tooltip: T('Choose a pool for the Apps'),
     },
+    reInit: {
+      title: T('Settings Requiring Re-Initialization'),
+      formWarning: T('Changing settings below will result in Kubernetes cluster re-initialization deleting installed apps and their data.'),
+      modalWarning: T('You have changed one of the settings that require Kubernetes cluster re-initialization. Please be aware that this will delete installed apps and their data.'),
+    },
     cluster_cidr: {
       placeholder: T('Cluster CIDR'),
       tooltip: T(''),
