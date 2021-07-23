@@ -18,7 +18,7 @@ import { BootEnvService, WebSocketService } from 'app/services';
 export class BootEnvironmentRenameComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot'];
   editCall: 'bootenv.update' = 'bootenv.update';
-  pk: any;
+  pk: string;
   isNew = false;
   isEntity = true;
   protected entityForm: EntityFormComponent;

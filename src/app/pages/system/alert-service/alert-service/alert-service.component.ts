@@ -8,6 +8,7 @@ import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import helptext from 'app/helptext/system/alert-service';
 import { AlertServiceCreate } from 'app/interfaces/alert-service.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -690,7 +691,7 @@ export class AlertServiceComponent implements FormConfiguration {
               this.dialogService.Info(T('Failed'), T('Failed sending test alert!'));
             }
           },
-          (err: any) => {
+          (err: WebsocketError) => {
             this.loader.close();
             new EntityUtils().handleWSError(this, err, this.dialogService);
           },
@@ -782,7 +783,7 @@ export class AlertServiceComponent implements FormConfiguration {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
         },
-        (err: any) => {
+        (err: WebsocketError) => {
           this.loader.close();
           new EntityUtils().handleWSError(this, err, this.dialogService);
         },
@@ -793,7 +794,7 @@ export class AlertServiceComponent implements FormConfiguration {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
         },
-        (err: any) => {
+        (err: WebsocketError) => {
           this.loader.close();
           new EntityUtils().handleWSError(this, err, this.dialogService);
         },

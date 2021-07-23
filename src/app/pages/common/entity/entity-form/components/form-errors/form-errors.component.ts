@@ -7,6 +7,6 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
   templateUrl: './form-errors.component.html',
 })
 export class FormErrorsComponent {
-  @Input()control: FormControl;
-  @Input()config: FieldConfig;
+  @Input() control: FormControl;
+  @Input() config: FieldConfig;
 }
