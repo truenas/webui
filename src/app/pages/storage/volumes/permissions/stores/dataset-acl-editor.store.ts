@@ -345,7 +345,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
 
       return of({
         ...aceAttributes,
-        id: -1,
+        id: -1, // -1 is effectively null for middleware
       });
     });
 

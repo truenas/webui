@@ -21,7 +21,6 @@ import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.c
 import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot';
 import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/dataset-form.component';
-import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl/dataset-posix-acl.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 import { DatasetUnlockComponent } from './volumes/datasets/dataset-unlock/dataset-unlock.component';
@@ -97,7 +96,7 @@ export const routes: Routes = [
           },
           {
             path: 'id/:pk/dataset/posix-acl/:path',
-            component: DatasetPosixAclComponent,
+            component: DatasetAclEditorComponent,
             data: { title: 'Edit POSIX.1e ACL', breadcrumb: 'Edit POSIX.1e ACL' },
           },
           {

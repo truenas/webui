@@ -15,7 +15,8 @@ export const newNfsAce = {
 };
 
 export const newPosixAce = {
-  tag: PosixAclTag.User,
+  tag: PosixAclTag.Mask,
+  default: false,
   perms: {
     [PosixPermission.Read]: false,
     [PosixPermission.Write]: false,
