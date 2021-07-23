@@ -14,11 +14,12 @@
 }
 
 .name {
-  margin-right: auto;
+  flex-grow: 1;
 }
 
 .permissions {
   font-size: 0.8rem;
+  margin-left: 20px;
   opacity: 0.75;
   text-align: right;
 }

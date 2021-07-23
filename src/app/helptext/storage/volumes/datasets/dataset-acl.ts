@@ -5,6 +5,10 @@ import {
 } from 'app/enums/nfs-acl.enum';
 import { posixAclTagLabels, PosixPermission } from 'app/enums/posix-acl.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import {
+  NfsFormFlagsType,
+  NfsFormPermsType,
+} from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace-form-values.interface';
 import { T } from 'app/translate-marker';
 
 export default {
@@ -31,13 +35,14 @@ export default {
  permissions and <i>Deny</i> to restrict the specified permissions.'),
   dataset_acl_type_options: mapToOptions(nfsAclTypeLabels),
 
+  dataset_acl_perms_set_title: T('Permissions'),
   dataset_acl_perms_type_placeholder: T('Permissions Type'),
   dataset_acl_perms_type_tooltip: T('Choose the type of permissions.\
  <i>Basic</i> shows general permissions. <i>Advanced</i> shows each\
  specific type of permission for finer control.'),
   dataset_acl_perms_type_options: [
-    { label: T('Basic'), value: 'BASIC' },
-    { label: T('Advanced'), value: 'ADVANCED' },
+    { label: T('Basic'), value: NfsFormPermsType.Basic },
+    { label: T('Advanced'), value: NfsFormPermsType.Advanced },
   ],
 
   dataset_acl_user_placeholder: T('User'),
@@ -86,14 +91,15 @@ export default {
   dataset_acl_basic_perms_other_warning: T('These permissions are too complicated to be displayed and cannot be saved unless changed.'),
   dataset_acl_advanced_perms_options: mapToOptions(nfsAdvancedPermissionLabels),
 
+  dataset_acl_flags_set_title: T('Flags'),
   dataset_acl_flags_type_placeholder: T('Flags Type'),
   dataset_acl_flags_type_tooltip: T('Select the set of ACE inheritance\
  <i>Flags</i> to display. <i>Basic</i> shows nonspecific inheritance\
  options. <i>Advanced</i> shows specific inheritance settings for finer\
  control.'),
   dataset_acl_flags_type_options: [
-    { label: T('Basic'), value: 'BASIC' },
-    { label: T('Advanced'), value: 'ADVANCED' },
+    { label: T('Basic'), value: NfsFormFlagsType.Basic },
+    { label: T('Advanced'), value: NfsFormFlagsType.Advanced },
   ],
 
   dataset_acl_flags_placeholder: T('Flags'),
@@ -204,13 +210,8 @@ export default {
     input: {
       placeholder: T('Default ACL Options'),
     },
-    button: T('Continue'),
-  },
-
-  preset_dialog: {
-    message: T('The chosen preset ACL will REPLACE the ACL currently displayed in the form \
+    message: T('The chosen preset ACL will <strong>REPLACE</strong> the ACL currently displayed in the form \
  and delete any unsaved changes.'),
-    button: T('Select'),
   },
 
   preset_cust_action_btn: T('Select an ACL Preset'),

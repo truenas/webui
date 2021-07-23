@@ -3,16 +3,18 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  NfsAclTag, nfsAclTagLabels, nfsAclTypeLabels, NfsAdvancedFlag, nfsAdvancedFlagLabels,
+  NfsAdvancedFlag, nfsAdvancedFlagLabels,
   NfsAdvancedPermission, nfsAdvancedPermissionLabels, nfsBasicFlagLabels, nfsBasicPermissionLabels,
 } from 'app/enums/nfs-acl.enum';
 import {
+  areNfsFlagsBasic,
+  areNfsPermissionsBasic,
   NfsAcl, NfsAclItem,
 } from 'app/interfaces/acl.interface';
 import {
   PermissionItem,
-  PermissionsItemType,
-} from 'app/pages/storage/volumes/permissions-sidebar/interfaces/permission-item.interface';
+} from 'app/pages/storage/volumes/permissions/interfaces/permission-item.interface';
+import { nfsAceToPermissionItem } from 'app/pages/storage/volumes/permissions/utils/nfs-ace-to-permission-item.utils';
 
 interface PermissionDetails {
   arePermissionsBasic: boolean;
@@ -47,46 +49,9 @@ export class NfsPermissionsComponent implements OnChanges {
     this.permissionDetails = [];
 
     this.acl.acl.forEach((ace) => {
-      this.permissionItems.push(this.aceToPermissionItem(ace));
+      this.permissionItems.push(nfsAceToPermissionItem(this.translate, ace));
       this.permissionDetails.push(this.aceToPermissionDetails(ace));
     });
-  }
-
-  private aceToPermissionItem(ace: NfsAclItem): PermissionItem {
-    let name = this.translate.instant(nfsAclTagLabels.get(ace.tag));
-
-    let type: PermissionsItemType;
-    switch (ace.tag) {
-      case NfsAclTag.User:
-      case NfsAclTag.Owner:
-        type = PermissionsItemType.User;
-        name = `${name} - ${ace.who || '?'}`;
-        break;
-      case NfsAclTag.Group:
-      case NfsAclTag.UserGroup:
-        type = PermissionsItemType.Group;
-        name = `${name} - ${ace.who || '?'}`;
-        break;
-      default:
-        type = PermissionsItemType.Other;
-    }
-
-    const access = this.translate.instant(nfsAclTypeLabels.get(ace.type));
-    let action = this.translate.instant('Special');
-    if ('BASIC' in ace.perms) {
-      action = this.translate.instant(nfsBasicPermissionLabels.get(ace.perms.BASIC));
-    } else {
-      const permissions = Object.keys(ace.perms) as NfsAdvancedPermission[];
-      if (permissions.length === 1) {
-        action = this.translate.instant(nfsAdvancedPermissionLabels.get(permissions[0]));
-      }
-    }
-
-    return {
-      type,
-      name,
-      description: `${access} | ${action}`,
-    };
   }
 
   private aceToPermissionDetails(ace: NfsAclItem): PermissionDetails {
@@ -94,7 +59,7 @@ export class NfsPermissionsComponent implements OnChanges {
     let arePermissionsBasic: boolean;
     let permissions: string[];
 
-    if ('BASIC' in ace.perms) {
+    if (areNfsPermissionsBasic(ace.perms)) {
       arePermissionsBasic = true;
       permissions = [this.translate.instant(nfsBasicPermissionLabels.get(ace.perms.BASIC))];
     } else {
@@ -110,7 +75,7 @@ export class NfsPermissionsComponent implements OnChanges {
     let areFlagsBasic: boolean;
     let flags: string[];
 
-    if ('BASIC' in ace.flags) {
+    if (areNfsFlagsBasic(ace.flags)) {
       areFlagsBasic = true;
       flags = [this.translate.instant(nfsBasicFlagLabels.get(ace.flags.BASIC))];
     } else {

@@ -1,0 +1,68 @@
+.header {
+  align-items: baseline;
+}
+
+.card {
+  margin: 0 auto;
+}
+
+.dataset-path {
+  display: flex;
+  margin-left: 10%;
+
+  .dataset-path-label {
+    font-weight: 500;
+    margin-right: 6px;
+  }
+}
+
+.content {
+  padding-bottom: 1px;
+}
+
+.spinner {
+  margin: 30px auto;
+}
+
+.columns {
+  display: flex;
+  padding: 0;
+
+  .column-left {
+    background-color: var(--bg1);
+    flex-basis: 400px;
+  }
+}
+
+.controls-container {
+  border-top: 1px solid var(--lines);
+  display: flex;
+  justify-content: center;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  margin: 21px 20px 0;
+  min-width: 240px;
+  padding-bottom: 40px;
+}
+
+.control-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+
+  .checkboxes {
+    padding: 0 5px;
+  }
+
+  .action {
+    flex-grow: 1;
+    margin-right: 6px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
