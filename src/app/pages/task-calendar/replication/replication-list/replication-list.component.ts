@@ -171,6 +171,7 @@ export class ReplicationListComponent {
       const log = (row.job && row.job.logs_excerpt) ? row.job.logs_excerpt : null;
       if (error === null && log === null) {
         this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+        return;
       }
 
       const dialog_title = T('Task State');
