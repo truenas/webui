@@ -1,0 +1,40 @@
+mat-table.jobs-table {
+  background-color: var(--bg2);
+
+  .mat-cell,
+  .mat-header-cell,
+  .mat-footer-cell, {
+    color: var(--fg2);
+  }
+
+  .jobs-item {
+    .jobs-progress {
+      margin: 3px 0;
+    }
+
+    mat-icon.state-success {
+      color: var(--green);
+    }
+
+    mat-icon.state-failed {
+      color: var(--red);
+    }
+
+    mat-icon.state-running {
+      color: var(--primary);
+    }
+
+    mat-icon.state-waiting {
+      color: var(--accent);
+    }
+
+    mat-icon.state-aborted {
+      color: var(--orange);
+    }
+  }
+
+  .jobs-name-column {
+    min-width: 300px;
+  }
+}
+

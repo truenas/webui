@@ -1178,7 +1178,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
 
   isInteractive(column: string): boolean {
     const item = this.currentColumns.find((obj) => obj.prop === column);
-    return (item?.checkbox || item?.toggle || item?.button || item?.job);
+    return (item?.checkbox || item?.toggle || item?.button);
   }
 
   doRowClick(element: Row): void {
@@ -1191,11 +1191,5 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
 
   isBasicColumnTemplate(column: string): boolean {
     return !['expandedDetail', 'action', 'multiselect', 'expansion-chevrons'].includes(column) && !this.isInteractive(column);
-  }
-
-  isCustomColumnComponent(column: string): boolean {
-    const item = this.currentColumns.find((obj) => obj.prop === column);
-
-    return Boolean(!this.isBasicColumnTemplate(column) && item?.widget?.component && column == 'method');
   }
 }

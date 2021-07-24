@@ -28,7 +28,7 @@
     <entity-empty [conf]="emptyConfig"></entity-empty>
   </ng-template>
 </mat-dialog-content>
-<mat-dialog-actions>
+<mat-dialog-actions *ngIf="jobs.length">
   <a
     [routerLink]="'/jobs'"
     mat-button

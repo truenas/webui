@@ -178,48 +178,6 @@
           </td>
         </ng-container>
 
-        <!-- Interactive Job Column -->
-        <ng-container *ngIf="isCustomColumnComponent(column)" matColumnDef="{{column}}">
-          <th mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
-          <td mat-cell *matCellDef="let element" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)">
-            <!--
-                For some reason it doesn't work
-                TODO: Try to reuse app-job-item components
-
-                <ng-container [ngSwitch]="currentColumns[i].widget.component">
-                  <app-job-item *ngSwitchCase="'JobItemComponent'" [ngClass]="'test'" [job]="element"></app-job-item>
-                </ng-container>
-            -->
-            <div class="entity-job-item" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="8px">
-              <div fxFlex="100" fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start center">
-                <mat-icon *ngIf="element.state === EntityJobState.Success" class="state-success">check_circle_outline</mat-icon>
-                <mat-icon *ngIf="element.state === EntityJobState.Failed" class="state-failed" [matTooltip]="element.error">highlight_off</mat-icon>
-                <mat-icon *ngIf="element.state === EntityJobState.Running" class="state-running">cached</mat-icon>
-                <mat-icon *ngIf="element.state === EntityJobState.Pending" class="state-waiting">schedule</mat-icon>
-                <mat-icon *ngIf="element.state === EntityJobState.Aborted" class="state-aborted">report</mat-icon>
-
-                <div fxFlex="100" fxLayout="column">
-                  <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
-                    <span>{{ element.description ? element.description : element.method  }}</span>
-                    <span *ngIf="!EntityJobState.Failed">{{ element.progress.percent || 0 | number: '1.2-2' }}%</span>
-                  </div>
-
-                  <mat-progress-bar
-                    *ngIf="element.state === EntityJobState.Running"
-                    [value]="element.progress.percent"
-                    mode="buffer"
-                    class="entity-job-progress"
-                  ></mat-progress-bar>
-                </div>
-              </div>
-
-              <button mat-icon-button type="button" (click)="this.conf.onAborted(element)" *ngIf="element.state === EntityJobState.Running && element.abortable">
-                <mat-icon fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
-              </button>
-            </div>
-          </td>
-        </ng-container>
-
       </ng-container>
 
       <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->

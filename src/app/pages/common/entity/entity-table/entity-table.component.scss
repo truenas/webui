@@ -334,29 +334,3 @@ div#cardHeaderContainer {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-.entity-job-item {
-  .entity-job-progress {
-    margin: 3px 0;
-  }
-
-  mat-icon.state-success {
-    color: var(--green);
-  }
-
-  mat-icon.state-failed {
-    color: var(--red);
-  }
-
-  mat-icon.state-running {
-    color: var(--primary);
-  }
-
-  mat-icon.state-waiting {
-    color: var(--accent);
-  }
-
-  mat-icon.state-aborted {
-    color: var(--orange);
-  }
-}
