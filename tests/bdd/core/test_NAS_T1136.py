@@ -274,8 +274,8 @@ def verify_all_files_are_in_the_test_folder(driver):
     driver.find_element_by_xpath('//span[text()="music"]').click()
     assert wait_on_element(driver, 5, '//h2[text()="music"]')
     assert wait_on_element(driver, 5, '//span[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
-    assert wait_on_element(driver, 5, '//span[text()="test"]', 'clickable')
-    driver.find_element_by_xpath('//span[text()="test"]').click()
+    assert wait_on_element(driver, 5, '//a[text()="test"]', 'clickable')
+    driver.find_element_by_xpath('//a[text()="test"]').click()
 
 
 @then('remove all files from the dataset')
@@ -331,8 +331,8 @@ def verify_all_files_are_moved_from_the_dropbox_test_folder_to_the_dataset(drive
     driver.find_element_by_xpath('//span[text()="music"]').click()
     assert wait_on_element(driver, 5, '//h2[text()="music"]')
     assert not is_element_present(driver, '//span[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]')
-    assert wait_on_element(driver, 5, '//span[text()="test"]', 'clickable')
-    driver.find_element_by_xpath('//span[text()="test"]').click()
+    assert wait_on_element(driver, 5, '//a[text()="test"]', 'clickable')
+    driver.find_element_by_xpath('//a[text()="test"]').click()
     cmd = 'test -f /mnt/system/dropbox_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True, results['output']
@@ -378,8 +378,8 @@ def verify_all_files_are_moved_from_the_dataset_to_the_dropbox_test_folder(drive
     driver.find_element_by_xpath('//span[text()="music"]').click()
     assert wait_on_element(driver, 5, '//h2[text()="music"]')
     assert wait_on_element(driver, 5, '//span[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
-    assert wait_on_element(driver, 5, '//span[text()="test"]', 'clickable')
-    driver.find_element_by_xpath('//span[text()="test"]').click()
+    assert wait_on_element(driver, 5, '//a[text()="test"]', 'clickable')
+    driver.find_element_by_xpath('//a[text()="test"]').click()
     cmd = 'test -f /mnt/system/dropbox_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is False, results['output']
@@ -537,8 +537,8 @@ def verify_all_files_are_sync_to_the_Dropbox_test_folder_tab(driver):
     driver.find_element_by_xpath('//span[text()="music"]').click()
     assert wait_on_element(driver, 5, '//h2[text()="music"]')
     assert wait_on_element(driver, 5, '//span[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
-    assert wait_on_element(driver, 5, '//span[text()="test"]', 'clickable')
-    driver.find_element_by_xpath('//span[text()="test"]').click()
+    assert wait_on_element(driver, 5, '//a[text()="test"]', 'clickable')
+    driver.find_element_by_xpath('//a[text()="test"]').click()
 
 
 @then('on the dataset folder, delete a file')
