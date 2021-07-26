@@ -649,7 +649,7 @@ export class ReplicationFormComponent implements FormConfiguration {
         {
           type: 'radio',
           name: 'schema_or_regex',
-          placeholder: helptext.name_schema_or_regex_placeholder_pull,
+          placeholder: helptext.name_schema_or_regex_placeholder_push,
           options: [
             { label: helptext.naming_schema_placeholder, value: SnapshotNamingOption.NamingSchema },
             { label: helptext.name_regex_placeholder, value: SnapshotNamingOption.NameRegex },
@@ -1207,11 +1207,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       } else {
         this.form_message.content = '';
       }
-      if (res === Direction.Push) {
-        this.fieldSets.config('schema_or_regex').label = helptext.name_schema_or_regex_placeholder_push;
-      } else {
-        this.fieldSets.config('schema_or_regex').label = helptext.name_schema_or_regex_placeholder_pull;
-      }
+      this.fieldSets.config('schema_or_regex').placeholder = helptext[(res === Direction.Push ? 'name_schema_or_regex_placeholder_push' : 'name_schema_or_regex_placeholder_pull')];
       this.toggleNamingSchemaOrRegex();
     });
 
