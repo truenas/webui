@@ -299,7 +299,7 @@ export class LdapComponent implements FormConfiguration {
     const enabled = entityEdit.formGroup.controls['enable'].value;
     this.entityForm.setDisabled('hostname', !enabled, !enabled);
     this.entityForm.setDisabled('hostname_noreq', enabled, enabled);
-    entityEdit.formGroup.controls['enable'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityEdit.formGroup.controls['enable'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       this.entityForm.setDisabled('hostname', !res, !res);
       this.entityForm.setDisabled('hostname_noreq', res, res);
       if (!res) {

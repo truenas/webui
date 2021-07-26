@@ -33,7 +33,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   @Input() data: Subject<CoreEvent>;
   @Input() cpuModel: string;
   chart: any;// Chart.js instance with per core data
-  ctx: any; // canvas context for chart.js
+  ctx: CanvasRenderingContext2D; // canvas context for chart.js
   private _cpuData: any;
   get cpuData(): any { return this._cpuData; }
   set cpuData(value) {
@@ -74,7 +74,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     router: Router,
     public translate: TranslateService,
     public mediaObserver: MediaObserver,
-    private el: ElementRef,
+    private el: ElementRef<HTMLElement>,
   ) {
     super(translate);
 
@@ -238,7 +238,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   // chart.js renderer
   renderChart(): void {
     if (!this.ctx) {
-      const el = this.el.nativeElement.querySelector('#cpu-cores-chart canvas');
+      const el = this.el.nativeElement.querySelector('#cpu-cores-chart canvas') as HTMLCanvasElement;
       if (!el) { return; }
 
       const ds = this.makeDatasets(this.cpuData.data);

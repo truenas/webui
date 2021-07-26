@@ -41,6 +41,7 @@ export class GeneralSettingsComponent implements OnInit {
   localeData: DataCard;
   configData: any;
   displayedColumns: any;
+  subs: any;
   dataSource: NtpServer[];
   formEvent$: Subject<CoreEvent>;
 

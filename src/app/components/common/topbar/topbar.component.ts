@@ -345,12 +345,11 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   onReboot(): void {
-    this.dialogService.confirm(
-      this.translate.instant('Restart'),
-      this.translate.instant('Restart the system?'),
-      false,
-      this.translate.instant('Restart'),
-    ).pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.dialogService.confirm({
+      title: this.translate.instant('Restart'),
+      message: this.translate.instant('Restart the system?'),
+      buttonMsg: this.translate.instant('Restart'),
+    }).pipe(untilDestroyed(this)).subscribe((res) => {
       if (!res) {
         return;
       }
