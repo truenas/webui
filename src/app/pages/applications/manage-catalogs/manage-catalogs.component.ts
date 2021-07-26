@@ -61,7 +61,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   };
 
   filterString = '';
-  catalogSyncJobs: Record<number, JobState> = {};
+  catalogSyncJobIds: number[] = [];
 
   private dialogRef: MatDialogRef<EntityJobComponent>;
   protected entityList: EntityTableComponent;
@@ -85,12 +85,14 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
 
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       if (event.fields.method == 'catalog.sync') {
-        const oldState = this.catalogSyncJobs[event.fields.id];
-        this.catalogSyncJobs[event.fields.id] = event.fields.state;
-
-        if (oldState !== JobState.Running) {
+        const jobId = event.fields.id;
+        if (!this.catalogSyncJobIds.includes(jobId) && event.fields.state === JobState.Running) {
           this.refresh();
-          delete this.catalogSyncJobs[event.fields.id];
+          this.catalogSyncJobIds.push(jobId);
+        }
+
+        if (event.fields.state == JobState.Success || event.fields.state == JobState.Failed) {
+          this.catalogSyncJobIds.splice(this.catalogSyncJobIds.indexOf(jobId));
         }
       }
     });
