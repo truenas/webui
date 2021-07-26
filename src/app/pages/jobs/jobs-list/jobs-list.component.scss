@@ -38,3 +38,19 @@ mat-table.jobs-table {
   }
 }
 
+.jobs-container {
+  display: flex;
+
+  .jobs-table {
+    flex-grow: 1;
+    overflow-x: hidden;
+  }
+
+  .job-logs-sidebar {
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    width: 320px;
+  }
+}
+

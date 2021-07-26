@@ -30,6 +30,7 @@ export class JobsListComponent implements OnInit {
   dataSource: MatTableDataSource<Job>;
   displayedColumns = ['name', 'state', 'id', 'date_started', 'date_finished', 'logs_excerpt'];
   expandedElement: any | null;
+  viewingLogsForJob: Job;
   readonly JobState = JobState;
 
   constructor(
@@ -72,7 +73,7 @@ export class JobsListComponent implements OnInit {
       .subscribe(
         (jobs) => {
           for (let i = 0; i < jobs.length; i++) {
-            this.dataSource.data.unshift(this.transformJob(jobs[i]));
+            this.dataSource.data.push(this.transformJob(jobs[i]));
           }
 
           this.dataSource.sort = this.sort;
@@ -109,7 +110,10 @@ export class JobsListComponent implements OnInit {
   }
 
   viewLogs(job: JobRow): void {
-    // TODO: Implement slide-out sidebar with details
-    console.info('show logs', job);
+    this.viewingLogsForJob = job;
+  }
+
+  onLogsSidebarClosed(): void {
+    this.viewingLogsForJob = null;
   }
 }
