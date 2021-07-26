@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -60,6 +61,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   };
 
   filterString = '';
+  catalogSyncJobs: Record<number, JobState> = {};
 
   private dialogRef: MatDialogRef<EntityJobComponent>;
   protected entityList: EntityTableComponent;
@@ -79,6 +81,18 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
 
     this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshUserForm();
+    });
+
+    this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
+      if (event.fields.method == 'catalog.sync') {
+        const oldState = this.catalogSyncJobs[event.fields.id];
+        this.catalogSyncJobs[event.fields.id] = event.fields.state;
+
+        if (oldState !== JobState.Running) {
+          this.refresh();
+          delete this.catalogSyncJobs[event.fields.id];
+        }
+      }
     });
   }
 
