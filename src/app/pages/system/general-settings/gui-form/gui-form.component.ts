@@ -183,7 +183,6 @@ export class GuiFormComponent implements FormConfiguration {
     this.https_port = this.configData.ui_httpsport;
     this.redirect = this.configData.ui_httpsredirect;
     if (this.configData.ui_certificate && this.configData.ui_certificate.id) {
-      (this.configData['ui_certificate'] as any) = this.configData.ui_certificate.id.toString();
       this.guicertificate = this.configData.ui_certificate.id.toString();
     }
     this.addresses = this.configData['ui_address'];
@@ -216,7 +215,7 @@ export class GuiFormComponent implements FormConfiguration {
         for (const id in res) {
           this.ui_certificate.options.push({ label: res[id], value: id });
         }
-        entityEdit.formGroup.controls['ui_certificate'].setValue(this.configData.ui_certificate);
+        entityEdit.formGroup.controls['ui_certificate'].setValue(this.configData.ui_certificate.id.toString());
       });
 
     const httpsprotocolsField = this.fieldSets

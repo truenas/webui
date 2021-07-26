@@ -7,6 +7,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/services/components/service-nfs';
 import { FormConfiguration, FormCustomAction } from 'app/interfaces/entity-form.interface';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -313,7 +314,7 @@ export class ServiceNFSComponent implements FormConfiguration {
                     self.dialogRef.close(true);
                     that.dialog.Info(helptext.addSPN.success, helptext.addSPN.success_msg, '500px', 'info');
                   },
-                  (err: any) => {
+                  (err: WebsocketError) => {
                     self.loader.close();
                     self.dialogRef.close(true);
                     that.dialog.errorReport(helptext.add_principal_form.error_title,

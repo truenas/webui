@@ -91,7 +91,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   screenSize = 'waiting';
   numberOfRunningJobs$: Observable<number> = this.jobsManagerStore.numberOfRunningJobs$;
 
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
   protected tcConnected = false;
   protected tc_queryCall: 'truecommand.config' = 'truecommand.config';
   protected tc_updateCall: 'truecommand.update' = 'truecommand.update';
@@ -458,7 +458,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   showResilveringDetails(): void {
-    this.dialogRef = this.dialog.open(ResilverProgressDialogComponent);
+    this.dialog.open(ResilverProgressDialogComponent);
   }
 
   onGoToLegacy(): void {

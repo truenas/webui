@@ -11,6 +11,7 @@ import global_helptext from 'app/helptext/global-helptext';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -116,7 +117,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
                   that.dialogservice.Info(helptext.ad_leave_domain_dialog.success,
                     helptext.ad_leave_domain_dialog.success_msg, '400px', 'info', true);
                 },
-                (err: any) => {
+                (err: WebsocketError) => {
                   self.loader.close();
                   new EntityUtils().handleWSError(helptext.ad_leave_domain_dialog.error, err, that.dialogservice);
                 });

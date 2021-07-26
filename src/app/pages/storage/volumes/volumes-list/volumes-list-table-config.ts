@@ -21,6 +21,7 @@ import helptext from 'app/helptext/storage/volumes/volume-list';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -506,7 +507,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     self.parentVolumesListComponent.repaintMe();
                   }
                 });
-                dialogRef.componentInstance.failure.pipe(untilDestroyed(self, 'destroy')).subscribe((err: any) => {
+                dialogRef.componentInstance.failure.pipe(untilDestroyed(self, 'destroy')).subscribe((err) => {
                   if (err) {
                     dialogRef.close();
                     new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
@@ -849,7 +850,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       );
                     }
                   });
-                  this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((err: any) => {
+                  this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((err) => {
                     this.dialogRef.componentInstance.setDescription(err.error);
                   });
                 });
@@ -1464,7 +1465,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       );
                       entityDialog.dialogRef.close();
                       self.parentVolumesListComponent.repaintMe();
-                    }, (err: any) => {
+                    }, (err: WebsocketError) => {
                       entityDialog.loader.close();
                       new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
                     });
@@ -1504,7 +1505,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       self.parentVolumesListComponent.repaintMe();
                     }
                   });
-                  dialogRef.componentInstance.failure.pipe(untilDestroyed(self, 'destroy')).subscribe((err: any) => {
+                  dialogRef.componentInstance.failure.pipe(untilDestroyed(self, 'destroy')).subscribe((err) => {
                     if (err) {
                       dialogRef.close();
                       new EntityUtils().handleWSError(entityDialog, err, self.dialogService);

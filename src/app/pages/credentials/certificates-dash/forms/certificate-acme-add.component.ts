@@ -220,7 +220,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       this.dialog.closeAll();
       // Dialog needed b/c handleWSError doesn't open a dialog when rejection comes back from provider
       if (err.error.includes('[EFAULT')) {

@@ -9,7 +9,7 @@ import { FieldConfig } from '../models/field-config.interface';
 import { FieldRelation, RelationGroup } from '../models/field-relation.interface';
 
 @UntilDestroy()
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class FieldRelationService {
   findActivationRelation(relGroups: RelationGroup[]): RelationGroup {
     return relGroups.find((rel) => {
@@ -200,7 +200,50 @@ export class FieldRelationService {
     }
   }
 
-  setDisabled(fieldConfig: FieldConfig, formGroup: FormGroup, disable: boolean, hide?: boolean): void {
+  /**
+   * Manually executes a relationship check and hides/shows controls.
+   * @param options
+   * * `emitEvent`: Similarly to emitEvent in angular form controls.
+   * When true (default) will trigger valueChanges and statusChanges.
+   */
+  refreshRelations(
+    config: FieldConfig,
+    formGroup: FormGroup,
+    options: { emitEvent: boolean } = { emitEvent: true },
+  ): void {
+    if (config.relation && config.relation.length > 0) {
+      const activations = this.findActivationRelation(config.relation);
+      if (activations) {
+        const tobeDisabled = this.isFormControlToBeDisabled(activations, formGroup);
+        const tobeHide = this.isFormControlToBeHide(activations, formGroup);
+        this.setDisabled(config, formGroup, tobeDisabled, tobeHide, options);
+      }
+    }
+
+    if (config.listFields) {
+      const formArray = formGroup.get(config.name) as FormArray;
+      for (let i = 0; i < config.listFields.length; i++) {
+        config.listFields[i].forEach((subFieldConfig) => {
+          this.refreshRelations(subFieldConfig, formArray.at(i) as FormGroup);
+        });
+      }
+    }
+
+    if (config.subFields) {
+      const dictFormGroup = formGroup.get(config.name) as FormGroup;
+      config.subFields.forEach((subFieldConfig) => {
+        this.refreshRelations(subFieldConfig, dictFormGroup);
+      });
+    }
+  }
+
+  setDisabled(
+    fieldConfig: FieldConfig,
+    formGroup: FormGroup,
+    disable: boolean,
+    hide?: boolean,
+    options: { emitEvent: boolean } = { emitEvent: true },
+  ): void {
     // if field is hidden, disable it too
     if (hide) {
       disable = hide;
@@ -212,8 +255,9 @@ export class FieldRelationService {
     fieldConfig.isHidden = hide;
 
     if (formGroup.controls[fieldConfig.name]) {
-      const method = disable ? 'disable' : 'enable';
-      formGroup.controls[fieldConfig.name][method]();
+      disable
+        ? formGroup.controls[fieldConfig.name].disable(options)
+        : formGroup.controls[fieldConfig.name].enable(options);
     }
   }
 

@@ -11,14 +11,19 @@ import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
-import { DatasetNfsAclComponent } from 'app/pages/storage/volumes/datasets/dataset-nfs-acl/dataset-nfs-acl.component';
-import { DatasetTrivialPermissionsComponent } from 'app/pages/storage/volumes/datasets/dataset-trivial-permissions/dataset-trivial-permissions.component';
-import { NfsPermissionsComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/nfs-permissions/nfs-permissions.component';
-import { PermissionsItemComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/permissions-item/permissions-item.component';
-import { PosixPermissionsComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/posix-permissions/posix-permissions.component';
-import { TrivialPermissionsComponent } from 'app/pages/storage/volumes/permissions-sidebar/components/trivial-permissions/trivial-permissions.component';
-import { PermissionsSidebarComponent } from 'app/pages/storage/volumes/permissions-sidebar/permissions-sidebar.component';
-import { PermissionsSidebarStore } from 'app/pages/storage/volumes/permissions-sidebar/permissions-sidebar.store';
+import { AclEditorListComponent } from 'app/pages/storage/volumes/permissions/components/acl-editor-list/acl-editor-list.component';
+import { EditNfsAceComponent } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace.component';
+import { EditPosixAceComponent } from 'app/pages/storage/volumes/permissions/components/edit-posix-ace/edit-posix-ace.component';
+import { PermissionsItemComponent } from 'app/pages/storage/volumes/permissions/components/permissions-item/permissions-item.component';
+import { SelectPresetModalComponent } from 'app/pages/storage/volumes/permissions/components/select-preset-modal/select-preset-modal.component';
+import { NfsPermissionsComponent } from 'app/pages/storage/volumes/permissions/components/view-nfs-permissions/nfs-permissions.component';
+import { PosixPermissionsComponent } from 'app/pages/storage/volumes/permissions/components/view-posix-permissions/posix-permissions.component';
+import { TrivialPermissionsComponent } from 'app/pages/storage/volumes/permissions/components/view-trivial-permissions/trivial-permissions.component';
+import { DatasetAclEditorComponent } from 'app/pages/storage/volumes/permissions/containers/dataset-acl-editor/dataset-acl-editor.component';
+import { DatasetTrivialPermissionsComponent } from 'app/pages/storage/volumes/permissions/containers/dataset-trivial-permissions/dataset-trivial-permissions.component';
+import { PermissionsSidebarComponent } from 'app/pages/storage/volumes/permissions/containers/permissions-sidebar/permissions-sidebar.component';
+import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/stores/dataset-acl-editor.store';
+import { PermissionsSidebarStore } from 'app/pages/storage/volumes/permissions/stores/permissions-sidebar.store';
 import { VolumeAddkeyFormComponent } from 'app/pages/storage/volumes/volume-addkey-form/volume-addkey-form.component';
 import { VolumeChangekeyFormComponent } from 'app/pages/storage/volumes/volume-changekey-form/volume-changekey-form.component';
 import { VolumeCreatekeyFormComponent } from 'app/pages/storage/volumes/volume-createkey-form/volume-createkey-form.component';
@@ -42,7 +47,6 @@ import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.c
 import { routing } from './storage.routing';
 import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot';
 import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list';
-import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl/dataset-posix-acl.component';
 import { DatasetQuotasGrouplistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { DatasetQuotasUserlistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
@@ -85,7 +89,6 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     SnapshotAddComponent,
     ImportDiskComponent,
     DatasetTrivialPermissionsComponent,
-    DatasetNfsAclComponent,
     DatasetUnlockComponent,
     UnlockDialogComponent,
     VmwareSnapshotFormComponent,
@@ -100,12 +103,16 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     DatasetQuotasGrouplistComponent,
     UserQuotaFormComponent,
     GroupQuotaFormComponent,
-    DatasetPosixAclComponent,
     PermissionsSidebarComponent,
     PermissionsItemComponent,
     TrivialPermissionsComponent,
     PosixPermissionsComponent,
     NfsPermissionsComponent,
+    DatasetAclEditorComponent,
+    AclEditorListComponent,
+    EditNfsAceComponent,
+    EditPosixAceComponent,
+    SelectPresetModalComponent,
   ],
   exports: [VolumesListControlsComponent],
   entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],
@@ -116,6 +123,7 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     JobService,
     TranslateService,
     PermissionsSidebarStore,
+    DatasetAclEditorStore,
   ],
 })
 export class StorageModule {
