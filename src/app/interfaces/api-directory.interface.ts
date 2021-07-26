@@ -4,7 +4,7 @@ import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum'
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import {
-  Acl, AclQueryParams, NfsAclItem, SetAcl,
+  Acl, AclQueryParams, NfsAclItem, PosixAclItem, SetAcl,
 } from 'app/interfaces/acl.interface';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
@@ -323,8 +323,8 @@ export type ApiDirectory = {
   };
   'filesystem.listdir': { params: any; response: any };
   'filesystem.stat': { params: [/* path */ string]; response: FileSystemStat };
-  'filesystem.default_acl_choices': { params: void; response: string[] };
-  'filesystem.get_default_acl': { params: [DefaultAclType]; response: NfsAclItem[] };
+  'filesystem.default_acl_choices': { params: void; response: DefaultAclType[] };
+  'filesystem.get_default_acl': { params: [DefaultAclType]; response: NfsAclItem[] | PosixAclItem[] };
   'filesystem.statfs': { params: any; response: any };
   'filesystem.getacl': { params: AclQueryParams; response: Acl };
   'filesystem.setacl': { params: [SetAcl]; response: any };

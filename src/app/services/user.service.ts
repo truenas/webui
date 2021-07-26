@@ -8,7 +8,7 @@ import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebSocketService } from './ws.service';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class UserService {
   static VALIDATOR_NAME = /^[a-zA-Z0-9_][a-zA-Z0-9_\.-]*[$]?$/;
   protected uncachedUserQuery: 'dscache.get_uncached_user' = 'dscache.get_uncached_user';

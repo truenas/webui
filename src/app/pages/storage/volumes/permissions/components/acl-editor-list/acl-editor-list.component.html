@@ -1,0 +1,41 @@
+<div class="acl-label">
+  {{ 'Access Control List' | translate }}
+</div>
+<div class="acl-list">
+  <div *ngIf="!acl.acl.length; else aclList" class="empty-message">
+    {{ 'The list is empty.' | translate }}
+  </div>
+  <ng-template #aclList>
+    <div
+      *ngFor="let ace of acl.acl; let i = index"
+      class="ace"
+      [class.ace-selected]="i === selectedAceIndex"
+      [class.fn-theme-red]="acesWithError.includes(i)"
+      (click)="onAceSelected(i)"
+    >
+      <app-permissions-item
+        class="permission-item"
+        *ngIf="permissionItems[i]"
+        [item]="permissionItems[i]"
+      ></app-permissions-item>
+
+      <span
+        *ngIf="acesWithError.includes(i)"
+        class="warning"
+        [matTooltip]="'Ace has errors.' | translate"
+        (click)="onRemoveAcePressed(i)"
+      >
+        <mat-icon>warning</mat-icon>
+      </span>
+
+      <span
+        *ngIf="canBeRemoved(ace)"
+        class="remove"
+        [attr.title]="'Close' | translate"
+        (click)="onRemoveAcePressed(i)"
+      >
+        <mat-icon>cancel</mat-icon>
+      </span>
+    </div>
+  </ng-template>
+</div>

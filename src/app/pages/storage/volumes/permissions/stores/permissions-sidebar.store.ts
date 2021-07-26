@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { EMPTY, forkJoin, Observable } from 'rxjs';
 import {
-  catchError, switchMap, takeUntil, tap,
+  catchError, switchMap, tap,
 } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { PermissionsSidebarState } from 'app/pages/storage/volumes/permissions-sidebar/interfaces/permissions-sidebar-state.interface';
+import { PermissionsSidebarState } from 'app/pages/storage/volumes/permissions/interfaces/permissions-sidebar-state.interface';
 import { DialogService, WebSocketService } from 'app/services';
 
 const initialState: PermissionsSidebarState = {
@@ -52,7 +52,6 @@ export class PermissionsSidebarStore extends ComponentStore<PermissionsSidebarSt
 
             return EMPTY;
           }),
-          takeUntil(this.destroy$),
         );
       }),
     );
