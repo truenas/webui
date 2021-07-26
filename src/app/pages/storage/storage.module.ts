@@ -47,7 +47,6 @@ import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.c
 import { routing } from './storage.routing';
 import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot';
 import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list';
-import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl/dataset-posix-acl.component';
 import { DatasetQuotasGrouplistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { DatasetQuotasUserlistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
@@ -104,7 +103,6 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     DatasetQuotasGrouplistComponent,
     UserQuotaFormComponent,
     GroupQuotaFormComponent,
-    DatasetPosixAclComponent,
     PermissionsSidebarComponent,
     PermissionsItemComponent,
     TrivialPermissionsComponent,
