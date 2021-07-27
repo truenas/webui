@@ -26,7 +26,7 @@ interface FilterValue {
   providers: [EntityTreeTableService],
 })
 export class EntityTreeTableComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatTable, { static: false }) table: any;
+  @ViewChild(MatTable, { static: false }) table: MatTable<any>;
   _conf: EntityTreeTable;
   @Input()
   set conf(conf: EntityTreeTable) {
@@ -143,7 +143,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     );
   }
 
-  clickAction(): any {
+  clickAction(): null {
     return null;
   }
 
@@ -201,7 +201,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   isTableOverflow(): boolean {
     let hasHorizontalScrollbar = false;
     if (this.table) {
-      const parentNode = this.table._elementRef.nativeElement.parentNode;
+      const parentNode = (this.table as any)._elementRef.nativeElement.parentNode;
       hasHorizontalScrollbar = parentNode.parentNode.scrollWidth > parentNode.parentNode.clientWidth;
     }
     return hasHorizontalScrollbar;

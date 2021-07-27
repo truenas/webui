@@ -15,14 +15,14 @@ export interface InputUnitConfig {
   allowUnits?: string[];
 }
 
-export interface FieldConfig {
+export interface FieldConfig<P = any> {
   acceptedFiles?: string;
   addBtnMessage?: string;
   addInitialList?: boolean;
   alert?: { message: string; forValues: any[] };
   asyncValidation?: AsyncValidatorFn | AsyncValidatorFn[];
   autocomplete?: boolean;
-  blurEvent?: (parent: any) => void;
+  blurEvent?: (parent: P) => void;
   blurStatus?: boolean;
   box?: boolean;
   buttonClass?: string;
@@ -72,7 +72,7 @@ export interface FieldConfig {
   paraText?: any;
   paragraphIcon?: string;
   paragraphIconSize?: string;
-  parent?: any;
+  parent?: P;
   placeholder?: string;
   readonly?: boolean;
   relation?: RelationGroup[];

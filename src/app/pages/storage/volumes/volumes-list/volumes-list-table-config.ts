@@ -15,6 +15,7 @@ import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
+import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import helptext from 'app/helptext/storage/volumes/volume-list';
@@ -432,7 +433,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
               done = true;
             }
           });
-          dialogRef.componentInstance.failure.pipe(untilDestroyed(self, 'destroy')).subscribe((res: any) => {
+          dialogRef.componentInstance.failure.pipe(untilDestroyed(self, 'destroy')).subscribe((res) => {
             dialogRef.close(false);
             new EntityUtils().handleWSError(self, res, self.dialogService);
           });
@@ -802,7 +803,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   untilDestroyed(this, 'destroy'),
                 ).subscribe(() => {
                   this.loader.open();
-                  this.ws.call('pool.scrub', [row1.id, 'STOP']).pipe(untilDestroyed(this, 'destroy')).subscribe(
+                  this.ws.call('pool.scrub', [row1.id, PoolScrubAction.Stop]).pipe(untilDestroyed(this, 'destroy')).subscribe(
                     () => {
                       this.loader.close();
                       const msg = self.translate.instant('Stopping scrub on pool');
@@ -1562,7 +1563,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   }
                 });
 
-                dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((res: any) => {
+                dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
                   dialogRef.close(false);
                   new EntityUtils().handleWSError(this, res, this.dialogService);
                 });

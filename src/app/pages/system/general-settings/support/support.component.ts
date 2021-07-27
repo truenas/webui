@@ -23,7 +23,6 @@ import { SupportFormUnlicensedComponent } from './support-unlicensed/support-for
   providers: [],
 })
 export class SupportComponent implements OnInit {
-  scrshot: any;
   subs: any;
   isProduction: boolean;
   product_image = '';
