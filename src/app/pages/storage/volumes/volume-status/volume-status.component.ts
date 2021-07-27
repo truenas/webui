@@ -8,10 +8,12 @@ import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
 import { Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { CoreEvent } from 'app/interfaces/events';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
@@ -293,26 +295,26 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           const pIndex = name.lastIndexOf('p');
           name = pIndex > -1 ? name.substring(0, pIndex) : name;
         }
-        this.dialogService.confirm(
-          helptext.offline_disk.title,
-          helptext.offline_disk.message + name + '?' + (this.pool.encrypt == 0 ? '' : helptext.offline_disk.encryptPoolWarning),
-          false,
-          helptext.offline_disk.buttonMsg,
-        ).pipe(untilDestroyed(this)).subscribe((res: any) => {
-          if (res) {
-            this.loader.open();
-            const value = { label: row.guid };
-            this.ws.call('pool.offline', [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
-              () => {
-                this.getData();
-                this.loader.close();
-              },
-              (err) => {
-                this.loader.close();
-                new EntityUtils().handleWSError(this, err, this.dialogService);
-              },
-            );
-          }
+        this.dialogService.confirm({
+          title: helptext.offline_disk.title,
+          message: helptext.offline_disk.message + name + '?' + (this.pool.encrypt == 0 ? '' : helptext.offline_disk.encryptPoolWarning),
+          buttonMsg: helptext.offline_disk.buttonMsg,
+        }).pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe(() => {
+          this.loader.open();
+          const value = { label: row.guid };
+          this.ws.call('pool.offline', [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
+            () => {
+              this.getData();
+              this.loader.close();
+            },
+            (err) => {
+              this.loader.close();
+              new EntityUtils().handleWSError(this, err, this.dialogService);
+            },
+          );
         });
       },
       isHidden: data.status == 'OFFLINE',
@@ -323,26 +325,26 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
 
-        this.dialogService.confirm(
-          helptext.online_disk.title,
-          helptext.online_disk.message + diskName + '?',
-          false,
-          helptext.online_disk.buttonMsg,
-        ).pipe(untilDestroyed(this)).subscribe((res: any) => {
-          if (res) {
-            this.loader.open();
-            const value = { label: row.guid };
-            this.ws.call('pool.online', [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
-              () => {
-                this.getData();
-                this.loader.close();
-              },
-              (err) => {
-                this.loader.close();
-                new EntityUtils().handleWSError(this, err, this.dialogService);
-              },
-            );
-          }
+        this.dialogService.confirm({
+          title: helptext.online_disk.title,
+          message: helptext.online_disk.message + diskName + '?',
+          buttonMsg: helptext.online_disk.buttonMsg,
+        }).pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe(() => {
+          this.loader.open();
+          const value = { label: row.guid };
+          this.ws.call('pool.online', [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
+            () => {
+              this.getData();
+              this.loader.close();
+            },
+            (err) => {
+              this.loader.close();
+              new EntityUtils().handleWSError(this, err, this.dialogService);
+            },
+          );
         });
       },
       isHidden: !!(data.status == 'ONLINE' || this.pool.encrypt !== 0),
@@ -380,7 +382,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
               entityDialog.parent.getUnusedDisk();
               entityDialog.parent.dialogService.Info(helptext.replace_disk.title, helptext.replace_disk.info_dialog_content + name + '.', '', 'info', true);
             });
-            dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+            dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
               dialogRef.close();
               entityDialog.dialogRef.close();
               let err = helptext.replace_disk.err_msg;
@@ -404,25 +406,25 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
         }
 
-        this.dialogService.confirm(
-          helptext.remove_disk.title,
-          helptext.remove_disk.message + diskName + '?',
-          false,
-          helptext.remove_disk.buttonMsg,
-        ).pipe(untilDestroyed(this)).subscribe((res: any) => {
-          if (res) {
-            this.loader.open();
-            this.ws.call('pool.remove', [this.pk, { label: row.guid }]).pipe(untilDestroyed(this)).subscribe(
-              () => {
-                this.getData();
-                this.loader.close();
-              },
-              (err) => {
-                this.loader.close();
-                new EntityUtils().handleWSError(this, err, this.dialogService);
-              },
-            );
-          }
+        this.dialogService.confirm({
+          title: helptext.remove_disk.title,
+          message: helptext.remove_disk.message + diskName + '?',
+          buttonMsg: helptext.remove_disk.buttonMsg,
+        }).pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe(() => {
+          this.loader.open();
+          this.ws.call('pool.remove', [this.pk, { label: row.guid }]).pipe(untilDestroyed(this)).subscribe(
+            () => {
+              this.getData();
+              this.loader.close();
+            },
+            (err) => {
+              this.loader.close();
+              new EntityUtils().handleWSError(this, err, this.dialogService);
+            },
+          );
         });
       },
       isHidden: false,
@@ -433,26 +435,26 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
 
-        this.dialogService.confirm(
-          helptext.detach_disk.title,
-          helptext.detach_disk.message + diskName + '?',
-          false,
-          helptext.detach_disk.buttonMsg,
-        ).pipe(untilDestroyed(this)).subscribe((res: any) => {
-          if (res) {
-            this.loader.open();
-            this.ws.call('pool.detach', [this.pk, { label: row.guid }]).pipe(untilDestroyed(this)).subscribe(
-              () => {
-                this.getData();
-                this.getUnusedDisk();
-                this.loader.close();
-              },
-              (err) => {
-                this.loader.close();
-                new EntityUtils().handleWSError(this, err, this.dialogService);
-              },
-            );
-          }
+        this.dialogService.confirm({
+          title: helptext.detach_disk.title,
+          message: helptext.detach_disk.message + diskName + '?',
+          buttonMsg: helptext.detach_disk.buttonMsg,
+        }).pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe(() => {
+          this.loader.open();
+          this.ws.call('pool.detach', [this.pk, { label: row.guid }]).pipe(untilDestroyed(this)).subscribe(
+            () => {
+              this.getData();
+              this.getUnusedDisk();
+              this.loader.close();
+            },
+            (err) => {
+              this.loader.close();
+              new EntityUtils().handleWSError(this, err, this.dialogService);
+            },
+          );
         });
       },
       isHidden: true,
@@ -509,7 +511,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
               entityDialog.parent.getUnusedDisk();
               entityDialog.parent.dialogService.Info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + name + '.', '', 'info', true);
             });
-            dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+            dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
               dialogRef.close();
               entityDialog.dialogRef.close();
               let err = helptext.extend_disk.err_msg;
@@ -532,25 +534,25 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
         }
 
-        this.dialogService.confirm(
-          helptext.remove_disk.title,
-          helptext.remove_disk.message + diskName + '?',
-          false,
-          helptext.remove_disk.buttonMsg,
-        ).pipe(untilDestroyed(this)).subscribe((res: any) => {
-          if (res) {
-            this.loader.open();
-            this.ws.call('pool.remove', [this.pk, { label: row.guid }]).pipe(untilDestroyed(this)).subscribe(
-              () => {
-                this.getData();
-                this.loader.close();
-              },
-              (err) => {
-                this.loader.close();
-                new EntityUtils().handleWSError(this, err, this.dialogService);
-              },
-            );
-          }
+        this.dialogService.confirm({
+          title: helptext.remove_disk.title,
+          message: helptext.remove_disk.message + diskName + '?',
+          buttonMsg: helptext.remove_disk.buttonMsg,
+        }).pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe(() => {
+          this.loader.open();
+          this.ws.call('pool.remove', [this.pk, { label: row.guid }]).pipe(untilDestroyed(this)).subscribe(
+            () => {
+              this.getData();
+              this.loader.close();
+            },
+            (err) => {
+              this.loader.close();
+              new EntityUtils().handleWSError(this, err, this.dialogService);
+            },
+          );
         });
       },
     }];

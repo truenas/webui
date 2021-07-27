@@ -206,7 +206,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
               dialogRef.close();
               this.router.navigate(['/storage']);
             });
-            dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe((err: any) => {
+            dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe((err) => {
               dialogRef.close();
               new EntityUtils().errorReport(err, this.dialog);
             });
@@ -345,7 +345,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
 
       return of({
         ...aceAttributes,
-        id: -1,
+        id: -1, // -1 is effectively null for middleware
       });
     });
 
