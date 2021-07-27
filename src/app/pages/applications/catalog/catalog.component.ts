@@ -25,7 +25,6 @@ import { DialogService, WebSocketService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
 import { ApplicationsService } from '../applications.service';
 import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
-import { ChartReleaseAddComponent } from '../forms/chart-release-add.component';
 import { ChartWizardComponent } from '../forms/chart-wizard.component';
 import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
 
@@ -53,7 +52,6 @@ export class CatalogComponent implements OnInit {
   private poolList: Option[] = [];
   private selectedPool = '';
   private kubernetesForm: KubernetesSettingsComponent;
-  private chartReleaseForm: ChartReleaseAddComponent;
   private chartWizardComponent: ChartWizardComponent;
 
   protected utils: CommonUtils;
@@ -243,12 +241,6 @@ export class CatalogComponent implements OnInit {
       this.modalService,
       this.appService,
     );
-    this.chartReleaseForm = new ChartReleaseAddComponent(
-      this.mdDialog,
-      this.dialogService,
-      this.modalService,
-      this.appService,
-    );
     this.chartWizardComponent = new ChartWizardComponent(
       this.mdDialog,
       this.dialogService,
@@ -371,13 +363,8 @@ export class CatalogComponent implements OnInit {
         };
         catalogAppInfo.schema = catalogApp.versions[catalogApp.latest_version].schema;
 
-        if (catalogApp.name != ixChartApp) {
-          this.chartWizardComponent.setCatalogApp(catalogAppInfo);
-          this.modalService.open('slide-in-form', this.chartWizardComponent);
-        } else {
-          this.chartReleaseForm.setGpuConfiguration(catalogAppInfo);
-          this.modalService.open('slide-in-form', this.chartReleaseForm);
-        }
+        this.chartWizardComponent.setCatalogApp(catalogAppInfo);
+        this.modalService.open('slide-in-form', this.chartWizardComponent);
       }
     });
   }
