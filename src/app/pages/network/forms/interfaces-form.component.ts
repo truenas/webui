@@ -614,24 +614,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           this.lag_protocol.options.push({ label: res[i], value: res[i] });
         }
       });
-
-      this.ws.call('interface.xmit_hash_policy_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-        const xmitHashPolicyFieldConfig = _.find(this.fieldConfig, { name: 'xmit_hash_policy' });
-        xmitHashPolicyFieldConfig.options = [];
-        for (const key in choices) {
-          xmitHashPolicyFieldConfig.options.push({ label: key, value: key });
-        }
-        this.entityForm.formGroup.get('xmit_hash_policy').setValue('LAYER2+3');
-      });
-
-      this.ws.call('interface.lacpdu_rate_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-        const lacpduRateFieldConfig = _.find(this.fieldConfig, { name: 'lacpdu_rate' });
-        lacpduRateFieldConfig.options = [];
-        for (const key in choices) {
-          lacpduRateFieldConfig.options.push({ label: key, value: key });
-        }
-        this.entityForm.formGroup.get('lacpdu_rate').setValue('SLOW');
-      });
     } else if (type === NetworkInterfaceType.Bridge) {
       this.networkService.getBridgeMembersChoices(id).pipe(untilDestroyed(this)).subscribe((choices) => {
         for (const key in choices) {
