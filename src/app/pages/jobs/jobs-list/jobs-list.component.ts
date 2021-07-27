@@ -16,7 +16,6 @@ import { ApiEvent } from 'app/interfaces/api-event.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { JobRow } from 'app/pages/jobs/jobs-list/job-row.interface';
 import { DialogService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -34,18 +33,17 @@ export enum JobFilterState {
   styleUrls: ['./jobs-list.component.scss'],
 })
 export class JobsListComponent implements OnInit {
-  title = this.translate.instant(T('Job Log'));
   paginationPageIndex = 0;
   paginationPageSize = 10;
   paginationPageSizeOptions: number[] = [10, 50, 100];
   paginationShowFirstLastButtons = true;
   queryCall: 'core.get_jobs' = 'core.get_jobs';
   queryCallOption: QueryParams<Job> = [[], { order_by: ['-id'] }];
-  @ViewChild('taskTable', { static: false }) taskTable: MatTable<JobRow[]>;
+  @ViewChild('taskTable', { static: false }) taskTable: MatTable<Job[]>;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  dataSource: MatTableDataSource<JobRow> = new MatTableDataSource<JobRow>([]);
-  displayedColumns = ['name', 'state', 'id', 'date_started', 'date_finished', 'logs_excerpt'];
+  dataSource: MatTableDataSource<Job> = new MatTableDataSource<Job>([]);
+  displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'logs_excerpt'];
   expandedElement: any | null;
   viewingLogsForJob: Job;
   filterValue = '';
@@ -61,15 +59,7 @@ export class JobsListComponent implements OnInit {
     private dialogService: DialogService,
   ) {}
 
-  transformJob(job: Job): JobRow {
-    return {
-      ...job,
-      date_started: job.time_started ? this.localeService.formatDateTime(new Date(job.time_started.$date)) : '–',
-      date_finished: job.time_finished ? this.localeService.formatDateTime(new Date(job.time_finished.$date)) : '–',
-    };
-  }
-
-  onAborted(job: JobRow): void {
+  onAborted(job: Job): void {
     this.dialogService
       .confirm({
         title: this.translate.instant(T('Abort the task')),
@@ -122,17 +112,15 @@ export class JobsListComponent implements OnInit {
       });
   }
 
-  getData(): Observable<JobRow[]> {
-    return this.ws
-      .call(this.queryCall, this.queryCallOption)
-      .pipe(map((jobs: Job[]) => jobs.map((job) => this.transformJob(job))));
+  getData(): Observable<Job[]> {
+    return this.ws.call(this.queryCall, this.queryCallOption);
   }
 
-  getUpdates(): Observable<JobRow> {
-    return this.ws.subscribe(this.queryCall).pipe(map((event: ApiEvent<Job>) => this.transformJob(event.fields)));
+  getUpdates(): Observable<Job> {
+    return this.ws.subscribe(this.queryCall).pipe(map((event: ApiEvent<Job>) => event.fields));
   }
 
-  viewLogs(job: JobRow): void {
+  viewLogs(job: Job): void {
     this.viewingLogsForJob = job;
   }
 
