@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/storage/vmware-snapshot/vmware-snapshot';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -37,7 +38,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
   private fileSystemList: any[];
 
   fieldConfig: FieldConfig[];
-  fieldSets: FieldSet[] = [
+  fieldSets: FieldSet<this>[] = [
     {
       name: helptext.fieldset_vmsnapshot,
       label: true,
@@ -70,7 +71,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
           required: true,
           blurStatus: true,
           parent: this,
-          blurEvent: this.blurEvent,
+          blurEvent: this.passwordBlur,
           togglePw: true,
         },
         {
@@ -108,7 +109,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
           || this.entityForm.formGroup.controls['username'].value === undefined
           || this.entityForm.formGroup.controls['password'].value === undefined
         ) { this.dialogService.Info(T('VM Snapshot'), T('Enter valid VMware ESXI/vSphere credentials to fetch datastores.')); } else {
-          this.blurEvent(this);
+          this.passwordBlur(this);
         }
       },
     },
@@ -231,7 +232,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
     }
   }
 
-  blurEvent(parent: any): void {
+  passwordBlur(parent: this): void {
     if (parent.entityForm) {
       this.datastore = _.find(parent.fieldConfig, { name: 'datastore' });
       const payload: any = {};
@@ -267,7 +268,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
           parent.dataListComplete = res.datastores;
           parent.loader.close();
         },
-        (error: any) => {
+        (error: WebsocketError) => {
           this.datastore.options.length = 0;
           parent.loader.close();
           if (error.reason && error.reason.includes('[ETIMEDOUT]')) {

@@ -11,6 +11,7 @@ import { User } from 'app/interfaces/user.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import {
@@ -54,7 +55,7 @@ export class UserFormComponent implements FormConfiguration {
           required: true,
           validation: helptext.user_form_full_name_validation,
           blurStatus: true,
-          blurEvent: this.blurEvent,
+          blurEvent: this.fullNameBlur,
           parent: this,
         },
         {
@@ -70,7 +71,7 @@ export class UserFormComponent implements FormConfiguration {
             forbiddenValues(this.namesInUse),
           ],
           blurStatus: true,
-          blurEvent: this.blurEvent2,
+          blurEvent: this.userNameBlur,
           parent: this,
         },
         {
@@ -283,7 +284,7 @@ export class UserFormComponent implements FormConfiguration {
       name: 'divider',
       divider: true,
     },
-  ]);
+  ] as FieldSet<this>[]);
 
   custActions = [
     {
@@ -511,7 +512,7 @@ export class UserFormComponent implements FormConfiguration {
     return this.ws.call('user.update', [this.pk, entityForm]);
   }
 
-  blurEvent(parent: any): void {
+  fullNameBlur(parent: this): void {
     if (parent.entityForm && parent.entityForm.isNew) {
       let username: string;
       const fullname = parent.entityForm.formGroup.controls.full_name.value.split(/[\s,]+/);
@@ -530,7 +531,7 @@ export class UserFormComponent implements FormConfiguration {
     }
   }
 
-  blurEvent2(parent: { fieldSets: FieldSets; entityForm: EntityFormComponent }): void {
+  userNameBlur(parent: this): void {
     if (parent.entityForm) {
       const username = parent.entityForm.formGroup.controls.username.value;
       parent.fieldSets.config('username').warnings = username.length > 8 ? helptext.user_form_blur_event2_warning : null;

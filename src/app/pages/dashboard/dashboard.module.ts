@@ -5,7 +5,6 @@ import { MaterialModule } from 'app/app-material.module';
 import { AppCommonModule } from 'app/components/common/app-common.module';
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { EntityModule } from '../common/entity/entity.module';
-import { DashboardNoteEditComponent } from './dashboard-note-edit.component';
 import { DashboardComponent } from './dashboard.component';
 import { routing } from './dashboard.routing';
 
@@ -14,7 +13,6 @@ import { routing } from './dashboard.routing';
     MaterialModule, AppCommonModule, EntityModule],
   declarations: [
     DashboardComponent,
-    DashboardNoteEditComponent,
   ],
   providers: [
 

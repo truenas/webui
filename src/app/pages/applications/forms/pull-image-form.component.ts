@@ -114,7 +114,7 @@ export class PullImageFormComponent implements FormConfiguration {
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       new EntityUtils().handleWSError(this, error, this.dialogService);
     });
   }

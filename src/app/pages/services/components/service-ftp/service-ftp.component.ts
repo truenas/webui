@@ -11,6 +11,7 @@ import helptext from 'app/helptext/services/components/service-ftp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import {
   DialogService, SystemGeneralService, WebSocketService, StorageService,
@@ -272,7 +273,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
           required: true,
           validation: helptext.userbw_validation,
           blurStatus: true,
-          blurEvent: this.blurEvent,
+          blurEvent: this.localUserBwBlur,
           parent: this,
         },
         {
@@ -283,7 +284,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
           required: true,
           validation: helptext.userbw_validation,
           blurStatus: true,
-          blurEvent: this.blurEvent2,
+          blurEvent: this.localUserDlbwBlur,
           parent: this,
         },
         {
@@ -294,7 +295,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
           required: true,
           validation: helptext.userbw_validation,
           blurStatus: true,
-          blurEvent: this.blurEvent3,
+          blurEvent: this.anonUserBwBlur,
           parent: this,
         },
         {
@@ -305,7 +306,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
           required: true,
           validation: helptext.userbw_validation,
           blurStatus: true,
-          blurEvent: this.blurEvent4,
+          blurEvent: this.anonUserDlbwBlur,
           parent: this,
         },
       ],
@@ -371,7 +372,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
       ],
     },
     { name: 'divider', divider: true },
-  ]);
+  ] as FieldSet<this>[]);
 
   advanced_field = this.fieldSets.advancedFields;
 
@@ -516,31 +517,31 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     return this.ws.call('ftp.update', [body]);
   }
 
-  blurEvent(parent: any): void {
+  localUserBwBlur(parent: this): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'localuserbw');
     }
   }
 
-  blurEvent2(parent: any): void {
+  localUserDlbwBlur(parent: this): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'localuserdlbw');
     }
   }
 
-  blurEvent3(parent: any): void {
+  anonUserBwBlur(parent: this): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'anonuserbw');
     }
   }
 
-  blurEvent4(parent: any): void {
+  anonUserDlbwBlur(parent: this): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'anonuserdlbw');
     }
   }
 
-  transformValue(parent: any, fieldname: string): void {
+  transformValue(parent: this, fieldname: string): void {
     parent.entityForm.formGroup.controls[fieldname].setValue(parent.storageService.humanReadable || 0);
     // Clear humanReadable value to keep from accidentally setting it elsewhere
     parent.storageService.humanReadable = '';

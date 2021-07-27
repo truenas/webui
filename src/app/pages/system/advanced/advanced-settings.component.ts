@@ -16,6 +16,7 @@ import { helptext_system_general as helptext } from 'app/helptext/system/general
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { GpuDevice } from 'app/interfaces/gpu-device.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyType, EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -124,7 +125,7 @@ export class AdvancedSettingsComponent implements OnInit {
                     true,
                   );
                 },
-                (err: any) => new EntityUtils().handleError(this, err),
+                (err: WebsocketError) => new EntityUtils().handleError(this, err),
               );
           },
         },

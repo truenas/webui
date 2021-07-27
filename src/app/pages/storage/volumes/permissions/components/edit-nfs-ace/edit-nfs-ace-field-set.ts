@@ -1,19 +1,25 @@
-import { untilDestroyed } from '@ngneat/until-destroy';
 import {
   NfsAclTag, NfsAclType, NfsBasicFlag,
 } from 'app/enums/nfs-acl.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
-import { Group } from 'app/interfaces/group.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import {
   NfsFormFlagsType,
   NfsFormPermsType,
 } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace-form-values.interface';
+import { getFormUserGroupLoaders } from 'app/pages/storage/volumes/permissions/utils/get-form-user-group-loaders.utils';
 import { newNfsAce } from 'app/pages/storage/volumes/permissions/utils/new-ace.utils';
 import { UserService } from 'app/services';
 
 export function getEditNfsAceFieldSet(userService: UserService): FieldSet[] {
+  const {
+    loadMoreUserOptions,
+    loadMoreGroupOptions,
+    updateUserSearchOptions,
+    updateGroupSearchOptions,
+  } = getFormUserGroupLoaders(userService);
+
   return [
     {
       name: helptext.dataset_acl_title_list,
@@ -190,44 +196,4 @@ export function getEditNfsAceFieldSet(userService: UserService): FieldSet[] {
       ],
     },
   ];
-
-  function updateGroupSearchOptions(value = '', parent: any, config: any): void {
-    userService.groupQueryDSCache(value).pipe(untilDestroyed(parent)).subscribe((groups) => {
-      config.searchOptions = groups.map((group) => ({ label: group.group, value: group.group }));
-    });
-  }
-
-  function updateUserSearchOptions(value = '', parent: any, config: any): void {
-    userService.userQueryDSCache(value).pipe(untilDestroyed(parent)).subscribe((users) => {
-      config.searchOptions = users.map((user) => ({ label: user.username, value: user.username }));
-    });
-  }
-
-  function loadMoreUserOptions(length: number, parent: any, searchText: string, config: any): void {
-    userService.userQueryDSCache(searchText, length)
-      .pipe(untilDestroyed(parent))
-      .subscribe((users) => {
-        const userOptions = users.map((user) => ({ label: user.username, value: user.username }));
-
-        if (searchText == '') {
-          config.options = config.options.concat(userOptions);
-        } else {
-          config.searchOptions = config.searchOptions.concat(userOptions);
-        }
-      });
-  }
-
-  function loadMoreGroupOptions(length: number, parent: any, searchText: string, config: any): void {
-    userService.groupQueryDSCache(searchText, false, length)
-      .pipe(untilDestroyed(parent))
-      .subscribe((groups: Group[]) => {
-        const groupOptions = groups.map((group) => ({ label: group.group, value: group.group }));
-
-        if (searchText == '') {
-          config.options = config.options.concat(groupOptions);
-        } else {
-          config.searchOptions = config.searchOptions.concat(groupOptions);
-        }
-      });
-  }
 }

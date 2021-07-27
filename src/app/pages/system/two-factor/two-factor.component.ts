@@ -4,6 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext } from 'app/helptext/system/2fa';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -21,8 +22,8 @@ export class TwoFactorComponent implements FormConfiguration {
   qrInfo: string;
   private secret: string;
   title = helptext.two_factor.formTitle;
-  private digitsOnLoad: string;
-  private intervalOnLoad: string;
+  private digitsOnLoad: number;
+  private intervalOnLoad: number;
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
@@ -188,14 +189,16 @@ export class TwoFactorComponent implements FormConfiguration {
     protected loader: AppLoaderService,
     protected mdDialog: MatDialog) { }
 
-  resourceTransformIncomingRestData(data: any): any {
-    data.ssh = data.services.ssh;
+  resourceTransformIncomingRestData(data: TwoFactorConfig): any {
     this.secret = data.secret;
     this.TwoFactorEnabled = data.enabled;
     this.digitsOnLoad = data.otp_digits;
     this.intervalOnLoad = data.interval;
     this.updateEnabledStatus();
-    return data;
+    return {
+      ...data,
+      ssh: data.services.ssh,
+    };
   }
 
   isCustActionVisible(actionId: string): boolean {
