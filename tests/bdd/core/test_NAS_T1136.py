@@ -430,6 +430,7 @@ def verify_all_files_are_sync_to_the_dataset_folder(driver, nas_ip):
 def on_the_dropbox_test_folder_tab_delete_one_file(driver):
     """on the Dropbox test folder tab, delete one file."""
     driver.switch_to.window(driver.window_handles[1])
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//h2[text()="test"]')
     assert wait_on_element(driver, 5, '//span[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')
     action = ActionChains(driver)
@@ -479,6 +480,8 @@ def verify_the_file_is_removed_from_the_dataset_folder(driver, nas_ip):
 def on_the_dropbox_test_folder_tab_delete_all_file(driver):
     """on the Dropbox test folder tab, delete all file."""
     driver.switch_to.window(driver.window_handles[1])
+    driver.refresh()
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//h2[text()="test"]')
     assert wait_on_element(driver, 5, '//span[text()="music"]')
     action = ActionChains(driver)
