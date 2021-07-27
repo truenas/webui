@@ -278,7 +278,7 @@ export class SnapshotListComponent implements EntityTableConfig {
           () => {
             this.entityList.getData();
           },
-          (res: any) => {
+          (res: WebsocketError) => {
             new EntityUtils().handleWSError(this, res, this.entityList.dialogService);
             this.entityList.loaderOpen = false;
             this.entityList.loader.close();

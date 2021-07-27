@@ -508,7 +508,7 @@ export class NFSFormComponent implements FormConfiguration {
       });
   }
 
-  loadMoreUserOptions(length: number, parent: NFSFormComponent, searchText: string, config: any): void {
+  loadMoreUserOptions(length: number, parent: NFSFormComponent, searchText: string, config: FieldConfig): void {
     parent.userService
       .userQueryDSCache(searchText, length)
       .pipe(untilDestroyed(parent))
@@ -525,7 +525,7 @@ export class NFSFormComponent implements FormConfiguration {
       });
   }
 
-  loadMoreGroupOptions(length: number, parent: NFSFormComponent, searchText: string, config: any): void {
+  loadMoreGroupOptions(length: number, parent: NFSFormComponent, searchText: string, config: FieldConfig): void {
     parent.userService
       .groupQueryDSCache(searchText, false, length)
       .pipe(untilDestroyed(parent))

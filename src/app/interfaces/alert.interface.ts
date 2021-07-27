@@ -30,3 +30,12 @@ export interface AlertClass {
   level: AlertLevel;
   title: string;
 }
+
+export interface AlertClasses {
+  id: number;
+  classes: {
+    [className: string]: { level: AlertClasses };
+  };
+}
+
+export type AlertClassesUpdate = Omit<AlertClasses, 'id'>;

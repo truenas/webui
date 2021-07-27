@@ -178,8 +178,6 @@ export class DiskFormComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  protected disk_hddstandby: any;
-  protected disk_advpowermgmt: any;
   title: string;
 
   rowid: any;
