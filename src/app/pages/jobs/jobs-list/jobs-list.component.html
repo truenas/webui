@@ -128,7 +128,7 @@
           {{ 'Logs/Errors' | translate }}
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <ng-container *ngIf="element.logs_excerpt; then viewLogsTemplate; else emptyLogsTemplate"></ng-container>
+          <ng-container *ngIf="element.logs_excerpt || element.error; then viewLogsTemplate; else emptyLogsTemplate"></ng-container>
 
           <ng-template #emptyLogsTemplate>
             {{ 'None' | translate }}
