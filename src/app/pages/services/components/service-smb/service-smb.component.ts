@@ -359,8 +359,8 @@ export class ServiceSMBComponent implements FormConfiguration {
     entityEdit.submitFunction = (body) => this.ws.call('smb.update', [body]);
   }
 
-  updateGroupSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).groupQueryDSCache(value, true).pipe(untilDestroyed(this)).subscribe((items) => {
+  updateGroupSearchOptions(value = '', parent: this): void {
+    parent.userService.groupQueryDSCache(value, true).pipe(untilDestroyed(this)).subscribe((items) => {
       const groupOptions: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         groupOptions.push({ label: items[i].group, value: items[i].group });

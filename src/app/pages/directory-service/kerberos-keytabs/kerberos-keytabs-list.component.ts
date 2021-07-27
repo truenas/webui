@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/directory-service/kerberos-keytabs-form-list';
+import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/kerberos-keytabs/kerberos-keytabs-form.component';
@@ -49,19 +50,19 @@ export class KerberosKeytabsListComponent implements EntityTableConfig {
     }] as EntityTableAction[];
   }
 
-  getActions(row: any): EntityTableAction[] {
+  getActions(row: any): EntityTableAction<KerberosKeytab>[] {
     const actions = [];
     actions.push({
       id: 'edit',
       label: T('Edit'),
       disabled: row.disableEdit,
-      onClick: (row: any) => {
+      onClick: (row: KerberosKeytab) => {
         this.doAdd(row.id);
       },
     }, {
       id: 'delete',
       label: T('Delete'),
-      onClick: (row: any) => {
+      onClick: (row: KerberosKeytab) => {
         this.entityList.doDelete(row);
       },
     });

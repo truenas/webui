@@ -194,7 +194,7 @@ export class EntityFormService {
     });
   }
 
-  clearFormError(fieldConfig: any[]): void {
+  clearFormError(fieldConfig: FieldConfig[]): void {
     for (let f = 0; f < fieldConfig.length; f++) {
       fieldConfig[f]['errors'] = '';
       fieldConfig[f]['hasErrors'] = false;

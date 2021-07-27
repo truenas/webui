@@ -208,7 +208,7 @@ export class DiskFormComponent implements FormConfiguration {
   }
 
   afterInit(entityEdit: EntityFormComponent): void {
-    entityEdit.formGroup.controls['hddstandby'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    entityEdit.formGroup.controls['hddstandby'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: DiskStandby) => {
       if (value === DiskStandby.AlwaysOn) {
         entityEdit.formGroup.controls['hddstandby_force'].setValue(false);
       }

@@ -67,7 +67,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   statsDataEvent$: Subject<CoreEvent>;
   private statsEvents: Subscription;
-  tcStats: any;
 
   // For empty state
   get empty(): boolean {

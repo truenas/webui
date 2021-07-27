@@ -588,8 +588,8 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.modalService.open('slide-in-form', this.addZvolComponent);
   }
 
-  updateZvolSearchOptions(value = '', parent: any): void {
-    (parent.ws as WebSocketService).call('pool.dataset.query', [[['type', '=', DatasetType.Volume], ['id', '^', value]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
+  updateZvolSearchOptions(value = '', parent: this): void {
+    parent.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume], ['id', '^', value]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
       const searchedZvols = [];
       zvols.forEach((zvol) => {
         searchedZvols.push(
@@ -600,7 +600,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       });
       searchedZvols.push({
         label: 'Add New', value: 'new', sticky: 'bottom',
-      });
+      } as any);
       _.find(parent.diskFieldConfig, { name: 'path' }).searchOptions = searchedZvols;
     });
   }

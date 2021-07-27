@@ -11,6 +11,7 @@ import helptext from 'app/helptext/services/components/service-ftp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import {
@@ -35,7 +36,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
   protected rootlogin_fg: FormControl;
   protected warned = false;
   protected rootlogin: boolean;
-  fieldConfig: any;
+  fieldConfig: FieldConfig[];
   title = helptext.formTitle;
 
   protected bwFields = ['localuserbw', 'localuserdlbw', 'anonuserbw', 'anonuserdlbw'];

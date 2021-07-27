@@ -327,7 +327,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
     return actions;
   }
 
-  key_file_updater(file: any, parent: any): void {
+  key_file_updater(file: any, parent: this): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };

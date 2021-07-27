@@ -391,7 +391,7 @@ export class ExtentFormComponent implements FormConfiguration {
     }
   }
 
-  blurFilesize(parent: any): void {
+  blurFilesize(parent: this): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['filesize'].setValue(parent.storageService.humanReadable);
     }
