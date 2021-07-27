@@ -4,7 +4,7 @@ import { FieldConfig } from '../entity-form/models/field-config.interface';
 
 export interface DialogFormConfiguration<P = any> {
   title: string;
-  fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig<P>[];
   method_rest?: string;
   method_ws?: ApiMethod;
   saveButtonText?: string;

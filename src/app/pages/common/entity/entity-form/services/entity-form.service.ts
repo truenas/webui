@@ -7,6 +7,7 @@ import {
   FormGroup,
 } from '@angular/forms';
 import * as _ from 'lodash';
+import { FileType } from 'app/enums/file-type.enum';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { WebSocketService } from 'app/services/ws.service';
 import { FieldConfig, UnitType, InputUnitConfig } from '../models/field-config.interface';
@@ -105,7 +106,7 @@ export class EntityFormService {
   ): Promise<any[]> {
     const children: any[] = [];
     let typeFilter: any;
-    explorerType && explorerType === 'directory' ? typeFilter = [['type', '=', 'DIRECTORY']] : typeFilter = [];
+    explorerType && explorerType === 'directory' ? typeFilter = [['type', '=', FileType.Directory]] : typeFilter = [];
 
     return this.ws.call('filesystem.listdir', [node.data.name, typeFilter,
       { order_by: ['name'], limit: 1000 }]).toPromise().then((res) => {
@@ -115,13 +116,13 @@ export class EntityFormService {
         const child: any = {};
         if (!showHiddenFiles) {
           if (res[i].hasOwnProperty('name') && !res[i].name.startsWith('.')) {
-            if (res[i].type === 'SYMLINK') {
+            if (res[i].type === FileType.Symlink) {
               continue;
             }
             if (res[i].name !== hideDirs) {
               child['name'] = res[i].path;
               child['acl'] = res[i].acl;
-              if (res[i].type === 'DIRECTORY') {
+              if (res[i].type === FileType.Directory) {
                 child['hasChildren'] = true;
               }
               child['subTitle'] = res[i].name;
@@ -129,12 +130,12 @@ export class EntityFormService {
             }
           }
         } else if (res[i].hasOwnProperty('name')) {
-          if (res[i].type === 'SYMLINK') {
+          if (res[i].type === FileType.Symlink) {
             continue;
           }
           if (res[i].name !== hideDirs) {
             child['name'] = res[i].path;
-            if (res[i].type === 'DIRECTORY') {
+            if (res[i].type === FileType.Directory) {
               child['hasChildren'] = true;
             }
             child['subTitle'] = res[i].name;

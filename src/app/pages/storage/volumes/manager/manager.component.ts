@@ -643,7 +643,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
               this.goBack();
             },
           );
-        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error: any) => {
+        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
           dialogRef.close(false);
           new EntityUtils().handleWSError(self, error, this.dialog);
         });

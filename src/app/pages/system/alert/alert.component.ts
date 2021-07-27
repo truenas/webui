@@ -152,7 +152,7 @@ export class AlertConfigComponent implements OnInit {
               for (const j in res.classes[k]) {
                 const prop = k + '_' + j;
                 if (this.formGroup.controls[prop]) {
-                  this.formGroup.controls[prop].setValue(res.classes[k][j]);
+                  this.formGroup.controls[prop].setValue((res.classes as any)[k][j]);
                 } else {
                   console.error('Missing prop: ' + prop); // some properties don't exist between both calls?
                 }
