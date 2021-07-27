@@ -1,9 +1,14 @@
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
 mat-table.jobs-table {
   background-color: var(--bg2);
 
   .mat-cell,
   .mat-header-cell,
-  .mat-footer-cell, {
+  .mat-footer-cell {
     color: var(--fg2);
   }
 
@@ -40,6 +45,7 @@ mat-table.jobs-table {
 
 .jobs-container {
   display: flex;
+  margin-top: 16px;
 
   .jobs-table {
     flex-grow: 1;
@@ -54,3 +60,22 @@ mat-table.jobs-table {
   }
 }
 
+::ng-deep {
+  .jobs-fitlers {
+    mat-button-toggle {
+      &.mat-button-toggle-appearance-standard {
+        background: var(--alt-bg2);
+        color: var(--fg2);
+
+        .mat-button-toggle-label-content {
+          line-height: 36px;
+        }
+
+        &.mat-button-toggle-checked {
+          background: var(--alt-bg1);
+          color: var(--fg2);
+        }
+      }
+    }
+  }
+}

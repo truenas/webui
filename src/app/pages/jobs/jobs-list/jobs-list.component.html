@@ -1,5 +1,35 @@
+<div fxFlex fxLayoutAlign="space-between center">
+  <div class="jobs-fitlers">
+    <mat-button-toggle-group name="filters" aria-label="Jobs Filters" (change)="onFilterChange($event)">
+      <mat-button-toggle checked [value]="JobFilterState.All">{{ 'All' | translate }}</mat-button-toggle>
+      <mat-button-toggle [value]="JobFilterState.Running">{{ 'Running' | translate }}</mat-button-toggle>
+      <mat-button-toggle [value]="JobFilterState.Failed">{{ 'Failed' | translate }}</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+  <div class="form-element search-field" id="row-filter">
+    <mat-form-field floatPlaceholder="never">
+      <span matPrefix><mat-icon>search</mat-icon></span>
+      <input
+        matInput
+        #filter
+        [(ngModel)]="filterValue"
+        (keyup)="searchQuery(filterValue)"
+        placeholder="{{ 'Filter' | translate }} {{ title | translate }}"
+      />
+    </mat-form-field>
+  </div>
+</div>
+
 <div class="jobs-container">
-  <mat-table #taskTable [dataSource]="dataSource" multiTemplateDataRows matSort class="jobs-table">
+  <mat-table
+    #taskTable
+    [dataSource]="dataSource"
+    multiTemplateDataRows
+    class="jobs-table"
+    matSort
+    matSortActive="id"
+    matSortDirection="desc"
+  >
     <ng-container matColumnDef="name">
       <mat-header-cell
         *matHeaderCellDef
@@ -19,10 +49,7 @@
               <mat-icon *ngSwitchCase="JobState.Failed" class="state-failed" [matTooltip]="element.error"
                 >highlight_off</mat-icon
               >
-              <mat-icon *ngSwitchCase="JobState.Running" class="state-running">
-                <!-- TODO: Replace with mat-spinner -->
-                cached
-              </mat-icon>
+              <mat-spinner *ngSwitchCase="JobState.Running" class="state-running" [diameter]="24"></mat-spinner>
               <mat-icon *ngSwitchCase="JobState.Pending" class="state-waiting">schedule</mat-icon>
               <mat-icon *ngSwitchCase="JobState.Aborted" class="state-aborted">report</mat-icon>
             </ng-container>
@@ -110,9 +137,6 @@
       ix-auto-type="expander"
       ix-auto-identifier="{{ row.method }}"
     ></mat-row>
-
-    <!-- TODO: Implement mat-paginator with server-side pagination -->
-    <!-- TODO: Implement filtering by search query -->
   </mat-table>
 
   <app-job-logs-sidebar
@@ -122,3 +146,10 @@
     (closed)="onLogsSidebarClosed()"
   ></app-job-logs-sidebar>
 </div>
+
+<mat-paginator
+  [pageIndex]="paginationPageIndex"
+  [pageSize]="paginationPageSize"
+  [pageSizeOptions]="paginationPageSizeOptions"
+  [showFirstLastButtons]="paginationShowFirstLastButtons"
+></mat-paginator>
