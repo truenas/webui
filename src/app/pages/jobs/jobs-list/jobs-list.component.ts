@@ -1,4 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  Component, OnInit, ViewChild,
+} from '@angular/core';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -19,7 +21,6 @@ import { DialogService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { T } from 'app/translate-marker';
-import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
 
 export enum JobFilterState {
   All = 'All',
@@ -43,29 +44,14 @@ export class JobsListComponent implements OnInit {
   @ViewChild('taskTable', { static: false }) taskTable: MatTable<JobRow[]>;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  dataSource: MatTableDataSource<JobRow>;
+  dataSource: MatTableDataSource<JobRow> = new MatTableDataSource<JobRow>([]);
   displayedColumns = ['name', 'state', 'id', 'date_started', 'date_finished', 'logs_excerpt'];
   expandedElement: any | null;
   viewingLogsForJob: Job;
   filterValue = '';
-  emptyTableConf: EmptyConfig = {
-    type: EmptyType.no_search_results,
-    large: true,
-    title: T('No jobs are available'),
-    message: T('Try reset filters to see all data'),
-    button: {
-      label: T('Show All Jobs'),
-      action: () => {
-        console.info('Reset filters');
-      },
-    },
-  };
+  isLoading = true;
   readonly JobState = JobState;
   readonly JobFilterState = JobFilterState;
-
-  get isTableEmpty(): boolean {
-    return Boolean(this.dataSource.filter ? this.dataSource?.filteredData?.length : this.dataSource?.data?.length);
-  }
 
   constructor(
     private ws: WebSocketService,
@@ -73,9 +59,7 @@ export class JobsListComponent implements OnInit {
     private localeService: LocaleService,
     private store: JobsManagerStore,
     private dialogService: DialogService,
-  ) {
-    this.dataSource = new MatTableDataSource<JobRow>([]);
-  }
+  ) {}
 
   transformJob(job: Job): JobRow {
     return {
@@ -107,10 +91,15 @@ export class JobsListComponent implements OnInit {
       .subscribe(
         (jobs) => {
           this.dataSource.data = jobs;
-          this.dataSource.sort = this.sort;
-          this.dataSource.paginator = this.paginator;
+          this.isLoading = false;
+
+          setTimeout(() => {
+            this.dataSource.sort = this.sort;
+            this.dataSource.paginator = this.paginator;
+          }, 0);
         },
         (error) => {
+          this.isLoading = false;
           new EntityUtils().handleWSError(this, error);
         },
       );

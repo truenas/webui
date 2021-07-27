@@ -1,6 +1,10 @@
 :host {
   display: flex;
   flex-direction: column;
+
+  mat-spinner {
+    margin: 30px auto;
+  }
 }
 
 mat-table.jobs-table {
@@ -76,6 +80,38 @@ mat-table.jobs-table {
           color: var(--fg2);
         }
       }
+    }
+  }
+
+  #row-filter.form-element.search-field {
+    .mat-form-field-wrapper .mat-input-element {
+      top: 0;
+    }
+
+    .reset-input {
+      align-items: center;
+      bottom: 0;
+      cursor: pointer;
+      display: flex;
+      margin-left: 0.3rem;
+      margin-left: 0;
+      opacity: 0.5;
+      padding: 5px;
+      position: absolute;
+      right: 0.3rem;
+      top: 0;
+      user-select: none;
+    }
+
+    .search-icon {
+      position: relative;
+      top: 2px;
+    }
+
+    .mat-icon {
+      font-size: 1rem;
+      height: auto;
+      width: auto;
     }
   }
 }

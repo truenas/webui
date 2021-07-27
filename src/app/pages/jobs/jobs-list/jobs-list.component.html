@@ -1,3 +1,6 @@
+<mat-spinner [diameter]="40" *ngIf="isLoading"></mat-spinner>
+
+<ng-container *ngIf="!isLoading">
 <div fxFlex fxLayoutAlign="space-between center">
   <div class="jobs-fitlers">
     <mat-button-toggle-group name="filters" aria-label="Jobs Filters" (change)="onFilterChange($event)">
@@ -8,7 +11,7 @@
   </div>
   <div class="form-element search-field" id="row-filter">
     <mat-form-field floatPlaceholder="never">
-      <span matPrefix><mat-icon>search</mat-icon></span>
+      <span matPrefix class="search-icon"><mat-icon>search</mat-icon></span>
       <input
         matInput
         #filter
@@ -16,6 +19,9 @@
         (keyup)="searchQuery(filterValue)"
         placeholder="{{ 'Filter' | translate }} {{ title | translate }}"
       />
+      <span *ngIf="filterValue.length" class="reset-input">
+        <mat-icon (click)="filterValue = ''; searchQuery(filterValue)" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+      </span>
     </mat-form-field>
   </div>
 </div>
@@ -49,7 +55,7 @@
               <mat-icon *ngSwitchCase="JobState.Failed" class="state-failed" [matTooltip]="element.error"
                 >highlight_off</mat-icon
               >
-              <mat-spinner *ngSwitchCase="JobState.Running" class="state-running" [diameter]="24"></mat-spinner>
+              <mat-spinner *ngSwitchCase="JobState.Running" class="state-running" [diameter]="20"></mat-spinner>
               <mat-icon *ngSwitchCase="JobState.Pending" class="state-waiting">schedule</mat-icon>
               <mat-icon *ngSwitchCase="JobState.Aborted" class="state-aborted">report</mat-icon>
             </ng-container>
@@ -153,3 +159,4 @@
   [pageSizeOptions]="paginationPageSizeOptions"
   [showFirstLastButtons]="paginationShowFirstLastButtons"
 ></mat-paginator>
+</ng-container>
