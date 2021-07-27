@@ -2,14 +2,19 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { map, tap } from 'rxjs/operators';
+import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
+import { IdmapName } from 'app/enums/idmap-name.enum';
 import helptext from 'app/helptext/directory-service/idmap';
+import { Idmap } from 'app/interfaces/idmap.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/active-directory/active-directory.component';
 import {
-  IdmapService, ValidationService, SystemGeneralService, WebSocketService,
+  IdmapService, SystemGeneralService, ValidationService, WebSocketService,
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
@@ -24,13 +29,14 @@ import { IdmapFormComponent } from './idmap-form.component';
 export class IdmapListComponent implements EntityTableConfig {
   title = 'Idmap';
   queryCall: 'idmap.query' = 'idmap.query';
+  queryCallOption: QueryParams<Idmap>;
   wsDelete: 'idmap.delete' = 'idmap.delete';
   protected entityList: EntityTableComponent;
   protected idmapFormComponent: IdmapFormComponent;
   protected requiredDomains = [
-    'DS_TYPE_ACTIVEDIRECTORY',
-    'DS_TYPE_DEFAULT_DOMAIN',
-    'DS_TYPE_LDAP',
+    IdmapName.DsTypeActiveDirectory,
+    IdmapName.DsTypeDefaultDomain,
+    IdmapName.DsTypeLdap,
   ];
 
   columns = [
@@ -71,8 +77,8 @@ export class IdmapListComponent implements EntityTableConfig {
       if (item.certificate) {
         item.cert_name = item.certificate.cert_name;
       }
-      if (item.name === 'DS_TYPE_ACTIVEDIRECTORY' && item.idmap_backend === 'AUTORID') {
-        const obj = data.find((o) => o.name === 'DS_TYPE_DEFAULT_DOMAIN');
+      if (item.name === IdmapName.DsTypeActiveDirectory && item.idmap_backend === 'AUTORID') {
+        const obj = data.find((o) => o.name === IdmapName.DsTypeDefaultDomain);
         obj.disableEdit = true;
       }
       const index = helptext.idmap.name.options.findIndex((o) => o.value === item.name);
@@ -86,6 +92,21 @@ export class IdmapListComponent implements EntityTableConfig {
     this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
+  }
+
+  prerequisite(): Promise<boolean> {
+    return this.ws.call('directoryservices.get_state').pipe(
+      tap((state) => {
+        if (state.ldap !== DirectoryServiceState.Disabled) {
+          this.queryCallOption = [[['name', '=', IdmapName.DsTypeLdap]]];
+        } else if (state.activedirectory !== DirectoryServiceState.Disabled) {
+          this.queryCallOption = [[['name', '!=', IdmapName.DsTypeLdap]]];
+        } else {
+          this.queryCallOption = undefined;
+        }
+      }),
+      map(() => true),
+    ).toPromise();
   }
 
   getAddActions(): EntityTableAction[] {

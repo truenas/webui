@@ -26,7 +26,6 @@ import { ModalService } from 'app/services/modal.service';
   selector: 'app-activedirectory',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-
 export class ActiveDirectoryComponent implements FormConfiguration {
   title: string = helptext.title;
   queryCall: 'activedirectory.config' = 'activedirectory.config';

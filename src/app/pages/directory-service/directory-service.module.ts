@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { MaterialModule } from 'app/app-material.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/active-directory/active-directory.component';
 import { routing } from 'app/pages/directory-service/directory-service.routing';
 import { DirectoryServicesComponent } from 'app/pages/directory-service/directory-services.component';
@@ -24,6 +25,7 @@ import { NISComponent } from './nis/nis.component';
   imports: [
     CommonModule, EntityModule, FormsModule, ReactiveFormsModule, FlexLayoutModule,
     NgxUploaderModule, routing, MaterialModule, TranslateModule,
+    CommonDirectivesModule,
   ],
   declarations: [
     LdapComponent,

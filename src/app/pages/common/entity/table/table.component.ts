@@ -21,7 +21,7 @@ export interface AppTableHeaderAction {
 
 export interface AppTableHeaderExtraAction extends AppTableHeaderAction {}
 
-export interface AppTableConfig {
+export interface AppTableConfig<P = any> {
   title?: string;
   titleHref?: string;
   columns: any[];
@@ -41,7 +41,7 @@ export interface AppTableConfig {
   tableComponent?: TableComponent;
   emptyEntityLarge?: boolean;
   alwaysHideViewMore?: boolean;
-  parent: any;
+  parent: P;
   tableActions?: AppTableHeaderAction[];
   tableExtraActions?: AppTableHeaderExtraAction[];
 

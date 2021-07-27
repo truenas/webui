@@ -28,43 +28,45 @@ export class TableService {
 
   // get table data source
   getData(table: any): void {
-    table.ws.call(table.tableConf.queryCall).pipe(untilDestroyed(this)).subscribe((res: any) => {
-      if (table.tableConf.dataSourceHelper) {
-        res = table.tableConf.dataSourceHelper(res);
-      }
-      if (table.tableConf.afterGetDataExpandable) {
-        res = table.tableConf.afterGetDataExpandable(res);
-      }
-      if (table.tableConf.getInOutInfo) {
-        table.tableConf.getInOutInfo(res);
-      }
-      table.dataSource = res;
-      if (!(table.dataSource?.length > 0)) {
-        table.emptyConf = {
-          type: EmptyType.no_page_data,
-          large: table.entityEmptyLarge,
-          title: T('No ') + table.title + T(' configured'),
-        };
-        if (table.tableConf.add) {
-          table.emptyConf.message = T('To configure ') + table.title + (', click the "Add" button.');
+    table.ws.call(table.tableConf.queryCall, table.tableConf.queryCallOption)
+      .pipe(untilDestroyed(this))
+      .subscribe((res: any) => {
+        if (table.tableConf.dataSourceHelper) {
+          res = table.tableConf.dataSourceHelper(res);
         }
-      }
-      if (table.limitRows) {
-        if (table.enableViewMore) {
-          table.displayedDataSource = table.dataSource.slice(0, table.dataSource.length);
-        } else {
-          table.displayedDataSource = table.dataSource.slice(0, table.limitRows - 1);
-          table.showViewMore = table.dataSource.length !== table.displayedDataSource.length;
+        if (table.tableConf.afterGetDataExpandable) {
+          res = table.tableConf.afterGetDataExpandable(res);
         }
-      }
-      if (table.loaderOpen) {
-        this.loader.close();
-      }
+        if (table.tableConf.getInOutInfo) {
+          table.tableConf.getInOutInfo(res);
+        }
+        table.dataSource = res;
+        if (!(table.dataSource?.length > 0)) {
+          table.emptyConf = {
+            type: EmptyType.no_page_data,
+            large: table.entityEmptyLarge,
+            title: T('No ') + table.title + T(' configured'),
+          };
+          if (table.tableConf.add) {
+            table.emptyConf.message = T('To configure ') + table.title + (', click the "Add" button.');
+          }
+        }
+        if (table.limitRows) {
+          if (table.enableViewMore) {
+            table.displayedDataSource = table.dataSource.slice(0, table.dataSource.length);
+          } else {
+            table.displayedDataSource = table.dataSource.slice(0, table.limitRows - 1);
+            table.showViewMore = table.dataSource.length !== table.displayedDataSource.length;
+          }
+        }
+        if (table.loaderOpen) {
+          this.loader.close();
+        }
 
-      if (table.tableConf.afterGetData) {
-        table.tableConf.afterGetData(res);
-      }
-    });
+        if (table.tableConf.afterGetData) {
+          table.tableConf.afterGetData(res);
+        }
+      });
   }
 
   delete(table: any, item: any, action?: any): void {
