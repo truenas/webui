@@ -30,8 +30,8 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   @ViewChild('cores', { static: true }) cpuCores: ViewChartBarComponent;
   @Input() data: Subject<CoreEvent>;
   @Input() ecc = false;
-  chart: any;// chart instance
-  ctx: any; // canvas context for chart.js
+  chart: Chart;// chart instance
+  ctx: CanvasRenderingContext2D; // canvas context for chart.js
   private _memData: any;
   get memData(): any { return this._memData; }
   set memData(value) {
@@ -69,7 +69,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     public translate: TranslateService,
     private sanitizer: DomSanitizer,
     public mediaObserver: MediaObserver,
-    private el: ElementRef,
+    private el: ElementRef<HTMLElement>,
   ) {
     super(translate);
 
@@ -161,7 +161,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   // chart.js renderer
   renderChart(): void {
     if (!this.ctx) {
-      const el = this.el.nativeElement.querySelector('#memory-usage-chart canvas');
+      const el = this.el.nativeElement.querySelector('#memory-usage-chart canvas') as HTMLCanvasElement;
       if (!el) { return; }
 
       const ds = this.makeDatasets(this.memData.data);

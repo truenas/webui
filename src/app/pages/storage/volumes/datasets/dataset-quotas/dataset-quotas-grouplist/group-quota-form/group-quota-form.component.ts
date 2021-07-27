@@ -36,7 +36,7 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
   save_button_enabled = false;
   private differ: IterableDiffer<unknown>;
   fieldConfig: FieldConfig[] = [];
-  fieldSets: FieldSet[] = [
+  fieldSets: FieldSet<this>[] = [
     {
       name: helptext.groups.quota_title,
       label: true,
@@ -48,7 +48,7 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
           placeholder: helptext.groups.data_quota.placeholder,
           tooltip: `${helptext.groups.data_quota.tooltip} bytes.`,
           blurStatus: true,
-          blurEvent: this.blurEvent,
+          blurEvent: this.dataQuotaBlur,
           parent: this,
         },
         {
@@ -155,13 +155,13 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
       });
     });
 
-    this.entityForm.formGroup.controls['data_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
-      this.dq = res;
+    this.entityForm.formGroup.controls['data_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((quota: string) => {
+      this.dq = quota;
       this.allowSubmit();
     });
 
-    this.entityForm.formGroup.controls['obj_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
-      this.oq = res;
+    this.entityForm.formGroup.controls['obj_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((quota: string) => {
+      this.oq = quota;
       this.allowSubmit();
     });
 
@@ -175,7 +175,7 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
       }
     });
 
-    entityEdit.formGroup.controls['data_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    entityEdit.formGroup.controls['data_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       const formField = _.find(this.fieldConfig, { name: 'data_quota' });
       const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
       formField['hasErrors'] = false;
@@ -187,7 +187,7 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
     });
   }
 
-  blurEvent(parent: any): void {
+  dataQuotaBlur(parent: this): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'data_quota');
     }

@@ -372,7 +372,7 @@ export class ReplicationFormComponent implements FormConfiguration {
             },
           ],
           blurStatus: true,
-          blurEvent: this.blurEvent,
+          blurEvent: this.speedLimitBlur,
           parent: this,
         },
         {
@@ -1544,13 +1544,13 @@ export class ReplicationFormComponent implements FormConfiguration {
     });
   }
 
-  blurEvent(parent: any): void {
+  speedLimitBlur(parent: this): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['speed_limit'].setValue(parent.storageService.humanReadable);
     }
   }
 
-  blurEventNamingSchema(parent: any): void {
+  blurEventNamingSchema(parent: this): void {
     if (
       parent.entityForm
       && parent.entityForm.formGroup.controls['direction'].value === Direction.Push
