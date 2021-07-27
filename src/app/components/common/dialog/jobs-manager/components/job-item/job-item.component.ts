@@ -31,6 +31,9 @@ export class JobItemComponent {
 
   getReadableDate(input: ApiTimestamp): string {
     // TODO: Convert this method into pipe
+    if (!input.$date) {
+      return '–';
+    }
     return this.localeService.formatDateTime(new Date(input.$date));
   }
 
