@@ -9,7 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { ixChartApp, appImagePlaceholder } from 'app/constants/catalog.constants';
+import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
@@ -27,7 +27,6 @@ import { ModalService } from 'app/services/modal.service';
 import { ApplicationsService } from '../applications.service';
 import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';
 import { ChartFormComponent } from '../forms/chart-form.component';
-import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component';
 
 @UntilDestroy()
 @Component({
@@ -390,24 +389,18 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
 
   edit(name: string): void {
     const catalogApp = this.chartItems[name];
-    if (catalogApp && catalogApp.chart_name != ixChartApp) {
-      const chartFormComponent = new ChartFormComponent(
-        this.mdDialog,
-        this.dialogService,
-        this.modalService,
-        this.appService,
-      );
-      chartFormComponent.setTitle(catalogApp.chart_name);
-      this.modalService.open('slide-in-form', chartFormComponent, name);
+    const chartFormComponent = new ChartFormComponent(
+      this.mdDialog,
+      this.dialogService,
+      this.modalService,
+      this.appService,
+    );
+    if (catalogApp.chart_name == ixChartApp) {
+      chartFormComponent.setTitle(helptext.launch);
     } else {
-      const chartReleaseForm = new ChartReleaseEditComponent(
-        this.mdDialog,
-        this.dialogService,
-        this.modalService,
-        this.appService,
-      );
-      this.modalService.open('slide-in-form', chartReleaseForm, name);
+      chartFormComponent.setTitle(catalogApp.chart_name);
     }
+    this.modalService.open('slide-in-form', chartFormComponent, name);
   }
 
   getSelectedItems(): any[] {

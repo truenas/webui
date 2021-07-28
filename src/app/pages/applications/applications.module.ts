@@ -19,8 +19,6 @@ import { DockerImagesComponent } from './docker-images/docker-images.component';
 import { CatalogAddFormComponent } from './forms/catalog-add-form.component';
 import { CatalogEditFormComponent } from './forms/catalog-edit-form.component';
 import { ChartFormComponent } from './forms/chart-form.component';
-import { ChartReleaseAddComponent } from './forms/chart-release-add.component';
-import { ChartReleaseEditComponent } from './forms/chart-release-edit.component';
 import { ChartWizardComponent } from './forms/chart-wizard.component';
 import { KubernetesSettingsComponent } from './forms/kubernetes-settings.component';
 import { PullImageFormComponent } from './forms/pull-image-form.component';
@@ -50,8 +48,6 @@ import { PodShellComponent } from './pod-shell/pod-shell.component';
     ChartReleasesComponent,
     DockerImagesComponent,
     KubernetesSettingsComponent,
-    ChartReleaseAddComponent,
-    ChartReleaseEditComponent,
     ChartFormComponent,
     ChartWizardComponent,
     PodShellComponent,
