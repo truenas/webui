@@ -1,24 +1,20 @@
 import {
-  Component, OnInit, ViewChild,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
 } from '@angular/core';
-import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
-import { Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
-import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
+import { filter } from 'rxjs/operators';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiEvent } from 'app/interfaces/api-event.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { JobsListControlsComponent } from 'app/pages/jobs/components/jobs-list-controls/jobs-list-controls.component';
+import { JobsListStore } from 'app/pages/jobs/jobs-list/jobs-list.store';
 import { DialogService } from 'app/services';
-import { LocaleService } from 'app/services/locale.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { T } from 'app/translate-marker';
 
 export enum JobFilterState {
@@ -31,8 +27,9 @@ export enum JobFilterState {
 @Component({
   templateUrl: './jobs-list.component.html',
   styleUrls: ['./jobs-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class JobsListComponent implements OnInit {
+export class JobsListComponent implements OnInit, AfterViewInit {
   paginationPageIndex = 0;
   paginationPageSize = 10;
   paginationPageSizeOptions: number[] = [10, 50, 100];
@@ -46,17 +43,18 @@ export class JobsListComponent implements OnInit {
   displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'logs_excerpt'];
   expandedElement: any | null;
   viewingLogsForJob: Job;
-  filterValue = '';
-  isLoading = true;
+  isLoading: boolean;
+  actionsConfig: any;
+  selectedIndex = 0;
   readonly JobState = JobState;
   readonly JobFilterState = JobFilterState;
 
   constructor(
-    private ws: WebSocketService,
+    private core: CoreService,
     private translate: TranslateService,
-    private localeService: LocaleService,
-    private store: JobsManagerStore,
+    private store: JobsListStore,
     private dialogService: DialogService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   onAborted(job: Job): void {
@@ -76,48 +74,70 @@ export class JobsListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getData()
-      .pipe(untilDestroyed(this))
-      .subscribe(
-        (jobs) => {
-          this.dataSource.data = jobs;
-          this.isLoading = false;
+    this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
+      this.dataSource.data = state.jobs;
+      this.isLoading = state.isLoading;
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
+      this.cdr.markForCheck();
+    });
 
-          setTimeout(() => {
-            this.dataSource.sort = this.sort;
-            this.dataSource.paginator = this.paginator;
-          }, 0);
-        },
-        (error) => {
-          this.isLoading = false;
-          new EntityUtils().handleWSError(this, error);
-        },
-      );
-
-    this.getUpdates()
+    this.store
+      .getUpdates()
       .pipe(untilDestroyed(this))
       .subscribe((job) => {
-        // only update exist jobs or add latest jobs
-        const lastJob = this.dataSource.data[0];
-        if (job.id >= lastJob?.id) {
-          const targetRow = _.findIndex(this.dataSource.data, { id: job.id });
-          const data = this.dataSource.data;
-          if (targetRow === -1) {
-            data.push(job);
-          } else {
-            data[targetRow] = job;
-          }
-          this.dataSource.data = data;
-        }
+        this.handleUpdate(job);
       });
   }
 
-  getData(): Observable<Job[]> {
-    return this.ws.call(this.queryCall, this.queryCallOption);
+  ngAfterViewInit(): void {
+    this.actionsConfig = { actionType: JobsListControlsComponent, actionConfig: this };
+    this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
   }
 
-  getUpdates(): Observable<Job> {
-    return this.ws.subscribe(this.queryCall).pipe(map((event: ApiEvent<Job>) => event.fields));
+  handleUpdate(job: Job): void {
+    if (this.selectedIndex === 2 && job.state === JobState.Failed) {
+      this.store.patchState((state) => {
+        return {
+          ...state,
+          jobs: [job, ...state.jobs],
+        };
+      });
+    }
+
+    if (this.selectedIndex === 1) {
+      this.store.patchState((state) => {
+        let modifiedJobs = [...state.jobs];
+        const jobIndex = modifiedJobs.findIndex((item) => item.id === job.id);
+        if (jobIndex === -1) {
+          modifiedJobs = [job, ...state.jobs];
+        } else {
+          modifiedJobs[jobIndex] = job;
+        }
+
+        return {
+          ...state,
+          jobs: modifiedJobs.filter((item) => item.state === JobState.Running),
+        };
+      });
+    }
+
+    if (this.selectedIndex === 0) {
+      this.store.patchState((state) => {
+        let modifiedJobs = [...state.jobs];
+        const jobIndex = state.jobs.findIndex((item) => item.id === job.id);
+        if (jobIndex === -1) {
+          modifiedJobs = [job, ...state.jobs];
+        } else {
+          modifiedJobs[jobIndex] = job;
+        }
+
+        return {
+          ...state,
+          jobs: modifiedJobs,
+        };
+      });
+    }
   }
 
   viewLogs(job: Job): void {
@@ -128,24 +148,18 @@ export class JobsListComponent implements OnInit {
     this.viewingLogsForJob = null;
   }
 
-  searchQuery(query: string): void {
-    if (query?.trim().length > 0) {
-      this.dataSource.filter = query;
-    } else {
-      this.dataSource.filter = '';
-    }
-  }
-
-  onFilterChange(state: MatButtonToggleChange): void {
-    switch (state.value) {
-      case JobFilterState.All:
-        this.dataSource.filter = '';
+  onTabChange(tab: MatTabChangeEvent): void {
+    this.selectedIndex = tab.index;
+    switch (tab.index) {
+      case 2:
+        this.store.selectFailedJobs();
         break;
-      case JobFilterState.Running:
-      case JobFilterState.Failed:
-        this.dataSource.filter = state.value;
+      case 1:
+        this.store.selectRunningJobs();
         break;
+      case 0:
       default:
+        this.store.selectAllJobs();
         break;
     }
   }

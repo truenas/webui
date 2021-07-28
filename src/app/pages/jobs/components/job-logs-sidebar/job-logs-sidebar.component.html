@@ -1,4 +1,4 @@
-<mat-card class="card">
+<mat-card class="card mat-elevation-z0">
   <div class="sidebar-sticky">
     <div class="sidebar-header">
       <div class="sidebar-title">{{ 'Logs/Errors' | translate }}</div>
@@ -11,7 +11,7 @@
     <div class="logs-information">
       <div class="list-item">
         <h4>{{ 'Log Path' | translate }}</h4>
-        <div>{{ job.logs_path }}</div>
+        <div>{{ job.logs_path ? job.logs_path : '–' }}</div>
       </div>
 
       <div class="list-item">

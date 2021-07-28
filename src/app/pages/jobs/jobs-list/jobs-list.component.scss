@@ -14,6 +14,16 @@ mat-table.jobs-table {
   .mat-header-cell,
   .mat-footer-cell {
     color: var(--fg2);
+    padding: 0 8px;
+
+    &:first-of-type {
+      padding-left: 24px;
+    }
+  }
+
+  .mat-column-state,
+  .mat-column-logs_excerpt {
+    min-width: 110px;
   }
 
   .jobs-item {
@@ -42,8 +52,21 @@ mat-table.jobs-table {
     }
   }
 
-  .jobs-name-column {
-    min-width: 300px;
+  .jobs-item-icon {
+    align-items: center;
+    cursor: default;
+    display: inline-flex;
+    flex-grow: 0;
+    justify-content: center;
+    max-height: 24px;
+    max-width: 24px;
+    min-height: 24px;
+    min-width: 24px;
+    overflow: hidden;
+
+    mat-spinner {
+      margin: 0;
+    }
   }
 }
 

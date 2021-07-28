@@ -1,39 +1,31 @@
-<mat-spinner [diameter]="40" *ngIf="isLoading"></mat-spinner>
+<div fxLayout="row">
+  <mat-tab-group
+    animationDuration="0ms"
+    [selectedIndex]="selectedIndex"
+    (selectedTabChange)="onTabChange($event)"
+    fxFlex="100%"
+  >
+    <mat-tab label="{{ 'All' | translate }}" ix-auto ix-auto-type="tab" ix-auto-identifier="filter-all">
+      <ng-container *ngIf="isLoading; then loading; else jobsTable"></ng-container>
+    </mat-tab>
+    <mat-tab label="{{ 'Active' | translate }}" ix-auto ix-auto-type="tab" ix-auto-identifier="filter-active">
+      <ng-container *ngIf="isLoading; then loading; else jobsTable"></ng-container>
+    </mat-tab>
+    <mat-tab label="{{ 'Failed' | translate }}" ix-auto ix-auto-type="tab" ix-auto-identifier="filter-failed">
+      <ng-container *ngIf="isLoading; then loading; else jobsTable"></ng-container>
+    </mat-tab>
+  </mat-tab-group>
+</div>
 
-<ng-container *ngIf="!isLoading">
-  <div fxFlex fxLayoutAlign="space-between center">
-    <div class="jobs-fitlers">
-      <mat-button-toggle-group name="filters" aria-label="Jobs Filters" (change)="onFilterChange($event)">
-        <mat-button-toggle checked [value]="JobFilterState.All">{{ 'All' | translate }}</mat-button-toggle>
-        <mat-button-toggle [value]="JobFilterState.Running">{{ 'Running' | translate }}</mat-button-toggle>
-        <mat-button-toggle [value]="JobFilterState.Failed">{{ 'Failed' | translate }}</mat-button-toggle>
-      </mat-button-toggle-group>
-    </div>
-    <div class="form-element search-field" id="row-filter">
-      <mat-form-field floatPlaceholder="never">
-        <span matPrefix class="search-icon"><mat-icon>search</mat-icon></span>
-        <input
-          matInput
-          #filter
-          [(ngModel)]="filterValue"
-          (keyup)="searchQuery(filterValue)"
-          placeholder="{{ 'Filter' | translate }} {{ title | translate }}"
-        />
-        <span *ngIf="filterValue.length" class="reset-input">
-          <mat-icon
-            (click)="filterValue = ''; searchQuery(filterValue)"
-            role="img"
-            fontSet="mdi-set"
-            fontIcon="mdi-close-circle"
-          ></mat-icon>
-        </span>
-      </mat-form-field>
-    </div>
-  </div>
+<ng-template #loading>
+  <mat-spinner [diameter]="40"></mat-spinner>
+</ng-template>
 
+<ng-template #jobsTable>
   <div class="jobs-container">
     <mat-table
       #taskTable
+      *ngIf="dataSource"
       [dataSource]="dataSource"
       multiTemplateDataRows
       class="jobs-table"
@@ -45,7 +37,6 @@
         <mat-header-cell
           *matHeaderCellDef
           class="jobs-name-column"
-          mat-sort-header
           ix-auto
           ix-auto-type="tab"
           ix-auto-identifier="name"
@@ -53,17 +44,17 @@
           {{ 'Name' | translate }}
         </mat-header-cell>
         <mat-cell *matCellDef="let element" class="jobs-name-column">
-          <div class="jobs-item" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="8px">
+          <div class="jobs-item" fxFlex="100" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="8px">
             <div fxFlex="100" fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start center">
-              <ng-container [ngSwitch]="element.state">
+              <div class="jobs-item-icon" [ngSwitch]="element.state">
                 <mat-icon *ngSwitchCase="JobState.Success" class="state-success">check_circle_outline</mat-icon>
                 <mat-icon *ngSwitchCase="JobState.Failed" class="state-failed" [matTooltip]="element.error"
                   >highlight_off</mat-icon
                 >
-                <mat-spinner *ngSwitchCase="JobState.Running" class="state-running" [diameter]="20"></mat-spinner>
+                <mat-spinner *ngSwitchCase="JobState.Running" class="state-running" [diameter]="22"></mat-spinner>
                 <mat-icon *ngSwitchCase="JobState.Pending" class="state-waiting">schedule</mat-icon>
                 <mat-icon *ngSwitchCase="JobState.Aborted" class="state-aborted">report</mat-icon>
-              </ng-container>
+              </div>
 
               <div fxFlex="100" fxLayout="column">
                 <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
@@ -112,23 +103,29 @@
         <mat-cell *matCellDef="let element" fxFlex="74px">{{ element.id }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="time_started">
-        <mat-header-cell *matHeaderCellDef mat-sort-header ix-auto ix-auto-type="tab" ix-auto-identifier="DateStarted">
+        <mat-header-cell *matHeaderCellDef ix-auto ix-auto-type="tab" ix-auto-identifier="DateStarted">
           {{ 'Started' | translate }}
         </mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element.time_started?.$date ? (element.time_started.$date | formatDateTime) : '–' }}</mat-cell>
+        <mat-cell *matCellDef="let element">{{
+          element.time_started?.$date ? (element.time_started.$date | formatDateTime) : '–'
+        }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="time_finished">
-        <mat-header-cell *matHeaderCellDef mat-sort-header ix-auto ix-auto-type="tab" ix-auto-identifier="DateFinished">
+        <mat-header-cell *matHeaderCellDef ix-auto ix-auto-type="tab" ix-auto-identifier="DateFinished">
           {{ 'Finished' | translate }}
         </mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element.time_finished?.$date ? (element.time_finished.$date | formatDateTime) : '–' }}</mat-cell>
+        <mat-cell *matCellDef="let element">{{
+          element.time_finished?.$date ? (element.time_finished.$date | formatDateTime) : '–'
+        }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="logs_excerpt">
-        <mat-header-cell *matHeaderCellDef mat-sort-header ix-auto ix-auto-type="tab" ix-auto-identifier="LogsErrors">
+        <mat-header-cell *matHeaderCellDef ix-auto ix-auto-type="tab" ix-auto-identifier="LogsErrors">
           {{ 'Logs/Errors' | translate }}
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <ng-container *ngIf="element.logs_excerpt || element.error; then viewLogsTemplate; else emptyLogsTemplate"></ng-container>
+          <ng-container
+            *ngIf="element.logs_excerpt || element.error; then viewLogsTemplate; else emptyLogsTemplate"
+          ></ng-container>
 
           <ng-template #emptyLogsTemplate>
             {{ 'None' | translate }}
@@ -164,4 +161,4 @@
     [pageSizeOptions]="paginationPageSizeOptions"
     [showFirstLastButtons]="paginationShowFirstLastButtons"
   ></mat-paginator>
-</ng-container>
+</ng-template>
