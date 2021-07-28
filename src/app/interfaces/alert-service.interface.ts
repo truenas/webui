@@ -7,9 +7,9 @@ export interface AlertServiceCreate {
   name: string;
   type: AlertServiceType;
   attributes: {
-    v3_authprotocol: string;
-    v3_privprotocol: string;
-    chat_ids: number[];
+    v3_authprotocol?: string;
+    v3_privprotocol?: string;
+    chat_ids?: number[];
     [attribute: string]: string | number | boolean | number[] | string[];
   };
 }
