@@ -5,7 +5,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import isCidr from 'is-cidr';
 import * as _ from 'lodash';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
-import { LACPDURate, NetworkInterfaceType, XmitHashPolicy } from 'app/enums/network-interface.enum';
+import {
+  LACPDURate, LinkAggregationProtocol, NetworkInterfaceType, XmitHashPolicy,
+} from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
@@ -345,7 +347,24 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     for (let i = 0; i < this.lagg_fields.length; i++) {
       this.entityForm.setDisabled(this.lagg_fields[i], !is_lagg, !is_lagg);
     }
-    for (let i = 0; i < this.vlan_fields.length; i++) {
+    const lagProtocol = this.entityForm.formGroup.get('lag_protocol')?.value;
+    if (lagProtocol) {
+      if (lagProtocol === LinkAggregationProtocol.Lacp) {
+        this.entityForm.setDisabled('xmit_hash_policy', !is_lagg, !is_lagg);
+        this.entityForm.setDisabled('lacpdu_rate', !is_lagg, !is_lagg);
+      } else if (lagProtocol === LinkAggregationProtocol.LoadBalance) {
+        this.entityForm.setDisabled('xmit_hash_policy', !is_lagg, !is_lagg);
+        this.entityForm.setDisabled('lacpdu_rate', true, true);
+      } else {
+        this.entityForm.setDisabled('lacpdu_rate', true, true);
+        this.entityForm.setDisabled('xmit_hash_policy', true, true);
+      }
+    } else {
+      this.entityForm.setDisabled('lacpdu_rate', true, true);
+      this.entityForm.setDisabled('xmit_hash_policy', true, true);
+    }
+
+    for (let i = 0; i < this.bridge_fields.length; i++) {
       this.entityForm.setDisabled(this.bridge_fields[i], !is_bridge, !is_bridge);
     }
     this.vlan_fieldset.label = is_vlan;
@@ -522,18 +541,15 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     }
 
     this.entityForm.formGroup.get('lag_protocol').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
-      const enabled = false;
-      const disabled = true;
-
-      if (value === 'LACP') {
-        this.entityForm.setDisabled('xmit_hash_policy', enabled, enabled);
-        this.entityForm.setDisabled('lacpdu_rate', enabled, enabled);
-      } else if (value === 'LOADBALANCE') {
-        this.entityForm.setDisabled('xmit_hash_policy', enabled, enabled);
-        this.entityForm.setDisabled('lacpdu_rate', disabled, disabled);
+      if (value === LinkAggregationProtocol.Lacp) {
+        this.entityForm.setDisabled('xmit_hash_policy', false, false);
+        this.entityForm.setDisabled('lacpdu_rate', false, false);
+      } else if (value === LinkAggregationProtocol.LoadBalance) {
+        this.entityForm.setDisabled('xmit_hash_policy', false, false);
+        this.entityForm.setDisabled('lacpdu_rate', true, true);
       } else {
-        this.entityForm.setDisabled('lacpdu_rate', disabled, disabled);
-        this.entityForm.setDisabled('xmit_hash_policy', disabled, disabled);
+        this.entityForm.setDisabled('lacpdu_rate', true, true);
+        this.entityForm.setDisabled('xmit_hash_policy', true, true);
       }
     });
   }
