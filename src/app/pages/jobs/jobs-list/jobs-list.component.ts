@@ -17,12 +17,6 @@ import { JobsListStore } from 'app/pages/jobs/jobs-list/jobs-list.store';
 import { DialogService } from 'app/services';
 import { T } from 'app/translate-marker';
 
-export enum JobFilterState {
-  All = 'All',
-  Running = 'Running',
-  Failed = 'Failed',
-}
-
 @UntilDestroy()
 @Component({
   templateUrl: './jobs-list.component.html',
@@ -46,7 +40,6 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   actionsConfig: any;
   selectedIndex = 0;
   readonly JobState = JobState;
-  readonly JobFilterState = JobFilterState;
 
   constructor(
     private core: CoreService,
