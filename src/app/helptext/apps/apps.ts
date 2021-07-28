@@ -165,9 +165,14 @@ export default {
     },
 
     upgrade_dialog: {
-      title: T('Upgrade to '),
-      msg: T('Upgrade '),
+      title: T('Upgrade'),
+      currentVersion: T('Current Version'),
+      versionToUpgrade: T('Version to be upgarded'),
+      images: T('Images(to be updated)'),
+      noImageUpdate: T('No image available for upgrading to this version'),
+      noChangeLogMsg: T('No changelog available for upgrading to this version'),
       job: T('Upgrading...'),
+      changeLog: T('Changelog'),
     },
 
     rollback_dialog: {

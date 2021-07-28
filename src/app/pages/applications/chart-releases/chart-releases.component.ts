@@ -330,12 +330,29 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
   }
 
   update(name: string): void {
+    const catalogApp = this.chartItems[name];
     this.appLoaderService.open();
     this.appService.getUpgradeSummary(name).pipe(untilDestroyed(this)).subscribe((res: UpgradeSummary) => {
       this.appLoaderService.close();
+      let msg = `<div><strong>${helptext.charts.upgrade_dialog.currentVersion}:</strong> ${catalogApp.human_version}`;
+      msg += `<div><strong>${helptext.charts.upgrade_dialog.versionToUpgrade}:</strong> ${res.latest_human_version}`;
+      msg += `<div><strong>${helptext.charts.upgrade_dialog.images}:</strong></div>`;
+      if (Object.keys(res.container_images_to_update).length > 0) {
+        for (const key in res.container_images_to_update) {
+          msg += `<div>${key}</div>`;
+        }
+      } else {
+        msg += `${helptext.charts.upgrade_dialog.noImageUpdate}`;
+      }
+      msg += `<div><strong>${helptext.charts.upgrade_dialog.changeLog}</strong></div>`;
+      if (res.changelog) {
+        msg += res.changelog;
+      } else {
+        msg += helptext.charts.upgrade_dialog.noChangeLogMsg;
+      }
       this.dialogService.confirm({
-        title: helptext.charts.upgrade_dialog.title + res.latest_human_version,
-        message: res.changelog,
+        title: `${helptext.charts.upgrade_dialog.title} ${name}`,
+        message: msg,
       }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
         if (res) {
           this.dialogRef = this.mdDialog.open(EntityJobComponent, {
