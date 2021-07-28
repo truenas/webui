@@ -4,7 +4,6 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import * as FontFaceObserver from 'fontfaceobserver';
 import * as _ from 'lodash';
 import { Subject, Observable } from 'rxjs';
@@ -28,7 +27,6 @@ import { DialogService, ShellService, WebSocketService } from 'app/services';
   providers: [ShellService],
   encapsulation: ViewEncapsulation.None,
 })
-
 export class PodShellComponent implements OnInit, OnDestroy {
   // sets the shell prompt
   @Input() prompt = '';
@@ -41,34 +39,30 @@ export class PodShellComponent implements OnInit, OnDestroy {
   font_name = 'Inconsolata';
   token: any;
   xterm: any;
-  resize_terminal = true;
   private fitAddon: FitAddon;
   formEvent$: Subject<CoreEvent>;
 
-  usage_tooltip = helptext.usage_tooltip;
-
-  clearLine = '\u001b[2K\r';
   shellConnected = false;
   connectionId: string;
   protected chart_release_name: string;
   protected pod_name: string;
   protected command: string;
-  protected conatiner_name: string;
+  protected containerName: string;
   protected podDetails: Record<string, string[]>;
 
   protected route_success: string[] = ['apps'];
 
   choosePod: DialogFormConfiguration;
 
-  constructor(protected core: CoreService,
+  constructor(
+    private core: CoreService,
     private ws: WebSocketService,
-    public ss: ShellService,
+    private ss: ShellService,
     private dialogService: DialogService,
-    public translate: TranslateService,
-    protected aroute: ActivatedRoute,
-    protected router: Router,
-    private dialog: MatDialog) {
-  }
+    private aroute: ActivatedRoute,
+    private router: Router,
+    private dialog: MatDialog,
+  ) {}
 
   ngOnInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
@@ -83,7 +77,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
         if (!podDetail) {
           this.dialogService.confirm(helptext.podConsole.nopod.title, helptext.podConsole.nopod.message, true, 'Close', false, null, null, null, null, true);
         } else {
-          this.conatiner_name = podDetail[0];
+          this.containerName = podDetail[0];
           this.updateChooseShellDialog();
 
           this.getAuthToken().pipe(untilDestroyed(this)).subscribe((token) => {
@@ -189,12 +183,11 @@ export class PodShellComponent implements OnInit, OnDestroy {
   }
 
   initializeTerminal(): void {
-    const size = this.getSize();
     const setting = {
       cursorBlink: false,
       tabStopWidth: 8,
-      cols: size.cols,
-      rows: size.rows,
+      cols: 80,
+      rows: 20,
       focus: true,
       fontSize: this.font_size,
       fontFamily: this.font_name,
@@ -225,42 +218,10 @@ export class PodShellComponent implements OnInit, OnDestroy {
     this.xterm.loadAddon(attachAddon);
   }
 
-  getSize(): { rows: number; cols: number } {
-    const domWidth = this.container.nativeElement.offsetWidth;
-    const domHeight = this.container.nativeElement.offsetHeight;
-    const span = document.createElement('span');
-    this.container.nativeElement.appendChild(span);
-    span.style.whiteSpace = 'nowrap';
-    span.style.fontFamily = this.font_name;
-    span.style.fontSize = this.font_size + 'px';
-    span.innerHTML = 'a';
-
-    let cols = 0;
-    while (span.offsetWidth < domWidth) {
-      span.innerHTML += 'a';
-      cols++;
-    }
-
-    let rows = Math.ceil(domHeight / span.offsetHeight);
-    span.remove();
-    if (cols < 80) {
-      cols = 80;
-    }
-
-    if (rows < 10) {
-      rows = 10;
-    }
-
-    return {
-      rows,
-      cols,
-    };
-  }
-
   resizeTerm(): boolean {
-    const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
+    const size = this.fitAddon.proposeDimensions();
     this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
       this.xterm.focus();
     });
@@ -290,7 +251,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
     this.ss.podInfo = {
       chart_release_name: this.chart_release_name,
       pod_name: this.pod_name,
-      container_name: this.conatiner_name,
+      container_name: this.containerName,
       command: this.command,
     };
     this.ss.connect();
@@ -314,7 +275,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
         name: 'containers',
         placeholder: helptext.podConsole.chooseConatiner.placeholder,
         required: true,
-        value: this.conatiner_name,
+        value: this.containerName,
         options: this.podDetails[this.pod_name].map((item) => ({
           label: item,
           value: item,
@@ -340,7 +301,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
   onChooseShell(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     self.pod_name = entityDialog.formGroup.controls['pods'].value;
-    self.conatiner_name = entityDialog.formGroup.controls['containers'].value;
+    self.containerName = entityDialog.formGroup.controls['containers'].value;
     self.command = entityDialog.formGroup.controls['command'].value;
 
     self.reconnect();
@@ -350,7 +311,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
   afterShellDialogInit(entityDialog: any): void {
     const self = entityDialog.parent;
 
-    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(parent)).subscribe((value: any) => {
       const containers = self.podDetails[value];
       const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' });
       containerFC.options = containers.map((item: any) => ({
