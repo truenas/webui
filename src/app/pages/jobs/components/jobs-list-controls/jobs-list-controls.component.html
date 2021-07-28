@@ -1,7 +1,7 @@
 <div
   *ngIf="entity"
   fxFlex
-  class="entity-table-controls"
+  class="jobs-list-controls"
   fxLayout="row wrap"
   fxLayoutAlignGap="16px"
   fxLayoutAlign="end center"
@@ -26,26 +26,3 @@
   </div>
   <!-- END SEARCH -->
 </div>
-
-<!--
-<div class="form-element search-field" id="row-filter">
-  <mat-form-field floatPlaceholder="never">
-    <span matPrefix class="search-icon"><mat-icon>search</mat-icon></span>
-    <input
-      matInput
-      #filter
-      [(ngModel)]="filterValue"
-      (keyup)="searchQuery(filterValue)"
-      placeholder="{{ 'Filter' | translate }} {{ title | translate }}"
-    />
-    <span *ngIf="filterValue.length" class="reset-input">
-      <mat-icon
-        (click)="filterValue = ''; searchQuery(filterValue)"
-        role="img"
-        fontSet="mdi-set"
-        fontIcon="mdi-close-circle"
-      ></mat-icon>
-    </span>
-  </mat-form-field>
-</div>
- -->

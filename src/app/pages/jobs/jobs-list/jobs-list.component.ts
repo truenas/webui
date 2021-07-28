@@ -41,7 +41,6 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   dataSource: MatTableDataSource<Job> = new MatTableDataSource<Job>([]);
   displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'logs_excerpt'];
-  expandedElement: any | null;
   viewingLogsForJob: Job;
   isLoading: boolean;
   actionsConfig: any;

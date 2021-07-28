@@ -21,13 +21,6 @@ const initialState: JobsManagerState = {
 export class JobsListStore extends ComponentStore<JobsManagerState> {
   private jobs: Job[] = [];
 
-  readonly runningJobs$: Observable<Job[]> = this.select(
-    () => this.jobs.filter((job) => job.state === JobState.Running),
-  );
-  readonly failedJobs$: Observable<Job[]> = this.select(
-    () => this.jobs.filter((job) => job.state === JobState.Failed),
-  );
-
   constructor(private ws: WebSocketService, private dialog: DialogService) {
     super(initialState);
 
@@ -47,20 +40,18 @@ export class JobsListStore extends ComponentStore<JobsManagerState> {
       isLoading: true,
     });
 
-    return this.ws
-      .call('core.get_jobs', [[], { order_by: ['-id'] }])
-      .pipe(
-        catchError((error) => {
-          new EntityUtils().errorReport(error, this.dialog);
+    return this.ws.call('core.get_jobs', [[], { order_by: ['-id'] }]).pipe(
+      catchError((error) => {
+        new EntityUtils().errorReport(error, this.dialog);
 
-          this.patchState({
-            isLoading: false,
-          });
+        this.patchState({
+          isLoading: false,
+        });
 
-          return EMPTY;
-        }),
-        untilDestroyed(this),
-      );
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    );
   }
 
   getUpdates(): Observable<Job> {
@@ -79,29 +70,18 @@ export class JobsListStore extends ComponentStore<JobsManagerState> {
   }
 
   selectAllJobs(): void {
-    this.patchState((state) => {
-      return {
-        ...state,
-        jobs: this.jobs,
-      };
-    });
+    this.patchState({ jobs: this.jobs });
   }
 
   selectRunningJobs(): void {
-    this.patchState((state) => {
-      return {
-        ...state,
-        jobs: this.jobs.filter((job) => job.state === JobState.Running),
-      };
+    this.patchState({
+      jobs: this.jobs.filter((job) => job.state === JobState.Running),
     });
   }
 
   selectFailedJobs(): void {
-    this.patchState((state) => {
-      return {
-        ...state,
-        jobs: this.jobs.filter((job) => job.state === JobState.Failed),
-      };
+    this.patchState({
+      jobs: this.jobs.filter((job) => job.state === JobState.Failed),
     });
   }
 

@@ -5,7 +5,6 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { fromEvent, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { GlobalAction } from '../../../../components/common/page-title/page-title.component';
-import { CoreService } from '../../../../core/services/core-service/core.service';
 import { JobsListComponent } from '../../jobs-list/jobs-list.component';
 
 @UntilDestroy()
@@ -19,8 +18,6 @@ export class JobsListControlsComponent implements OnDestroy, AfterViewInit, Glob
   @ViewChild('filter', { static: false }) filter: ElementRef;
   @Input() entity: JobsListComponent;
   private filterSubscription: Subscription;
-
-  constructor(private core: CoreService) {}
 
   resetJobFilter(): void {
     this.filterValue = '';
@@ -42,8 +39,7 @@ export class JobsListControlsComponent implements OnDestroy, AfterViewInit, Glob
     }
 
     this.filterSubscription = fromEvent(this.filter.nativeElement, 'keyup')
-      .pipe(debounceTime(250), distinctUntilChanged())
-      .pipe(untilDestroyed(this))
+      .pipe(debounceTime(250), distinctUntilChanged(), untilDestroyed(this))
       .subscribe(() => {
         this.filterValue = this.filter.nativeElement.value || '';
         this.filterJobs(this.filterValue);
