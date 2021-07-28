@@ -162,7 +162,7 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
     assert wait_on_element(driver, 30, '//button[@id="My Dropbox task_Status-button" and contains(.,"SUCCESS")]')
-    time.sleep(1)
+    time.sleep(2)
 
 
 @then('verify all files are copied from Dropbox are into the dataset')
@@ -368,6 +368,15 @@ def select_push_as_the_direction_then_under_transfer_mode_select_move(driver):
 @then('verify all files are moved from the dataset to the Dropbox test folder')
 def verify_all_files_are_moved_from_the_dataset_to_the_dropbox_test_folder(driver, nas_ip):
     """verify all files are moved from the dataset to the Dropbox test folder."""
+    cmd = 'test -f /mnt/system/dropbox_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is False, results['output']
+    cmd = 'test -f /mnt/system/dropbox_cloud/Explaining_BSD.pdf'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is False, results['output']
+    cmd = 'test -f /mnt/system/dropbox_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'] is False, results['output']
     driver.switch_to.window(driver.window_handles[1])
     driver.refresh()
     time.sleep(1)
@@ -380,15 +389,6 @@ def verify_all_files_are_moved_from_the_dataset_to_the_dropbox_test_folder(drive
     assert wait_on_element(driver, 5, '//span[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
     assert wait_on_element(driver, 5, '//a[text()="test"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="test"]').click()
-    cmd = 'test -f /mnt/system/dropbox_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is False, results['output']
-    cmd = 'test -f /mnt/system/dropbox_cloud/Explaining_BSD.pdf'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is False, results['output']
-    cmd = 'test -f /mnt/system/dropbox_cloud/music/Mr_Smith_Pequeñas_Guitarras.mp3'
-    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
-    assert results['result'] is False, results['output']
 
 
 @then('select PULL as the Direction then under Transfer Mode, select SYNC')
