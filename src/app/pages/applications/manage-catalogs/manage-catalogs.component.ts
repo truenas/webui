@@ -12,7 +12,6 @@ import {
   EntityTableComponent,
 } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
@@ -207,17 +206,19 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
 
   syncRow(row: Catalog): void {
     const payload = [row.label];
-    this.loader.open();
-    this.ws.call('catalog.sync', payload).pipe(untilDestroyed(this)).subscribe(
-      () => {
-        this.loader.close();
-        this.refresh();
+
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+      data: {
+        title: helptext.refreshing,
       },
-      (res) => {
-        this.loader.close();
-        new EntityUtils().handleWSError(this, res, this.dialogService);
-      },
-    );
+      disableClose: true,
+    });
+    this.dialogRef.componentInstance.setCall('catalog.sync', payload);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialogService.closeAllDialogs();
+      this.refresh();
+    });
   }
 
   onRowClick(row: Catalog): void {
