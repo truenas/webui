@@ -8,6 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -19,6 +20,7 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
@@ -336,20 +338,24 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
       this.dialogService.confirm({
         title: helptext.charts.upgrade_dialog.title + res.latest_human_version,
         message: res.changelog,
-      }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-        if (res) {
-          this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-            data: {
-              title: (
-                helptext.charts.upgrade_dialog.job),
-            },
-          });
-          this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name]);
-          this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-            this.dialogService.closeAllDialogs();
-          });
-        }
+      }).pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+          data: {
+            title: helptext.charts.upgrade_dialog.job,
+          },
+        });
+        this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name]);
+        this.dialogRef.componentInstance.submit();
+        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          this.dialogService.closeAllDialogs();
+        });
+        this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+          this.dialogService.closeAllDialogs();
+          new EntityUtils().handleWSError(this, error, this.dialogService);
+        });
       });
     });
   }
