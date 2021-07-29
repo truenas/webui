@@ -162,7 +162,7 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
     assert wait_on_element(driver, 30, '//button[@id="My Backblaze B2 task_Status-button" and contains(.,"SUCCESS")]')
-    time.sleep(1)
+    time.sleep(3)
 
 
 @then('verify all files are copied from Backblaze B2 are into the dataset')
@@ -264,7 +264,7 @@ def click_on_Browser_Files_click_on_bucket_then_click_on_the_test_folder(driver,
 @then('verify all files are in the bucket')
 def verify_all_files_are_in_the_test_folder(driver):
     """verify all files are in the bucket."""
-    assert wait_on_element(driver, 5, '//a[contains(text(),"Explaining_BSD.pdf")]', 'clickable')
+    assert wait_on_element(driver, 10, '//a[contains(text(),"Explaining_BSD.pdf")]', 'clickable')
     assert wait_on_element(driver, 5, '//a[contains(text(),"Gloomy_Forest_wallpaper_ForWallpapercom.jpg")]', 'clickable')
     assert wait_on_element(driver, 5, '//span[contains(text(),"music")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"music")]').click()
@@ -466,7 +466,7 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     time.sleep(1)
     assert wait_on_element(driver, 30, '//button[@id="My Backblaze B2 task_Status-button" and contains(.,"SUCCESS")]')
     # give time to the system to be ready.
-    time.sleep(1)
+    time.sleep(3)
 
 
 @then('verify the file is removed from the dataset folder')
