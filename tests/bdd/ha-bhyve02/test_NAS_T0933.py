@@ -168,7 +168,7 @@ def navigate_to_shell(driver):
 def the_shell_should_should_open(driver):
     """The Shell page should open."""
     assert wait_on_element(driver, 5, '//span[@class="reverse-video terminal-cursor"]')
-    time.sleep(5)
+    time.sleep(10)
 
 
 @then(parsers.parse('input "{cmd}"'))
