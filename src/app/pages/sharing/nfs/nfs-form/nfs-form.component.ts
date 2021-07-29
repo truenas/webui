@@ -508,11 +508,11 @@ export class NFSFormComponent implements FormConfiguration {
       });
   }
 
-  loadMoreUserOptions(length: number, parent: NFSFormComponent, searchText: string, config: any): void {
+  loadMoreUserOptions(length: number, parent: NFSFormComponent, searchText: string, config: FieldConfig): void {
     parent.userService
       .userQueryDSCache(searchText, length)
       .pipe(untilDestroyed(parent))
-      .subscribe((items: any) => {
+      .subscribe((items) => {
         const users: Option[] = [];
         for (let i = 0; i < items.length; i++) {
           users.push({ label: items[i].username, value: items[i].username });
@@ -525,7 +525,7 @@ export class NFSFormComponent implements FormConfiguration {
       });
   }
 
-  loadMoreGroupOptions(length: number, parent: NFSFormComponent, searchText: string, config: any): void {
+  loadMoreGroupOptions(length: number, parent: NFSFormComponent, searchText: string, config: FieldConfig): void {
     parent.userService
       .groupQueryDSCache(searchText, false, length)
       .pipe(untilDestroyed(parent))

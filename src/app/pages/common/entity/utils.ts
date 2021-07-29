@@ -1,8 +1,11 @@
 import * as _ from 'lodash';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { Relation } from './entity-form/models/field-relation.interface';
+import { DialogService } from 'app/services';
+import { Relation, RelationGroup } from './entity-form/models/field-relation.interface';
 
 export const NULL_VALUE = 'null_value';
 
@@ -61,27 +64,31 @@ export class EntityUtils {
     }
   }
 
-  handleWSError(entity: any, res: any, dialogService?: any, targetFieldConfig?: any): void {
+  handleWSError(
+    entity: any,
+    res: WebsocketError | Job,
+    dialogService?: DialogService,
+    targetFieldConfig?: FieldConfig[],
+  ): void {
     let dialog;
     if (dialogService) {
       dialog = dialogService;
     } else if (entity) {
       dialog = entity.dialog;
     }
-    if (res.exc_info && res.exc_info.extra) {
-      res.extra = res.exc_info.extra;
+    if ('exc_info' in res && res.exc_info.extra) {
+      (res as any).extra = res.exc_info.extra;
     }
 
-    if (res.extra && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
+    if ('extra' in res && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
       let scroll = false;
-      if (res.extra.excerpt) {
+      if ((res.extra as any).excerpt) {
         this.errorReport(res, dialog);
       }
       for (let i = 0; i < res.extra.length; i++) {
-        let field = res.extra[i][0].split('.');
+        const field = res.extra[i][0].split('.')[1];
         const error = res.extra[i][1];
 
-        field = field[1];
         let fc = _.find(entity.fieldConfig, { name: field })
           || (entity.getErrorField ? entity.getErrorField(field) : undefined);
         let stepIndex;
@@ -126,10 +133,10 @@ export class EntityUtils {
     }
   }
 
-  errorReport(res: any, dialog: any): void {
-    if (res.trace && res.trace.formatted && dialog) {
+  errorReport(res: WebsocketError | Job, dialog: DialogService): void {
+    if ('trace' in res && res.trace.formatted && dialog) {
       dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
-    } else if (res.state && res.error && res.exception && dialog) {
+    } else if ('state' in res && res.error && res.exception && dialog) {
       dialog.errorReport(res.state, res.error, res.exception);
     } else {
       // if it can't print the error at least put it on the console.
@@ -251,7 +258,7 @@ export class EntityUtils {
     return result;
   }
 
-  createRelations(relations: Relation[]): { action: string; when: { name: string; operator: string; value: any }[] }[] {
+  createRelations(relations: Relation[]): RelationGroup[] {
     const result = relations.map((relation) => {
       const relationFieldName = relation.fieldName;
 
@@ -277,13 +284,22 @@ export class EntityUtils {
 
     const name = schemaConfig.variable;
 
-    const fieldConfig: any = {
-      required: schemaConfig.schema.required,
-      value: schemaConfig.schema.default,
-      tooltip: schemaConfig.description,
-      placeholder: schemaConfig.label,
+    const fieldConfig: FieldConfig = {
       name,
-    };
+    } as FieldConfig;
+
+    if (schemaConfig.schema.required !== undefined) {
+      fieldConfig.required = schemaConfig.schema.required;
+    }
+    if (schemaConfig.schema.default !== undefined) {
+      fieldConfig.value = schemaConfig.schema.default;
+    }
+    if (schemaConfig.description !== undefined) {
+      fieldConfig.tooltip = schemaConfig.description;
+    }
+    if (schemaConfig.label !== undefined) {
+      fieldConfig.placeholder = schemaConfig.label;
+    }
 
     let relations: Relation[] = null;
     if (schemaConfig.schema.show_if) {

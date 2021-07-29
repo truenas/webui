@@ -17,6 +17,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { LocaleService } from 'app/services/locale.service';
 import { StorageService } from 'app/services/storage.service';
 import { T } from 'app/translate-marker';
+import { BootenvRow } from './bootenv-row.interface';
 
 @UntilDestroy()
 @Component({
@@ -80,15 +81,16 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   }
 
   dataHandler(entityList: EntityTableComponent): void {
-    entityList.rows.forEach((row: any) => {
-      if (row.active !== '-' && row.active !== '') {
-        row.hideCheckbox = true;
-      }
-      row.rawspace = this.storage.convertBytestoHumanReadable(row.rawspace);
+    entityList.rows = entityList.rows.map((row: Bootenv) => {
+      return {
+        ...row,
+        rawspace: this.storage.convertBytestoHumanReadable(row.rawspace),
+        hideCheckbox: row.active !== '-' && row.active !== '',
+      } as BootenvRow;
     });
   }
 
-  rowValue(row: Bootenv, attr: keyof Bootenv): unknown {
+  rowValue(row: BootenvRow, attr: keyof BootenvRow): unknown {
     if (attr === 'created') {
       return this.localeService.formatDateTime(row.created.$date);
     }
@@ -116,13 +118,13 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     return true;
   }
 
-  getActions(row: any): EntityTableAction[] {
+  getActions(row: BootenvRow): EntityTableAction[] {
     const actions = [];
     if (!row.active.includes('Reboot')) {
       actions.push({
         label: T('Activate'),
         id: 'activate',
-        onClick: (row: any) => {
+        onClick: (row: BootenvRow) => {
           this.doActivate(row.id);
         },
       });
@@ -131,7 +133,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     actions.push({
       label: T('Clone'),
       id: 'clone',
-      onClick: (row: any) => {
+      onClick: (row: BootenvRow) => {
         this._router.navigate(new Array('').concat(
           ['system', 'boot', 'clone', row.id],
         ));
@@ -141,7 +143,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     actions.push({
       label: T('Rename'),
       id: 'rename',
-      onClick: (row: any) => {
+      onClick: (row: BootenvRow) => {
         this._router.navigate(new Array('').concat(
           ['system', 'boot', 'rename', row.id],
         ));
@@ -152,7 +154,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       actions.push({
         label: T('Delete'),
         id: 'delete',
-        onClick: (row: any) =>
+        onClick: (row: BootenvRow) =>
           this.entityList.doDeleteJob(row).pipe(untilDestroyed(this)).subscribe(
             (success) => {
               if (!success) {
@@ -176,7 +178,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       actions.push({
         label: T('Unkeep'),
         id: 'keep',
-        onClick: (row: any) => {
+        onClick: (row: BootenvRow) => {
           this.toggleKeep(row.id, row.keep);
         },
       });
@@ -184,7 +186,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       actions.push({
         label: T('Keep'),
         id: 'keep',
-        onClick: (row: any) => {
+        onClick: (row: BootenvRow) => {
           this.toggleKeep(row.id, row.keep);
         },
       });
@@ -209,8 +211,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     },
   }];
 
-  getSelectedNames(selectedBootenvs: any): any[] {
-    const selected: any[] = [];
+  getSelectedNames(selectedBootenvs: BootenvRow[]): string[][] {
+    const selected: string[][] = [];
     for (const i in selectedBootenvs) {
       if (selectedBootenvs[i].active === '-' || selectedBootenvs[i].active === '') {
         selected.push([selectedBootenvs[i].id]);
@@ -219,7 +221,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     return selected;
   }
 
-  wsMultiDeleteParams(selected: any): any[] {
+  wsMultiDeleteParams(selected: BootenvRow[]): any[] {
     const params: any[] = ['bootenv.do_delete'];
     params.push(this.getSelectedNames(selected));
     return params;
@@ -248,7 +250,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   updateBootState(): void {
     this.ws.call('boot.get_state').pipe(untilDestroyed(this)).subscribe((state) => {
       if (state.scan.end_time) {
-        this.scrub_msg = this.localeService.formatDateTime(state.scan.end_time.$date as any);
+        this.scrub_msg = this.localeService.formatDateTime(state.scan.end_time.$date);
       } else {
         this.scrub_msg = T('Never');
       }
@@ -262,7 +264,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     });
   }
 
-  toggleKeep(id: string, status: any): void {
+  toggleKeep(id: string, status: boolean): void {
     if (!status) {
       this.dialog.confirm(T('Keep'), T('Keep this Boot Environment?'), false, helptext_system_bootenv.list_dialog_keep_action).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
         if (res) {
@@ -348,9 +350,9 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             cancelButtonText: T('Close'),
             parent: this,
             customSubmit(entityDialog: EntityDialogComponent) {
-              const scrubIntervalValue: number = parseInt(entityDialog.formValue.new_scrub_interval);
+              const scrubIntervalValue = parseInt(entityDialog.formValue.new_scrub_interval);
               if (scrubIntervalValue > 0) {
-                localWS.call('boot.set_scrub_interval', [scrubIntervalValue]).pipe(untilDestroyed(this)).subscribe(() => {
+                localWS.call('boot.set_scrub_interval', [scrubIntervalValue]).pipe(untilDestroyed(entityDialog.parent)).subscribe(() => {
                   localDialog.closeAllDialogs();
                   localDialog.Info(T('Scrub Interval Set'), T(`Scrub interval set to ${scrubIntervalValue} days`), '300px', 'info', true);
                 });

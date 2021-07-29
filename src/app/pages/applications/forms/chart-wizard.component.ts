@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
+import { ixChartApp } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from 'app/helptext/apps/apps';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
@@ -51,6 +52,11 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
   parseSchema(): void {
     try {
       this.title = this.catalogApp.name;
+      let hideVersion = false;
+      if (this.catalogApp.name == ixChartApp) {
+        this.title = helptext.launch;
+        hideVersion = true;
+      }
       const versionKeys: any[] = [];
       Object.keys(this.catalogApp.versions).forEach((versionKey) => {
         if (this.catalogApp.versions[versionKey].healthy) {
@@ -86,6 +92,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
           options: versionOptions,
           value: this.selectedVersionKey,
           required: true,
+          isHidden: hideVersion,
         }],
       });
 
@@ -156,7 +163,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.exc_info && res.exc_info.extra) {
         new EntityUtils().handleWSError(this, res);
       } else {

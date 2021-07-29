@@ -67,7 +67,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   statsDataEvent$: Subject<CoreEvent>;
   private statsEvents: Subscription;
-  tcStats: any;
 
   // For empty state
   get empty(): boolean {
@@ -474,9 +473,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.nics.forEach((nic) => {
       conf.push({
-        name: 'Interface', identifier: 'name,' + nic.name, rendered: true, id: conf.length.toString(),
+        name: 'Interface', identifier: 'name,' + nic.name, rendered: false, id: conf.length.toString(),
       });
     });
+
+    conf.push({ name: 'Network', rendered: true, id: conf.length.toString() });
 
     return conf;
   }

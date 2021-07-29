@@ -15,12 +15,14 @@ import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
+import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -325,7 +327,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
     return actions;
   }
 
-  key_file_updater(file: any, parent: any): void {
+  key_file_updater(file: any, parent: this): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
@@ -421,7 +423,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
             dialogRef.componentInstance.setCall('pool.unlock', params);
             dialogRef.componentInstance.submit();
           }
-          dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
+          dialogRef.componentInstance.success.pipe(untilDestroyed(self, 'destroy')).subscribe(() => {
             if (!done) {
               dialogRef.close(false);
               entityDialog.dialogRef.close(true);
@@ -431,7 +433,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
               done = true;
             }
           });
-          dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((res: any) => {
+          dialogRef.componentInstance.failure.pipe(untilDestroyed(self, 'destroy')).subscribe((res) => {
             dialogRef.close(false);
             new EntityUtils().handleWSError(self, res, self.dialogService);
           });
@@ -506,7 +508,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     self.parentVolumesListComponent.repaintMe();
                   }
                 });
-                dialogRef.componentInstance.failure.pipe(untilDestroyed(self, 'destroy')).subscribe((err: any) => {
+                dialogRef.componentInstance.failure.pipe(untilDestroyed(self, 'destroy')).subscribe((err) => {
                   if (err) {
                     dialogRef.close();
                     new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
@@ -801,7 +803,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   untilDestroyed(this, 'destroy'),
                 ).subscribe(() => {
                   this.loader.open();
-                  this.ws.call('pool.scrub', [row1.id, 'STOP']).pipe(untilDestroyed(this, 'destroy')).subscribe(
+                  this.ws.call('pool.scrub', [row1.id, PoolScrubAction.Stop]).pipe(untilDestroyed(this, 'destroy')).subscribe(
                     () => {
                       this.loader.close();
                       const msg = self.translate.instant('Stopping scrub on pool');
@@ -849,7 +851,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       );
                     }
                   });
-                  this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((err: any) => {
+                  this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((err) => {
                     this.dialogRef.componentInstance.setDescription(err.error);
                   });
                 });
@@ -909,7 +911,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     if (res.exc_info && res.exc_info.extra) {
                       (res as any).extra = res.exc_info.extra;
                     }
-                    new EntityUtils().handleWSError(this, res, parent.dialogService, conf.fieldConfig);
+                    new EntityUtils().handleWSError(parent, res, parent.dialogService, conf.fieldConfig);
                   }
                   if (res.state === JobState.Success) {
                     if (entityDialog) {
@@ -926,7 +928,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 },
                 (err) => {
                   parent.loader.close();
-                  new EntityUtils().handleWSError(this, err, parent.dialogService);
+                  new EntityUtils().handleWSError(parent, err, parent.dialogService);
                 },
               );
             }
@@ -1464,7 +1466,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       );
                       entityDialog.dialogRef.close();
                       self.parentVolumesListComponent.repaintMe();
-                    }, (err: any) => {
+                    }, (err: WebsocketError) => {
                       entityDialog.loader.close();
                       new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
                     });
@@ -1504,7 +1506,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       self.parentVolumesListComponent.repaintMe();
                     }
                   });
-                  dialogRef.componentInstance.failure.pipe(untilDestroyed(self, 'destroy')).subscribe((err: any) => {
+                  dialogRef.componentInstance.failure.pipe(untilDestroyed(self, 'destroy')).subscribe((err) => {
                     if (err) {
                       dialogRef.close();
                       new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
@@ -1561,7 +1563,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   }
                 });
 
-                dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((res: any) => {
+                dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
                   dialogRef.close(false);
                   new EntityUtils().handleWSError(this, res, this.dialogService);
                 });

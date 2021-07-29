@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatStepper } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -699,9 +700,9 @@ export class CertificateAddComponent implements WizardConfiguration {
     });
   }
 
-  customNext(stepper: any): void {
+  customNext(stepper: MatStepper): void {
     stepper.next();
-    this.currentStep = stepper._selectedIndex;
+    this.currentStep = stepper.selectedIndex;
   }
 
   getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
@@ -1065,7 +1066,7 @@ export class CertificateAddComponent implements WizardConfiguration {
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       this.dialog.closeAll();
       // Dialog needed b/c handleWSError doesn't open a dialog when rejection comes back from provider
       if (err.error.includes('[EFAULT')) {

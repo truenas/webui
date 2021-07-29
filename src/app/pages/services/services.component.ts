@@ -181,10 +181,9 @@ export class Services implements EntityTableConfig, OnInit {
       .call('service.update', [service.id, { enable: service.enable }])
       .pipe(untilDestroyed(this)).subscribe((res) => {
         if (!res) {
-          return;
+          // Middleware should return the service id
+          throw new Error('Method service.update failed. No response from server');
         }
-
-        service.enable = !service.enable;
       });
   }
 

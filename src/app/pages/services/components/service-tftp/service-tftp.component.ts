@@ -134,8 +134,8 @@ export class ServiceTFTPComponent implements FormConfiguration {
     entityEdit.submitFunction = (body) => this.ws.call('tftp.update', [body]);
   }
 
-  updateUserSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+  updateUserSearchOptions(value = '', parent: this): void {
+    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });

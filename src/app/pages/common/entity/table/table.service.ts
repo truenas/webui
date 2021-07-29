@@ -165,7 +165,7 @@ export class TableService {
           table.tableConf.afterDelete();
         }
       });
-      this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+      this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
         this.loader.close();
         table.loaderOpen = false;
         new EntityUtils().handleWSError(this, err, this.dialogService);

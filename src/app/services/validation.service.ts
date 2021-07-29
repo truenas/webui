@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { FormControl, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormControl, ValidatorFn } from '@angular/forms';
 
 @Injectable({ providedIn: 'root' })
 export class ValidationService {
   greaterThan(otherControlName: string, fieldPlaceholers: [string]): ValidatorFn {
-    let thisControl: FormControl;
+    let thisControl: AbstractControl;
     let otherControl: FormControl;
 
-    return function greaterThanValidate(control: FormControl) {
+    return function greaterThanValidate(control: AbstractControl) {
       if (!control.parent) {
         return null;
       }
@@ -41,9 +41,9 @@ export class ValidationService {
   }
 
   rangeValidator(min: number, max?: number): ValidatorFn {
-    let thisControl: FormControl;
+    let thisControl: AbstractControl;
 
-    return function rangeValidate(control: FormControl) {
+    return function rangeValidate(control: AbstractControl) {
       let regex;
       if (min === 0) {
         regex = /^(0|[1-9]\d*)$/;
@@ -82,10 +82,10 @@ export class ValidationService {
   }
 
   matchOtherValidator(otherControlName: string): ValidatorFn {
-    let thisControl: FormControl;
+    let thisControl: AbstractControl;
     let otherControl: FormControl;
 
-    return function matchOtherValidate(control: FormControl) {
+    return function matchOtherValidate(control: AbstractControl) {
       if (!control.parent) {
         return null;
       }

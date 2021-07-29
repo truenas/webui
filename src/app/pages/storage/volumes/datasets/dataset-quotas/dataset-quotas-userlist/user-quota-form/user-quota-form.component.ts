@@ -34,7 +34,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
   save_button_enabled = false;
   private differ: any;
   fieldConfig: FieldConfig[] = [];
-  fieldSets: FieldSet[] = [
+  fieldSets: FieldSet<this>[] = [
     {
       name: helptext.users.quota_title,
       label: true,
@@ -46,7 +46,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
           placeholder: helptext.users.data_quota.placeholder,
           tooltip: `${helptext.users.data_quota.tooltip} bytes.`,
           blurStatus: true,
-          blurEvent: this.blurEvent,
+          blurEvent: this.dataQuotaBlur,
           parent: this,
         },
         {
@@ -185,19 +185,19 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
     });
   }
 
-  blurEvent(parent: any): void {
+  dataQuotaBlur(parent: this): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'data_quota');
     }
   }
 
-  transformValue(parent: any, fieldname: string): void {
+  transformValue(parent: this, fieldname: string): void {
     parent.entityForm.formGroup.controls[fieldname].setValue(parent.storageService.humanReadable || 0);
     parent.storageService.humanReadable = '';
   }
 
-  updateSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+  updateSearchOptions(value = '', parent: this): void {
+    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       const entries: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         entries.push({ label: items[i].username, value: items[i].username });

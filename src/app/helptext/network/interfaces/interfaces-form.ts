@@ -34,7 +34,7 @@ export default {
   int_name_placeholder: T('Name'),
   int_name_tooltip: T('Enter a name for the interface.\
  Use the format <samp>bond<i>X</i></samp>,\
- <samp>vlan<i>X</i></samp>, or <samp>bridge<i>X</i></samp> where\
+ <samp>vlan<i>X</i></samp>, or <samp>br<i>X</i></samp> where\
  <i>X</i> is a number representing a non-parent interface. Read-only\
  when editing an interface.'),
   int_name_validation: [],

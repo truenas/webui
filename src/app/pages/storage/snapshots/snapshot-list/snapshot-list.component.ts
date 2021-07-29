@@ -9,8 +9,10 @@ import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
+import { Job } from 'app/interfaces/job.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Snapshot } from 'app/interfaces/storage.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -177,7 +179,6 @@ export class SnapshotListComponent implements EntityTableConfig {
   }
 
   resourceTransformIncomingRestData(rows: any[]): any[] {
-    /// /
     rows.forEach((row) => {
       if (row.properties) {
         row.used = this.storageService.convertBytestoHumanReadable(row.properties.used.rawvalue);
@@ -185,7 +186,6 @@ export class SnapshotListComponent implements EntityTableConfig {
         row.referenced = this.storageService.convertBytestoHumanReadable(row.properties.referenced.rawvalue);
       }
     });
-    /// /
     return rows;
   }
 
@@ -241,8 +241,8 @@ export class SnapshotListComponent implements EntityTableConfig {
         .subscribe((snapshot) => {
           entityList.handleData(snapshot, true);
         },
-        () => {
-          new EntityUtils().handleWSError(this, config, entityList.dialogService);
+        (error) => {
+          new EntityUtils().handleWSError(this, error, entityList.dialogService);
         });
     });
   }
@@ -276,7 +276,7 @@ export class SnapshotListComponent implements EntityTableConfig {
           () => {
             this.entityList.getData();
           },
-          (res: any) => {
+          (res: WebsocketError) => {
             new EntityUtils().handleWSError(this, res, this.entityList.dialogService);
             this.entityList.loaderOpen = false;
             this.entityList.loader.close();
@@ -316,7 +316,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     const listEnd = '</ul>';
     const breakTag = '<br>';
 
-    info.datasets.forEach((dataset: any) => {
+    info.datasets.forEach((dataset) => {
       const totalSnapshots: number = info.snapshots[dataset].length;
       const snapshotText = this.translate.instant(
         '{ n, plural, one {# snapshot} other {# snapshots} }',
@@ -325,7 +325,7 @@ export class SnapshotListComponent implements EntityTableConfig {
       const header = `<br/> <div><strong>${dataset}</strong> (${snapshotText}) </div>`;
       const listContent: string[] = [];
 
-      info.snapshots[dataset].forEach((snapshot: any) => {
+      info.snapshots[dataset].forEach((snapshot) => {
         listContent.push('<li>&nbsp;&nbsp;&nbsp;&nbsp;' + snapshot + '</li>');
       });
 
@@ -351,11 +351,11 @@ export class SnapshotListComponent implements EntityTableConfig {
     dialogRef.componentInstance.setCall(this.wsMultiDelete, params);
     dialogRef.componentInstance.submit();
 
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job_res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job_res: Job<any[]>) => {
       const jobErrors: string[] = [];
       const jobSuccess: any[] = [];
 
-      job_res.result.forEach((item: any) => {
+      job_res.result.forEach((item) => {
         if (item.error) {
           jobErrors.push(item.error);
         } else {
@@ -429,7 +429,7 @@ export class SnapshotListComponent implements EntityTableConfig {
           entityDialog.dialogRef.close();
           parent.entityList.getData();
         },
-        (err: any) => {
+        (err: WebsocketError) => {
           parent.entityList.loaderOpen = false;
           parent.entityList.loader.close();
           entityDialog.dialogRef.close();

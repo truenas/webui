@@ -47,7 +47,7 @@ export class VmFormComponent implements FormConfiguration {
   queryCallOption: any[] = [];
 
   fieldConfig: FieldConfig[] = [];
-  fieldSets: FieldSet[] = [
+  fieldSets: FieldSet<this>[] = [
     {
       name: helptext.vm_settings_title,
       class: 'vm_settings',
@@ -160,7 +160,7 @@ export class VmFormComponent implements FormConfiguration {
           placeholder: `${helptext.memory_placeholder} ${globalHelptext.human_readable.suggestion_label}`,
           tooltip: helptext.memory_tooltip,
           blurStatus: true,
-          blurEvent: this.blurEvent,
+          blurEvent: this.memoryBlur,
           parent: this,
         },
 
@@ -303,7 +303,7 @@ export class VmFormComponent implements FormConfiguration {
     });
   }
 
-  blurEvent(parent: any): void {
+  memoryBlur(parent: this): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['memory'].setValue(parent.storageService.humanReadable);
       const valString = (parent.entityForm.formGroup.controls['memory'].value);
@@ -328,7 +328,7 @@ export class VmFormComponent implements FormConfiguration {
         if (errors) {
           config.hasErrors = true;
           config.hasErrors = true;
-          self.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(this)).subscribe((warning) => {
+          self.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(self)).subscribe((warning) => {
             config.warnings = warning + ` ${self.maxVCPUs}.`;
           });
         } else {

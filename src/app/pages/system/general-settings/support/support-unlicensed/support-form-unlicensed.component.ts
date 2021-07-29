@@ -4,6 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -32,7 +33,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
   protected isOneColumnForm = true;
 
   fieldConfig: FieldConfig[] = [];
-  fieldSets: FieldSet[] = [
+  fieldSets: FieldSet<this>[] = [
     {
       name: 'column1',
       label: false,
@@ -51,7 +52,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
           required: true,
           validation: helptext.username.validation,
           blurStatus: true,
-          blurEvent: this.blurEvent,
+          blurEvent: this.usernameOrPasswordBlur,
           parent: this,
           value: '',
         },
@@ -65,7 +66,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
           required: true,
           validation: helptext.password.validation,
           blurStatus: true,
-          blurEvent: this.blurEvent,
+          blurEvent: this.usernameOrPasswordBlur,
           parent: this,
           togglePw: true,
           value: '',
@@ -145,7 +146,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     this.entityEdit = entityEdit;
   }
 
-  blurEvent(parent: any): void {
+  usernameOrPasswordBlur(parent: this): void {
     this.password_fc = _.find(parent.fieldConfig, { name: 'password' });
     this.username_fc = _.find(parent.fieldConfig, { name: 'username' });
     this.category = _.find(parent.fieldConfig, { name: 'category' });
@@ -172,7 +173,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
             }
             this.category.options = _.sortBy(options, ['label']);
           }
-        }, (error: any) => {
+        }, (error: WebsocketError) => {
           if (error.reason[0] === '[') {
             while (error.reason[0] !== ' ') {
               error.reason = error.reason.slice(1);
@@ -224,7 +225,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
           dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.resetForm();
           });
-          dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+          dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
             dialogRef.componentInstance.setDescription(res.error);
           });
         });
@@ -246,7 +247,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     this.modalService.close('slide-in-form');
   }
 
-  updater(file: any, parent: any): void {
+  updater(file: any, parent: this): void {
     parent.subs = [];
     const fileBrowser = file.fileInput.nativeElement;
     this.screenshot = _.find(parent.fieldConfig, { name: 'screenshot' });

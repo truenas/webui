@@ -12,6 +12,7 @@ import { LayoutService } from 'app/core/services/layout.service';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
+import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { WebSocketService, SystemGeneralService } from 'app/services';
 import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -42,7 +43,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isOpen = false;
   notificPanelClosed = false;
   menuName: string;
-  subs: any[];
+  subs: SubMenuItem[];
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
   readonly ProductType = ProductType;
@@ -248,14 +249,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     this.isSidenotOpen = false;
   }
 
-  changeState($event: any): void {
-    if ($event.transfer) {
-      if (this.media.isActive('xs') || this.media.isActive('sm')) {
-        this.sideNave.close();
-      }
-    }
-  }
-
   openModal(id: string): void {
     this.modalService.open(id, {});
   }
@@ -265,7 +258,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   // For the slide-in menu
-  toggleMenu(menuInfo?: any): void {
+  toggleMenu(menuInfo?: [string, SubMenuItem[]]): void {
     if (this.isOpen && !menuInfo || this.isOpen && menuInfo[0] === this.menuName) {
       this.isOpen = false;
     } else if (menuInfo) {

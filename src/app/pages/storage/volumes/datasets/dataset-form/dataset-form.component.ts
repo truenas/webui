@@ -904,31 +904,31 @@ export class DatasetFormComponent implements FormConfiguration {
     return data;
   }
 
-  blurEventQuota(parent: any): void {
+  blurEventQuota(parent: this): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['quota'].setValue(parent.humanReadable['quota']);
     }
   }
 
-  blurEventRefQuota(parent: any): void {
+  blurEventRefQuota(parent: this): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['refquota'].setValue(parent.humanReadable['refquota']);
     }
   }
 
-  blurEventReservation(parent: any): void {
+  blurEventReservation(parent: this): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['reservation'].setValue(parent.humanReadable['reservation']);
     }
   }
 
-  blurEventRefReservation(parent: any): void {
+  blurEventRefReservation(parent: this): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['refreservation'].setValue(parent.humanReadable['refreservation']);
     }
   }
 
-  blurSpecialSmallBlocks(parent: any): void {
+  blurSpecialSmallBlocks(parent: this): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['special_small_block_size'].setValue(parent.humanReadable['special_small_block_size']);
     }
@@ -1651,7 +1651,7 @@ export class DatasetFormComponent implements FormConfiguration {
     });
   }
 
-  setParent(id: any): void {
+  setParent(id: string): void {
     if (!this.paramMap) {
       this.paramMap = {};
     }

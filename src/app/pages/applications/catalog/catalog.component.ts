@@ -5,11 +5,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
 import {
   chartsTrain, ixChartApp, officialCatalog, appImagePlaceholder,
 } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
+import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
@@ -23,9 +25,14 @@ import { DialogService, WebSocketService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
 import { ApplicationsService } from '../applications.service';
 import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
-import { ChartReleaseAddComponent } from '../forms/chart-release-add.component';
 import { ChartWizardComponent } from '../forms/chart-wizard.component';
 import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
+
+interface CatalogSyncJob {
+  id: number;
+  name: string;
+  progress: number;
+}
 
 @UntilDestroy()
 @Component({
@@ -41,10 +48,10 @@ export class CatalogComponent implements OnInit {
   filteredCatalogNames: string[] = [];
   filteredCatalogApps: any[] = [];
   filterString = '';
+  catalogSyncJobs: CatalogSyncJob[] = [];
   private poolList: Option[] = [];
   private selectedPool = '';
   private kubernetesForm: KubernetesSettingsComponent;
-  private chartReleaseForm: ChartReleaseAddComponent;
   private chartWizardComponent: ChartWizardComponent;
 
   protected utils: CommonUtils;
@@ -82,6 +89,7 @@ export class CatalogComponent implements OnInit {
     private core: CoreService,
     private modalService: ModalService,
     private appService: ApplicationsService,
+    private store: JobsManagerStore,
   ) {
     this.utils = new CommonUtils();
   }
@@ -92,6 +100,41 @@ export class CatalogComponent implements OnInit {
     this.refreshForms();
     this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshForms();
+    });
+
+    this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
+      const syncJobs = state.jobs.filter((job) => job.method == 'catalog.create' && job.state === JobState.Running);
+      syncJobs.forEach((syncJob) => {
+        const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id == syncJob.id);
+        if (!catalogSyncJob) {
+          this.catalogSyncJobs.push({
+            id: syncJob.id,
+            name: (syncJob.arguments[0] as any).label,
+            progress: syncJob.progress.percent,
+          });
+        }
+      });
+    });
+
+    this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
+      if (event.fields.method == 'catalog.create') {
+        let catalogSyncJob = this.catalogSyncJobs.find((job) => job.id == event.fields.id);
+        if (!catalogSyncJob) {
+          catalogSyncJob = {
+            id: event.fields.id,
+            name: event.fields.arguments[0] as string,
+            progress: event.fields.progress.percent,
+          };
+          this.catalogSyncJobs.push(catalogSyncJob);
+        }
+        catalogSyncJob.progress = event.fields.progress.percent;
+        if (event.fields.state == JobState.Success) {
+          this.catalogSyncJobs = this.catalogSyncJobs.filter((job) => job.id !== catalogSyncJob.id);
+          this.loadCatalogs();
+        } else if (event.fields.state == JobState.Failed) {
+          this.catalogSyncJobs = this.catalogSyncJobs.filter((job) => job.id !== catalogSyncJob.id);
+        }
+      }
     });
   }
 
@@ -198,12 +241,6 @@ export class CatalogComponent implements OnInit {
       this.modalService,
       this.appService,
     );
-    this.chartReleaseForm = new ChartReleaseAddComponent(
-      this.mdDialog,
-      this.dialogService,
-      this.modalService,
-      this.appService,
-    );
     this.chartWizardComponent = new ChartWizardComponent(
       this.mdDialog,
       this.dialogService,
@@ -282,7 +319,7 @@ export class CatalogComponent implements OnInit {
         });
       });
 
-      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
         new EntityUtils().handleWSError(self, err, this.dialogService);
       });
     });
@@ -326,13 +363,8 @@ export class CatalogComponent implements OnInit {
         };
         catalogAppInfo.schema = catalogApp.versions[catalogApp.latest_version].schema;
 
-        if (catalogApp.name != ixChartApp) {
-          this.chartWizardComponent.setCatalogApp(catalogAppInfo);
-          this.modalService.open('slide-in-form', this.chartWizardComponent);
-        } else {
-          this.chartReleaseForm.setGpuConfiguration(catalogAppInfo);
-          this.modalService.open('slide-in-form', this.chartReleaseForm);
-        }
+        this.chartWizardComponent.setCatalogApp(catalogAppInfo);
+        this.modalService.open('slide-in-form', this.chartWizardComponent);
       }
     });
   }

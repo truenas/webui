@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { IscsiExtent } from 'app/interfaces/iscsi.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -62,17 +64,17 @@ export class ExtentListComponent implements EntityTableConfig {
       id: 'edit',
       icon: 'edit',
       label: T('Edit'),
-      onClick: (rowinner: any) => { this.entityTable.doEdit(rowinner.id); },
+      onClick: (rowinner: IscsiExtent) => { this.entityTable.doEdit(rowinner.id); },
     }, {
       name: 'delete',
       id: 'delete',
       icon: 'delete',
       label: T('Delete'),
-      onClick: (rowinner: any) => { this.doDelete(rowinner); },
+      onClick: (rowinner: IscsiExtent) => { this.doDelete(rowinner); },
     }] as EntityTableAction[];
   }
 
-  doDelete(row: any): void {
+  doDelete(row: IscsiExtent): void {
     const id = row.id;
     const self = this;
     const entityTable = this.entityTable;
@@ -111,7 +113,7 @@ export class ExtentListComponent implements EntityTableConfig {
             entityTable.getData();
             entityTable.excuteDeletion = true;
           },
-          (err: any) => {
+          (err: WebsocketError) => {
             entityTable.loader.close();
             new EntityUtils().handleWSError(entityTable, err, entityTable.dialogService);
           },

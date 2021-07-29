@@ -13,7 +13,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { GlobalAction } from 'app/components/common/page-title/page-title.component';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { VolumeImportWizardComponent } from 'app/pages/storage/volumes/volume-import-wizard/volume-import-wizard.component';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
@@ -31,7 +31,7 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
 
   conf: EntityTableConfig;
   filterValue = '';
-  actions: any[];
+  actions: EntityTableAction[];
 
   private filterSubscription: Subscription;
 

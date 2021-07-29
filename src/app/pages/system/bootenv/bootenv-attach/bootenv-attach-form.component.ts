@@ -90,7 +90,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
           );
         });
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       this.dialogRef.componentInstance.setDescription(res.error);
     });
   }

@@ -12,7 +12,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_smb, shared } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { SmbShare } from 'app/interfaces/smb-share.interface';
+import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
@@ -312,8 +312,8 @@ export class SMBFormComponent implements FormConfiguration {
   ];
 
   entityForm: EntityFormComponent;
-  presets: any;
-  protected presetFields: any[] = [];
+  presets: SmbPresets;
+  protected presetFields: (keyof SmbShare)[] = [];
 
   constructor(
     protected router: Router,
@@ -428,6 +428,7 @@ export class SMBFormComponent implements FormConfiguration {
     const datasetId = sharePath.replace('/mnt/', '');
     const poolName = datasetId.split('/')[0];
     const homeShare = entityForm.formGroup.get('home').value;
+    // TODO: Incorrect url https://jira.ixsystems.com/browse/NAS-111465
     const ACLRoute = ['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId];
 
     if (homeShare && entityForm.isNew) {
@@ -617,10 +618,10 @@ export class SMBFormComponent implements FormConfiguration {
     entityForm.formGroup.controls['purpose'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.clearPresets();
       for (const item in this.presets[res].params) {
-        this.presetFields.push(item);
+        this.presetFields.push(item as keyof SmbShare);
         const ctrl = entityForm.formGroup.controls[item];
         if (ctrl && item !== 'auxsmbconf') {
-          ctrl.setValue(this.presets[res].params[item]);
+          ctrl.setValue(this.presets[res].params[item as keyof SmbShare]);
           ctrl.disable();
         }
       }

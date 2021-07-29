@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {
+  FormArray,
   FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -902,7 +903,7 @@ export class VMWizardComponent implements WizardConfiguration {
 
         if (errors) {
           config.hasErrors = true;
-          self.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(this)).subscribe((warning) => {
+          self.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(self)).subscribe((warning) => {
             config.warnings = warning + ` ${self.maxVCPUs}.`;
           });
         } else {
@@ -927,8 +928,8 @@ export class VMWizardComponent implements WizardConfiguration {
 
         if (errors) {
           config.hasErrors = true;
-          self.translate.get('Cannot allocate').pipe(untilDestroyed(this)).subscribe((msg) => {
-            self.translate.get('to storage for this virtual machine.').pipe(untilDestroyed(this)).subscribe((msg2) => {
+          self.translate.get('Cannot allocate').pipe(untilDestroyed(self)).subscribe((msg) => {
+            self.translate.get('to storage for this virtual machine.').pipe(untilDestroyed(self)).subscribe((msg2) => {
               config.warnings = `${msg} ${self.storageService.humanReadable} ${msg2}`;
             });
           });
@@ -942,7 +943,7 @@ export class VMWizardComponent implements WizardConfiguration {
     };
   }
 
-  blurEventForMemory(parent: any): void {
+  blurEventForMemory(parent: this): void {
     const enteredVal = parent.entityWizard.formGroup.value.formArray[1].memory;
     const vm_memory_requested = parent.storageService.convertHumanStringToNum(enteredVal);
     if (isNaN(vm_memory_requested)) {
@@ -957,8 +958,8 @@ export class VMWizardComponent implements WizardConfiguration {
     }
   }
 
-  blueEventForVolSize(parent: any): void {
-    const enteredVal = parent.entityWizard.formArray.controls[2].value.volsize;
+  blueEventForVolSize(parent: this): void {
+    const enteredVal = (parent.entityWizard.formArray as FormArray).controls[2].value.volsize;
     const volsize = parent.storageService.convertHumanStringToNum(enteredVal, false, 'mgtp');
     if (volsize >= 1048576) {
       parent.entityWizard.formArray.get([2]).get('volsize').setValue(parent.storageService.humanReadable);

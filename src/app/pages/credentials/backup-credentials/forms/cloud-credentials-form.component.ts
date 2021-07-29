@@ -10,6 +10,7 @@ import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interfa
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -1310,7 +1311,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     }
   }
 
-  setFieldRequired(name: string, required: boolean, entityform: any): void {
+  setFieldRequired(name: string, required: boolean, entityform: EntityFormComponent): void {
     const field = _.find(this.fieldConfig, { name });
     const controller = entityform.formGroup.controls[name];
     if (field.required !== required) {
@@ -1511,7 +1512,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         this.modalService.close('slide-in-form');
         this.modalService.refreshTable();
       },
-      (err: any) => {
+      (err: WebsocketError) => {
         this.entityForm.loader.close();
         this.modalService.refreshTable();
         if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace'))) {

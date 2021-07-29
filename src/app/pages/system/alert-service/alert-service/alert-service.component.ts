@@ -8,6 +8,7 @@ import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import helptext from 'app/helptext/system/alert-service';
 import { AlertServiceCreate } from 'app/interfaces/alert-service.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -690,7 +691,7 @@ export class AlertServiceComponent implements FormConfiguration {
               this.dialogService.Info(T('Failed'), T('Failed sending test alert!'));
             }
           },
-          (err: any) => {
+          (err: WebsocketError) => {
             this.loader.close();
             new EntityUtils().handleWSError(this, err, this.dialogService);
           },
@@ -754,19 +755,21 @@ export class AlertServiceComponent implements FormConfiguration {
 
   generatePayload(data: any): AlertServiceCreate {
     const payload: AlertServiceCreate = {
-      attributes: { chat_ids: null, v3_authprotocol: null, v3_privprotocol: null },
+      attributes: {},
       enabled: data.enabled,
       level: data.level,
       name: data.name,
       type: data.type,
     };
+    if (data['Telegram-chat_ids']) {
+      data['Telegram-chat_ids'] = this.generateTelegramChatIdsPayload(data, 'Telegram-chat_ids');
+    }
+    data['SNMPTrap-v3_authprotocol'] = data['SNMPTrap-v3_authprotocol'] === '' ? null : data['SNMPTrap-v3_authprotocol'];
+    data['SNMPTrap-v3_privprotocol'] = data['SNMPTrap-v3_privprotocol'] === '' ? null : data['SNMPTrap-v3_privprotocol'];
     for (const i in data) {
-      if (data[i] === '' && (i === 'SNMPTrap-v3_authprotocol' || i === 'SNMPTrap-v3_privprotocol')) {
-        data[i] = null;
-      } else if (data[i] && i == 'Telegram-chat_ids') {
-        data[i] = this.generateTelegramChatIdsPayload(data, i);
+      if (i.split('-').length > 1) {
+        payload['attributes'][i.split('-')[1]] = data[i];
       }
-      payload['attributes'][i.split('-')[1]] = data[i];
     }
     return payload;
   }
@@ -782,7 +785,7 @@ export class AlertServiceComponent implements FormConfiguration {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
         },
-        (err: any) => {
+        (err: WebsocketError) => {
           this.loader.close();
           new EntityUtils().handleWSError(this, err, this.dialogService);
         },
@@ -793,7 +796,7 @@ export class AlertServiceComponent implements FormConfiguration {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
         },
-        (err: any) => {
+        (err: WebsocketError) => {
           this.loader.close();
           new EntityUtils().handleWSError(this, err, this.dialogService);
         },

@@ -9,18 +9,19 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, switchMap, take } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { GpuDevice } from 'app/interfaces/gpu-device.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyType, EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { InputTableConf } from 'app/pages/common/entity/table/table.component';
+import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { InitshutdownFormComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-form/initshutdown-form.component';
@@ -89,7 +90,7 @@ export class AdvancedSettingsComponent implements OnInit {
   actionsConfig: any;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
 
-  cronTableConf: InputTableConf = {
+  cronTableConf: AppTableConfig = {
     title: helptext_system_advanced.fieldset_cron,
     titleHref: '/system/cron',
     queryCall: 'cronjob.query',
@@ -97,6 +98,38 @@ export class AdvancedSettingsComponent implements OnInit {
     deleteMsg: {
       title: T('Cron Job'),
       key_props: ['user', 'command', 'description'],
+    },
+    getActions: (): AppTableAction[] => {
+      return [
+        {
+          name: 'play',
+          icon: 'play_arrow',
+          matTooltip: T('Run job'),
+          onClick: (row: any): void => {
+            this.dialog
+              .confirm({ title: T('Run Now'), message: T('Run this job now?'), hideCheckBox: true })
+              .pipe(
+                filter((run) => !!run),
+                switchMap(() => this.ws.call('cronjob.run', [row.id])),
+              )
+              .pipe(untilDestroyed(this)).subscribe(
+                () => {
+                  const message = row.enabled == true
+                    ? T('This job is scheduled to run again ' + row.next_run + '.')
+                    : T('This job will not run again until it is enabled.');
+                  this.dialog.Info(
+                    T('Job ' + row.description + ' Completed Successfully'),
+                    message,
+                    '500px',
+                    'info',
+                    true,
+                  );
+                },
+                (err: WebsocketError) => new EntityUtils().handleError(this, err),
+              );
+          },
+        },
+      ];
     },
     emptyEntityLarge: false,
     parent: this,
@@ -117,7 +150,7 @@ export class AdvancedSettingsComponent implements OnInit {
     },
   };
 
-  initShutdownTableConf: InputTableConf = {
+  initShutdownTableConf: AppTableConfig = {
     title: helptext_system_advanced.fieldset_initshutdown,
     titleHref: '/system/initshutdown',
     queryCall: 'initshutdownscript.query',
@@ -145,7 +178,7 @@ export class AdvancedSettingsComponent implements OnInit {
     },
   };
 
-  sysctlTableConf: InputTableConf = {
+  sysctlTableConf: AppTableConfig = {
     title: helptext_system_advanced.fieldset_sysctl,
     queryCall: 'tunable.query',
     deleteCall: 'tunable.delete',
@@ -456,53 +489,46 @@ export class AdvancedSettingsComponent implements OnInit {
           filter(Boolean),
           untilDestroyed(this),
         ).subscribe(() => {
-          this.ws.call('core.download', ['system.debug', [], fileName]).pipe(untilDestroyed(this)).subscribe(
+          this.ws.call('core.download', ['system.debug', [], fileName, true]).pipe(untilDestroyed(this)).subscribe(
             (res) => {
               const url = res[1];
-              let failed = false;
-              this.storage.streamDownloadFile(this.http, url, fileName, mimeType).pipe(untilDestroyed(this)).subscribe(
-                (file) => {
-                  this.storage.downloadBlob(file, fileName);
-                },
-                (err) => {
-                  failed = true;
-                  if (this.dialogRef) {
-                    this.dialogRef.close();
-                  }
-                  if (err instanceof HttpErrorResponse) {
-                    this.dialog.errorReport(
-                      helptext_system_advanced.debug_download_failed_title,
-                      helptext_system_advanced.debug_download_failed_message,
-                      err.message,
-                    );
-                  } else {
-                    this.dialog.errorReport(
-                      helptext_system_advanced.debug_download_failed_title,
-                      helptext_system_advanced.debug_download_failed_message,
-                      err,
-                    );
-                  }
-                },
-              );
-              if (!failed) {
-                let reported = false; // prevent error from popping up multiple times
-                this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-                  data: { title: T('Saving Debug') },
-                  disableClose: true,
-                });
-                this.dialogRef.componentInstance.jobId = res[0];
-                this.dialogRef.componentInstance.wsshow();
-                this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-                  this.dialogRef.close();
-                });
-                this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((saveDebugErr: any) => {
-                  this.dialogRef.close();
-                  if (!reported) {
-                    new EntityUtils().handleWSError(this, saveDebugErr, this.dialog);
-                    reported = true;
-                  }
-                });
-              }
+              this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+                data: { title: T('Saving Debug') },
+                disableClose: true,
+              });
+              this.dialogRef.componentInstance.jobId = res[0];
+              this.dialogRef.componentInstance.wsshow();
+              this.dialogRef.componentInstance.success.pipe(take(1), untilDestroyed(this)).subscribe(() => {
+                this.dialogRef.close();
+                this.storage.streamDownloadFile(this.http, url, fileName, mimeType)
+                  .pipe(untilDestroyed(this)).subscribe(
+                    (file) => {
+                      this.storage.downloadBlob(file, fileName);
+                    },
+                    (err) => {
+                      if (this.dialogRef) {
+                        this.dialogRef.close();
+                      }
+                      if (err instanceof HttpErrorResponse) {
+                        this.dialog.errorReport(
+                          helptext_system_advanced.debug_download_failed_title,
+                          helptext_system_advanced.debug_download_failed_message,
+                          err.message,
+                        );
+                      } else {
+                        this.dialog.errorReport(
+                          helptext_system_advanced.debug_download_failed_title,
+                          helptext_system_advanced.debug_download_failed_message,
+                          err,
+                        );
+                      }
+                    },
+                  );
+              });
+              this.dialogRef.componentInstance.failure.pipe(take(1), untilDestroyed(this)).subscribe((saveDebugErr) => {
+                this.dialogRef.close();
+                new EntityUtils().handleWSError(this, saveDebugErr, this.dialog);
+              });
             },
             (err) => {
               new EntityUtils().handleWSError(this, err, this.dialog);

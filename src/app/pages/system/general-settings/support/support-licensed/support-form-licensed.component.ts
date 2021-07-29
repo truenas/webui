@@ -259,7 +259,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
           dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.resetForm();
           });
-          dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+          dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
             dialogRef.componentInstance.setDescription(res.error);
           });
         });
@@ -269,12 +269,12 @@ export class SupportFormLicensedComponent implements FormConfiguration {
         this.resetForm();
       }
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }
 
-  updater(file: any, parent: any): void {
+  updater(file: any, parent: this): void {
     parent.subs = [];
     const fileBrowser = file.fileInput.nativeElement;
     this.screenshot = _.find(parent.fieldConfig, { name: 'screenshot' });

@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import helptext from 'app/helptext/system/cron-form';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -110,8 +111,8 @@ export class CronFormComponent {
 
   constructor(protected userService: UserService, protected modalService: ModalService) {}
 
-  updateUserSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+  updateUserSearchOptions(value = '', parent: this): void {
+    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -146,10 +147,10 @@ export class CronFormComponent {
     };
   }
 
-  beforeSubmit(value: any): void {
+  beforeSubmit(value: { cron_picker: string; schedule?: Schedule }): void {
     const spl = value.cron_picker.split(' ');
     delete value.cron_picker;
-    const schedule: any = {};
+    const schedule: Schedule = {};
     schedule['minute'] = spl[0];
     schedule['hour'] = spl[1];
     schedule['dom'] = spl[2];

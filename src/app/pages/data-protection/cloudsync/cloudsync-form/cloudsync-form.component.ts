@@ -3,6 +3,7 @@ import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TreeNode } from 'angular-tree-component';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
@@ -399,7 +400,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     },
     { name: 'divider', divider: true },
   ]);
-  fieldConfig: any[] = [];
+  fieldConfig: FieldConfig[] = [];
 
   protected credentials: FieldConfig;
   protected bucket_field: FieldConfig;
@@ -436,7 +437,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           // this.matDialog.closeAll();
           // this.job.showLogs(res);
         });
-        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
           this.matDialog.closeAll();
           new EntityUtils().handleWSError(this.entityForm, err);
         });
@@ -465,7 +466,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     return this.ws.call('cloudsync.list_buckets', [credential.id]);
   }
 
-  getChildren(node: any): Promise<Promise<any>> {
+  getChildren(node: TreeNode): Promise<Promise<any>> {
     const credential = this.formGroup.controls['credentials'].value;
     let bucket = this.formGroup.controls['bucket'].value;
     if (this.bucket_field.disabled) {
@@ -490,7 +491,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     }
   }
 
-  getBucketFolders(credential: string, bucket: string, node: any): Promise<any> {
+  getBucketFolders(credential: string, bucket: string, node: TreeNode): Promise<any> {
     const formValue = this.entityForm.formGroup.value;
     const children: any[] = [];
     const data = {
@@ -606,8 +607,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.bucket_input_field = this.fieldSets.config('bucket_input');
     this.setDisabled('bucket', true, true);
     this.setDisabled('bucket_input', true, true);
-    this.cloudcredentialService.getCloudsyncCredentials().then((credentials: any) => {
-      credentials.forEach((item: any) => {
+    this.cloudcredentialService.getCloudsyncCredentials().then((credentials) => {
+      credentials.forEach((item) => {
         this.credentials.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
         this.credentials_list.push(item);
       });
@@ -654,7 +655,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       }
     });
 
-    this.formGroup.get('path_source').valueChanges.pipe(untilDestroyed(this)).subscribe((values: any) => {
+    this.formGroup.get('path_source').valueChanges.pipe(untilDestroyed(this)).subscribe((values: string | string[]) => {
       if (!values) {
         return;
       }
@@ -864,7 +865,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
     // Update transfer_mode paragraphs when the mode is changed
     this.formGroup.get('transfer_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode: TransferMode) => {
-      const paragraph = entityForm.fieldConfig.find((config: any) => config.name === 'transfer_mode_warning');
+      const paragraph = entityForm.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
       switch (mode) {
         case TransferMode.Sync:
           paragraph.paraText = helptext.transfer_mode_warning_sync;

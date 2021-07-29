@@ -565,7 +565,7 @@ export class ApiService {
     protected core: CoreService,
     protected ws: WebSocketService,
   ) {
-    this.ws.authStatus.pipe(untilDestroyed(this)).subscribe((evt: any) => {
+    this.ws.authStatus.pipe(untilDestroyed(this)).subscribe((evt) => {
       this.core.emit({ name: 'UserDataRequest', data: [[['id', '=', 1]]] });
       this.core.emit({ name: 'Authenticated', data: evt, sender: this });
     });

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormArray } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -125,7 +125,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   queryCallOption: any[];
   initialCount = 1;
-  private domainList: any;
+  private domainList: FormArray;
   private domainList_fc: FieldConfig;
 
   constructor(
@@ -162,7 +162,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     this.entityForm = entityEdit;
     this.fieldConfig = entityEdit.fieldConfig;
 
-    this.domainList = entityEdit.formGroup.controls['domains'];
+    this.domainList = entityEdit.formGroup.controls['domains'] as FormArray;
     this.domainList_fc = _.find(this.fieldConfig, { name: 'domains' });
     const listFields = this.domainList_fc.listFields;
 
@@ -184,7 +184,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
             const controls = listFields[i];
             const name_text_fc = _.find(controls, { name: 'name_text' });
             const auth_fc = _.find(controls, { name: 'authenticators' });
-            this.domainList.controls[i].controls['name_text'].setValue(domains[i]);
+            (this.domainList.controls[i] as FormGroup).controls['name_text'].setValue(domains[i]);
             name_text_fc.paraText = '<b>' + domains[i] + '</b>';
             auth_fc.options = this.dns_map.options;
           }
@@ -220,7 +220,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       this.dialog.closeAll();
       // Dialog needed b/c handleWSError doesn't open a dialog when rejection comes back from provider
       if (err.error.includes('[EFAULT')) {

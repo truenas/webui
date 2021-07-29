@@ -137,11 +137,11 @@ export class InitshutdownFormComponent implements FormConfiguration {
       this.formUpdate(value);
     });
 
-    this.type_control.setValue('COMMAND');
+    this.type_control.setValue(InitShutdownScriptType.Command);
   }
 
-  formUpdate(type: any): void {
-    const isCommand = type == 'COMMAND';
+  formUpdate(type: InitShutdownScriptType): void {
+    const isCommand = type == InitShutdownScriptType.Command;
 
     this.entityForm.setDisabled('script', isCommand, isCommand);
     this.entityForm.setDisabled('command', !isCommand, !isCommand);

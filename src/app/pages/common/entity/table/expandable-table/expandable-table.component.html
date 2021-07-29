@@ -5,7 +5,7 @@
       <mat-panel-title>
         <h5 class="title" *ngIf="title">
           <ng-container *ngIf="titleHref; else plainTitle">
-            <a [routerLink]="titleHref">{{ title }}</a>
+            <a [routerLink]="titleHref">{{ title }} <mat-icon class="title-icon">open_in_new</mat-icon></a>
           </ng-container>
           <ng-template #plainTitle>{{ title }}</ng-template>
         </h5>

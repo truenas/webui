@@ -11,6 +11,7 @@ import { CardComponent } from 'app/core/components/card/card.component';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { Display } from 'app/core/components/display/display.component';
 import { PageComponent } from 'app/core/components/page/page.component';
+import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { ViewButtonComponent } from 'app/core/components/view-button/view-button.component';
 import { ViewChartAreaComponent } from 'app/core/components/view-chart-area/view-chart-area.component';
 import { ViewChartBarComponent } from 'app/core/components/view-chart-bar/view-chart-bar.component';
@@ -26,6 +27,7 @@ import { WidgetChartComponent } from 'app/core/components/widgets/widget-chart/w
 import { WidgetControllerComponent } from 'app/core/components/widgets/widget-controller/widget-controller.component';
 import { WidgetCpuComponent } from 'app/core/components/widgets/widget-cpu/widget-cpu.component';
 import { WidgetMemoryComponent } from 'app/core/components/widgets/widget-memory/widget-memory.component';
+import { WidgetNetworkComponent } from 'app/core/components/widgets/widget-network/widget-network.component';
 import { WidgetNicComponent } from 'app/core/components/widgets/widget-nic/widget-nic.component';
 import { WidgetPoolComponent } from 'app/core/components/widgets/widget-pool/widget-pool.component';
 import { WidgetStorageComponent } from 'app/core/components/widgets/widget-storage/widget-storage.component';
@@ -93,7 +95,9 @@ import { ConvertPipe } from './pipes/convert.pipe';
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
     ConvertPipe,
+    FormatDateTimePipe,
     CopyButtonComponent,
+    WidgetNetworkComponent,
     WidgetStorageComponent,
   ],
   exports: [ // Modules and Components here
@@ -132,7 +136,9 @@ import { ConvertPipe } from './pipes/convert.pipe';
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
     CopyButtonComponent,
+    WidgetNetworkComponent,
     WidgetStorageComponent,
+    FormatDateTimePipe,
   ],
   entryComponents: [
     ContextMenuComponent,
@@ -161,6 +167,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
     CopyButtonComponent,
+    WidgetNetworkComponent,
     WidgetStorageComponent,
   ],
   providers: [

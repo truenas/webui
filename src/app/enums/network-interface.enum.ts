@@ -35,3 +35,8 @@ export enum LACPDURate {
   Slow = 'SLOW',
   Fast = 'FAST',
 }
+
+export enum LinkState {
+  Up = 'LINK_STATE_UP',
+  Down = 'LINK_STATE_DOWN',
+}
