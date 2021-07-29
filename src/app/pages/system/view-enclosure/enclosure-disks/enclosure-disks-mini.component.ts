@@ -75,7 +75,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     this.container.setTransform(-30);
   }
 
-  count(obj: any): number {
+  count(obj: Record<string, unknown>): number {
     return Object.keys(obj).length;
   }
 

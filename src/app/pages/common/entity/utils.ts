@@ -5,7 +5,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { DialogService } from 'app/services';
-import { Relation } from './entity-form/models/field-relation.interface';
+import { Relation, RelationGroup } from './entity-form/models/field-relation.interface';
 
 export const NULL_VALUE = 'null_value';
 
@@ -258,7 +258,7 @@ export class EntityUtils {
     return result;
   }
 
-  createRelations(relations: Relation[]): { action: string; when: { name: string; operator: string; value: any }[] }[] {
+  createRelations(relations: Relation[]): RelationGroup[] {
     const result = relations.map((relation) => {
       const relationFieldName = relation.fieldName;
 
@@ -284,9 +284,9 @@ export class EntityUtils {
 
     const name = schemaConfig.variable;
 
-    const fieldConfig: any = {
+    const fieldConfig: FieldConfig = {
       name,
-    };
+    } as FieldConfig;
 
     if (schemaConfig.schema.required !== undefined) {
       fieldConfig.required = schemaConfig.schema.required;

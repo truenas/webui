@@ -1,16 +1,14 @@
 import {
-  Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation,
+  Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import * as FontFaceObserver from 'fontfaceobserver';
 import { Observable } from 'rxjs';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
-import helptext from 'app/helptext/vm/vm-cards/vm-cards';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import { ShellService, WebSocketService } from 'app/services';
@@ -23,29 +21,23 @@ import { ShellService, WebSocketService } from 'app/services';
   providers: [ShellService],
   encapsulation: ViewEncapsulation.None,
 })
-
 export class VMSerialShellComponent implements OnInit, OnDestroy {
-  @Input() prompt = '';
   @ViewChild('terminal', { static: true }) container: ElementRef;
-  cols: string;
-  rows: string;
   font_size = 14;
   font_name = 'Inconsolata';
   connectionId: string;
   token: any;
   xterm: Terminal;
-  shell_tooltip = helptext.serial_shell_tooltip;
   private fitAddon: FitAddon;
 
-  clearLine = '\u001b[2K\r';
   protected pk: string;
 
-  constructor(private ws: WebSocketService,
-    public ss: ShellService,
-    protected aroute: ActivatedRoute,
-    public translate: TranslateService,
-    private dialog: MatDialog) {
-  }
+  constructor(
+    private ws: WebSocketService,
+    private ss: ShellService,
+    private aroute: ActivatedRoute,
+    private dialog: MatDialog,
+  ) {}
 
   ngOnInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
@@ -77,46 +69,12 @@ export class VMSerialShellComponent implements OnInit, OnDestroy {
     this.resizeTerm();
   }
 
-  getSize(): { rows: number; cols: number } {
-    const domWidth = this.container.nativeElement.offsetWidth;
-    const domHeight = this.container.nativeElement.offsetHeight;
-    const span = document.createElement('span');
-    this.container.nativeElement.appendChild(span);
-    span.style.whiteSpace = 'nowrap';
-    span.style.fontFamily = this.font_name;
-    span.style.fontSize = this.font_size + 'px';
-    span.innerHTML = 'a';
-
-    let cols = 0;
-    while (span.offsetWidth < domWidth) {
-      span.innerHTML += 'a';
-      cols++;
-    }
-
-    let rows = Math.ceil(domHeight / span.offsetHeight);
-    span.remove();
-    if (cols < 80) {
-      cols = 80;
-    }
-
-    if (rows < 10) {
-      rows = 10;
-    }
-
-    return {
-      rows,
-      cols,
-    };
-  }
-
   initializeTerminal(): void {
-    const size = this.getSize();
-
     const setting = {
       cursorBlink: false,
       tabStopWidth: 8,
-      cols: size.cols,
-      rows: size.rows,
+      cols: 80,
+      rows: 20,
       focus: true,
       fontSize: this.font_size,
       fontFamily: this.font_name,
@@ -140,9 +98,9 @@ export class VMSerialShellComponent implements OnInit, OnDestroy {
   }
 
   resizeTerm(): boolean {
-    const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
+    const size = this.fitAddon.proposeDimensions();
     this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
       this.xterm.focus();
     });

@@ -1,16 +1,14 @@
 import {
-  Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation,
+  Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import * as FontFaceObserver from 'fontfaceobserver';
 import { Subject, Observable } from 'rxjs';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
 import { CoreService } from 'app/core/services/core-service/core.service';
-import helptext from 'app/helptext/shell/shell';
 import { CoreEvent } from 'app/interfaces/events';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
@@ -26,24 +24,14 @@ import { CopyPasteMessageComponent } from './copy-paste-message.component';
   encapsulation: ViewEncapsulation.None,
 })
 export class ShellComponent implements OnInit, OnDestroy {
-  // sets the shell prompt
-  @Input() prompt = '';
-  // xter container
   @ViewChild('terminal', { static: true }) container: ElementRef;
-  // xterm variables
-  cols: string;
-  rows: string;
+
   font_size = 14;
   font_name = 'Inconsolata';
-  token: any;
-  xterm: any;
-  resize_terminal = true;
+  xterm: Terminal;
   private fitAddon: FitAddon;
   formEvent$: Subject<CoreEvent>;
 
-  usage_tooltip = helptext.usage_tooltip;
-
-  clearLine = '\u001b[2K\r';
   shellConnected = false;
   connectionId: string;
 
@@ -143,13 +131,11 @@ export class ShellComponent implements OnInit, OnDestroy {
   }
 
   initializeTerminal(): void {
-    const size = this.getSize();
-
     const setting = {
       cursorBlink: false,
       tabStopWidth: 8,
-      cols: size.cols,
-      rows: size.rows,
+      cols: 80,
+      rows: 20,
       focus: true,
       fontSize: this.font_size,
       fontFamily: this.font_name,
@@ -166,48 +152,15 @@ export class ShellComponent implements OnInit, OnDestroy {
     font.load().then(() => {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
-      this.xterm._initialized = true;
     }, (e) => {
       console.error('Font is not available', e);
     });
   }
 
-  getSize(): { rows: number; cols: number } {
-    const domWidth = this.container.nativeElement.offsetWidth;
-    const domHeight = this.container.nativeElement.offsetHeight;
-    const span = document.createElement('span');
-    this.container.nativeElement.appendChild(span);
-    span.style.whiteSpace = 'nowrap';
-    span.style.fontFamily = this.font_name;
-    span.style.fontSize = this.font_size + 'px';
-    span.innerHTML = 'a';
-
-    let cols = 0;
-    while (span.offsetWidth < domWidth) {
-      span.innerHTML += 'a';
-      cols++;
-    }
-
-    let rows = Math.ceil(domHeight / span.offsetHeight);
-    span.remove();
-    if (cols < 80) {
-      cols = 80;
-    }
-
-    if (rows < 10) {
-      rows = 10;
-    }
-
-    return {
-      rows,
-      cols,
-    };
-  }
-
   resizeTerm(): boolean {
-    const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
+    const size = this.fitAddon.proposeDimensions();
     this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
       this.xterm.focus();
     });
@@ -244,7 +197,6 @@ export class ShellComponent implements OnInit, OnDestroy {
     private core: CoreService,
     private ws: WebSocketService,
     private ss: ShellService,
-    private translate: TranslateService,
     private dialog: MatDialog,
   ) {}
 }

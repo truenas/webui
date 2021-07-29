@@ -17,6 +17,7 @@ import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication';
 import repwizardhelptext from 'app/helptext/data-protection/replication/replication-wizard';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
@@ -51,7 +52,7 @@ export class ReplicationFormComponent implements FormConfiguration {
   editCall: 'replication.update' = 'replication.update';
   isEntity = true;
   protected entityForm: EntityFormComponent;
-  protected queryRes: any;
+  protected queryRes: ReplicationTask[];
   title: string;
   pk: number;
   protected retentionPolicyChoice = [

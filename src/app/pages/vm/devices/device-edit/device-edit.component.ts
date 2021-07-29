@@ -46,7 +46,7 @@ export class DeviceEditComponent implements OnInit {
   protected updateCall: 'vm.device.update' = 'vm.device.update';
   protected route_success: string[];
   deviceid: number;
-  vmname: any;
+  vmname: string;
   fieldSets: any;
   isCustActionVisible = false;
   protected ipAddress: FieldConfig;
@@ -62,7 +62,7 @@ export class DeviceEditComponent implements OnInit {
   rootpwd: FieldConfig;
   vminfo: any;
   vmId: number;
-  boot: any;
+  boot: FieldConfig;
   error: string;
   private productType = window.localStorage.getItem('product_type') as ProductType;
 

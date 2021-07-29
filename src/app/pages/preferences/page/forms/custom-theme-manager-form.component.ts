@@ -42,8 +42,6 @@ export class CustomThemeManagerFormComponent implements EmbeddedFormConfig, OnIn
   values: boolean[] = [];
   saveSubmitText = T('Delete Selected');
   isEntity = true;
-  private colorOptions: any[] = [];
-  private customThemeOptions: any[] = [];
   private customThemeFields: any[] = [];
   fieldConfig: FieldConfig[] = [];
   fieldSetDisplay = 'no-margins';// default | carousel | stepper

@@ -193,13 +193,13 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
     }
   }
 
-  transformValue(parent: any, fieldname: string): void {
+  transformValue(parent: this, fieldname: string): void {
     parent.entityForm.formGroup.controls[fieldname].setValue(parent.storageService.humanReadable || 0);
     parent.storageService.humanReadable = '';
   }
 
-  updateSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
+  updateSearchOptions(value = '', parent: this): void {
+    parent.userService.groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
       const groupOptions: Option[] = [];
       for (let i = 0; i < groups.length; i++) {
         groupOptions.push({ label: groups[i].group, value: groups[i].group });

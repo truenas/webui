@@ -400,7 +400,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     },
     { name: 'divider', divider: true },
   ]);
-  fieldConfig: any[] = [];
+  fieldConfig: FieldConfig[] = [];
 
   protected credentials: FieldConfig;
   protected bucket_field: FieldConfig;

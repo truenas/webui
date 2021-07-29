@@ -5,10 +5,8 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/services';
-import { LocaleService } from 'app/services/locale.service';
 import { T } from 'app/translate-marker';
 
 @UntilDestroy()
@@ -24,18 +22,9 @@ export class JobItemComponent {
   readonly JobState = JobState;
 
   constructor(
-    private localeService: LocaleService,
     private dialogService: DialogService,
     private translate: TranslateService,
   ) {}
-
-  getReadableDate(input: ApiTimestamp): string {
-    // TODO: Convert this method into pipe
-    if (!input.$date) {
-      return '–';
-    }
-    return this.localeService.formatDateTime(new Date(input.$date));
-  }
 
   abort(job: Job): void {
     this.dialogService

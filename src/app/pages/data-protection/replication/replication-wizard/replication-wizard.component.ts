@@ -22,6 +22,7 @@ import sshConnectionsHelptex from 'app/helptext/system/ssh-connections';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -231,7 +232,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               value: this.defaultNamingSchema,
               parent: this,
               blurStatus: true,
-              blurEvent: (parent: any) => {
+              blurEvent: (parent: this) => {
                 parent.getSnapshots();
               },
             },
@@ -767,7 +768,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   };
 
   protected snapshotsCountField: FieldConfig;
-  private existSnapshotTasks: any[] = [];
+  private existSnapshotTasks: number[] = [];
   private eligibleSnapshots = 0;
   protected preload_fieldSet: FieldSet;
   protected source_fieldSet: FieldSet;
@@ -1156,15 +1157,13 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
           enabled: true,
         };
-        await this.isSnapshotTaskExist(payload).then(
-          (res: any[]) => {
-            if (res.length === 0) {
-              snapshotPromises.push(this.ws.call((this.createCalls as any)[item], [payload]).toPromise());
-            } else {
-              this.existSnapshotTasks.push(...res.map((task) => task.id));
-            }
-          },
-        );
+        await this.isSnapshotTaskExist(payload).then((res) => {
+          if (res.length === 0) {
+            snapshotPromises.push(this.ws.call((this.createCalls as any)[item], [payload]).toPromise());
+          } else {
+            this.existSnapshotTasks.push(...res.map((task) => task.id));
+          }
+        });
       }
       return Promise.all(snapshotPromises);
     }
@@ -1490,7 +1489,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
   }
 
-  async isSnapshotTaskExist(payload: any): Promise<any> {
+  async isSnapshotTaskExist(payload: any): Promise<PeriodicSnapshotTask[]> {
     return this.ws.call('pool.snapshottask.query', [[
       ['dataset', '=', payload['dataset']],
       ['schedule.minute', '=', payload['schedule']['minute']],

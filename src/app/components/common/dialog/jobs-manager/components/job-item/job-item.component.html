@@ -16,11 +16,11 @@
       <ng-container *ngIf="job.state === JobState.Running; then started; else stopped"></ng-container>
 
       <ng-template #started>
-        {{ 'Started' | translate }}: <strong>{{ getReadableDate(job.time_started) }}</strong>
+        {{ 'Started' | translate }}: <strong>{{ job.time_started?.$date ? (job.time_started.$date | formatDateTime) : '–' }}</strong>
       </ng-template>
 
       <ng-template #stopped>
-        {{ 'Stopped' | translate }}: <strong>{{ getReadableDate(job.time_finished) }}</strong>
+        {{ 'Stopped' | translate }}: <strong>{{ job.time_finished?.$date ? (job.time_finished.$date | formatDateTime) : '–' }}</strong>
       </ng-template>
     </div>
   </div>

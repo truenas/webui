@@ -73,7 +73,7 @@
 
         <!-- Column Template -->
         <ng-container
-          *ngIf="column !== 'expandedDetail' && column !== 'action' && column !== 'multiselect' && column !== 'expansion-chevrons' && !isInteractive(column)"
+          *ngIf="isBasicColumnTemplate(column)"
           [sticky]="isLeftStickyColumnNo(i)"
           matColumnDef="{{column}}"
         >

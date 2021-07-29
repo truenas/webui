@@ -26,3 +26,12 @@ export interface SmbShare {
   timemachine: boolean;
   vuid: string;
 }
+
+export interface SmbPreset {
+  verbose_name: string;
+  params: Partial<SmbShare>;
+}
+
+export interface SmbPresets {
+  [name: string]: SmbPreset;
+}
