@@ -20,6 +20,19 @@ export class FormRadioComponent implements Field, OnInit, OnDestroy {
   radioValue: any;
   valueChangesSubscription: Subscription;
 
+  get radioLayout(): string {
+    return this.config.inlineFields ? 'row wrap' : 'column';
+  }
+
+  get radioFlex(): string {
+    if (this.radioLayout == 'column') return '100%';
+
+    if (this.radioLayout == 'row wrap' && this.config.inlineFieldFlex) {
+      return this.config.inlineFieldFlex;
+    }
+    return '50%';
+  }
+
   constructor(public translate: TranslateService) {}
 
   ngOnInit(): void {
