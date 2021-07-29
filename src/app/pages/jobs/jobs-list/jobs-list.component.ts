@@ -40,7 +40,6 @@ export class JobsListComponent implements OnInit {
   displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'logs_excerpt'];
   viewingLogsForJob: Job;
   isLoading: boolean;
-  actionsConfig: any;
   toolbarConfig: ToolbarConfig;
   settingsEvent$: Subject<CoreEvent> = new Subject();
   filterString = '';
@@ -120,11 +119,6 @@ export class JobsListComponent implements OnInit {
 
     this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
   }
-
-  // ngAfterViewInit(): void {
-  // this.actionsConfig = { actionType: JobsListControlsComponent, actionConfig: this };
-  // this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
-  // }
 
   handleUpdate(job: Job): void {
     if (this.selectedIndex === 2 && job.state === JobState.Failed) {
