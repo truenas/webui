@@ -31,12 +31,12 @@ export enum XmitHashPolicy {
   Layer3Plus4 = 'LAYER3+4',
 }
 
-export enum LACPDURate {
-  Slow = 'SLOW',
-  Fast = 'FAST',
-}
-
 export enum LinkState {
   Up = 'LINK_STATE_UP',
   Down = 'LINK_STATE_DOWN',
+}
+
+export enum LACPDURate {
+  Slow = 'SLOW',
+  Fast = 'FAST',
 }
