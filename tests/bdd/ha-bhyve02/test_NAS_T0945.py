@@ -52,11 +52,12 @@ def login_appear_enter_root_and_password(driver, user, password):
 def you_should_see_the_dashboard(driver):
     """you should see the dashboard."""
     assert wait_on_element(driver, 5, '//h1[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 5, '//h1[contains(.,"End User License Agreement - TrueNAS")]')
+    if wait_on_element(driver, 1, '//button[@ix-auto="button__I AGREE"]'):
+        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     if wait_on_element(driver, 1, '//div[contains(.,"Looking for help?")]'):
         assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    if wait_on_element(driver, 1, '//button[@ix-auto="button__I AGREE"]'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
 
 
