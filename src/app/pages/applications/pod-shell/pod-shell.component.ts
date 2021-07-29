@@ -308,7 +308,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
     self.dialogService.closeAllDialogs();
   }
 
-  afterShellDialogInit(entityDialog: any): void {
+  afterShellDialogInit(entityDialog: EntityDialogComponent): void {
     const self = entityDialog.parent;
 
     entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(parent)).subscribe((value: any) => {

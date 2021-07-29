@@ -74,7 +74,7 @@ import {
   IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { KerberosConfig } from 'app/interfaces/kerberos-config.interface';
+import { KerberosConfig, KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
@@ -110,7 +110,7 @@ import {
   SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTest,
 } from 'app/interfaces/smart-test.interface';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
-import { SmbShare } from 'app/interfaces/smb-share.interface';
+import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
@@ -470,7 +470,7 @@ export type ApiDirectory = {
   'kerberos.keytab.kerberos_principal_choices': { params: void; response: string[] };
   'kerberos.keytab.create': { params: any; response: any };
   'kerberos.keytab.update': { params: any; response: any };
-  'kerberos.keytab.query': { params: any; response: any };
+  'kerberos.keytab.query': { params: QueryParams<KerberosKeytab>; response: KerberosKeytab[] };
   'kerberos.keytab.delete': { params: any; response: any };
 
   'kmip.update': { params: any; response: any };
@@ -504,10 +504,10 @@ export type ApiDirectory = {
   'openvpn.client.update': { params: any; response: any };
   'openvpn.client.authentication_algorithm_choices': { params: void; response: Choices };
   'openvpn.client.cipher_choices': { params: void; response: Choices };
-  'openvpn.server.renew_static_key': { params: any; response: any };
+  'openvpn.server.renew_static_key': { params: void; response: any };
   'openvpn.client.config': { params: void; response: OpenvpnClientConfig };
-  'openvpn.server.cipher_choices': { params: any; response: any };
-  'openvpn.server.authentication_algorithm_choices': { params: any; response: any };
+  'openvpn.server.cipher_choices': { params: void; response: Choices };
+  'openvpn.server.authentication_algorithm_choices': { params: void; response: Choices };
   'openvpn.server.client_configuration_generation': { params: any; response: any };
   'openvpn.server.update': { params: any; response: any };
   'openvpn.server.config': { params: void; response: OpenvpnServerConfig };
@@ -697,7 +697,7 @@ export type ApiDirectory = {
   'sharing.smb.create': { params: any; response: any };
   'sharing.smb.update': { params: any; response: any };
   'sharing.smb.delete': { params: any; response: any };
-  'sharing.smb.presets': { params: any; response: any };
+  'sharing.smb.presets': { params: void; response: SmbPresets };
   'sharing.nfs.query': { params: QueryParams<NfsShare>; response: NfsShare[] };
   'sharing.nfs.update': { params: any; response: any };
   'sharing.nfs.create': { params: any; response: any };

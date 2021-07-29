@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatStepper } from '@angular/material/stepper';
 import {
   UntilDestroy, untilDestroyed,
 } from '@ngneat/until-destroy';
@@ -158,7 +159,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   },
   ];
 
-  updater(file: any, parent: any): void {
+  updater(file: any, parent: this): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
@@ -190,8 +191,8 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   ) {
   }
 
-  customNext(stepper: any): void {
-    if (stepper._selectedIndex === (this.importIndex - 1)) {
+  customNext(stepper: MatStepper): void {
+    if (stepper.selectedIndex === (this.importIndex - 1)) {
       if (this.encrypted && this.encrypted.value) {
         this.decryptDisks(stepper);
       } else {

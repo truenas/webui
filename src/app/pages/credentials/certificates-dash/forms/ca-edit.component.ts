@@ -7,6 +7,7 @@ import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -32,7 +33,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   private rowNum: any;
   title: string;
   private incomingData: CertificateAuthority;
-  private unsignedCAs: any[] = [];
+  private unsignedCAs: Option[] = [];
 
   fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [

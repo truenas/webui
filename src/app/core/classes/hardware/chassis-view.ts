@@ -67,7 +67,7 @@ export class ChassisView {
   orientation = 'rows'; // 'rows' || 'columns'
   layout?: LayoutGenerator;
   vertical = false;
-  filters: any[] = [];
+  filters: AdvancedBloomFilter[] = [];
   disabledOpacity = 0.25;
   chassisOpacity = 0.25;
   initialized = false;

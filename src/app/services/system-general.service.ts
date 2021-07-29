@@ -110,7 +110,7 @@ export class SystemGeneralService {
     return this.ws.call(this.caList, [[['privatekey', '!=', null]]]);
   }
 
-  getCertificateCountryChoices(): Observable<any> {
+  getCertificateCountryChoices(): Observable<Choices> {
     return this.ws.call('certificate.country_choices');
   }
 
@@ -182,7 +182,7 @@ export class SystemGeneralService {
     this.refreshSysGeneral$.next();
   }
 
-  checkRootPW(password: string): Observable<any> {
+  checkRootPW(password: string): Observable<boolean> {
     return this.ws.call('auth.check_user', ['root', password]);
   }
 }

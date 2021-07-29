@@ -291,7 +291,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   }
 
   // Convert timespan to start/end options for RRDTool
-  async convertTimespan(timespan: any, direction = 'backward', currentDate?: number): Promise<TimeData> {
+  async convertTimespan(timespan: string, direction = 'backward', currentDate?: number): Promise<TimeData> {
     let durationUnit: keyof Duration;
     let value: number;
 
@@ -362,7 +362,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     };
   }
 
-  fetchReportData(rrdOptions: any, report: Report, identifier?: string): void {
+  fetchReportData(rrdOptions: TimeData, report: Report, identifier?: string): void {
     // Report options
     const params = identifier ? { name: report.name, identifier } : { name: report.name };
 

@@ -179,7 +179,6 @@ export class SnapshotListComponent implements EntityTableConfig {
   }
 
   resourceTransformIncomingRestData(rows: any[]): any[] {
-    /// /
     rows.forEach((row) => {
       if (row.properties) {
         row.used = this.storageService.convertBytestoHumanReadable(row.properties.used.rawvalue);
@@ -187,7 +186,6 @@ export class SnapshotListComponent implements EntityTableConfig {
         row.referenced = this.storageService.convertBytestoHumanReadable(row.properties.referenced.rawvalue);
       }
     });
-    /// /
     return rows;
   }
 
@@ -318,7 +316,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     const listEnd = '</ul>';
     const breakTag = '<br>';
 
-    info.datasets.forEach((dataset: any) => {
+    info.datasets.forEach((dataset) => {
       const totalSnapshots: number = info.snapshots[dataset].length;
       const snapshotText = this.translate.instant(
         '{ n, plural, one {# snapshot} other {# snapshots} }',
@@ -327,7 +325,7 @@ export class SnapshotListComponent implements EntityTableConfig {
       const header = `<br/> <div><strong>${dataset}</strong> (${snapshotText}) </div>`;
       const listContent: string[] = [];
 
-      info.snapshots[dataset].forEach((snapshot: any) => {
+      info.snapshots[dataset].forEach((snapshot) => {
         listContent.push('<li>&nbsp;&nbsp;&nbsp;&nbsp;' + snapshot + '</li>');
       });
 

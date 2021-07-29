@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {
   Validators, FormControl, ValidationErrors, FormGroup,
 } from '@angular/forms';
+import { MatStepper } from '@angular/material/stepper';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   UntilDestroy, untilDestroyed,
@@ -529,8 +530,8 @@ export class ZvolWizardComponent implements WizardConfiguration {
     return this.ws.call('pool.dataset.create', [data]);
   }
 
-  async customNext(stepper: any): Promise<void> {
-    if (stepper._selectedIndex == 0) {
+  async customNext(stepper: MatStepper): Promise<void> {
+    if (stepper.selectedIndex == 0) {
       if (!this.parent) {
         this.wizardConfig[0].fieldConfig.find((c) => c.name === 'path').warnings = 'Please select a ZFS Volume';
         return;

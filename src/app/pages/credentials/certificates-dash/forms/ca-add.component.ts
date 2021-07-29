@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
+import { MatStepper } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_system_ca } from 'app/helptext/system/ca';
@@ -610,9 +611,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     });
   }
 
-  customNext(stepper: any): void {
+  customNext(stepper: MatStepper): void {
     stepper.next();
-    this.currentStep = stepper._selectedIndex;
+    this.currentStep = stepper.selectedIndex;
   }
 
   getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
