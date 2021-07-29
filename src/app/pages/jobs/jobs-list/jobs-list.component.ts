@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
 } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -7,12 +7,15 @@ import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { JobState } from 'app/enums/job-state.enum';
+import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
-import { JobsListControlsComponent } from 'app/pages/jobs/components/jobs-list-controls/jobs-list-controls.component';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { JobsListStore } from 'app/pages/jobs/jobs-list/jobs-list.store';
 import { DialogService } from 'app/services';
 import { T } from 'app/translate-marker';
@@ -23,7 +26,7 @@ import { T } from 'app/translate-marker';
   styleUrls: ['./jobs-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class JobsListComponent implements OnInit, AfterViewInit {
+export class JobsListComponent implements OnInit {
   paginationPageIndex = 0;
   paginationPageSize = 10;
   paginationPageSizeOptions: number[] = [10, 50, 100];
@@ -38,6 +41,9 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   viewingLogsForJob: Job;
   isLoading: boolean;
   actionsConfig: any;
+  toolbarConfig: ToolbarConfig;
+  settingsEvent$: Subject<CoreEvent> = new Subject();
+  filterString = '';
   selectedIndex = 0;
   readonly JobState = JobState;
 
@@ -66,6 +72,8 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.setupToolbar();
+
     this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.dataSource.data = state.jobs;
       this.isLoading = state.isLoading;
@@ -82,10 +90,41 @@ export class JobsListComponent implements OnInit, AfterViewInit {
       });
   }
 
-  ngAfterViewInit(): void {
-    this.actionsConfig = { actionType: JobsListControlsComponent, actionConfig: this };
-    this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
+  setupToolbar(): void {
+    this.settingsEvent$ = new Subject();
+    this.settingsEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+      if (evt.data.event_control == 'filter') {
+        this.filterString = evt.data.filter;
+        this.dataSource.filter = evt.data.filter;
+      }
+    });
+
+    const controls = [
+      {
+        name: 'filter',
+        type: 'input',
+        value: this.filterString,
+      },
+    ];
+
+    const toolbarConfig = {
+      target: this.settingsEvent$,
+      controls,
+    };
+    const settingsConfig = {
+      actionType: EntityToolbarComponent,
+      actionConfig: toolbarConfig,
+    };
+
+    this.toolbarConfig = toolbarConfig;
+
+    this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
   }
+
+  // ngAfterViewInit(): void {
+  // this.actionsConfig = { actionType: JobsListControlsComponent, actionConfig: this };
+  // this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
+  // }
 
   handleUpdate(job: Job): void {
     if (this.selectedIndex === 2 && job.state === JobState.Failed) {

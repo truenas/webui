@@ -8,12 +8,11 @@ import { CoreComponents } from 'app/core/components/core-components.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { routing } from 'app/pages/jobs/jobs.routing';
 import { JobLogsSidebarComponent } from './components/job-logs-sidebar/job-logs-sidebar.component';
-import { JobsListControlsComponent } from './components/jobs-list-controls/jobs-list-controls.component';
 import { JobsListComponent } from './jobs-list/jobs-list.component';
 import { JobsListStore } from './jobs-list/jobs-list.store';
 
 @NgModule({
-  declarations: [JobsListComponent, JobLogsSidebarComponent, JobsListControlsComponent],
+  declarations: [JobsListComponent, JobLogsSidebarComponent],
   imports: [
     CoreComponents,
     EntityModule,
