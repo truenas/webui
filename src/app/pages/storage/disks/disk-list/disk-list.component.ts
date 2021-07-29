@@ -256,7 +256,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
                     });
                   }
                 });
-                dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((wipeRes: any) => {
+                dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((wipeRes) => {
                   dialogRef.componentInstance.setDescription(wipeRes.error);
                 });
                 dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {

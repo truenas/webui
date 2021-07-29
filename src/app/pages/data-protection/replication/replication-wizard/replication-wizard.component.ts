@@ -15,12 +15,14 @@ import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { ReplicationEncryptionKeyFormat } from 'app/enums/replication-encryption-key-format.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
+import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication-wizard';
 import sshConnectionsHelptex from 'app/helptext/system/ssh-connections';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -213,27 +215,34 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               }],
             },
             {
+              type: 'radio',
+              name: 'schema_or_regex',
+              placeholder: helptext.name_schema_or_regex_placeholder_push,
+              options: [
+                { label: helptext.naming_schema_placeholder, value: SnapshotNamingOption.NamingSchema },
+                { label: helptext.name_regex_placeholder, value: SnapshotNamingOption.NameRegex },
+              ],
+              value: SnapshotNamingOption.NamingSchema,
+            },
+            {
               type: 'input',
               name: 'naming_schema',
               placeholder: helptext.naming_schema_placeholder,
               tooltip: helptext.naming_schema_tooltip,
               value: this.defaultNamingSchema,
-              relation: [{
-                action: RelationAction.Show,
-                connective: RelationConnection.Or,
-                when: [{
-                  name: 'custom_snapshots',
-                  value: true,
-                }, {
-                  name: 'source_datasets_from',
-                  value: DatasetSource.Remote,
-                }],
-              }],
               parent: this,
               blurStatus: true,
-              blurEvent: (parent: any) => {
+              blurEvent: (parent: this) => {
                 parent.getSnapshots();
               },
+            },
+            {
+              type: 'input',
+              name: 'name_regex',
+              placeholder: helptext.name_regex_placeholder,
+              tooltip: helptext.name_regex_tooltip,
+              parent: this,
+              isHidden: true,
             },
           ],
         },
@@ -759,7 +768,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   };
 
   protected snapshotsCountField: FieldConfig;
-  private existSnapshotTasks: any[] = [];
+  private existSnapshotTasks: number[] = [];
   private eligibleSnapshots = 0;
   protected preload_fieldSet: FieldSet;
   protected source_fieldSet: FieldSet;
@@ -797,6 +806,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     this.step0Init();
     this.step1Init();
+    this.toggleNamingSchemaOrRegex();
   }
 
   step0Init(): void {
@@ -842,6 +852,9 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         this.loadOrClearReplicationTask(value);
       }
     });
+    this.entityWizard.formArray.get([0]).get('schema_or_regex').valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.toggleNamingSchemaOrRegex();
+    });
     this.entityWizard.formArray.get([0]).get('source_datasets').valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.genTaskName();
       this.getSnapshots();
@@ -857,6 +870,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       this.entityWizard.formArray.get([0]).get(datasetFrom).valueChanges
         .pipe(untilDestroyed(this))
         .subscribe((value: any) => {
+          this.toggleNamingSchemaOrRegex();
           if (value === DatasetSource.Remote) {
             if (datasetFrom === 'source_datasets_from') {
               this.entityWizard.formArray.get([0]).get('target_dataset_from').setValue(DatasetSource.Local);
@@ -870,6 +884,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             }
             this.setDisable(datasetName, false, false, 0);
           }
+          const direction = value === DatasetSource.Remote ? Direction.Pull : Direction.Push;
+          _.find(this.wizardConfig[0].fieldConfig, { name: 'schema_or_regex' }).placeholder = helptext[
+            (direction === Direction.Pull ? 'name_schema_or_regex_placeholder_pull' : 'name_schema_or_regex_placeholder_push')
+          ];
         });
 
       this.entityWizard.formArray.get([0]).get(credentialName).valueChanges
@@ -905,7 +923,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     });
 
     this.entityWizard.formArray.get([0]).get('custom_snapshots').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
-      this.setDisable('naming_schema', !value, !value, 0);
+      this.toggleNamingSchemaOrRegex();
       if (!value) {
         this.getSnapshots();
       }
@@ -919,6 +937,19 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       this.clearReplicationTask();
     }
     this.selectedReplicationTask = task;
+  }
+
+  setSchemaOrRegexForObject(data: any, schemaOrRegex: SnapshotNamingOption,
+    schema: string = null, regex: string = null): any {
+    if (schemaOrRegex === SnapshotNamingOption.NamingSchema) {
+      data.naming_schema = schema ? [schema] : [this.defaultNamingSchema];
+      delete data.name_regex;
+    } else {
+      data.name_regex = regex;
+      delete data.naming_schema;
+      delete data.also_include_naming_schema;
+    }
+    return data;
   }
 
   step1Init(): void {
@@ -1126,15 +1157,13 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
           enabled: true,
         };
-        await this.isSnapshotTaskExist(payload).then(
-          (res: any[]) => {
-            if (res.length === 0) {
-              snapshotPromises.push(this.ws.call((this.createCalls as any)[item], [payload]).toPromise());
-            } else {
-              this.existSnapshotTasks.push(...res.map((task) => task.id));
-            }
-          },
-        );
+        await this.isSnapshotTaskExist(payload).then((res) => {
+          if (res.length === 0) {
+            snapshotPromises.push(this.ws.call((this.createCalls as any)[item], [payload]).toPromise());
+          } else {
+            this.existSnapshotTasks.push(...res.map((task) => task.id));
+          }
+        });
       }
       return Promise.all(snapshotPromises);
     }
@@ -1179,16 +1208,18 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         payload['auto'] = true;
         if (payload['direction'] === Direction.Pull) {
           payload['schedule'] = this.parsePickerTime(data['schedule_picker']);
-          payload['naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema]; // default?
+          payload = this.setSchemaOrRegexForObject(payload, data['schema_or_regex'], data['naming_schema'], data['name_regex']);
         } else {
           payload['periodic_snapshot_tasks'] = data['periodic_snapshot_tasks'];
         }
       } else {
         payload['auto'] = false;
         if (payload['direction'] === Direction.Pull) {
-          payload['naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema];
-        } else {
+          payload = this.setSchemaOrRegexForObject(payload, data['schema_or_regex'], data['naming_schema'], data['name_regex']);
+        } else if (data['schema_or_regex'] === SnapshotNamingOption.NamingSchema) {
           payload['also_include_naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema];
+        } else {
+          payload.name_regex = data['name_regex'];
         }
       }
 
@@ -1409,8 +1440,20 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     if (this.entityWizard.formArray.get([0]).get('ssh_credentials_target').value) {
       transport = TransportMode.Local;
     }
+    const namingSchemaFormControl = this.entityWizard.formArray.get([0]).get('naming_schema');
+    const namingSchema = namingSchemaFormControl.enabled && namingSchemaFormControl.value
+      ? namingSchemaFormControl.value.split(' ') : [this.defaultNamingSchema];
+
+    const schemaOrRegexFormControl = this.entityWizard.formArray.get([0]).get('schema_or_regex');
+
+    const nameRegexFormControl = this.entityWizard.formArray.get([0]).get('name_regex');
+
+    const namingOption = schemaOrRegexFormControl.value === SnapshotNamingOption.NamingSchema
+      ? namingSchema : nameRegexFormControl.value;
+
     const payload = [
       this.entityWizard.formArray.get([0]).get('source_datasets').value || [],
+      namingOption,
       (this.entityWizard.formArray.get([0]).get('naming_schema').enabled && this.entityWizard.formArray.get([0]).get('naming_schema').value)
         ? this.entityWizard.formArray.get([0]).get('naming_schema').value.split(' ')
         : [this.defaultNamingSchema],
@@ -1446,7 +1489,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
   }
 
-  async isSnapshotTaskExist(payload: any): Promise<any> {
+  async isSnapshotTaskExist(payload: any): Promise<PeriodicSnapshotTask[]> {
     return this.ws.call('pool.snapshottask.query', [[
       ['dataset', '=', payload['dataset']],
       ['schedule.minute', '=', payload['schedule']['minute']],
@@ -1456,5 +1499,30 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       ['schedule.dow', '=', payload['schedule']['dow']],
       ['naming_schema', '=', payload['naming_schema'] ? payload['naming_schema'] : this.defaultNamingSchema],
     ]]).toPromise();
+  }
+
+  toggleNamingSchemaOrRegex(): void {
+    const customSnapshotsValue = this.entityWizard.formArray.get([0]).get('custom_snapshots').value;
+    const sourceDatasetsFromValue = this.entityWizard.formArray.get([0]).get('source_datasets_from').value;
+    const schemaOrRegexFormControl = this.entityWizard.formArray.get([0]).get('schema_or_regex');
+
+    if (customSnapshotsValue || sourceDatasetsFromValue === DatasetSource.Remote) {
+      if (schemaOrRegexFormControl.disabled) {
+        this.setDisable('schema_or_regex', false, false, 0);
+      }
+      if (schemaOrRegexFormControl.value === SnapshotNamingOption.NamingSchema) {
+        this.setDisable('naming_schema', false, false, 0);
+        this.setDisable('name_regex', true, true, 0);
+      } else {
+        this.setDisable('naming_schema', true, true, 0);
+        this.setDisable('name_regex', false, false, 0);
+      }
+    } else {
+      this.setDisable('naming_schema', true, true, 0);
+      if (!schemaOrRegexFormControl.disabled) {
+        this.setDisable('schema_or_regex', true, true, 0);
+      }
+      this.setDisable('name_regex', true, true, 0);
+    }
   }
 }

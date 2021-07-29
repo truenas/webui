@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { helptext } from 'app/helptext/system/reporting';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { ReportingConfig } from 'app/interfaces/reporting.interface';
@@ -86,7 +87,7 @@ export class ReportsConfigComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ]);
 
-  afterModalFormSaved?(): any;
+  afterModalFormSaved?: () => void;
 
   constructor(
     private ws: WebSocketService,
@@ -108,12 +109,16 @@ export class ReportsConfigComponent implements FormConfiguration {
   customSubmit(body: any): void {
     if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints
       || body.cpu_in_percentage !== this.isCpuCheckboxChecked) {
-      this.dialog.confirm(helptext.dialog.title, helptext.dialog.message, false,
-        helptext.dialog.action).pipe(untilDestroyed(this)).subscribe((res: any) => {
-        if (res) {
-          body.confirm_rrd_destroy = true;
-          this.doSubmit(body);
-        }
+      this.dialog.confirm({
+        title: helptext.dialog.title,
+        message: helptext.dialog.message,
+        buttonMsg: helptext.dialog.action,
+      }).pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        body.confirm_rrd_destroy = true;
+        this.doSubmit(body);
       });
     } else {
       this.doSubmit(body);

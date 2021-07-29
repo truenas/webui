@@ -86,7 +86,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
         self.loader.open();
         self.ws.call('pool.dataset.get_quota', [self.pk, DatasetQuotaType.Group, [['id', '=', row.id]]]).pipe(untilDestroyed(this)).subscribe((res) => {
           self.loader.close();
-          const conf: DialogFormConfiguration = {
+          const conf: DialogFormConfiguration<this> = {
             title: helptext.groups.dialog.title,
             fieldConfig: [
               {
@@ -199,7 +199,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
     });
   }
 
-  blurEvent(parent: any): void {
+  blurEvent(parent: this): void {
     (<HTMLInputElement>document.getElementById('data-quota_input')).value = parent.storageService.humanReadable;
   }
 

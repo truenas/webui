@@ -46,7 +46,7 @@ export class WebSocketService {
     this.connect();
   }
 
-  get authStatus(): Observable<any> {
+  get authStatus(): Observable<boolean> {
     return this.authStatus$.asObservable();
   }
 
@@ -256,7 +256,7 @@ export class WebSocketService {
     return source;
   }
 
-  login(username: string, password: string, otp_token?: string): Observable<any> {
+  login(username: string, password: string, otp_token?: string): Observable<boolean> {
     const params: LoginParams = otp_token
       ? [username, password, otp_token]
       : [username, password];

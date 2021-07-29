@@ -959,7 +959,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     };
   }
 
-  blurFilesize(parent: any): void {
+  blurFilesize(parent: this): void {
     if (parent.entityWizard) {
       parent.entityWizard.formArray.get([0]).get('filesize').setValue(parent.storageService.humanReadable);
     }

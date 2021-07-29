@@ -4,6 +4,7 @@ import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
+import { OpenvpnClientConfig } from 'app/interfaces/openvpn-client-config.interface';
 import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
@@ -30,11 +31,11 @@ export class ServicesService {
     return this.ws.call('certificateauthority.query');
   }
 
-  getOpenVPNServerAuthAlgorithmChoices(): Observable<any[]> {
+  getOpenVPNServerAuthAlgorithmChoices(): Observable<Choices> {
     return this.ws.call('openvpn.server.authentication_algorithm_choices');
   }
 
-  getOpenServerCipherChoices(): Observable<any[]> {
+  getOpenServerCipherChoices(): Observable<Choices> {
     return this.ws.call('openvpn.server.cipher_choices');
   }
 
@@ -47,7 +48,7 @@ export class ServicesService {
   updateOpenVPN(call: ApiMethod, body: any): Observable<any> {
     return this.ws.call(call, [body]);
   }
-  getClientInfo(): Observable<any> {
+  getClientInfo(): Observable<OpenvpnClientConfig> {
     return this.ws.call('openvpn.client.config');
   }
 

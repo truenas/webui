@@ -9,13 +9,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { Subject } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
+import { filter, switchMap, take } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { GpuDevice } from 'app/interfaces/gpu-device.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyType, EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -124,7 +125,7 @@ export class AdvancedSettingsComponent implements OnInit {
                     true,
                   );
                 },
-                (err: any) => new EntityUtils().handleError(this, err),
+                (err: WebsocketError) => new EntityUtils().handleError(this, err),
               );
           },
         },
@@ -488,53 +489,46 @@ export class AdvancedSettingsComponent implements OnInit {
           filter(Boolean),
           untilDestroyed(this),
         ).subscribe(() => {
-          this.ws.call('core.download', ['system.debug', [], fileName]).pipe(untilDestroyed(this)).subscribe(
+          this.ws.call('core.download', ['system.debug', [], fileName, true]).pipe(untilDestroyed(this)).subscribe(
             (res) => {
               const url = res[1];
-              let failed = false;
-              this.storage.streamDownloadFile(this.http, url, fileName, mimeType).pipe(untilDestroyed(this)).subscribe(
-                (file) => {
-                  this.storage.downloadBlob(file, fileName);
-                },
-                (err) => {
-                  failed = true;
-                  if (this.dialogRef) {
-                    this.dialogRef.close();
-                  }
-                  if (err instanceof HttpErrorResponse) {
-                    this.dialog.errorReport(
-                      helptext_system_advanced.debug_download_failed_title,
-                      helptext_system_advanced.debug_download_failed_message,
-                      err.message,
-                    );
-                  } else {
-                    this.dialog.errorReport(
-                      helptext_system_advanced.debug_download_failed_title,
-                      helptext_system_advanced.debug_download_failed_message,
-                      err,
-                    );
-                  }
-                },
-              );
-              if (!failed) {
-                let reported = false; // prevent error from popping up multiple times
-                this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-                  data: { title: T('Saving Debug') },
-                  disableClose: true,
-                });
-                this.dialogRef.componentInstance.jobId = res[0];
-                this.dialogRef.componentInstance.wsshow();
-                this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-                  this.dialogRef.close();
-                });
-                this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((saveDebugErr) => {
-                  this.dialogRef.close();
-                  if (!reported) {
-                    new EntityUtils().handleWSError(this, saveDebugErr, this.dialog);
-                    reported = true;
-                  }
-                });
-              }
+              this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+                data: { title: T('Saving Debug') },
+                disableClose: true,
+              });
+              this.dialogRef.componentInstance.jobId = res[0];
+              this.dialogRef.componentInstance.wsshow();
+              this.dialogRef.componentInstance.success.pipe(take(1), untilDestroyed(this)).subscribe(() => {
+                this.dialogRef.close();
+                this.storage.streamDownloadFile(this.http, url, fileName, mimeType)
+                  .pipe(untilDestroyed(this)).subscribe(
+                    (file) => {
+                      this.storage.downloadBlob(file, fileName);
+                    },
+                    (err) => {
+                      if (this.dialogRef) {
+                        this.dialogRef.close();
+                      }
+                      if (err instanceof HttpErrorResponse) {
+                        this.dialog.errorReport(
+                          helptext_system_advanced.debug_download_failed_title,
+                          helptext_system_advanced.debug_download_failed_message,
+                          err.message,
+                        );
+                      } else {
+                        this.dialog.errorReport(
+                          helptext_system_advanced.debug_download_failed_title,
+                          helptext_system_advanced.debug_download_failed_message,
+                          err,
+                        );
+                      }
+                    },
+                  );
+              });
+              this.dialogRef.componentInstance.failure.pipe(take(1), untilDestroyed(this)).subscribe((saveDebugErr) => {
+                this.dialogRef.close();
+                new EntityUtils().handleWSError(this, saveDebugErr, this.dialog);
+              });
             },
             (err) => {
               new EntityUtils().handleWSError(this, err, this.dialog);

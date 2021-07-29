@@ -322,7 +322,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
       && this.entityForm.formGroup.controls['username'].valid;
   }
 
-  setDisabled(fieldConfig: any, fieldName: string, disable: boolean, hide = false): void {
+  setDisabled(fieldConfig: FieldConfig[], fieldName: string, disable: boolean, hide = false): void {
     if (hide) {
       disable = hide;
     }

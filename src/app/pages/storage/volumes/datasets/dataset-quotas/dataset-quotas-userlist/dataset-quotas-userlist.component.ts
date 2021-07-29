@@ -86,7 +86,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
         self.loader.open();
         self.ws.call('pool.dataset.get_quota', [self.pk, DatasetQuotaType.User, [['id', '=', row.id]]]).pipe(untilDestroyed(this)).subscribe((res) => {
           self.loader.close();
-          const conf: DialogFormConfiguration = {
+          const conf: DialogFormConfiguration<this> = {
             title: helptext.users.dialog.title,
             fieldConfig: [
               {
@@ -202,7 +202,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
     });
   }
 
-  blurEvent(parent: any): void {
+  blurEvent(parent: this): void {
     (<HTMLInputElement>document.getElementById('data-quota_input')).value = parent.storageService.humanReadable;
   }
 

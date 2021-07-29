@@ -1,7 +1,9 @@
 import {
   Component,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import {
+  AbstractControl, FormArray, FormControl, FormGroup,
+} from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -42,7 +44,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
   protected entityForm: EntityFormComponent;
   protected dialogOpen = false;
 
-  protected datasets: any;
+  protected datasets: FormArray;
   protected datasets_fc: FieldConfig;
   protected key_file_fc: FieldConfig;
   protected key_file_fg: FormControl;
@@ -215,7 +217,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
-    this.datasets = entityEdit.formGroup.controls['datasets'];
+    this.datasets = entityEdit.formGroup.controls['datasets'] as FormArray;
     this.datasets_fc = _.find(this.fieldConfig, { name: 'datasets' });
     this.key_file_fc = _.find(this.fieldConfig, { name: 'key_file' });
     const listFields = this.datasets_fc.listFields;
@@ -246,7 +248,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
           const name_text_fc = _.find(controls, { name: 'name_text' });
           const result = res.result[i];
 
-          this.datasets.controls[i].controls['name'].setValue(result['name']);
+          (this.datasets.controls[i] as FormGroup).controls['name'].setValue(result['name']);
           name_text_fc.paraText = helptext.dataset_name_paratext + result['name'];
           const is_passphrase = result.key_format === DatasetEncryptionType.Passphrase;
           if (!is_passphrase) { // hide key datasets by default
@@ -258,8 +260,13 @@ export class DatasetUnlockComponent implements FormConfiguration {
               this.key_file_fc.width = '50%';
             }
           }
-          this.datasets.controls[i].controls['is_passphrase'].setValue(is_passphrase);
-          this.setDisabled(passphrase_fc, this.datasets.controls[i].controls['passphrase'], !is_passphrase, !is_passphrase);
+          (this.datasets.controls[i] as FormGroup).controls['is_passphrase'].setValue(is_passphrase);
+          this.setDisabled(
+            passphrase_fc,
+            (this.datasets.controls[i] as FormGroup).controls['passphrase'] as FormControl,
+            !is_passphrase,
+            !is_passphrase,
+          );
         }
       }
     });
@@ -275,7 +282,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
 
     this.key_file_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((hide_key_datasets: boolean) => {
       for (let i = 0; i < this.datasets.controls.length; i++) {
-        const dataset_controls = this.datasets.controls[i].controls;
+        const dataset_controls = (this.datasets.controls[i] as FormGroup).controls;
         const controls = listFields[i];
         const key_fc = _.find(controls, { name: 'key' });
         const name_text_fc = _.find(controls, { name: 'name_text' });
@@ -298,7 +305,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
       .subscribe((unlock_children: boolean) => {
         for (let i = 0; i < this.datasets.controls.length; i++) {
           const controls = listFields[i];
-          const dataset_controls = this.datasets.controls[i].controls;
+          const dataset_controls = (this.datasets.controls[i] as FormGroup).controls;
           if (dataset_controls['name'].value !== this.pk) {
             const key_fc = _.find(controls, { name: 'key' });
             const passphrase_fc = _.find(controls, { name: 'passphrase' });
@@ -351,7 +358,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
       });
   }
 
-  setDisabled(fieldConfig: FieldConfig, formControl: FormControl, disable: boolean, hide: boolean): void {
+  setDisabled(fieldConfig: FieldConfig, formControl: AbstractControl, disable: boolean, hide: boolean): void {
     fieldConfig.disabled = disable;
     fieldConfig['isHidden'] = hide;
     if (!hide) {
@@ -499,7 +506,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
     this.router.navigate(this.route_success);
   }
 
-  key_file_updater(file: any, parent: any): void {
+  key_file_updater(file: any, parent: this): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };

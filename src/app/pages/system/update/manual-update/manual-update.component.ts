@@ -137,7 +137,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
         ures[0].attributes.preferences['rebootAfterManualUpdate'] = false;
       }
       entityForm.formGroup.controls['rebootAfterManualUpdate'].setValue(ures[0].attributes.preferences['rebootAfterManualUpdate']);
-      entityForm.formGroup.controls['rebootAfterManualUpdate'].valueChanges.pipe(untilDestroyed(this)).subscribe((form_res: any) => {
+      entityForm.formGroup.controls['rebootAfterManualUpdate'].valueChanges.pipe(untilDestroyed(this)).subscribe((form_res: boolean) => {
         ures[0].attributes.preferences['rebootAfterManualUpdate'] = form_res;
         this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).pipe(untilDestroyed(this)).subscribe(() => {
         });
@@ -204,7 +204,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
       });
       this.dialogRef.componentInstance.failure
         .pipe(take(1))
-        .pipe(untilDestroyed(this)).subscribe((failure: any) => {
+        .pipe(untilDestroyed(this)).subscribe((failure) => {
           this.dialogRef.close(false);
           this.dialogService.errorReport(failure.error, failure.state, failure.exception);
           this.save_button_enabled = true;
@@ -212,7 +212,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     });
   }
 
-  updater(file: any, parent: any): void {
+  updater(file: any, parent: this): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.save_button_enabled = true;

@@ -29,6 +29,15 @@ export class WizardSummaryComponent {
       result = false;
     } else if (fieldConfig.type == 'list' && fieldValue.length == 0) {
       result = false;
+    } else if (fieldConfig.type == 'dict') {
+      result = false;
+      for (const key in fieldValue) {
+        const subValue = fieldValue[key];
+        if (!Array.isArray(subValue) && subValue !== undefined || Array.isArray(subValue) && subValue.length > 0) {
+          result = true;
+          break;
+        }
+      }
     }
     return result;
   }
