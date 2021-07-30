@@ -322,7 +322,6 @@ def wipe_all_disk_without_a_pool(driver):
         disk = disk_element.text
         if is_element_present(driver, f'//tr[contains(.,"{disk}")]//div[text()="N/A"]'):
             disk_list.append(disk)
-    print(disk_list)
     for disk in disk_list:
         assert wait_on_element(driver, 7, f'//tr[@ix-auto="expander__{disk}"]/td[2]', 'clickable')
         driver.find_element_by_xpath(f'//tr[@ix-auto="expander__{disk}"]/td[2]').click()
@@ -350,15 +349,20 @@ def navigate_to_storage_click_create(driver):
     driver.find_element_by_xpath('//a[@ix-auto="button___POOL_CREATE"]').click()
 
 
-@then(parsers.parse('enter tank for pool name, check the box next to "{disk}", click the arrow pointing to Data Vdevs, click Create, check confirm, click CREATE POOL'))
-def enter_tank_for_pool_name_check_the_box_next_to_sda_press_under_data_vdev_click_create_check_confirm_click_create_pool(driver, disk):
-    """enter tank for pool name, check the box next to sda, click the arrow pointing to Data Vdevs, click Create, check confirm, click CREATE POOL."""
+@then('enter tank for pool name, click the checkbox beside the first disk')
+def enter_tank_for_pool_name_click_the_checkbox_beside_the_first_disk(driver):
+    """enter tank for pool name, click the checkbox beside the first disk."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Create Pool")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Pool Manager")]')
-    assert wait_on_element(driver, 7, '//input[@id="pool-manager__name-input-field"]', 'clickable')
+    assert wait_on_element(driver, 7, '//input[@id="pool-manager__name-input-field"]', 'inputable')
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').clear()
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys('tank')
-    driver.find_element_by_xpath(f'//mat-checkbox[@id="pool-manager__disks-{disk}"]').click()
+    driver.find_element_by_xpath('//datatable-body[contains(.,"sd")]//mat-checkbox[1]').click()
+
+
+@then('click the arrow pointing to Data Vdevs, click Create, check confirm, click CREATE POOL')
+def click_the_arrow_pointing_to_data_vdevs_click_create_check_confirm_click_create_pool(driver):
+    """click the arrow pointing to Data Vdevs, click Create, check confirm, click CREATE POOL."""
     assert wait_on_element(driver, 7, '//button[@id="vdev__add-button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
     assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]', 'clickable')
