@@ -11,6 +11,7 @@ import {
   PermissionItem,
   PermissionsItemType,
 } from 'app/pages/storage/volumes/permissions/interfaces/permission-item.interface';
+import { getAceWhoString } from 'app/pages/storage/volumes/permissions/utils/get-ace-who-string.utils';
 
 export function nfsAceToPermissionItem(translate: TranslateService, ace: NfsAclItem): PermissionItem {
   let name = translate.instant(nfsAclTagLabels.get(ace.tag));
@@ -20,12 +21,12 @@ export function nfsAceToPermissionItem(translate: TranslateService, ace: NfsAclI
     case NfsAclTag.User:
     case NfsAclTag.Owner:
       type = PermissionsItemType.User;
-      name = `${name} - ${ace.who || '?'}`;
+      name = `${name} - ${getAceWhoString(ace)}`;
       break;
     case NfsAclTag.Group:
     case NfsAclTag.UserGroup:
       type = PermissionsItemType.Group;
-      name = `${name} - ${ace.who || '?'}`;
+      name = `${name} - ${getAceWhoString(ace)}`;
       break;
     default:
       type = PermissionsItemType.Other;

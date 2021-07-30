@@ -5,6 +5,7 @@ import {
   PermissionItem,
   PermissionsItemType,
 } from 'app/pages/storage/volumes/permissions/interfaces/permission-item.interface';
+import { getAceWhoString } from 'app/pages/storage/volumes/permissions/utils/get-ace-who-string.utils';
 import { posixPermissionsToDescription } from 'app/pages/storage/volumes/permissions/utils/permissions-to-description.utils';
 
 export function posixAceToPermissionItem(translate: TranslateService, ace: PosixAclItem): PermissionItem {
@@ -15,12 +16,12 @@ export function posixAceToPermissionItem(translate: TranslateService, ace: Posix
     case PosixAclTag.User:
     case PosixAclTag.UserObject:
       type = PermissionsItemType.User;
-      name = `${name} – ${ace.who || '?'}`;
+      name = `${name} – ${getAceWhoString(ace)}`;
       break;
     case PosixAclTag.Group:
     case PosixAclTag.GroupObject:
       type = PermissionsItemType.Group;
-      name = `${name} - ${ace.who || '?'}`;
+      name = `${name} - ${getAceWhoString(ace)}`;
       break;
     case PosixAclTag.Mask:
       type = PermissionsItemType.Group;

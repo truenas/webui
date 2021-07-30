@@ -42,7 +42,6 @@ export class AclEditorListComponent implements OnChanges {
    */
   canBeRemoved(aceToRemove: NfsAclItem | PosixAclItem): boolean {
     if (this.acl.acltype === AclType.Nfs4) {
-      // TODO: The same applies for default ACL (entries flagged by "default")
       return true;
     }
 

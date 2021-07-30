@@ -24,6 +24,7 @@ import { DialogService } from 'app/services';
 })
 export class DatasetAclEditorComponent implements OnInit {
   datasetPath: string;
+  fullDatasetPath: string;
   isLoading: boolean;
   acl: Acl;
   selectedAceIndex: number;
@@ -67,8 +68,9 @@ export class DatasetAclEditorComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.datasetPath = '/mnt/' + this.route.snapshot.params['path'];
-    this.store.loadAcl(this.datasetPath);
+    this.datasetPath = this.route.snapshot.params['path'];
+    this.fullDatasetPath = `/mnt/${this.datasetPath}`;
+    this.store.loadAcl(this.fullDatasetPath);
 
     this.store.state$
       .pipe(untilDestroyed(this))
