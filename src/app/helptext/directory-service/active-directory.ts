@@ -6,8 +6,6 @@ export default {
   title: T('Active Directory'),
   activedirectory_custactions_basic_id: 'basic_mode',
   activedirectory_custactions_advanced_id: 'advanced_mode',
-  activedirectory_custactions_edit_imap_id: 'edit_idmap',
-  activedirectory_custactions_edit_imap_name: T('Edit Idmap'),
   activedirectory_custactions_clearcache_id: 'ds_clearcache',
   activedirectory_custactions_clearcache_name: T('Rebuild Directory Service Cache'),
   activedirectory_custactions_clearcache_dialog_title: T('Active Directory'),

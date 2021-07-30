@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { map, tap } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { IdmapName } from 'app/enums/idmap-name.enum';
 import helptext from 'app/helptext/directory-service/idmap';
@@ -12,7 +12,8 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { ActiveDirectoryComponent } from 'app/pages/directory-service/active-directory/active-directory.component';
+import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
+import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import {
   IdmapService, SystemGeneralService, ValidationService, WebSocketService,
 } from 'app/services';
@@ -33,15 +34,10 @@ export class IdmapListComponent implements EntityTableConfig {
   wsDelete: 'idmap.delete' = 'idmap.delete';
   protected entityList: EntityTableComponent;
   protected idmapFormComponent: IdmapFormComponent;
-  protected requiredDomains = [
-    IdmapName.DsTypeActiveDirectory,
-    IdmapName.DsTypeDefaultDomain,
-    IdmapName.DsTypeLdap,
-  ];
 
   columns = [
     {
-      name: T('Name'), prop: 'name', always_display: true, minWidth: 250,
+      name: T('Name'), prop: 'label', always_display: true, minWidth: 250,
     },
     { name: T('Backend'), prop: 'idmap_backend', maxWidth: 100 },
     { name: T('DNS Domain Name'), prop: 'dns_domain_name' },
@@ -81,8 +77,11 @@ export class IdmapListComponent implements EntityTableConfig {
         const obj = data.find((o) => o.name === IdmapName.DsTypeDefaultDomain);
         obj.disableEdit = true;
       }
+      item.label = item.name;
       const index = helptext.idmap.name.options.findIndex((o) => o.value === item.name);
-      if (index >= 0) item.name = helptext.idmap.name.options[index].label;
+      if (index >= 0) {
+        item.label = helptext.idmap.name.options[index].label;
+      }
     });
     return data;
   }
@@ -117,12 +116,14 @@ export class IdmapListComponent implements EntityTableConfig {
           if (adConfig.enable) {
             this.doAdd();
           } else {
-            this.dialogService.confirm(helptext.idmap.enable_ad_dialog.title, helptext.idmap.enable_ad_dialog.message,
-              true, helptext.idmap.enable_ad_dialog.button).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-              if (res) {
-                this.showADForm();
-              }
-            });
+            this.dialogService.confirm({
+              title: helptext.idmap.enable_ad_dialog.title,
+              message: helptext.idmap.enable_ad_dialog.message,
+              hideCheckBox: true,
+              buttonMsg: helptext.idmap.enable_ad_dialog.button,
+            })
+              .pipe(filter(Boolean), untilDestroyed(this))
+              .subscribe(() => this.showADForm());
           }
         });
       },
@@ -133,16 +134,20 @@ export class IdmapListComponent implements EntityTableConfig {
     const actions = [];
     actions.push({
       id: 'edit',
+      name: 'edit',
+      icon: 'edit',
       label: T('Edit'),
       disabled: row.disableEdit,
       onClick: (row: any) => {
         this.doAdd(row.id);
       },
     });
-    if (!this.requiredDomains.includes(row.name)) {
+    if (!requiredIdmapDomains.includes(row.name)) {
       actions.push({
         id: 'delete',
         label: T('Delete'),
+        name: 'delete',
+        icon: 'delete',
         onClick: (row: any) => {
           this.entityList.doDeleteJob(row).pipe(untilDestroyed(this)).subscribe(
             () => {},

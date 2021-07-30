@@ -9,21 +9,23 @@ import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { IdmapName } from 'app/enums/idmap-name.enum';
 import helptext from 'app/helptext/directory-service/dashboard';
 import idmapHelptext from 'app/helptext/directory-service/idmap';
+import { Idmap } from 'app/interfaces/idmap.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { AppTableConfig } from 'app/pages/common/entity/table/table.component';
-import { ActiveDirectoryComponent } from 'app/pages/directory-service/active-directory/active-directory.component';
-import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/kerberos-keytabs/kerberos-keytabs-form.component';
-import { KerberosRealmsFormComponent } from 'app/pages/directory-service/kerberos-realms/kerberos-realms-form.component';
-import { KerberosSettingsComponent } from 'app/pages/directory-service/kerberos-settings/kerberos-settings.component';
+import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
+import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form.component';
+import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-form.component';
+import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
+import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import {
   DialogService, IdmapService, SystemGeneralService, ValidationService, WebSocketService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-import { IdmapFormComponent } from './idmap/idmap-form.component';
-import { LdapComponent } from './ldap/ldap.component';
+import { IdmapFormComponent } from './components/idmap/idmap-form.component';
+import { LdapComponent } from './components/ldap/ldap.component';
 
 enum DirectoryServicesCardId {
   ActiveDirectory = 'active-directory',
@@ -64,11 +66,6 @@ export class DirectoryServicesComponent implements OnInit {
     title: helptext.idmap.title,
     titleHref: '/directoryservice/idmap',
     queryCall: 'idmap.query',
-    deleteCall: 'idmap.delete',
-    deleteMsg: {
-      title: helptext.idmap.title,
-      key_props: ['name'],
-    },
     emptyEntityLarge: false,
     parent: this,
     columns: [
@@ -80,13 +77,48 @@ export class DirectoryServicesComponent implements OnInit {
       { name: T('Range Low'), prop: 'range_low' },
       { name: T('Range High'), prop: 'range_high' },
       { name: T('Certificate'), prop: 'cert_name' },
+
     ],
     add() {
       this.parent.onCardButtonPressed(DirectoryServicesCardId.Idmap);
     },
-    edit(row) {
+    edit(row: Idmap) {
       this.parent.onCardButtonPressed(DirectoryServicesCardId.Idmap, row.id);
     },
+    getActions: () => {
+      return [
+        {
+          id: 'delete',
+          label: T('Delete'),
+          name: 'delete',
+          icon: 'delete',
+          onClick: (row: any) => {
+            this.dialog.confirm({
+              title: this.translate.instant('Delete'),
+              message: this.translate.instant('Are you sure you want to delete this idmap?'),
+            }).pipe(
+              filter(Boolean),
+              switchMap(() => {
+                this.loader.open();
+                return this.ws.call('idmap.delete', [row.id]);
+              }),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.loader.close();
+              this.refreshTables();
+            });
+          },
+        },
+      ];
+    },
+    isActionVisible(actionId: string, row: Idmap) {
+      if (actionId === 'delete' && requiredIdmapDomains.includes(row.name)) {
+        return false;
+      }
+
+      return true;
+    },
+
   };
 
   kerberosRealmsTableConf: AppTableConfig<this> = {

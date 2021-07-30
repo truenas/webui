@@ -59,14 +59,6 @@ export class LdapComponent implements FormConfiguration {
       },
     },
     {
-      id: helptext.ldap_custactions_edit_imap_id,
-      name: helptext.ldap_custactions_edit_imap_name,
-      function: () => {
-        this.modalService.close('slide-in-form');
-        this.router.navigate(new Array('').concat(['directoryservice', 'idmap']));
-      },
-    },
-    {
       id: helptext.ldap_custactions_clearcache_id,
       name: helptext.ldap_custactions_clearcache_name,
       function: async () => {

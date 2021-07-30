@@ -54,14 +54,6 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       },
     },
     {
-      id: helptext.activedirectory_custactions_edit_imap_id,
-      name: helptext.activedirectory_custactions_edit_imap_name,
-      function: () => {
-        this.modalService.close('slide-in-form');
-        this.router.navigate(new Array('').concat(['directoryservice', 'idmap']));
-      },
-    },
-    {
       id: helptext.activedirectory_custactions_clearcache_id,
       name: helptext.activedirectory_custactions_clearcache_name,
       function: async () => {
@@ -293,7 +285,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       return false;
     } if (actionname === 'basic_mode' && this.isBasicMode === true) {
       return false;
-    } if ((actionname === 'edit_idmap' || actionname === 'leave_domain') && this.isBasicMode === true) {
+    } if (actionname === 'leave_domain' && this.isBasicMode === true) {
       return false;
     } if (actionname === 'leave_domain' && this.adStatus === false) {
       return false;
