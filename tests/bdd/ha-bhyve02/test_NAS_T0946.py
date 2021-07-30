@@ -285,9 +285,9 @@ def please_wait_should_appear_wait_for_save_changes_then_click_save_changes(driv
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
-@then('navigate to Storage then click the gear icon and click Disks then click Name to sort in ascending order')
-def navigate_to_storage_then_click_the_great_icon_to_disks_then_click_name_to_sort_in_ascending_order(driver):
-    """navigate to Storage then click the gear icon and click Disks then click Name to sort in ascending order."""
+@then('navigate to Storage then click the gear icon and click Disks')
+def navigate_to_storage_then_click_the_gear_icon_and_click_disks(driver):
+    """navigate to Storage then click the gear icon and click Disks."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Storage")]')
     assert wait_on_element(driver, 7, '(//button[@ix-auto="button__tab-selector"])[2]', 'clickable')
@@ -312,10 +312,17 @@ def the_list_of_disks_should_appear_in_ascending_order_starting_with_sda(driver)
         assert disk == disk_list[num]
 
 
-@then('starting with sda, click >, click wipe, check confirm, and click continue. Repeat steps for sdb')
-def starting_with_sda_click__click_wipe_check_confirm_and_click_continue_repeat_steps_for_sdb(driver):
-    """starting with sda, click >, click wipe, check confirm, and click continue. Repeat steps for sdb."""
-    disk_list = ['sda', 'sdb']
+@then('wipe all disk without a pool')
+def wipe_all_disk_without_a_pool(driver):
+    """wipe all disk without a pool."""
+    # making a dynamic list of disk instead of using a static list
+    disk_list = []
+    disk_elements = driver.find_elements_by_xpath('//div[contains(text(),"sd")]')
+    for disk_element in disk_elements:
+        disk = disk_element.text
+        if is_element_present(driver, f'//tr[contains(.,"{disk}")]//div[text()="N/A"]'):
+            disk_list.append(disk)
+    print(disk_list)
     for disk in disk_list:
         assert wait_on_element(driver, 7, f'//tr[@ix-auto="expander__{disk}"]/td[2]', 'clickable')
         driver.find_element_by_xpath(f'//tr[@ix-auto="expander__{disk}"]/td[2]').click()
