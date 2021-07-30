@@ -48,6 +48,8 @@ export interface LinkAggregationNetworkInterface extends BaseNetworkInterface {
   lag_ports: string[];
   lag_protocol: LinkAggregationProtocol;
   disable_offload_capabilities: boolean;
+  lacpdu_rate: string;
+  xmit_hash_policy: string;
 }
 
 export type NetworkInterface =

@@ -1188,4 +1188,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
       this.expandedElement = this.expandedElement === element ? null : element;
     }
   }
+
+  isBasicColumnTemplate(column: string): boolean {
+    return !['expandedDetail', 'action', 'multiselect', 'expansion-chevrons'].includes(column) && !this.isInteractive(column);
+  }
 }

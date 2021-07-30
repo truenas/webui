@@ -234,7 +234,7 @@ export class ConfigurationComponent implements FormConfiguration {
   private entityEdit: EntityFormComponent;
   private failover_fields = ['hostname_b', 'hostname_virtual'];
   title = helptext.title;
-  afterModalFormClosed: any;
+  afterModalFormClosed: () => void;
 
   constructor(protected router: Router,
     protected ws: WebSocketService) { }

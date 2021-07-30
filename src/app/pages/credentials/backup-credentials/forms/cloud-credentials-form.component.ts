@@ -1311,7 +1311,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     }
   }
 
-  setFieldRequired(name: string, required: boolean, entityform: any): void {
+  setFieldRequired(name: string, required: boolean, entityform: EntityFormComponent): void {
     const field = _.find(this.fieldConfig, { name });
     const controller = entityform.formGroup.controls[name];
     if (field.required !== required) {

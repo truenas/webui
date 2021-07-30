@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { AbstractControl, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/data-protection/snapshot/snapshot-form';
@@ -27,7 +27,7 @@ export class SnapshotFormComponent implements FormConfiguration {
   pk: number;
   protected dataset: string;
   protected dataset_disabled = false;
-  protected datasetFg: any;
+  protected datasetFg: AbstractControl;
   save_button_enabled = true;
   protected entityForm: EntityFormComponent;
   title: string;

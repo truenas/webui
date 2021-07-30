@@ -11,6 +11,7 @@ import { CardComponent } from 'app/core/components/card/card.component';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { Display } from 'app/core/components/display/display.component';
 import { PageComponent } from 'app/core/components/page/page.component';
+import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { ViewButtonComponent } from 'app/core/components/view-button/view-button.component';
 import { ViewChartAreaComponent } from 'app/core/components/view-chart-area/view-chart-area.component';
 import { ViewChartBarComponent } from 'app/core/components/view-chart-bar/view-chart-bar.component';
@@ -94,6 +95,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
     ConvertPipe,
+    FormatDateTimePipe,
     CopyButtonComponent,
     WidgetNetworkComponent,
     WidgetStorageComponent,
@@ -136,6 +138,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     CopyButtonComponent,
     WidgetNetworkComponent,
     WidgetStorageComponent,
+    FormatDateTimePipe,
   ],
   entryComponents: [
     ContextMenuComponent,

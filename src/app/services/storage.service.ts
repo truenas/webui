@@ -384,22 +384,28 @@ export class StorageService {
   }
 
   // Converts a number from bytes to the most natural human readable format
-  convertBytestoHumanReadable(bytes: number, decimalPlaces?: number, min_units?: string, hideBytes?: boolean): string {
+  convertBytestoHumanReadable(
+    rawBytes: number | string,
+    decimalPlaces?: number,
+    minUnits?: string,
+    hideBytes?: boolean,
+  ): string {
     let i = -1;
-    let dec;
     let units;
-    decimalPlaces !== undefined ? dec = decimalPlaces : dec = 2;
+    let bytes = Number(rawBytes);
+
+    const dec = decimalPlaces !== undefined ? decimalPlaces : 2;
     if (bytes >= 1024) {
       do {
         bytes = bytes / 1024;
         i++;
       } while (bytes >= 1024 && i < 4);
       units = this.IECUnits[i];
-    } else if (min_units) {
-      units = min_units;
+    } else if (minUnits) {
+      units = minUnits;
     } else {
       units = hideBytes ? '' : 'bytes';
     }
-    return `${Math.max(bytes, 0.1).toFixed(dec)} ${units}`;
+    return `${bytes.toFixed(dec)} ${units}`;
   }
 }

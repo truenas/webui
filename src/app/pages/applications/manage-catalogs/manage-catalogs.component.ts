@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -11,7 +12,6 @@ import {
   EntityTableComponent,
 } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
@@ -60,6 +60,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   };
 
   filterString = '';
+  catalogSyncJobIds: number[] = [];
 
   private dialogRef: MatDialogRef<EntityJobComponent>;
   protected entityList: EntityTableComponent;
@@ -79,6 +80,20 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
 
     this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshUserForm();
+    });
+
+    this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
+      if (event.fields.method == 'catalog.sync') {
+        const jobId = event.fields.id;
+        if (!this.catalogSyncJobIds.includes(jobId) && event.fields.state === JobState.Running) {
+          this.refresh();
+          this.catalogSyncJobIds.push(jobId);
+        }
+
+        if (event.fields.state == JobState.Success || event.fields.state == JobState.Failed) {
+          this.catalogSyncJobIds.splice(this.catalogSyncJobIds.indexOf(jobId));
+        }
+      }
     });
   }
 
@@ -191,17 +206,19 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
 
   syncRow(row: Catalog): void {
     const payload = [row.label];
-    this.loader.open();
-    this.ws.call('catalog.sync', payload).pipe(untilDestroyed(this)).subscribe(
-      () => {
-        this.loader.close();
-        this.refresh();
+
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+      data: {
+        title: helptext.refreshing,
       },
-      (res) => {
-        this.loader.close();
-        new EntityUtils().handleWSError(this, res, this.dialogService);
-      },
-    );
+      disableClose: true,
+    });
+    this.dialogRef.componentInstance.setCall('catalog.sync', payload);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialogService.closeAllDialogs();
+      this.refresh();
+    });
   }
 
   onRowClick(row: Catalog): void {

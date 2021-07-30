@@ -27,12 +27,14 @@ import { R20A } from 'app/core/classes/hardware/r20a';
 import { R40 } from 'app/core/classes/hardware/r40';
 import { R50 } from 'app/core/classes/hardware/r50';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
-import { SystemProfiler, EnclosureMetadata } from 'app/core/classes/system-profiler';
+import { SystemProfiler, EnclosureMetadata, EnclosureDisk } from 'app/core/classes/system-profiler';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { Temperature } from 'app/core/services/disk-temperature.service';
 import { CoreEvent } from 'app/interfaces/events';
+import { Pool } from 'app/interfaces/pool.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from 'app/translate-marker';
@@ -60,7 +62,7 @@ export interface DiskFailure {
 
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
   showCaption = true;
-  protected pendingDialog: any;
+  protected pendingDialog: EntityDialogComponent;
   protected aborted = false;
 
   mqAlias: string;
@@ -100,8 +102,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     return this._expanders;
   }
 
-  private _unhealthyPools: string[] = [];
-  get unhealthyPools(): string[] {
+  private _unhealthyPools: Pool[] = [];
+  get unhealthyPools(): Pool[] {
     const sickPools = this.getUnhealthyPools();
     return sickPools;
   }
@@ -788,7 +790,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   setDiskHealthState(disk: any, enclosure: ChassisView = this.enclosure): void {
     let index = -1;
 
-    enclosure.driveTrayObjects.forEach((dto: any, i: number) => {
+    enclosure.driveTrayObjects.forEach((dto: DriveTray, i: number) => {
       const result = (dto.id == disk.enclosure.slot.toString());
       if (result) {
         index = i;
@@ -836,9 +838,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
   }
 
-  getUnhealthyPools(): any[] {
-    const sickPools: any[] = [];
-    this.system.pools.forEach((pool: any, index: number) => {
+  getUnhealthyPools(): Pool[] {
+    const sickPools: Pool[] = [];
+    this.system.pools.forEach((pool: Pool, index: number) => {
       const healthy = pool.healthy;
       const inCurrentEnclosure = index == this.selectedEnclosure.poolKeys[pool.name];
       if (!healthy && inCurrentEnclosure) {
@@ -849,10 +851,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   getDiskFailures(): void {
-    const failedDisks: any[] = [];
+    const failedDisks: DiskFailure[] = [];
     const selectedEnclosure = this.getSelectedEnclosure();
 
-    const analyze = (disk: any): void => {
+    const analyze = (disk: EnclosureDisk): void => {
       let failed = false;
       const reasons = [];
 
@@ -885,15 +887,15 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     if (this.subenclosure) {
       // If this is a head unit with rear bays, treat both enclosures as single unit
-      this.system.profile[this.system.headIndex].disks.forEach((disk: any) => {
+      this.system.profile[this.system.headIndex].disks.forEach((disk) => {
         analyze(disk);
       });
 
-      this.system.profile[this.system.rearIndex].disks.forEach((disk: any) => {
+      this.system.profile[this.system.rearIndex].disks.forEach((disk) => {
         analyze(disk);
       });
     } else {
-      selectedEnclosure.disks.forEach((disk: any) => {
+      selectedEnclosure.disks.forEach((disk) => {
         analyze(disk);
       });
     }
@@ -911,7 +913,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     const selectedEnclosure: EnclosureMetadata = this.getSelectedEnclosure();
     this.setDisksDisabled();
 
-    selectedEnclosure.disks.forEach((disk: any): void => {
+    selectedEnclosure.disks.forEach((disk): void => {
       if (
         disk.enclosure.slot < this.enclosure.slotRange.start
         || disk.enclosure.slot > this.enclosure.slotRange.end
@@ -942,13 +944,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     return gb.toFixed(2) + ' GB';
   }
 
-  findDiskBySlotNumber(slot: number): any {
+  findDiskBySlotNumber(slot: number): EnclosureDisk {
     const selectedEnclosure = this.getSelectedEnclosure();
-    let disk;
     for (const i in selectedEnclosure.disks) {
       if (selectedEnclosure.disks[i].enclosure.slot == slot) {
-        disk = selectedEnclosure.disks[i];
-        return disk;
+        return selectedEnclosure.disks[i];
       }
     }
   }
@@ -1132,7 +1132,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         },
       ],
       saveButtonText: T('SAVE'),
-      customSubmit(entityDialog: any) {
+      customSubmit(entityDialog: EntityDialogComponent) {
         self.pendingDialog = entityDialog;
         entityDialog.loader.open();
         self.setEnclosureLabel(entityDialog.formValue.label);

@@ -247,7 +247,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     this.modalService.close('slide-in-form');
   }
 
-  updater(file: any, parent: any): void {
+  updater(file: any, parent: this): void {
     parent.subs = [];
     const fileBrowser = file.fileInput.nativeElement;
     this.screenshot = _.find(parent.fieldConfig, { name: 'screenshot' });

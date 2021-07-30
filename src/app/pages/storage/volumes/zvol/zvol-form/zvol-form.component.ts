@@ -716,7 +716,7 @@ export class ZvolFormComponent implements FormConfiguration {
     });
   }
 
-  blurVolsize(parent: any): void {
+  blurVolsize(parent: this): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['volsize'].setValue(parent.storageService.humanReadable);
     }
