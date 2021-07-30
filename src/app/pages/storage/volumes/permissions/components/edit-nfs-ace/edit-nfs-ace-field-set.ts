@@ -81,6 +81,8 @@ export function getEditNfsAceFieldSet(userService: UserService): FieldSet[] {
         {
           type: 'radio',
           name: 'type',
+          inlineFields: true,
+          inlineFieldFlex: '25%',
           placeholder: helptext.dataset_acl_type_placeholder,
           tooltip: helptext.dataset_acl_type_tooltip,
           options: helptext.dataset_acl_type_options,
@@ -98,6 +100,7 @@ export function getEditNfsAceFieldSet(userService: UserService): FieldSet[] {
         {
           type: 'radio',
           name: 'permissionType',
+          inlineFields: true,
           required: true,
           placeholder: helptext.dataset_acl_perms_type_placeholder,
           tooltip: helptext.dataset_acl_perms_type_tooltip,
@@ -151,6 +154,7 @@ export function getEditNfsAceFieldSet(userService: UserService): FieldSet[] {
         {
           type: 'radio',
           name: 'flagsType',
+          inlineFields: true,
           required: true,
           placeholder: helptext.dataset_acl_flags_type_placeholder,
           tooltip: helptext.dataset_acl_flags_type_tooltip,
