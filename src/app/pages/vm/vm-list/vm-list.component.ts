@@ -144,14 +144,14 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     this.entityList = entityList;
     this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
       const changedRow = (this.entityList.rows as VirtualMachineRow[]).find((o) => o.id === event.id);
-      if (event.fields.state === ServiceStatus.Running) {
+      if (event.fields.status.state === ServiceStatus.Running) {
         changedRow.state = ServiceStatus.Running;
-        changedRow.status.state = ServiceStatus.Running;
-        changedRow.status.domain_state = event.fields.state;
+        changedRow.status.state = event.fields.status.state;
+        changedRow.status.domain_state = event.fields.status.domain_state;
       } else {
         changedRow.state = ServiceStatus.Stopped;
-        changedRow.status.state = ServiceStatus.Stopped;
-        changedRow.status.domain_state = event.fields.state;
+        changedRow.status.state = event.fields.status.state;
+        changedRow.status.domain_state = event.fields.status.domain_state;
       }
     });
   }
