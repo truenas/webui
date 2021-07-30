@@ -135,8 +135,7 @@ def you_should_be_returned_to_the_list_of_pools(driver):
 @then(parsers.parse('the {pool_name} pool should be on the Pools list'))
 def the_dozer_pool_should_be_on_the_pools_list(driver, pool_name):
     """the "dozer" pool should be on the Pools list."""
-    assert wait_on_element(driver, 7, '//mat-panel-title[contains(.,"tank")]')
-    driver.find_element_by_xpath('//td[contains(.,"tank")]')
+    assert wait_on_element(driver, 7, f'//mat-panel-title[contains(.,"{pool_name}")]')
 
 
 @then('navigate to System Setting and click Misc')
@@ -201,6 +200,6 @@ def navigate_to_dashboard(driver):
 @then('refresh and wait for the second node to be up')
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
-    driver.refresh()
+    # driver.refresh()
     assert wait_on_element(driver, 120, '//div[contains(.,"tn-bhyve01-nodeb")]')
     assert wait_on_element(driver, 10, '//mat-icon[@svgicon="ha_enabled"]')
