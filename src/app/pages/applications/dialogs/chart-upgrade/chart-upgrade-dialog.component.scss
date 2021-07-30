@@ -1,11 +1,11 @@
-.ix-blue chart-events-dialog div.mat-dialog-content {
-  max-width: unset;
-  overflow: auto !important;
-}
-
-chart-events-dialog {
+::ng-deep chart-upgrade-dialog {
 
   font-size: 14px !important;
+
+  div.mat-dialog-content {
+    max-width: unset;
+    overflow: auto !important;
+  }
 
   .logo-container {
     height: 100px;
@@ -25,8 +25,6 @@ chart-events-dialog {
       width: 100px;
     }
   }
-
-  .ports,
 
   .resource {
     padding: 5px 0;
@@ -80,18 +78,6 @@ chart-events-dialog {
 
   .mat-expansion-panel-spacing {
     margin: 5px 0 !important;
-  }
-
-
-  .event-time {
-    margin-right: 10px;
-    width: 130px;
-  }
-
-  .event-message {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   .row-dark {

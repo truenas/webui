@@ -2,6 +2,7 @@ import {
   OnInit, Component, ViewEncapsulation, Inject,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
 import { ChartContainerImage } from 'app/interfaces/chart-release.interface';
@@ -23,7 +24,7 @@ export class ChartEventsDialog implements OnInit {
   pods: any[] = [];
   deployments: any[] = [];
   statefulsets: any[] = [];
-
+  imagePlaceholder = appImagePlaceholder;
   helptext = helptext;
 
   constructor(

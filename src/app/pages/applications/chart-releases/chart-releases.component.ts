@@ -16,6 +16,8 @@ import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { ChartUpgradeDialog } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
+import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
@@ -336,29 +338,17 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
     this.appLoaderService.open();
     this.appService.getUpgradeSummary(name).pipe(untilDestroyed(this)).subscribe((res: UpgradeSummary) => {
       this.appLoaderService.close();
-      let msg = `<div><strong>${helptext.charts.upgrade_dialog.currentVersion}:</strong> ${catalogApp.human_version}`;
-      msg += `<div><strong>${helptext.charts.upgrade_dialog.versionToUpgrade}:</strong> ${res.latest_human_version}`;
-      msg += `<div><strong>${helptext.charts.upgrade_dialog.images}:</strong></div>`;
-      if (Object.keys(res.container_images_to_update).length > 0) {
-        for (const key in res.container_images_to_update) {
-          msg += `<div>${key}</div>`;
-        }
-      } else {
-        msg += `${helptext.charts.upgrade_dialog.noImageUpdate}`;
-      }
-      msg += `<div><strong>${helptext.charts.upgrade_dialog.changeLog}</strong></div>`;
-      if (res.changelog) {
-        msg += res.changelog;
-      } else {
-        msg += helptext.charts.upgrade_dialog.noChangeLogMsg;
-      }
-      this.dialogService.confirm({
-        title: `${helptext.charts.upgrade_dialog.title} ${name}`,
-        message: msg,
-      }).pipe(
-        filter(Boolean),
-        untilDestroyed(this),
-      ).subscribe(() => {
+
+      const dialogRef = this.mdDialog.open(ChartUpgradeDialog, {
+        width: '500px',
+        maxWidth: '500px',
+        data: {
+          appInfo: catalogApp,
+          upgradeSummary: res,
+        } as ChartUpgradeDialogConfig,
+        disableClose: false,
+      });
+      dialogRef.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.dialogRef = this.mdDialog.open(EntityJobComponent, {
           data: {
             title: helptext.charts.upgrade_dialog.job,
