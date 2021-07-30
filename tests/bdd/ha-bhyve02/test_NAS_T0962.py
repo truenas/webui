@@ -131,7 +131,7 @@ def input_the_account_name_ad_user_the_password_ap_password(driver, ad_user, ad_
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Account Password"]').send_keys(ad_password)
 
 
-@then(parsers.parse('click advanced, and input the Computer Account OU "{ca_ou}'))
+@then(parsers.parse('click advanced, and input the Computer Account OU "{ca_ou}"'))
 def click_advanced_and_input_the_computer_account_ou_truenas_servers(driver, ca_ou):
     """click advanced, and input the Computer Account OU "ca_ou"."""
     if is_element_present(driver, '//button[@ix-auto="button__ADVANCED OPTIONS"]'):
@@ -152,7 +152,8 @@ def check_the_enable_box_and_click_save(driver):
 @then('the Active Directory setup should successfully save without an error')
 def the_active_directory_setup_should_successfully_save_without_an_error(driver):
     """the Active Directory setup should successfully save without an error."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, '//h1[text()="Start"]')
     assert wait_on_element(driver, 7, f'//span[text()="{domain.upper()}"]')
 
 
@@ -195,8 +196,8 @@ def after_go_to_the_dashboard(driver):
 @then('click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER')
 def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver):
     """click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER."""
-    assert wait_on_element(driver, 60, '//button[@ix-auto="button__INITIATE FAILOVER"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__INITIATE FAILOVER"]').click()
+    assert wait_on_element(driver, 30, '//button[@ix-auto="button__Initiate Failover"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__Initiate Failover"]').click()
     assert wait_on_element(driver, 5, '//h1[text()="Initiate Failover"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__Initiate Failover"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[contains(@class,"confirm-checkbox")]').click()
@@ -226,6 +227,8 @@ def at_the_login_page_enter_user_and_password(driver, user, password):
 def on_the_dashboard_wait_5_second(driver):
     """on the Dashboard, wait 5 second."""
     assert wait_on_element(driver, 10, '//h1[text()="Dashboard"]')
+    if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]'):
+        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     time.sleep(5)
 
 
