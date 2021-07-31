@@ -686,9 +686,9 @@ export class AlertServiceComponent implements FormConfiguration {
           (wasAlertSent) => {
             this.loader.close();
             if (wasAlertSent) {
-              this.dialogService.Info(T('Succeeded'), T('Test alert sent!'), '500px', 'info');
+              this.dialogService.info(T('Succeeded'), T('Test alert sent!'), '500px', 'info');
             } else {
-              this.dialogService.Info(T('Failed'), T('Failed sending test alert!'));
+              this.dialogService.info(T('Failed'), T('Failed sending test alert!'));
             }
           },
           (err: WebsocketError) => {
@@ -746,7 +746,7 @@ export class AlertServiceComponent implements FormConfiguration {
       return chatId;
     });
     if (wrongChatIds.length > 0) {
-      this.dialogService.Info(T('Failed'), T('The following Telegram chat ID(s) must be numbers!') + '\n\n' + wrongChatIds.join(', '));
+      this.dialogService.info(T('Failed'), T('The following Telegram chat ID(s) must be numbers!') + '\n\n' + wrongChatIds.join(', '));
       throw new Error('Telegram-chat_ids must be an array of integer');
     }
     // Avoid duplicated chat IDs

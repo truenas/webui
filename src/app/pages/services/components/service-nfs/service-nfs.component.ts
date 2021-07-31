@@ -309,7 +309,7 @@ export class ServiceNFSComponent implements FormConfiguration {
                   .pipe(untilDestroyed(this)).subscribe(() => {
                     self.loader.close();
                     self.dialogRef.close(true);
-                    that.dialog.Info(helptext.addSPN.success, helptext.addSPN.success_msg, '500px', 'info');
+                    that.dialog.info(helptext.addSPN.success, helptext.addSPN.success_msg, '500px', 'info');
                   },
                   (err: WebsocketError) => {
                     self.loader.close();

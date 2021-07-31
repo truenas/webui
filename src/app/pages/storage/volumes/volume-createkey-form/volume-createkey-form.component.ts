@@ -85,7 +85,7 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
           if (res) {
             this.encryptionService.openEncryptDialog(this.pk, this.route_return, this.poolName);
           } else {
-            this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');
+            this.dialogService.info('Error', 'The administrator password is incorrect.', '340px');
           }
         });
       },
@@ -139,7 +139,7 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
         this.encryptionService.setPassphrase(this.pk, value.passphrase, value.adminpw,
           value.name, this.route_return, false, true, 'created for');
       } else {
-        this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');
+        this.dialogService.info('Error', 'The administrator password is incorrect.', '340px');
       }
     });
   }

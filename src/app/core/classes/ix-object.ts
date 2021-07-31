@@ -1,6 +1,6 @@
 import { UUID } from 'angular2-uuid';
 
-export abstract class iXObject {
+export abstract class IxObject {
   readonly id: string;
   private _element: HTMLElement;
 

@@ -424,7 +424,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           this.ws.call('interface.checkin').pipe(untilDestroyed(this)).subscribe(() => {
             this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
             this.loader.close();
-            this.dialogService.Info(
+            this.dialogService.info(
               network_interfaces_helptext.checkin_complete_title,
               network_interfaces_helptext.checkin_complete_message,
               '500px', 'info',
@@ -555,7 +555,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     }
     reasons = reasons + '</ul>';
 
-    this.dialogService.Info(ha_status, reasons, '500px', ha_icon, true);
+    this.dialogService.info(ha_status, reasons, '500px', ha_icon, true);
   }
 
   checkUpgradePending(): void {
@@ -746,7 +746,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
             entityDialog.dialogRef.close();
             // only show this for connecting TC
             if (!self.tcConnected) {
-              self.dialogService.Info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message, '500px', 'info');
+              self.dialogService.info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message, '500px', 'info');
             }
           },
           (err) => {
@@ -852,18 +852,18 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
             delete pwChange.curr_password;
             this.ws.call('user.update', [1, pwChange]).pipe(untilDestroyed(this)).subscribe(() => {
               this.loader.close();
-              this.dialogService.Info(T('Success'), helptext.changePasswordDialog.pw_updated, '300px', 'info', false);
+              this.dialogService.info(T('Success'), helptext.changePasswordDialog.pw_updated, '300px', 'info', false);
             }, (res) => {
               this.loader.close();
-              this.dialogService.Info(T('Error'), res, '300px', 'warning', false);
+              this.dialogService.info(T('Error'), res, '300px', 'warning', false);
             });
           } else {
             this.loader.close();
-            this.dialogService.Info(helptext.changePasswordDialog.pw_invalid_title, helptext.changePasswordDialog.pw_invalid_title, '300px', 'warning', false);
+            this.dialogService.info(helptext.changePasswordDialog.pw_invalid_title, helptext.changePasswordDialog.pw_invalid_title, '300px', 'warning', false);
           }
         }, (res) => {
           this.loader.close();
-          this.dialogService.Info(T('Error'), res, '300px', 'warning', false);
+          this.dialogService.info(T('Error'), res, '300px', 'warning', false);
         });
       },
     };

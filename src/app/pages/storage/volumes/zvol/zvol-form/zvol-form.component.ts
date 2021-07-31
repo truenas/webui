@@ -837,7 +837,7 @@ export class ZvolFormComponent implements FormConfiguration {
         });
       } else {
         this.loader.close();
-        this.dialogService.Info(helptext.zvol_save_errDialog.title, helptext.zvol_save_errDialog.msg);
+        this.dialogService.info(helptext.zvol_save_errDialog.title, helptext.zvol_save_errDialog.msg);
         this.modalService.close('slide-in-form');
       }
     });

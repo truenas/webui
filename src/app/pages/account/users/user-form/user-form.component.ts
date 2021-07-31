@@ -470,7 +470,7 @@ export class UserFormComponent implements FormConfiguration {
     }
   }
 
-  clean_uid(value: any): any {
+  cleanUid(value: any): any {
     delete value['password_conf'];
     if (value['uid'] === null) {
       delete value['uid'];

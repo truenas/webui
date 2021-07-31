@@ -66,9 +66,33 @@ module.exports = {
           "tsx": "never"
         }],
 
+        // TODO: Partially implemented
+        '@typescript-eslint/naming-convention': [
+          'error',
+          {
+            selector: 'typeLike',
+            format: ['PascalCase'],
+          },
+          {
+            selector: 'enumMember',
+            format: ['PascalCase'],
+          },
+          {
+            selector: 'enumMember',
+            format: ['PascalCase'],
+          },
+          {
+            selector: 'function',
+            format: ['camelCase'],
+          },
+          {
+            selector: ['classMethod', 'objectLiteralMethod', 'typeMethod'],
+            format: ['camelCase'],
+          },
+        ],
+
         // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically
         "no-underscore-dangle": "off",
-        "@typescript-eslint/naming-convention": "off",
         "class-methods-use-this": "off",
         "eqeqeq": "off",
         "import/prefer-default-export": "off",

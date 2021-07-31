@@ -108,7 +108,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
           this.entityForm.formGroup.controls['hostname'].value === undefined
           || this.entityForm.formGroup.controls['username'].value === undefined
           || this.entityForm.formGroup.controls['password'].value === undefined
-        ) { this.dialogService.Info(T('VM Snapshot'), T('Enter valid VMware ESXI/vSphere credentials to fetch datastores.')); } else {
+        ) { this.dialogService.info(T('VM Snapshot'), T('Enter valid VMware ESXI/vSphere credentials to fetch datastores.')); } else {
           this.passwordBlur(this);
         }
       },

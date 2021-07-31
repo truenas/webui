@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { iXObject } from 'app/core/classes/ix-object';
+import { IxObject } from 'app/core/classes/ix-object';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -17,7 +17,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./entity-card.component.scss'],
   providers: [DialogService],
 })
-export class EntityCardComponent extends iXObject implements OnInit, AfterViewInit {
+export class EntityCardComponent extends IxObject implements OnInit, AfterViewInit {
   @Input('conf') conf: any;
   @Input() width: string;
   @Input() height: string;
