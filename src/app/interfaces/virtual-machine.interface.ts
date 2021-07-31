@@ -36,6 +36,14 @@ export type VmStopParams = [
 export type VmDisplayWebUriParams = [
   /* id */ number,
   /* domain */ string,
+  /* options */ {
+    devices_passwords: [
+      {
+        device_id: number;
+        password: string;
+      },
+    ];
+  }?,
 ];
 
 export interface VmDisplayResponse {
