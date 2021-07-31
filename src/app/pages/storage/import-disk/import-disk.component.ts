@@ -132,7 +132,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
       }
     });
 
-    entityForm.formGroup.controls['volume'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['volume'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.ws.call('pool.import_disk_autodetect_fs_type', [res]).pipe(untilDestroyed(this)).subscribe((res: any) => {
         // If ws call fails to return type, no type is selected; otherwise, type is autoselected.
         for (const option of this.fs_type_list.options) {
@@ -197,7 +197,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
         },
       ];
     });
-    this.dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe((job: any) => {
+    this.dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe((job) => {
       this.dialogRef.close();
       this.entityForm.success = false;
       this.job.showLogs(job, T('Disk Import Aborted: Log Summary'), T('Close'));

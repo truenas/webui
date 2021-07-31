@@ -8,6 +8,7 @@ import { combineLatest, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
+import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -212,9 +213,9 @@ export class ZvolFormComponent implements FormConfiguration {
         placeholder: helptext.zvol_deduplication_placeholder,
         tooltip: helptext.zvol_deduplication_tooltip,
         options: [
-          { label: T('On'), value: 'ON' },
-          { label: T('Verify'), value: 'VERIFY' },
-          { label: T('Off'), value: 'OFF' },
+          { label: T('On'), value: DeduplicationSetting.On },
+          { label: T('Verify'), value: DeduplicationSetting.Verify },
+          { label: T('Off'), value: DeduplicationSetting.Off },
         ],
         validation: helptext.zvol_deduplication_validation,
         required: true,

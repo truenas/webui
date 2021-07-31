@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -29,7 +30,7 @@ export class CertificateEditComponent implements FormConfiguration {
   title = helptext_system_certificates.edit.title;
   private viewButtonText = helptext_system_certificates.viewButton.certificate;
   protected isCSR: boolean;
-  queryCallOption: any[];
+  queryCallOption: [QueryFilter<Certificate>];
 
   fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [

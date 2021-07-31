@@ -11,6 +11,7 @@ import { helptext_system_general as helptext } from 'app/helptext/system/general
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -296,11 +297,13 @@ export class GuiFormComponent implements FormConfiguration {
 
             this.loader.open();
             this.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
-            this.ws.call('service.restart', [ServiceName.Http]).pipe(untilDestroyed(this)).subscribe(() => {
-            }, (res: any) => {
-              this.loader.close();
-              this.dialog.errorReport(helptext.dialog_error_title, res.reason, res.trace.formatted);
-            });
+            this.ws.call('service.restart', [ServiceName.Http]).pipe(untilDestroyed(this)).subscribe(
+              () => {},
+              (res: WebsocketError) => {
+                this.loader.close();
+                this.dialog.errorReport(helptext.dialog_error_title, res.reason, res.trace.formatted);
+              },
+            );
 
             this.ws.reconnect(protocol, hostname + ':' + port);
             setTimeout(() => {

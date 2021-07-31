@@ -329,7 +329,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   };
 
   title: string;
-  afterModalFormClosed: any;
+  afterModalFormClosed: () => void;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected networkService: NetworkService, protected dialog: DialogService,
@@ -448,7 +448,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     }
     this.aliases_fc = _.find(this.fieldConfig, { name: 'aliases' });
 
-    entityForm.formGroup.controls['disable_offload_capabilities'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['disable_offload_capabilities'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res && !this.offload_warned) {
         this.dialog.confirm({
           title: helptext.disable_offload_capabilities_warning_title,

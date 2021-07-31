@@ -15,6 +15,7 @@ import { DatasetEncryptionSummary } from 'app/interfaces/dataset-encryption-summ
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import {
   FieldConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -506,7 +507,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
     this.router.navigate(this.route_success);
   }
 
-  key_file_updater(file: any, parent: this): void {
+  key_file_updater(file: FormUploadComponent, parent: this): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };

@@ -201,7 +201,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     icon: 'delete',
     enable: true,
     ttpos: 'above' as TooltipPosition,
-    onClick: (selected: any) => {
+    onClick: (selected: BootenvRow[]) => {
       for (let i = selected.length - 1; i >= 0; i--) {
         if (selected[i].active !== '-' && selected[i].active !== '') {
           selected.splice(i, 1);

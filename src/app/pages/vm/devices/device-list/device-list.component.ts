@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import {
@@ -32,7 +34,7 @@ export class DeviceListComponent implements EntityTableConfig {
   private entityList: EntityTableComponent;
   wsDelete: 'datastore.delete' = 'datastore.delete';
   queryCall: 'vm.device.query' = 'vm.device.query';
-  queryCallOption: any[] = [[['vm', '=']]];
+  queryCallOption: [[Partial<QueryFilter<VmDevice>>]] = [[['vm', '=']]];
   protected loaderOpen = false;
   columns = [
     { name: T('Device ID'), prop: 'id', always_display: true },

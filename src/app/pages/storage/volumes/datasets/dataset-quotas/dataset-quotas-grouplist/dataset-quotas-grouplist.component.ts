@@ -173,7 +173,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
 
   preInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    const paramMap: any = (<any> this.aroute.params).getValue();
+    const paramMap = this.aroute.snapshot.params;
     this.pk = paramMap.pk;
     this.useFullFilter = window.localStorage.getItem('useFullFilter') !== 'false';
   }
