@@ -316,14 +316,25 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
   }
 
   start(name: string): void {
-    this.appService.setReplicaCount(name, 1).pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshStatus(name);
-    });
+    this.changeReplicaCountJob(name, helptext.starting, 1);
   }
 
   stop(name: string): void {
-    this.appService.setReplicaCount(name, 0).pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshStatus(name);
+    this.changeReplicaCountJob(name, helptext.stopping, 0);
+  }
+
+  changeReplicaCountJob(chartName: string, title: string, newReplicaCount: number): void {
+    const dialogRef = this.mdDialog.open(EntityJobComponent, {
+      data: { title },
+    });
+    dialogRef.componentInstance.setCall('chart.release.scale', [chartName, { replica_count: newReplicaCount }]);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialogService.closeAllDialogs();
+      this.refreshStatus(chartName);
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      new EntityUtils().handleWSError(this, error, this.dialogService);
     });
   }
 
