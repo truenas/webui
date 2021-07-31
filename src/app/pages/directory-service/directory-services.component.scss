@@ -13,12 +13,28 @@
 }
 
 .advanced-settings {
+  display: block;
   margin-top: 50px;
+
+  &.expanded {
+    .advanced-settings-cards {
+      display: grid;
+    }
+  }
+
+  .advanced-settings-cards {
+    display: none;
+  }
 
   .header {
     color: var(--fg1);
+    cursor: pointer;
     margin-bottom: 10px;
     margin-left: 7px;
+
+    button {
+      margin-left: 5px;
+    }
   }
 }
 

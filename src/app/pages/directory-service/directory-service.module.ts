@@ -1,3 +1,4 @@
+import { CdkAccordionModule } from '@angular/cdk/accordion';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -23,7 +24,7 @@ import { NISComponent } from './components/nis/nis.component';
 @NgModule({
   imports: [
     CommonModule, EntityModule, FormsModule, ReactiveFormsModule, FlexLayoutModule,
-    NgxUploaderModule, routing, MaterialModule, TranslateModule,
+    NgxUploaderModule, routing, MaterialModule, TranslateModule, CdkAccordionModule,
   ],
   declarations: [
     LdapComponent,

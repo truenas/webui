@@ -1,3 +1,4 @@
+import { CdkAccordionItem } from '@angular/cdk/accordion';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -55,8 +56,6 @@ export class DirectoryServicesComponent implements OnInit {
 
   isActiveDirectoryEnabled = false;
   isLdapEnabled = false;
-
-  isAdvancedFirstEdit = true;
 
   activeDirectoryDataCard: DataCard;
   ldapDataCard: DataCard;
@@ -282,6 +281,21 @@ export class DirectoryServicesComponent implements OnInit {
       });
   }
 
+  onAdvancedSettingsOpened(expansionPanel: CdkAccordionItem): void {
+    // Immediately show additional setting, so that user knows what they are.
+    expansionPanel.open();
+    this.dialog.confirm({
+      title: helptext.advancedEdit.title,
+      hideCheckBox: true,
+      message: helptext.advancedEdit.message,
+    })
+      .pipe(filter((confirmed) => !confirmed), untilDestroyed(this))
+      .subscribe(() => {
+        // Hide settings back, if user cancels.
+        expansionPanel.close();
+      });
+  }
+
   onCardButtonPressed(name: DirectoryServicesCardId, id?: number): void {
     let component: ActiveDirectoryComponent
     | IdmapFormComponent
@@ -314,21 +328,6 @@ export class DirectoryServicesComponent implements OnInit {
 
     of(true).pipe(
       switchMap(() => {
-        const needsWarning = ![DirectoryServicesCardId.ActiveDirectory, DirectoryServicesCardId.Ldap].includes(name)
-          && this.isAdvancedFirstEdit;
-
-        if (needsWarning) {
-          return this.dialog.Info(helptext.advancedEdit.title, helptext.advancedEdit.message);
-        }
-
-        return of(true);
-      }),
-      filter(Boolean),
-      switchMap(() => {
-        this.isAdvancedFirstEdit = false;
-
-        // TODO: May not be needed.
-
         if (name == DirectoryServicesCardId.Idmap && !id) {
           return this.idmapService.getADStatus().pipe(
             switchMap((adConfig) => {

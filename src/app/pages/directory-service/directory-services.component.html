@@ -38,8 +38,20 @@
   </div>
 </ng-container>
 
-<div class="advanced-settings">
-  <h3 class="header">{{ 'Advanced Settings' | translate }}</h3>
+<cdk-accordion-item
+  class="advanced-settings"
+  [class.expanded]="expansionPanel.expanded"
+  #expansionPanel="cdkAccordionItem"
+>
+  <h3 class="header">
+    {{ 'Advanced Settings' | translate }}
+
+    <button
+      *ngIf="!expansionPanel.expanded"
+      mat-button
+      (click)="onAdvancedSettingsOpened(expansionPanel)"
+    >{{ 'Show' | translate }}</button>
+  </h3>
 
   <div class="advanced-settings-cards">
     <app-table [conf]="idmapTableConf"></app-table>
@@ -47,7 +59,7 @@
     <app-table [conf]="kerberosRealmsTableConf"></app-table>
     <app-table [conf]="kerberosKeytabTableConf"></app-table>
   </div>
-</div>
+</cdk-accordion-item>
 
 <ng-template #dataCard let-card="card">
   <mat-card *ngIf="typeCard(card) as card">
