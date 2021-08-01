@@ -957,3 +957,8 @@ ul.nested-list li {
   align-items: center;
   display: flex;
 }
+
+.form-selection-list.mat-list-base .mat-list-item .mat-list-item-content,
+.form-selection-list.mat-list-base .mat-list-option .mat-list-item-content {
+  padding: 0;
+}

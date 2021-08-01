@@ -126,14 +126,14 @@ export function getEditNfsAceFieldSet(userService: UserService): FieldSet[] {
           ],
         },
         {
-          type: 'select',
-          multiple: true,
-          isHidden: true,
-          required: true,
+          type: 'selectionlist',
           name: 'advancedPermissions',
           placeholder: helptext.dataset_acl_perms_placeholder,
-          tooltip: helptext.dataset_acl_perms_tooltip,
+          isHidden: true,
           options: helptext.dataset_acl_advanced_perms_options,
+          tooltip: helptext.dataset_acl_perms_tooltip,
+          inlineFields: true,
+          inlineFieldFlex: '50%',
           relation: [
             {
               action: RelationAction.Show,
@@ -179,10 +179,11 @@ export function getEditNfsAceFieldSet(userService: UserService): FieldSet[] {
           ],
         },
         {
-          type: 'select',
-          multiple: true,
+          type: 'selectionlist',
           isHidden: true,
           required: true,
+          inlineFields: true,
+          inlineFieldFlex: '50%',
           name: 'advancedFlags',
           placeholder: helptext.dataset_acl_flags_placeholder,
           tooltip: helptext.dataset_acl_flags_tooltip,

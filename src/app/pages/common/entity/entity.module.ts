@@ -17,6 +17,7 @@ import { NgxUploaderModule } from 'ngx-uploader';
 import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { FormSelectionListComponent } from 'app/pages/common/entity/entity-form/components/form-selection-list/form-selection-list.component';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { WizardSummaryComponent } from 'app/pages/common/entity/entity-wizard/components/wizard-summary/wizard-summary.component';
 import { ExpandableTableComponent } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
@@ -117,6 +118,7 @@ import { TableService } from './table/table.service';
     FormLabelComponent,
     FormSelectComponent,
     FormRadioComponent,
+    FormSelectionListComponent,
     FormCheckboxComponent,
     FormComboboxComponent,
     FormTextareaComponent,
@@ -220,6 +222,7 @@ import { TableService } from './table/table.service';
     FormColorpickerComponent,
     FormPermissionsComponent,
     FormArrayComponent,
+    FormSelectionListComponent,
     FormRadioComponent,
     FormUploadComponent,
     FormReadFileComponent,
