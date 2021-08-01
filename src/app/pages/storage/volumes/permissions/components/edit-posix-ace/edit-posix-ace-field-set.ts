@@ -72,13 +72,13 @@ export function getEditPosixAceFieldSet(userService: UserService): FieldSet[] {
           ],
         },
         {
-          type: 'select',
-          multiple: true,
+          type: 'selectionlist',
           name: 'permissions',
+          inlineFields: true,
+          inlineFieldFlex: '33%',
           placeholder: helptext.posix_perms.placeholder,
           tooltip: helptext.posix_perms.tooltip,
           options: helptext.posix_perms.options,
-          value: [],
         },
         {
           type: 'checkbox',
