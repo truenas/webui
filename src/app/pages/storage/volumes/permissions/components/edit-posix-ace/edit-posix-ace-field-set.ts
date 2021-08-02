@@ -4,6 +4,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { getFormUserGroupLoaders } from 'app/pages/storage/volumes/permissions/utils/get-form-user-group-loaders.utils';
 import { UserService } from 'app/services';
+import { T } from 'app/translate-marker';
 
 export function getEditPosixAceFieldSet(userService: UserService): FieldSet[] {
   const {
@@ -79,6 +80,11 @@ export function getEditPosixAceFieldSet(userService: UserService): FieldSet[] {
           placeholder: helptext.posix_perms.placeholder,
           tooltip: helptext.posix_perms.tooltip,
           options: helptext.posix_perms.options,
+        },
+        {
+          type: 'label',
+          name: 'flagsLabel',
+          label: T('Flags'),
         },
         {
           type: 'checkbox',

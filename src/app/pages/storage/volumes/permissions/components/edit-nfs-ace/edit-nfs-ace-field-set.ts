@@ -162,8 +162,9 @@ export function getEditNfsAceFieldSet(userService: UserService): FieldSet[] {
           value: newNfsAce.flags.BASIC,
         },
         {
-          type: 'select',
+          type: 'radio',
           name: 'basicFlag',
+          inlineFields: true,
           placeholder: helptext.dataset_acl_flags_placeholder,
           tooltip: helptext.dataset_acl_flags_tooltip,
           options: helptext.dataset_acl_basic_flags_options,
