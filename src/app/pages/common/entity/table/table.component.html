@@ -69,7 +69,7 @@
                   <li>{{ column.name }}: {{element[column.prop1]}}</li>
                   <li>{{ column.name2 }}: {{element[column.prop2]}}</li>
                 </ul>
-                <mat-icon *ngIf="column.getIcon" [innerHtml]="column.getIcon(element, column.prop1)" [matTooltip]="column.matTooltip"></mat-icon>
+                <mat-icon *ngIf="column.getIcon && column.getIcon(element, column.prop1)" [innerHtml]="column.getIcon(element, column.prop1)" [matTooltip]="column.matTooltip"></mat-icon>
               </ng-container>
             </div>
           </td>

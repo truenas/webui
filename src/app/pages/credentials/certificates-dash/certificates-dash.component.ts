@@ -114,7 +114,7 @@ export class CertificatesDashComponent implements OnInit {
             {
               name: T('Status'),
               prop1: 'revoked',
-              matTooltip: 'Revoked',
+              matTooltip: T('Revoked'),
               getIcon: (element: any, prop: string): string => {
                 if (element[prop]) {
                   return 'block';
@@ -181,7 +181,7 @@ export class CertificatesDashComponent implements OnInit {
             {
               name: T('Status'),
               prop1: 'revoked',
-              matTooltip: 'Revoked',
+              matTooltip: T('Revoked'),
               getIcon: (element: any, prop: string): string => {
                 if (element[prop]) {
                   return 'block';
@@ -282,6 +282,7 @@ export class CertificatesDashComponent implements OnInit {
     this.downloadActions = [
       {
         icon: 'save_alt',
+        matTooltip: T('Download'),
         name: 'download',
         onClick: (rowinner: Certificate) => {
           const path = rowinner.CSR ? rowinner.csr_path : rowinner.certificate_path;
@@ -328,7 +329,7 @@ export class CertificatesDashComponent implements OnInit {
     const revokeAction = {
       icon: 'undo',
       name: 'revoke',
-      matTooltip: 'Revoke',
+      matTooltip: T('Revoke'),
       onClick: (rowInner: Certificate) => {
         this.dialogService.confirm({
           title: T('Revoke Certificate'),

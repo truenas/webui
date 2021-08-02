@@ -2204,6 +2204,7 @@
   "Revoke": "",
   "Revoke Certificate": "",
   "Revoke Certificate Authority": "",
+  "Revoked": "",
   "Revoked: ": "",
   "Revoking Certificate": "",
   "Revoking this CA will revoke the complete CA chain. This is a one way action and cannot be reversed. Are you sure you want to revoke this CA?": "",
