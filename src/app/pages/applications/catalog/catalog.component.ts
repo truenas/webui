@@ -336,16 +336,16 @@ export class CatalogComponent implements OnInit {
     });
     dialogRef.componentInstance.setCall('kubernetes.update', [{ pool }]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(self)).subscribe((res: any) => {
       self.selectedPool = pool;
       self.refreshToolbarMenus();
       self.dialogService.closeAllDialogs();
-      self.translate.get(helptext.choosePool.message).pipe(untilDestroyed(this)).subscribe((msg: string) => {
+      self.translate.get(helptext.choosePool.message).pipe(untilDestroyed(self)).subscribe((msg: string) => {
         self.dialogService.Info(helptext.choosePool.success, msg + res.result.pool,
           '500px', 'info', true);
       });
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(self)).subscribe((err) => {
       new EntityUtils().handleWSError(self, err, self.dialogService);
     });
   }

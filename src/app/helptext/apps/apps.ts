@@ -37,6 +37,8 @@ export default {
 
   installing: T('Installing'),
   refreshing: T('Refreshing'),
+  starting: T('Starting'),
+  stopping: T('Stopping'),
   settings: T('Settings'),
   choose: T('Choose Pool'),
   advanced: T('Advanced Settings'),
