@@ -112,12 +112,9 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
           ? this.diskbucket.SMARToptions = this.SMARToptions[0]
           : this.diskbucket.SMARToptions = undefined;
 
-        this.router.navigate(['/', 'storage', 'disks', 'bulk-edit',
-        ]);
+        this.router.navigate(['/', 'storage', 'disks', 'bulk-edit']);
       } else {
-        this.router.navigate(new Array('/').concat([
-          'storage', 'disks', 'edit', selected[0].identifier,
-        ]));
+        this.router.navigate(['/', 'storage', 'disks', 'edit', selected[0].identifier]);
       }
     },
   }, {
@@ -159,9 +156,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
       name: 'edit',
       label: T('Edit'),
       onClick: (row: Disk) => {
-        this.router.navigate(new Array('/').concat([
-          'storage', 'disks', 'edit', row.identifier,
-        ]));
+        this.router.navigate(['/', 'storage', 'disks', 'edit', row.identifier]);
       },
     }, {
       id: parentRow.name,
@@ -181,9 +176,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
           name: 'smartresults',
           label: T('S.M.A.R.T Test Results'),
           onClick: (row) => {
-            this.router.navigate(new Array('/').concat([
-              'storage', 'disks', 'smartresults', row.name,
-            ]));
+            this.router.navigate(['/', 'storage', 'disks', 'smartresults', row.name]);
           },
         });
         break;
