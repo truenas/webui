@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { filter } from 'rxjs/operators';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
@@ -13,6 +14,7 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form.component';
@@ -35,7 +37,7 @@ import { CertificateEditComponent } from './forms/certificate-edit.component';
 })
 export class CertificatesDashComponent implements OnInit {
   cards: { name: string; tableConf: AppTableConfig }[];
-
+  protected dialogRef: MatDialogRef<EntityJobComponent>;
   protected certificateAddComponent: CertificateAddComponent;
   protected certificateEditComponent: CertificateEditComponent;
   protected certificateAuthorityAddComponent: CertificateAuthorityAddComponent;
@@ -93,6 +95,12 @@ export class CertificatesDashComponent implements OnInit {
           complex: true,
           dataSourceHelper: this.certificatesDataSourceHelper,
           getActions: this.certificateActions.bind(this),
+          isActionVisible: (actionId: string, certificate: any) => {
+            if (actionId === 'revoke') {
+              return certificate.can_be_revoked;
+            }
+            return true;
+          },
           columns: [
             {
               name: T('Name'), prop1: 'name', name2: T('Issuer'), prop2: 'issuer',
@@ -102,6 +110,17 @@ export class CertificatesDashComponent implements OnInit {
             },
             {
               name: T('CN'), prop1: 'common', name2: T('SAN'), prop2: 'san',
+            },
+            {
+              name: T('Status'),
+              prop1: 'revoked',
+              matTooltip: T('Revoked'),
+              getIcon: (element: any, prop: string): string => {
+                if (element[prop]) {
+                  return 'block';
+                }
+                return '';
+              },
             },
           ],
           parent: this,
@@ -158,6 +177,17 @@ export class CertificatesDashComponent implements OnInit {
             },
             {
               name: T('CN'), prop1: 'common', name2: T('SAN'), prop2: 'san',
+            },
+            {
+              name: T('Status'),
+              prop1: 'revoked',
+              matTooltip: T('Revoked'),
+              getIcon: (element: any, prop: string): string => {
+                if (element[prop]) {
+                  return 'block';
+                }
+                return '';
+              },
             },
           ],
           parent: this,
@@ -249,52 +279,81 @@ export class CertificatesDashComponent implements OnInit {
   }
 
   certificateActions(): AppTableAction[] {
-    this.downloadActions = [{
-      icon: 'save_alt',
-      name: 'download',
-
-      onClick: (rowinner: Certificate) => {
-        const path = rowinner.CSR ? rowinner.csr_path : rowinner.certificate_path;
-        const fileName = rowinner.name + '.crt'; // what about for a csr?
-        this.ws.call('core.download', ['filesystem.get', [path], fileName]).pipe(untilDestroyed(this)).subscribe(
-          (res) => {
-            const url = res[1];
-            const mimetype = 'application/x-x509-user-cert';
-            this.storage.streamDownloadFile(this.http, url, fileName, mimetype)
-              .pipe(untilDestroyed(this))
-              .subscribe((file) => {
-                this.storage.downloadBlob(file, fileName);
-              }, (err) => {
-                this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
-                  helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
-              });
-          },
-          (err) => {
-            new EntityUtils().handleWSError(this, err, this.dialogService);
-          },
-        );
-        const keyName = rowinner.name + '.key';
-        this.ws.call('core.download', ['filesystem.get', [rowinner.privatekey_path], keyName]).pipe(untilDestroyed(this)).subscribe(
-          (res) => {
-            const url = res[1];
-            const mimetype = 'text/plain';
-            this.storage.streamDownloadFile(this.http, url, keyName, mimetype)
-              .pipe(untilDestroyed(this))
-              .subscribe((file) => {
-                this.storage.downloadBlob(file, keyName);
-              }, (err) => {
-                this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
-                  helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
-              });
-          },
-          (err) => {
-            new EntityUtils().handleWSError(this, err, this.dialogService);
-          },
-        );
-        event.stopPropagation();
+    this.downloadActions = [
+      {
+        icon: 'save_alt',
+        matTooltip: T('Download'),
+        name: 'download',
+        onClick: (rowinner: Certificate) => {
+          const path = rowinner.CSR ? rowinner.csr_path : rowinner.certificate_path;
+          const fileName = rowinner.name + '.crt'; // what about for a csr?
+          this.ws.call('core.download', ['filesystem.get', [path], fileName]).pipe(untilDestroyed(this)).subscribe(
+            (res) => {
+              const url = res[1];
+              const mimetype = 'application/x-x509-user-cert';
+              this.storage.streamDownloadFile(this.http, url, fileName, mimetype)
+                .pipe(untilDestroyed(this))
+                .subscribe((file) => {
+                  this.storage.downloadBlob(file, fileName);
+                }, (err) => {
+                  this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
+                    helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
+                });
+            },
+            (err) => {
+              new EntityUtils().handleWSError(this, err, this.dialogService);
+            },
+          );
+          const keyName = rowinner.name + '.key';
+          this.ws.call('core.download', ['filesystem.get', [rowinner.privatekey_path], keyName]).pipe(untilDestroyed(this)).subscribe(
+            (res) => {
+              const url = res[1];
+              const mimetype = 'text/plain';
+              this.storage.streamDownloadFile(this.http, url, keyName, mimetype)
+                .pipe(untilDestroyed(this))
+                .subscribe((file) => {
+                  this.storage.downloadBlob(file, keyName);
+                }, (err) => {
+                  this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
+                    helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
+                });
+            },
+            (err) => {
+              new EntityUtils().handleWSError(this, err, this.dialogService);
+            },
+          );
+          event.stopPropagation();
+        },
       },
-    }];
-    return this.downloadActions;
+    ];
+    const revokeAction = {
+      icon: 'undo',
+      name: 'revoke',
+      matTooltip: T('Revoke'),
+      onClick: (rowInner: Certificate) => {
+        this.dialogService.confirm({
+          title: T('Revoke Certificate'),
+          message: T('This is a one way action and cannot be reversed. Are you sure you want to revoke this Certificate?'),
+          buttonMsg: T('Revoke'),
+          cancelMsg: T('Cancel'),
+          hideCheckBox: true,
+        })
+          .pipe(filter(Boolean), untilDestroyed(this))
+          .subscribe(() => {
+            this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Revoking Certificate') } });
+            this.dialogRef.componentInstance.setCall('certificate.update', [rowInner.id, { revoked: true }]);
+            this.dialogRef.componentInstance.submit();
+            this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+              this.dialog.closeAll();
+            });
+            this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
+              this.dialog.closeAll();
+              new EntityUtils().handleWSError(null, res, this.dialogService);
+            });
+          });
+      },
+    };
+    return [revokeAction, ...this.downloadActions];
   }
 
   csrActions(): AppTableAction<Certificate>[] {
@@ -308,12 +367,13 @@ export class CertificatesDashComponent implements OnInit {
         event.stopPropagation();
       },
     };
-    csrRowActions.unshift(acmeAction);
-    return csrRowActions;
+
+    return [acmeAction, ...csrRowActions];
   }
 
   caActions(): AppTableAction<CertificateAuthority>[] {
     const caRowActions = [...this.downloadActions];
+
     const acmeAction = {
       icon: 'beenhere',
       name: 'sign_CSR',
@@ -324,8 +384,36 @@ export class CertificatesDashComponent implements OnInit {
         event.stopPropagation();
       },
     };
-    caRowActions.unshift(acmeAction);
-    return caRowActions;
+
+    const revokeAction = {
+      icon: 'undo',
+      name: 'revoke',
+      matTooltip: 'Revoke',
+      onClick: (rowInner: CertificateAuthority) => {
+        this.dialogService.confirm({
+          title: T('Revoke Certificate Authority'),
+          message: T('Revoking this CA will revoke the complete CA chain. This is a one way action and cannot be reversed. Are you sure you want to revoke this CA?'),
+          buttonMsg: T('Revoke'),
+          cancelMsg: T('Cancel'),
+          hideCheckBox: true,
+        })
+          .pipe(filter(Boolean), untilDestroyed(this))
+          .subscribe(() => {
+            this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Revoking Certificate') } });
+            this.dialogRef.componentInstance.setCall('certificateauthority.update', [rowInner.id, { revoked: true }]);
+            this.dialogRef.componentInstance.submit();
+            this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+              this.dialog.closeAll();
+            });
+            this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
+              this.dialog.closeAll();
+              new EntityUtils().handleWSError(null, res, this.dialogService);
+            });
+          });
+      },
+    };
+
+    return [acmeAction, revokeAction, ...caRowActions];
   }
 
   openForm(component: CertificateAcmeAddComponent, id: any): void {
