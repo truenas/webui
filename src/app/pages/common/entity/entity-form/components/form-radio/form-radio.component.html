@@ -6,7 +6,7 @@
   <mat-radio-group [formControlName]="config.name" id="{{config.name}}_radiogroup" (change)="onChangeRadio($event)"
     [fxLayout]="radioLayout" ix-auto ix-auto-type="radio-group" ix-auto-identifier="{{config.name}}">
     <div *ngFor="let option of config.options" [fxFlex.gt-md]="radioFlex" fxFlex="100%">
-        <mat-radio-button [checked]="option.value === radioValue" [value]="option.value" id="{{config.name}}_{{option.value}}_radiobutton"
+        <mat-radio-button *ngIf="!option.hiddenFromDisplay" [checked]="option.value === radioValue" [value]="option.value" id="{{config.name}}_{{option.value}}_radiobutton"
           ix-auto
           ix-auto-type="radio"
           ix-auto-identifier="{{config.name}}_{{option.label}}">
