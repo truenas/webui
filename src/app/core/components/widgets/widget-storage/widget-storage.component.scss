@@ -14,20 +14,43 @@
   top: 0;
 }
 
-ul {
-  padding-left: 0;
-}
-
 mat-grid-tile {
   background-color: var(--bg1);
+  border-radius: 2px;
   opacity: 0.7;
+
+  ul {
+    margin: 0;
+    padding-left: 0;
+  }
 
   .tile {
     padding-left: 15px;
 
+    .tile-header-button {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+
+    .tile-header-title {
+      align-items: center;
+      display: flex;
+      font-size: 27px;
+      height: 48px;
+      min-height: 48px;
+      overflow: hidden;
+      text-align: left;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      white-space: nowrap;
+      width: calc(100% - 40px);
+    }
+
     &.rows-3 {
-      .tile-header {
+      .tile-header-title {
         height: 38px;
+        min-height: 38px;
       }
 
       .tile-content {
@@ -36,26 +59,13 @@ mat-grid-tile {
     }
 
     &.rows-2-2 {
-      .tile-header {
+      .tile-header-title {
         height: 48px;
+        min-height: 48px;
       }
 
       .tile-content {
         padding-bottom: 13px;
-      }
-    }
-
-    .tile-header {
-      font-size: 27px;
-      height: 48px;
-      text-transform: uppercase;
-
-      .header-title {
-        overflow: hidden;
-        text-align: left;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: calc(100% - 40px);
       }
     }
 
@@ -64,8 +74,9 @@ mat-grid-tile {
       padding-bottom: 10px;
 
       .divider {
-        background-color: var(--fg2);
+        background-color: var(--lines);
         height: 75%;
+        margin-right: 12px;
         width: 1px;
       }
 
