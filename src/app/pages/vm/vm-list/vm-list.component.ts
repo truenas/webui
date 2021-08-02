@@ -328,21 +328,12 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     }
   }
 
-  updateRows(rows: VirtualMachineRow[]): Promise<boolean> {
+  updateRows(rows: VirtualMachineRow[]): Promise<VirtualMachineRow[]> {
     return new Promise((resolve, reject) => {
       this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe(
         (res) => {
-          for (const row of rows) {
-            const targetIndex = _.findIndex(res, (o) => o['id'] === row.id);
-            if (targetIndex === -1) {
-              reject(false);
-            }
-            for (const i in row) {
-              (row[i as keyof VirtualMachineRow] as any) = res[targetIndex][i as keyof VirtualMachine];
-            }
-          }
-          this.resourceTransformIncomingRestData(rows as any);
-          resolve(true);
+          rows = this.resourceTransformIncomingRestData(res);
+          resolve(rows);
         },
         (err) => {
           new EntityUtils().handleWSError(this, err, this.dialogService);
