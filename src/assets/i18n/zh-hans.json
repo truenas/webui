@@ -860,7 +860,7 @@
   "The system could not retrieve any SMB Shares from the database. Please click the button below to add an SMB Share.": "",
   "The system returned the following error - ": "",
   "There are no alerts.": "",
-  "There are no image(s) requiring update": "",
+  "There are no images requiring upgrade": "",
   "There are pending network interface changes. Review them now?": "",
   "There are unapplied network interface changes that must be tested before being permanently saved. Test changes now?": "",
   "There was a problem submitting the SPN entry.": "",
