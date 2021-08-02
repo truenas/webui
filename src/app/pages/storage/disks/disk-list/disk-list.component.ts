@@ -28,6 +28,12 @@ import { StorageService, DialogService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { T } from 'app/translate-marker';
 
+export enum DiskWipeMethod {
+  Quick = 'QUICK',
+  Full = 'FULL',
+  FullRandom = 'FULL_RANDOM',
+}
+
 @UntilDestroy()
 @Component({
   selector: 'disk-list',
@@ -106,9 +112,8 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
           ? this.diskbucket.SMARToptions = this.SMARToptions[0]
           : this.diskbucket.SMARToptions = undefined;
 
-        this.router.navigate(new Array('/').concat([
-          'storage', 'disks', 'bulk-edit',
-        ]));
+        this.router.navigate(['/', 'storage', 'disks', 'bulk-edit',
+        ]);
       } else {
         this.router.navigate(new Array('/').concat([
           'storage', 'disks', 'edit', selected[0].identifier,
@@ -212,16 +217,16 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
                 options: [
                   {
                     label: T('Quick'),
-                    value: 'QUICK',
+                    value: DiskWipeMethod.Quick,
                   }, {
                     label: T('Full with zeros'),
-                    value: 'FULL',
+                    value: DiskWipeMethod.Full,
                   }, {
                     label: T('Full with random data'),
-                    value: 'FULL_RANDOM',
+                    value: DiskWipeMethod.FullRandom,
                   },
                 ],
-                value: 'QUICK',
+                value: DiskWipeMethod.Quick,
               },
             ],
             saveButtonText: helptext.diskWipeDialogForm.saveButtonText,
