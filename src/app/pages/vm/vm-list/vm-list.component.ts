@@ -344,7 +344,6 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   onCheckboxChange(row: VirtualMachineRow): void {
-    row.autostart = !row.autostart;
     this.doRowAction(row, this.wsMethods.update, [row.id, { autostart: row.autostart }]);
   }
 
