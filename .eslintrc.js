@@ -78,10 +78,6 @@ module.exports = {
             format: ['PascalCase'],
           },
           {
-            selector: 'enumMember',
-            format: ['PascalCase'],
-          },
-          {
             selector: 'function',
             format: ['camelCase'],
           },
