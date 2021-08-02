@@ -51,6 +51,8 @@ export interface FieldConfig<P = any> {
   initial?: string;
   initialCount?: number;
   inlineLabel?: string;
+  inlineFields?: boolean;
+  inlineFieldFlex?: string;
   inputType?: string;
   inputUnit?: InputUnitConfig;
   isDoubleConfirm?: boolean;
