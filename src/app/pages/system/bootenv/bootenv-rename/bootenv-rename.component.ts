@@ -12,7 +12,7 @@ import { BootEnvService, WebSocketService } from 'app/services';
 @UntilDestroy()
 @Component({
   selector: 'app-bootenv-rename',
-  template: "<entity-form [conf]='this'></entity-form>",
+  template: '<entity-form [conf]="this"></entity-form>',
   providers: [BootEnvService],
 })
 export class BootEnvironmentRenameComponent implements FormConfiguration {
