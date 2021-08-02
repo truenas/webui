@@ -234,7 +234,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
                 message: helptext.diskWipeDialogForm.confirmContent,
               }).pipe(
                 filter(Boolean),
-                untilDestroyed(this),
+                untilDestroyed(self),
               ).subscribe(() => {
                 const dialogRef = self.dialog.open(EntityJobComponent, {
                   data: { title: helptext.diskWipeDialogForm.title + row.name },
@@ -246,7 +246,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
                 );
                 dialogRef.componentInstance.submit();
 
-                dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+                dialogRef.componentInstance.success.pipe(untilDestroyed(self)).subscribe(() => {
                   if (dialogRef.componentInstance) {
                     dialogRef.close(true);
                     self.dialogService.generalDialog({
@@ -256,10 +256,10 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
                     });
                   }
                 });
-                dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((wipeRes) => {
+                dialogRef.componentInstance.failure.pipe(untilDestroyed(self)).subscribe((wipeRes) => {
                   dialogRef.componentInstance.setDescription(wipeRes.error);
                 });
-                dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
+                dialogRef.componentInstance.aborted.pipe(untilDestroyed(self)).subscribe(() => {
                   dialogRef.close(true);
                 });
                 entityDialogForm.dialogRef.close(true);
@@ -347,7 +347,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
           item.type = entityDialog.formValue.type;
         });
 
-        parent.ws.call('smart.test.manual_test', [disksIdentifier]).pipe(untilDestroyed(this)).subscribe(
+        parent.ws.call('smart.test.manual_test', [disksIdentifier]).pipe(untilDestroyed(parent)).subscribe(
           (res) => {
             entityDialog.dialogRef.close(true);
             parent.generateManualTestSummary(res);
