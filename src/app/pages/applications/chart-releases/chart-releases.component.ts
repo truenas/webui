@@ -8,7 +8,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -359,13 +358,17 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
         } as ChartUpgradeDialogConfig,
         disableClose: false,
       });
-      dialogRef.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((version) => {
+        if (!version) {
+          return;
+        }
+
         this.dialogRef = this.mdDialog.open(EntityJobComponent, {
           data: {
             title: helptext.charts.upgrade_dialog.job,
           },
         });
-        this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name]);
+        this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name, { item_version: version }]);
         this.dialogRef.componentInstance.submit();
         this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           this.dialogService.closeAllDialogs();

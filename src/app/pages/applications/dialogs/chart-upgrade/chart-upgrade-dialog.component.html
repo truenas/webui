@@ -8,10 +8,16 @@
       <span class="version"> {{ dialogConfig.appInfo.human_version }}</span>
     </div>
   </div>
-  <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">
-    <div>
-      <span>{{ 'Version to be upgraded' | translate }}:</span><span class="value">{{ dialogConfig.upgradeSummary.latest_human_version }}</span>
-    </div>
+  <div class="resource" fxLayout="row" fxLayoutAlign="start center">
+    <span>{{ 'Version to be upgraded' | translate }}:</span>
+    <mat-form-field class="form-element ">
+      <mat-select class="" [(ngModel)]="selectedVersionKey"  (ngModelChange)="onVersionOptionChanged()"
+          ix-auto ix-auto-type="select" ix-auto-identifier="status-select">
+          <mat-option *ngFor="let option of versionOptions | keyvalue: originalOrder" [value]="option.key">
+            {{ option.value.human_version }}
+          </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
   <mat-accordion>
     <mat-expansion-panel>
@@ -22,11 +28,11 @@
       </mat-expansion-panel-header>
       <div class="expansion-content">
         <div *ngIf="hasUpdateImages();else no_image">
-          <div *ngFor="let containerImage of dialogConfig.upgradeSummary.container_images_to_update | keyvalue; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
+          <div *ngFor="let containerImage of selectedVersion.containerImagesToUpdate | keyvalue: originalOrder; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
             <div fxLayout="row" fxLayoutAlign="center start">
               <span fxFlex="70%" class="">{{ containerImage.key }}</span>
               <span fxFlex="30%" class="value" >
-                {{ containerImage.update_available?'Available':'Not Available' | translate}}
+                {{ containerImage.value.update_available?'Available':'Not Available' | translate}}
               </span>
             </div>
           </div>
@@ -47,7 +53,7 @@
       </mat-expansion-panel-header>
       <div class="expansion-content">
         <div fxLayout="row" fxLayoutAlign="start start" class="detail-row row-dark">
-          <div [innerHTML]="dialogConfig.upgradeSummary.changelog || ('No Changelog' | translate)">
+          <div [innerHTML]="selectedVersion.changelog || ('No Changelog' | translate)">
           </div>
         </div>
       </div>
@@ -59,7 +65,7 @@
   <button mat-button class="mat-button mat-secondary" (click)="dialogRef.close(false)" ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE">
     {{ 'Close' | translate }}
   </button>
-  <button mat-button class="mat-button mat-secondary" (click)="dialogRef.close(true)" ix-auto ix-auto-type="button" ix-auto-identifier="UPGRADE">
+  <button mat-button class="mat-button mat-secondary" (click)="dialogRef.close(selectedVersionKey)" ix-auto ix-auto-type="button" ix-auto-identifier="UPGRADE">
     {{ 'Upgrade' | translate }}
   </button>
 </div>

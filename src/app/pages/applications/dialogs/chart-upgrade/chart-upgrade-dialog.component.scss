@@ -6,6 +6,11 @@
   max-width: unset;
   overflow: auto;
 
+  .mat-form-field {
+    margin: 0 0 0 10px;
+    width: unset !important;
+  }
+
   .mat-accordion {
     max-height: 300px;
 

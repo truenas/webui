@@ -90,7 +90,12 @@ export class ApplicationsService {
     return this.ws.call('container.update', [{ enable_image_updates }]);
   }
 
-  getUpgradeSummary(name: string): Observable<UpgradeSummary> {
-    return this.ws.call('chart.release.upgrade_summary', [name]);
+  getUpgradeSummary(name: string, version?: string): Observable<UpgradeSummary> {
+    const payload = [];
+    payload.push(name);
+    if (version) {
+      payload.push({ item_version: version });
+    }
+    return this.ws.call('chart.release.upgrade_summary', payload);
   }
 }
