@@ -55,13 +55,14 @@ def on_the_dashboard_click_network_on_the_left_sidebar(driver):
     assert wait_on_element(driver, 7, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Network"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 
 @then('on the network page, click on setting on the Global Configuration card')
 def on_the_network_page_click_on_setting_on_the_global_configuration_card(driver):
     """on the network page, click on setting on the Global Configuration card."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__globalSettings"]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__globalSettings"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__globalSettings"]').click()
 
 
