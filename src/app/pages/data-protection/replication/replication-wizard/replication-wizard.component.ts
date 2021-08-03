@@ -59,6 +59,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   summaryTitle = T('Replication Summary');
   pk: number;
   saveSubmitText = T('START REPLICATION');
+  hideCancel = true;
 
   protected entityWizard: EntityWizardComponent;
   custActions = [{
