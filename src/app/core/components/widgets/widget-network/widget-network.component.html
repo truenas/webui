@@ -61,8 +61,12 @@
                     </div>
                   </div>
                   <div class="nic-chart" fxFlex *ngIf="availableNics.length <= 3">
-                    <div class="chart-body">
-                      <view-chart-area [data]="nicInfoMap[nic.state.name]?.chartData" [options]="chartOptions"></view-chart-area>
+                    <div class="chart-body" [ngClass]="{ 'chart-body-errors': emptyChartConf && emptyChartConf.type == emptyTypes.Errors}">
+                      <view-chart-area *ngIf="nicInfoMap && nicInfoMap.chartData; else emptychart" 
+                        [data]="nicInfoMap[nic.state.name]?.chartData" 
+                        [options]="chartOptions">
+                      </view-chart-area>
+                      <entity-empty #emptychart [conf]="emptyChartConf"></entity-empty>
                     </div>
                   </div>
                 </div>
