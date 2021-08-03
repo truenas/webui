@@ -414,17 +414,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           filter(Boolean),
           untilDestroyed(this),
         ).subscribe(() => {
-          this.loader.open();
-          this.ws.call('pool.remove', [this.pk, { label: row.guid }]).pipe(untilDestroyed(this)).subscribe(
-            () => {
-              this.getData();
-              this.loader.close();
-            },
-            (err) => {
-              this.loader.close();
-              new EntityUtils().handleWSError(this, err, this.dialogService);
-            },
-          );
+          this.poolRemove(this.pk, row.guid);
         });
       },
       isHidden: false,
@@ -542,17 +532,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           filter(Boolean),
           untilDestroyed(this),
         ).subscribe(() => {
-          this.loader.open();
-          this.ws.call('pool.remove', [this.pk, { label: row.guid }]).pipe(untilDestroyed(this)).subscribe(
-            () => {
-              this.getData();
-              this.loader.close();
-            },
-            (err) => {
-              this.loader.close();
-              new EntityUtils().handleWSError(this, err, this.dialogService);
-            },
-          );
+          this.poolRemove(this.pk, row.guid);
         });
       },
     }];
@@ -660,5 +640,21 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     const diskForm = new DiskFormComponent(this.router, this.ws, this.aroute);
     diskForm.inIt(pk);
     this.modalService.open('slide-in-form', diskForm);
+  }
+
+  poolRemove(id: number, label: number | string): void {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
+      data: { title: helptext.remove_disk.title },
+      disableClose: true,
+    });
+    dialogRef.componentInstance.setCall('pool.remove', [id, { label }]);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialogService.closeAllDialogs();
+      this.getData();
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      new EntityUtils().handleWSError(this, error, this.dialogService);
+    });
   }
 }

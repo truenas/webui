@@ -137,6 +137,7 @@ import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 import { WebdavConfig, WebdavConfigUpdate } from 'app/interfaces/webdav-config.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { PoolRemoveParams } from './pool-remove.interface';
 
 /**
  * API definitions for `call` and `job` methods.
@@ -557,7 +558,7 @@ export type ApiDirectory = {
   'pool.dataset.export_key': { params: any; response: any };
   'pool.offline': { params: any; response: any };
   'pool.online': { params: any; response: any };
-  'pool.remove': { params: any; response: any };
+  'pool.remove': { params: PoolRemoveParams; response: any };
   'pool.detach': { params: any; response: any };
   'pool.export': { params: PoolExportParams; response: void };
   'pool.passphrase': { params: any; response: any };
