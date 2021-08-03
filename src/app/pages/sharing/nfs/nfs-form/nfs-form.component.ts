@@ -440,7 +440,7 @@ export class NFSFormComponent implements FormConfiguration {
                         .subscribe(
                           () => {
                             this.dialog
-                              .Info(
+                              .info(
                                 T('NFS') + shared.dialog_started_title,
                                 T('The NFS') + shared.dialog_started_message,
                                 '250px',

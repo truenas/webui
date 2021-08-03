@@ -403,7 +403,7 @@ export class SMBFormComponent implements FormConfiguration {
           () => {
             this.loader.close();
             this.dialog
-              .Info(
+              .info(
                 helptext_sharing_smb.restarted_smb_dialog.title,
                 helptext_sharing_smb.restarted_smb_dialog.message,
                 '250px',
@@ -502,7 +502,7 @@ export class SMBFormComponent implements FormConfiguration {
                         return this.ws.call('service.update', [cifsService.id, { enable: true }]).pipe(
                           switchMap(() => this.ws.call('service.start', [cifsService.service])),
                           switchMap(() =>
-                            this.dialog.Info(
+                            this.dialog.info(
                               T('SMB') + shared.dialog_started_title,
                               T('The SMB') + shared.dialog_started_message,
                               '250px',

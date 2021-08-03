@@ -62,7 +62,7 @@ export class ConfigResetComponent implements OnInit {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogRef.close();
-      this.ws.prepare_shutdown();
+      this.ws.prepareShutdown();
       this.loader.open();
       setTimeout(() => {
         this.isWSConnected();

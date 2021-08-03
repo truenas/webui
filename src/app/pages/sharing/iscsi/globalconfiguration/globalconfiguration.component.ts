@@ -94,7 +94,7 @@ export class GlobalconfigurationComponent implements FormConfiguration {
             this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
               this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
                 this.loader.close();
-                this.dialogService.Info(T('iSCSI') + shared.dialog_started_title,
+                this.dialogService.info(T('iSCSI') + shared.dialog_started_title,
                   T('The iSCSI') + shared.dialog_started_message, '250px', 'info');
               }, (err) => {
                 this.loader.close();

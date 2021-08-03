@@ -58,7 +58,7 @@ export class RebootComponent implements OnInit {
           });
       },
       () => { // show reboot screen
-        this.ws.prepare_shutdown();
+        this.ws.prepareShutdown();
         this.loader.open();
         setTimeout(() => {
           this.isWSConnected();

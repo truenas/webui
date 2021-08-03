@@ -414,7 +414,7 @@ export class UpdateComponent implements OnInit {
     );
   }
 
-  ApplyPendingUpdate(): void {
+  applyPendingUpdate(): void {
     this.updateType = 'applyPending';
     // Calls the 'Save Config' dialog - Returns here if user declines
     this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
@@ -424,7 +424,7 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  ManualUpdate(): void {
+  manualUpdate(): void {
     this.updateType = 'manual';
     // Calls the 'Save Config' dialog - Returns here if user declines
     this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
@@ -489,7 +489,7 @@ export class UpdateComponent implements OnInit {
             }
           });
         } else if (update.status === SystemUpdateStatus.Unavailable) {
-          this.dialogService.Info(T('Check Now'), T('No updates available.'));
+          this.dialogService.info(T('Check Now'), T('No updates available.'));
         }
       },
       (err) => {
@@ -531,7 +531,7 @@ export class UpdateComponent implements OnInit {
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.dialogRef.close(false);
-            this.dialogService.Info(T('Updates successfully downloaded'), '', '450px', 'info', true);
+            this.dialogService.info(T('Updates successfully downloaded'), '', '450px', 'info', true);
             this.pendingupdates();
           });
           this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {

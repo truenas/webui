@@ -46,7 +46,7 @@ export class SharesDashboardComponent implements AfterViewInit {
   iscsiTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.ISCSI);
 
   emptyTableConf: EmptyConfig = {
-    type: EmptyType.no_page_data,
+    type: EmptyType.NoPageData,
     large: true,
     title: 'No Shares Configured',
     message: 'You have not configured any shares yet. Click the \'Add Share\' button to add your first share.',
@@ -531,7 +531,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           this.ws.call(rpc, [service.service]).pipe(untilDestroyed(this)).subscribe((hasChanged: boolean) => {
             if (hasChanged) {
               if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
-                this.dialog.Info(
+                this.dialog.info(
                   this.translate.instant(T('Service failed to stop')),
                   this.translate.instant('{service} service failed to stop.', { service: serviceNames.get(service.service) || service.service }),
                 );
@@ -539,7 +539,7 @@ export class SharesDashboardComponent implements AfterViewInit {
               service.state = ServiceStatus.Running;
             } else {
               if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
-                this.dialog.Info(
+                this.dialog.info(
                   this.translate.instant(T('Service failed to start')),
                   this.translate.instant('{service} service failed to start.', { service: serviceNames.get(service.service) || service.service }),
                 );

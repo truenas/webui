@@ -57,7 +57,7 @@ export class GuiFormComponent implements FormConfiguration {
           tooltip: helptext.stg_guiaddress.tooltip,
           required: true,
           options: [],
-          validation: [this.IPValidator('ui_address', '0.0.0.0')],
+          validation: [this.ipValidator('ui_address', '0.0.0.0')],
         },
         {
           type: 'select',
@@ -67,7 +67,7 @@ export class GuiFormComponent implements FormConfiguration {
           tooltip: helptext.stg_guiv6address.tooltip,
           required: true,
           options: [],
-          validation: [this.IPValidator('ui_v6address', '::')],
+          validation: [this.ipValidator('ui_v6address', '::')],
         },
         {
           type: 'input',
@@ -155,7 +155,7 @@ export class GuiFormComponent implements FormConfiguration {
     });
   }
 
-  IPValidator(name: 'ui_address' | 'ui_v6address', wildcard: string): ValidatorFn {
+  ipValidator(name: 'ui_address' | 'ui_v6address', wildcard: string): ValidatorFn {
     const self = this;
     return function validIPs(control: FormControl) {
       const config = self.fieldSets

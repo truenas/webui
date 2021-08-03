@@ -160,7 +160,7 @@ export class SupportComponent implements OnInit {
       this.dialog.dialogForm(this.updateProdStatusConf);
     } else {
       this.ws.call('truenas.set_production', [false, false]).pipe(untilDestroyed(this)).subscribe(() => {
-        this.dialog.Info(helptext.is_production_dialog.title,
+        this.dialog.info(helptext.is_production_dialog.title,
           helptext.is_production_dialog.message, '300px', 'info', true);
       }, (err) => {
         this.loader.close();

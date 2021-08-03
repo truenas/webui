@@ -144,9 +144,9 @@
     <div class="col-md-12">
       <button mat-button class="btn btn-success update-button mat-basic" *ngIf="updates_available" (click)="downloadUpdate()" [disabled]="status == 'REBOOT_REQUIRED'"
         ix-auto ix-auto-type="button" ix-auto-identifier="DOWNLOAD UPDATES">{{" Download Updates" | translate}}</button>
-      <button mat-button class="btn btn-success update-button mat-basic" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" (click)="ApplyPendingUpdate()"
+      <button mat-button class="btn btn-success update-button mat-basic" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" (click)="applyPendingUpdate()"
         ix-auto ix-auto-type="button" ix-auto-identifier="APPLY PENDING UPDATE">{{"Apply Pending update" | translate}}</button>
-      <button mat-button class="btn btn-success update-button mat-basic" (click)="ManualUpdate()"
+      <button mat-button class="btn btn-success update-button mat-basic" (click)="manualUpdate()"
         ix-auto ix-auto-type="button" ix-auto-identifier="INSTALL MANUAL UPDATE FILE">{{"Install Manual Update File" | translate}}</button>
       <!-- <button mat-button class="btn btn-success update-button red-warning-button" *ngIf="failover_upgrade_pending" (click)="applyFailoverUpgrade()">{{"Apply Failover Upgrade" | translate}}</button> -->
       <p><font color ="red">{{general_update_error}}</font></p>

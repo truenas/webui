@@ -80,7 +80,7 @@ export class AdvancedSettingsComponent implements OnInit {
   protected systemDatasetPoolComponent: SystemDatasetPoolComponent;
 
   emptyPageConf: EmptyConfig = {
-    type: EmptyType.no_page_data,
+    type: EmptyType.NoPageData,
     title: T('No sysctls configured'),
     large: false,
     message: T('To configure sysctls, click the "Add" button.'),
@@ -117,7 +117,7 @@ export class AdvancedSettingsComponent implements OnInit {
                   const message = row.enabled == true
                     ? T('This job is scheduled to run again ' + row.next_run + '.')
                     : T('This job will not run again until it is enabled.');
-                  this.dialog.Info(
+                  this.dialog.info(
                     T('Job ' + row.description + ' Completed Successfully'),
                     message,
                     '500px',
@@ -447,7 +447,7 @@ export class AdvancedSettingsComponent implements OnInit {
 
     if (this.isFirstTime) {
       this.dialog
-        .Info(helptext_system_advanced.first_time.title, helptext_system_advanced.first_time.message)
+        .info(helptext_system_advanced.first_time.title, helptext_system_advanced.first_time.message)
         .pipe(untilDestroyed(this)).subscribe(() => {
           if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
             this.sysGeneralService.sendConfigData(this.configData as any);

@@ -104,7 +104,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   has_encrypted_root: { [pool: string]: boolean } = {};
   has_key_dataset: { [pool: string]: boolean } = {};
   entityEmptyConf: EmptyConfig = {
-    type: EmptyType.first_use,
+    type: EmptyType.FirstUse,
     large: true,
     title: T('No Pools'),
     message: `${T('It seems you haven\'t configured pools yet.')} ${T('Please click the button below to create a pool.')}`,
