@@ -48,7 +48,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   readonly ProductType = ProductType;
 
-  @ViewChild(MatSidenav, { static: false }) private sideNave: MatSidenav;
+  @ViewChild(MatSidenav, { static: false }) private sideNav: MatSidenav;
   @ViewChild('footerBarScroll', { static: true }) private footerBarScroll: ElementRef;
   freenasThemes: Theme[];
 
@@ -74,7 +74,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     // Close sidenav after route change in mobile
     router.events.pipe(untilDestroyed(this)).subscribe((routeChange) => {
       if (routeChange instanceof NavigationEnd && this.isMobile) {
-        this.sideNave.close();
+        this.sideNav.close();
       }
     });
     // Watches screen size and open/close sidenav
@@ -159,6 +159,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     this.isSidenavOpen = !this.isMobile;
     this.isSidenotOpen = false;
     this.sidenavMode = this.isMobile ? 'over' : 'side';
+    if (!this.isMobile) {
+      // TODO: This is hack to resolve issue described here: https://jira.ixsystems.com/browse/NAS-110404
+      setTimeout(() => {
+        this.sideNav.open();
+      });
+    }
+
     this.layoutService.isMenuCollapsed = false;
     this.cd.detectChanges();
   }
