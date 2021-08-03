@@ -5,15 +5,15 @@ import { TranslateService } from '@ngx-translate/core';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SmartTestResults } from 'app/interfaces/smart-test.interface';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { PageTitleService } from 'app/services/page-title.service';
 import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
   selector: 'app-smart-test-results-list',
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  template: '<entity-table [conf]="this"></entity-table>',
 })
 export class SmartResultsComponent implements EntityTableConfig {
-  title: string;
   queryCall: 'smart.test.results' = 'smart.test.results';
   queryCallOption: QueryParams<SmartTestResults> = [];
 
@@ -41,14 +41,19 @@ export class SmartResultsComponent implements EntityTableConfig {
 
   protected disk: string;
 
-  constructor(private aroute: ActivatedRoute, private translate: TranslateService) { }
+  constructor(
+    private aroute: ActivatedRoute,
+    private translate: TranslateService,
+    private pageTitleService: PageTitleService,
+  ) { }
 
   preInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.disk = params['pk'];
-      this.title = this.translate.instant('S.M.A.R.T Test Results of {disk}', {
+      const pageTitle = this.translate.instant('S.M.A.R.T Test Results of {disk}', {
         disk: this.disk,
       });
+      this.pageTitleService.setTitle(pageTitle);
       this.queryCallOption = [[['disk', '=', this.disk]]];
     });
   }
