@@ -62,3 +62,19 @@
     width: 100%;
   }
 }
+
+.empty-page.compact {
+  margin: 0;
+}
+
+.empty-page.errors {
+  .icon-div {
+    margin: 16px;
+  }
+
+  .icon-div .mat-icon {
+    color: var(--red);
+    opacity: 1;
+  }
+}
+

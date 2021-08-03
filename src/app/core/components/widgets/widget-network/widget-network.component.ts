@@ -9,7 +9,6 @@ import { sub } from 'date-fns';
 import { WidgetUtils } from 'app/core/components/widgets/widget-utils';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
-import { ErrorResponse } from 'app/interfaces/error-response.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
@@ -323,14 +322,20 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
 
         this.nicInfoMap[nic.name].chartData = chartData;
       },
-      (err: ErrorResponse) => {
-        this.emptyChartConf = {
-          type: EmptyType.Errors,
-          large: false,
-          title: T('Error getting chart data'),
-          message: err.reason,
-        };
+      () => {
+        // Handle the error
+        const errorString = T('Error getting chart data');
+        this.chartDataError(errorString);
       });
     });
+  }
+
+  chartDataError(err: string): void {
+    this.emptyChartConf = {
+      type: EmptyType.Errors,
+      large: false,
+      compact: true,
+      title: err,
+    };
   }
 }
