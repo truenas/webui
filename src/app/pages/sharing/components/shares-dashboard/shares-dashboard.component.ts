@@ -20,7 +20,13 @@ import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.compon
 import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
 import {
-  AppLoaderService, DialogService, IscsiService, ModalService, NetworkService, SystemGeneralService, UserService,
+  AppLoaderService,
+  DialogService,
+  IscsiService,
+  ModalService,
+  NetworkService,
+  SystemGeneralService,
+  UserService,
   WebSocketService,
 } from 'app/services';
 import { T } from 'app/translate-marker';
@@ -35,7 +41,7 @@ enum ShareType {
 @UntilDestroy()
 @Component({
   selector: 'app-shares-dashboard',
-  templateUrl: './shares-dashboard.template.html',
+  templateUrl: './shares-dashboard.component.html',
   styleUrls: ['./shares-dashboard.component.scss'],
   providers: [IscsiService],
 })
