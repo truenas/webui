@@ -108,7 +108,7 @@ import { S3Config, S3ConfigUpdate } from 'app/interfaces/s3-config.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import {
-  SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTest,
+  SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTest, SmartTestResults,
 } from 'app/interfaces/smart-test.interface';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
@@ -676,7 +676,7 @@ export type ApiDirectory = {
   'smart.test.manual_test': { params: [SmartManualTestParams[]]; response: any };
   'smart.test.query': { params: QueryParams<SmartTest>; response: SmartTest[] };
   'smart.test.create': { params: any; response: any };
-  'smart.test.results': { params: any; response: any };
+  'smart.test.results': { params: QueryParams<SmartTestResults>; response: SmartTestResults[] };
   'smart.test.update': { params: any; response: any };
   'smart.test.delete': { params: any; response: any };
 
