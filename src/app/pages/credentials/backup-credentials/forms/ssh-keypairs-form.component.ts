@@ -7,6 +7,7 @@ import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum'
 import helptext from 'app/helptext/system/ssh-keypairs';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -24,7 +25,7 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class SshKeypairsFormComponent implements FormConfiguration {
   queryCall: 'keychaincredential.query' = 'keychaincredential.query';
-  queryCallOption: any[];
+  queryCallOption: [QueryFilter<KeychainCredential>];
   addCall: 'keychaincredential.create' = 'keychaincredential.create';
   editCall: 'keychaincredential.update' = 'keychaincredential.update';
   isEntity = true;

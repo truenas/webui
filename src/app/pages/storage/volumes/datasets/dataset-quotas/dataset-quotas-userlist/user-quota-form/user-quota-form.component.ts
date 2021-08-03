@@ -104,7 +104,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
   }
 
   preInit(): void {
-    const paramMap: any = (<any> this.aroute.params).getValue();
+    const paramMap = this.aroute.snapshot.params;
     this.pk = paramMap.pk;
   }
 

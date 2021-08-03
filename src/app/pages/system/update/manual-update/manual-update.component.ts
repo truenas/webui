@@ -14,6 +14,7 @@ import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -32,7 +33,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
   formGroup: FormGroup;
   route_success: string[] = ['system', 'update'];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
-  fileLocation: any;
+  fileLocation: string;
   subs: any;
   isHA = false;
   isUpdateRunning = false;
@@ -212,7 +213,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     });
   }
 
-  updater(file: any, parent: this): void {
+  updater(file: FormUploadComponent, parent: this): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.save_button_enabled = true;

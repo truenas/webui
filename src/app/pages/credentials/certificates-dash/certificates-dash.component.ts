@@ -46,7 +46,7 @@ export class CertificatesDashComponent implements OnInit {
   protected acmeDNSComponent: AcmednsFormComponent;
   private downloadActions: AppTableAction[];
   private unsignedCAs: Option[] = [];
-  private caId: any;
+  private caId: number;
 
   constructor(
     private modalService: ModalService,

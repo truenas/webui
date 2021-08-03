@@ -11,6 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
+import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
@@ -230,9 +231,9 @@ export class ZvolWizardComponent implements WizardConfiguration {
           placeholder: helptext.zvol_deduplication_placeholder,
           tooltip: helptext.zvol_deduplication_tooltip,
           options: [
-            { label: T('On'), value: 'ON' },
-            { label: T('Verify'), value: 'VERIFY' },
-            { label: T('Off'), value: 'OFF' },
+            { label: T('On'), value: DeduplicationSetting.On },
+            { label: T('Verify'), value: DeduplicationSetting.Verify },
+            { label: T('Off'), value: DeduplicationSetting.Off },
           ],
           validation: helptext.zvol_deduplication_validation,
           required: true,
