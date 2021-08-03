@@ -45,7 +45,7 @@ export class DirectoryServicesComponent implements OnInit {
   protected kerberosKeytabsFormComponent: KerberosKeytabsFormComponent;
 
   emptyPageConf: EmptyConfig = {
-    type: EmptyType.no_page_data,
+    type: EmptyType.NoPageData,
     title: T('No sysctls configured'),
     large: false,
     message: T('To configure sysctls, click the "Add" button.'),

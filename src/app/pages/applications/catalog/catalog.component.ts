@@ -59,7 +59,7 @@ export class CatalogComponent implements OnInit {
   private noAvailableCatalog = true;
   isLoading = false;
   emptyPageConf: EmptyConfig = {
-    type: EmptyType.loading,
+    type: EmptyType.Loading,
     large: true,
     title: helptext.catalogMessage.loading,
   };
@@ -142,7 +142,7 @@ export class CatalogComponent implements OnInit {
     this.catalogNames = [];
     this.catalogApps = [];
     this.isLoading = true;
-    this.showLoadStatus(EmptyType.loading);
+    this.showLoadStatus(EmptyType.Loading);
 
     this.appService.getAllCatalogItems().pipe(untilDestroyed(this)).subscribe((catalogs) => {
       this.noAvailableCatalog = true;
@@ -179,21 +179,21 @@ export class CatalogComponent implements OnInit {
     let message;
 
     if (this.isLoading) {
-      type = EmptyType.loading;
+      type = EmptyType.Loading;
     }
 
     switch (type) {
-      case EmptyType.loading:
+      case EmptyType.Loading:
         title = helptext.catalogMessage.loading;
         break;
-      case EmptyType.no_page_data:
+      case EmptyType.NoPageData:
         if (this.noAvailableCatalog) {
           title = helptext.catalogMessage.no_catalog;
         } else {
           title = helptext.catalogMessage.no_application;
         }
         break;
-      case EmptyType.no_search_results:
+      case EmptyType.NoSearchResults:
         title = helptext.catalogMessage.no_search_result;
         break;
     }
@@ -314,7 +314,7 @@ export class CatalogComponent implements OnInit {
         this.selectedPool = null;
         this.refreshToolbarMenus();
         this.translate.get(helptext.choosePool.unsetPool.label).pipe(untilDestroyed(this)).subscribe((msg) => {
-          this.dialogService.Info(helptext.choosePool.success, msg,
+          this.dialogService.info(helptext.choosePool.success, msg,
             '500px', 'info', true);
         });
       });
@@ -341,7 +341,7 @@ export class CatalogComponent implements OnInit {
       self.refreshToolbarMenus();
       self.dialogService.closeAllDialogs();
       self.translate.get(helptext.choosePool.message).pipe(untilDestroyed(self)).subscribe((msg: string) => {
-        self.dialogService.Info(helptext.choosePool.success, msg + res.result.pool,
+        self.dialogService.info(helptext.choosePool.success, msg + res.result.pool,
           '500px', 'info', true);
       });
     });
@@ -383,9 +383,9 @@ export class CatalogComponent implements OnInit {
 
     if (this.filteredCatalogApps.length == 0) {
       if (this.filterString) {
-        this.showLoadStatus(EmptyType.no_search_results);
+        this.showLoadStatus(EmptyType.NoSearchResults);
       } else {
-        this.showLoadStatus(EmptyType.no_page_data);
+        this.showLoadStatus(EmptyType.NoPageData);
       }
     }
   }

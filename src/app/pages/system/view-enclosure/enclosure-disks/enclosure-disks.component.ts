@@ -129,7 +129,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   selectedVdevDisks: string[];
-  selectedDisk: any;
+  selectedDisk: EnclosureDisk;
 
   theme: any;
   protected themeUtils: ThemeUtils;

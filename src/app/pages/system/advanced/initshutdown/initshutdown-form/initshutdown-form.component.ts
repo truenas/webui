@@ -133,7 +133,7 @@ export class InitshutdownFormComponent implements FormConfiguration {
     this.pk = entityForm.pk;
     this.title = entityForm.isNew ? helptext.ini_add : helptext.ini_edit;
     this.type_control = entityForm.formGroup.controls['type'] as FormControl;
-    this.type_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.type_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: InitShutdownScriptType) => {
       this.formUpdate(value);
     });
 

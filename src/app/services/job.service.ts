@@ -56,7 +56,7 @@ export class JobService {
       const log = job && job.logs_excerpt ? job.logs_excerpt : null;
 
       if (!log) {
-        this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+        this.dialog.info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
       } else {
         const target_job = job;
         this.dialog.confirm(dialog_title, `<pre>${log}</pre>`, true, T('Download Logs'),

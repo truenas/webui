@@ -7,6 +7,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService } from 'app/services/';
@@ -247,7 +248,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     this.modalService.close('slide-in-form');
   }
 
-  updater(file: any, parent: this): void {
+  updater(file: FormUploadComponent, parent: this): void {
     parent.subs = [];
     const fileBrowser = file.fileInput.nativeElement;
     this.screenshot = _.find(parent.fieldConfig, { name: 'screenshot' });

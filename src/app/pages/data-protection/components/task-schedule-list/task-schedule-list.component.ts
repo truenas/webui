@@ -31,14 +31,14 @@ export class TaskScheduleListComponent implements OnInit, OnChanges {
   constructor(private _taskService: TaskService) {}
 
   ngOnInit(): void {
-    this._buildFutureRuns();
+    this.buildFutureRuns();
   }
 
   ngOnChanges(): void {
-    this._buildFutureRuns();
+    this.buildFutureRuns();
   }
 
-  private _buildFutureRuns(): void {
+  private buildFutureRuns(): void {
     const scheduleExpression = this.config.cron_schedule
       || this.config.cron
       || this.config.scrub_schedule

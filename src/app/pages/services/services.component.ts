@@ -149,7 +149,7 @@ export class Services implements EntityTableConfig, OnInit {
     this.ws.call(rpc, [service.service]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
-          this.dialog.Info(
+          this.dialog.info(
             T('Service failed to stop'),
             serviceName + ' ' + T('service failed to stop.'),
           );
@@ -158,7 +158,7 @@ export class Services implements EntityTableConfig, OnInit {
         service.onChanging = false;
       } else {
         if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
-          this.dialog.Info(
+          this.dialog.info(
             T('Service failed to start'),
             serviceName + ' ' + T('service failed to start.'),
           );

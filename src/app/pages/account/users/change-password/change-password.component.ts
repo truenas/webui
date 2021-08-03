@@ -79,7 +79,7 @@ export class ChangePasswordComponent implements FormConfiguration {
         });
       } else {
         this.loader.close();
-        this.dialog.Info(helptext.pw_invalid_title, helptext.pw_invalid_msg, '300px', 'warning', true);
+        this.dialog.info(helptext.pw_invalid_title, helptext.pw_invalid_msg, '300px', 'warning', true);
       }
     }, (res) => {
       this.loader.close();

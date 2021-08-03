@@ -24,15 +24,13 @@ export class CronFormComponent {
   protected queryKey = 'id';
   protected editCall = 'cronjob.update';
   protected addCall = 'cronjob.create';
-  protected pk: any;
-  protected data: any;
+  protected pk: number;
   protected user_field: FieldConfig;
   protected isOneColumnForm = true;
   protected isEntity = true;
 
   isNew = false;
   entityForm: EntityFormComponent;
-  formGroup: any;
   error: string;
   fieldConfig: FieldConfig[] = [];
   fieldSetDisplay = 'no-margins';
