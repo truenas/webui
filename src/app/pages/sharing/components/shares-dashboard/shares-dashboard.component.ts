@@ -12,7 +12,10 @@ import { Service } from 'app/interfaces/service.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { ExpandableTableState, InputExpandableTableConf } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
+import {
+  ExpandableTableState,
+  InputExpandableTableConf,
+} from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
 import { TableComponent, AppTableHeaderExtraAction } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
@@ -54,10 +57,12 @@ export class SharesDashboardComponent implements AfterViewInit {
   emptyTableConf: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: true,
-    title: 'No Shares Configured',
-    message: 'You have not configured any shares yet. Click the \'Add Share\' button to add your first share.',
+    title: this.translate.instant(T('No Shares Configured')),
+    message: this.translate.instant(
+      T("You have not configured any shares yet. Click the 'Add Share' button to add your first share."),
+    ),
     button: {
-      label: 'Add Share',
+      label: this.translate.instant(T('Add Share')),
       action: this.showAddDialog.bind(this),
     },
   };
@@ -452,9 +457,9 @@ export class SharesDashboardComponent implements AfterViewInit {
 
   showAddDialog(): void {
     const conf: DialogFormConfiguration = {
-      title: 'Add New Share',
-      message: 'Select the type of Share you want to add',
-      saveButtonText: 'Create',
+      title: this.translate.instant(T('Add New Share')),
+      message: this.translate.instant(T('Select the type of Share you want to add')),
+      saveButtonText: this.translate.instant(T('Create')),
       fieldConfig: [{
         type: 'radio',
         name: 'share_type',
@@ -539,7 +544,7 @@ export class SharesDashboardComponent implements AfterViewInit {
               if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
                 this.dialog.info(
                   this.translate.instant(T('Service failed to stop')),
-                  this.translate.instant('{service} service failed to stop.', { service: serviceNames.get(service.service) || service.service }),
+                  this.translate.instant('The {service} service failed to stop.', { service: serviceNames.get(service.service) || service.service }),
                 );
               }
               service.state = ServiceStatus.Running;
@@ -547,7 +552,7 @@ export class SharesDashboardComponent implements AfterViewInit {
               if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
                 this.dialog.info(
                   this.translate.instant(T('Service failed to start')),
-                  this.translate.instant('{service} service failed to start.', { service: serviceNames.get(service.service) || service.service }),
+                  this.translate.instant('The {service} service failed to start.', { service: serviceNames.get(service.service) || service.service }),
                 );
               }
               service.state = ServiceStatus.Stopped;
