@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { iXAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
 
 @Component({
   selector: 'toolbar-button',
@@ -21,7 +21,7 @@ import { iXAbstractObject } from 'app/core/classes/ix-abstract-object';
     </div>
   `,
 })
-export class ToolbarButtonComponent extends iXAbstractObject {
+export class ToolbarButtonComponent extends IxAbstractObject {
   @Input() config?: any;
   @Input() controller: Subject<any>;
   constructor(public translate: TranslateService) {

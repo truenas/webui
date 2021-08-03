@@ -98,7 +98,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
             },
           ],
           width: '100%',
-          updater: this.key_file_updater,
+          updater: this.keyFileUpdater,
           parent: this,
         },
       ],
@@ -489,7 +489,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
           this.dialogOpen = true;
           const unlockDialogRef = this.dialog.open(UnlockDialogComponent, { disableClose: true });
           unlockDialogRef.componentInstance.parent = this;
-          unlockDialogRef.componentInstance.show_final_results();
+          unlockDialogRef.componentInstance.showFinalResults();
           unlockDialogRef.componentInstance.unlock_datasets = unlock;
           unlockDialogRef.componentInstance.error_datasets = errors;
           unlockDialogRef.componentInstance.skipped_datasets = skipped;
@@ -503,11 +503,11 @@ export class DatasetUnlockComponent implements FormConfiguration {
     });
   }
 
-  go_back(): void {
+  goBack(): void {
     this.router.navigate(this.route_success);
   }
 
-  key_file_updater(file: FormUploadComponent, parent: this): void {
+  keyFileUpdater(file: FormUploadComponent, parent: this): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };

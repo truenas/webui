@@ -66,7 +66,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       name: helptext.activedirectory_custactions_clearcache_name,
       function: async () => {
         this.systemGeneralService.refreshDirServicesCache().pipe(untilDestroyed(this)).subscribe(() => {
-          this.dialogservice.Info(helptext.activedirectory_custactions_clearcache_dialog_title,
+          this.dialogservice.info(helptext.activedirectory_custactions_clearcache_dialog_title,
             helptext.activedirectory_custactions_clearcache_dialog_message);
         });
       },
@@ -113,7 +113,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
                   that.entityEdit.formGroup.controls['enable'].setValue(false);
                   that.adStatus = false;
                   that.isCustActionVisible('leave_domain');
-                  that.dialogservice.Info(helptext.ad_leave_domain_dialog.success,
+                  that.dialogservice.info(helptext.ad_leave_domain_dialog.success,
                     helptext.ad_leave_domain_dialog.success_msg, '400px', 'info', true);
                 },
                 (err: WebsocketError) => {

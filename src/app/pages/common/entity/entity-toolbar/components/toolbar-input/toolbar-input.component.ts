@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { iXAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
 
 @Component({
   selector: 'toolbar-input',
@@ -25,7 +25,7 @@ import { iXAbstractObject } from 'app/core/classes/ix-abstract-object';
   `,
   encapsulation: ViewEncapsulation.None,
 })
-export class ToolbarInputComponent extends iXAbstractObject {
+export class ToolbarInputComponent extends IxAbstractObject {
   @Input() config?: any;
   @Input() controller: Subject<any>;
 

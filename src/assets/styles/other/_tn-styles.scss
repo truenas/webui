@@ -973,6 +973,23 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     border: solid 2px;
   }
 
+  .form-selection-list {
+    .mat-pseudo-checkbox {
+      @include variable(border-color, --primary, $primary, !important);
+      border: solid 2px;
+      opacity: 0.75;
+
+      &::after {
+        border-bottom: 1.35px solid currentColor;
+        border-left: 1.35px solid currentColor;
+      }
+    }
+
+    .mat-list-text {
+      opacity: 0.75;
+    }
+  }
+
   // for multi-selection only
   .mat-option-pseudo-checkbox.mat-pseudo-checkbox {
     display: none;

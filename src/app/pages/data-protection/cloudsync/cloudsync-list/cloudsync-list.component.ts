@@ -138,7 +138,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                 row.state = { state: JobState.Running };
                 this.ws.call('cloudsync.sync', [row.id]).pipe(untilDestroyed(this)).subscribe(
                   (jobId: number) => {
-                    this.dialog.Info(
+                    this.dialog.info(
                       T('Task Started'),
                       T('Cloud sync <i>') + row.description + T('</i> has started.'),
                       '500px',
@@ -175,7 +175,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
               if (res) {
                 this.ws.call('cloudsync.abort', [row.id]).pipe(untilDestroyed(this)).subscribe(
                   () => {
-                    this.dialog.Info(
+                    this.dialog.info(
                       T('Task Stopped'),
                       T('Cloud sync <i>') + row.description + T('</i> stopped.'),
                       '500px',
@@ -208,7 +208,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
               if (res) {
                 this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).pipe(untilDestroyed(this)).subscribe(
                   (jobId: number) => {
-                    this.dialog.Info(
+                    this.dialog.info(
                       T('Task Started'),
                       T('Cloud sync <i>') + row.description + T('</i> has started.'),
                       '500px',
@@ -354,7 +354,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         this.job.showLogs(row.job);
       }
     } else {
-      this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+      this.dialog.info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
     }
   }
 

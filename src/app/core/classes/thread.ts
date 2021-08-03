@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { iXAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
 
 export interface ProcessTask {
   responseEvent: string;
@@ -8,7 +8,7 @@ export interface ProcessTask {
 }
 
 @Injectable()
-export class Thread extends iXAbstractObject {
+export class Thread extends IxAbstractObject {
   thread: Worker;
   protected ready: boolean;
   protected maxThreads: number;

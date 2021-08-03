@@ -354,10 +354,10 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
               if (scrubIntervalValue > 0) {
                 localWS.call('boot.set_scrub_interval', [scrubIntervalValue]).pipe(untilDestroyed(entityDialog.parent)).subscribe(() => {
                   localDialog.closeAllDialogs();
-                  localDialog.Info(T('Scrub Interval Set'), T(`Scrub interval set to ${scrubIntervalValue} days`), '300px', 'info', true);
+                  localDialog.info(T('Scrub Interval Set'), T(`Scrub interval set to ${scrubIntervalValue} days`), '300px', 'info', true);
                 });
               } else {
-                localDialog.Info(T('Enter valid value'), T(scrubIntervalValue + ' is not a valid number of days.'));
+                localDialog.info(T('Enter valid value'), T(scrubIntervalValue + ' is not a valid number of days.'));
               }
             },
           };
@@ -392,7 +392,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
         this.loaderOpen = true;
         this.ws.call('boot.scrub').pipe(untilDestroyed(this)).subscribe(() => {
           this.loader.close();
-          this.dialog.Info(T('Scrub Started'), T(''), '300px', 'info', true);
+          this.dialog.info(T('Scrub Started'), T(''), '300px', 'info', true);
         },
         (res: any) => {
           this.dialog.errorReport(res.error, res.reason, res);

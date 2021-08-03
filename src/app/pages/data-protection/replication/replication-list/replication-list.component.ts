@@ -121,7 +121,7 @@ export class ReplicationListComponent implements EntityTableConfig {
               row.state = { state: JobState.Running };
               this.ws.call('replication.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
                 (jobId: number) => {
-                  this.dialog.Info(
+                  this.dialog.info(
                     T('Task started'),
                     T('Replication <i>') + row.name + T('</i> has started.'),
                     '500px',
@@ -218,12 +218,12 @@ export class ReplicationListComponent implements EntityTableConfig {
       if (row.state.state === JobState.Running) {
         this.entityList.runningStateButton(row.job.id);
       } else if (row.state.state === JobState.Hold) {
-        this.dialog.Info(T('Task is on hold'), row.state.reason, '500px', 'info', true);
+        this.dialog.info(T('Task is on hold'), row.state.reason, '500px', 'info', true);
       } else {
         this.dialog.errorReport(row.state.state, `<pre>${row.state.error}</pre>`);
       }
     } else {
-      this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+      this.dialog.info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
     }
   }
 
