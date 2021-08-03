@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
+import { filter, map } from 'rxjs/operators';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptext_sharing_webdav, helptext_sharing_smb, helptext_sharing_nfs } from 'app/helptext/sharing';
@@ -81,23 +82,47 @@ export class SharesDashboardComponent implements AfterViewInit {
   webdavServiceStatus = ServiceStatus.Loading;
   nfsServiceStatus = ServiceStatus.Loading;
   iscsiServiceStatus = ServiceStatus.Loading;
+  readonly servicesToCheck = [ServiceName.Cifs, ServiceName.Iscsi, ServiceName.WebDav, ServiceName.Nfs];
   readonly ServiceStatus = ServiceStatus;
 
-  constructor(private userService: UserService, private modalService: ModalService, private ws: WebSocketService,
-    private dialog: DialogService, private networkService: NetworkService, private router: Router,
-    private loader: AppLoaderService, private sysGeneralService: SystemGeneralService, private aroute: ActivatedRoute,
-    private iscsiService: IscsiService, private translate: TranslateService) {
+  constructor(
+    private userService: UserService,
+    private modalService: ModalService,
+    private ws: WebSocketService,
+    private dialog: DialogService,
+    private networkService: NetworkService,
+    private router: Router,
+    private loader: AppLoaderService,
+    private sysGeneralService: SystemGeneralService,
+    private aroute: ActivatedRoute,
+    private iscsiService: IscsiService,
+    private translate: TranslateService,
+  ) {
+    this.getInitialServiceStatus();
+  }
+
+  getInitialServiceStatus(): void {
     this.ws
       .call('service.query', [])
-      .pipe(untilDestroyed(this)).subscribe((services) => {
-        [
-          _.find(services, { service: ServiceName.Cifs }),
-          _.find(services, { service: ServiceName.Iscsi }),
-          _.find(services, { service: ServiceName.WebDav }),
-          _.find(services, { service: ServiceName.Nfs }),
-        ].forEach((service) => {
-          this.updateTableServiceStatus(service);
+      .pipe(untilDestroyed(this))
+      .subscribe((services) => {
+        this.servicesToCheck.forEach((service) => {
+          this.updateTableServiceStatus(_.find(services, { service }));
         });
+        this.subscribeToServiceUpdates();
+      });
+  }
+
+  subscribeToServiceUpdates(): void {
+    this.ws
+      .subscribe('service.query')
+      .pipe(
+        map((event) => event.fields),
+        filter((service) => this.servicesToCheck.includes(service.service)),
+        untilDestroyed(this),
+      )
+      .subscribe((service: Service) => {
+        this.updateTableServiceStatus(service);
       });
   }
 

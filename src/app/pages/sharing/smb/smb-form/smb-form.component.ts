@@ -517,8 +517,9 @@ export class SMBFormComponent implements FormConfiguration {
                     switchMap(promptUserACLEdit),
                   );
               }),
+              untilDestroyed(this),
             )
-            .pipe(untilDestroyed(this)).subscribe(
+            .subscribe(
               () => {},
               (error) => new EntityUtils().handleWSError(this, error, this.dialog),
             );
