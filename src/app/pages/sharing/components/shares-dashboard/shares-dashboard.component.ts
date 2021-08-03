@@ -4,6 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
+import {
+  delay, filter, map, tap,
+} from 'rxjs/operators';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptext_sharing_webdav, helptext_sharing_smb, helptext_sharing_nfs } from 'app/helptext/sharing';
@@ -12,7 +15,10 @@ import { Service } from 'app/interfaces/service.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { ExpandableTableState, InputExpandableTableConf } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
+import {
+  ExpandableTableState,
+  InputExpandableTableConf,
+} from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
 import { TableComponent, AppTableHeaderExtraAction } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
@@ -20,7 +26,13 @@ import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.compon
 import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
 import {
-  AppLoaderService, DialogService, IscsiService, ModalService, NetworkService, SystemGeneralService, UserService,
+  AppLoaderService,
+  DialogService,
+  IscsiService,
+  ModalService,
+  NetworkService,
+  SystemGeneralService,
+  UserService,
   WebSocketService,
 } from 'app/services';
 import { T } from 'app/translate-marker';
@@ -35,7 +47,7 @@ enum ShareType {
 @UntilDestroy()
 @Component({
   selector: 'app-shares-dashboard',
-  templateUrl: './shares-dashboard.template.html',
+  templateUrl: './shares-dashboard.component.html',
   styleUrls: ['./shares-dashboard.component.scss'],
   providers: [IscsiService],
 })
@@ -48,10 +60,12 @@ export class SharesDashboardComponent implements AfterViewInit {
   emptyTableConf: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: true,
-    title: 'No Shares Configured',
-    message: 'You have not configured any shares yet. Click the \'Add Share\' button to add your first share.',
+    title: this.translate.instant(T('No Shares Configured')),
+    message: this.translate.instant(
+      T("You have not configured any shares yet. Click the 'Add Share' button to add your first share."),
+    ),
     button: {
-      label: 'Add Share',
+      label: this.translate.instant(T('Add Share')),
       action: this.showAddDialog.bind(this),
     },
   };
@@ -70,23 +84,49 @@ export class SharesDashboardComponent implements AfterViewInit {
   webdavServiceStatus = ServiceStatus.Loading;
   nfsServiceStatus = ServiceStatus.Loading;
   iscsiServiceStatus = ServiceStatus.Loading;
+  readonly servicesToCheck = [ServiceName.Cifs, ServiceName.Iscsi, ServiceName.WebDav, ServiceName.Nfs];
   readonly ServiceStatus = ServiceStatus;
 
-  constructor(private userService: UserService, private modalService: ModalService, private ws: WebSocketService,
-    private dialog: DialogService, private networkService: NetworkService, private router: Router,
-    private loader: AppLoaderService, private sysGeneralService: SystemGeneralService, private aroute: ActivatedRoute,
-    private iscsiService: IscsiService, private translate: TranslateService) {
+  constructor(
+    private userService: UserService,
+    private modalService: ModalService,
+    private ws: WebSocketService,
+    private dialog: DialogService,
+    private networkService: NetworkService,
+    private router: Router,
+    private loader: AppLoaderService,
+    private sysGeneralService: SystemGeneralService,
+    private aroute: ActivatedRoute,
+    private iscsiService: IscsiService,
+    private translate: TranslateService,
+  ) {
+    this.getInitialServiceStatus();
+  }
+
+  getInitialServiceStatus(): void {
     this.ws
       .call('service.query', [])
-      .pipe(untilDestroyed(this)).subscribe((services) => {
-        [
-          _.find(services, { service: ServiceName.Cifs }),
-          _.find(services, { service: ServiceName.Iscsi }),
-          _.find(services, { service: ServiceName.WebDav }),
-          _.find(services, { service: ServiceName.Nfs }),
-        ].forEach((service) => {
-          this.updateTableServiceStatus(service);
+      .pipe(untilDestroyed(this))
+      .subscribe((services) => {
+        this.servicesToCheck.forEach((service) => {
+          this.updateTableServiceStatus(_.find(services, { service }));
         });
+        this.subscribeToServiceUpdates();
+      });
+  }
+
+  subscribeToServiceUpdates(): void {
+    this.ws
+      .subscribe('service.query')
+      .pipe(
+        map((event) => event.fields),
+        filter((service) => this.servicesToCheck.includes(service.service)),
+        tap((service) => this.updateTableServiceStatus({ ...service, state: ServiceStatus.Loading })),
+        delay(300), /* delay to show spinner */
+        untilDestroyed(this),
+      )
+      .subscribe((service: Service) => {
+        this.updateTableServiceStatus(service);
       });
   }
 
@@ -446,9 +486,9 @@ export class SharesDashboardComponent implements AfterViewInit {
 
   showAddDialog(): void {
     const conf: DialogFormConfiguration = {
-      title: 'Add New Share',
-      message: 'Select the type of Share you want to add',
-      saveButtonText: 'Create',
+      title: this.translate.instant(T('Add New Share')),
+      message: this.translate.instant(T('Select the type of Share you want to add')),
+      saveButtonText: this.translate.instant(T('Create')),
       fieldConfig: [{
         type: 'radio',
         name: 'share_type',
@@ -533,7 +573,7 @@ export class SharesDashboardComponent implements AfterViewInit {
               if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
                 this.dialog.info(
                   this.translate.instant(T('Service failed to stop')),
-                  this.translate.instant('{service} service failed to stop.', { service: serviceNames.get(service.service) || service.service }),
+                  this.translate.instant('The {service} service failed to stop.', { service: serviceNames.get(service.service) || service.service }),
                 );
               }
               service.state = ServiceStatus.Running;
@@ -541,7 +581,7 @@ export class SharesDashboardComponent implements AfterViewInit {
               if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
                 this.dialog.info(
                   this.translate.instant(T('Service failed to start')),
-                  this.translate.instant('{service} service failed to start.', { service: serviceNames.get(service.service) || service.service }),
+                  this.translate.instant('The {service} service failed to start.', { service: serviceNames.get(service.service) || service.service }),
                 );
               }
               service.state = ServiceStatus.Stopped;
