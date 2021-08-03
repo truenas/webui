@@ -104,6 +104,7 @@ def the_user_edit_page_should_open(driver):
 @then('Change the users shell and click save')
 def change_the_users_shell_and_click_save(driver):
     """Change the users shell and click save."""
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
     element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)

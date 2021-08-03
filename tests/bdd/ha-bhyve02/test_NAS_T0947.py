@@ -96,7 +96,7 @@ def the_users_add_page_should_open(driver):
 @then('Fill in the following fields Full Name, Username, Password, Confirm Password and click Save')
 def fill_in_the_following_fields_full_name_username_password_confirm_password_and_click_save(driver):
     """Fill in the following fields Full Name, Username, Password, Confirm Password and click Save."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Full Name"]', 'clickable')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Full Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').send_keys('Eric Turgeon')
     driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').clear()
