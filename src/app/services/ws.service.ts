@@ -289,7 +289,7 @@ export class WebSocketService {
     observer.complete();
   }
 
-  login_token(token: string): Observable<boolean> {
+  loginToken(token: string): Observable<boolean> {
     return Observable.create((observer: Observer<boolean>) => {
       if (token) {
         this.call('auth.token', [token]).pipe(untilDestroyed(this)).subscribe((result) => {
@@ -304,7 +304,7 @@ export class WebSocketService {
     this.token = null;
   }
 
-  prepare_shutdown(): void {
+  prepareShutdown(): void {
     this.shuttingdown = true;
     this.clearCredentials();
   }

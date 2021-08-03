@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select/select';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { iXAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
 
 @Component({
   selector: 'toolbar-select',
@@ -25,7 +25,7 @@ import { iXAbstractObject } from 'app/core/classes/ix-abstract-object';
     </div>
   `,
 })
-export class ToolbarSelectComponent extends iXAbstractObject {
+export class ToolbarSelectComponent extends IxAbstractObject {
   @Input() config?: any;
   @Input() controller: Subject<any>;
   selectedValue: string;

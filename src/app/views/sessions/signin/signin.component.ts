@@ -201,7 +201,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     if (middleware_token) {
-      this.ws.login_token(middleware_token)
+      this.ws.loginToken(middleware_token)
         .pipe(untilDestroyed(this)).subscribe((result) => {
           this.loginCallback(result);
         });
@@ -218,7 +218,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
         this.ws.redirectUrl = sessionStorage.currentUrl;
       }
 
-      this.ws.login_token(this.ws.token)
+      this.ws.loginToken(this.ws.token)
         .pipe(untilDestroyed(this)).subscribe((result) => { this.loginCallback(result); });
     }
   }

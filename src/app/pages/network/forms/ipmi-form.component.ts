@@ -262,7 +262,7 @@ export class IPMIFromComponent implements FormConfiguration {
     this.loader.open();
     return call$.pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
-      this.dialog.Info(T('Settings saved.'), '', '300px', 'info', true);
+      this.dialog.info(T('Settings saved.'), '', '300px', 'info', true);
     }, (res) => {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityEdit, res);

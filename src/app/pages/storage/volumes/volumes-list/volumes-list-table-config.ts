@@ -25,6 +25,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -327,7 +328,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
     return actions;
   }
 
-  key_file_updater(file: any, parent: this): void {
+  keyFileUpdater(file: FormUploadComponent, parent: this): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
@@ -356,7 +357,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
           {
             type: 'upload',
             message: self.messageService,
-            updater: self.key_file_updater,
+            updater: self.keyFileUpdater,
             parent: self,
             hideButton: true,
             name: 'key',
@@ -429,7 +430,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
               entityDialog.dialogRef.close(true);
               self.parentVolumesListComponent.repaintMe();
               const unlockTr = self.translate.instant(' has been unlocked.');
-              self.dialogService.Info(T('Unlock'), row1.name + unlockTr, '300px', 'info', true);
+              self.dialogService.info(T('Unlock'), row1.name + unlockTr, '300px', 'info', true);
               done = true;
             }
           });
@@ -500,7 +501,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   if (res) {
                     dialogRef.close();
                     entityDialog.dialogRef.close();
-                    self.dialogService.Info(
+                    self.dialogService.info(
                       helptext.pool_options_dialog.dialog_saved_title,
                       self.translate.instant('Pool options for {poolName} successfully saved.', { poolName: row.name }),
                       '500px', 'info',
@@ -703,9 +704,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   const msg = self.translate.instant(helptext.exportSuccess);
                   const destroyed = self.translate.instant(helptext.destroyed);
                   if (!value.destroy) {
-                    self.dialogService.Info(helptext.exportDisconnect, msg + row1.name + "'", '500px', 'info');
+                    self.dialogService.info(helptext.exportDisconnect, msg + row1.name + "'", '500px', 'info');
                   } else {
-                    self.dialogService.Info(helptext.exportDisconnect, msg + row1.name + destroyed, '500px', 'info');
+                    self.dialogService.info(helptext.exportDisconnect, msg + row1.name + destroyed, '500px', 'info');
                   }
                   dialogRef.close(true);
                   self.parentVolumesListComponent.repaintMe();
@@ -807,7 +808,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     () => {
                       this.loader.close();
                       const msg = self.translate.instant('Stopping scrub on pool');
-                      this.dialogService.Info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>`, '300px', 'info', true);
+                      this.dialogService.info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>`, '300px', 'info', true);
                     },
                     (err) => {
                       this.loader.close();
@@ -834,7 +835,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   this.dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe((jobres: any) => {
                     this.dialogRef.close(false);
                     if (jobres.progress.percent == 100 && jobres.progress.description === 'Scrub finished') {
-                      this.dialogService.Info(
+                      this.dialogService.info(
                         this.translate.instant('Scrub Complete'),
                         this.translate.instant('Scrub complete on pool <i>{poolName}</i>.', { poolName: row1.name }),
                         '300px',
@@ -842,7 +843,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                         true,
                       );
                     } else {
-                      this.dialogService.Info(
+                      this.dialogService.info(
                         this.translate.instant('Scrub Stopped'),
                         this.translate.instant('Stopped the scrub on pool <i>{poolName}</i>.', { poolName: row1.name }),
                         '300px',
@@ -964,7 +965,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 this.loader.open();
                 this.ws.call('pool.upgrade', [rowData.id]).pipe(untilDestroyed(this, 'destroy')).subscribe(
                   () => {
-                    this.dialogService.Info(
+                    this.dialogService.info(
                       this.translate.instant('Upgraded'),
                       this.translate.instant('Successfully Upgraded {poolName}.', { poolName: row1.name }),
                       '500px',
@@ -1222,7 +1223,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
           };
           this.dialogService.dialogForm(this.dialogConf).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
             if (res) {
-              this.dialogService.Info(T('Create Snapshot'), T('Snapshot successfully taken.'), '500px', 'info');
+              this.dialogService.info(T('Create Snapshot'), T('Snapshot successfully taken.'), '500px', 'info');
             }
           });
         },
@@ -1240,7 +1241,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
             this.ws.call('pool.dataset.promote', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
               this.loader.close();
               // Showing info here because there is no feedback on list parent for this if promoted.
-              this.dialogService.Info(T('Promote Dataset'), T('Successfully Promoted ') + row1.id, '500px', 'info').pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
+              this.dialogService.info(T('Promote Dataset'), T('Successfully Promoted ') + row1.id, '500px', 'info').pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
                 this.parentVolumesListComponent.repaintMe();
               });
             }, (res) => {
@@ -1458,7 +1459,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     entityDialog.loader.open();
                     entityDialog.ws.call(method, payload).pipe(untilDestroyed(self, 'destroy')).subscribe(() => {
                       entityDialog.loader.close();
-                      self.dialogService.Info(
+                      self.dialogService.info(
                         helptext.encryption_options_dialog.dialog_saved_title,
                         self.translate.instant('Encryption options for {id} successfully saved.', { id: row.id }),
                         '500px',
@@ -1497,7 +1498,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     if (res) {
                       dialogRef.close();
                       entityDialog.dialogRef.close();
-                      self.dialogService.Info(
+                      self.dialogService.info(
                         helptext.encryption_options_dialog.dialog_saved_title,
                         self.translate.instant('Encryption options for {id} successfully saved.', { id: row.id }),
                         '500px',

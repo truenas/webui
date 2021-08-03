@@ -12,7 +12,7 @@ export class VmService {
     return this.ws.call('vm.query', [[['name', '=', vm]], { get: true }]);
   }
 
-  getBootloaderOptions(): Observable<any> {
+  getBootloaderOptions(): Observable<Choices> {
     return this.ws.call('vm.bootloader_options');
   }
 

@@ -376,7 +376,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
         fail_note += `<b>${res[i].disk}</b><br>${res[i].error}<br>`;
       }
     }
-    this.dialogService.Info(
+    this.dialogService.info(
       T('Manual Test Summary'),
       (hasSuccessNote ? success_note + '<br>' : '') + (hasFailNote ? fail_note : ''),
       '600px',

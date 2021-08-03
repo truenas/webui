@@ -1,6 +1,8 @@
 import { ElementRef } from '@angular/core';
 import * as d3 from 'd3';
+import { Application, Container } from 'pixi.js';
 import { Subject } from 'rxjs';
+import { EnclosureDisk } from 'app/core/classes/system-profiler';
 import { CoreEvent } from 'app/interfaces/events';
 import { Theme } from 'app/services/theme/theme.service';
 import { ChassisView } from './chassis-view';
@@ -18,19 +20,18 @@ export class VDevLabelsSVG {
   events$: Subject<CoreEvent>;
 
   protected svg: any; // Our d3 generated svg layer
-  protected mainStage: any; // WebGL Canvas
-  protected app: any;
+  protected mainStage: Container; // WebGL Canvas
+  protected app: Application;
   protected chassis: ChassisView; // The chassis we are labelling
   color: string;
   selectedDiskColor: string;
   highlightColor: string;
   highlightedDiskName: string;
-  selectedDisk: any;
+  selectedDisk: EnclosureDisk;
 
-  private textAreas: any;
   private trays: any = {};
 
-  constructor(chassis: ChassisView, app: any, theme: Theme, disk: any) {
+  constructor(chassis: ChassisView, app: Application, theme: Theme, disk: EnclosureDisk) {
     this.selectedDisk = disk;
     this.color = 'var(--cyan)';
     this.selectedDiskColor = 'var(--yellow)';
@@ -39,7 +40,7 @@ export class VDevLabelsSVG {
     this.onInit(chassis, app);
   }
 
-  onInit(chassis: ChassisView, app: any): void {
+  onInit(chassis: ChassisView, app: Application): void {
     this.chassis = chassis;
     this.app = app;
     this.mainStage = this.app.stage;
@@ -114,7 +115,7 @@ export class VDevLabelsSVG {
   }
 
   getParent(): HTMLElement {
-    return this.app.renderer.view.offsetParent;
+    return this.app.renderer.view.offsetParent as HTMLElement;
   }
 
   createVdevLabelTile(

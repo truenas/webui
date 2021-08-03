@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
@@ -159,7 +160,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   },
   ];
 
-  updater(file: any, parent: this): void {
+  updater(file: FormUploadComponent, parent: this): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
@@ -206,11 +207,11 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
 
   decryptDisks(stepper: any): void {
     if (this.devices_fg.status === 'INVALID') {
-      this.dialogService.Info(T('Disk Selection Required'), T('Select one or more disks to decrypt.'));
+      this.dialogService.info(T('Disk Selection Required'), T('Select one or more disks to decrypt.'));
       return;
     }
     if (!this.subs) {
-      this.dialogService.Info(T('Encryption Key Required'), T('Select a key before decrypting the disks.'));
+      this.dialogService.info(T('Encryption Key Required'), T('Select a key before decrypting the disks.'));
     }
     const formData: FormData = new FormData();
     const params = [this.devices_fg.value];

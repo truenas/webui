@@ -160,7 +160,7 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
                     value: false,
                     onChange: (valueChangeData: { event: MatCheckboxChange }) => {
                       if (valueChangeData.event.checked) {
-                        self.dialogService.Info('Following users will be deleted', usersInGroup.map((user, index) => {
+                        self.dialogService.info('Following users will be deleted', usersInGroup.map((user, index) => {
                           if (user.full_name && user.full_name.length) {
                             return (index + 1) + '. ' + user.username + ' (' + user.full_name + ')';
                           }

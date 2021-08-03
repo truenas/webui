@@ -29,7 +29,7 @@ export class NISComponent implements FormConfiguration {
       name: helptext.nis_custactions_clearcache_name,
       function: async () => {
         this.systemGeneralService.refreshDirServicesCache().pipe(untilDestroyed(this)).subscribe(() => {
-          this.dialogservice.Info(helptext.nis_custactions_clearcache_dialog_title,
+          this.dialogservice.info(helptext.nis_custactions_clearcache_dialog_title,
             helptext.nis_custactions_clearcache_dialog_message);
         });
       },

@@ -14,6 +14,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -242,7 +243,7 @@ export class GeneralSettingsComponent implements OnInit {
     this.modalService.open('slide-in-form', addComponent, id);
   }
 
-  doNTPDelete(server: any): void {
+  doNTPDelete(server: NtpServer): void {
     this.dialog.confirm({
       title: helptext.deleteServer.title,
       message: `${helptext.deleteServer.message} ${server.address}?`,
@@ -319,7 +320,7 @@ export class GeneralSettingsComponent implements OnInit {
     });
   }
 
-  updater(file: any, parent: any): void {
+  updater(file: FormUploadComponent, parent: this): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };

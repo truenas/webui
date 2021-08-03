@@ -32,3 +32,26 @@ export type VmStopParams = [
     force_after_timeout: boolean;
   },
 ];
+
+export type VmDisplayWebUriParams = [
+  /* id */ number,
+  /* domain */ string,
+  /* options */ {
+    devices_passwords: [
+      {
+        device_id: number;
+        password: string;
+      },
+    ];
+  }?,
+];
+
+export interface VmDisplayResponse {
+  error: unknown;
+  uri: string;
+}
+
+export type VmCloneParams = [
+  /* id */ number,
+  /* newName */ string?,
+];

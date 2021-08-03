@@ -411,7 +411,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
           placeholder: helptext_sharing_iscsi.auth_network.placeholder,
           tooltip: helptext_sharing_iscsi.auth_network.tooltip,
           hasErrors: false,
-          validation: [this.IPValidator('auth_network')],
+          validation: [this.ipValidator('auth_network')],
         },
       ],
       skip: false,
@@ -930,7 +930,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     }
   }
 
-  IPValidator(name: string): ValidatorFn {
+  ipValidator(name: string): ValidatorFn {
     const self = this;
     return function validIPs(control: FormControl) {
       const config = self.wizardConfig[2].fieldConfig.find((c) => c.name === name);

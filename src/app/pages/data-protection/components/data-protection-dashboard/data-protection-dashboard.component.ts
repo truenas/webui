@@ -597,7 +597,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               row.state = { state: JobState.Running };
               this.ws.call('replication.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
                 (jobId: number) => {
-                  this.dialog.Info(
+                  this.dialog.info(
                     T('Task started'),
                     T('Replication <i>') + row.name + T('</i> has started.'),
                     '500px',
@@ -686,7 +686,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               row.state = { state: JobState.Running };
               this.ws.call('cloudsync.sync', [row.id]).pipe(untilDestroyed(this)).subscribe(
                 (jobId: number) => {
-                  this.dialog.Info(
+                  this.dialog.info(
                     T('Task Started'),
                     T('Cloud sync <i>') + row.description + T('</i> has started.'),
                     '500px',
@@ -721,7 +721,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
               this.ws.call('cloudsync.abort', [row.id]).pipe(untilDestroyed(this)).subscribe(
                 () => {
-                  this.dialog.Info(
+                  this.dialog.info(
                     T('Task Stopped'),
                     T('Cloud sync <i>') + row.description + T('</i> stopped.'),
                     '500px',
@@ -752,7 +752,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
               this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).pipe(untilDestroyed(this)).subscribe(
                 (jobId: number) => {
-                  this.dialog.Info(
+                  this.dialog.info(
                     T('Task Started'),
                     T('Cloud sync <i>') + row.description + T('</i> has started.'),
                     '500px',
@@ -875,7 +875,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               row.state = { state: JobState.Running };
               this.ws.call('rsynctask.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
                 (jobId: number) => {
-                  this.dialog.Info(
+                  this.dialog.info(
                     T('Task Started'),
                     'Rsync task <i>' + row.remotehost + ' - ' + row.remotemodule + '</i> started.',
                     '500px',
@@ -930,7 +930,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         this.job.showLogs(row.job);
       }
     } else {
-      this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+      this.dialog.info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
     }
   }
 

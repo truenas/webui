@@ -108,7 +108,7 @@ import { S3Config, S3ConfigUpdate } from 'app/interfaces/s3-config.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import {
-  SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTest,
+  SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTest, SmartTestResults,
 } from 'app/interfaces/smart-test.interface';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
@@ -128,11 +128,16 @@ import { Tunable, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig } from 'app/interfaces/ups-config.interface';
 import { User } from 'app/interfaces/user.interface';
-import { VirtualMachine, VmStopParams } from 'app/interfaces/virtual-machine.interface';
+import {
+  VirtualMachine, VmCloneParams,
+  VmDisplayWebUriParams,
+  VmStopParams,
+} from 'app/interfaces/virtual-machine.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 import { WebdavConfig, WebdavConfigUpdate } from 'app/interfaces/webdav-config.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { PoolRemoveParams } from './pool-remove.interface';
 
 /**
  * API definitions for `call` and `job` methods.
@@ -553,7 +558,7 @@ export type ApiDirectory = {
   'pool.dataset.export_key': { params: any; response: any };
   'pool.offline': { params: any; response: any };
   'pool.online': { params: any; response: any };
-  'pool.remove': { params: any; response: any };
+  'pool.remove': { params: PoolRemoveParams; response: any };
   'pool.detach': { params: any; response: any };
   'pool.export': { params: PoolExportParams; response: void };
   'pool.passphrase': { params: any; response: any };
@@ -641,7 +646,7 @@ export type ApiDirectory = {
   'system.info': { params: void; response: SystemInfo };
   'system.advanced.config': { params: void; response: AdvancedConfig };
   'system.general.update': { params: any; response: any };
-  'system.ntpserver.delete': { params: any; response: any };
+  'system.ntpserver.delete': { params: [/* id */ number]; response: any };
   'system.ntpserver.query': { params: QueryParams<NtpServer>; response: NtpServer[] };
   'system.ntpserver.create': { params: any; response: any };
   'system.ntpserver.update': { params: any; response: any };
@@ -672,7 +677,7 @@ export type ApiDirectory = {
   'smart.test.manual_test': { params: [SmartManualTestParams[]]; response: any };
   'smart.test.query': { params: QueryParams<SmartTest>; response: SmartTest[] };
   'smart.test.create': { params: any; response: any };
-  'smart.test.results': { params: any; response: any };
+  'smart.test.results': { params: QueryParams<SmartTestResults>; response: SmartTestResults[] };
   'smart.test.update': { params: any; response: any };
   'smart.test.delete': { params: any; response: any };
 
@@ -744,13 +749,13 @@ export type ApiDirectory = {
   // Vm
   'vm.query': { params: QueryParams<VirtualMachine, { get: boolean }>; response: VirtualMachine[] };
   'vm.cpu_model_choices': { params: void; response: Choices };
-  'vm.bootloader_options': { params: any; response: any };
+  'vm.bootloader_options': { params: void; response: Choices };
   'vm.device.nic_attach_choices': { params: void; response: Choices };
   'vm.device.bind_choices': { params: void; response: Choices };
   'vm.create': { params: any; response: any };
   'vm.delete': { params: any; response: any };
   'vm.resolution_choices': { params: void; response: Choices };
-  'vm.get_display_web_uri': { params: any; response: any };
+  'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: any };
   'vm.device.passthrough_device_choices': { params: void; response: Choices };
   'vm.device.create': { params: any; response: any };
   'vm.random_mac': { params: void; response: string };
@@ -760,12 +765,12 @@ export type ApiDirectory = {
   'vm.device.update': { params: any; response: any };
   'vm.port_wizard': { params: any; response: any };
   'vm.get_available_memory': { params: void; response: number };
-  'vm.clone': { params: any; response: any };
+  'vm.clone': { params: VmCloneParams; response: boolean };
   'vm.update': { params: any; response: any };
-  'vm.poweroff': { params: any; response: any };
-  'vm.restart': { params: [/* id */ number]; response: any };
-  'vm.get_display_devices': { params: any; response: any };
-  'vm.start': { params: any; response: any };
+  'vm.poweroff': { params: [/* id */ number]; response: void };
+  'vm.restart': { params: [/* id */ number]; response: void };
+  'vm.get_display_devices': { params: [/* id */ number]; response: any };
+  'vm.start': { params: [/* id */ number]; response: void };
   'vm.get_vmemory_in_use': { params: any; response: any };
 
   // Vmware

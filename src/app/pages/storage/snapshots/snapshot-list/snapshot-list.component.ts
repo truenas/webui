@@ -376,7 +376,7 @@ export class SnapshotListComponent implements EntityTableConfig {
 
         this.dialogService.errorReport(errorTitle, '', errorMessage);
       } else {
-        this.dialogService.Info(
+        this.dialogService.info(
           this.translate.instant('Deleted {n, plural, one {# snapshot} other {# snapshots}}', { n: jobSuccess.length }),
           '',
           '320px',

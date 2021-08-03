@@ -58,7 +58,7 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
   imagePlaceholder = appImagePlaceholder;
 
   emptyPageConf: EmptyConfig = {
-    type: EmptyType.loading,
+    type: EmptyType.Loading,
     large: true,
     title: helptext.message.loading,
     button: {
@@ -178,20 +178,20 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
     let message;
 
     switch (type) {
-      case EmptyType.loading:
+      case EmptyType.Loading:
         title = helptext.message.loading;
         break;
-      case EmptyType.first_use:
+      case EmptyType.FirstUse:
         title = helptext.message.not_configured;
         break;
-      case EmptyType.no_search_results:
+      case EmptyType.NoSearchResults:
         title = helptext.message.no_search_result;
         break;
-      case EmptyType.no_page_data:
+      case EmptyType.NoPageData:
         title = helptext.message.no_installed;
         message = helptext.message.no_installed_message;
         break;
-      case EmptyType.errors:
+      case EmptyType.Errors:
         title = helptext.message.not_running;
         break;
     }
@@ -239,7 +239,7 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
   refreshChartReleases(): void {
     this.chartItems = {};
     this.filerChartItems();
-    this.showLoadStatus(EmptyType.loading);
+    this.showLoadStatus(EmptyType.Loading);
     setTimeout(() => {
       this.updateChartReleases();
     }, 1000);
@@ -249,12 +249,12 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
     this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((res) => {
       if (!res.pool) {
         this.chartItems = {};
-        this.showLoadStatus(EmptyType.first_use);
+        this.showLoadStatus(EmptyType.FirstUse);
       } else {
         this.appService.getKubernetesServiceStarted().pipe(untilDestroyed(this)).subscribe((res) => {
           if (!res) {
             this.chartItems = {};
-            this.showLoadStatus(EmptyType.errors);
+            this.showLoadStatus(EmptyType.Errors);
           } else {
             this.appService.getChartReleases().pipe(untilDestroyed(this)).subscribe((charts) => {
               this.chartItems = {};
@@ -468,7 +468,7 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
         });
 
         this.translate.get(helptext.bulkActions.finished).pipe(untilDestroyed(this)).subscribe((msg) => {
-          this.dialogService.Info(helptext.bulkActions.success, msg,
+          this.dialogService.info(helptext.bulkActions.success, msg,
             '500px', 'info', true);
         });
       }
@@ -552,9 +552,9 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
 
     if (this.filteredChartItems.length == 0) {
       if (this.filterString) {
-        this.showLoadStatus(EmptyType.no_search_results);
+        this.showLoadStatus(EmptyType.NoSearchResults);
       } else {
-        this.showLoadStatus(EmptyType.no_page_data);
+        this.showLoadStatus(EmptyType.NoPageData);
       }
     }
 

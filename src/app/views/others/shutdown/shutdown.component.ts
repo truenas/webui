@@ -46,7 +46,7 @@ export class ShutdownComponent implements OnInit {
           });
       },
       () => {
-        this.ws.prepare_shutdown();
+        this.ws.prepareShutdown();
       },
     );
     // fade to black after 60 sec on shut down
