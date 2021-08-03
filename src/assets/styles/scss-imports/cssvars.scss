@@ -114,3 +114,22 @@ $md-accent: (
     A700 : #000,
   )
 );
+
+$breakpoint-xs: 600px;
+$breakpoint-sm: 960px;
+$breakpoint-md: 1280px;
+$breakpoint-lg: 1920px;
+
+$media-xs: 'screen and (max-width: #{$breakpoint-xs - 1})';
+$media-sm: 'screen and (min-width: #{$breakpoint-xs}) and (max-width: #{$breakpoint-sm - 1})';
+$media-md: 'screen and (min-width: #{$breakpoint-sm}) and (max-width: #{$breakpoint-md - 1})';
+$media-lg: 'screen and (min-width: #{$breakpoint-md}) and (max-width: #{$breakpoint-lg - 1})';
+$media-xl: 'screen and (min-width: #{$breakpoint-lg})';
+$media-lt-sm: 'screen and (max-width: #{$breakpoint-xs - 1})';
+$media-lt-md: 'screen and (max-width: #{$breakpoint-sm - 1})';
+$media-lt-lg: 'screen and (max-width: #{$breakpoint-md - 1})';
+$media-lt-xl: 'screen and (max-width: #{$breakpoint-lg - 1})';
+$media-gt-xs: 'screen and (min-width: #{$breakpoint-xs})';
+$media-gt-sm: 'screen and (min-width: #{$breakpoint-sm})';
+$media-gt-md: 'screen and (min-width: #{$breakpoint-md})';
+$media-gt-lg: 'screen and (min-width: #{$breakpoint-lg})';

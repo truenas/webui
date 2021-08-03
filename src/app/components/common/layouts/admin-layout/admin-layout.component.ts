@@ -261,10 +261,15 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   toggleMenu(menuInfo?: [string, SubMenuItem[]]): void {
     if (this.isOpen && !menuInfo || this.isOpen && menuInfo[0] === this.menuName) {
       this.isOpen = false;
+      this.subs = [];
     } else if (menuInfo) {
       this.menuName = menuInfo[0];
       this.subs = menuInfo[1];
       this.isOpen = true;
     }
+  }
+
+  onMenuClosed(): void {
+    this.isOpen = false;
   }
 }
