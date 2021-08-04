@@ -79,11 +79,6 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
       name: 'rollback_snapshot',
       placeholder: helptext.charts.rollback_dialog.snapshot.placeholder,
       tooltip: helptext.charts.rollback_dialog.snapshot.tooltip,
-    }, {
-      type: 'checkbox',
-      name: 'force',
-      placeholder: helptext.charts.rollback_dialog.force.placeholder,
-      tooltip: helptext.charts.rollback_dialog.force.tooltip,
     }],
     method_ws: 'chart.release.rollback',
     saveButtonText: helptext.charts.rollback_dialog.action,
@@ -361,6 +356,7 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
         this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name]);
         this.dialogRef.componentInstance.submit();
         this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          this.refreshChartReleases();
           this.dialogService.closeAllDialogs();
         });
         this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
@@ -382,19 +378,22 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
     const payload = {
       item_version: form['item_version'].value,
       rollback_snapshot: form['rollback_snapshot'].value,
-      force: form['force'].value,
     };
     self.dialogRef = self.mdDialog.open(EntityJobComponent, {
       data: {
-        title: (
-          helptext.charts.rollback_dialog.job),
+        title: helptext.charts.rollback_dialog.job,
       },
       disableClose: true,
     });
     self.dialogRef.componentInstance.setCall('chart.release.rollback', [self.rollbackChartName, payload]);
     self.dialogRef.componentInstance.submit();
-    self.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+    self.dialogRef.componentInstance.success.pipe(untilDestroyed(self)).subscribe(() => {
+      self.refreshChartReleases();
       self.dialogService.closeAllDialogs();
+    });
+    self.dialogRef.componentInstance.failure.pipe(untilDestroyed(self)).subscribe((error) => {
+      self.dialogService.closeAllDialogs();
+      new EntityUtils().handleWSError(self, error, self.dialogService);
     });
   }
 
@@ -476,8 +475,7 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
           if (res) {
             this.dialogRef = this.mdDialog.open(EntityJobComponent, {
               data: {
-                title: (
-                  helptext.charts.delete_dialog.job),
+                title: helptext.charts.delete_dialog.job,
               },
               disableClose: true,
             });
