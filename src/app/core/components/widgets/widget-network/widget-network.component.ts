@@ -12,6 +12,7 @@ import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interfac
 import { CoreEvent } from 'app/interfaces/events';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
+import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { TableService } from 'app/pages/common/entity/table/table.service';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { WebSocketService } from 'app/services';
@@ -41,6 +42,13 @@ interface NicInfoMap {
 export class WidgetNetworkComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
   @Input() stats: any;
   @Input() nics: BaseNetworkInterface[];
+
+  emptyTypes = EmptyType;
+  emptyChartConf: EmptyConfig = {
+    type: EmptyType.Loading,
+    large: false,
+    title: T('Loading'),
+  };
 
   private utils: WidgetUtils;
   LinkState = LinkState;
@@ -313,7 +321,21 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
         };
 
         this.nicInfoMap[nic.name].chartData = chartData;
+      },
+      () => {
+        // Handle the error
+        const errorString = T('Error getting chart data');
+        this.chartDataError(errorString);
       });
     });
+  }
+
+  chartDataError(err: string): void {
+    this.emptyChartConf = {
+      type: EmptyType.Errors,
+      large: false,
+      compact: true,
+      title: err,
+    };
   }
 }
