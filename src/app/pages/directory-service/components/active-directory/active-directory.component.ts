@@ -380,10 +380,6 @@ export class ActiveDirectoryComponent implements FormConfiguration {
 
   setBasicMode(basic_mode: boolean): void {
     this.isBasicMode = basic_mode;
-    _.find(this.fieldSets, { class: 'adv_row' }).label = !basic_mode;
-    _.find(this.fieldSets, { class: 'adv_column1' }).label = !basic_mode;
-    _.find(this.fieldSets, { class: 'adv_column2' }).label = !basic_mode;
-    _.find(this.fieldSets, { class: 'divider1' }).divider = !basic_mode;
   }
 
   beforeSubmit(data: any): void {
@@ -455,7 +451,8 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogRef.close();
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      new EntityUtils().handleWSError(this, error, this.dialogservice);
       this.dialogRef.close();
     });
   }
