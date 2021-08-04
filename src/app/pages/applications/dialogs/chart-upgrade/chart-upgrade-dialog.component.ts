@@ -47,7 +47,10 @@ export class ChartUpgradeDialog {
     if (this.dialogConfig.upgradeSummary.available_versions_for_upgrade) {
       this.dialogConfig.upgradeSummary.available_versions_for_upgrade.forEach((availableVersion) => {
         if (!(availableVersion.version in this.versionOptions)) {
-          this.versionOptions[availableVersion.version] = availableVersion;
+          this.versionOptions[availableVersion.version] = {
+            version: availableVersion.version,
+            humanVersion: availableVersion.human_version,
+          };
         }
       });
     }
