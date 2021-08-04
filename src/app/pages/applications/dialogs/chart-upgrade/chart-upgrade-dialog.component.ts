@@ -35,30 +35,21 @@ export class ChartUpgradeDialog {
   ) {
     this.dialogConfig = data;
 
-    if (!this.dialogConfig.upgradeSummary.item_update_available
-      && this.dialogConfig.upgradeSummary.image_update_available) {
-      this.versionOptions[this.dialogConfig.appInfo.version] = {
-        version: this.dialogConfig.appInfo.version,
-        human_version: this.dialogConfig.appInfo.human_version,
-      };
-    } else if (this.dialogConfig.upgradeSummary.available_versions_for_upgrade) {
-      this.dialogConfig.upgradeSummary.available_versions_for_upgrade.forEach((availableVersion) => {
-        this.versionOptions[availableVersion.version] = availableVersion;
-      });
-    } else {
-      this.versionOptions[this.dialogConfig.appInfo.version] = {
-        version: this.dialogConfig.appInfo.version,
-        human_version: this.dialogConfig.appInfo.human_version,
-      };
-    }
+    this.versionOptions[this.dialogConfig.upgradeSummary.latest_version] = {
+      version: this.dialogConfig.upgradeSummary.latest_version,
+      humanVersion: this.dialogConfig.upgradeSummary.latest_human_version,
+      changelog: this.dialogConfig.upgradeSummary.changelog,
+      containerImagesToUpdate: this.dialogConfig.upgradeSummary.container_images_to_update,
+      itemUpdateAvailable: this.dialogConfig.upgradeSummary.item_update_available,
+      fetched: true,
+    };
 
-    for (const key in this.versionOptions) {
-      if (key == this.dialogConfig.upgradeSummary.latest_version) {
-        this.versionOptions[key]['changelog'] = this.dialogConfig.upgradeSummary.changelog;
-        this.versionOptions[key]['containerImagesToUpdate'] = this.dialogConfig.upgradeSummary.container_images_to_update;
-        this.versionOptions[key]['fetched'] = true;
-        break;
-      }
+    if (this.dialogConfig.upgradeSummary.available_versions_for_upgrade) {
+      this.dialogConfig.upgradeSummary.available_versions_for_upgrade.forEach((availableVersion) => {
+        if (!(availableVersion.version in this.versionOptions)) {
+          this.versionOptions[availableVersion.version] = availableVersion;
+        }
+      });
     }
 
     this.selectedVersionKey = Object.keys(this.versionOptions)[0];
@@ -79,6 +70,7 @@ export class ChartUpgradeDialog {
           this.appLoaderService.close();
           this.selectedVersion.changelog = res.changelog;
           this.selectedVersion.containerImagesToUpdate = res.container_images_to_update;
+          this.selectedVersion.itemUpdateAvailable = res.item_update_available;
           this.selectedVersion.fetched = true;
         },
         (err) => {
