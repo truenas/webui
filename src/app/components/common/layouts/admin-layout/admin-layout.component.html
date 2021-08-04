@@ -1,6 +1,6 @@
 <mat-sidenav-container class="app-side-nav-container" fxLayout="row" ngClass.xs="xs" ngClass.sm="sm" ngClass.md="md" ngClass.lg="lg" ngClass.xl="xl">
   <!-- Main side navigation -->
-  <mat-sidenav fxFlex="sidenavWidth" #sidenav [opened]="isSidenavOpen" [mode]="sidenavMode" class="sidebar-panel not-alerts" >
+  <mat-sidenav fxFlex="sidenavWidth" #sidenav [opened]="isSidenavOpen" [mode]="sidenavMode" (closedStart)="onMenuClosed()" class="sidebar-panel not-alerts" >
     <div id="scroll-area" class="navigation-hold" fxLayout="column">
       <div *ngFor="let theme of freenasThemes">
         <div *ngIf="theme.name == currentTheme" ix-auto ix-auto-type="button" ix-auto-identifier="logo">
@@ -41,6 +41,11 @@
       </div>
 
       <navigation (menuToggled)="toggleMenu($event)" (menuClosed)="toggleMenu()"></navigation>
+
+      <div class="slidein-nav slidein-nav-sm" [class.slidein-open]="isOpen">
+        <app-secondary-menu [subMenuItems]="subs" [menuName]="menuName" (toggleMenu)="toggleMenu()"></app-secondary-menu>
+      </div>
+
       <div class="sidenav-copyright-txt" *ngIf="!isSidenavCollapsed">
         <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
         <div>TrueNAS {{product_type}}®</div>
@@ -56,26 +61,17 @@
       </div>
     </div>
   </mat-sidenav>
+
   <mat-sidenav-content fxFlex="calc(100% - {{sidenavWidth}})" class="fn-maincontent" [style.margin-left]="sidenavWidth">
     <!-- Top Bar -->
     <!-- Template reference variables of Left sidebar and Right notification is supplied -->
     <!-- Listens language change event -->
     <topbar [sidenav]="sidenav" [notificPanel]="notificationPanel"></topbar>
 
-    <!-- Slide-in menu and overlay -->
-    <div class="slidein-nav" [ngClass]="{'slidein-open' : isOpen}">
-      <mat-list class="" role="list">
-        <ng-container *ngFor="let subItem of subs; let j = index">
-          <mat-list-item *ngIf="!subItem.disabled" routerLinkActive="selected" (click)="toggleMenu()"
-          class="sidebar-list-item slide-in-nav-item" role="listitem"
-            ix-auto ix-auto-type="option" ix-auto-identifier="{{subItem.name}}">
-            <a [routerLink]="['/', menuName, subItem.state]" id="{{i}}-{{j}}" *ngIf="!subItem.disabled" class="slidein-nav-link">{{subItem.name | translate}}</a>
-        </mat-list-item>
-        </ng-container>
-      </mat-list>
+    <div class="slidein-nav slidein-nav-md" [class.slidein-open]="isOpen">
+      <app-secondary-menu [subMenuItems]="subs" [menuName]="menuName" (toggleMenu)="toggleMenu()"></app-secondary-menu>
     </div>
-    <div class="overlay" [ngClass]="{'isdark' : isOpen}" (click)="toggleMenu()"></div>
-    <!-- end slide-in -->
+    <div class="overlay" [class.isdark]="isOpen" (click)="toggleMenu()"></div>
 
     <!-- App content -->
     <div class="rightside-content-hold" [ngClass]="{'has-footer':isShowFooterConsole}">

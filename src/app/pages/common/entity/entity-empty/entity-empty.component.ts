@@ -13,6 +13,7 @@ export enum EmptyType {
 export interface EmptyConfig {
   type: EmptyType;
   large: boolean;
+  compact?: boolean;
   title: string;
   message?: string;
   icon?: string;
@@ -28,7 +29,7 @@ export interface EmptyConfig {
 })
 
 export class EntityEmptyComponent {
-  @Input('conf') conf: any;
+  @Input('conf') conf: EmptyConfig;
 
   constructor(
     protected ws: WebSocketService,
