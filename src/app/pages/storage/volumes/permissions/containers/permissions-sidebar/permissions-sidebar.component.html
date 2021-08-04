@@ -3,7 +3,7 @@
     <div class="sidebar-title">{{ 'Dataset Permissions' | translate }}</div>
 
     <a
-      *ngIf="acl"
+      *ngIf="canEditPermissions"
       class="action"
       [attr.title]="'Edit permissions' | translate"
       [routerLink]="editPermissionsUrl"

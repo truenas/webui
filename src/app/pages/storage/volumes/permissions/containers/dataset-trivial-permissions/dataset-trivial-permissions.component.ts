@@ -29,6 +29,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
   protected updateCall: 'pool.dataset.permission' = 'pool.dataset.permission';
 
   datasetPath: string;
+  aclType: AclType;
 
   protected datasetId: string;
   formGroup: FormGroup;
@@ -132,22 +133,28 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
       id: 'cancel',
       name: helptext.acl_manager_button,
       function: () => {
-        this.ws.call('filesystem.getacl', [this.datasetPath]).pipe(untilDestroyed(this)).subscribe((acl) => {
-          if (acl.acltype === AclType.Posix1e) {
-            this.router.navigate(new Array('/').concat([
-              'storage', 'id', this.datasetId.split('/')[0], 'dataset',
-              'posix-acl', this.datasetId,
-            ]));
-          } else {
-            this.router.navigate(new Array('/').concat([
-              'storage', 'id', this.datasetId.split('/')[0], 'dataset',
-              'acl', this.datasetId,
-            ]));
-          }
-        });
+        if (this.aclType === AclType.Posix1e) {
+          this.router.navigate(new Array('/').concat([
+            'storage', 'id', this.datasetId.split('/')[0], 'dataset',
+            'posix-acl', this.datasetId,
+          ]));
+        } else {
+          this.router.navigate(new Array('/').concat([
+            'storage', 'id', this.datasetId.split('/')[0], 'dataset',
+            'acl', this.datasetId,
+          ]));
+        }
       },
     },
   ];
+
+  isCustActionVisible(action: string): boolean {
+    if (action !== 'cancel') {
+      return true;
+    }
+
+    return this.aclType !== AclType.Off;
+  }
 
   protected datasetMode: string;
 
@@ -166,6 +173,10 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.datasetId = params['pk'];
       this.datasetPath = '/mnt/' + this.datasetId;
+    });
+
+    this.ws.call('pool.dataset.query', [[['id', '=', this.datasetId]]]).pipe(untilDestroyed(this)).subscribe((dataset) => {
+      this.aclType = dataset[0].acltype.value as AclType;
     });
 
     this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
