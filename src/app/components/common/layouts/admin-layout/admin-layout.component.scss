@@ -96,16 +96,16 @@ jw-modal {
 .slidein-nav {
   z-index: 100;
 
-  &.slidein-nav-xs {
-    @media #{$media-gt-xs} {
+  &.slidein-nav-sm {
+    @media #{$media-gt-sm} {
       display: none;
     }
   }
 
-  &.slidein-nav-sm {
+  &.slidein-nav-md {
     display: block;
 
-    @media #{$media-lt-sm} {
+    @media #{$media-lt-md} {
       display: none;
     }
   }

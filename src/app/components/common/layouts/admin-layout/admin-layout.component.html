@@ -42,7 +42,7 @@
 
       <navigation (menuToggled)="toggleMenu($event)" (menuClosed)="toggleMenu()"></navigation>
 
-      <div class="slidein-nav slidein-nav-xs" [class.slidein-open]="isOpen">
+      <div class="slidein-nav slidein-nav-sm" [class.slidein-open]="isOpen">
         <app-secondary-menu [subMenuItems]="subs" [menuName]="menuName" (toggleMenu)="toggleMenu()"></app-secondary-menu>
       </div>
 
@@ -68,7 +68,7 @@
     <!-- Listens language change event -->
     <topbar [sidenav]="sidenav" [notificPanel]="notificationPanel"></topbar>
 
-    <div class="slidein-nav slidein-nav-sm" [class.slidein-open]="isOpen">
+    <div class="slidein-nav slidein-nav-md" [class.slidein-open]="isOpen">
       <app-secondary-menu [subMenuItems]="subs" [menuName]="menuName" (toggleMenu)="toggleMenu()"></app-secondary-menu>
     </div>
     <div class="overlay" [class.isdark]="isOpen" (click)="toggleMenu()"></div>
