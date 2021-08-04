@@ -144,14 +144,14 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     this.entityList = entityList;
     this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
       const changedRow = (this.entityList.rows as VirtualMachineRow[]).find((o) => o.id === event.id);
-      if (event.fields.state === ServiceStatus.Running) {
+      if (event.fields.status.state === ServiceStatus.Running) {
         changedRow.state = ServiceStatus.Running;
-        changedRow.status.state = ServiceStatus.Running;
-        changedRow.status.domain_state = event.fields.state;
+        changedRow.status.state = event.fields.status.state;
+        changedRow.status.domain_state = event.fields.status.domain_state;
       } else {
         changedRow.state = ServiceStatus.Stopped;
-        changedRow.status.state = ServiceStatus.Stopped;
-        changedRow.status.domain_state = event.fields.state;
+        changedRow.status.state = event.fields.status.state;
+        changedRow.status.domain_state = event.fields.status.domain_state;
       }
     });
   }
@@ -292,7 +292,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
           this.updateRows([row]);
         }
         this.dialogRef.close(false);
-        this.dialogService.Info(T('Finished'), T('If ' + row.name + T(' is still running, \
+        this.dialogService.info(T('Finished'), T('If ' + row.name + T(' is still running, \
  the Guest OS did not respond as expected. It is possible to use <i>Power Off</i> or the <i>Force Stop \
  After Timeout</i> option to stop the VM.')), '450px', 'info', true);
         this.checkMemory();
@@ -328,21 +328,12 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     }
   }
 
-  updateRows(rows: VirtualMachineRow[]): Promise<boolean> {
+  updateRows(rows: VirtualMachineRow[]): Promise<VirtualMachineRow[]> {
     return new Promise((resolve, reject) => {
       this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe(
         (res) => {
-          for (const row of rows) {
-            const targetIndex = _.findIndex(res, (o) => o['id'] === row.id);
-            if (targetIndex === -1) {
-              reject(false);
-            }
-            for (const i in row) {
-              (row[i as keyof VirtualMachineRow] as any) = res[targetIndex][i as keyof VirtualMachine];
-            }
-          }
-          this.resourceTransformIncomingRestData(rows as any);
-          resolve(true);
+          rows = this.resourceTransformIncomingRestData(res);
+          resolve(rows);
         },
         (err) => {
           new EntityUtils().handleWSError(this, err, this.dialogService);
@@ -353,7 +344,6 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   onCheckboxChange(row: VirtualMachineRow): void {
-    row.autostart = !row.autostart;
     this.doRowAction(row, this.wsMethods.update, [row.id, { autostart: row.autostart }]);
   }
 
@@ -507,7 +497,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
               ).pipe(untilDestroyed(this)).subscribe((web_uri_res: { [displayId: number]: DisplayWebUri }) => {
                 this.loader.close();
                 if (web_uri_res[display_devices_res[0].id].error) {
-                  return this.dialogService.Info('Error', web_uri_res[display_devices_res[0].id].error);
+                  return this.dialogService.info('Error', web_uri_res[display_devices_res[0].id].error);
                 }
                 window.open(web_uri_res[display_devices_res[0].id].uri, '_blank');
               }, (err) => {
@@ -547,7 +537,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
                   ).pipe(untilDestroyed(this)).subscribe((web_uris_res: { [displayId: number]: DisplayWebUri }) => {
                     this.loader.close();
                     if (web_uris_res[display_device.id].error) {
-                      return this.dialogService.Info('Error', web_uris_res[display_device.id].error);
+                      return this.dialogService.info('Error', web_uris_res[display_device.id].error);
                     }
                     window.open(web_uris_res[display_device.id].uri, '_blank');
                   }, (err) => {

@@ -4,6 +4,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -23,7 +25,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
   editCall: 'iscsi.targetextent.update' = 'iscsi.targetextent.update';
   route_success: string[] = ['sharing', 'iscsi', 'associatedtarget'];
   isEntity = true;
-  customFilter: any[] = [[['id', '=']]];
+  customFilter: [[Partial<QueryFilter<IscsiTargetExtent>>]] = [[['id', '=']]];
 
   fieldSets: FieldSet[] = [
     {

@@ -82,7 +82,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogRef.close(true);
-      this.dialogService.Info(helptext_system_bootenv.attach_dialog.title,
+      this.dialogService.info(helptext_system_bootenv.attach_dialog.title,
         `<i>${entityForm.dev}</i> ${helptext_system_bootenv.attach_dialog.message}`, '300px', 'info', true)
         .pipe(untilDestroyed(this)).subscribe(() => {
           this.router.navigate(

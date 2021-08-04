@@ -411,7 +411,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
   formGroup: FormGroup;
   error: string;
-  pk: any;
+  pk: number;
   isNew = false;
   protected data: any;
 
@@ -614,7 +614,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       });
     });
 
-    this.formGroup.get('folder_source').valueChanges.pipe(untilDestroyed(this)).subscribe((values: any) => {
+    this.formGroup.get('folder_source').valueChanges.pipe(untilDestroyed(this)).subscribe((values: string | string[]) => {
       if (!values) {
         return;
       }
@@ -699,7 +699,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
     this.folder_field_destination = this.fieldSets.config('folder_destination');
     this.folder_field_source = this.fieldSets.config('folder_source');
-    this.formGroup.controls['credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.formGroup.controls['credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: number | typeof NULL_VALUE) => {
       this.setDisabled('bucket', true, true);
       this.setDisabled('bucket_input', true, true);
       // reset folder tree view
@@ -859,7 +859,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       }))
       .pipe(filter(() => this.formGroup.get('transfer_mode').value !== TransferMode.Copy))
       .pipe(untilDestroyed(this)).subscribe(() => {
-        this.dialog.Info(helptext.resetTransferModeDialog.title, helptext.resetTransferModeDialog.content, '500px', 'info', true);
+        this.dialog.info(helptext.resetTransferModeDialog.title, helptext.resetTransferModeDialog.content, '500px', 'info', true);
         this.formGroup.get('transfer_mode').setValue(TransferMode.Copy);
       });
 
@@ -1040,7 +1040,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       });
     } else {
       this.loader.open();
-      this.ws.call(this.editCall, [parseInt(this.pk, 10), value]).pipe(untilDestroyed(this)).subscribe(
+      this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
         () => {
           this.loader.close();
           this.modalService.close('slide-in-form');

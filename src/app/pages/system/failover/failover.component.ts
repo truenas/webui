@@ -59,7 +59,7 @@ export class FailoverComponent implements FormConfiguration {
               ds.componentInstance.method, ds.componentInstance.data,
             ).pipe(untilDestroyed(this)).subscribe(() => {
               this.load.close();
-              this.dialog.Info(helptext_system_failover.confirm_dialogs.sync_title,
+              this.dialog.info(helptext_system_failover.confirm_dialogs.sync_title,
                 helptext_system_failover.confirm_dialogs.sync_to_message, '', 'info', true);
             }, (err) => {
               this.load.close();
@@ -80,7 +80,7 @@ export class FailoverComponent implements FormConfiguration {
             this.load.open();
             this.ws.call('failover.sync_from_peer').pipe(untilDestroyed(this)).subscribe(() => {
               this.load.close();
-              this.dialog.Info(helptext_system_failover.confirm_dialogs.sync_title,
+              this.dialog.info(helptext_system_failover.confirm_dialogs.sync_title,
                 helptext_system_failover.confirm_dialogs.sync_from_message, '', 'info', true);
             }, (err) => {
               this.load.close();
@@ -172,7 +172,7 @@ export class FailoverComponent implements FormConfiguration {
     return this.ws.call('failover.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.alreadyDisabled = body['disabled'];
       this.load.close();
-      this.dialog.Info(T('Settings saved.'), '', '300px', 'info', true).pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialog.info(T('Settings saved.'), '', '300px', 'info', true).pipe(untilDestroyed(this)).subscribe(() => {
         if (body.disabled && !body.master) {
           this.ws.logout();
         }

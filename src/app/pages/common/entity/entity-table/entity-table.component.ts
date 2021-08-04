@@ -78,7 +78,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
   displayedColumns: string[] = [];
   firstUse = true;
   emptyTableConf: EmptyConfig = {
-    type: EmptyType.loading,
+    type: EmptyType.Loading,
     large: true,
     title: this.title,
   };
@@ -389,10 +389,10 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
       this.isTableEmpty = true;
       this.configureEmptyTable(
         this.dataSource.filter
-          ? EmptyType.no_search_results
+          ? EmptyType.NoSearchResults
           : this.firstUse
-            ? EmptyType.first_use
-            : EmptyType.no_page_data,
+            ? EmptyType.FirstUse
+            : EmptyType.NoPageData,
       );
     }
 
@@ -411,15 +411,15 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     let message = '';
     let messagePreset = false;
     switch (emptyType) {
-      case EmptyType.loading:
+      case EmptyType.Loading:
         this.emptyTableConf = {
-          type: EmptyType.loading,
+          type: EmptyType.Loading,
           large: true,
           title: this.title,
         };
         break;
 
-      case EmptyType.no_search_results:
+      case EmptyType.NoSearchResults:
         title = T('No Search Results.');
         message = T('Your query didn\'t return any results. Please try again.');
         if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.no_search_results) {
@@ -427,14 +427,14 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
           message = this.conf.emptyTableConfigMessages.no_search_results.message;
         }
         this.emptyTableConf = {
-          type: EmptyType.no_search_results,
+          type: EmptyType.NoSearchResults,
           large: true,
           title,
           message,
         };
         break;
 
-      case EmptyType.errors:
+      case EmptyType.Errors:
         title = T('Something went wrong');
         message = T('The system returned the following error - ');
         if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.errors) {
@@ -445,11 +445,11 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
           title,
           message: message + error,
           large: true,
-          type: EmptyType.errors,
+          type: EmptyType.Errors,
         };
         break;
 
-      case EmptyType.first_use:
+      case EmptyType.FirstUse:
         messagePreset = false;
         title = T('No ') + this.title;
         message = T('It seems you haven\'t setup any ') + this.title + T(' yet.');
@@ -459,7 +459,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
           messagePreset = true;
         }
         this.emptyTableConf = {
-          type: EmptyType.first_use,
+          type: EmptyType.FirstUse,
           large: true,
           title,
           message,
@@ -479,7 +479,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
         }
         break;
 
-      case EmptyType.no_page_data:
+      case EmptyType.NoPageData:
       default:
         messagePreset = false;
         title = T('No ') + this.title;
@@ -490,7 +490,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
           messagePreset = true;
         }
         this.emptyTableConf = {
-          type: EmptyType.no_page_data,
+          type: EmptyType.NoPageData,
           large: true,
           title,
           message,
@@ -586,7 +586,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
       },
       (res: any) => {
         this.isTableEmpty = true;
-        this.configureEmptyTable(EmptyType.errors, res);
+        this.configureEmptyTable(EmptyType.Errors, res);
         if (this.loaderOpen) {
           this.loader.close();
           this.loaderOpen = false;
@@ -657,7 +657,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
       this.isTableEmpty = false;
     } else {
       this.isTableEmpty = true;
-      this.configureEmptyTable(this.firstUse ? EmptyType.first_use : EmptyType.no_page_data);
+      this.configureEmptyTable(this.firstUse ? EmptyType.FirstUse : EmptyType.NoPageData);
     }
 
     for (let i = 0; i < this.currentRows.length; i++) {
@@ -1005,7 +1005,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
                     }
                   }
                   if (message === '') {
-                    this.dialogService.Info(T('Items deleted'), '', '300px', 'info', true);
+                    this.dialogService.info(T('Items deleted'), '', '300px', 'info', true);
                   } else {
                     message = '<ul>' + message + '</ul>';
                     this.dialogService.errorReport(T('Items Delete Failed'), message);

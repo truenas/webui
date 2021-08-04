@@ -65,10 +65,11 @@
           <td mat-cell *matCellDef="let element">
             <div class="table-cell">
               <ng-container>
-                <ul class="complex-table-data">
+                <ul class="complex-table-data" *ngIf="!column.getIcon">
                   <li>{{ column.name }}: {{element[column.prop1]}}</li>
                   <li>{{ column.name2 }}: {{element[column.prop2]}}</li>
                 </ul>
+                <mat-icon *ngIf="column.getIcon && column.getIcon(element, column.prop1)" [innerHtml]="column.getIcon(element, column.prop1)" [matTooltip]="column.matTooltip"></mat-icon>
               </ng-container>
             </div>
           </td>

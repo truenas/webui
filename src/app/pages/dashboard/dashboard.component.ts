@@ -75,7 +75,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   emptyDashConf: EmptyConfig = {
-    type: EmptyType.no_page_data,
+    type: EmptyType.NoPageData,
     large: true,
     title: T('Dashboard is Empty!'),
     message: T('You have hidden all of your available widgets. Use the dashboard configuration form to add widgets.'),

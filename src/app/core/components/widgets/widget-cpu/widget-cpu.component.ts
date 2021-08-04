@@ -158,10 +158,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       const temperatureIndex = this.hyperthread ? Math.floor(i / 2 - mod) : i;
 
       if (cpuData.temperature && cpuData.temperature[temperatureIndex] && !cpuData.temperature_celsius) {
-        const temperatureAsCelsius = (cpuData.temperature[temperatureIndex] / 10 - 273.05).toFixed(1);
+        const temperatureAsCelsius = (cpuData.temperature[temperatureIndex] / 10 - 273.05).toFixed(0);
         temperatureValues.push(parseInt(temperatureAsCelsius));
       } else if (cpuData.temperature_celsius && cpuData.temperature_celsius[temperatureIndex]) {
-        temperatureValues.push(cpuData.temperature_celsius[temperatureIndex]);
+        temperatureValues.push(cpuData.temperature_celsius[temperatureIndex].toFixed(0));
       }
     }
     temperatureColumn = temperatureColumn.concat(temperatureValues);
@@ -173,33 +173,33 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   setMobileStats(usage: number[], temps: number[]): void {
     // Usage
     usage.splice(0, 1);
-    this.usageMin = Math.min(...usage);
-    this.usageMax = Math.max(...usage);
+    this.usageMin = Number(Math.min(...usage).toFixed(0));
+    this.usageMax = Number(Math.max(...usage).toFixed(0));
     this.usageMinThreads = [];
     this.usageMaxThreads = [];
     for (let u = 0; u < usage.length; u++) {
       if (usage[u] == this.usageMin) {
-        this.usageMinThreads.push(u);
+        this.usageMinThreads.push(Number(u.toFixed(0)));
       }
 
       if (usage[u] == this.usageMax) {
-        this.usageMaxThreads.push(u);
+        this.usageMaxThreads.push(Number(u.toFixed(0)));
       }
     }
 
     // Temperature
     temps.splice(0, 1);
-    this.tempMin = Math.min(...temps);
-    this.tempMax = Math.max(...temps);
+    this.tempMin = Number(Math.min(...temps).toFixed(0));
+    this.tempMax = Number(Math.max(...temps).toFixed(0));
     this.tempMinThreads = [];
     this.tempMaxThreads = [];
     for (let t = 0; t < temps.length; t++) {
       if (temps[t] == this.tempMin) {
-        this.tempMinThreads.push(t);
+        this.tempMinThreads.push(Number(t.toFixed(0)));
       }
 
       if (temps[t] == this.tempMax) {
-        this.tempMaxThreads.push(t);
+        this.tempMaxThreads.push(Number(t.toFixed(0)));
       }
     }
   }

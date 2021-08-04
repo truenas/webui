@@ -6,8 +6,9 @@ import * as _ from 'lodash';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import helptext from 'app/helptext/system/alert-service';
-import { AlertServiceCreate } from 'app/interfaces/alert-service.interface';
+import { AlertService, AlertServiceCreate } from 'app/interfaces/alert-service.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -28,7 +29,7 @@ import { T } from 'app/translate-marker';
 export class AlertServiceComponent implements FormConfiguration {
   addCall: 'alertservice.create' = 'alertservice.create';
   queryCall: 'alertservice.query' = 'alertservice.query';
-  queryCallOption: any[] = [['id', '=']];
+  queryCallOption: [Partial<QueryFilter<AlertService>>] = [['id', '=']];
   editCall: 'alertservice.update' = 'alertservice.update';
   testCall: 'alertservice.test' = 'alertservice.test';
   route_success: string[] = ['system', 'alertservice'];
@@ -686,9 +687,9 @@ export class AlertServiceComponent implements FormConfiguration {
           (wasAlertSent) => {
             this.loader.close();
             if (wasAlertSent) {
-              this.dialogService.Info(T('Succeeded'), T('Test alert sent!'), '500px', 'info');
+              this.dialogService.info(T('Succeeded'), T('Test alert sent!'), '500px', 'info');
             } else {
-              this.dialogService.Info(T('Failed'), T('Failed sending test alert!'));
+              this.dialogService.info(T('Failed'), T('Failed sending test alert!'));
             }
           },
           (err: WebsocketError) => {
@@ -746,7 +747,7 @@ export class AlertServiceComponent implements FormConfiguration {
       return chatId;
     });
     if (wrongChatIds.length > 0) {
-      this.dialogService.Info(T('Failed'), T('The following Telegram chat ID(s) must be numbers!') + '\n\n' + wrongChatIds.join(', '));
+      this.dialogService.info(T('Failed'), T('The following Telegram chat ID(s) must be numbers!') + '\n\n' + wrongChatIds.join(', '));
       throw new Error('Telegram-chat_ids must be an array of integer');
     }
     // Avoid duplicated chat IDs

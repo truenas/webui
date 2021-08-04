@@ -43,7 +43,7 @@ export class TableService {
         table.dataSource = res;
         if (!(table.dataSource?.length > 0)) {
           table.emptyConf = {
-            type: EmptyType.no_page_data,
+            type: EmptyType.NoPageData,
             large: table.entityEmptyLarge,
             title: T('No ') + table.title + T(' configured'),
           };

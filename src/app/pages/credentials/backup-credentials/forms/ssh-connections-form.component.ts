@@ -8,6 +8,7 @@ import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum'
 import helptext from 'app/helptext/system/ssh-connections';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -21,6 +22,11 @@ import {
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 
+enum SetupMethod {
+  Manual = 'manual',
+  SemiAutomatic = 'semiautomatic',
+}
+
 @UntilDestroy()
 @Component({
   selector: 'app-ssh-connections-form',
@@ -29,19 +35,19 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class SshConnectionsFormComponent implements FormConfiguration {
   queryCall: 'keychaincredential.query' = 'keychaincredential.query';
-  queryCallOption: any[];
+  queryCallOption: [QueryFilter<KeychainCredential>];
   protected sshCalls = {
-    manual: 'keychaincredential.create' as 'keychaincredential.create',
-    semiautomatic: 'keychaincredential.remote_ssh_semiautomatic_setup' as 'keychaincredential.remote_ssh_semiautomatic_setup',
+    [SetupMethod.Manual]: 'keychaincredential.create' as 'keychaincredential.create',
+    [SetupMethod.SemiAutomatic]: 'keychaincredential.remote_ssh_semiautomatic_setup' as 'keychaincredential.remote_ssh_semiautomatic_setup',
   };
-  addCall: 'keychaincredential.create' | 'keychaincredential.remote_ssh_semiautomatic_setup' = this.sshCalls['manual'];
+  addCall: 'keychaincredential.create' | 'keychaincredential.remote_ssh_semiautomatic_setup' = this.sshCalls[SetupMethod.Manual];
   editCall: 'keychaincredential.update' = 'keychaincredential.update';
   isEntity = true;
   protected namesInUseConnection: string[] = [];
   protected namesInUse: string[] = [];
   title = helptext.formTitle;
   protected isOneColumnForm = true;
-  private rowNum: any;
+  private rowNum: number;
   private getRow = new Subscription();
 
   fieldConfig: FieldConfig[];
@@ -67,13 +73,13 @@ export class SshConnectionsFormComponent implements FormConfiguration {
           options: [
             {
               label: 'Manual',
-              value: 'manual',
+              value: SetupMethod.Manual,
             }, {
               label: 'Semi-automatic (TrueNAS only)',
-              value: 'semiautomatic',
+              value: SetupMethod.SemiAutomatic,
             },
           ],
-          value: 'semiautomatic',
+          value: SetupMethod.SemiAutomatic,
           isHidden: false,
         },
       ],
@@ -94,7 +100,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
             action: RelationAction.Show,
             when: [{
               name: 'setup_method',
-              value: 'manual',
+              value: SetupMethod.Manual,
             }],
           }],
         }, {
@@ -108,7 +114,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
             action: RelationAction.Show,
             when: [{
               name: 'setup_method',
-              value: 'manual',
+              value: SetupMethod.Manual,
             }],
           }],
         }, {
@@ -122,7 +128,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
             action: RelationAction.Show,
             when: [{
               name: 'setup_method',
-              value: 'semiautomatic',
+              value: SetupMethod.SemiAutomatic,
             }],
           }],
         }, {
@@ -146,7 +152,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
             action: RelationAction.Show,
             when: [{
               name: 'setup_method',
-              value: 'semiautomatic',
+              value: SetupMethod.SemiAutomatic,
             }],
           }],
         }, {
@@ -168,7 +174,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
             action: RelationAction.Show,
             when: [{
               name: 'setup_method',
-              value: 'manual',
+              value: SetupMethod.Manual,
             }],
           }],
         }, {
@@ -236,7 +242,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     private dialogService: DialogService,
     private replicationService: ReplicationService, private modalService: ModalService,
   ) {
-    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.rowNum = rowId;
       this.getRow.unsubscribe();
     });
@@ -277,12 +283,12 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     this.updateDiscoverButtonDisabled();
     if (this.entityForm.isNew) {
       this.addCall = this.sshCalls[this.entityForm.formGroup.controls['setup_method'].value as keyof SshConnectionsFormComponent['sshCalls']];
-      this.entityForm.formGroup.controls['setup_method'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+      this.entityForm.formGroup.controls['setup_method'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: SetupMethod) => {
         this.addCall = this.sshCalls[res as keyof SshConnectionsFormComponent['sshCalls']];
         this.updateDiscoverButtonDisabled();
       });
     } else {
-      this.entityForm.formGroup.controls['setup_method'].setValue('manual');
+      this.entityForm.formGroup.controls['setup_method'].setValue(SetupMethod.Manual);
     }
 
     const nameCtrl = this.entityForm.formGroup.controls['name'];
@@ -309,7 +315,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
   }
 
   updateDiscoverButtonDisabled(): void {
-    if (this.entityForm.formGroup.controls['setup_method'].value === 'manual') {
+    if (this.entityForm.formGroup.controls['setup_method'].value === SetupMethod.Manual) {
       this.setDisabled(this.fieldSets[1].config, 'remote_host_key_button', !this.isManualAuthFormValid(), false);
     } else {
       this.setDisabled(this.fieldSets[1].config, 'remote_host_key_button', true, true);
@@ -394,7 +400,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
       );
     }
 
-    if (data['setup_method'] === 'manual') {
+    if (data['setup_method'] === SetupMethod.Manual) {
       const attributes: any = {};
       for (const item in this.manualMethodFields) {
         attributes[this.manualMethodFields[item]] = data[this.manualMethodFields[item]];

@@ -85,7 +85,7 @@ export class BootStatusListComponent implements OnInit {
         this.router.navigate(
           new Array('').concat('system', 'boot'),
         );
-        this.dialog.Info(T('Device detached '), T(`<i>${disk}</i> has been detached.`), '300px', 'info', true);
+        this.dialog.info(T('Device detached '), T(`<i>${disk}</i> has been detached.`), '300px', 'info', true);
       },
       (res) => {
         this.loader.close();

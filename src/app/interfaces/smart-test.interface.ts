@@ -32,3 +32,18 @@ export interface SmartManualTestParams {
   identifier: string;
   type: SmartTestType;
 }
+
+export interface SmartTestResults {
+  disk: string;
+  tests: SmartTestResult[];
+}
+
+export interface SmartTestResult {
+  description: string;
+  lba_of_first_error: number;
+  lifetime: number;
+  num: number;
+  remaining: number;
+  status: string; // Enum: SUCCESS,
+  status_verbose: string;
+}

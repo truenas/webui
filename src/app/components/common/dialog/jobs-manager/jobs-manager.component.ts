@@ -36,7 +36,7 @@ export class JobsManagerComponent implements OnInit {
   numberOfRunningJobs$ = this.store.numberOfRunningJobs$;
   numberOfFailedJobs$ = this.store.numberOfFailedJobs$;
   emptyConfig: EmptyConfig = {
-    type: EmptyType.no_page_data,
+    type: EmptyType.NoPageData,
     large: false,
     title: T('No jobs are available.'),
     icon: 'assignment',

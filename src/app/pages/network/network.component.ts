@@ -82,7 +82,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     delete(row: any, table: any) {
       const deleteAction = row.type === NetworkInterfaceType.Physical ? T('Reset configuration for ') : T('Delete ');
       if (this.parent.ha_enabled) {
-        this.parent.dialog.Info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
+        this.parent.dialog.info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
       } else {
         table.tableService.delete(table, row, deleteAction);
       }
@@ -432,7 +432,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.ws.call('interface.checkin').pipe(untilDestroyed(this)).subscribe(() => {
       this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
       this.loader.close();
-      this.dialog.Info(
+      this.dialog.info(
         helptext.checkin_complete_title,
         helptext.checkin_complete_message,
         '500px',
@@ -462,7 +462,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
           this.hasPendingChanges = false;
           this.checkinWaiting = false;
           this.loader.close();
-          this.dialog.Info(helptext.rollback_changes_title, helptext.changes_rolled_back, '500px', 'info', true);
+          this.dialog.info(helptext.rollback_changes_title, helptext.changes_rolled_back, '500px', 'info', true);
         }, (err) => {
           this.loader.close();
           new EntityUtils().handleWSError(this, err, this.dialog);
@@ -628,7 +628,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         this.ws.call('service.stop', [rowinner.service]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             if (res) {
-              this.dialog.Info(T('Service failed to stop'), T('OpenVPN ') + rowinner.service_label + ' ' + T('service failed to stop.'));
+              this.dialog.info(T('Service failed to stop'), T('OpenVPN ') + rowinner.service_label + ' ' + T('service failed to stop.'));
               rowinner.state = ServiceStatus.Running;
               rowinner['onChanging'] = false;
             } else {
@@ -655,7 +655,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
               rowinner.state = ServiceStatus.Running;
               rowinner['onChanging'] = false;
             } else {
-              this.dialog.Info(T('Service failed to start'), T('OpenVPN ') + rowinner.service_label + ' ' + T('service failed to start.'));
+              this.dialog.info(T('Service failed to start'), T('OpenVPN ') + rowinner.service_label + ' ' + T('service failed to start.'));
               rowinner.state = ServiceStatus.Stopped;
               rowinner['onChanging'] = false;
             }

@@ -12,6 +12,7 @@ import { CoreService } from 'app/core/services/core-service/core.service';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { LocaleService } from 'app/services/locale.service';
+import { PageTitleService } from 'app/services/page-title.service';
 import { RoutePart, RoutePartsService } from 'app/services/route-parts/route-parts.service';
 
 export interface GlobalAction {
@@ -27,25 +28,26 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('viewcontroller', { static: false }) viewcontroller: ViewControllerComponent;
   @Input() breadcrumbs: boolean;
   @Input() product_type: ProductType;
-  titleText: string;
+  title$ = this.pageTitleService.title$;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
-  private hasInitialized = false;
+  hasInitialized = false;
   private globalActionsConfig: any;
   private globalActions: any;
 
   routeParts: (RoutePart & { disabled?: boolean })[];
   isEnabled = true;
-  constructor(private router: Router,
+  constructor(
+    private router: Router,
     private routePartsService: RoutePartsService,
     private activeRoute: ActivatedRoute,
     private core: CoreService,
-    private localeService: LocaleService) {
-  }
+    private localeService: LocaleService,
+    private pageTitleService: PageTitleService,
+  ) {}
 
   ngOnInit(): void {
   // must be running once to get breadcrumbs
     this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
-    this.titleText = this.routeParts && this.routeParts[0].title ? this.routeParts[0].title : '';
 
     // generate url from parts
     this.routeParts.reverse().map((item, i) => {
@@ -65,11 +67,11 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
     // only execute when routechange
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
-    ).pipe(untilDestroyed(this)).subscribe(() => {
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.destroyActions();
 
       this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
-      this.titleText = this.routeParts && this.routeParts[0].title ? this.routeParts[0].title : '';
 
       // generate url from parts
       this.routeParts.reverse().map((item, i) => {

@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -123,7 +124,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
 
   protected entityForm: EntityFormComponent;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
-  queryCallOption: any[];
+  queryCallOption: [QueryFilter<Certificate>];
   initialCount = 1;
   private domainList: FormArray;
   private domainList_fc: FieldConfig;

@@ -9,6 +9,7 @@ import { filter } from 'rxjs/operators';
 import { AclMode, AclType } from 'app/enums/acl-type.enum';
 import { DatasetAclType } from 'app/enums/dataset-acl-type.enum';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
+import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -73,7 +74,7 @@ export class DatasetFormComponent implements FormConfiguration {
   title: string;
   volid: string;
   isBasicMode = true;
-  pk: any;
+  pk: string;
   customFilter: any[] = [];
   queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   isEntity = true;
@@ -566,9 +567,9 @@ export class DatasetFormComponent implements FormConfiguration {
           placeholder: helptext.dataset_form_deduplication_placeholder,
           tooltip: helptext.dataset_form_deduplication_tooltip,
           options: [
-            { label: 'on', value: 'ON' },
-            { label: 'verify', value: 'VERIFY' },
-            { label: 'off', value: 'OFF' },
+            { label: 'on', value: DeduplicationSetting.On },
+            { label: 'verify', value: DeduplicationSetting.Verify },
+            { label: 'off', value: DeduplicationSetting.Off },
           ],
           disabled: true,
           isHidden: true,
@@ -666,7 +667,7 @@ export class DatasetFormComponent implements FormConfiguration {
               aclModeFormControl.setValue(AclMode.Inherit);
               this.entityForm.setDisabled('aclmode', true, false);
             }
-            this.dialogService.Info('ACL Types & ACL Modes', helptext.acl_type_change_warning);
+            this.dialogService.info('ACL Types & ACL Modes', helptext.acl_type_change_warning);
           },
         },
         {
@@ -984,8 +985,8 @@ export class DatasetFormComponent implements FormConfiguration {
     this.dedup_fg = this.entityForm.formGroup.controls['deduplication'] as FormControl;
     this.dedup_field = _.find(this.fieldConfig, { name: 'deduplication' });
     this.dedup_value = this.dedup_fg.value;
-    this.dedup_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((dedup: any) => {
-      if (dedup === 'INHERIT' || dedup === 'OFF') {
+    this.dedup_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((dedup: DeduplicationSetting) => {
+      if (dedup === DeduplicationSetting.Inherit || dedup === DeduplicationSetting.Off) {
         this.dedup_field.warnings = '';
       } else {
         this.dedup_field.warnings = helptext.dataset_form_deduplication_warning;

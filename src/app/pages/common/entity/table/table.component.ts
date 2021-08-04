@@ -154,7 +154,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     this.entityEmptyLarge = this._tableConf.emptyEntityLarge;
     this.emptyConf = {
-      type: EmptyType.loading,
+      type: EmptyType.Loading,
       title: this.title,
       large: this.entityEmptyLarge,
     };
