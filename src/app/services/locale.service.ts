@@ -112,7 +112,7 @@ export class LocaleService {
     return format(date, formatStr);
   }
 
-  saveDateTimeFormat(dateFormat: any, timeFormat: any): void {
+  saveDateTimeFormat(dateFormat: string, timeFormat: string): void {
     this.dateFormat = this.formatDateTimeToDateFns(dateFormat);
     this.timeFormat = this.formatDateTimeToDateFns(timeFormat);
     this.storeDateTimeFormat(this.dateFormat, this.timeFormat);

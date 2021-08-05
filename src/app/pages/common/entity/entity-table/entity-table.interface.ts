@@ -44,6 +44,7 @@ export interface EntityTableConfig<Row = any> {
   actionsConfig?: { actionType: any; actionConfig: any };
   rowIdentifier?: string;
   disableActionsConfig?: boolean;
+  inlineActions?: boolean;
 
   wsDeleteParams?: (row: Row, id: string) => any;
   addRows?: (entity: EntityTableComponent) => void;

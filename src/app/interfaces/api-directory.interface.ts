@@ -1,5 +1,6 @@
 import { DefaultAclType } from 'app/enums/acl-type.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
+import { DeviceType } from 'app/enums/device-type.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { LACPDURate, XmitHashPolicy } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -53,6 +54,7 @@ import { DatasetHasVmsQueryParams } from 'app/interfaces/dataset-has-vms-query-p
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { DatasetQuota, DatasetQuotaQueryParams } from 'app/interfaces/dataset-quota.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
+import { Device } from 'app/interfaces/device.interface';
 import {
   AuthenticatorSchema,
   CreateDnsAuthenticator,
@@ -60,13 +62,18 @@ import {
 } from 'app/interfaces/dns-authenticator.interface';
 import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { DynamicDnsConfig, DynamicDnsUpdate } from 'app/interfaces/dynamic-dns.interface';
+import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { FailoverUpdate } from 'app/interfaces/failover.interface';
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { FtpConfig } from 'app/interfaces/ftp-config.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
-import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
+import {
+  CreateInitShutdownScript,
+  InitShutdownScript,
+  UpdateInitShutdownScriptParams,
+} from 'app/interfaces/init-shutdown-script.interface';
 import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface';
 import {
   IscsiAuthAccess, IscsiExtent,
@@ -105,6 +112,7 @@ import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { RsyncConfig, RsyncConfigUpdate } from 'app/interfaces/rsync-config.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { S3Config, S3ConfigUpdate } from 'app/interfaces/s3-config.interface';
+import { Sensor } from 'app/interfaces/sensor.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import {
@@ -114,7 +122,7 @@ import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
-import { StaticRoute } from 'app/interfaces/static-route.interface';
+import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
 import {
   Disk, DiskQueryOptions, DiskUpdate, UnusedDisk,
 } from 'app/interfaces/storage.interface';
@@ -129,7 +137,7 @@ import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig } from 'app/interfaces/ups-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import {
-  VirtualMachine, VmCloneParams,
+  VirtualMachine, VmCloneParams, VmDisplayWebUri,
   VmDisplayWebUriParams,
   VmStopParams,
 } from 'app/interfaces/virtual-machine.interface';
@@ -171,8 +179,8 @@ export type ApiDirectory = {
   'alertservice.update': { params: any; response: any };
   'alertservice.create': { params: [AlertServiceCreate]; response: any };
   'alertservice.query': { params: QueryParams<AlertService>; response: AlertService[] };
-  'alertservice.test': { params: any; response: boolean };
-  'alertservice.delete': { params: any; response: any };
+  'alertservice.test': { params: [AlertServiceCreate]; response: boolean };
+  'alertservice.delete': { params: number; response: boolean };
 
   // Api Key
   'api_key.create': { params: [CreateApiKeyRequest]; response: ApiKey };
@@ -303,8 +311,7 @@ export type ApiDirectory = {
   'datastore.delete': { params: any; response: any };
 
   // Device
-  'device.gpu_pci_ids_choices': { params: any; response: any };
-  'device.get_info': { params: any; response: any };
+  'device.get_info': { params: [DeviceType]; response: Device[] };
 
   // Disk
   'disk.query': { params: QueryParams<Disk, DiskQueryOptions>; response: Disk[] };
@@ -319,7 +326,7 @@ export type ApiDirectory = {
   'directoryservices.get_state': { params: any; response: any };
 
   // Enclosure
-  'enclosure.query': { params: any; response: any };
+  'enclosure.query': { params: void; response: Enclosure[] };
   'enclosure.update': { params: any; response: any };
   'enclosure.set_slot_status': { params: any; response: any };
 
@@ -438,7 +445,7 @@ export type ApiDirectory = {
   'iscsi.portal.create': { params: any; response: any };
   'iscsi.portal.update': { params: any; response: any };
   'iscsi.portal.listen_ip_choices': { params: void; response: Choices };
-  'iscsi.portal.query': { params: any; response: IscsiPortal[] };
+  'iscsi.portal.query': { params: QueryParams<IscsiPortal>; response: IscsiPortal[] };
   'iscsi.portal.delete': { params: any; response: any };
   'iscsi.target.update': { params: any; response: any };
   'iscsi.target.create': { params: any; response: any };
@@ -698,7 +705,7 @@ export type ApiDirectory = {
   'service.restart': { params: [ServiceName]; response: void };
 
   // Sensor
-  'sensor.query': { params: any; response: any };
+  'sensor.query': { params: void; response: Sensor[] };
 
   // Sharing
   'sharing.smb.query': { params: QueryParams<SmbShare>; response: SmbShare[] };
@@ -755,7 +762,7 @@ export type ApiDirectory = {
   'vm.create': { params: any; response: any };
   'vm.delete': { params: any; response: any };
   'vm.resolution_choices': { params: void; response: Choices };
-  'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: any };
+  'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: { [id: number]: VmDisplayWebUri } };
   'vm.device.passthrough_device_choices': { params: void; response: Choices };
   'vm.device.create': { params: any; response: any };
   'vm.random_mac': { params: void; response: string };
@@ -771,7 +778,6 @@ export type ApiDirectory = {
   'vm.restart': { params: [/* id */ number]; response: void };
   'vm.get_display_devices': { params: [/* id */ number]; response: any };
   'vm.start': { params: [/* id */ number]; response: void };
-  'vm.get_vmemory_in_use': { params: any; response: any };
 
   // Vmware
   'vmware.dataset_has_vms': { params: DatasetHasVmsQueryParams; response: boolean };
@@ -819,8 +825,8 @@ export type ApiDirectory = {
 
   // staticroute
   'staticroute.query': { params: QueryParams<StaticRoute>; response: StaticRoute[] };
-  'staticroute.create': { params: any; response: any };
-  'staticroute.update': { params: any; response: any };
+  'staticroute.create': { params: UpdateStaticRoute; response: StaticRoute };
+  'staticroute.update': { params: UpdateStaticRoute; response: StaticRoute };
   'staticroute.delete': { params: [/* id */ number]; response: boolean };
 
   // SNMP
@@ -833,8 +839,8 @@ export type ApiDirectory = {
 
   // InitShutdownScript
   'initshutdownscript.query': { params: QueryParams<InitShutdownScript>; response: InitShutdownScript[] };
-  'initshutdownscript.create': { params: any; response: any };
-  'initshutdownscript.update': { params: any; response: any };
+  'initshutdownscript.create': { params: CreateInitShutdownScript; response: InitShutdownScript };
+  'initshutdownscript.update': { params: UpdateInitShutdownScriptParams; response: InitShutdownScript };
   'initshutdownscript.delete': { params: [/* id */ number]; response: boolean };
 };
 

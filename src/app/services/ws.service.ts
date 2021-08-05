@@ -20,9 +20,9 @@ export class WebSocketService {
   private authStatus$: Subject<boolean>;
   onCloseSubject$: Subject<boolean>;
   onOpenSubject$: Subject<boolean>;
-  pendingCalls: any;
+  pendingCalls: Map<string, any>;
   pendingSubs: any = {};
-  pendingMessages: any[] = [];
+  pendingMessages: unknown[] = [];
   socket: WebSocket;
   connected = false;
   loggedIn = false;
@@ -163,7 +163,7 @@ export class WebSocketService {
     }
   }
 
-  send(payload: any): void {
+  send(payload: unknown): void {
     if (this.socket.readyState == WebSocket.OPEN) {
       this.socket.send(JSON.stringify(payload));
     } else {

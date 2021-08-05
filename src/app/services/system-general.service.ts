@@ -94,7 +94,7 @@ export class SystemGeneralService {
 
   constructor(protected ws: WebSocketService) {}
 
-  getCA(): Observable<any[]> {
+  getCA(): Observable<CertificateAuthority[]> {
     return this.ws.call(this.caList, []);
   }
 

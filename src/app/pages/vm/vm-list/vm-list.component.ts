@@ -33,11 +33,6 @@ import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
 
-interface DisplayWebUri {
-  error: string;
-  uri: string;
-}
-
 @UntilDestroy()
 @Component({
   selector: 'vm-list',
@@ -494,7 +489,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
                   display_vm.id,
                   this.extractHostname(window.origin),
                 ],
-              ).pipe(untilDestroyed(this)).subscribe((web_uri_res: { [displayId: number]: DisplayWebUri }) => {
+              ).pipe(untilDestroyed(this)).subscribe((web_uri_res) => {
                 this.loader.close();
                 if (web_uri_res[display_devices_res[0].id].error) {
                   return this.dialogService.info('Error', web_uri_res[display_devices_res[0].id].error);
@@ -534,7 +529,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
                       display_vm.id,
                       this.extractHostname(window.origin),
                     ],
-                  ).pipe(untilDestroyed(this)).subscribe((web_uris_res: { [displayId: number]: DisplayWebUri }) => {
+                  ).pipe(untilDestroyed(this)).subscribe((web_uris_res) => {
                     this.loader.close();
                     if (web_uris_res[display_device.id].error) {
                       return this.dialogService.info('Error', web_uris_res[display_device.id].error);
@@ -621,7 +616,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
               ],
             },
           ],
-        ).pipe(untilDestroyed(this)).subscribe((pass_res: { [displayId: number]: DisplayWebUri }) => {
+        ).pipe(untilDestroyed(this)).subscribe((pass_res) => {
           this.loader.close();
           if (pass_res[display_device.id].error) {
             passDialog.formGroup.controls['password'].reset();
