@@ -132,7 +132,7 @@ export class ChartFormComponent implements FormConfiguration {
     const configData = new EntityUtils().remapAppConfigData(data.config, fieldConfigs);
 
     configData['release_name'] = data.name;
-    configData['extra_fieldsets'] = this.parseSchema(chartSchema);
+    configData['extra_fieldsets'] = extraFieldSets;
 
     return configData;
   }
