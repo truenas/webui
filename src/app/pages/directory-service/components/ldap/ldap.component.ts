@@ -45,8 +45,6 @@ export class LdapComponent implements FormConfiguration {
       name: global_helptext.basic_options,
       function: () => {
         this.isBasicMode = !this.isBasicMode;
-        this.fieldSets.find((set) => set.name === helptext.ldap_advanced).label = false;
-        this.fieldSets.find((set) => set.name === 'divider').divider = false;
       },
     },
     {
@@ -54,16 +52,6 @@ export class LdapComponent implements FormConfiguration {
       name: global_helptext.advanced_options,
       function: () => {
         this.isBasicMode = !this.isBasicMode;
-        this.fieldSets.find((set) => set.name === 'Advanced Settings').label = true;
-        this.fieldSets.find((set) => set.name === 'divider').divider = true;
-      },
-    },
-    {
-      id: helptext.ldap_custactions_edit_imap_id,
-      name: helptext.ldap_custactions_edit_imap_name,
-      function: () => {
-        this.modalService.close('slide-in-form');
-        this.router.navigate(new Array('').concat(['directoryservice', 'idmap']));
       },
     },
     {

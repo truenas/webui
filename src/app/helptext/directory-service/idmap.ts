@@ -1,4 +1,5 @@
 import { Validators } from '@angular/forms';
+import { IdmapName } from 'app/enums/idmap-name.enum';
 import { T } from 'app/translate-marker';
 
 export default {
@@ -12,9 +13,9 @@ export default {
       placeholder: T('Name'),
       tooltip: T('Enter the pre-Windows 2000 domain name.'),
       options: [
-        { label: T('Active Directory - Primary Domain'), value: 'DS_TYPE_ACTIVEDIRECTORY' },
-        { label: T('SMB - Primary Domain'), value: 'DS_TYPE_DEFAULT_DOMAIN' },
-        { label: T('LDAP - Primary Domain'), value: 'DS_TYPE_LDAP' },
+        { label: T('Active Directory - Primary Domain'), value: IdmapName.DsTypeActiveDirectory },
+        { label: T('SMB - Primary Domain'), value: IdmapName.DsTypeDefaultDomain },
+        { label: T('LDAP - Primary Domain'), value: IdmapName.DsTypeLdap },
         { label: T('Custom Value'), value: 'custom' },
       ],
     },
@@ -189,16 +190,4 @@ export default {
       success_msg: T('The cache has been cleared.'),
     },
   },
-
-  // idmap_rfc2307_ldap_url_name : 'ldap_url',
-  // idmap_rfc2307_ldap_url_placeholder: T('LDAP URL'),
-  // idmap_rfc2307_ldap_url_tooltip: T('The LDAP URL for accessing the LDAP server when using\
-  //  a stand-alone LDAP server.'),
-
-  // idmap_script_name : 'script',
-  // idmap_script_placeholder: T('Script'),
-  // idmap_script_tooltip: T('Configure an external program to perform ID mapping. See\
-  //  <a href="http://samba.org.ru/samba/docs/man/manpages/idmap_script.8.html"\
-  //  target="_blank">idmap_script(8)</a> for more details.')
-
 };

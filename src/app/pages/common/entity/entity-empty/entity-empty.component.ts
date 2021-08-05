@@ -11,7 +11,7 @@ export enum EmptyType {
   NoSearchResults = 'no_search_results',
 }
 export interface EmptyConfig {
-  type: EmptyType;
+  type?: EmptyType;
   large: boolean;
   compact?: boolean;
   title: string;
@@ -19,7 +19,7 @@ export interface EmptyConfig {
   icon?: string;
   button?: {
     label: string;
-    action(): any;
+    action: () => void;
   };
 }
 @Component({
@@ -29,7 +29,7 @@ export interface EmptyConfig {
 })
 
 export class EntityEmptyComponent {
-  @Input('conf') conf: EmptyConfig;
+  @Input() conf: EmptyConfig;
 
   constructor(
     protected ws: WebSocketService,
