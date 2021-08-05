@@ -1,8 +1,8 @@
 :host {
-  font-size: 14px !important;
+  font-size: 14px;
 }
 
-::ng-deep .mat-dialog-content {
+:host ::ng-deep .mat-dialog-content {
   max-width: unset;
   overflow: auto;
 
