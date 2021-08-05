@@ -99,8 +99,8 @@ def after_click_on_credentials_on_the_left_sidebar_then_directory_services(drive
     """after, click on Credentials on the left sidebar, then Directory Services."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Directory Services"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
+    assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]')
+    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]').click()
 
 
 @then('on the Directory Services page, click Setting on the Active Directory card')

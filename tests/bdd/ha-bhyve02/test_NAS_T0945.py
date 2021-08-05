@@ -2,6 +2,7 @@
 """High Availability (tn09) feature tests."""
 
 import time
+from selenium.common.exceptions import ElementClickInterceptedException
 from function import (
     is_element_present,
     wait_on_element,
@@ -54,11 +55,14 @@ def you_should_see_the_dashboard(driver):
     assert wait_on_element(driver, 5, '//h1[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
     if wait_on_element(driver, 2, '//h1[contains(.,"End User License Agreement - TrueNAS")]'):
-        assert wait_on_element(driver, 5, '//button[@ix-auto="button__I AGREE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-    if wait_on_element(driver, 2, '//div[contains(.,"Looking for help?")]'):
-        assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+        try:
+            assert wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable')
+            driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+        except ElementClickInterceptedException:
+            assert wait_on_element(driver, 2, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+            driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+            assert wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable')
+            driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
 
 
 @then('go to System Settings, click Services')

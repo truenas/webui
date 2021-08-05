@@ -154,7 +154,7 @@ def run_testing():
     convert_jira_feature_file(test_suite)
     pytest_cmd = [
         f"pytest-{version}",
-        "-v",
+        "-vs",
         test_suite,
         "--junitxml=results/junit/webui_test.xml",
         "--cucumber-json=results/cucumber/webui_test.json"

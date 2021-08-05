@@ -56,8 +56,8 @@ def navigate_to_system_settings_and_click_general(driver):
     """navigate to System Settings and click General."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__General"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__General"]').click()
+    assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__General"]', 'clickable')
+    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__General"]').click()
 
 
 @then('the General page should load')
@@ -179,8 +179,8 @@ def navigate_to_system_then_click_failover(driver):
     """navigate to System then click Failover"""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Failover"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
+    assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Failover"]', 'clickable')
+    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Failover"]').click()
 
 
 @then('the Failover page should open')
