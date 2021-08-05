@@ -154,11 +154,11 @@ mat-tab-group {
       text-align: center;
 
       .version {
-        opacity: 0.5;
+        opacity: 0.6;
       }
 
       .update-label {
-        color: rgba(255, 255, 255);
+        color: var(--fg2);
         white-space: nowrap;
       }
 

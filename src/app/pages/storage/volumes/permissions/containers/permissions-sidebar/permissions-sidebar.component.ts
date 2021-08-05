@@ -43,6 +43,11 @@ export class PermissionsSidebarComponent implements OnInit, OnChanges {
     return ['/storage/id', this.dataset.pool, 'dataset', 'acl', this.dataset.id];
   }
 
+  get canEditPermissions(): boolean {
+    const isRootDataset = (this.dataset.mountpoint.match(/\//g) || []).length <= 2;
+    return this.acl && !isRootDataset;
+  }
+
   ngOnInit(): void {
     this.store.state$
       .pipe(untilDestroyed(this))

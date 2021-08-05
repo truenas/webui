@@ -251,8 +251,8 @@ export class WidgetStorageComponent extends WidgetComponent implements OnChanges
         usedValue = filesize(vol.used, { exponent: 3 });
       }
 
-      if (usedValue != 'Locked') {
-        displayValue = this.getSizeString(vol.avail - vol.used);
+      if (usedValue !== 'Locked') {
+        displayValue = this.getSizeString(vol.avail);
       }
     } else if (!vol || typeof vol.avail == undefined) {
       displayValue = T('Unknown');
