@@ -167,11 +167,10 @@ export class EntityUtils {
     return ndata;
   }
 
-  bool(v: any): boolean {
-    return v === 'false' || v === 'null' || v === 'NaN' || v === 'undefined'
-      || v === '0'
+  bool(value: unknown): boolean {
+    return value === 'false' || value === 'null' || value === 'NaN' || value === 'undefined' || value === '0'
       ? false
-      : !!v;
+      : !!value;
   }
 
   array1DToLabelValuePair(arr: (string | number)[]): Option[] {
@@ -227,13 +226,12 @@ export class EntityUtils {
     return result;
   }
 
-  changeNull2String(value: any): any {
-    let result = value;
+  changeNull2String<T>(value: T): T | typeof NULL_VALUE {
     if (value === null) {
-      result = NULL_VALUE;
+      return NULL_VALUE;
     }
 
-    return result;
+    return value;
   }
 
   changeNullString2Null(data: any): any {

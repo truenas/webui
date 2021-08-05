@@ -1,4 +1,6 @@
 import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
+import { DiskDataEvent } from 'app/interfaces/events/disk-data-event.interface';
+import { EnclosureDataEvent } from 'app/interfaces/events/enclosure-data-event.interface';
 import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { RealtimeStatsEvent } from 'app/interfaces/events/realtime-stats-event.interface';
@@ -20,4 +22,6 @@ export type CoreEvent =
   | UntypedEvent
   | CpuStatsEvent
   | UpdateCheckedEvent
-  | UserDataEvent;
+  | UserDataEvent
+  | EnclosureDataEvent
+  | DiskDataEvent;

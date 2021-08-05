@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -9,7 +10,7 @@ import { CoreService } from './core-service/core.service';
 
 interface InfoObject {
   version: string; // "TrueNAS-12.0-MASTER-202003160424"
-  buildtime: any; // {$date: 1584373672000}
+  buildtime: ApiTimestamp; // {$date: 1584373672000}
   hostname: string; // "truenas.local"
   physmem: number; // 8445599744
   model: string; // "Intel(R) Core(TM) i3-2100T CPU @ 2.50GHz"
@@ -20,8 +21,8 @@ interface InfoObject {
   system_serial: string;
   system_product: string;
   license: any;
-  boottime: any; // {$date: 1584373672000}
-  datetime: any; // {$date: 1585005911991}
+  boottime: ApiTimestamp; // {$date: 1584373672000}
+  datetime: ApiTimestamp; // {$date: 1585005911991}
   timezone: string; // "America/Los_Angeles"
   system_manufacturer: string; // null
   ecc_memory: boolean; // false

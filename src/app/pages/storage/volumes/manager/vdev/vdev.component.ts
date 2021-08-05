@@ -9,6 +9,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import * as filesize from 'filesize';
 import helptext from 'app/helptext/storage/volumes/manager/vdev';
+import { ManagerDisk } from 'app/pages/storage/volumes/manager/manager-disk.interface';
+import { ManagerComponent } from 'app/pages/storage/volumes/manager/manager.component';
 import { StorageService } from 'app/services/storage.service';
 
 @Component({
@@ -17,15 +19,15 @@ import { StorageService } from 'app/services/storage.service';
   styleUrls: ['vdev.component.scss'],
 })
 export class VdevComponent implements OnInit {
-  @Input() index: any;
+  @Input() index: number;
   @Input() group: string;
-  @Input() manager: any;
+  @Input() manager: ManagerComponent;
   @Input() initial_values: any = {};
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
   type: string;
   removable = true;
-  disks: any[] = [];
-  selected: any[] = [];
+  disks: ManagerDisk[] = [];
+  selected: ManagerDisk[] = [];
   id: number;
   size: string;
   rawSize = 0;
@@ -85,7 +87,7 @@ export class VdevComponent implements OnInit {
     return 'Vdev ' + (this.index + 1) + ': ' + this.type.charAt(0).toUpperCase() + this.type.slice(1);
   }
 
-  addDisk(disk: any): void {
+  addDisk(disk: ManagerDisk): void {
     this.disks.push(disk);
     this.disks = [...this.disks];
     this.guessVdevType();
@@ -93,7 +95,7 @@ export class VdevComponent implements OnInit {
     this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
   }
 
-  removeDisk(disk: any): void {
+  removeDisk(disk: ManagerDisk): void {
     this.disks.splice(this.disks.indexOf(disk), 1);
     this.disks = [...this.disks];
     this.guessVdevType();
@@ -134,7 +136,7 @@ export class VdevComponent implements OnInit {
     const swapsize = this.manager.swapondrive * 1024 * 1024 * 1024;
     this.vdev_disks_size_error = false;
     for (let i = 0; i < this.disks.length; i++) {
-      const size = parseInt(this.disks[i].real_capacity, 10) - swapsize;
+      const size = this.disks[i].real_capacity - swapsize;
       stripeSize += size;
       if (i === 0) {
         smallestdisk = size;
@@ -198,7 +200,7 @@ export class VdevComponent implements OnInit {
     this.manager.selected = [];
   }
 
-  getDisks(): any[] {
+  getDisks(): ManagerDisk[] {
     return this.disks;
   }
 

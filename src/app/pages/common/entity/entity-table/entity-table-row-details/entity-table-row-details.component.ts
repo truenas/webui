@@ -13,7 +13,7 @@ import { EntityTableComponent } from '../entity-table.component';
 })
 export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   @Input() config: any;
-  @Input() parent: EntityTableComponent & { conf: any };
+  @Input() parent: EntityTableComponent;
 
   columns: any[] = [];
   actions: EntityTableAction[] = [];
