@@ -3,7 +3,7 @@ import { ActivatedRoute, Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as ipRegex from 'ip-regex';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
@@ -56,7 +56,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   private uniqueIPs: string[] = [];
   private affectedServices: string[] = [];
   checkin_interval: Interval;
-  private statsEvent$: Subscription;
 
   private navigation: Navigation;
   helptext = helptext;
@@ -511,13 +510,11 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     if (this.formEvent$) {
       this.formEvent$.complete();
     }
-    if (this.statsEvent$) this.ws.unsubscribe(this.statsEvent$);
-
     this.core.unregister({ observerClass: this });
   }
 
   getInterfaceInOutInfo(tableSource: any[]): void {
-    this.statsEvent$ = this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((evt) => {
+    this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((evt) => {
       if (evt.interfaces) {
         tableSource.map((row) => {
           row.received = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].received_bytes);
