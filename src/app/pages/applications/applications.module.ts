@@ -14,6 +14,7 @@ import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
 import { CatalogSummaryDialog } from './dialogs/catalog-summary/catalog-summary-dialog.component';
 import { ChartEventsDialog } from './dialogs/chart-events/chart-events-dialog.component';
+import { ChartUpgradeDialog } from './dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ManageCatalogSummaryDialog } from './dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { DockerImagesComponent } from './docker-images/docker-images.component';
 import { CatalogAddFormComponent } from './forms/catalog-add-form.component';
@@ -53,6 +54,7 @@ import { PodShellComponent } from './pod-shell/pod-shell.component';
     PodShellComponent,
     PodLogsComponent,
     ChartEventsDialog,
+    ChartUpgradeDialog,
     CatalogSummaryDialog,
     ManageCatalogsComponent,
     ManageCatalogSummaryDialog,
