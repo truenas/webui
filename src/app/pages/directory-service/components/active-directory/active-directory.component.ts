@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
+import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/directory-service/active-directory';
 import global_helptext from 'app/helptext/global-helptext';
@@ -17,7 +18,7 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { SystemGeneralService, WebSocketService, DialogService } from 'app/services';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -25,7 +26,6 @@ import { ModalService } from 'app/services/modal.service';
   selector: 'app-activedirectory',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-
 export class ActiveDirectoryComponent implements FormConfiguration {
   title: string = helptext.title;
   queryCall: 'activedirectory.config' = 'activedirectory.config';
@@ -51,14 +51,6 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       name: global_helptext.advanced_options,
       function: () => {
         this.setBasicMode(false);
-      },
-    },
-    {
-      id: helptext.activedirectory_custactions_edit_imap_id,
-      name: helptext.activedirectory_custactions_edit_imap_name,
-      function: () => {
-        this.modalService.close('slide-in-form');
-        this.router.navigate(new Array('').concat(['directoryservice', 'idmap']));
       },
     },
     {
@@ -293,7 +285,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       return false;
     } if (actionname === 'basic_mode' && this.isBasicMode === true) {
       return false;
-    } if ((actionname === 'edit_idmap' || actionname === 'leave_domain') && this.isBasicMode === true) {
+    } if (actionname === 'leave_domain' && this.isBasicMode === true) {
       return false;
     } if (actionname === 'leave_domain' && this.adStatus === false) {
       return false;
@@ -332,7 +324,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       });
     }
     this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((res) => {
-      res.activedirectory === 'HEALTHY' ? this.adStatus = true : this.adStatus = false;
+      this.adStatus = res.activedirectory === DirectoryServiceState.Healthy;
     });
   }
 
@@ -388,10 +380,6 @@ export class ActiveDirectoryComponent implements FormConfiguration {
 
   setBasicMode(basic_mode: boolean): void {
     this.isBasicMode = basic_mode;
-    _.find(this.fieldSets, { class: 'adv_row' }).label = !basic_mode;
-    _.find(this.fieldSets, { class: 'adv_column1' }).label = !basic_mode;
-    _.find(this.fieldSets, { class: 'adv_column2' }).label = !basic_mode;
-    _.find(this.fieldSets, { class: 'divider1' }).divider = !basic_mode;
   }
 
   beforeSubmit(data: any): void {
@@ -463,7 +451,8 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogRef.close();
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      new EntityUtils().handleWSError(this, error, this.dialogservice);
       this.dialogRef.close();
     });
   }

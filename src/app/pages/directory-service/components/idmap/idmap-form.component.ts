@@ -4,6 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { IdmapName } from 'app/enums/idmap-name.enum';
 import helptext from 'app/helptext/directory-service/idmap';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
@@ -44,9 +45,9 @@ export class IdmapFormComponent implements FormConfiguration {
   protected backendChoices: IdmapBackendOptions;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   protected requiredDomains = [
-    'DS_TYPE_ACTIVEDIRECTORY',
-    'DS_TYPE_DEFAULT_DOMAIN',
-    'DS_TYPE_LDAP',
+    IdmapName.DsTypeActiveDirectory,
+    IdmapName.DsTypeDefaultDomain,
+    IdmapName.DsTypeLdap,
   ];
   protected readOnly = false;
   fieldConfig: FieldConfig[] = [];
@@ -343,8 +344,8 @@ export class IdmapFormComponent implements FormConfiguration {
       }
     });
 
-    entityEdit.formGroup.controls['name'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
-      if (value === 'DS_TYPE_DEFAULT_DOMAIN') {
+    entityEdit.formGroup.controls['name'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: IdmapName) => {
+      if (value === IdmapName.DsTypeDefaultDomain) {
         entityEdit.formGroup.controls['idmap_backend'].setValue('TDB');
         this.hideField('idmap_backend', true, entityEdit);
       } else if (_.find(this.fieldConfig, { name: 'idmap_backend' }).isHidden) {

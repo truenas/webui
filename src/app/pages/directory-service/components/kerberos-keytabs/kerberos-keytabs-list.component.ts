@@ -4,7 +4,7 @@ import helptext from 'app/helptext/directory-service/kerberos-keytabs-form-list'
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/kerberos-keytabs/kerberos-keytabs-form.component';
+import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form.component';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 

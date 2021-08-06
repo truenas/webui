@@ -1,6 +1,8 @@
 <div mat-dialog-content>
     <div class="logo-container" fxLayout="row" fxLayoutAlign="start center">
-        <div class="logo" style="background-image: url('{{ catalogApp.icon }}');"></div>
+        <div class="logo">
+          <img [src]="catalogApp.icon" [src-fallback]="imagePlaceholder"/>
+        </div>
         <div fxLayout="row" fxLayoutAlign="start center">
             <strong class="chart-name">{{ catalogApp.name }}</strong>
             <span class="version"> {{ catalogApp.human_version }}</span>
@@ -52,7 +54,7 @@
             </div>
           </div>
         </mat-expansion-panel>
-        
+
         <mat-expansion-panel>
             <mat-expansion-panel-header>
                 <mat-panel-title>
@@ -65,11 +67,11 @@
                         <div class="event-time">{{ event.first_timestamp?.$date | date: 'yyyy-MM-dd H:mm:ss' }}</div>
                         <div class="event-message">{{ event.message }}</div>
                     </div>
-                </div>                
+                </div>
                 <ng-template #no_event>
                     <div fxLayout="row" fxLayoutAlign="start start" class="detail-row row-dark">
                         {{ 'No Recent Events' | translate }}
-                    </div>                    
+                    </div>
                 </ng-template>
             </div>
         </mat-expansion-panel>
