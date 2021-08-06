@@ -20,6 +20,8 @@ export class DiskStateService extends BaseService {
 
   protected onAuthenticated(evt: CoreEvent) {
     this.authenticated = true;
+
+    // Check for Disk Presence
     this.ws.sub('disk.query').subscribe((res) => {
       // A couple of notes about what to expect in the response.
       // Cleared:boolean is a property in the response that seems to indicate removal
@@ -29,6 +31,13 @@ export class DiskStateService extends BaseService {
 
       if (res && res.cleared) {
         this.core.emit({ name: 'DiskRemoved', data: res, sender: this });
+      }
+    });
+
+    // Check for Pool Status
+    this.ws.subscribe('zfs.pool.scan').subscribe((res) => {
+      if (res.fields.scan.function == 'RESILVER') {
+        this.core.emit({ name: 'Resilvering', data: res.fields, sender: this });
       }
     });
   }
