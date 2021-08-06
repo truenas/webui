@@ -101,15 +101,16 @@ def after_click_on_credentials_on_the_left_sidebar_then_directory_services(drive
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
     assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]')
     driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]').click()
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 
 @then('on the Directory Services page, click Setting on the Active Directory card')
 def on_the_directory_services_page_click_setting_on_the_active_directory_card(driver):
     """on the Directory Services page, click Setting on the Active Directory card."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Directory Services")]')
-    assert wait_on_element(driver, 5, '//h3[text()="Active Directory"]')
-    assert wait_on_element(driver, 7, '//mat-card[contains(.,"Active Directory")]//button[contains(.,"Settings")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"Active Directory")]//button[contains(.,"Settings")]').click()
+    assert wait_on_element(driver, 7, '//h1[text()="Directory Services"]')
+    assert wait_on_element(driver, 5, '//h3[text()="Active Directory and LDAP are disabled."]')
+    assert wait_on_element(driver, 5, '//button[contains(.,"Configure Active Directory")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Configure Active Directory")]').click()
 
 
 @then(parsers.parse('on the Active Directory page, input the Domain name "{ad_domain}"'))
@@ -153,8 +154,16 @@ def check_the_enable_box_and_click_save(driver):
 @then('the Active Directory setup should successfully save without an error')
 def the_active_directory_setup_should_successfully_save_without_an_error(driver):
     """the Active Directory setup should successfully save without an error."""
-    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element_disappear(driver, 20, '//h1[text()="Start"]')
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h1[text()="Start"]')
+    driver.refresh()
+    if wait_on_element(driver, 2, '//input[@data-placeholder="Username"]', 'inputable'):
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys('testing')
+        assert wait_on_element(driver, 5, '//button[@name="signin_button"]', 'clickable')
+        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     assert wait_on_element(driver, 7, f'//span[text()="{domain.upper()}"]')
 
 
@@ -197,13 +206,15 @@ def after_go_to_the_dashboard(driver):
 @then('click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER')
 def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver):
     """click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER."""
-    assert wait_on_element(driver, 30, '//button[@ix-auto="button__Initiate Failover"]')
+    assert wait_on_element(driver, 10, '//span[text()="(Standby)"]')
+    assert wait_on_element(driver, 10, '//button[@ix-auto="button__Initiate Failover"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__Initiate Failover"]').click()
     assert wait_on_element(driver, 5, '//h1[text()="Initiate Failover"]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__Initiate Failover"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[contains(@class,"confirm-checkbox")]').click()
     assert wait_on_element(driver, 5, '//button[.//text()="Failover"]', 'clickable')
     driver.find_element_by_xpath('//button[.//text()="Failover"]').click()
+    time.sleep(5)
 
 
 @then('wait for the login page to appear')
@@ -222,13 +233,14 @@ def at_the_login_page_enter_user_and_password(driver, user, password):
     driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
     assert wait_on_element(driver, 4, '//button[@name="signin_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+    time.sleep(2)
 
 
 @then('on the Dashboard, wait 5 second')
 def on_the_dashboard_wait_5_second(driver):
     """on the Dashboard, wait 5 second."""
-    assert wait_on_element(driver, 10, '//h1[text()="Dashboard"]')
-    if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]'):
+    assert wait_on_element(driver, 5, '//h1[text()="Dashboard"]')
+    if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     time.sleep(5)
 
