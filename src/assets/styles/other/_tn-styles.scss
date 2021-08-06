@@ -860,6 +860,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(color, --blue-txt, $blue-txt);
   }
 
+  .fn-theme-accent {
+    @include variable(background-color, --accent, $accent);
+    @include variable(color, --accent, $accent);
+  }
+
   .fn-theme-green {
     @include variable(background-color, --green, $green);
     @include variable(color, --green-txt, $green-txt);
@@ -920,6 +925,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
     &.fn-theme-primary {
       @include variable(color, --primary, $primary);
+    }
+
+    &.fn-theme-accent {
+      @include variable(color, --accent, $accent);
     }
 
     &.fn-theme-red {

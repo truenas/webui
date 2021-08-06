@@ -605,12 +605,12 @@ export class SharesDashboardComponent implements AfterViewInit {
     ];
   }
 
-  getStatusClass(status: ServiceStatus): string {
+  getStatusClass(status: ServiceStatus, count: number): string {
     switch (status) {
       case ServiceStatus.Running:
         return 'fn-theme-primary';
       case ServiceStatus.Stopped:
-        return 'fn-theme-red';
+        return count > 0 ? 'fn-theme-red' : 'fn-theme-accent';
       default:
         return 'fn-theme-orange';
     }
