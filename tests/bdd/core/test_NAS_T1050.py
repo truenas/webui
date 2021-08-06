@@ -125,7 +125,7 @@ def click_on_the_nfs_dataset_3_dots_button_select_edit_permissions(driver):
 @then('on the Permissions page, set the user to nobody and the Group to nogroup')
 def on_the_edit_acl_page_set_the_user_to_nobody_and_the_group_to_nogroup(driver):
     """on the Permissions page, set the user to nobody and the Group to nogroup."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="User"]')
+    assert wait_on_element(driver, 7, '//input[@placeholder="User"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="User"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="User"]').send_keys('nobody')
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__nobody"]', 'clickable')
