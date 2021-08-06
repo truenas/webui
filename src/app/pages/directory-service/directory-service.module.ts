@@ -18,7 +18,6 @@ import { EntityModule } from '../common/entity/entity.module';
 import { IdmapFormComponent } from './idmap/idmap-form.component';
 import { IdmapListComponent } from './idmap/idmap-list.component';
 import { LdapComponent } from './ldap/ldap.component';
-import { NISComponent } from './nis/nis.component';
 
 @NgModule({
   imports: [
@@ -28,7 +27,6 @@ import { NISComponent } from './nis/nis.component';
   declarations: [
     LdapComponent,
     ActiveDirectoryComponent,
-    NISComponent,
     KerberosRealmsListComponent,
     KerberosRealmsFormComponent,
     KerberosSettingsComponent,

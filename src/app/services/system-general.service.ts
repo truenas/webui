@@ -114,10 +114,6 @@ export class SystemGeneralService {
     return this.ws.call('certificate.country_choices');
   }
 
-  getIPChoices(): Observable<any> {
-    return this.ws.call('notifier.choices', ['IPChoices', [true, false]]);
-  }
-
   getSysInfo(): Observable<SystemInfo> {
     return this.ws.call('system.info');
   }

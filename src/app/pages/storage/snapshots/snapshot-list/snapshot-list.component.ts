@@ -375,7 +375,7 @@ export class SnapshotListComponent implements EntityTableConfig {
       }
     });
 
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
       dialogRef.close();
     });
