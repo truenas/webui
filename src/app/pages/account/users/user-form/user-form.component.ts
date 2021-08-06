@@ -494,7 +494,6 @@ export class UserFormComponent implements FormConfiguration {
         value.sudo = false;
         value.locked = false;
       }
-      delete value['password_conf'];
     } else {
       if (value['password_edit'] === value['password_conf_edit'] && value['password_edit'] !== '' && value['password_conf_edit'] !== '') {
         value['password'] = value['password_edit'];
