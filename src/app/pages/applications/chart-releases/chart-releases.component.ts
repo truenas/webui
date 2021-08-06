@@ -8,7 +8,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -16,6 +15,8 @@ import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { ChartUpgradeDialog } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
+import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
@@ -79,11 +80,6 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
       name: 'rollback_snapshot',
       placeholder: helptext.charts.rollback_dialog.snapshot.placeholder,
       tooltip: helptext.charts.rollback_dialog.snapshot.tooltip,
-    }, {
-      type: 'checkbox',
-      name: 'force',
-      placeholder: helptext.charts.rollback_dialog.force.placeholder,
-      tooltip: helptext.charts.rollback_dialog.force.tooltip,
     }],
     method_ws: 'chart.release.rollback',
     saveButtonText: helptext.charts.rollback_dialog.action,
@@ -343,24 +339,34 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
   }
 
   update(name: string): void {
+    const catalogApp = this.chartItems[name];
     this.appLoaderService.open();
     this.appService.getUpgradeSummary(name).pipe(untilDestroyed(this)).subscribe((res: UpgradeSummary) => {
       this.appLoaderService.close();
-      this.dialogService.confirm({
-        title: helptext.charts.upgrade_dialog.title + res.latest_human_version,
-        message: res.changelog,
-      }).pipe(
-        filter(Boolean),
-        untilDestroyed(this),
-      ).subscribe(() => {
+
+      const dialogRef = this.mdDialog.open(ChartUpgradeDialog, {
+        width: '500px',
+        maxWidth: '500px',
+        data: {
+          appInfo: catalogApp,
+          upgradeSummary: res,
+        } as ChartUpgradeDialogConfig,
+        disableClose: false,
+      });
+      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((version) => {
+        if (!version) {
+          return;
+        }
+
         this.dialogRef = this.mdDialog.open(EntityJobComponent, {
           data: {
             title: helptext.charts.upgrade_dialog.job,
           },
         });
-        this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name]);
+        this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name, { item_version: version }]);
         this.dialogRef.componentInstance.submit();
         this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          this.refreshChartReleases();
           this.dialogService.closeAllDialogs();
         });
         this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
@@ -382,19 +388,22 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
     const payload = {
       item_version: form['item_version'].value,
       rollback_snapshot: form['rollback_snapshot'].value,
-      force: form['force'].value,
     };
     self.dialogRef = self.mdDialog.open(EntityJobComponent, {
       data: {
-        title: (
-          helptext.charts.rollback_dialog.job),
+        title: helptext.charts.rollback_dialog.job,
       },
       disableClose: true,
     });
     self.dialogRef.componentInstance.setCall('chart.release.rollback', [self.rollbackChartName, payload]);
     self.dialogRef.componentInstance.submit();
-    self.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+    self.dialogRef.componentInstance.success.pipe(untilDestroyed(self)).subscribe(() => {
+      self.refreshChartReleases();
       self.dialogService.closeAllDialogs();
+    });
+    self.dialogRef.componentInstance.failure.pipe(untilDestroyed(self)).subscribe((error) => {
+      self.dialogService.closeAllDialogs();
+      new EntityUtils().handleWSError(self, error, self.dialogService);
     });
   }
 
@@ -476,8 +485,7 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
           if (res) {
             this.dialogRef = this.mdDialog.open(EntityJobComponent, {
               data: {
-                title: (
-                  helptext.charts.delete_dialog.job),
+                title: helptext.charts.delete_dialog.job,
               },
               disableClose: true,
             });

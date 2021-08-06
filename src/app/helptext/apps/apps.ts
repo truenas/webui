@@ -167,8 +167,7 @@ export default {
     },
 
     upgrade_dialog: {
-      title: T('Upgrade to '),
-      msg: T('Upgrade '),
+      title: T('Upgrade'),
       job: T('Upgrading...'),
     },
 
