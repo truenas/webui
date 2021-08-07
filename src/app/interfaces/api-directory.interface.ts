@@ -301,7 +301,7 @@ export type ApiDirectory = {
   'cloudsync.abort': { params: [/* id */ number]; response: boolean };
   'cloudsync.restore': { params: any; response: any };
   'cloudsync.query': { params: QueryParams<CloudSyncTask>; response: CloudSyncTask[] };
-  'cloudsync.delete': { params: [/* id */ number]; response: void };
+  'cloudsync.delete': { params: [/* id */ number]; response: boolean };
   'cloudsync.sync_onetime': { params: any; response: any };
 
   // Container
@@ -677,7 +677,7 @@ export type ApiDirectory = {
   'support.is_available_and_enabled': { params: any; response: any };
   'support.config': { params: any; response: any };
   'support.update': { params: any; response: any };
-  'support.new_ticket': { params: CreateNewTicket; response: NewTicketResponse };
+  'support.new_ticket': { params: [CreateNewTicket]; response: NewTicketResponse };
   'support.fetch_categories': { params: FetchSupportParams; response: Choices };
 
   // SMART
@@ -791,7 +791,7 @@ export type ApiDirectory = {
   'user.create': { params: any; response: any };
   'user.query': { params: QueryParams<User>; response: User[] };
   'user.set_root_password': { params: [/* password */ string]; response: void };
-  'user.delete': { params: DeleteUserParams; response: void };
+  'user.delete': { params: DeleteUserParams; response: number };
   'user.get_user_obj': { params: any; response: any };
   'user.shell_choices': { params: [/* userId */ number?]; response: Choices };
   'user.set_attribute': { params: any; response: any };
