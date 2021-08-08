@@ -1,7 +1,8 @@
-.container {
-  height: 90%;
-}
+$header-height: 97px;
 
+.container {
+  height: calc(100% - #{$header-height});
+}
 
 .zero-table-container {
   display: grid;
