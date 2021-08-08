@@ -1,4 +1,5 @@
 import { TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 
 export const fakeTranslateService = {
   instant: (str) => str,
