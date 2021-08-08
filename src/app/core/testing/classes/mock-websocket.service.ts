@@ -38,4 +38,8 @@ export class MockWebsocketService extends WebSocketService {
   mockCallOnce<K extends ApiMethod>(method: K, response: ApiDirectory[K]['params']): void {
     when(this.call).calledWith(method, expect.anything()).mockReturnValueOnce(response);
   }
+
+  onclose(): void {
+    // Noop to avoid calling redirect.
+  }
 }
