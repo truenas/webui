@@ -21,6 +21,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, Subscription, Subject } from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
@@ -275,13 +276,17 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     this.success = false;
     this.clearErrors();
     let value = _.cloneDeep(this.formGroup.value);
+
+    // TODO: remove
     for (const i in value) {
       if (value.hasOwnProperty(i)) {
-        if ((this.conf as any)['clean_' + i]) {
-          value = (this.conf as any)['clean_' + i](value, i);
+        const cleanMethod = new EntityUtils().getCleanMethod(i);
+        if ((this.conf as any)[cleanMethod]) {
+          value = (this.conf as any)[cleanMethod](value, i);
         }
       }
     }
+
     if ('id' in value) {
       delete value['id'];
     }

@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
@@ -124,12 +124,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
               let p1 = '';
               const self = this;
               this.loader.open();
-              this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-                if (res.length > 0) {
-                  const servicesMsgA = self.translate.instant(helptext.encryptMsgA);
-                  const servicesMsgB = self.translate.instant(helptext.encryptMsgB);
-                  p1 = servicesMsgA + `<i>${row1.name}</i>` + servicesMsgB;
-                  res.forEach((item) => {
+              this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((attachments) => {
+                if (attachments.length > 0) {
+                  p1 = self.translate.instant(helptext.encryptMsg, { name: row1.name });
+                  attachments.forEach((item) => {
                     p1 += `<br><br>${item.type}:`;
                     item.attachments.forEach((i: string) => {
                       const tempArr = i.split(',');
@@ -533,12 +531,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
 
           if (rowData.is_decrypted && rowData.status !== 'UNKNOWN') {
             this.loader.open();
-            this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-              if (res.length > 0) {
-                const a = self.translate.instant(helptext.exportMessages.servicesA);
-                const b = self.translate.instant(helptext.exportMessages.servicesB);
-                p1 = a + `<i>${row1.name}</i>` + b;
-                res.forEach((item) => {
+            this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((attachments) => {
+              if (attachments.length > 0) {
+                p1 = self.translate.instant(helptext.exportMessages.services, { name: row1.name });
+                attachments.forEach((item) => {
                   p1 += `<br><b>${item.type}:</b>`;
                   item.attachments.forEach((i) => {
                     const tempArr = i.split(',');
@@ -1056,69 +1052,134 @@ export class VolumesListTableConfig implements EntityTableConfig {
           label: T('Delete Dataset'),
           onClick: (row1: any) => {
             const datasetName = row1.name;
-            this.dialogService.doubleConfirm(
-              this.translate.instant('Delete Dataset <i><b>{datasetName}</b></i>', { datasetName }),
-              this.translate.instant(
-                'The <i><b>{datasetName}</b></i> dataset and all snapshots stored with it <b>will be permanently deleted</b>.',
-                { datasetName },
-              ),
-              datasetName,
-              true,
-              this.translate.instant('DELETE DATASET'),
-            ).pipe(
-              filter(Boolean),
-              untilDestroyed(this, 'destroy'),
-            ).subscribe(() => {
-              this.loader.open();
-              this.ws.call('pool.dataset.delete', [rowData.id, { recursive: true }]).pipe(untilDestroyed(this, 'destroy')).subscribe(
-                () => {
-                  this.loader.close();
-                  this.parentVolumesListComponent.repaintMe();
-                },
-                (e_res) => {
-                  this.loader.close();
-                  if (e_res.reason.indexOf('Device busy') > -1) {
-                    this.dialogService.confirm({
-                      title: this.translate.instant('Device Busy'),
-                      message: this.translate.instant('Force deletion of dataset <i>{datasetName}</i>?', { datasetName }),
-                      buttonMsg: this.translate.instant('Force Delete'),
-                    }).pipe(
-                      filter(Boolean),
-                      untilDestroyed(this, 'destroy'),
-                    ).subscribe(() => {
-                      this.loader.open();
-                      this.ws.call('pool.dataset.delete', [rowData.id, {
-                        recursive: true,
-                        force: true,
-                      }]).pipe(untilDestroyed(this, 'destroy')).subscribe(
-                        () => {
-                          this.loader.close();
-                          this.parentVolumesListComponent.repaintMe();
-                        },
-                        (err) => {
-                          this.loader.close();
-                          this.dialogService.errorReport(
-                            this.translate.instant(
-                              'Error deleting dataset <i>{datasetName}</i>.', { datasetName },
-                            ),
-                            err.reason,
-                            err.stack,
-                          );
-                        },
-                      );
+            const self = this;
+
+            this.loader.open();
+            combineLatest([
+              this.ws.call('pool.dataset.attachments', [row1.id]),
+              this.ws.call('pool.dataset.processes', [row1.id]),
+            ]).pipe(untilDestroyed(this, 'destroy')).subscribe(
+              ([attachments, processes]) => {
+                if (attachments.length > 0) {
+                  p1 = self.translate.instant(helptext.datasetDeleteMsg, { name: datasetName });
+                  attachments.forEach((item) => {
+                    p1 += `<br><b>${item.type}:</b>`;
+                    item.attachments.forEach((i) => {
+                      const tempArr = i.split(',');
+                      tempArr.forEach((i) => {
+                        p1 += `<br> - ${i}`;
+                      });
                     });
-                  } else {
-                    this.dialogService.errorReport(
-                      this.translate.instant(
-                        'Error deleting dataset <i>{datasetName}</i>.', { datasetName },
-                      ),
-                      e_res.reason,
-                      e_res.stack,
-                    );
+                  });
+                  p1 += '<br /><br />';
+                }
+
+                const running_processes: PoolProcess[] = [];
+                const running_unknown_processes: PoolProcess[] = [];
+                if (processes.length > 0) {
+                  processes.forEach((item) => {
+                    if (!item.service) {
+                      if (item.name && item.name !== '') {
+                        running_processes.push(item);
+                      } else {
+                        running_unknown_processes.push(item);
+                      }
+                    }
+                  });
+                  if (running_processes.length > 0) {
+                    const runningMsg = self.translate.instant(helptext.exportMessages.running);
+                    p1 += runningMsg + `<b>${datasetName}</b>:`;
+                    running_processes.forEach((process) => {
+                      if (process.name) {
+                        p1 += `<br> - ${process.name}`;
+                      }
+                    });
                   }
-                },
-              );
-            });
+                  if (running_unknown_processes.length > 0) {
+                    p1 += '<br><br>' + self.translate.instant(helptext.exportMessages.unknown);
+                    running_unknown_processes.forEach((process) => {
+                      if (process.pid) {
+                        p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0, 40)}`;
+                      }
+                    });
+                    p1 += '<br><br>' + self.translate.instant(helptext.exportMessages.terminated);
+                  }
+                }
+
+                doDelete();
+              },
+              (err) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this, err, this.dialogService);
+              },
+            );
+
+            function doDelete(): void {
+              self.loader.close();
+              self.dialogService.doubleConfirm(
+                self.translate.instant('Delete Dataset <i><b>{datasetName}</b></i>', { datasetName }),
+                self.translate.instant(
+                  'The <i><b>{datasetName}</b></i> dataset and all snapshots stored with it <b>will be permanently deleted</b>.',
+                  { datasetName },
+                ) + '<br><br>' + p1,
+                datasetName,
+                true,
+                self.translate.instant('DELETE DATASET'),
+              ).pipe(
+                filter(Boolean),
+                untilDestroyed(self, 'destroy'),
+              ).subscribe(() => {
+                self.loader.open();
+                self.ws.call('pool.dataset.delete', [rowData.id, { recursive: true }]).pipe(untilDestroyed(self, 'destroy')).subscribe(
+                  () => {
+                    self.loader.close();
+                    self.parentVolumesListComponent.repaintMe();
+                  },
+                  (e_res) => {
+                    self.loader.close();
+                    if (e_res.reason.indexOf('Device busy') > -1) {
+                      self.dialogService.confirm({
+                        title: self.translate.instant('Device Busy'),
+                        message: self.translate.instant('Force deletion of dataset <i>{datasetName}</i>?', { datasetName }),
+                        buttonMsg: self.translate.instant('Force Delete'),
+                      }).pipe(
+                        filter(Boolean),
+                        untilDestroyed(self, 'destroy'),
+                      ).subscribe(() => {
+                        self.loader.open();
+                        self.ws.call('pool.dataset.delete', [rowData.id, {
+                          recursive: true,
+                          force: true,
+                        }]).pipe(untilDestroyed(self, 'destroy')).subscribe(
+                          () => {
+                            self.loader.close();
+                            self.parentVolumesListComponent.repaintMe();
+                          },
+                          (err) => {
+                            self.loader.close();
+                            self.dialogService.errorReport(
+                              self.translate.instant(
+                                'Error deleting dataset <i>{datasetName}</i>.', { datasetName },
+                              ),
+                              err.reason,
+                              err.stack,
+                            );
+                          },
+                        );
+                      });
+                    } else {
+                      self.dialogService.errorReport(
+                        self.translate.instant(
+                          'Error deleting dataset <i>{datasetName}</i>.', { datasetName },
+                        ),
+                        e_res.reason,
+                        e_res.stack,
+                      );
+                    }
+                  },
+                );
+              });
+            }
           },
         });
       }
