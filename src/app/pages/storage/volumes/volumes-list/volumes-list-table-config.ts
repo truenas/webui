@@ -533,12 +533,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
 
           if (rowData.is_decrypted && rowData.status !== 'UNKNOWN') {
             this.loader.open();
-            this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-              if (res.length > 0) {
-                const a = self.translate.instant(helptext.exportMessages.servicesA);
-                const b = self.translate.instant(helptext.exportMessages.servicesB);
-                p1 = a + `<i>${row1.name}</i>` + b;
-                res.forEach((item) => {
+            this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((attachments) => {
+              if (attachments.length > 0) {
+                p1 = self.translate.instant(helptext.exportMessages.services, { name: row1.name });
+                attachments.forEach((item) => {
                   p1 += `<br><b>${item.type}:</b>`;
                   item.attachments.forEach((i) => {
                     const tempArr = i.split(',');
