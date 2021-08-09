@@ -162,7 +162,7 @@ matches your certificate usage scenario.'),
       placeholder: T('Private Key'),
       tooltip: T(
         'Paste the private key associated with the\
- Certificate when available. Please provide\
+ Certificate. Please provide\
  a key at least 1024 bits long.',
       ),
     },
