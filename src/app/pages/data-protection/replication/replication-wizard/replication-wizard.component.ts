@@ -983,10 +983,29 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     return new Promise((resolve) => {
       this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
         (res) => {
+          const targetDatasetFormControl = this.entityWizard.formArray.get([0]).get('source_datasets');
+          const prevErrors = targetDatasetFormControl.errors;
+          delete prevErrors.failedToLoadChildren;
+          if (Object.keys(prevErrors).length) {
+            targetDatasetFormControl.setErrors({ ...prevErrors });
+          } else {
+            targetDatasetFormControl.setErrors(null);
+          }
+          const targetDatasetFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'source_datasets' });
+          targetDatasetFieldConfig.warnings = null;
+
           resolve(res);
         },
         () => {
           node.collapse();
+          const targetDatasetFormControl = this.entityWizard.formArray.get([0]).get('source_datasets');
+          const prevErrors = targetDatasetFormControl.errors;
+          targetDatasetFormControl.setErrors({
+            ...prevErrors,
+            failedToLoadChildren: true,
+          });
+          const targetDatasetFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'source_datasets' });
+          targetDatasetFieldConfig.warnings = 'Failed to load sub-directories/datasets';
         },
       );
     });
