@@ -76,11 +76,11 @@ export class EntityUtils {
     } else if (entity) {
       dialog = entity.dialog;
     }
-    if ('exc_info' in res && res.exc_info.extra) {
+    if ('exc_info' in res && res.exc_info && res.exc_info.extra) {
       (res as any).extra = res.exc_info.extra;
     }
 
-    if ('extra' in res && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
+    if ('extra' in res && res.extra && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
       let scroll = false;
       if ((res.extra as any).excerpt) {
         this.errorReport(res, dialog);
