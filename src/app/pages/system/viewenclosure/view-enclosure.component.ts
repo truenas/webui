@@ -137,6 +137,10 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
       this.system.sensorData = evt.data;
     });
 
+    core.register({ observerClass: this, eventName: 'Resilvering' }).subscribe((evt: CoreEvent) => {
+      if (evt.data.scan.state == 'FINISHED') this.fetchData();
+    });
+
     core.register({ observerClass: this, eventName: 'DisksChanged' }).subscribe((evt: CoreEvent) => {
       if (evt.data.cleared) {
         // Extra actions if disk is removed
@@ -168,6 +172,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   }
 
   fetchData() {
+    console.warn('Fetching Data...');
     this.core.emit({ name: 'DisksRequest', sender: this });
   }
 

@@ -206,19 +206,18 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       }
     });
 
-    this.ws.subscribe('zfs.pool.scan').subscribe((res) => {
-      if (res && res.fields.scan.function.indexOf('RESILVER') > -1) {
-        this.resilveringDetails = res.fields;
+    this.core.register({
+      observerClass: this,
+      eventName: 'Resilvering',
+    }).subscribe((evt: CoreEvent) => {
+      if (evt.data.scan.state == 'FINISHED') {
+        this.showResilvering = false;
+        this.resilveringDetails = '';
+      } else {
+        this.resilveringDetails = evt.data;
         this.showResilvering = true;
       }
     });
-
-    setInterval(() => {
-      if (this.resilveringDetails && this.resilveringDetails.scan.state == 'FINISHED') {
-        this.showResilvering = false;
-        this.resilveringDetails = '';
-      }
-    }, 2500);
 
     this.core.register({
       observerClass: this,
