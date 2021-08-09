@@ -124,12 +124,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
               let p1 = '';
               const self = this;
               this.loader.open();
-              this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-                if (res.length > 0) {
-                  const servicesMsgA = self.translate.instant(helptext.encryptMsgA);
-                  const servicesMsgB = self.translate.instant(helptext.encryptMsgB);
-                  p1 = servicesMsgA + `<i>${row1.name}</i>` + servicesMsgB;
-                  res.forEach((item) => {
+              this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((attachments) => {
+                if (attachments.length > 0) {
+                  p1 = self.translate.instant(helptext.encryptMsg, { name: row1.name });
+                  attachments.forEach((item) => {
                     p1 += `<br><br>${item.type}:`;
                     item.attachments.forEach((i: string) => {
                       const tempArr = i.split(',');
