@@ -195,5 +195,9 @@ mat-grid-list {
 }
 
 .chart-body.chart-body-errors {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
   margin: 8px;
 }
