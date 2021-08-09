@@ -1434,7 +1434,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     window.addEventListener('message', method, false);
 
     function doAuth(message: any, selectedProvider: string): void {
-      if (message.data.oauth_portal) {
+      if ('oauth_portal' in message.data) {
         if (message.data.error) {
           dialogService.errorReport(T('Error'), message.data.error);
         } else {
@@ -1451,8 +1451,9 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         if (selectedProvider === 'ONEDRIVE') {
           getOnedriveList(message.data);
         }
+
+        window.removeEventListener('message', method);
       }
-      window.removeEventListener('message', method);
     }
   }
 
