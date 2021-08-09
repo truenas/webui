@@ -1447,7 +1447,7 @@
     replace-in-file "^4.1.3"
     tslib "^2.0.0"
 
-"@ngneat/until-destroy@^8.0.4":
+"@ngneat/until-destroy@^8.1.1":
   version "8.1.1"
   resolved "https://registry.yarnpkg.com/@ngneat/until-destroy/-/until-destroy-8.1.1.tgz#78b5d37f52d5c74c2a0f1332781b549744ff1978"
   integrity sha512-9vJBQwSqVzunxOpD9J8AiS7IAF7L+9EDVxm9grvUJ4na2m1BYxxfG6WxVS+B3wNQYDqiYsJf30Ox8CjTXDum/A==

@@ -580,6 +580,8 @@ export type ApiDirectory = {
   'pool.dataset.unlock_services_restart_choices': { params: [/* id */ string]; response: Choices };
   'pool.dataset.lock': { params: any; response: any };
   'pool.dataset.unlock': { params: any; response: any };
+  'pool.dataset.attachments': { params: [/* dataset id */ string]; response: PoolAttachment[] };
+  'pool.dataset.processes': { params: [/* dataset id */ string]; response: PoolProcess[] };
   'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: any; response: any };
   'pool.lock': { params: any; response: any };
