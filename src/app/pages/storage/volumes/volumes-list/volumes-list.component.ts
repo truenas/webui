@@ -15,7 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { TreeNode } from 'primeng/api';
-import { map, switchMap } from 'rxjs/operators';
+import { filter, map, switchMap } from 'rxjs/operators';
 import helptext from '../../../../helptext/storage/volumes/volume-list';
 import dataset_helptext from '../../../../helptext/storage/volumes/datasets/dataset-form';
 import { JobService, RestService } from '../../../../services';
@@ -315,7 +315,7 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T('Download Key'),
           onClick: (row1) => {
             const message = helptext.export_geli_message + row1.name;
-            this.dialogService.passwordConfirm(message).subscribe((export_keys) => {
+            this.dialogService.passwordConfirm(message).pipe(filter(Boolean)).subscribe(() => {
               const dialogRef = self.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
               dialogRef.componentInstance.volumeId = row1.id;
               dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key';
@@ -338,7 +338,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T('Download Key'),
         onClick: (row1) => {
           const message = helptext.export_geli_message + row1.name;
-          this.dialogService.passwordConfirm(message).subscribe((export_keys) => {
+          this.dialogService.passwordConfirm(message).pipe(filter(Boolean)).subscribe(() => {
             const dialogRef = self.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
             dialogRef.componentInstance.volumeId = row1.id;
             dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key';
@@ -374,23 +374,21 @@ export class VolumesListTableConfig implements InputTableConf {
         onClick: (row1) => {
           const message = helptext.export_keys_message + row1.name;
           const fileName = 'dataset_' + row1.name + '_keys.json';
-          this.dialogService.passwordConfirm(message).subscribe((export_keys) => {
-            if (export_keys) {
-              this.loader.open();
-              const mimetype = 'application/json';
-              this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).subscribe((res) => {
-                this.loader.close();
-                const url = res[1];
-                this.storageService.streamDownloadFile(this.http, url, fileName, mimetype).subscribe((file) => {
-                  if (res !== null && res !== '') {
-                    this.storageService.downloadBlob(file, fileName);
-                  }
-                });
-              }, (e) => {
-                this.loader.close();
-                new EntityUtils().handleWSError(this, e, this.dialogService);
+          this.dialogService.passwordConfirm(message).pipe(filter(Boolean)).subscribe(() => {
+            this.loader.open();
+            const mimetype = 'application/json';
+            this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).subscribe((res) => {
+              this.loader.close();
+              const url = res[1];
+              this.storageService.streamDownloadFile(this.http, url, fileName, mimetype).subscribe((file) => {
+                if (res !== null && res !== '') {
+                  this.storageService.downloadBlob(file, fileName);
+                }
               });
-            }
+            }, (e) => {
+              this.loader.close();
+              new EntityUtils().handleWSError(this, e, this.dialogService);
+            });
           });
         },
       });
@@ -1675,33 +1673,31 @@ export class VolumesListTableConfig implements InputTableConf {
             name: T('Export Key'),
             label: T('Export Key'),
             onClick: (row) => {
-              this.dialogService.passwordConfirm(message).subscribe((export_keys) => {
-                if (export_keys) {
-                  const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Retrieving Key') }, disableClose: true });
-                  dialogRef.componentInstance.setCall('pool.dataset.export_key', [rowData.id]);
-                  dialogRef.componentInstance.submit();
-                  dialogRef.componentInstance.success.subscribe((res) => {
-                    dialogRef.close();
-                    this.dialogService.confirm(`Key for ${rowData.id}`, res.result, true, T('Download Key'), false,
-                      '', '', '', '', false, T('Close')).subscribe((download) => {
-                      if (download) {
-                        this.loader.open();
-                        this.ws.call('core.download', ['pool.dataset.export_key', [rowData.id, true], fileName]).subscribe((res) => {
-                          this.loader.close();
-                          const url = res[1];
-                          this.storageService.streamDownloadFile(this.http, url, fileName, mimetype).subscribe((file) => {
-                            if (res !== null && res !== '') {
-                              this.storageService.downloadBlob(file, fileName);
-                            }
-                          });
-                        }, (e) => {
-                          this.loader.close();
-                          new EntityUtils().handleWSError(this, e, this.dialogService);
+              this.dialogService.passwordConfirm(message).pipe(filter(Boolean)).subscribe(() => {
+                const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Retrieving Key') }, disableClose: true });
+                dialogRef.componentInstance.setCall('pool.dataset.export_key', [rowData.id]);
+                dialogRef.componentInstance.submit();
+                dialogRef.componentInstance.success.subscribe((res) => {
+                  dialogRef.close();
+                  this.dialogService.confirm(`Key for ${rowData.id}`, res.result, true, T('Download Key'), false,
+                    '', '', '', '', false, T('Close')).subscribe((download) => {
+                    if (download) {
+                      this.loader.open();
+                      this.ws.call('core.download', ['pool.dataset.export_key', [rowData.id, true], fileName]).subscribe((res) => {
+                        this.loader.close();
+                        const url = res[1];
+                        this.storageService.streamDownloadFile(this.http, url, fileName, mimetype).subscribe((file) => {
+                          if (res !== null && res !== '') {
+                            this.storageService.downloadBlob(file, fileName);
+                          }
                         });
-                      }
-                    });
+                      }, (e) => {
+                        this.loader.close();
+                        new EntityUtils().handleWSError(this, e, this.dialogService);
+                      });
+                    }
                   });
-                }
+                });
               });
             },
           });
