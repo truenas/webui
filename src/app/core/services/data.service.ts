@@ -5,7 +5,6 @@ import { ApiCall } from './api.service';
 import { CoreService } from './core-service/core.service';
 import { DiskStateService } from './disk-state/disk-state.service';
 import { DiskTemperatureService } from './disk-temperature.service';
-import { StatsService } from './stats.service';
 import { SystemProfileService } from './system-profile.service';
 
 /*
@@ -28,7 +27,6 @@ export class DataService implements OnDestroy {
     private sysInfo: SystemProfileService,
     private dts: DiskTemperatureService,
     private dss: DiskStateService,
-    private statsService: StatsService,
     protected core: CoreService,
     protected ws: WebSocketService,
   ) {
