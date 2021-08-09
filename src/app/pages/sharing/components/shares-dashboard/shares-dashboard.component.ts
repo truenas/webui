@@ -14,7 +14,6 @@ import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import {
   ExpandableTableState,
   InputExpandableTableConf,
@@ -56,19 +55,6 @@ export class SharesDashboardComponent implements AfterViewInit {
   nfsTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.NFS);
   smbTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.SMB);
   iscsiTableConf: InputExpandableTableConf = this.getTableConfigForShareType(ShareType.ISCSI);
-
-  emptyTableConf: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    large: true,
-    title: this.translate.instant(T('No Shares Configured')),
-    message: this.translate.instant(
-      T("You have not configured any shares yet. Click the 'Add Share' button to add your first share."),
-    ),
-    button: {
-      label: this.translate.instant(T('Add Share')),
-      action: this.showAddDialog.bind(this),
-    },
-  };
 
   webdavHasItems = 0;
   nfsHasItems = 0;
@@ -186,6 +172,7 @@ export class SharesDashboardComponent implements AfterViewInit {
             key_props: ['name'],
           },
           limitRowsByMaxHeight: true,
+          hideEntityEmpty: true,
           emptyEntityLarge: false,
           parent: this,
           columns: [
@@ -229,6 +216,7 @@ export class SharesDashboardComponent implements AfterViewInit {
             key_props: ['name'],
           },
           limitRowsByMaxHeight: true,
+          hideEntityEmpty: true,
           emptyEntityLarge: false,
           parent: this,
           columns: [
@@ -274,6 +262,7 @@ export class SharesDashboardComponent implements AfterViewInit {
             key_props: ['name'],
           },
           emptyEntityLarge: false,
+          hideEntityEmpty: true,
           parent: this,
           columns: [
             { prop: 'name', name: helptext_sharing_webdav.column_name, always_display: true },
@@ -318,6 +307,7 @@ export class SharesDashboardComponent implements AfterViewInit {
             title: T('Delete'),
             key_props: ['name'],
           },
+          hideEntityEmpty: true,
           detailsHref: '/sharing/smb',
           emptyEntityLarge: false,
           parent: this,
