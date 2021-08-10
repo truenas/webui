@@ -27,6 +27,7 @@ interface NicInfo {
   lastSent: number;
   lastReceived: number;
   chartData: ChartData;
+  emptyConfig?: EmptyConfig;
 }
 
 interface NicInfoMap {
@@ -43,13 +44,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   @Input() stats: any;
   @Input() nics: BaseNetworkInterface[];
 
-  emptyTypes = EmptyType;
-  emptyChartConf: EmptyConfig = {
-    type: EmptyType.Loading,
-    large: false,
-    title: T('Loading'),
-  };
-
+  readonly emptyTypes = EmptyType;
   private utils: WidgetUtils;
   LinkState = LinkState;
   title = T('Network');
@@ -209,6 +204,11 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
         lastSent: 0,
         lastReceived: 0,
         chartData: null,
+        emptyConfig: {
+          type: EmptyType.Loading,
+          large: false,
+          title: T('Loading'),
+        },
       };
     });
   }
@@ -329,14 +329,14 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
       },
       () => {
         // Handle the error
-        const errorString = T('Error getting chart data');
-        this.chartDataError(errorString);
+        const errorString = this.translate.instant(T('Error getting chart data'));
+        this.nicInfoMap[nic.name].emptyConfig = this.chartDataError(errorString);
       });
     });
   }
 
-  chartDataError(err: string): void {
-    this.emptyChartConf = {
+  chartDataError(err: string): EmptyConfig {
+    return {
       type: EmptyType.Errors,
       large: false,
       compact: true,
