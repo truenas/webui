@@ -16,7 +16,6 @@ import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/ent
 import { TableService } from 'app/pages/common/entity/table/table.service';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { WebSocketService } from 'app/services';
-import { LocaleService } from 'app/services/locale.service';
 import { T } from 'app/translate-marker';
 
 interface NicInfo {
@@ -119,7 +118,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
 
   constructor(
     public router: Router, private ws: WebSocketService,
-    private locale: LocaleService, private reportsService: ReportsService,
+    private reportsService: ReportsService,
     private tableService: TableService, public translate: TranslateService,
   ) {
     super(translate);
