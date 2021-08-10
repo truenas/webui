@@ -26,6 +26,13 @@ ul {
   margin-right: 6px;
 }
 
+.controls {
+  color: var(--fg2);
+  position: absolute;
+  right: 16px;
+  top: 0;
+}
+
 mat-grid-list {
   &:not(.nics-1) .tile {
     background-color: var(--bg1);

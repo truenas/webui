@@ -9,7 +9,26 @@
             ix-auto ix-auto-type="button" ix-auto-identifier="goBack">
             <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
           </button>
-          <h3 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h3>
+          <h3 class="mat-card-title-text">
+            <div class="card-title-text">{{title | translate}}</div>
+          </h3>
+
+          <div class="controls">
+            <a
+              mat-icon-button
+              ix-auto
+              ix-auto-type="button"
+              ix-auto-identifier="networkReports"
+              [routerLink]="['/reportsdashboard/network']"
+            >
+              <mat-icon role="img"
+                matTooltip="{{'Network Reports' | translate}}"
+                matTooltipPosition="above"
+                aria-label="Network Reports">
+                  insert_chart
+              </mat-icon>
+            </a>
+          </div>
         </mat-toolbar-row>
         <div>
           <div class="card-body" [style.padding]="paddingTop + 'px ' + paddingX + 'px ' + paddingBottom + 'px'">
@@ -19,15 +38,6 @@
                   <div class="nic-info" fxLayout="column" fxLayoutAlign="start stretch">
                     <div class="info-header" fxLayout="row" fxLayoutAlign="start start">
                       <h4 class="info-header-title">{{nic.state.name}}</h4>
-                      <button mat-icon-button class="" (click)="router.navigate(['reportsdashboard/network'])"
-                        ix-auto="network" ix-auto-type="button" ix-auto-identifier="networkReports">
-                        <mat-icon role="img"
-                          matTooltip="{{'Network Reports' | translate}}"
-                          matTooltipPosition="above"
-                          aria-label="Network Reports">
-                            insert_chart
-                        </mat-icon>
-                      </button>
                     </div>
                     <div class="info-body" fxLayout="row" fxFlex fxLayoutAlign="space-between stretch">
                       <ul>
