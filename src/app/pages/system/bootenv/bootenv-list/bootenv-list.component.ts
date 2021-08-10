@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -238,7 +239,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             this.loader.close();
             this.entityList.selection.clear();
           },
-          (res: any) => {
+          (res: WebsocketError) => {
             new EntityUtils().handleWSError(this, res, this.dialog);
             this.loader.close();
           },
@@ -276,7 +277,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
               this.loader.close();
               this.entityList.selection.clear();
             },
-            (res: any) => {
+            (res: WebsocketError) => {
               new EntityUtils().handleWSError(this, res, this.dialog);
               this.loader.close();
             },
@@ -294,7 +295,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
               this.loader.close();
               this.entityList.selection.clear();
             },
-            (res: any) => {
+            (res: WebsocketError) => {
               new EntityUtils().handleWSError(this, res, this.dialog);
               this.loader.close();
             },
@@ -394,8 +395,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
           this.loader.close();
           this.dialog.info(T('Scrub Started'), T(''), '300px', 'info', true);
         },
-        (res: any) => {
-          this.dialog.errorReport(res.error, res.reason, res);
+        (res: WebsocketError) => {
+          new EntityUtils().handleWSError(this, res, this.dialog);
           this.loader.close();
         });
       }

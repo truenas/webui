@@ -13,3 +13,21 @@ export interface FileSystemStat {
   uid: number;
   user: string;
 }
+
+export interface Statfs {
+  flags: unknown[];
+  fstype: string;
+  source: string;
+  dest: string;
+  blocksize: number;
+  total_blocks: number;
+  free_blocks: number;
+  avail_blocks: number;
+  files: number;
+  free_files: number;
+  name_max: number;
+  fsid: unknown[];
+  total_bytes: number;
+  free_bytes: number;
+  avail_bytes: number;
+}

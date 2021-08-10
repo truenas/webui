@@ -22,6 +22,7 @@ import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
@@ -51,7 +52,7 @@ export class VMWizardComponent implements WizardConfiguration {
   firstFormGroup: FormGroup;
   summaryTitle = T('VM Summary');
   namesInUse: string[] = [];
-  statSize: any;
+  statSize: Statfs;
   displayPort: number;
   vcpus = 1;
   cores = 1;

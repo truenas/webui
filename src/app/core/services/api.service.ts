@@ -4,6 +4,7 @@ import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { User } from 'app/interfaces/user.interface';
 import { WebSocketService } from 'app/services/ws.service';
 import { CoreService } from './core-service/core.service';
 
@@ -35,7 +36,7 @@ export class ApiService {
         clone.args = [[['id', '=', 1]]];
         return clone;
       },
-      postProcessor(res: any) {
+      postProcessor(res: User[]) {
         const cloneRes = { ...res };
         return cloneRes[0].attributes;
       },
