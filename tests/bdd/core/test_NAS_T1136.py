@@ -323,9 +323,9 @@ def verify_all_files_are_moved_from_the_dropbox_test_folder_to_the_dataset(drive
     """verify all files are moved from the Dropbox test folder to the dataset."""
     driver.switch_to.window(driver.window_handles[1])
     driver.refresh()
-    time.sleep(1)
+    time.sleep(2)
     assert wait_on_element(driver, 5, '//h2[text()="test"]')
-    assert wait_on_element(driver, 5, '//span[text()="music"]', 'clickable')
+    assert wait_on_element(driver, 7, '//span[text()="music"]')
     assert not is_element_present(driver, '//span[text()="Explaining_BSD.pdf"]')
     assert not is_element_present(driver, '//span[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')
     driver.find_element_by_xpath('//span[text()="music"]').click()
