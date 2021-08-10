@@ -66,7 +66,7 @@
                       <ul fxFlex="70" class="detail-info" *ngIf="availableNics.length === 1" fxLayout="column" fxLayoutAlign="space-between start">
                         <li><span class="label">{{ 'Media Type' | translate }}:</span> {{ nic.state.active_media_type }}</li>
                         <li><span class="label">{{ 'Media Subtype' | translate }}:</span> {{ nic.state.active_media_subtype }}</li>
-                        <li><span class="label">{{ 'IP Addresses' | translate }}:</span> {{ nicInfoMap[nic.state.name]?.ip }}</li>
+                        <li><span class="label">{{ 'IP Address' | translate }}:</span> {{ nicInfoMap[nic.state.name]?.ip }}</li>
                       </ul>
                     </div>
                   </div>
