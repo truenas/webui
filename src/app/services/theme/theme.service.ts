@@ -10,7 +10,7 @@ export const DefaultTheme = {
   label: 'iX Dark',
   labelSwatch: 'blue',
   description: 'TrueNAS 12 default theme',
-  accentColors: ['blue', 'magenta', 'orange', 'cyan', 'yellow', 'violet', 'red', 'green'],
+  accentColors: ['blue', 'magenta', 'orange', 'cyan', 'yellow', 'violet', 'red', 'green', 'grey2'],
   primary: 'var(--blue)',
   topbar: '#111111',
   'topbar-txt': 'var(--fg2)',
@@ -31,6 +31,7 @@ export const DefaultTheme = {
   blue: '#0095D5',
   cyan: '#00d0d6',
   green: '#71BF44',
+  grey2: '#a8a8a8',
 };
 
 export interface Theme {
@@ -63,6 +64,7 @@ export interface Theme {
   blue: string;
   cyan: string;
   green: string;
+  grey2: string;
 }
 
 @UntilDestroy()
@@ -86,7 +88,7 @@ export class ThemeService {
       label: 'iX Blue',
       labelSwatch: 'blue',
       description: 'Official iX System Colors on light',
-      accentColors: ['blue', 'orange', 'cyan', 'violet', 'yellow', 'magenta', 'red', 'green'],
+      accentColors: ['blue', 'orange', 'cyan', 'violet', 'yellow', 'magenta', 'red', 'green', 'grey2'],
       primary: 'var(--blue)',
       topbar: 'var(--blue)',
       accent: 'var(--yellow)',
@@ -106,13 +108,14 @@ export class ThemeService {
       blue: '#0095D5',
       cyan: '#00d0d6',
       green: '#71BF44',
+      grey2: '#a8a8a8',
     },
     {
       name: 'dracula',
       label: 'Dracula',
       labelSwatch: 'blue',
       description: 'Dracula color theme',
-      accentColors: ['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
+      accentColors: ['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green', 'grey2'],
       primary: 'var(--blue)',
       topbar: 'var(--blue)',
       'topbar-txt': 'var(--fg1)',
@@ -133,13 +136,14 @@ export class ThemeService {
       blue: '#6272a4',
       cyan: '#8be9fd',
       green: '#50fa7b',
+      grey2: '#a8a8a8',
     },
     {
       name: 'nord',
       label: 'Nord',
       labelSwatch: 'blue',
       description: 'Unofficial nord color theme based on https://www.nordtheme.com/',
-      accentColors: ['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
+      accentColors: ['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green', 'grey2'],
       primary: 'var(--cyan)',
       topbar: 'var(--alt-bg2)',
       'topbar-txt': 'var(--fg2)',
@@ -160,13 +164,14 @@ export class ThemeService {
       blue: '#5e81aC',
       cyan: '#88c0d0',
       green: '#a3be8c',
+      grey2: '#a8a8a8',
     },
     {
       name: 'paper',
       label: 'Paper',
       labelSwatch: 'blue',
       description: 'FreeNAS 11.2 default theme',
-      accentColors: ['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
+      accentColors: ['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green', 'grey2'],
       primary: 'var(--blue)',
       topbar: 'var(--blue)',
       accent: 'var(--yellow)',
@@ -186,13 +191,14 @@ export class ThemeService {
       blue: '#0D5687',
       cyan: '#00d0d6',
       green: '#1F9642',
+      grey2: '#a8a8a8',
     },
     {
       name: 'solarized-dark',
       label: 'Solarized Dark',
       labelSwatch: 'bg2',
       description: 'Solarized dark color scheme',
-      accentColors: ['blue', 'magenta', 'cyan', 'violet', 'green', 'orange', 'yellow', 'red'],
+      accentColors: ['blue', 'magenta', 'cyan', 'violet', 'green', 'orange', 'yellow', 'red', 'grey2'],
       primary: 'var(--fg1)',
       topbar: 'var(--fg1)',
       'topbar-txt': '#cdcdcd',
@@ -213,13 +219,14 @@ export class ThemeService {
       blue: '#268bd2',
       cyan: '#2aa198',
       green: '#859900',
+      grey2: '#a8a8a8',
     },
     {
       name: 'midnight',
       label: 'Midnight',
       labelSwatch: 'blue',
       description: 'Dark theme with blues and greys',
-      accentColors: ['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
+      accentColors: ['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green', 'grey2'],
       primary: 'var(--blue)',
       topbar: 'var(--blue)',
       'topbar-txt': 'var(--fg2)',
@@ -240,13 +247,14 @@ export class ThemeService {
       blue: '#1274b5',
       cyan: '#00d0d6',
       green: '#1F9642',
+      grey2: '#a8a8a8',
     },
     {
       name: 'high-contrast',
       label: 'High Contrast',
       labelSwatch: 'fg1',
       description: 'High contrast theme based on Legacy UI color scheme',
-      accentColors: ['green', 'violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue'],
+      accentColors: ['green', 'violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue', 'grey2'],
       primary: 'var(--blue)',
       topbar: 'var(--black)',
       accent: 'var(--magenta)',
@@ -266,6 +274,7 @@ export class ThemeService {
       blue: '#4784ac',
       cyan: '#00d0d6',
       green: '#59d600',
+      grey2: '#a8a8a8',
     },
   ];
 

@@ -610,7 +610,7 @@ export class SharesDashboardComponent implements AfterViewInit {
       case ServiceStatus.Running:
         return 'fn-theme-primary';
       case ServiceStatus.Stopped:
-        return count > 0 ? 'fn-theme-red' : 'fn-theme-accent';
+        return count > 0 ? 'fn-theme-red' : 'fn-theme-grey2';
       default:
         return 'fn-theme-orange';
     }
