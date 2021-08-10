@@ -20,7 +20,7 @@
   <app-expandable-table [ngClass]="getIscsiOrder()" [expandableTableState]="iscsiExpandableState" [disabled]="true" [conf]="iscsiTableConf">
     <ng-container
       headerCustomContent
-      *ngTemplateOutlet="iscsiServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { status: iscsiServiceStatus, iscsi: iscsiHasItems }"
+      *ngTemplateOutlet="iscsiServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { status: iscsiServiceStatus, count: iscsiHasItems }"
     ></ng-container>
   </app-expandable-table>
 
