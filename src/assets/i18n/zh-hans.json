@@ -404,6 +404,7 @@
   "IGNORE": "忽略",
   "INFO": "信息",
   "IP Address Management": "IP地址管理",
+  "IPMI": "",
   "IPv4": "",
   "IPv6": "",
   "IPv6 addresses are not allowed for HA.": "HA不允许使用IPv6地址。",
