@@ -209,10 +209,10 @@ export class DialogService {
       ],
       saveButtonText: buttonMsg || T('DELETE'),
       afterInit(entityDialog: EntityDialogComponent) {
-        entityDialog.formGroup.controls['name'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
+        entityDialog.formGroup.controls['name'].valueChanges.pipe(untilDestroyed(entityDialog)).subscribe((res) => {
           entityDialog.submitEnabled = res === name && (confirmBox ? entityDialog.formGroup.controls['confirm'].value : true);
         });
-        entityDialog.formGroup.controls['confirm'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
+        entityDialog.formGroup.controls['confirm'].valueChanges.pipe(untilDestroyed(entityDialog)).subscribe((res) => {
           entityDialog.submitEnabled = res && (entityDialog.formGroup.controls['name'].value === name);
         });
       },

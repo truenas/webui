@@ -9,7 +9,6 @@ import { DiskTemperatureService } from 'app/core/services/disk-temperature.servi
 import { InteractionManagerService } from 'app/core/services/interaction-manager.service';
 import { LayoutService } from 'app/core/services/layout.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { StatsService } from 'app/core/services/stats.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -31,7 +30,6 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [
     CoreService,
     ApiService,
-    StatsService,
     DiskStateService,
     DiskTemperatureService,
     AnimationService,
@@ -53,7 +51,6 @@ export class CoreServices {
         CoreService,
         ApiService,
         DiskStateService,
-        StatsService,
         DiskTemperatureService,
         AnimationService,
         InteractionManagerService,
