@@ -860,9 +860,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(color, --blue-txt, $blue-txt);
   }
 
-  .fn-theme-grey2 {
-    @include variable(background-color, --grey2, $grey2);
-    @include variable(color, --grey2-txt, $grey2-txt);
+  .fn-theme-grey {
+    @include variable(background-color, --grey, --grey);
+    @include variable(color, --grey, --grey);
   }
 
   .fn-theme-green {
@@ -927,8 +927,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       @include variable(color, --primary, $primary);
     }
 
-    &.fn-theme-grey2 {
-      @include variable(color, --grey2, $grey2);
+    &.fn-theme-grey {
+      @include variable(color, --grey, --grey);
     }
 
     &.fn-theme-red {
