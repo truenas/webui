@@ -40,6 +40,7 @@ export interface AppTableConfig<P = any> {
   }; //
   tableComponent?: TableComponent;
   emptyEntityLarge?: boolean;
+  hideEntityEmpty?: boolean;
   alwaysHideViewMore?: boolean;
   parent: P;
   tableActions?: AppTableHeaderAction[];

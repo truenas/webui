@@ -58,7 +58,7 @@ export class ExpandableTableComponent implements OnInit, AfterViewChecked {
       this.isEmpty = !data.length;
       this.disabled = true;
       if (this.tableConf.limitRows) {
-        return data.splice(0, this.tableConf.limitRows);
+        return data.slice(0, this.tableConf.limitRows);
       }
       return data;
     };
