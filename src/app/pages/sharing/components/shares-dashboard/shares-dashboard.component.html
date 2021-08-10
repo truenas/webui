@@ -2,25 +2,25 @@
   <app-expandable-table [ngClass]="getWebdavOrder()" [expandableTableState]="webdavExpandableState" [disabled]="true" [conf]="webdavTableConf">
     <ng-container
       headerCustomContent
-      *ngTemplateOutlet="webdavServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { $implicit: webdavServiceStatus }"
+      *ngTemplateOutlet="webdavServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { status: webdavServiceStatus, count: webdavHasItems }"
     ></ng-container>
   </app-expandable-table>
   <app-expandable-table [ngClass]="getNfsOrder()" [expandableTableState]="nfsExpandableState" [disabled]="true" [conf]="nfsTableConf">
     <ng-container
       headerCustomContent
-      *ngTemplateOutlet="nfsServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { $implicit: nfsServiceStatus }"
+      *ngTemplateOutlet="nfsServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { status: nfsServiceStatus, count: nfsHasItems }"
     ></ng-container>
   </app-expandable-table>
   <app-expandable-table [ngClass]="getSmbOrder()" [expandableTableState]="smbExpandableState" [disabled]="true" [conf]="smbTableConf">
     <ng-container
       headerCustomContent
-      *ngTemplateOutlet="smbServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { $implicit: smbServiceStatus }"
+      *ngTemplateOutlet="smbServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { status: smbServiceStatus, count: smbHasItems }"
     ></ng-container>
   </app-expandable-table>
   <app-expandable-table [ngClass]="getIscsiOrder()" [expandableTableState]="iscsiExpandableState" [disabled]="true" [conf]="iscsiTableConf">
     <ng-container
       headerCustomContent
-      *ngTemplateOutlet="iscsiServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { $implicit: iscsiServiceStatus }"
+      *ngTemplateOutlet="iscsiServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { status: iscsiServiceStatus, count: iscsiHasItems }"
     ></ng-container>
   </app-expandable-table>
 
@@ -28,10 +28,10 @@
     <mat-spinner [diameter]="24"></mat-spinner>
   </ng-template>
 
-  <ng-template #statusButton let-status>
+  <ng-template #statusButton let-status="status" let-count="count">
     <button
       mat-stroked-button
-      [ngClass]="getStatusClass(status)"
+      [ngClass]="getStatusClass(status, count)"
       ix-auto
       ix-auto-type="button"
       ix-auto-identifier="share-service-status-button"
