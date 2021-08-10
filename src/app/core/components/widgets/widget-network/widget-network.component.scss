@@ -50,7 +50,11 @@ mat-grid-list {
     padding: 12px 16px;
 
     .nic-info {
-      width: 170px;
+      width: 205px;
+    }
+
+    ul {
+      width: 100%;
     }
   }
 
@@ -61,16 +65,33 @@ mat-grid-list {
       width: 150px;
     }
 
+    .info-header {
+      margin-bottom: 4px;
+    }
+
     .info-body {
       font-size: 12px;
-    }
 
-    .info-body .line-state {
-      padding: 0;
-    }
+      span.icon {
+        height: 18px;
+        min-width: 24px;
+        width: 24px;
 
-    .info-body ul li {
-      line-height: 15px;
+        .mat-icon {
+          font-size: 18px;
+          height: 22px;
+          line-height: 18px;
+          width: 22px;
+        }
+      }
+
+      .line-state {
+        padding: 0;
+      }
+
+      ul li {
+        line-height: 15px;
+      }
     }
   }
 
@@ -107,7 +128,6 @@ mat-grid-list {
 
 .nic-info {
   font-size: 12px;
-  padding-right: 10px;
 
   .divider {
     background-color: var(--lines);
@@ -147,10 +167,13 @@ mat-grid-list {
   }
 
   span.icon {
-    display: inline-block;
+    cursor: default;
+    display: inline-flex;
     height: 22px;
+    justify-content: center;
+    min-width: 26px;
     text-align: center;
-    width: 25px;
+    width: 26px;
 
     &.up {
       color: var(--green);
@@ -182,8 +205,7 @@ mat-grid-list {
   .mat-icon {
     font-size: 22px;
     line-height: 22px;
-    margin-left: -5px;
-    margin-top: 0;
+    margin: 0;
 
     &.mdi-set {
       margin-top: 0;
