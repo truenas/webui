@@ -156,14 +156,14 @@ def the_active_directory_setup_should_successfully_save_without_an_error(driver)
     """the Active Directory setup should successfully save without an error."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element_disappear(driver, 30, '//h1[text()="Start"]')
-    # driver.refresh()
-    # if wait_on_element(driver, 2, '//input[@data-placeholder="Username"]', 'inputable'):
-    #     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-    #     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-    #     driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-    #     driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys('testing')
-    #     assert wait_on_element(driver, 5, '//button[@name="signin_button"]', 'clickable')
-    #     driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+    driver.refresh()
+    if wait_on_element(driver, 2, '//input[@data-placeholder="Username"]', 'inputable'):
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys('testing')
+        assert wait_on_element(driver, 5, '//button[@name="signin_button"]', 'clickable')
+        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     assert wait_on_element(driver, 7, f'//span[text()="{domain.upper()}"]')
 
 
@@ -214,12 +214,17 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
     driver.find_element_by_xpath('//mat-checkbox[contains(@class,"confirm-checkbox")]').click()
     assert wait_on_element(driver, 5, '//button[.//text()="Failover"]', 'clickable')
     driver.find_element_by_xpath('//button[.//text()="Failover"]').click()
-    time.sleep(5)
 
 
 @then('wait for the login page to appear')
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear."""
+    # to make sure the UI is refresh for the login page
+    assert wait_on_element(driver, 60, '//p[contains(.,"Waiting for Active TrueNAS controller to come up")]')
+    time.sleep(1)
+    assert wait_on_element_disappear(driver, 30, '//p[contains(.,"Waiting for Active TrueNAS controller to come up")]')
+    time.sleep(5)
+    driver.refresh()
     assert wait_on_element(driver, 60, '//input[@data-placeholder="Username"]')
 
 
@@ -239,7 +244,9 @@ def at_the_login_page_enter_user_and_password(driver, user, password):
 @then('on the Dashboard, wait 5 second')
 def on_the_dashboard_wait_5_second(driver):
     """on the Dashboard, wait 5 second."""
-    assert wait_on_element(driver, 5, '//h1[text()="Dashboard"]')
+    assert wait_on_element(driver, 10, '//h1[text()="Dashboard"]')
+    # make sure HA is enable before going forward
+    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
     if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     time.sleep(5)
