@@ -222,7 +222,7 @@ def wait_for_the_login_page_to_appear(driver):
     # to make sure the UI is refresh for the login page
     assert wait_on_element(driver, 60, '//p[contains(.,"Waiting for Active TrueNAS controller to come up")]')
     time.sleep(1)
-    assert wait_on_element_disappear(driver, 30, '//p[contains(.,"Waiting for Active TrueNAS controller to come up")]')
+    assert wait_on_element_disappear(driver, 60, '//p[contains(.,"Waiting for Active TrueNAS controller to come up")]')
     time.sleep(5)
     driver.refresh()
     assert wait_on_element(driver, 60, '//input[@data-placeholder="Username"]')
