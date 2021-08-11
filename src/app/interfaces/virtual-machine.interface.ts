@@ -46,6 +46,11 @@ export type VmDisplayWebUriParams = [
   }?,
 ];
 
+export interface VmDisplayWebUri {
+  error: string;
+  uri: string;
+}
+
 export interface VmDisplayResponse {
   error: unknown;
   uri: string;

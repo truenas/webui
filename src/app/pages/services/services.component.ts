@@ -31,7 +31,7 @@ export class Services implements EntityTableConfig, OnInit {
   queryCallOption: QueryParams<Service> = [[], { order_by: ['service'] }];
   rowIdentifier = 'name';
   entityList: EntityTableComponent;
-  protected inlineActions = true;
+  inlineActions = true;
 
   columns = [
     { name: T('Name'), prop: 'name', always_display: true },

@@ -20,6 +20,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -79,7 +80,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
     private parentVolumesListComponent: VolumesListComponent,
     private router: Router,
     private classId: string,
-    private datasetData: any[],
+    private datasetData: Dataset[],
     public mdDialog: MatDialog,
     protected ws: WebSocketService,
     protected dialogService: DialogService,

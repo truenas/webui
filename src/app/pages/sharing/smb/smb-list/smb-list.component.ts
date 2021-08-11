@@ -103,14 +103,14 @@ export class SMBListComponent implements EntityTableConfig {
         icon: 'edit',
         name: 'edit',
         label: T('Edit'),
-        onClick: (row: any) => this.entityList.doEdit(row.id),
+        onClick: (row: SmbShare) => this.entityList.doEdit(row.id),
       },
       {
         id: row.name,
         icon: 'security',
         name: 'share_acl',
         label: helptext_sharing_smb.action_share_acl,
-        onClick: (row: any) => {
+        onClick: (row: SmbShare) => {
           this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
             (res) => {
               if (res) {
@@ -137,7 +137,7 @@ export class SMBListComponent implements EntityTableConfig {
         disabled: optionDisabled,
         matTooltip: vol_helptext.acl_edit_msg,
         label: helptext_sharing_smb.action_edit_acl,
-        onClick: (row: any) => {
+        onClick: (row: SmbShare) => {
           const datasetId = rowName;
           this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
             (res) => {
@@ -164,7 +164,7 @@ export class SMBListComponent implements EntityTableConfig {
         icon: 'delete',
         name: 'delete',
         label: T('Delete'),
-        onClick: (row: any) => this.entityList.doDelete(row),
+        onClick: (row: SmbShare) => this.entityList.doDelete(row),
       },
     ] as EntityTableAction[];
   }

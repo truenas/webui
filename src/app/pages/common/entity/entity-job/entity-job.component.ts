@@ -62,7 +62,7 @@ export class EntityJobComponent implements OnInit {
       this.showCloseButton = true;
       this.dialogRef.disableClose = true;
     }
-    this.progress.pipe(untilDestroyed(this)).subscribe((progress: any) => {
+    this.progress.pipe(untilDestroyed(this)).subscribe((progress: JobProgress) => {
       if (progress.description) {
         this.description = progress.description;
       }

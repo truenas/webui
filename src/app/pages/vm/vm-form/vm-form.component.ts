@@ -1,24 +1,28 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
+import { DeviceType } from 'app/enums/device-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { VmDeviceType, VmTime } from 'app/enums/vm.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { GpuDevice } from 'app/interfaces/gpu-device.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import {
-  FieldConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  WebSocketService, StorageService, VmService, AppLoaderService, DialogService, SystemGeneralService,
+  AppLoaderService,
+  DialogService,
+  StorageService,
+  SystemGeneralService,
+  VmService,
+  WebSocketService,
 } from 'app/services';
 import { T } from 'app/translate-marker';
 
@@ -40,7 +44,7 @@ export class VmFormComponent implements FormConfiguration {
   vcpus: number;
   cores: number;
   threads: number;
-  private gpus: GpuDevice[];
+  private gpus: Device[];
   private isolatedGpuPciIds: string[];
   private maxVCPUs: number;
   private productType = window.localStorage.getItem('product_type') as ProductType;
@@ -343,7 +347,7 @@ export class VmFormComponent implements FormConfiguration {
   resourceTransformIncomingRestData(vmRes: any): any {
     this.rawVmData = vmRes;
     vmRes['memory'] = this.storageService.convertBytestoHumanReadable(vmRes['memory'] * 1048576, 0);
-    this.ws.call('device.get_info', ['GPU']).pipe(untilDestroyed(this)).subscribe((gpus: GpuDevice[]) => {
+    this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
       const vmPciSlots: string[] = vmRes.devices
         .filter((device: any) => device.dtype === VmDeviceType.Pci)

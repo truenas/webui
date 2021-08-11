@@ -1,6 +1,8 @@
+import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
+import { Sensor } from 'app/interfaces/sensor.interface';
 import {
-  Disk, Enclosure, VDev, VDevStats,
+  Disk, VDev, VDevStats,
 } from 'app/interfaces/storage.interface';
 
 export interface EnclosureDisk extends Disk {
@@ -36,8 +38,8 @@ export class SystemProfiler {
   headIndex: number;
   rearIndex: number;
 
-  private _diskData: any[];
-  get diskData(): any[] {
+  private _diskData: Disk[];
+  get diskData(): Disk[] {
     return this._diskData;
   }
   set diskData(obj) {
@@ -64,8 +66,8 @@ export class SystemProfiler {
     this.parsePoolsData(this._pools);
   }
 
-  private _sensorData: any;
-  get sensorData(): any {
+  private _sensorData: Sensor[];
+  get sensorData(): Sensor[] {
     return this._sensorData;
   }
   set sensorData(obj) {
@@ -143,8 +145,8 @@ export class SystemProfiler {
     });
   }
 
-  private parseSensorData(obj: any): void {
-    const powerStatus = obj.filter((v: any) => v.name.startsWith('PS'));
+  private parseSensorData(obj: Sensor[]): void {
+    const powerStatus = obj.filter((v) => v.name.startsWith('PS'));
     if (this.enclosures[this.headIndex] && this.enclosures[this.headIndex].model == 'M Series') {
       const elements = powerStatus.map((item: any) => {
         item.descriptor = item.name;
@@ -311,7 +313,7 @@ export class SystemProfiler {
   rawCapacity(): number {
     if (!this.diskData || this.diskData.length == 0) { return; }
     let capacity = 0;
-    this.diskData.forEach((disk) => {
+    this.diskData.forEach((disk: any) => {
       if (disk.vdev && disk.vdev.topology == 'data') {
         capacity += disk.size;
       }
@@ -325,7 +327,7 @@ export class SystemProfiler {
       : this.enclosures[key].model;
   }
 
-  getDiskByID(id: string): any {
+  getDiskByID(id: string): Disk {
     return this.diskData ? this.diskData.find((disk) => disk.identifier == id) : null;
   }
 }

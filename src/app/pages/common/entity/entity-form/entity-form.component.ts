@@ -54,7 +54,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   isNew = false;
   hasConf = true;
   wsResponse: any;
-  wsfg: FormControl;
+  wsfg: AbstractControl;
   wsResponseIdx: any;
   queryResponse: any;
   saveSubmitText = T('Save');
@@ -308,7 +308,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               if (fg) {
                 const current_field = this.fieldConfig.find((control) => control.name === key);
                 if (current_field.type === 'array') {
-                  this.setArrayValue(this.data[key], fg, key);
+                  this.setArrayValue(this.data[key], fg as FormArray, key);
                 } else if (current_field.type === 'list') {
                   this.setListValue(this.data[key], fg as FormArray, key);
                 } else if (current_field.type === 'dict') {
@@ -345,12 +345,12 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               this.conf.dataHandler(this);
             } else {
               for (const key in this.wsResponse) {
-                this.wsfg = this.formGroup.controls[key] as FormControl;
+                this.wsfg = this.formGroup.controls[key] as AbstractControl;
                 this.wsResponseIdx = this.wsResponse[key];
                 if (this.wsfg) {
                   const current_field = this.fieldConfig.find((control) => control.name === key);
                   if (current_field.type === 'array') {
-                    this.setArrayValue(this.wsResponse[key], this.wsfg, key);
+                    this.setArrayValue(this.wsResponse[key], this.wsfg as FormArray, key);
                   } else if (current_field.type === 'list' || current_field.type === 'dict') {
                     this.setObjectListValue(this.wsResponse[key], this.wsfg, current_field);
                   } else if (!(current_field.type === 'select' && current_field.options.length == 0)) {
@@ -558,7 +558,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
   }
 
-  isFieldsetAvailabel(fieldset: any): boolean {
+  isFieldsetAvailabel(fieldset: FieldSet): boolean {
     if (fieldset.config) {
       for (let i = 0; i < fieldset.config.length; i++) {
         if (!fieldset.config[i].isHidden) {
@@ -569,7 +569,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return false;
   }
 
-  isShow(id: any): any {
+  isShow(id: any): boolean {
     if (this.conf.isBasicMode) {
       if (this.conf.advanced_field.indexOf(id) > -1) {
         return false;
@@ -610,7 +610,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.formGroup.controls[name].setValue(value, { emitEvent: true });
   }
 
-  setArrayValue(data: any[], formArray: any, name: string): void {
+  setArrayValue(data: any[], formArray: FormArray, name: string): void {
     let array_controls: any;
     for (const i in this.fieldConfig) {
       const config = this.fieldConfig[i];

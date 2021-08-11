@@ -27,7 +27,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { Interval } from 'app/interfaces/timeout.interface';
 import {
   EntityTableAction,
-  EntityTableColumn,
+  EntityTableColumn, EntityTableColumnProp,
   EntityTableConfig, EntityTableConfigConfig, EntityTableConfirmDialog,
 } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService, JobService } from 'app/services';
@@ -318,15 +318,15 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
       const preferredCols = this.prefService.preferences.tableDisplayedColumns;
       // Turn off preferred cols for snapshots to allow for two diffferent column sets to be displayed
       if (preferredCols.length > 0 && this.title !== 'Snapshots') {
-        preferredCols.forEach((i: any) => {
+        preferredCols.forEach((column) => {
           // If preferred columns have been set for THIS table...
-          if (i.title === this.title) {
+          if (column.title === this.title) {
             this.firstUse = false;
-            this.conf.columns = i.cols.filter((col: any) =>
+            this.conf.columns = column.cols.filter((col) =>
               // Remove columns if they are already present in always displayed columns
               !this.alwaysDisplayedCols.find((item) => item.prop === col.prop));
             // Remove columns from display and preferred cols if they don't exist in the table
-            const notFound: any[] = [];
+            const notFound: EntityTableColumnProp[] = [];
             this.conf.columns.forEach((col) => {
               const found = this.filterColumns.find((o) => o.prop === col.prop);
               if (!found) {
@@ -1046,9 +1046,9 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
 
     const preferredCols = this.prefService.preferences.tableDisplayedColumns;
     if (preferredCols.length > 0) {
-      preferredCols.forEach((i: any) => {
-        if (i.title === this.title) {
-          preferredCols.splice(preferredCols.indexOf(i), 1);
+      preferredCols.forEach((column) => {
+        if (column.title === this.title) {
+          preferredCols.splice(preferredCols.indexOf(column), 1);
         }
       });
     }
@@ -1069,7 +1069,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     }
   }
 
-  isChecked(col: any): boolean {
+  isChecked(col: EntityTableColumn): boolean {
     return this.conf.columns.find((c) => c.name === col.name) !== undefined;
   }
 
