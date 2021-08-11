@@ -246,9 +246,8 @@ export class WebSocketService {
         this.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
           if (event.id == job_id) {
             observer.next(event.fields);
-            if (event.fields.state === JobState.Success || event.fields.state == JobState.Failed) {
-              observer.complete();
-            }
+            if (event.fields.state === JobState.Success) observer.complete();
+            if (event.fields.state === JobState.Failed) observer.error(event.fields);
           }
         });
       });
