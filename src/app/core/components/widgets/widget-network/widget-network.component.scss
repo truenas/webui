@@ -3,11 +3,6 @@
   width: 600px;
 }
 
-ul {
-  margin: 0;
-  padding-left: 0;
-}
-
 .widget mat-card-content {
   width: 100%;
 }
@@ -41,6 +36,10 @@ mat-grid-list {
   &.nics-1 .tile {
     padding: 12px 16px;
 
+    .info-body ul {
+      width: auto;
+    }
+
     .detail-info li {
       line-height: 20px;
     }
@@ -52,17 +51,13 @@ mat-grid-list {
     .nic-info {
       width: 205px;
     }
-
-    ul {
-      width: 100%;
-    }
   }
 
   &.nics-3 .tile {
     padding: 4px 4px 4px 16px;
 
     .nic-info {
-      width: 150px;
+      width: 175px;
     }
 
     .info-header {
@@ -213,12 +208,21 @@ mat-grid-list {
   }
 
   ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
     text-align: left;
+    width: 100%;
 
     li {
       line-height: 18px;
-      overflow: hidden;
-      white-space: nowrap;
+      min-width: 0;
+
+      span:nth-child(2) {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
   }
 }
