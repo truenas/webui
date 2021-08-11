@@ -20,7 +20,7 @@
         <div *ngIf="!config.hideButton" class="list-action list-action-inline"
           [style.padding-bottom]="config.width == '100%' ? '10px' : '0'">
           <div>
-            <button mat-icon-button id="delete-box_{{ config.name+i }}" class="top-right"
+            <button mat-icon-button class="top-right"
                 ix-auto ix-auto-type="icon-button" ix-auto-identifier="delete-box_{{ config.name+i }}" (click)="(delete(i))">
                 <mat-icon>clear</mat-icon>
               </button>
