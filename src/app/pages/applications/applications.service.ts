@@ -40,10 +40,6 @@ export class ApplicationsService {
     return this.ws.call('kubernetes.bindip_choices');
   }
 
-  getCatItems(label: string): Observable<any> {
-    return this.ws.call('catalog.items', [label]);
-  }
-
   getChartReleases(name?: string): Observable<ChartRelease[]> {
     const secondOption = { extra: { history: true } };
 

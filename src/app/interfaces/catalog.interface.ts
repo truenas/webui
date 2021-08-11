@@ -63,6 +63,8 @@ export interface CatalogAppVersion {
   supported: boolean;
   values: any;
   version: string;
+  train?: string;
+  app?: string;
 }
 
 export interface ChartMetadata {
@@ -83,4 +85,8 @@ export interface ChartMetadataDependency {
   name: string;
   repository: string;
   version: string;
+}
+
+export interface CatalogItem {
+  [train: string]: CatalogTrain;
 }
