@@ -1159,7 +1159,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                             self.loader.close();
                             self.dialogService.errorReport(
                               self.translate.instant(
-                                'Error deleting dataset <i>{datasetName}</i>.', { datasetName },
+                                'Error deleting dataset {datasetName}.', { datasetName },
                               ),
                               err.reason,
                               err.stack,
@@ -1170,7 +1170,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     } else {
                       self.dialogService.errorReport(
                         self.translate.instant(
-                          'Error deleting dataset <i>{datasetName}</i>.', { datasetName },
+                          'Error deleting dataset {datasetName}.', { datasetName },
                         ),
                         e_res.reason,
                         e_res.stack,
