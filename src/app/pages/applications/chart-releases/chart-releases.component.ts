@@ -13,7 +13,7 @@ import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import helptext from 'app/helptext/apps/apps';
-import { UpgradeSummary } from 'app/interfaces/application.interface';
+import { ApplicationUserEventName, UpgradeSummary } from 'app/interfaces/application.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { ChartUpgradeDialog } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
@@ -165,7 +165,7 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
   }
 
   viewCatalog(): void {
-    this.updateTab.emit({ name: 'SwitchTab', value: 0 });
+    this.updateTab.emit({ name: ApplicationUserEventName.SwitchTab, value: 0 });
   }
 
   showLoadStatus(type: EmptyType): void {
@@ -681,6 +681,6 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
   refreshToolbarMenus(): void {
     const isSelectedOneMore: boolean = this.getSelectedItems().length > 0;
     const isSelectedAll = !this.filteredChartItems.find((item) => !item.selected);
-    this.updateTab.emit({ name: 'UpdateToolbar', value: isSelectedOneMore, isSelectedAll });
+    this.updateTab.emit({ name: ApplicationUserEventName.UpdateToolbar, value: isSelectedOneMore, isSelectedAll });
   }
 }

@@ -53,10 +53,6 @@ export class ApplicationsService {
     return this.ws.call('chart.release.query', [[], { select: ['name'] }]);
   }
 
-  setReplicaCount(name: string, count: number): Observable<any> {
-    return this.ws.call('chart.release.scale', [name, { replica_count: count }]);
-  }
-
   getPodConsoleChoices(name: string): Observable<Record<string, string[]>> {
     return this.ws.call('chart.release.pod_console_choices', [name]);
   }

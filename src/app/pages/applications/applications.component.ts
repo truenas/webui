@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import helptext from 'app/helptext/apps/apps';
+import { ApplicationUserEvent, ApplicationUserEventName } from 'app/interfaces/application.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
@@ -219,15 +220,15 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
     this.toolbarConfig.target.next({ name: 'UpdateControls', data: this.toolbarConfig.controls });
   }
 
-  updateTab(evt: any): void {
-    if (evt.name == 'SwitchTab') {
-      this.selectedIndex = evt.value;
-    } else if (evt.name == 'UpdateToolbar') {
-      this.isSelectedOneMore = evt.value;
+  updateTab(evt: ApplicationUserEvent): void {
+    if (evt.name == ApplicationUserEventName.SwitchTab) {
+      this.selectedIndex = evt.value as number;
+    } else if (evt.name == ApplicationUserEventName.UpdateToolbar) {
+      this.isSelectedOneMore = evt.value as boolean;
       this.isSelectedAll = evt.isSelectedAll;
       this.updateToolbar();
-    } else if (evt.name == 'catalogToolbarChanged') {
-      this.isSelectedPool = evt.value;
+    } else if (evt.name == ApplicationUserEventName.CatalogToolbarChanged) {
+      this.isSelectedPool = evt.value as boolean;
       this.catalogOptions = evt.catalogNames.map((catalogName: string) => ({
         label: this.utils.capitalizeFirstLetter(catalogName),
         value: catalogName,

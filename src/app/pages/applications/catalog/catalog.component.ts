@@ -13,6 +13,7 @@ import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
+import { ApplicationUserEventName } from 'app/interfaces/application.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -230,7 +231,11 @@ export class CatalogComponent implements OnInit {
   }
 
   refreshToolbarMenus(): void {
-    this.updateTab.emit({ name: 'catalogToolbarChanged', value: Boolean(this.selectedPool), catalogNames: this.catalogNames });
+    this.updateTab.emit({
+      name: ApplicationUserEventName.CatalogToolbarChanged,
+      value: Boolean(this.selectedPool),
+      catalogNames: this.catalogNames,
+    });
   }
 
   refreshForms(): void {
