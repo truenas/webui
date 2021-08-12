@@ -7,7 +7,7 @@ export function fakeSuccessfulJob<T = void>(jobResult: T = undefined): Job<T> {
     description: '',
     error: '',
     exception: '',
-    id: 13,
+    id: 0,
     result: jobResult,
     state: JobState.Success,
   } as Job<T>;
