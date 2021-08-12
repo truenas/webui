@@ -2,8 +2,11 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { NewTicketType } from 'app/enums/new-ticket-type.enum';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Job } from 'app/interfaces/job.interface';
+import { CreateNewTicket, NewTicketResponse } from 'app/interfaces/support.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -79,10 +82,10 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
           tooltip: helptext.type.tooltip,
           tooltipPosition: 'above',
           options: [
-            { label: T('Bug'), value: 'BUG' },
-            { label: T('Feature'), value: 'FEATURE' },
+            { label: T('Bug'), value: NewTicketType.Bug },
+            { label: T('Feature'), value: NewTicketType.Feature },
           ],
-          value: 'BUG',
+          value: NewTicketType.Bug,
         },
         {
           type: 'select',
@@ -164,7 +167,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
       }
       if (this.category.options.length === 0 && this.username !== '' && this.password !== '') {
         this.category.isLoading = true;
-        parent.ws.call('support.fetch_categories', [this.username, this.password]).pipe(untilDestroyed(this)).subscribe((res: string[]) => {
+        parent.ws.call('support.fetch_categories', [this.username, this.password]).pipe(untilDestroyed(this)).subscribe((res) => {
           this.category.isLoading = false;
           parent.entityEdit.setDisabled('category', false);
           const options = [];
@@ -203,12 +206,12 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     this.openDialog(payload);
   }
 
-  openDialog(payload: any): void {
+  openDialog(payload: CreateNewTicket): void {
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Ticket'), CloseOnClickOutside: true } });
     let url: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<NewTicketResponse>) => {
       if (res.result) {
         url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
       }
@@ -243,7 +246,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
 
   resetForm(): void {
     this.entityEdit.formGroup.reset();
-    this.entityEdit.formGroup.controls['type'].setValue('BUG');
+    this.entityEdit.formGroup.controls['type'].setValue(NewTicketType.Bug);
     this.subs = [];
     this.modalService.close('slide-in-form');
   }

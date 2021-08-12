@@ -36,3 +36,8 @@ export interface UserGroup {
   bsdgrp_sudo_commands: { [property: string]: any }[];
   bsdgrp_smb: boolean;
 }
+
+export type DeleteUserParams = [
+  /* id */ number,
+  /* params */ { delete_group: boolean },
+];

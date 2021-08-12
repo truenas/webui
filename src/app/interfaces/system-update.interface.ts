@@ -35,3 +35,7 @@ export interface SystemUpdateTrain {
   description: string;
   sequence: string;
 }
+
+export interface UpdateParams {
+  reboot: boolean;
+}

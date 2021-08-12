@@ -2,7 +2,8 @@ import {
   Component, Input, OnInit, OnChanges,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { EntityTableComponent } from './entity-table.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 @Component({
   selector: 'app-entity-table-actions',
@@ -10,11 +11,11 @@ import { EntityTableComponent } from './entity-table.component';
   templateUrl: './entity-table-actions.component.html',
 })
 export class EntityTableActionsComponent implements OnInit, OnChanges {
-  @Input('entity') entity: EntityTableComponent & { conf: any };
-  @Input('row') row: any;
-  @Input('icon_name') icon_name = 'more_vert';
-  @Input('action') action: any;
-  @Input('groups') groups = false;
+  @Input() entity: EntityTableComponent;
+  @Input() row: any;
+  @Input() icon_name = 'more_vert';
+  @Input() action: EntityTableAction;
+  @Input() groups = false;
 
   actions: any[];
   showMenu = true;

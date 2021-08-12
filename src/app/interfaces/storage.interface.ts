@@ -33,17 +33,6 @@ export interface VDevStats {
   physical_ashift: number;
 }
 
-// As returned by enclosure.query
-export interface Enclosure {
-  controller: boolean;
-  elements: any[]; // Requires types for nested properties
-  id: string;
-  label: string;
-  model: string;
-  name: string;
-  number: number;
-}
-
 // As returned by disk.query
 export interface EnclosureSlot {
   number: number;

@@ -10,6 +10,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { WebSocketService, DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
@@ -26,7 +27,7 @@ import { EntityUtils } from '../utils';
   providers: [EntityFormService, FieldRelationService],
 })
 export class EntityWizardComponent implements OnInit {
-  @Input('conf') conf: any;
+  @Input('conf') conf: WizardConfiguration;
   @ViewChild('stepper', { static: true }) stepper: MatStepper;
 
   formGroup: FormGroup;
@@ -76,10 +77,9 @@ export class EntityWizardComponent implements OnInit {
       // Fallback if no fieldsets are defined
       if (this.conf.wizardConfig[i].fieldSets) {
         let fieldConfig: any[] = [];
+
         /* Temp patch to support both FieldSet approaches */
-        const fieldSets = this.conf.wizardConfig[i].fieldSets.list
-          ? this.conf.wizardConfig[i].fieldSets.list()
-          : this.conf.wizardConfig[i].fieldSets;
+        const fieldSets = this.conf.wizardConfig[i].fieldSets;
         for (let j = 0; j < fieldSets.length; j++) {
           const fieldset = fieldSets[j];
           if (fieldset.config) {

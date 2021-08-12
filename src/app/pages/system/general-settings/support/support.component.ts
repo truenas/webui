@@ -20,7 +20,6 @@ import { SupportFormUnlicensedComponent } from './support-unlicensed/support-for
 @Component({
   selector: 'app-support',
   templateUrl: './support.component.html',
-  providers: [],
 })
 export class SupportComponent implements OnInit {
   subs: any;
@@ -43,8 +42,6 @@ export class SupportComponent implements OnInit {
   protected supportFormUnlicensed = new SupportFormUnlicensedComponent(this.ws, this.mdDialog, this.modalService);
   protected proactiveComponent = new ProactiveComponent(this.ws, this.loader, this.dialog, this.translate,
     this.modalService);
-
-  custActions: any[] = [];
 
   constructor(protected ws: WebSocketService,
     protected prefService: PreferencesService,

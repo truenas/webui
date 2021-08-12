@@ -34,7 +34,6 @@ import { AppCommonModule } from './components/common/app-common.module';
 import { AboutModalDialog } from './components/common/dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from './components/common/dialog/directory-services-monitor/directory-services-monitor.component';
 import { ResilverProgressDialogComponent } from './components/common/dialog/resilver-progress/resilver-progress.component';
-import { TaskManagerComponent } from './components/common/dialog/task-manager/task-manager.component';
 import { TruecommandComponent } from './components/common/dialog/truecommand/truecommand.component';
 import { ConfirmDialog } from './pages/common/confirm-dialog/confirm-dialog.component';
 import { EntityDialogComponent } from './pages/common/entity/entity-dialog/entity-dialog.component';
@@ -100,7 +99,6 @@ import { WebSocketService } from './services/ws.service';
     InfoDialog,
     GeneralDialogComponent,
     AboutModalDialog,
-    TaskManagerComponent,
     TruecommandComponent,
     DirectoryServicesMonitorComponent,
     ConsolePanelModalDialog,
@@ -132,7 +130,6 @@ import { WebSocketService } from './services/ws.service';
     InfoDialog,
     GeneralDialogComponent,
     AboutModalDialog,
-    TaskManagerComponent,
     TruecommandComponent,
     DirectoryServicesMonitorComponent,
     ConsolePanelModalDialog,
