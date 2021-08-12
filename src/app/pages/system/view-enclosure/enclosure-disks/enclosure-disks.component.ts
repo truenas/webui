@@ -868,7 +868,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       const elements = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex
         ? this.system.enclosures[disk.enclosure.number].elements
         : this.system.enclosures[disk.enclosure.number].elements[0].elements;
-      const slot = elements.filter((s: any) => s.slot == disk.enclosure.slot);
+      const slot = (elements as any).filter((s: any) => s.slot == disk.enclosure.slot);
 
       if (!failed && slot.fault) {
         failed = true;

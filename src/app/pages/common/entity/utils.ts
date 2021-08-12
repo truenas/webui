@@ -167,11 +167,10 @@ export class EntityUtils {
     return ndata;
   }
 
-  bool(v: any): boolean {
-    return v === 'false' || v === 'null' || v === 'NaN' || v === 'undefined'
-      || v === '0'
+  bool(value: unknown): boolean {
+    return value === 'false' || value === 'null' || value === 'NaN' || value === 'undefined' || value === '0'
       ? false
-      : !!v;
+      : !!value;
   }
 
   array1DToLabelValuePair(arr: (string | number)[]): Option[] {
@@ -227,13 +226,12 @@ export class EntityUtils {
     return result;
   }
 
-  changeNull2String(value: any): any {
-    let result = value;
+  changeNull2String<T>(value: T): T | typeof NULL_VALUE {
     if (value === null) {
-      result = NULL_VALUE;
+      return NULL_VALUE;
     }
 
-    return result;
+    return value;
   }
 
   changeNullString2Null(data: any): any {
@@ -448,29 +446,30 @@ export class EntityUtils {
     return result;
   }
 
-  remapAppConfigData(data: any, fieldConfigs: FieldConfig[]): any {
-    let result: any;
-    if (data === undefined || data === null || data === '') {
+  remapOneConfigData(data: any, fieldConfig: FieldConfig): any {
+    let result;
+    if (!fieldConfig || data === undefined || data === null || data === '') {
       result = data;
-    } else if (typeof data === 'object') {
-      result = {};
-      Object.keys(data).forEach((key) => {
-        const value = data[key];
-        let newValue: any = {};
-        if (Array.isArray(value)) {
-          const name = this.findKeyOfList(fieldConfigs, key);
-          newValue = value.map((item) => {
-            const remapedValue = this.remapAppConfigData(item, fieldConfigs);
-            if (name) {
-              return { [name]: remapedValue };
-            }
-            return remapedValue;
-          });
-        } else {
-          newValue = this.remapAppConfigData(value, fieldConfigs);
+    } else if (Array.isArray(data)) {
+      result = [];
+      data.forEach((item) => {
+        let value = item;
+        const subFieldConfig = fieldConfig.templateListField[0];
+        if (subFieldConfig.type === 'dict') {
+          value = this.remapOneConfigData(item, subFieldConfig);
         }
-        result[key] = newValue;
+        result.push({
+          [subFieldConfig.name]: value,
+        });
       });
+    } else if (typeof data === 'object') {
+      result = {} as any;
+      for (const key in data) {
+        const subValue = data[key];
+        const subFieldConfig = fieldConfig.subFields.find((fg) => fg.name === key);
+        const newValue = this.remapOneConfigData(subValue, subFieldConfig);
+        result[key] = newValue;
+      }
     } else {
       result = data;
     }
@@ -478,30 +477,15 @@ export class EntityUtils {
     return result;
   }
 
-  findKeyOfList(fieldConfigs: FieldConfig[], key: string): string {
-    if (!fieldConfigs) {
-      return null;
+  remapAppConfigData(data: any, fieldConfigs: FieldConfig[]): any {
+    const result = {} as any;
+    for (const key in data) {
+      const value = data[key];
+      const fieldConfig = fieldConfigs.find((fg) => fg.name === key);
+      const newValue = this.remapOneConfigData(value, fieldConfig);
+      result[key] = newValue;
     }
-    for (let i = 0; i < fieldConfigs.length; i++) {
-      const fieldConfig = fieldConfigs[i];
-
-      if (fieldConfig.type == 'list') {
-        if (fieldConfig.name == key) {
-          return fieldConfig.templateListField[0].name;
-        }
-        const result = this.findKeyOfList(fieldConfig.templateListField, key);
-        if (result) {
-          return result;
-        }
-      } else if (fieldConfig.type == 'dict') {
-        const result = this.findKeyOfList(fieldConfig.subFields, key);
-        if (result) {
-          return result;
-        }
-      }
-    }
-
-    return null;
+    return result;
   }
 
   snakeToPascal(str: string): string {

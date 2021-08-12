@@ -94,7 +94,7 @@ export class SystemGeneralService {
 
   constructor(protected ws: WebSocketService) {}
 
-  getCA(): Observable<any[]> {
+  getCA(): Observable<CertificateAuthority[]> {
     return this.ws.call(this.caList, []);
   }
 
@@ -112,10 +112,6 @@ export class SystemGeneralService {
 
   getCertificateCountryChoices(): Observable<Choices> {
     return this.ws.call('certificate.country_choices');
-  }
-
-  getIPChoices(): Observable<any> {
-    return this.ws.call('notifier.choices', ['IPChoices', [true, false]]);
   }
 
   getSysInfo(): Observable<SystemInfo> {

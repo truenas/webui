@@ -1,5 +1,5 @@
 <div id="{{config.name}}" class="dynamic-field form-input form-element" [formGroup]="group" [ngClass]="fieldShow" [class.has-pwtoggle]="config.togglePw" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
-      
+
         <div *ngIf="config.placeholder" class="label-container">
           <label class="label input-text">
             {{config.placeholder | translate}}
@@ -37,7 +37,6 @@
 				ix-auto
 				ix-auto-type="input"
 				ix-auto-identifier="{{config.placeholder}}"
-				[id]="config.name"
 				(change)="valueChange()"
 				(paste)="onPaste($event)"
 				(input)="onInput()">

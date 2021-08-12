@@ -171,7 +171,7 @@ export class SnapshotFormComponent implements FormConfiguration {
 
     this.datasetFg = entityForm.formGroup.controls['dataset'];
 
-    this.datasetFg.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.datasetFg.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       if (this.dataset_disabled && this.dataset !== value) {
         this.save_button_enabled = true;
         datasetField.warnings = '';

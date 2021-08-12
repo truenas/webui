@@ -28,8 +28,8 @@ export class FormUploadComponent {
   jobId: number;
   fileBrowser = true;
   apiEndPoint = '/_upload?auth_token=' + this.ws.token;
-  fileList: any;
-  fbrowser: any;
+  fileList: FileList;
+  fbrowser: HTMLInputElement;
 
   constructor(
     protected ws: WebSocketService, protected http: HttpClient, private loader: AppLoaderService,
@@ -38,7 +38,7 @@ export class FormUploadComponent {
 
   fileBtnClick(): void {
     this.fileInput.nativeElement.click();
-    this.fbrowser = document.getElementById('fb');
+    this.fbrowser = document.getElementById('fb') as HTMLInputElement;
     this.fbrowser.onchange = () => {
       this.fileList = this.fileInput.nativeElement.files;
     };

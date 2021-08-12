@@ -24,8 +24,8 @@ export class ShellService {
   podInfo: any;
 
   // input and output and eventEmmitter
-  private shellCmdOutput: any;
-  @Output() shellOutput = new EventEmitter < any >();
+  private shellCmdOutput: ArrayBuffer;
+  @Output() shellOutput = new EventEmitter<ArrayBuffer>();
   @Output() shellConnected = new EventEmitter<ShellConnectedEvent>();
 
   subscriptions = new Map <string, any[]>();

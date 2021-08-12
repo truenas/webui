@@ -80,7 +80,7 @@ export class StorageService {
   }
 
   // Handles sorting for entity tables and some other ngx datatables
-  tableSorter(arr: any[], key: string, asc: SortDirection): any[] {
+  tableSorter<T>(arr: T[], key: keyof T, asc: SortDirection): T[] {
     const tempArr: any[] = [];
     let sorter: any;
     const myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });

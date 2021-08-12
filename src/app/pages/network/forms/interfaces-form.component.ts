@@ -379,7 +379,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.bridge_fieldset = _.find(this.fieldSets, { class: 'bridge_settings' });
     this.failover_fieldset = _.find(this.fieldSets, { class: 'failover_settings' });
     this.vlan_pint = _.find(this.vlan_fieldset.config, { name: 'vlan_parent_interface' });
-    this.ws.call('interface.xmit_hash_policy_choices', []).pipe(untilDestroyed(this)).subscribe((choices) => {
+    this.ws.call('interface.xmit_hash_policy_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
       const xmitHashPolicyFieldConfig = _.find(this.fieldConfig, { name: 'xmit_hash_policy' });
       xmitHashPolicyFieldConfig.options = [];
       for (const key in choices) {
@@ -388,7 +388,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       this.entityForm.formGroup.get('xmit_hash_policy').setValue(XmitHashPolicy.Layer2Plus3);
     });
 
-    this.ws.call('interface.lacpdu_rate_choices', []).pipe(untilDestroyed(this)).subscribe((choices) => {
+    this.ws.call('interface.lacpdu_rate_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
       const lacpduRateFieldConfig = _.find(this.fieldConfig, { name: 'lacpdu_rate' });
       lacpduRateFieldConfig.options = [];
       for (const key in choices) {

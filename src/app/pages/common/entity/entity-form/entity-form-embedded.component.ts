@@ -13,6 +13,7 @@ import {
   AfterViewInit, SimpleChanges,
 } from '@angular/core';
 import {
+  FormArray,
   FormBuilder, FormControl, FormGroup,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -21,61 +22,64 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, Subscription, Subject } from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
+import { RelationGroup } from 'app/pages/common/entity/entity-form/models/field-relation.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
 import { EntityTemplateDirective } from '../entity-template.directive';
+import { FieldSets } from './classes/field-sets';
 import { FieldConfig } from './models/field-config.interface';
 import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
 import { FieldRelationService } from './services/field-relation.service';
 
 export interface EmbeddedFormConfig {
-  fieldSets?: any;
-  fieldSetDisplay?: any;
+  fieldSets?: FieldSets | FieldSet[];
+  fieldSetDisplay?: string;
   values?: any;
-  saveSubmitText?: any;
-  preInit?: any;
+  saveSubmitText?: string;
+  preInit?: (entityForm: EntityFormEmbeddedComponent) => void;
   target?: Subject<CoreEvent>;
-  resource_name?: any;
-  isEntity?: any;
+  resource_name?: string;
+  isEntity?: boolean;
   addCall?: any;
   editCall?: any;
   queryCall?: any;
   queryCallOption?: any;
-  isNew?: any;
-  pk?: any;
+  isNew?: boolean;
+  pk?: number | string;
   custom_get_query?: any;
   fieldConfig?: FieldConfig[];
   resourceTransformIncomingRestData?: any;
   route_usebaseUrl?: any;
-  afterInit?: any;
-  initial?: any;
+  afterInit?: (entityForm: EntityFormEmbeddedComponent) => void;
+  initial?: (this: EmbeddedFormConfig, entityForm: EntityFormEmbeddedComponent) => void;
   dataHandler?: any;
   dataAttributeHandler?: any;
-  route_cancel?: any;
-  route_success?: any;
-  route_delete?: any;
+  route_cancel?: string[];
+  route_success?: string[];
+  route_delete?: string[];
   custom_edit_query?: any;
   custom_add_query?: any;
   actionButtonsAlign?: string;
   custActions?: any[];
   customFilter?: any[];
+  isCustActionVisible?: (action: string) => boolean;
 
-  beforeSubmit?: any;
-  afterSubmit?: any;
-  customSubmit?: any;
-  clean?: any;
+  beforeSubmit?: (value: any) => void;
+  afterSubmit?: (value: any) => void;
+  customSubmit?: (value: any) => void;
+  clean?: (this: EmbeddedFormConfig, value: any) => void;
   errorReport?: any;
-  hide_fileds?: any;
-  isBasicMode?: any;
-  advanced_field?: any;
-  basic_field?: any;
-  route_conf?: any;
-  preHandler?: any;
-  initialCount?: any;
-  initialCount_default?: any;
+  hide_fileds?: string[];
+  isBasicMode?: boolean;
+  advanced_field?: string[];
+  basic_field?: string[];
+  route_conf?: string[];
+  preHandler?: (data: any, formArray: FormArray) => any;
+  initialCount?: number;
+  initialCount_default?: number;
 
   goBack?(): any;
   onSuccess?(res: any): any;
@@ -110,7 +114,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   get changes(): Observable<any> {
     return this.formGroup.valueChanges;
   }
-  get statusChanges(): Observable<any> {
+  get statusChanges(): Observable<string> {
     return this.formGroup.statusChanges;
   }
   get dirty(): boolean { return this.entityForm ? this.entityForm.dirty : false; }
@@ -193,7 +197,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     this.fieldSetDisplay = this.conf.fieldSetDisplay;
     if (this.conf.fieldSets) {
       /* Temp patch to support both FieldSet approaches */
-      this.fieldSets = this.conf.fieldSets.list ? this.conf.fieldSets.list() : this.conf.fieldSets;
+      this.fieldSets = 'list' in this.conf.fieldSets ? this.conf.fieldSets.list() : this.conf.fieldSets;
     }
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     this.setControlChangeDetection();
@@ -212,7 +216,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
         if (fg) {
           const current_field = this.fieldConfig.find((control) => control.name === i);
           if (current_field.type === 'array') {
-            this.setArrayValue(this.data[i], fg, i);
+            this.setArrayValue(this.data[i], fg as FormArray, i);
           } else {
             fg.setValue(this.data[i]);
           }
@@ -362,7 +366,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     this.formGroup.controls[name].setValue(value, { emitEvent: true });
   }
 
-  setArrayValue(data: any[], formArray: any, name: string): void {
+  setArrayValue(data: any[], formArray: FormArray, name: string): void {
     let array_controls: any;
     for (const i in this.fieldConfig) {
       const config = this.fieldConfig[i];
@@ -404,7 +408,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     }
   }
 
-  relationUpdate(config: FieldConfig, activations: any): void {
+  relationUpdate(config: FieldConfig, activations: RelationGroup): void {
     const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
       activations, this.formGroup,
     );
