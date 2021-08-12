@@ -293,11 +293,14 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     return true;
   }
 
-  constructor(protected router: Router,
+  constructor(
+    protected router: Router,
     protected ws: WebSocketService,
-    private modalService: ModalService, protected dialog: MatDialog,
+    private modalService: ModalService,
+    protected dialog: MatDialog,
     protected systemGeneralService: SystemGeneralService,
-    protected dialogservice: DialogService) { }
+    protected dialogservice: DialogService,
+  ) { }
 
   resourceTransformIncomingRestData(data: ActiveDirectoryConfig): any {
     const transformed: any = {
@@ -450,9 +453,11 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     this.dialogRef.componentInstance.wsshow();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogRef.close();
+      this.modalService.refreshTable();
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       new EntityUtils().handleWSError(this, error, this.dialogservice);
+      this.modalService.refreshTable();
       this.dialogRef.close();
     });
   }

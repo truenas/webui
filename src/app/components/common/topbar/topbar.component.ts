@@ -21,6 +21,7 @@ import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
 import helptext from 'app/helptext/topbar';
 import { CoreEvent } from 'app/interfaces/events';
+import { ResilverEvent } from 'app/interfaces/events/resilver-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
@@ -222,19 +223,18 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       }
     });
 
-    this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res && res.fields.scan.function.indexOf('RESILVER') > -1) {
-        this.resilveringDetails = res.fields;
+    this.core.register({
+      observerClass: this,
+      eventName: 'Resilvering',
+    }).pipe(untilDestroyed(this)).subscribe((evt: ResilverEvent) => {
+      if (evt.data.scan.state == 'FINISHED') {
+        this.showResilvering = false;
+        this.resilveringDetails = '';
+      } else {
+        this.resilveringDetails = evt.data;
         this.showResilvering = true;
       }
     });
-
-    setInterval(() => {
-      if (this.resilveringDetails && this.resilveringDetails.scan.state == JobState.Finished) {
-        this.showResilvering = false;
-        this.resilveringDetails = '';
-      }
-    }, 2500);
 
     this.core.register({
       observerClass: this,
