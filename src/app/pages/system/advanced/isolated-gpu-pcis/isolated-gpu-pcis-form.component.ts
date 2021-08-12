@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DeviceType } from 'app/enums/device-type.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { GpuDevice } from 'app/interfaces/gpu-device.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -21,7 +22,7 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
   queryCall: 'system.advanced.config' = 'system.advanced.config';
   updateCall: 'system.advanced.update' = 'system.advanced.update';
   isOneColumnForm = true;
-  gpus: GpuDevice[];
+  gpus: Device[];
   private isolatedGpuPciIds: string[];
   private advancedConfig: AdvancedConfig;
 
@@ -61,7 +62,7 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     const gpusFormControl = this.entityForm.formGroup.controls['gpus'];
 
-    this.ws.call('device.get_info', ['GPU']).pipe(untilDestroyed(this)).subscribe((gpus) => {
+    this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
       const gpusConf = this.fieldSets.config('gpus');
       for (const item of gpus) {

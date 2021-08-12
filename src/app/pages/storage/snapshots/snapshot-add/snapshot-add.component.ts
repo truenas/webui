@@ -107,7 +107,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
     });
 
     this.ws
-      .call('replication.list_naming_schemas', [])
+      .call('replication.list_naming_schemas')
       .pipe(map(new EntityUtils().array1DToLabelValuePair))
       .pipe(untilDestroyed(this)).subscribe(
         (options) => {

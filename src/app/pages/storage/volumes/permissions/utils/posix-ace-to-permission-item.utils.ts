@@ -21,7 +21,7 @@ export function posixAceToPermissionItem(translate: TranslateService, ace: Posix
     case PosixAclTag.Group:
     case PosixAclTag.GroupObject:
       type = PermissionsItemType.Group;
-      name = `${name} - ${getAceWhoString(ace)}`;
+      name = `${name} – ${getAceWhoString(ace)}`;
       break;
     case PosixAclTag.Mask:
       type = PermissionsItemType.Group;

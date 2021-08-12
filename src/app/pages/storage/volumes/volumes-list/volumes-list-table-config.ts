@@ -20,6 +20,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -79,7 +80,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
     private parentVolumesListComponent: VolumesListComponent,
     private router: Router,
     private classId: string,
-    private datasetData: any[],
+    private datasetData: Dataset[],
     public mdDialog: MatDialog,
     protected ws: WebSocketService,
     protected dialogService: DialogService,
@@ -1159,7 +1160,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                             self.loader.close();
                             self.dialogService.errorReport(
                               self.translate.instant(
-                                'Error deleting dataset <i>{datasetName}</i>.', { datasetName },
+                                'Error deleting dataset {datasetName}.', { datasetName },
                               ),
                               err.reason,
                               err.stack,
@@ -1170,7 +1171,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     } else {
                       self.dialogService.errorReport(
                         self.translate.instant(
-                          'Error deleting dataset <i>{datasetName}</i>.', { datasetName },
+                          'Error deleting dataset {datasetName}.', { datasetName },
                         ),
                         e_res.reason,
                         e_res.stack,
