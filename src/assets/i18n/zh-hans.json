@@ -171,7 +171,7 @@
   "Configuration": "配置",
   "Configuration Options": "配置选项",
   "Configure Active Directory": "配置活动目录",
-  "Configure LDAP": "配置LDAP"
+  "Configure LDAP": "配置LDAP",
   "Configuring...": "配置中...",
   "Confirm Failover": "确认故障转移",
   "Confirm changes to <i>Group</i>. To prevent errors, changes to the <i>Group</i>  are submitted only when this box is set.": "确认对<i>组</i>的更改。 为防止错误，只有在设置此框时才提交对 <i>组</i> 的更改。",
@@ -339,7 +339,7 @@
   "Error detected reading App": "读取应用程序时检测到错误",
   "Error getting chart data": "获取图表数据时出错",
   "Error starting service OpenVPN ": "启动OpenVPN服务时出错",
-  "Error stopping service OpenVPN ": "停止OpenVPN服务时出错"
+  "Error stopping service OpenVPN ": "停止OpenVPN服务时出错",
   "Error while creating the ": "创建时出错",
   "Export Key": "导出密钥",
   "Extents": "范围",
