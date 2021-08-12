@@ -69,10 +69,12 @@ def on_the_network_page_click_on_setting_on_the_global_configuration_card(driver
 @then(parsers.parse('on the Network Global Configuration page, change the first nameserver to "{nameserver1}"'))
 def on_the_network_global_configuration_page_change_the_first_nameserver_to_nameserver1(driver, nameserver1):
     """on the Network Global Configuration page, change the first nameserver to "{nameserver1}"."""
+    global nameserver_1
+    nameserver_1 = nameserver1
     assert wait_on_element(driver, 7, '//h4[contains(.,"Hostname and Domain")]')
-    assert wait_on_element(driver, 5, '//input[@id="nameserver1"]', 'inputable')
-    driver.find_element_by_xpath('//input[@id="nameserver1"]').clear()
-    driver.find_element_by_xpath('//input[@id="nameserver1"]').send_keys(nameserver1)
+    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Nameserver 1"]', 'inputable')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').send_keys(nameserver1)
 
 
 @then(parsers.parse('change the Domain for "{ad_domain}", and click Save'))
@@ -80,9 +82,9 @@ def change_the_Domain_for_ad_domain_and_click_Save(driver, ad_domain):
     """change the Domain for "ad_domain", and click Save."""
     global domain
     domain = ad_domain
-    assert wait_on_element(driver, 5, '//input[@id="domain"]')
-    driver.find_element_by_xpath('//input[@id="domain"]').clear()
-    driver.find_element_by_xpath('//input[@id="domain"]').send_keys(ad_domain)
+    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Domain"]')
+    # driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').clear()
+    # driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').send_keys(ad_domain)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
@@ -91,7 +93,7 @@ def change_the_Domain_for_ad_domain_and_click_Save(driver, ad_domain):
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """"Please wait" should appear while settings are being applied."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, f'//li[contains(.,"{domain}")]')
+    assert wait_on_element(driver, 7, f'//span[text()="{nameserver_1}"]')
 
 
 @then('after, click on Credentials on the left sidebar, then Directory Services')
@@ -156,14 +158,14 @@ def the_active_directory_setup_should_successfully_save_without_an_error(driver)
     """the Active Directory setup should successfully save without an error."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element_disappear(driver, 30, '//h1[text()="Start"]')
-    driver.refresh()
-    if wait_on_element(driver, 2, '//input[@data-placeholder="Username"]', 'inputable'):
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys('testing')
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]', 'clickable')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+    # driver.refresh()
+    # if wait_on_element(driver, 2, '//input[@data-placeholder="Username"]', 'inputable'):
+    #     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
+    #     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
+    #     driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
+    #     driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys('testing')
+    #     assert wait_on_element(driver, 5, '//button[@name="signin_button"]', 'clickable')
+    #     driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     assert wait_on_element(driver, 7, f'//span[text()="{domain.upper()}"]')
 
 
@@ -220,12 +222,12 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear."""
     # to make sure the UI is refresh for the login page
-    assert wait_on_element(driver, 60, '//p[contains(.,"Waiting for Active TrueNAS controller to come up")]', 'clickable')
+    # assert wait_on_element(driver, 60, '//p[contains(.,"Waiting for Active TrueNAS controller to come up")]', 'clickable')
     # element = driver.find_element_by_xpath('//p[contains(.,"Waiting for Active TrueNAS controller to come up")]')
     # while element.is_displayed() is False:
     #     element = driver.find_element_by_xpath('//p[contains(.,"Waiting for Active TrueNAS controller to come up")]')
     time.sleep(15)
-    driver.refresh()
+    # driver.refresh()
     assert wait_on_element(driver, 60, '//input[@data-placeholder="Username"]')
 
 
