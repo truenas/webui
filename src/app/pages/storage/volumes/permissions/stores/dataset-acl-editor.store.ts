@@ -201,7 +201,6 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
                 stripacl: true,
               },
             }]);
-            dialogRef.componentInstance.submit();
             dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe(() => {
               dialogRef.close();
               this.router.navigate(['/storage']);
@@ -210,6 +209,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
               dialogRef.close();
               new EntityUtils().errorReport(err, this.dialog);
             });
+            dialogRef.componentInstance.submit();
           },
         };
         this.dialog.dialogFormWide(conf);

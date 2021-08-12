@@ -238,6 +238,7 @@ import { TableService } from './table/table.service';
     EntityTableRowDetailsComponent,
     TaskScheduleListComponent,
     FormDictComponent,
+    EntityDialogComponent,
   ],
   providers: [
     EntityFormService,
