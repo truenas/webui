@@ -5,7 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
-import { CatalogItem } from 'app/interfaces/catalog.interface';
+import { Catalog, CatalogAppVersion, CatalogItem } from 'app/interfaces/catalog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -21,14 +21,14 @@ import { LocaleService } from 'app/services/locale.service';
   encapsulation: ViewEncapsulation.None,
 })
 export class ManageCatalogSummaryDialog implements OnInit {
-  catalog: any;
+  catalog: Catalog;
   statusOptions: string[] = ['All', 'Healthy', 'Unhealthy'];
   trainOptions: string[] = ['All'];
   helptext = helptext;
   selectedStatus: string = this.statusOptions[0];
   selectedTrain: string = this.trainOptions[0];
-  filteredItems: any[] = [];
-  catalogItems: any[] = [];
+  filteredItems: CatalogAppVersion[] = [];
+  catalogItems: CatalogAppVersion[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<EntityJobComponent>,
