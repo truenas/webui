@@ -222,12 +222,12 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear."""
     # to make sure the UI is refresh for the login page
-    # assert wait_on_element(driver, 60, '//p[contains(.,"Waiting for Active TrueNAS controller to come up")]', 'clickable')
+    assert wait_on_element(driver, 60, '//p[contains(.,"Waiting for Active TrueNAS controller to come up")]', 'clickable')
     # element = driver.find_element_by_xpath('//p[contains(.,"Waiting for Active TrueNAS controller to come up")]')
     # while element.is_displayed() is False:
     #     element = driver.find_element_by_xpath('//p[contains(.,"Waiting for Active TrueNAS controller to come up")]')
-    time.sleep(15)
-    # driver.refresh()
+    time.sleep(20)
+    driver.refresh()
     assert wait_on_element(driver, 60, '//input[@data-placeholder="Username"]')
 
 
@@ -294,25 +294,42 @@ def click_summit_the_my_acl_dataset_data_should_be_created(driver, dataset_name)
     assert wait_on_element(driver, 10, f'//div[contains(text(),"{dataset_name}")]')
 
 
-@then(parsers.parse('click on the "{dataset_name}" 3 dots button, select Edit Permissions'))
-def click_on_the_my_acl_dataset_3_dots_button_select_edit_permissions(driver, dataset_name):
-    """click on the "my_acl_dataset" 3 dots button, select Edit Permissions."""
+@then(parsers.parse('click on the "{dataset_name}" 3 dots button, select View Permissions'))
+def click_on_the_my_acl_dataset_3_dots_button_select_view_permissions(driver, dataset_name):
+    """click on the "my_acl_dataset" 3 dots button, select View Permissions."""
     assert wait_on_element(driver, 5, f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]')
     driver.find_element_by_xpath(f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="Edit Permissions"]')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Edit Permissions"]').click()
+    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
+    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
+
+
+@then('the Dataset Permissions widget should open')
+def the_dataset_permissions_widget_should_open(driver):
+    """The Dataset Permissions widget should open."""
+    assert wait_on_element(driver, 5, '//div[text()="Dataset Permissions"]')
+
+
+@then('click on the pencil beside Dataset Permissions')
+def click_on_the_pencil_beside_dataset_permissions(driver):
+    """click on the pencil beside Dataset Permissions."""
+    assert wait_on_element(driver, 5, '//mat-icon[text()="edit"]', 'clickable')
+    driver.find_element_by_xpath('//mat-icon[text()="edit"]').click()
 
 
 @then('the Edit ACL page should open')
 def the_edit_acl_page_should_open(driver):
-    """The Edit ACL page should open."""
+    """the Edit ACL page should open."""
     assert wait_on_element(driver, 5, '//h1[text()="Edit ACL"]')
-    assert wait_on_element(driver, 5, '//h4[text()="File Information"]')
+
+
+@then('click on Strip ACL then confirm Strip ACLs and click Strip ACL')
+def click_on_strip_acl_then_confirm_strip_acls_and_click_strip_acls(driver):
+    """click on Strip ACL then confirm Strip ACLs and click Strip ACLs."""
 
 
 @then('select OPEN for Default ACL Option')
 def select_open_for_default_acl_option(driver):
-    """Select OPEN for Default ACL Option."""
+    """select OPEN for Default ACL Option."""
     assert wait_on_element(driver, 5, '//button[@id="cust_button_Select an ACL Preset"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="cust_button_Select an ACL Preset"]').click()
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Default ACL Options"]', 'clickable')
