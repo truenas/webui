@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { ErrorMessage } from 'app/core/classes/ix-interfaces';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
 import { CoreService } from 'app/core/services/core-service/core.service';
+import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { DiskDataEvent } from 'app/interfaces/events/disk-data-event.interface';
 import { EnclosureDataEvent } from 'app/interfaces/events/enclosure-data-event.interface';
@@ -150,7 +151,7 @@ export class ViewEnclosureComponent implements OnDestroy {
     });
 
     core.register({ observerClass: this, eventName: 'Resilvering' }).pipe(untilDestroyed(this)).subscribe((evt: ResilverEvent) => {
-      if (evt.data.scan.state == 'FINISHED') this.fetchData();
+      if (evt.data.scan.state == PoolScanState.Finished) this.fetchData();
     });
 
     core.register({ observerClass: this, eventName: 'DisksChanged' }).pipe(untilDestroyed(this)).subscribe(() => {
