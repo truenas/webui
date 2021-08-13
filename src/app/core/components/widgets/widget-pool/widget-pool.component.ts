@@ -5,7 +5,7 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as filesize from 'filesize';
+import filesize from 'filesize';
 import {
   tween,
   styler,
