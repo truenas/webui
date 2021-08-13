@@ -24,6 +24,7 @@ import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.compo
   selector: 'app-applications',
   templateUrl: './applications.component.html',
   styleUrls: ['./applications.component.scss'],
+  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
 export class ApplicationsComponent implements OnInit, AfterViewInit {
