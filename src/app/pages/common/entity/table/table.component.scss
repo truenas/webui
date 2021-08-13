@@ -13,8 +13,11 @@ mat-card-content.table-container {
   max-width: 100%;
 }
 
-.mat-cell:not(:first-child):not(:last-child) {
-  padding: 0 8px;
+.mat-header-cell,
+.mat-cell {
+  &:not(:first-child):not(:last-child) {
+    padding: 0 8px;
+  }
 }
 
 .mat-cell:first-child {
