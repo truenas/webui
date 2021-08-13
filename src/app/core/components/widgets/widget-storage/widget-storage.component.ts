@@ -10,6 +10,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
+import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { T } from 'app/translate-marker';
 
 interface ItemInfo {
@@ -36,7 +37,7 @@ interface PoolInfoMap {
 })
 export class WidgetStorageComponent extends WidgetComponent implements OnChanges {
   @Input() pools: Pool[];
-  @Input() volumeData: any;
+  @Input() volumeData: { [name: string]: VolumeData };
   title: string = T('Storage');
 
   poolInfoMap: PoolInfoMap = {};
