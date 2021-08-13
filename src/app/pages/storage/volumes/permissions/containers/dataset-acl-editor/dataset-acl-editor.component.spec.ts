@@ -7,6 +7,7 @@ import {
   createRoutingFactory, mockProvider, SpectatorRouting, byText,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { of } from 'rxjs';
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { byButton } from 'app/core/testing/utils/by-button.utils';
@@ -43,6 +44,13 @@ describe('DatasetAclEditorComponent', () => {
         },
       },
       {
+        tag: NfsAclTag.Owner,
+        type: NfsAclType.Allow,
+        perms: {
+          BASIC: NfsBasicPermission.Read,
+        },
+      },
+      {
         tag: NfsAclTag.Everyone,
         type: NfsAclType.Deny,
         perms: {
@@ -51,10 +59,6 @@ describe('DatasetAclEditorComponent', () => {
       },
     ],
   } as NfsAcl;
-
-  const stat = {
-    user: 'john',
-  } as FileSystemStat;
 
   const createComponent = createRoutingFactory({
     component: DatasetAclEditorComponent,
@@ -74,10 +78,16 @@ describe('DatasetAclEditorComponent', () => {
       DialogService,
       mockWebsocket([
         mockCall('filesystem.getacl', acl),
-        mockCall('filesystem.stat', stat),
+        mockCall('filesystem.stat', {
+          user: 'john',
+          group: 'johns',
+        } as FileSystemStat),
         mockJob('filesystem.setacl', fakeSuccessfulJob()),
       ]),
-      mockProvider(UserService),
+      mockProvider(UserService, {
+        userQueryDSCache: () => of(),
+        groupQueryDSCache: () => of(),
+      }),
     ],
     params: {
       path: 'pool/dataset',
@@ -117,19 +127,20 @@ describe('DatasetAclEditorComponent', () => {
 
     it('shows loaded acl', () => {
       const items = spectator.queryAll('app-permissions-item');
-      expect(items).toHaveLength(2);
+      expect(items).toHaveLength(3);
 
       expect(items[0]).toHaveText('User - john');
       expect(items[0]).toHaveText('Allow | Modify');
-      expect(items[1]).toHaveText('everyone@');
-      expect(items[1]).toHaveText('Deny | Read');
+      expect(items[1]).toHaveText('owner@ - john');
+      expect(items[1]).toHaveText('Allow | Read');
+      expect(items[2]).toHaveText('everyone@');
+      expect(items[2]).toHaveText('Deny | Read');
     });
 
     it('shows form for appropriate ace selected', () => {
       const form = spectator.query(EditNfsAceComponent);
 
       expect(form).toExist();
-      expect(form.stat).toBe(stat);
       expect(form.ace).toBe(acl.acl[0]);
     });
   });
@@ -166,9 +177,9 @@ describe('DatasetAclEditorComponent', () => {
       spectator.click(byButton('Add Item'));
 
       const items = spectator.queryAll('app-permissions-item');
-      expect(items).toHaveLength(3);
-      expect(items[2]).toHaveText('User - ?');
-      expect(items[2]).toHaveText('Allow | Modify');
+      expect(items).toHaveLength(4);
+      expect(items[3]).toHaveText('User - ?');
+      expect(items[3]).toHaveText('Allow | Modify');
     });
   });
 
@@ -187,7 +198,12 @@ describe('DatasetAclEditorComponent', () => {
     it('saves acl items when Save Access Control List is pressed', () => {
       spectator.click(byButton('Save Access Control List'));
 
-      expect(store.saveAcl).toHaveBeenCalledWith({ recursive: false, traverse: false });
+      expect(store.saveAcl).toHaveBeenCalledWith({
+        recursive: false,
+        traverse: false,
+        owner: 'john',
+        ownerGroup: 'johns',
+      });
     });
 
     // TODO: Doesn't work because of entryComponents. Try again after upgrading Angular.
