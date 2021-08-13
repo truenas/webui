@@ -86,9 +86,68 @@ def the_dataset_should_be_created_without_error(driver):
     assert wait_on_element(driver, 10, '//span[contains(.,"backblaze_b2")]')
 
 
+@then('open a new tab navigate to <backblaze_url>, click Sign In')
+def open_a_new_tab_navigate_to_backblaze_url_click_sign_in(driver, backblaze_url):
+    """open a new tab navigate to <backblaze_url>, click Sign In."""
+    driver.execute_script("window.open();")
+    driver.switch_to.window(driver.window_handles[1])
+    driver.get(backblaze_url)
+    assert wait_on_element(driver, 5, '//img[@alt="Backblaze Logo"]')
+    assert wait_on_element(driver, 5, '//a[@id="signIn"]', 'clickable')
+    driver.find_element_by_xpath('//a[@id="signIn"]').click()
+
+
+@then('enter the <user_name> click Next and enter the <password> click Next')
+def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, user_name, password):
+    """enter the <user_name> click Next and enter the <password> click Next."""
+    assert wait_on_element(driver, 5, '//h3[text()="Sign in to your Backblaze account"]')
+    assert wait_on_element(driver, 5, '//input[@placeholder="Email"]', 'inputable')
+    driver.find_element_by_xpath('//input[@placeholder="Email"]').send_keys(user_name)
+    time.sleep(1)
+    assert wait_on_element(driver, 5, '//button[contains(text(),"Next")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(text(),"Next")]').click()
+    assert wait_on_element(driver, 5, '//p[@class="user-email"]')
+    assert wait_on_element(driver, 5, '//input[@placeholder="Password"]', 'inputable')
+    driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
+    time.sleep(1)
+    assert wait_on_element(driver, 5, '//button[contains(text(),"Sign in")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(text(),"Sign in")]').click()
+
+
+@then(parsers.parse('click on Browser Files, click on {bucket} bucket'))
+def click_on_Browser_Files_click_on_bucket_then_click_on_the_test_folder(driver, bucket):
+    """click on Browser Files, click on {bucket}, then click on the bucket."""
+    global my_bucket
+    my_bucket = bucket
+    assert wait_on_element(driver, 5, '//span[text()="Overview"]')
+    assert wait_on_element(driver, 5, '//a[text()="Browse Files"]', 'clickable')
+    driver.find_element_by_xpath('//a[text()="Browse Files"]').click()
+    assert wait_on_element(driver, 5, '//div[@class="b2-browse-crumbs" and contains(.,"Buckets")]')
+    assert wait_on_element(driver, 5, f'//span[contains(text(),"{bucket}")]', 'clickable')
+    driver.find_element_by_xpath(f'//span[contains(text(),"{bucket}")]').click()
+    assert wait_on_element(driver, 10, f'//a[text()="{bucket}"]', 'clickable')
+    time.sleep(1)
+
+
+@then('verify there is no file in the bucket if so delete it')
+def verify_there_is_no_file_in_the_bucket_if_so_delete_it(driver):
+    """verify there is no file in the bucket if so delete it."""
+    if wait_on_element(driver, 5, '//span[text()="music"]'):
+        assert wait_on_element(driver, 5, '//div[@class="b2-browse-checkbox"]//img[@name="allSelected"]', 'clickable')
+        driver.find_element_by_xpath('//div[@class="b2-browse-checkbox"]//img[@name="allSelected"]').click()
+        assert wait_on_element(driver, 5, '//a[@id="delete-button"]', 'clickable')
+        driver.find_element_by_xpath('//a[@id="delete-button"]').click()
+        assert wait_on_element(driver, 5, '//div[text()="Are you sure?"]')
+        assert wait_on_element(driver, 5, '//input[@id="Delete"]', 'clickable')
+        driver.find_element_by_xpath('//input[@id="Delete"]').click()
+        assert wait_on_element_disappear(driver, 15, '//span[contains(text(),"music")]')
+
+
 @then('click Tasks on the left sidebar, then click on Cloud Sync Tasks')
 def click_tasks_on_the_left_sidebar_then_click_on_cloud_sync_tasks(driver):
     """click Tasks on the left sidebar, then click on Cloud Sync Tasks."""
+    driver.switch_to.window(driver.window_handles[0])
+    time.sleep(0.5)
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Tasks"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Tasks"]').click()
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Cloud Sync Tasks"]', 'clickable')
@@ -188,6 +247,7 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
         assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Backblaze B2 task"]', 'clickable')
         driver.find_element_by_xpath('//a[@ix-auto="expander__My Backblaze B2 task"]').click()
     time.sleep(0.5)
+    assert wait_on_element(driver, 5, '//p[contains(text(),"backblazecreds")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
@@ -219,52 +279,15 @@ def under_bucket_select_the_bucket_and_click_save(driver, bucket):
     assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Please wait")]')
 
 
-@then('open a new tab navigate to <backblaze_url>, click Sign In')
-def open_a_new_tab_navigate_to_backblaze_url_click_sign_in(driver, backblaze_url):
-    """open a new tab navigate to <backblaze_url>, click Sign In."""
-    driver.execute_script("window.open();")
+@then('on Backblaze B2 verify all files are in the bucket')
+def on_backblaze_b2_verify_all_files_are_in_the_bucket(driver):
+    """on Backblaze B2 verify all files are in the bucket."""
     driver.switch_to.window(driver.window_handles[1])
-    driver.get(backblaze_url)
-    assert wait_on_element(driver, 5, '//img[@alt="Backblaze Logo"]')
-    assert wait_on_element(driver, 5, '//a[@id="signIn"]', 'clickable')
-    driver.find_element_by_xpath('//a[@id="signIn"]').click()
-
-
-@then('enter the <user_name> click Next and enter the <password> click Next')
-def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, user_name, password):
-    """enter the <user_name> click Next and enter the <password> click Next."""
-    assert wait_on_element(driver, 5, '//h3[text()="Sign in to your Backblaze account"]')
-    assert wait_on_element(driver, 5, '//input[@placeholder="Email"]', 'inputable')
-    driver.find_element_by_xpath('//input[@placeholder="Email"]').send_keys(user_name)
+    time.sleep(0.5)
+    assert wait_on_element(driver, 5, '//a[@id="refreshButtonId"]', 'clickable')
+    driver.find_element_by_xpath('//a[@id="refreshButtonId"]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//button[contains(text(),"Next")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(text(),"Next")]').click()
-    assert wait_on_element(driver, 5, '//p[@class="user-email"]')
-    assert wait_on_element(driver, 5, '//input[@placeholder="Password"]', 'inputable')
-    driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//button[contains(text(),"Sign in")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(text(),"Sign in")]').click()
-
-
-@then(parsers.parse('click on Browser Files, click on {bucket} bucket'))
-def click_on_Browser_Files_click_on_bucket_then_click_on_the_test_folder(driver, bucket):
-    """click on Browser Files, click on {bucket}, then click on the bucket."""
-    global my_bucket
-    my_bucket = bucket
-    assert wait_on_element(driver, 5, '//span[text()="Overview"]')
-    assert wait_on_element(driver, 5, '//a[text()="Browse Files"]', 'clickable')
-    driver.find_element_by_xpath('//a[text()="Browse Files"]').click()
-    assert wait_on_element(driver, 5, '//div[@class="b2-browse-crumbs" and contains(.,"Buckets")]')
-    assert wait_on_element(driver, 5, f'//span[contains(text(),"{bucket}")]', 'clickable')
-    driver.find_element_by_xpath(f'//span[contains(text(),"{bucket}")]').click()
-    assert wait_on_element(driver, 5, f'//a[text()="{bucket}"]', 'clickable')
-    time.sleep(1)
-
-
-@then('verify all files are in the bucket')
-def verify_all_files_are_in_the_test_folder(driver):
-    """verify all files are in the bucket."""
+    assert wait_on_element(driver, 10, f'//a[text()="{my_bucket}"]', 'clickable')
     assert wait_on_element(driver, 10, '//a[contains(text(),"Explaining_BSD.pdf")]', 'clickable')
     assert wait_on_element(driver, 5, '//a[contains(text(),"Gloomy_Forest_wallpaper_ForWallpapercom.jpg")]', 'clickable')
     assert wait_on_element(driver, 5, '//span[contains(text(),"music")]', 'clickable')
