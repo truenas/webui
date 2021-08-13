@@ -32,7 +32,7 @@
         </mat-toolbar-row>
         <div>
           <div class="card-body" [style.padding]="paddingTop + 'px ' + paddingX + 'px ' + paddingBottom + 'px'">
-            <mat-grid-list cols="6" [gutterSize]="gap + 'px'" [rowHeight]="rowHeight + 'px'"  class="nics-{{ availableNics.length}}">
+            <mat-grid-list cols="6" [gutterSize]="gap + 'px'" [rowHeight]="rowHeight + 'px'"  [ngClass]="'nics-' + availableNics.length">
               <mat-grid-tile *ngFor="let nic of availableNics; let i=index" [colspan]="getColspan(i)" class="tile-{{ i }}">
                 <div class="tile" [fxLayout]="availableNics.length === 1 ? 'column' : 'row'" fxFill fxLayoutAlign="start stretch" >
                   <div class="nic-info" fxLayout="column" fxLayoutAlign="start stretch">
