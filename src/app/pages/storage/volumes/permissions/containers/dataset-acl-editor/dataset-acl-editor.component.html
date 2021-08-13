@@ -1,27 +1,41 @@
 <mat-card class="card card-square">
-  <mat-card-header class="header">
-    <mat-card-title>{{ 'ACL Editor' | translate }}</mat-card-title>
+  <mat-spinner
+    *ngIf="isLoading; else loaded"
+    [diameter]="40"
+    class="spinner"
+  ></mat-spinner>
 
-    <div class="dataset-path">
-      <div class="dataset-path-label">{{ 'Dataset' | translate }}:</div>
-      <div>{{ fullDatasetPath }}</div>
-    </div>
-  </mat-card-header>
+  <ng-template #loaded>
+    <mat-card-header class="header">
+      <mat-card-title class="header-title">{{ 'ACL Editor' | translate }}</mat-card-title>
 
-  <div class="content">
-    <mat-spinner
-      *ngIf="isLoading; else loaded"
-      [diameter]="40"
-      class="spinner"
-    ></mat-spinner>
+      <div class="dataset-path">
+        <label class="header-label">{{ 'Dataset' | translate }}:</label>
+        <div>{{ fullDatasetPath }}</div>
+      </div>
 
-    <ng-template #loaded>
+      <div class="ownership-row">
+        <div class="control">
+          <label class="header-label">{{ 'Owner' | translate }}:</label>
+          <div dynamicField [config]="ownerFieldConfig" [group]="ownerFormGroup"></div>
+        </div>
+
+        <div class="control">
+          <label class="header-label">{{ 'Owner Group' | translate }}:</label>
+          <div dynamicField [config]="ownerGroupFieldConfig" [group]="ownerFormGroup"></div>
+        </div>
+      </div>
+    </mat-card-header>
+
+    <div class="content">
       <div class="columns">
         <div class="column-left">
           <app-acl-editor-list
             [acl]="acl"
             [selectedAceIndex]="selectedAceIndex"
             [acesWithError]="acesWithError"
+            [owner]="ownerFormGroup.get('owner').value"
+            [ownerGroup]="ownerFormGroup.get('ownerGroup').value"
           ></app-acl-editor-list>
 
           <div class="controls-container">
@@ -80,19 +94,18 @@
           </div>
         </div>
       </div>
-      <div class="column-right">
-        <ng-container *ngIf="acl.acl[selectedAceIndex] as selectedAce">
-          <app-edit-nfs-ace
-            *ngIf="isNfsAcl; else posixAcl"
-            [ace]="selectedAce"
-            [stat]="stat"
-          ></app-edit-nfs-ace>
-          <ng-template #posixAcl>
-            <app-edit-posix-ace [ace]="selectedAce" [stat]="stat"></app-edit-posix-ace>
-          </ng-template>
-        </ng-container>
+        <div class="column-right">
+          <ng-container *ngIf="acl.acl[selectedAceIndex] as selectedAce">
+            <app-edit-nfs-ace
+              *ngIf="isNfsAcl; else posixAcl"
+              [ace]="selectedAce"
+            ></app-edit-nfs-ace>
+            <ng-template #posixAcl>
+              <app-edit-posix-ace [ace]="selectedAce"></app-edit-posix-ace>
+            </ng-template>
+          </ng-container>
+        </div>
       </div>
     </div>
-    </ng-template>
-  </div>
+  </ng-template>
 </mat-card>

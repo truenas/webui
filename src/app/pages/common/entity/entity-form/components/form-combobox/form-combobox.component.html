@@ -1,7 +1,7 @@
 <div id="{{config.name}}" class="dynamic-field form-select form-element form-combobox" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
 ix-auto ix-auto-type="combobox" ix-auto-identifier="{{config.placeholder}}">
   <div>
-    <div class="label-container">
+    <div *ngIf="config.placeholder || config.tooltip" class="label-container">
       <label class="label input-select">
         {{config.placeholder | translate}}
         <span *ngIf="config.required">*</span>

@@ -1,19 +1,37 @@
 .header {
   align-items: baseline;
+  flex-wrap: wrap;
+
+  .header-title {
+    margin-bottom: 0;
+  }
+
+  .dataset-path {
+    display: flex;
+    margin-left: 10%;
+  }
+
+  .header-label {
+    font-weight: 500;
+    margin-right: 6px;
+  }
+
+  .ownership-row {
+    align-items: center;
+    display: flex;
+    padding-left: 25px;
+    width: 100%;
+  }
+
+  .control {
+    align-items: center;
+    display: flex;
+    margin-right: 20px;
+  }
 }
 
 .card {
   margin: 0 auto;
-}
-
-.dataset-path {
-  display: flex;
-  margin-left: 10%;
-
-  .dataset-path-label {
-    font-weight: 500;
-    margin-right: 6px;
-  }
 }
 
 .content {
