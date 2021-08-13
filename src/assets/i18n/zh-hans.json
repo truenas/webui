@@ -148,7 +148,7 @@
   "Choose between a <i>Hex</i> (base 16 numeral) or <i>Passphrase</i> (alphanumeric) style encryption key.": "在 <i>Hex</i>（基数为 16 的数字）或 <i>密码</i>（字母数字）样式的加密密钥之间进行选择。",
   "Choose container": "选择容器",
   "Choose log": "选择日志",
-  "Choose pod": "选择pod池",
+  "Choose pod": "选择pod",
   "City: ": "城市：",
   "Click an item to view NFSv4 permissions": "单击项目以查看 NFSv4 权限",
   "Click the button below to see all jobs.": "单击下面的按钮查看所有工作。",
