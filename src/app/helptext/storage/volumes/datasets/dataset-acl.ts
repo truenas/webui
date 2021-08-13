@@ -58,6 +58,9 @@ export default {
  attributes. Users created manually or imported from a directory service\
  appear in the drop-down menu.'),
 
+  dataset_ac_ownership_hint_user: T('Changing user here will change ownership of the dataset.'),
+  dataset_ac_ownership_hint_group: T('Changing group here will change ownership of the dataset.'),
+
   apply_user: {
     placeholder: T('Apply User'),
     tooltip: T('Confirm changes to <i>User</i>. To prevent errors, changes to the <i>User</i> \

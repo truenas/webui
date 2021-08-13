@@ -4,11 +4,8 @@ import {
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
-import {
-  PosixAclItem,
-} from 'app/interfaces/acl.interface';
+import { PosixAclItem } from 'app/interfaces/acl.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -26,7 +23,6 @@ import { UserService } from 'app/services';
 })
 export class EditPosixAceComponent implements FormConfiguration, OnChanges {
   @Input() ace: PosixAclItem;
-  @Input() stat: FileSystemStat;
 
   formGroup: FormGroup;
   fieldSets: FieldSet[] = [];
@@ -81,8 +77,8 @@ export class EditPosixAceComponent implements FormConfiguration, OnChanges {
   private updateFormValues(): void {
     const formValues = {
       tag: this.ace.tag,
-      user: this.ace.tag === PosixAclTag.User ? this.ace.who : '',
-      group: this.ace.tag === PosixAclTag.Group ? this.ace.who : '',
+      user: [PosixAclTag.User, PosixAclTag.UserObject].includes(this.ace.tag) ? this.ace.who : '',
+      group: [PosixAclTag.Group, PosixAclTag.GroupObject].includes(this.ace.tag) ? this.ace.who : '',
       default: this.ace.default,
       permissions: Object.entries(this.ace.perms)
         .filter(([_, isOn]) => isOn)
@@ -126,16 +122,12 @@ export class EditPosixAceComponent implements FormConfiguration, OnChanges {
 
     switch (formValues.tag) {
       case PosixAclTag.User:
+      case PosixAclTag.UserObject:
         ace.who = formValues.user;
         break;
       case PosixAclTag.Group:
-        ace.who = formValues.group;
-        break;
-      case PosixAclTag.UserObject:
-        ace.who = this.stat.user;
-        break;
       case PosixAclTag.GroupObject:
-        ace.who = this.stat.group;
+        ace.who = formValues.group;
         break;
     }
 

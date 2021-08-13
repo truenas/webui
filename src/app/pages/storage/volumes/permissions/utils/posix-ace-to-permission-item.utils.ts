@@ -14,17 +14,41 @@ export function posixAceToPermissionItem(translate: TranslateService, ace: Posix
   let type: PermissionsItemType;
   switch (ace.tag) {
     case PosixAclTag.User:
-    case PosixAclTag.UserObject:
       type = PermissionsItemType.User;
       name = `${name} – ${getAceWhoString(ace)}`;
       break;
+    case PosixAclTag.UserObject:
+      type = PermissionsItemType.User;
+      if (ace.default) {
+        name = `${name} (${translate.instant('default')})`;
+      } else {
+        name = `${name} – ${getAceWhoString(ace)}`;
+      }
+
+      break;
     case PosixAclTag.Group:
-    case PosixAclTag.GroupObject:
       type = PermissionsItemType.Group;
       name = `${name} – ${getAceWhoString(ace)}`;
       break;
+    case PosixAclTag.GroupObject:
+      type = PermissionsItemType.Group;
+
+      if (ace.default) {
+        name = `${name} (${translate.instant('default')})`;
+      } else {
+        name = `${name} – ${getAceWhoString(ace)}`;
+      }
+
+      break;
     case PosixAclTag.Mask:
       type = PermissionsItemType.Group;
+      break;
+    case PosixAclTag.Other:
+      type = PermissionsItemType.Other;
+      if (ace.default) {
+        name = `${name} (${translate.instant('default')})`;
+      }
+
       break;
     default:
       type = PermissionsItemType.Other;

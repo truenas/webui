@@ -2,6 +2,7 @@ import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { getFormUserGroupLoaders } from 'app/pages/storage/volumes/permissions/utils/get-form-user-group-loaders.utils';
 import { UserService } from 'app/services';
 import { T } from 'app/translate-marker';
@@ -43,10 +44,19 @@ export function getEditPosixAceFieldSet(userService: UserService): FieldSet[] {
           relation: [
             {
               action: RelationAction.Show,
-              when: [{
-                name: 'tag',
-                value: PosixAclTag.User,
-              }],
+              connective: RelationConnection.And,
+              when: [
+                {
+                  name: 'tag',
+                  operator: 'in',
+                  value: [PosixAclTag.User, PosixAclTag.UserObject],
+                },
+                {
+                  name: 'default',
+                  operator: '!=',
+                  value: true,
+                },
+              ],
             },
           ],
         },
@@ -65,10 +75,67 @@ export function getEditPosixAceFieldSet(userService: UserService): FieldSet[] {
           relation: [
             {
               action: RelationAction.Show,
-              when: [{
-                name: 'tag',
-                value: PosixAclTag.Group,
-              }],
+              connective: RelationConnection.And,
+              when: [
+                {
+                  name: 'tag',
+                  operator: 'in',
+                  value: [PosixAclTag.Group, PosixAclTag.GroupObject],
+                },
+                {
+                  name: 'default',
+                  operator: '!=',
+                  value: true,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'label',
+          name: 'ownership-hint-user',
+          label: helptext.dataset_ac_ownership_hint_user,
+          isHidden: true,
+          relation: [
+            {
+              action: RelationAction.Show,
+              connective: RelationConnection.And,
+              when: [
+                {
+                  name: 'tag',
+                  operator: 'in',
+                  value: [PosixAclTag.UserObject],
+                },
+                {
+                  name: 'default',
+                  operator: '!=',
+                  value: true,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'label',
+          name: 'ownership-hint-group',
+          label: helptext.dataset_ac_ownership_hint_group,
+          isHidden: true,
+          relation: [
+            {
+              action: RelationAction.Show,
+              connective: RelationConnection.And,
+              when: [
+                {
+                  name: 'tag',
+                  operator: 'in',
+                  value: [PosixAclTag.GroupObject],
+                },
+                {
+                  name: 'default',
+                  operator: '!=',
+                  value: true,
+                },
+              ],
             },
           ],
         },

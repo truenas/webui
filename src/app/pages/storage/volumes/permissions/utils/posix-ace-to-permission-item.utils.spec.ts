@@ -14,7 +14,7 @@ describe('posixAceToPermissionItem', () => {
     [PosixPermission.Execute]: true,
   } as PosixPermissions;
 
-  it('converts user aces to permission items', () => {
+  it('converts user ace to permission item', () => {
     expect(posixAceToPermissionItem(
       fakeTranslateService,
       { tag: PosixAclTag.User, who: 'john', perms } as PosixAclItem,
@@ -23,7 +23,9 @@ describe('posixAceToPermissionItem', () => {
       name: 'User – john',
       type: PermissionsItemType.User,
     });
+  });
 
+  it('converts owner ace to permission item with name when default is false', () => {
     expect(posixAceToPermissionItem(
       fakeTranslateService,
       { tag: PosixAclTag.UserObject, who: 'john', perms } as PosixAclItem,
@@ -34,7 +36,7 @@ describe('posixAceToPermissionItem', () => {
     });
   });
 
-  it('converts group aces to permission items', () => {
+  it('converts group ace to permission item', () => {
     expect(posixAceToPermissionItem(
       fakeTranslateService,
       { tag: PosixAclTag.Group, who: 'johns', perms } as PosixAclItem,
@@ -43,7 +45,9 @@ describe('posixAceToPermissionItem', () => {
       name: 'Group – johns',
       type: PermissionsItemType.Group,
     } as PermissionItem);
+  });
 
+  it('converts owner group ace to permission item with name when default is false', () => {
     expect(posixAceToPermissionItem(
       fakeTranslateService,
       { tag: PosixAclTag.GroupObject, who: 'johns', perms } as PosixAclItem,
@@ -67,7 +71,7 @@ describe('posixAceToPermissionItem', () => {
     )).toStrictEqual(expected);
   });
 
-  it('converts others ace to permission item', () => {
+  it('converts others ace to permission item when default is false', () => {
     const expected = {
       description: 'Read | Execute',
       name: 'Other',
@@ -78,5 +82,38 @@ describe('posixAceToPermissionItem', () => {
       fakeTranslateService,
       { tag: PosixAclTag.Other, perms } as PosixAclItem,
     )).toStrictEqual(expected);
+  });
+
+  it('handles default entries differently', () => {
+    expect(posixAceToPermissionItem(
+      fakeTranslateService,
+      {
+        tag: PosixAclTag.UserObject, who: 'john', perms, default: true,
+      } as PosixAclItem,
+    )).toStrictEqual({
+      description: 'Read | Execute',
+      name: 'User Obj (default)',
+      type: PermissionsItemType.User,
+    });
+
+    expect(posixAceToPermissionItem(
+      fakeTranslateService,
+      {
+        tag: PosixAclTag.GroupObject, who: 'johns', perms, default: true,
+      } as PosixAclItem,
+    )).toStrictEqual({
+      description: 'Read | Execute',
+      name: 'Group Obj (default)',
+      type: PermissionsItemType.Group,
+    });
+
+    expect(posixAceToPermissionItem(
+      fakeTranslateService,
+      { tag: PosixAclTag.Other, perms, default: true } as PosixAclItem,
+    )).toStrictEqual({
+      description: 'Read | Execute',
+      name: 'Other (default)',
+      type: PermissionsItemType.Other,
+    });
   });
 });

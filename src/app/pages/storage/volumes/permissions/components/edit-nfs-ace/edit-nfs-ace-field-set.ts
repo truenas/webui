@@ -1,6 +1,4 @@
-import {
-  NfsAclTag, NfsAclType, NfsBasicFlag,
-} from 'app/enums/nfs-acl.enum';
+import { NfsAclTag, NfsAclType, NfsBasicFlag } from 'app/enums/nfs-acl.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -51,7 +49,8 @@ export function getEditNfsAceFieldSet(userService: UserService): FieldSet[] {
               action: RelationAction.Show,
               when: [{
                 name: 'tag',
-                value: NfsAclTag.User,
+                operator: 'in',
+                value: [NfsAclTag.User, NfsAclTag.Owner],
               }],
             },
           ],
@@ -73,7 +72,40 @@ export function getEditNfsAceFieldSet(userService: UserService): FieldSet[] {
               action: RelationAction.Show,
               when: [{
                 name: 'tag',
-                value: NfsAclTag.UserGroup,
+                operator: 'in',
+                value: [NfsAclTag.UserGroup, NfsAclTag.Group],
+              }],
+            },
+          ],
+        },
+        {
+          type: 'label',
+          name: 'ownership-hint-user',
+          label: helptext.dataset_ac_ownership_hint_user,
+          isHidden: true,
+          relation: [
+            {
+              action: RelationAction.Show,
+              when: [{
+                name: 'tag',
+                operator: 'in',
+                value: [NfsAclTag.Owner],
+              }],
+            },
+          ],
+        },
+        {
+          type: 'label',
+          name: 'ownership-hint-group',
+          label: helptext.dataset_ac_ownership_hint_group,
+          isHidden: true,
+          relation: [
+            {
+              action: RelationAction.Show,
+              when: [{
+                name: 'tag',
+                operator: 'in',
+                value: [NfsAclTag.Group],
               }],
             },
           ],

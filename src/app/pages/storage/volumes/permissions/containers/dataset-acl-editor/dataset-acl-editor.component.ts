@@ -9,7 +9,6 @@ import { filter } from 'rxjs/operators';
 import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl } from 'app/interfaces/acl.interface';
-import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { SelectPresetModalComponent } from 'app/pages/storage/volumes/permissions/components/select-preset-modal/select-preset-modal.component';
 import { SelectPresetModalConfig } from 'app/pages/storage/volumes/permissions/interfaces/select-preset-modal-config.interface';
@@ -29,7 +28,6 @@ export class DatasetAclEditorComponent implements OnInit {
   acl: Acl;
   selectedAceIndex: number;
   acesWithError: number[];
-  stat: FileSystemStat;
 
   saveParameters = new FormGroup({
     recursive: new FormControl(),
@@ -80,7 +78,6 @@ export class DatasetAclEditorComponent implements OnInit {
         this.acl = state.acl;
         this.selectedAceIndex = state.selectedAceIndex;
         this.acesWithError = state.acesWithError;
-        this.stat = state.stat;
 
         if (isFirstLoad) {
           this.onFirstLoad();

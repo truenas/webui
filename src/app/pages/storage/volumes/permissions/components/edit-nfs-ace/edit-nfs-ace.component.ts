@@ -4,11 +4,7 @@ import {
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import {
-  NfsAclTag,
-  NfsAdvancedFlag,
-  NfsAdvancedPermission,
-} from 'app/enums/nfs-acl.enum';
+import { NfsAclTag, NfsAdvancedFlag, NfsAdvancedPermission } from 'app/enums/nfs-acl.enum';
 import {
   AdvancedNfsFlags,
   AdvancedNfsPermissions,
@@ -19,7 +15,6 @@ import {
   NfsAclItem,
 } from 'app/interfaces/acl.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -43,7 +38,6 @@ import { UserService } from 'app/services';
 })
 export class EditNfsAceComponent implements FormConfiguration, OnChanges {
   @Input() ace: NfsAclItem;
-  @Input() stat: FileSystemStat;
 
   formGroup: FormGroup;
   fieldSets: FieldSet[] = [];
@@ -100,8 +94,8 @@ export class EditNfsAceComponent implements FormConfiguration, OnChanges {
     const formValues = {
       tag: this.ace.tag,
       type: this.ace.type,
-      user: this.ace.tag === NfsAclTag.User ? this.ace.who : '',
-      group: this.ace.tag === NfsAclTag.UserGroup ? this.ace.who : '',
+      user: [NfsAclTag.User, NfsAclTag.Owner].includes(this.ace.tag) ? this.ace.who : '',
+      group: [NfsAclTag.UserGroup, NfsAclTag.Group].includes(this.ace.tag) ? this.ace.who : '',
     } as EditNfsAceFormValues;
 
     if (areNfsPermissionsBasic(this.ace.perms)) {
@@ -159,16 +153,12 @@ export class EditNfsAceComponent implements FormConfiguration, OnChanges {
 
     switch (formValues.tag) {
       case NfsAclTag.User:
+      case NfsAclTag.Owner:
         ace.who = formValues.user;
         break;
       case NfsAclTag.UserGroup:
-        ace.who = formValues.group;
-        break;
-      case NfsAclTag.Owner:
-        ace.who = this.stat.user;
-        break;
       case NfsAclTag.Group:
-        ace.who = this.stat.group;
+        ace.who = formValues.group;
         break;
     }
 
