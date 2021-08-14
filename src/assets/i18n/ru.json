@@ -669,6 +669,7 @@
   "Overrides default file creation mask of <i>0666</i>  which creates files with read and write access for everybody.": "",
   "Overview": "",
   "Owner:": "",
+  "Ownership": "",
   "PASSPHRASE": "",
   "PCI Passthru Device": "",
   "POSIX": "",

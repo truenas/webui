@@ -1658,6 +1658,7 @@
   "Overview": "",
   "Owner": "",
   "Owner:": "",
+  "Ownership": "",
   "Ownership of all files in the share will  be changed to user <samp>webdav</samp> and group <samp>webdav</samp>.  Existing permissions will not be changed, but the ownership change  might make files inaccesible to their original owners. This operation  cannot be undone! If unset, ownership of files to be accessed through  WebDAV must be manually set to the <samp>webdav</samp> or  <samp>www</samp> user/group.": "",
   "PASSPHRASE": "",
   "PCI Passthru Device": "",

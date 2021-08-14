@@ -21,10 +21,30 @@ export interface AppTableHeaderAction {
 
 export interface AppTableHeaderExtraAction extends AppTableHeaderAction {}
 
+export interface AppTableColumn {
+  name?: string;
+  name1?: string;
+  name2?: string;
+  prop?: string;
+  prop1?: string;
+  prop2?: string;
+  checkbox?: boolean;
+  onChange?(data: any): void;
+  width?: string;
+  state?: any;
+  button?: boolean;
+  tooltip?: string;
+  iconTooltip?: string;
+  enableMatTooltip?: boolean;
+  hidden?: boolean;
+  listview?: boolean;
+  getIcon?(element: any, prop: string): void;
+}
+
 export interface AppTableConfig<P = any> {
   title?: string;
   titleHref?: string;
-  columns: any[];
+  columns: AppTableColumn[];
   queryCall: string;
   queryCallOption?: any;
   deleteCall?: string;
@@ -76,7 +96,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   titleHref: string;
   dataSource: any[];
   displayedDataSource: any[];
-  displayedColumns: any[];
+  displayedColumns: string[];
   hideHeader = false;
   actions: any[];
   emptyConf: EmptyConfig;
@@ -163,7 +183,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     if (this._tableConf.hideHeader) {
       this.hideHeader = this._tableConf.hideHeader;
     }
-    this.displayedColumns = this._tableConf.columns.map((col) => col.name);
+    this.displayedColumns = this._tableConf.columns.filter((col) => !col.hidden).map((col) => col.name);
 
     if (this._tableConf.getActions || this._tableConf.deleteCall) {
       this.displayedColumns.push('action'); // add action column to table
