@@ -342,4 +342,21 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
       title: err,
     };
   }
+
+  getChartBodyClassess(nic: BaseNetworkInterface): string[] {
+    const classes = [];
+
+    if (this.nicInfoMap[nic.state.name].emptyConfig.type === this.emptyTypes.Errors) {
+      classes.push('chart-body-errors');
+    }
+
+    if (
+      this.nicInfoMap[nic.state.name].emptyConfig.type === this.emptyTypes.Loading
+      && !this.nicInfoMap[nic.name].chartData
+    ) {
+      classes.push('chart-body-loading');
+    }
+
+    return classes;
+  }
 }

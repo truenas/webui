@@ -215,11 +215,13 @@ export class LdapComponent implements FormConfiguration {
     return true;
   }
 
-  constructor(protected router: Router,
+  constructor(
+    protected router: Router,
     protected ws: WebSocketService,
     private modalService: ModalService,
     private dialogservice: DialogService,
-    protected systemGeneralService: SystemGeneralService) { }
+    protected systemGeneralService: SystemGeneralService,
+  ) { }
 
   resourceTransformIncomingRestData(data: LdapConfig): any {
     const transformed = {
@@ -313,6 +315,10 @@ export class LdapComponent implements FormConfiguration {
 
   submitFunction(body: any): Observable<any> {
     return this.ws.call('ldap.update', [body]);
+  }
+
+  afterSubmit(): void {
+    this.modalService.refreshTable();
   }
 
   errorReport(res: any): void {

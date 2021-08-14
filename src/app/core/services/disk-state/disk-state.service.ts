@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ResilverJob } from 'app/interfaces/resilver-job.interface';
 import { WebSocketService } from 'app/services/ws.service';
 import { BaseService } from '../base.service';
 import { CoreService } from '../core-service/core.service';
@@ -20,8 +21,17 @@ export class DiskStateService extends BaseService {
 
   protected onAuthenticated(): void {
     this.authenticated = true;
+
+    // Check for Disk Presence
     this.ws.sub('disk.query').subscribe((res: any) => {
       this.core.emit({ name: 'DisksChanged', data: res, sender: this });
+    });
+
+    // Check for Pool Status
+    this.ws.subscribe('zfs.pool.scan').subscribe((res: ResilverJob) => {
+      if (res.fields.scan.function == 'RESILVER') {
+        this.core.emit({ name: 'Resilvering', data: res.fields, sender: this });
+      }
     });
   }
 }
