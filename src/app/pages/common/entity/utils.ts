@@ -314,6 +314,7 @@ export class EntityUtils {
 
     if (schemaConfig.schema.enum) {
       fieldConfig['type'] = 'select';
+      fieldConfig['enableTextWrapForOptions'] = true;
       fieldConfig['options'] = (schemaConfig.schema.enum as any[]).map((option) => ({
         value: option.value,
         label: option.description,
