@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import {
-  FormArray,
-  FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators,
+  FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
@@ -12,6 +11,7 @@ import { combineLatest, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
+import { DeviceType } from 'app/enums/device-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime,
@@ -19,9 +19,10 @@ import {
 import globalHelptext from 'app/helptext/global-helptext';
 import add_edit_helptext from 'app/helptext/vm/devices/device-add-edit';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { GpuDevice } from 'app/interfaces/gpu-device.interface';
+import { Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
@@ -51,7 +52,7 @@ export class VMWizardComponent implements WizardConfiguration {
   firstFormGroup: FormGroup;
   summaryTitle = T('VM Summary');
   namesInUse: string[] = [];
-  statSize: any;
+  statSize: Statfs;
   displayPort: number;
   vcpus = 1;
   cores = 1;
@@ -62,11 +63,10 @@ export class VMWizardComponent implements WizardConfiguration {
   title = helptext.formTitle;
   hideCancel = true;
   private maxVCPUs = 16;
-  private gpus: GpuDevice[];
+  private gpus: Device[];
   private isolatedGpuPciIds: string[];
 
   entityWizard: EntityWizardComponent;
-  res: any;
   private productType = window.localStorage.getItem('product_type') as ProductType;
 
   wizardConfig: Wizard[] = [
@@ -484,7 +484,7 @@ export class VMWizardComponent implements WizardConfiguration {
       const vcpuLimitConf = _.find(this.wizardConfig[1].fieldConfig, { name: 'vcpu_limit' });
       vcpuLimitConf.paraText = helptext.vcpus_warning + ` ${this.maxVCPUs} ` + helptext.vcpus_warning_b;
     });
-    this.ws.call('device.get_info', ['GPU']).pipe(untilDestroyed(this)).subscribe((gpus) => {
+    this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
       const gpusConf = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' });
       for (const item of gpus) {
@@ -750,7 +750,6 @@ export class VMWizardComponent implements WizardConfiguration {
       this.messageService.messageSourceHasNewMessage$.pipe(untilDestroyed(this)).subscribe((message) => {
         this.getFormControlFromFieldName('iso_path').setValue(message);
       });
-      this.res = res;
       const grub = this.bootloader.options.find((option: any) => option.value === VmBootloader.Grub);
       const grubIndex = this.bootloader.options.indexOf(grub);
       if (res === 'Windows') {
@@ -1046,8 +1045,8 @@ export class VMWizardComponent implements WizardConfiguration {
 
     if (value.gpus) {
       for (const gpuPciSlot of value.gpus) {
-        const gpuIndex = this.gpus.findIndex((gpu: any) => gpu.addr.pci_slot == gpuPciSlot);
-        vmPayload['devices'].push(...this.gpus[gpuIndex].devices.map((gpuDevice: any) => ({
+        const gpuIndex = this.gpus.findIndex((gpu) => gpu.addr.pci_slot == gpuPciSlot);
+        vmPayload['devices'].push(...this.gpus[gpuIndex].devices.map((gpuDevice) => ({
           dtype: VmDeviceType.Pci,
           attributes: {
             pptdev: gpuDevice.vm_pci_slot,
@@ -1107,7 +1106,7 @@ export class VMWizardComponent implements WizardConfiguration {
       const devices = [...vmPayload['devices']];
       delete vmPayload['devices'];
       this.ws.call('vm.create', [vmPayload]).pipe(untilDestroyed(this)).subscribe((vm_res) => {
-        const observables: Observable<any>[] = [];
+        const observables: Observable<void>[] = [];
         for (const device of devices) {
           device.vm = vm_res.id;
           observables.push(this.ws.call('vm.device.create', [device]).pipe(
@@ -1170,7 +1169,7 @@ export class VMWizardComponent implements WizardConfiguration {
       const devices = [...vmPayload['devices']];
       delete vmPayload['devices'];
       this.ws.call('vm.create', [vmPayload]).pipe(untilDestroyed(this)).subscribe((vm_res) => {
-        const observables: Observable<any>[] = [];
+        const observables: Observable<void>[] = [];
         for (const device of devices) {
           device.vm = vm_res.id;
           observables.push(this.ws.call('vm.device.create', [device]).pipe(

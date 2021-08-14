@@ -23,7 +23,7 @@ import { T } from 'app/translate-marker';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class IPMIFromComponent implements FormConfiguration {
-  title = 'IMPI';
+  title = T('IPMI');
   queryCall: 'ipmi.query' = 'ipmi.query';
 
   protected entityEdit: EntityFormComponent;

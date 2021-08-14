@@ -13,6 +13,8 @@ export interface WizardConfiguration {
   saveSubmitText?: string;
   advanced_field?: string[];
   isBasicMode?: boolean;
+  showSpinner?: boolean;
+  isAutoSummary?: boolean;
   route_cancel?: string[];
   route_success?: string[];
   custActions?: {

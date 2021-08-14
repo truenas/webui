@@ -13,6 +13,7 @@ import { XtermAttachAddon } from 'app/core/classes/xterm-attach-addon';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import helptext from 'app/helptext/shell/shell';
 import { CoreEvent } from 'app/interfaces/events';
+import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
@@ -37,7 +38,6 @@ export class PodShellComponent implements OnInit, OnDestroy {
   rows: string;
   font_size = 14;
   font_name = 'Inconsolata';
-  token: any;
   xterm: any;
   private fitAddon: FitAddon;
   formEvent$: Subject<CoreEvent>;
@@ -234,7 +234,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
     this.initializeTerminal();
     this.refreshToolbarButtons();
 
-    this.ss.shellConnected.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.ss.shellConnected.pipe(untilDestroyed(this)).subscribe((res: ShellConnectedEvent) => {
       this.shellConnected = res.connected;
       this.connectionId = res.id;
       this.updateTerminal();

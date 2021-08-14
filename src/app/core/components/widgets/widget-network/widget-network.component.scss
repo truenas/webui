@@ -3,11 +3,6 @@
   width: 600px;
 }
 
-ul {
-  margin: 0;
-  padding-left: 0;
-}
-
 .widget mat-card-content {
   width: 100%;
 }
@@ -26,6 +21,13 @@ ul {
   margin-right: 6px;
 }
 
+.controls {
+  color: var(--fg2);
+  position: absolute;
+  right: 16px;
+  top: 0;
+}
+
 mat-grid-list {
   &:not(.nics-1) .tile {
     background-color: var(--bg1);
@@ -34,8 +36,8 @@ mat-grid-list {
   &.nics-1 .tile {
     padding: 12px 16px;
 
-    .info-header {
-      height: 35px;
+    .info-body ul {
+      width: auto;
     }
 
     .detail-info li {
@@ -47,7 +49,7 @@ mat-grid-list {
     padding: 12px 16px;
 
     .nic-info {
-      width: 170px;
+      width: 175px;
     }
   }
 
@@ -55,19 +57,36 @@ mat-grid-list {
     padding: 4px 4px 4px 16px;
 
     .nic-info {
-      width: 150px;
+      width: 175px;
+    }
+
+    .info-header {
+      margin-bottom: 4px;
     }
 
     .info-body {
       font-size: 12px;
-    }
 
-    .info-body .line-state {
-      padding: 0;
-    }
+      span.icon {
+        height: 18px;
+        min-width: 24px;
+        width: 24px;
 
-    .info-body ul li {
-      line-height: 15px;
+        .mat-icon {
+          font-size: 18px;
+          height: 22px;
+          line-height: 18px;
+          width: 22px;
+        }
+      }
+
+      .line-state {
+        padding: 0;
+      }
+
+      ul li {
+        line-height: 15px;
+      }
     }
   }
 
@@ -104,7 +123,6 @@ mat-grid-list {
 
 .nic-info {
   font-size: 12px;
-  padding-right: 10px;
 
   .divider {
     background-color: var(--lines);
@@ -114,8 +132,12 @@ mat-grid-list {
 }
 
 .info-header {
-  font-size: 24px;
-  height: 40px;
+  margin-bottom: 10px;
+
+  .info-header-title {
+    font-size: 24px;
+    line-height: 1.25;
+  }
 
   .mat-icon-button {
     height: 30px;
@@ -140,10 +162,13 @@ mat-grid-list {
   }
 
   span.icon {
-    display: inline-block;
+    cursor: default;
+    display: inline-flex;
     height: 22px;
+    justify-content: center;
+    min-width: 26px;
     text-align: center;
-    width: 25px;
+    width: 26px;
 
     &.up {
       color: var(--green);
@@ -161,13 +186,21 @@ mat-grid-list {
         height: 24px;
       }
     }
+
+    &.address {
+      .mat-icon {
+        font-size: 20px;
+        line-height: 20px;
+        position: relative;
+        top: 1px;
+      }
+    }
   }
 
   .mat-icon {
     font-size: 22px;
     line-height: 22px;
-    margin-left: -5px;
-    margin-top: 0;
+    margin: 0;
 
     &.mdi-set {
       margin-top: 0;
@@ -175,16 +208,32 @@ mat-grid-list {
   }
 
   ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
     text-align: left;
+    width: 100%;
 
     li {
       line-height: 18px;
-      overflow: hidden;
-      white-space: nowrap;
+      min-width: 0;
+
+      span:nth-child(2) {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
   }
 }
 
-.chart-body.chart-body-errors {
-  margin: 8px;
+.chart-body {
+  &.chart-body-errors,
+  &.chart-body-loading {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    margin: 8px;
+  }
 }

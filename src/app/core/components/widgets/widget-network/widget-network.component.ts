@@ -16,7 +16,6 @@ import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/ent
 import { TableService } from 'app/pages/common/entity/table/table.service';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { WebSocketService } from 'app/services';
-import { LocaleService } from 'app/services/locale.service';
 import { T } from 'app/translate-marker';
 
 interface NicInfo {
@@ -27,6 +26,7 @@ interface NicInfo {
   lastSent: number;
   lastReceived: number;
   chartData: ChartData;
+  emptyConfig?: EmptyConfig;
 }
 
 interface NicInfoMap {
@@ -43,13 +43,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   @Input() stats: any;
   @Input() nics: BaseNetworkInterface[];
 
-  emptyTypes = EmptyType;
-  emptyChartConf: EmptyConfig = {
-    type: EmptyType.Loading,
-    large: false,
-    title: T('Loading'),
-  };
-
+  readonly emptyTypes = EmptyType;
   private utils: WidgetUtils;
   LinkState = LinkState;
   title = T('Network');
@@ -124,7 +118,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
 
   constructor(
     public router: Router, private ws: WebSocketService,
-    private locale: LocaleService, private reportsService: ReportsService,
+    private reportsService: ReportsService,
     private tableService: TableService, public translate: TranslateService,
   ) {
     super(translate);
@@ -209,6 +203,11 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
         lastSent: 0,
         lastReceived: 0,
         chartData: null,
+        emptyConfig: {
+          type: EmptyType.Loading,
+          large: false,
+          title: T('Loading'),
+        },
       };
     });
   }
@@ -259,12 +258,17 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   }
 
   getIpAddress(nic: BaseNetworkInterface): string {
-    let ip = '0';
-    if (nic.aliases) {
-      const filtered = nic.aliases.filter((item: NetworkInterfaceAlias) =>
+    let ip = '–';
+    if (nic.state.aliases) {
+      const addresses = nic.state.aliases.filter((item: NetworkInterfaceAlias) =>
         [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
-      if (filtered.length > 0) {
-        ip = filtered[0].address + '/' + filtered[0].netmask;
+
+      if (addresses.length > 0) {
+        ip = addresses[0].address + '/' + addresses[0].netmask;
+
+        if (addresses.length >= 2) {
+          ip += ` (+${addresses.length - 1})`; /* show that interface has additional addresses */
+        }
       }
     }
 
@@ -324,18 +328,35 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
       },
       () => {
         // Handle the error
-        const errorString = T('Error getting chart data');
-        this.chartDataError(errorString);
+        const errorString = this.translate.instant(T('Error getting chart data'));
+        this.nicInfoMap[nic.name].emptyConfig = this.chartDataError(errorString);
       });
     });
   }
 
-  chartDataError(err: string): void {
-    this.emptyChartConf = {
+  chartDataError(err: string): EmptyConfig {
+    return {
       type: EmptyType.Errors,
       large: false,
       compact: true,
       title: err,
     };
+  }
+
+  getChartBodyClassess(nic: BaseNetworkInterface): string[] {
+    const classes = [];
+
+    if (this.nicInfoMap[nic.state.name].emptyConfig.type === this.emptyTypes.Errors) {
+      classes.push('chart-body-errors');
+    }
+
+    if (
+      this.nicInfoMap[nic.state.name].emptyConfig.type === this.emptyTypes.Loading
+      && !this.nicInfoMap[nic.name].chartData
+    ) {
+      classes.push('chart-body-loading');
+    }
+
+    return classes;
   }
 }

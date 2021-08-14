@@ -7,7 +7,6 @@ import { KerberosSettingsComponent } from 'app/pages/directory-service/component
 import { DirectoryServicesComponent } from 'app/pages/directory-service/directory-services.component';
 import { IdmapListComponent } from './components/idmap/idmap-list.component';
 import { LdapComponent } from './components/ldap/ldap.component';
-import { NISComponent } from './components/nis/nis.component';
 
 export const routes: Routes = [{
   path: '',
@@ -24,10 +23,6 @@ export const routes: Routes = [{
       path: 'activedirectory',
       component: ActiveDirectoryComponent,
       data: { title: 'Active Directory', breadcrumb: 'Active Directory', icon: 'apps' },
-    }, {
-      path: 'nis',
-      component: NISComponent,
-      data: { title: 'NIS', breadcrumb: 'NIS', icon: 'library_books' },
     }, {
       path: 'idmap',
       component: IdmapListComponent,

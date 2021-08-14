@@ -1,8 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import {
-  Component, OnInit,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -11,13 +9,14 @@ import * as cronParser from 'cron-parser';
 import { Subject } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
+import { DeviceType } from 'app/enums/device-type.enum';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { Device } from 'app/interfaces/device.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { GpuDevice } from 'app/interfaces/gpu-device.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EmptyType, EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
@@ -28,12 +27,12 @@ import { InitshutdownFormComponent } from 'app/pages/system/advanced/initshutdow
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
-  WebSocketService,
-  SystemGeneralService,
   DialogService,
   LanguageService,
   StorageService,
+  SystemGeneralService,
   UserService,
+  WebSocketService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
@@ -394,10 +393,10 @@ export class AdvancedSettingsComponent implements OnInit {
         },
       ];
 
-      this.ws.call('device.get_info', ['GPU']).pipe(untilDestroyed(this)).subscribe((gpus: GpuDevice[]) => {
-        const isolatedGpus = gpus.filter((gpu: GpuDevice) => advancedConfig.isolated_gpu_pci_ids.findIndex(
+      this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
+        const isolatedGpus = gpus.filter((gpu: Device) => advancedConfig.isolated_gpu_pci_ids.findIndex(
           (pciId: string) => pciId === gpu.addr.pci_slot,
-        ) > -1).map((gpu: GpuDevice) => gpu.description).join(', ');
+        ) > -1).map((gpu: Device) => gpu.description).join(', ');
         this.dataCards.push({
           title: T('Isolated GPU Device(s)'),
           id: CardId.Gpus,

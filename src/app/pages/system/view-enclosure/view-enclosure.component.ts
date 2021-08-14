@@ -7,8 +7,13 @@ import { Subject } from 'rxjs';
 import { ErrorMessage } from 'app/core/classes/ix-interfaces';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
 import { CoreService } from 'app/core/services/core-service/core.service';
+import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
+import { DiskDataEvent } from 'app/interfaces/events/disk-data-event.interface';
+import { EnclosureDataEvent } from 'app/interfaces/events/enclosure-data-event.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
+import { ResilverEvent } from 'app/interfaces/events/resilver-event.interface';
+import { SensorDataEvent } from 'app/interfaces/events/sensor-data-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 
@@ -123,7 +128,7 @@ export class ViewEnclosureComponent implements OnDestroy {
       }
     });
 
-    core.register({ observerClass: this, eventName: 'EnclosureData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'EnclosureData' }).pipe(untilDestroyed(this)).subscribe((evt: EnclosureDataEvent) => {
       this.system = new SystemProfiler(this.system_product, evt.data);
       this.selectedEnclosure = this.system.profile[this.system.headIndex];
       core.emit({ name: 'DisksRequest', sender: this });
@@ -141,15 +146,19 @@ export class ViewEnclosureComponent implements OnDestroy {
       this.addViews();
     });
 
-    core.register({ observerClass: this, eventName: 'SensorData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'SensorData' }).pipe(untilDestroyed(this)).subscribe((evt: SensorDataEvent) => {
       this.system.sensorData = evt.data;
+    });
+
+    core.register({ observerClass: this, eventName: 'Resilvering' }).pipe(untilDestroyed(this)).subscribe((evt: ResilverEvent) => {
+      if (evt.data.scan.state == PoolScanState.Finished) this.fetchData();
     });
 
     core.register({ observerClass: this, eventName: 'DisksChanged' }).pipe(untilDestroyed(this)).subscribe(() => {
       this.fetchData();
     });
 
-    core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: DiskDataEvent) => {
       this.system.diskData = evt.data;
       core.emit({ name: 'PoolDataRequest', sender: this });
       setTimeout(() => {
@@ -205,7 +214,7 @@ export class ViewEnclosureComponent implements OnDestroy {
     views.unshift(disks);
     let matchIndex;
 
-    this.system.enclosures[this.selectedEnclosure.enclosureKey].elements.forEach((element: any, index: number) => {
+    this.system.enclosures[this.selectedEnclosure.enclosureKey].elements.forEach((element, index) => {
       const view = {
         name: element.name,
         alias: '',
