@@ -388,6 +388,7 @@ export type ApiDirectory = {
   'keychaincredential.remote_ssh_host_key_scan': { params: any; response: any };
   'keychaincredential.delete': { params: any; response: any };
   'keychaincredential.remote_ssh_semiautomatic_setup': { params: any; response: any };
+  'keychaincredential.setup_ssh_connection': { params: any; response: any };
 
   // Kubernetes
   'kubernetes.config': { params: void; response: KubernetesConfig };
