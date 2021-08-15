@@ -1488,14 +1488,11 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     const nameRegexFormControl = this.entityWizard.formArray.get([0]).get('name_regex');
 
     const namingOption = schemaOrRegexFormControl.value === SnapshotNamingOption.NamingSchema
-      ? namingSchema : nameRegexFormControl.value;
+      ? namingSchema : [nameRegexFormControl.value];
 
     const payload = [
       this.entityWizard.formArray.get([0]).get('source_datasets').value || [],
       namingOption,
-      (this.entityWizard.formArray.get([0]).get('naming_schema').enabled && this.entityWizard.formArray.get([0]).get('naming_schema').value)
-        ? this.entityWizard.formArray.get([0]).get('naming_schema').value.split(' ')
-        : [this.defaultNamingSchema],
       transport,
       transport === TransportMode.Local ? null : this.entityWizard.formArray.get([0]).get('ssh_credentials_source').value,
     ];
