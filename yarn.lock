@@ -1727,6 +1727,11 @@
     style-value-types "^3.1.7"
     tslib "^1.10.0"
 
+"@popperjs/core@^2.9.3":
+  version "2.9.3"
+  resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.9.3.tgz#8b68da1ebd7fc603999cf6ebee34a4899a14b88e"
+  integrity sha512-xDu17cEfh7Kid/d95kB6tZsLOmSWKCZKtprnhVepjsSaCij+lM3mItSJDuuHDMbCWTh8Ejmebwb+KONcCJ0eXQ==
+
 "@schematics/angular@10.0.1":
   version "10.0.1"
   resolved "https://registry.yarnpkg.com/@schematics/angular/-/angular-10.0.1.tgz#0660d5eb99169a67ecfc7a4c2946de1ea32320c0"
@@ -10941,6 +10946,13 @@ ngx-markdown@10.0.0:
     marked "^1.1.0"
     prismjs "^1.20.0"
     tslib "^2.0.0"
+
+ngx-popperjs@^12.1.2:
+  version "12.1.2"
+  resolved "https://registry.yarnpkg.com/ngx-popperjs/-/ngx-popperjs-12.1.2.tgz#fb1324140e6c348ece9aac89e866d32ba4258bd0"
+  integrity sha512-CuRfm8YkVSwCJif8pHadrHkbQfsO0xa2adg5tST0wPef+ysN9Rj87Z1k+M6Y/5Yvfe1VmlnxmTOUgh9/EWugrw==
+  dependencies:
+    tslib "^2.2.0"
 
 ngx-translate-messageformat-compiler@4.9.0:
   version "4.9.0"

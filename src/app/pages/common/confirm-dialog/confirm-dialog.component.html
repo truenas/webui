@@ -6,8 +6,7 @@
         ix-auto-type="checkbox"
         ix-auto-identifier="{{secondaryCheckBoxMsg | uppercase}}">
       <span id="confirm-label">{{ secondaryCheckBoxMsg | translate }}</span> </mat-checkbox>
-      <!-- <tooltip *ngIf="config.tooltip" [message]="config.tooltip"></tooltip> -->
-      <tooltip *ngIf="tooltip" [message]="tooltip"></tooltip>
+      <popper-tooltip *ngIf="tooltip" [message]="tooltip"></popper-tooltip>
       <br><br>
   </span>
   <div class="message-content">

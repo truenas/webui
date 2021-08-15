@@ -13,11 +13,13 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { NgxFilesizeModule } from 'ngx-filesize';
+import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { FormSelectionListComponent } from 'app/pages/common/entity/entity-form/components/form-selection-list/form-selection-list.component';
+import { PopperTooltipComponent } from 'app/pages/common/entity/entity-form/components/popper-tooltip/popper-tooltip.component';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityTableActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-actions/entity-table-actions.component';
 import { WizardSummaryComponent } from 'app/pages/common/entity/entity-wizard/components/wizard-summary/wizard-summary.component';
@@ -60,8 +62,7 @@ import { FormTextareaButtonComponent } from './entity-form/components/form-texta
 import { FormTextareaComponent } from './entity-form/components/form-textarea/form-textarea.component';
 import { FormToggleButtonComponent } from './entity-form/components/form-toggle-button/form-toggle-button.component';
 import { FormUploadComponent } from './entity-form/components/form-upload/form-upload.component';
-import { TooltipDocReplacePipe } from './entity-form/components/tooltip/tooltip-docreplace';
-import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
+import { TooltipDocReplacePipe } from './entity-form/components/popper-tooltip/tooltip-docreplace';
 import { EntityFormConfigurationComponent } from './entity-form/entity-form-configuration.component';
 import { EntityFormEmbeddedComponent } from './entity-form/entity-form-embedded.component';
 import { EntityFormComponent } from './entity-form/entity-form.component';
@@ -95,7 +96,7 @@ import { TableService } from './table/table.service';
     CommonModule, FormsModule, ReactiveFormsModule, DragDropModule, RouterModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
     NgxUploaderModule, FlexLayoutModule, TranslateModule, CdkTreeModule,
-    OverlayModule, A11yModule, TreeTableModule, NgxFilesizeModule, CommonDirectivesModule,
+    OverlayModule, A11yModule, TreeTableModule, NgxFilesizeModule, CommonDirectivesModule, NgxPopperjsModule,
   ],
   declarations: [
     TaskScheduleListComponent,
@@ -132,7 +133,7 @@ import { TableService } from './table/table.service';
     FormExplorerComponent,
     FormPermissionsComponent,
     FormIpWithNetmaskComponent,
-    TooltipComponent,
+    PopperTooltipComponent,
     TooltipDocReplacePipe,
     FormSliderComponent,
     FormToggleButtonComponent,
@@ -184,7 +185,7 @@ import { TableService } from './table/table.service';
     SmdFabSpeedDialTrigger,
     SmdFabSpeedDialActions,
     SmdFabSpeedDialComponent,
-    TooltipComponent,
+    PopperTooltipComponent,
     EntityWizardComponent,
     EntityTaskComponent,
     EntityDialogComponent,

@@ -1,0 +1,65 @@
+/* Tooltip container */
+.tooltip {
+  display: inline-block;
+  position: relative;
+}
+
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  border-radius: 6px;
+  color: #fff;
+  font-size: 110%;
+  margin: auto;
+  max-width: 300px;
+  padding-top: 32px;
+  text-align: left;
+  white-space: normal;
+  width: 90vw;
+}
+
+
+.tooltip .material-icons {
+  font-size: 20px;
+}
+
+.tooltip-icon {
+  cursor: pointer;
+}
+
+.pin {
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  top: 2px;
+}
+
+.pin .mat-icon {
+  margin: 8px 8px 0;
+}
+
+.pin-icon {
+  height: auto;
+  width: 18px;
+}
+
+#tooltip-header {
+  left: 0;
+  margin: 8px 0;
+  padding: 0 12px;
+  position: absolute;
+  text-align: right;
+  top: 0;
+  width: 100%;
+}
+
+.tooltip-header-text {
+  font-weight: 500;
+  overflow: hidden;
+  position: absolute;
+  text-align: left;
+  text-overflow: ellipsis;
+  top: 8px;
+  white-space: nowrap;
+  width: calc(100% - 48px);
+}

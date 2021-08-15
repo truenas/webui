@@ -2,7 +2,7 @@
   ix-auto ix-auto-type="file-uploader" ix-auto-identifier="{{config.placeholder}}">
   <div class="top">
     <label>{{ config.placeholder | translate }}</label>
-    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [style.margin-left.px]="5" [position]="config.tooltipPosition ? config.tooltipPosition : null"></tooltip>
+    <popper-tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [style.margin-left.px]="5"></popper-tooltip>
   </div>
 
   <div>

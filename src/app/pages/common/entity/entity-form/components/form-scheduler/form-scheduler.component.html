@@ -2,7 +2,7 @@
   ix-auto ix-auto-type="scheduler" ix-auto-identifier="{{config.placeholder}}">
     <div class="label-container">
       <mat-label class="label input-text">{{config.placeholder}} <span *ngIf="config.required">*</span></mat-label>
-      <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+      <popper-tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></popper-tooltip>
     </div>
     <mat-form-field class="full-width" matTooltipPosition="above" [ngClass]="{'overlay-opened': isOpen}">
       <mat-select 
@@ -78,7 +78,7 @@
             <div class="preview-label">
               <h4 class="preview-label"><span *ngIf="!config.noMinutes">
                   Minutes/</span>Hours/Days
-                  <tooltip [header]="config.noMinutes ? helptext.scheduler.general.headerWithoutMinutes : helptext.scheduler.general.header" [message]="helptext.scheduler.general.tooltip"></tooltip>
+                  <popper-tooltip [header]="config.noMinutes ? helptext.scheduler.general.headerWithoutMinutes : helptext.scheduler.general.header" [message]="helptext.scheduler.general.tooltip"></popper-tooltip>
               </h4>
             </div>
             <div id="no-spaces">({{"Separate values with commas, and without spaces." | translate}})</div>
@@ -86,7 +86,7 @@
             <div class="form-element" *ngIf="!config.noMinutes">
               <div class="label-container">
                 <mat-label class="label input-text">Minutes</mat-label>
-                <tooltip [header]="helptext.scheduler.minutes.header" [message]="helptext.scheduler.minutes.tooltip"></tooltip>
+                <popper-tooltip [header]="helptext.scheduler.minutes.header" [message]="helptext.scheduler.minutes.tooltip"></popper-tooltip>
               </div>
               <mat-form-field>
                 <input matInput [(ngModel)]="minutes" [ngModelOptions]="{standalone: true}" [value]="minutes" placeholder="Minutes" required [ngClass]=" {'invalid' : validMinutes === false}">
@@ -96,7 +96,7 @@
             <div class="form-element">
               <div class="label-container">
                 <mat-label class="label input-text">Hours</mat-label>
-                <tooltip [header]="helptext.scheduler.hours.header" [message]="helptext.scheduler.hours.tooltip"></tooltip>
+                <popper-tooltip [header]="helptext.scheduler.hours.header" [message]="helptext.scheduler.hours.tooltip"></popper-tooltip>
               </div>
               <mat-form-field>
                 <input matInput [(ngModel)]="hours" [ngModelOptions]="{standalone: true}" [value]="hours" placeholder="Hours" required [ngClass]="{'invalid': validHours === false}">
@@ -106,7 +106,7 @@
             <div class="form-element">
               <div class="label-container">
                 <mat-label class="label input-text">Days</mat-label>
-                <tooltip [header]="helptext.scheduler.days.header" [message]="helptext.scheduler.days.tooltip"></tooltip>
+                <popper-tooltip [header]="helptext.scheduler.days.header" [message]="helptext.scheduler.days.tooltip"></popper-tooltip>
               </div>
               <mat-form-field>
                 <input matInput [(ngModel)]="days" [ngModelOptions]="{standalone: true}" [value]="days" placeholder="Days" required [ngClass]="{'invalid': validDays === false}">
