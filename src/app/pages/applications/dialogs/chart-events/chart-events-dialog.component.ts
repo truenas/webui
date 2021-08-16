@@ -5,7 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
-import { ChartContainerImage } from 'app/interfaces/chart-release.interface';
+import { ChartContainerImage, ChartRelease } from 'app/interfaces/chart-release.interface';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -18,7 +18,7 @@ import { LocaleService } from 'app/services/locale.service';
 })
 
 export class ChartEventsDialog implements OnInit {
-  catalogApp: any;
+  catalogApp: ChartRelease;
   containerImages: { [key: string]: ChartContainerImage } = {};
   chartEvents: ChartReleaseEvent[] = [];
   pods: any[] = [];
@@ -32,12 +32,9 @@ export class ChartEventsDialog implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     protected localeService: LocaleService,
     private loader: AppLoaderService,
-    private appService: ApplicationsService,
+    public appService: ApplicationsService,
   ) {
     this.catalogApp = data;
-    if (!this.catalogApp.used_ports) {
-      this.catalogApp.used_ports = helptext.chartEventDialog.noPorts;
-    }
   }
 
   ngOnInit(): void {

@@ -28,6 +28,7 @@ export type CatalogQueryParams = QueryParams<Catalog, {
     item_details?: boolean;
     cache?: boolean;
     retrieve_versions?: boolean;
+    include_chart_schema?: boolean;
   };
 }>;
 
@@ -47,6 +48,12 @@ export interface CatalogApp {
   latest_app_version: string;
   latest_human_version: string;
   versions: { [version: string]: CatalogAppVersion };
+  catalog?: {
+    id?: string;
+    label?: string;
+    train: string;
+  };
+  schema?: any;
 }
 
 export interface CatalogAppVersion {

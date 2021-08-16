@@ -1,7 +1,7 @@
 <div mat-dialog-content>
     <div class="logo-container" fxLayout="row" fxLayoutAlign="start center">
         <div class="logo">
-          <img [src]="catalogApp.icon" [src-fallback]="imagePlaceholder"/>
+          <img [src]="catalogApp.chart_metadata.icon" [src-fallback]="imagePlaceholder"/>
         </div>
         <div fxLayout="row" fxLayoutAlign="start center">
             <strong class="chart-name">{{ catalogApp.name }}</strong>
@@ -11,7 +11,7 @@
         </div>
     </div>
     <div class="ports">
-        <span>{{ 'Used Ports' | translate }}:</span><span class="value" textLimiter threshold="70">{{ catalogApp.used_ports | translate }}</span>
+        <span>{{ 'Used Ports' | translate }}:</span><span class="value" textLimiter threshold="70">{{ appService.getPorts(catalogApp) || ('No ports are being used.' | translate) }}</span>
     </div>
     <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">
         <div>
@@ -35,7 +35,7 @@
             <span>{{ 'Train' | translate }}:</span><div class="inline-block capitalized-text"><span class="value" textLimiter threshold="14">{{ catalogApp.catalog_train }}</span></div>
         </div>
         <div>
-            <span>{{ 'Item Name' | translate }}:</span><span class="value" textLimiter threshold="14">{{ catalogApp.chart_name }}</span>
+            <span>{{ 'Item Name' | translate }}:</span><span class="value" textLimiter threshold="14">{{ catalogApp.chart_metadata.name }}</span>
         </div>
     </div>
     <mat-accordion>

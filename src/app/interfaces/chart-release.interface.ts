@@ -19,6 +19,15 @@ export interface PodStatus {
   desired: number;
 }
 
+export interface ChartInfo {
+  deleted: string;
+  description: string;
+  first_deployed: string;
+  last_deployed: string;
+  notes: string;
+  status: string;
+}
+
 export interface ChartResources {
   storage_class: { [key: string]: string };
   persistent_volumes: any[];
@@ -45,77 +54,32 @@ export interface ChartReleaseCreate {
   version: string;
 }
 
-export interface ChartReleaseCreateResponse {
+export interface ChartRelease {
   name: string;
-  info: { [key: string]: string };
-  config: { [key: string]: string };
+  info: ChartInfo;
+  config: { [key: string]: any };
   hooks: any[];
   version: number;
   namespace: string;
-  chart_metadata: ChartMetaData;
+  chart_metadata: ChartMetadata;
   id: string;
   catalog: string;
   catalog_train: string;
   path: string;
   dataset: string;
-  status: string;
+  status: ChartReleaseStatus;
   used_ports: UsedPort[];
   pod_status: PodStatus;
   update_available: boolean;
   human_version: string;
   human_latest_version: string;
   container_images_update_available: boolean;
-  portals: { [key: string]: string };
-  chart_schema: { [key: string]: string };
+  portals: { [name: string]: string[] };
+  chart_schema: ChartSchema;
   history: { [key: string]: string };
-  resources: ChartResources;
-}
-
-// TODO: May be the same as ChartReleaseCreateResponse
-export interface ChartRelease {
-  catalog: string;
-  catalog_train: string;
-  chart_metadata: ChartMetadata;
-  config: { [key: string]: any };
-  container_images_update_available: boolean;
-  dataset: string;
-  human_latest_version: string;
-  human_version: string;
-  id: string;
-  info: {
-    deleted: string;
-    description: string;
-    first_deployed: string;
-    last_deployed: string;
-    notes: string;
-    status: string;
-  };
-  name: string;
-  namespace: string;
-  path: string;
-  pod_status: {
-    desired: number;
-    available: number;
-  };
-  portals: {
-    [name: string]: string[];
-  };
-  status: ChartReleaseStatus;
-  update_available: boolean;
-  used_ports: {
-    port: number;
-    protocol: string;
-  }[];
-  version: number;
-
-  // Only when retrieve_resources is true.
   resources?: ChartResources;
 
-  // Only when include_chart_schema is true.
-  chart_schema?: ChartSchema;
-
-  // Only when history is true.
-  history?: { [key: string]: string };
+  selected?: boolean;
 }
 
 export type ChartReleaseQueryParams = QueryParams<ChartRelease, {

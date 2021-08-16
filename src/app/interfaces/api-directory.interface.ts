@@ -35,7 +35,6 @@ import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface'
 import {
   ChartRelease,
   ChartReleaseCreate,
-  ChartReleaseCreateResponse,
   ChartReleaseQueryParams,
 } from 'app/interfaces/chart-release.interface';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -259,7 +258,7 @@ export type ApiDirectory = {
   // Chart
   'chart.release.pod_logs_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.query': { params: ChartReleaseQueryParams; response: ChartRelease[] };
-  'chart.release.create': { params: ChartReleaseCreate; response: ChartReleaseCreateResponse };
+  'chart.release.create': { params: ChartReleaseCreate; response: ChartRelease };
   'chart.release.update': { params: any; response: any };
   'chart.release.upgrade': { params: any; response: any };
   'chart.release.delete': { params: any; response: any };
@@ -391,7 +390,7 @@ export type ApiDirectory = {
 
   // Kubernetes
   'kubernetes.config': { params: void; response: KubernetesConfig };
-  'kubernetes.update': { params: [KubernetesConfigUpdate]; response: any };
+  'kubernetes.update': { params: [KubernetesConfigUpdate]; response: KubernetesConfig };
   'kubernetes.bindip_choices': { params: void; response: Choices };
 
   // Multipath

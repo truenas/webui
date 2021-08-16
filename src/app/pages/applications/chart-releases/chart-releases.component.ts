@@ -14,6 +14,7 @@ import { CoreService } from 'app/core/services/core-service/core.service';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import helptext from 'app/helptext/apps/apps';
 import { ApplicationUserEventName, UpgradeSummary } from 'app/interfaces/application.interface';
+import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { ChartUpgradeDialog } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
@@ -39,10 +40,10 @@ import { ChartFormComponent } from '../forms/chart-form.component';
 export class ChartReleasesComponent implements OnInit, OnDestroy {
   @Output() updateTab = new EventEmitter();
 
-  filteredChartItems: any[] = [];
+  filteredChartItems: ChartRelease[] = [];
   filterString = '';
 
-  chartItems: any = {};
+  chartItems: Record<string, ChartRelease> = {};
   @Output() switchTab = new EventEmitter<string>();
 
   private dialogRef: MatDialogRef<EntityJobComponent>;
@@ -140,7 +141,7 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
 
   constructor(private mdDialog: MatDialog, private appLoaderService: AppLoaderService,
     private dialogService: DialogService, private translate: TranslateService,
-    private appService: ApplicationsService, private modalService: ModalService,
+    public appService: ApplicationsService, private modalService: ModalService,
     private sysGeneralService: SystemGeneralService, private router: Router,
     private core: CoreService, protected ws: WebSocketService) { }
 
@@ -196,7 +197,7 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
     this.emptyPageConf.message = message;
   }
 
-  getChartItems(): any {
+  getChartItems(): ChartRelease[] {
     return Object.values(this.chartItems);
   }
 
@@ -205,28 +206,7 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
       const app = this.chartItems[evt.id];
 
       if (app && evt && evt.fields) {
-        app.status = evt.fields.status;
-        app.version = evt.fields.chart_metadata.version;
-        app.count = `${evt.fields.pod_status.available}/${evt.fields.pod_status.desired}`;
-        app.desired = evt.fields.pod_status.desired;
-        app.catalog = evt.fields.catalog;
-        app.update_available = evt.fields.update_available;
-        app.container_images_update_available = evt.fields.container_images_update_available;
-        app.human_version = evt.fields.human_version;
-        app.human_latest_version = evt.fields.human_latest_version;
-        app.latest_version = evt.fields.chart_metadata.latest_chart_version;
-        app.repository = evt.fields.config.image.repository;
-        app.tag = evt.fields.config.image.tag;
-        app.portal = evt.fields.portals && evt.fields.portals.web_portal ? evt.fields.portals.web_portal[0] : '';
-        app.history = !(_.isEmpty(evt.fields.history));
-
-        const ports: any[] = [];
-        if (evt.fields.used_ports) {
-          evt.fields.used_ports.forEach((item: any) => {
-            ports.push(`${item.port}\\${item.protocol}`);
-          });
-          app['used_ports'] = ports.join(', ');
-        }
+        this.chartItems[evt.id] = { ...app, ...evt.fields };
       }
     });
   }
@@ -255,38 +235,8 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
               this.chartItems = {};
 
               charts.forEach((chart) => {
-                const chartObj = {
-                  name: chart.name,
-                  catalog: chart.catalog,
-                  catalog_train: chart.catalog_train,
-                  status: chart.status,
-                  version: chart.chart_metadata.version,
-                  human_version: chart.human_version,
-                  human_latest_version: chart.human_latest_version,
-                  container_images_update_available: chart.container_images_update_available,
-                  latest_version: chart.chart_metadata.latest_chart_version,
-                  description: chart.chart_metadata.description,
-                  update_available: chart.update_available,
-                  chart_name: chart.chart_metadata.name,
-                  repository: chart.config.image.repository,
-                  tag: chart.config.image.tag,
-                  portal: chart.portals && chart.portals.web_portal ? chart.portals.web_portal[0] : '',
-                  id: chart.chart_metadata.name,
-                  icon: chart.chart_metadata.icon ? chart.chart_metadata.icon : this.ixIcon,
-                  count: `${chart.pod_status.available}/${chart.pod_status.desired}`,
-                  desired: chart.pod_status.desired,
-                  history: !(_.isEmpty(chart.history)),
-                  selected: false,
-                };
-
-                const ports: string[] = [];
-                if (chart.used_ports) {
-                  chart.used_ports.forEach((item) => {
-                    ports.push(`${item.port}\\${item.protocol}`);
-                  });
-                  (chartObj as any)['used_ports'] = ports.join(', ');
-                  this.chartItems[chartObj.name] = chartObj;
-                }
+                chart.selected = false;
+                this.chartItems[chart.name] = chart;
               });
 
               this.filerChartItems();
@@ -334,8 +284,8 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
     });
   }
 
-  portal(portal: string): void {
-    window.open(portal);
+  portal(chart: ChartRelease): void {
+    window.open(chart.portals.web_portal[0]);
   }
 
   update(name: string): void {
@@ -415,10 +365,10 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
       this.modalService,
       this.appService,
     );
-    if (catalogApp.chart_name == ixChartApp) {
+    if (catalogApp.chart_metadata.name == ixChartApp) {
       chartFormComponent.setTitle(helptext.launch);
     } else {
-      chartFormComponent.setTitle(catalogApp.chart_name);
+      chartFormComponent.setTitle(catalogApp.chart_metadata.name);
     }
     this.modalService.open('slide-in-form', chartFormComponent, name);
   }
@@ -541,7 +491,7 @@ export class ChartReleasesComponent implements OnInit, OnDestroy {
 
   filerChartItems(): void {
     if (this.filterString) {
-      this.filteredChartItems = this.getChartItems().filter((chart: any) => {
+      this.filteredChartItems = this.getChartItems().filter((chart) => {
         return chart.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1;
       });
     } else {

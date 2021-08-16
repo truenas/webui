@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { chartsTrain, latestVersion } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from 'app/helptext/apps/apps';
+import { CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -24,8 +25,7 @@ import { ApplicationsService } from '../applications.service';
 })
 export class ChartFormComponent implements FormConfiguration {
   queryCall: 'chart.release.query' = 'chart.release.query';
-  queryCallOption: any[];
-  customFilter: any[];
+  customFilter: CatalogQueryParams;
   addCall: 'chart.release.create' = 'chart.release.create';
   editCall: 'chart.release.update' = 'chart.release.update';
   isEntity = true;

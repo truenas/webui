@@ -90,4 +90,12 @@ export class ApplicationsService {
     }
     return this.ws.call('chart.release.upgrade_summary', payload);
   }
+
+  getPorts(chart: ChartRelease): string {
+    const ports: string[] = [];
+    chart.used_ports.forEach((item) => {
+      ports.push(`${item.port}\\${item.protocol}`);
+    });
+    return ports.join(', ');
+  }
 }
