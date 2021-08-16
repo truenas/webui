@@ -39,5 +39,5 @@ export interface UserGroup {
 
 export type DeleteUserParams = [
   /* id */ number,
-  /* params */ { delete_group: boolean},
+  /* params */ { delete_group: boolean },
 ];

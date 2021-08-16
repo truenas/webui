@@ -138,6 +138,7 @@ export class SmdFabSpeedDialActions implements AfterContentInit {
         </div>
     `,
   styleUrls: ['fab-speed-dial.scss'],
+  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
 export class SmdFabSpeedDialComponent implements AfterContentInit {
