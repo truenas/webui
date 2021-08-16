@@ -95,6 +95,46 @@ export interface ChartContainerImage {
   update_available: boolean;
 }
 
+export interface ChartSchemaEnum {
+  value: string;
+  description: string;
+}
+
+export interface ChartSchemaNodeConf {
+  type: string;
+  variable: string;
+  attrs?: ChartSchemaNode[];
+  items?: ChartSchemaNode[];
+  default?: any;
+  enum?: ChartSchemaEnum[];
+  required?: boolean;
+  value?: string;
+  max_length?: number;
+  min_length?: number;
+  min?: number;
+  max?: number;
+  cidr?: string;
+  private?: boolean;
+  hidden?: boolean;
+  show_if?: [/* field name */ string, /* operator name */ string, /* operator value */ string][];
+  show_subquestions_if?: any;
+  editable?: boolean;
+  subquestions?: ChartSchemaNode[];
+}
+
+export interface ChartSchemaGroup {
+  name: string;
+  description: string;
+}
+
+export interface ChartSchemaNode {
+  group?: string;
+  label: string;
+  schema: ChartSchemaNodeConf;
+  variable: string;
+  description?: string;
+}
+
 export interface ChartSchema {
   app_readme: string;
   changelog: string;
@@ -103,7 +143,17 @@ export interface ChartSchema {
   human_version: string;
   location: string;
   required_features: string[];
-  schema: any;
+  schema: {
+    groups: ChartSchemaGroup[];
+    questions: ChartSchemaNode[];
+    portals: {
+      web_portal: {
+        host: string[];
+        ports: string[];
+        protocols: string[];
+      };
+    };
+  };
   supported: boolean;
   values: any;
 }
