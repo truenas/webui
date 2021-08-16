@@ -13,6 +13,7 @@ import { LocaleService } from 'app/services/locale.service';
   selector: 'manage-catalog-summary-dialog',
   styleUrls: ['./manage-catalog-summary-dialog.component.scss'],
   templateUrl: './manage-catalog-summary-dialog.component.html',
+  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
 export class ManageCatalogSummaryDialog implements OnInit {
