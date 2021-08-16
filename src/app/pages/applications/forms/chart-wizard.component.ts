@@ -58,7 +58,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
         this.title = helptext.launch;
         hideVersion = true;
       }
-      const versionKeys: any[] = [];
+      const versionKeys: string[] = [];
       Object.keys(this.catalogApp.versions).forEach((versionKey) => {
         if (this.catalogApp.versions[versionKey].healthy) {
           versionKeys.push(versionKey);
@@ -97,15 +97,15 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
         }],
       });
 
-      selectedVersion.schema.groups.forEach((group: any) => {
+      selectedVersion.schema.groups.forEach((group) => {
         this.wizardConfig.push({
           label: group.name,
           fieldConfig: [],
         });
       });
 
-      selectedVersion.schema.questions.forEach((question: any) => {
-        const wizard = this.wizardConfig.find((wizard: any) => wizard.label == question.group);
+      selectedVersion.schema.questions.forEach((question) => {
+        const wizard = this.wizardConfig.find((wizard) => wizard.label == question.group);
         if (wizard) {
           const wizardFieldConfigs = new EntityUtils().parseSchemaFieldConfig(question);
           wizard.fieldConfig = wizard.fieldConfig.concat(wizardFieldConfigs);

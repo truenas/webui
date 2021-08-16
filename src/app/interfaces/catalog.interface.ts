@@ -1,3 +1,4 @@
+import { ChartSchemaGroup, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 
 export interface Catalog {
@@ -66,7 +67,17 @@ export interface CatalogAppVersion {
   human_version: string;
   location: string;
   required_features: string[];
-  schema: any;
+  schema: {
+    groups: ChartSchemaGroup[];
+    questions: ChartSchemaNode[];
+    portals: {
+      web_portal: {
+        host: string[];
+        ports: string[];
+        protocols: string[];
+      };
+    };
+  };
   supported: boolean;
   values: any;
   version: string;
