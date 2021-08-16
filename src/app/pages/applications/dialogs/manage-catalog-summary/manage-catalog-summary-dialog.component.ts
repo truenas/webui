@@ -32,7 +32,7 @@ export class ManageCatalogSummaryDialog implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<EntityJobComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: Catalog,
     protected localeService: LocaleService,
     private ws: WebSocketService,
     private loader: AppLoaderService,
@@ -91,7 +91,7 @@ export class ManageCatalogSummaryDialog implements OnInit {
     });
   }
 
-  versionStatusLabel(item: any): string {
+  versionStatusLabel(item: CatalogAppVersion): string {
     let label = '';
     if (this.selectedStatus == this.statusOptions[0]) {
       if (item.healthy) {

@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from 'app/helptext/apps/apps';
+import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -30,7 +31,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
   private title: string;
   private dialogRef: MatDialogRef<EntityJobComponent>;
   wizardConfig: Wizard[] = [];
-  private catalogApp: any;
+  private catalogApp: CatalogApp;
   private entityWizard: EntityWizardComponent;
   private destroy$ = new Subject();
   private selectedVersionKey: string;
@@ -44,7 +45,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
     this.title = title;
   }
 
-  setCatalogApp(catalogApp: any): void {
+  setCatalogApp(catalogApp: CatalogApp): void {
     this.catalogApp = catalogApp;
     this.parseSchema();
   }
@@ -114,7 +115,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
       this.wizardConfig = this.wizardConfig.filter((wizard) => wizard.fieldConfig.length > 0);
       if (this.entityWizard) {
         this.entityWizard.resetFields();
-        this.entityWizard.formArray.get([0]).get('version').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+        this.entityWizard.formArray.get([0]).get('version').valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
           this.selectedVersionKey = value;
           this.parseSchema();
         });

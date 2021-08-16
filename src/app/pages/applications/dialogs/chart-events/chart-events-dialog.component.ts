@@ -21,15 +21,12 @@ export class ChartEventsDialog implements OnInit {
   catalogApp: ChartRelease;
   containerImages: { [key: string]: ChartContainerImage } = {};
   chartEvents: ChartReleaseEvent[] = [];
-  pods: any[] = [];
-  deployments: any[] = [];
-  statefulsets: any[] = [];
   imagePlaceholder = appImagePlaceholder;
   helptext = helptext;
 
   constructor(
     public dialogRef: MatDialogRef<ChartEventsDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: ChartRelease,
     protected localeService: LocaleService,
     private loader: AppLoaderService,
     public appService: ApplicationsService,
@@ -46,10 +43,7 @@ export class ChartEventsDialog implements OnInit {
       ([charts, events]) => {
         this.loader.close();
         if (charts) {
-          this.containerImages = charts[0].resources.container_images;
-          this.pods = charts[0].resources.pods;
-          this.deployments = charts[0].resources.deployments;
-          this.statefulsets = charts[0].resources.statefulsets;
+          this.catalogApp = charts[0];
         }
         if (events) {
           this.chartEvents = events;
