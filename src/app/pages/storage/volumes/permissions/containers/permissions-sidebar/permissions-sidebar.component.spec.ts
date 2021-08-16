@@ -3,9 +3,8 @@ import {
   byTitle, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, NfsAcl, PosixAcl } from 'app/interfaces/acl.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -41,12 +40,12 @@ describe('PermissionsSidebarComponent', () => {
     providers: [
       PermissionsSidebarStore,
       mockProvider(DialogService),
-      mockWebsocket({
-        'filesystem.stat': of(stat),
-        'filesystem.getacl': of({
+      mockWebsocket([
+        mockCall('filesystem.stat', stat),
+        mockCall('filesystem.getacl', {
           trivial: true,
         } as Acl),
-      }),
+      ]),
     ],
   });
 
@@ -81,7 +80,7 @@ describe('PermissionsSidebarComponent', () => {
       acltype: AclType.Posix1e,
     } as PosixAcl;
 
-    spectator.inject(MockWebsocketService).mockCallOnce('filesystem.getacl', of(acl));
+    spectator.inject(MockWebsocketService).mockCallOnce('filesystem.getacl', acl);
 
     spectator.setInput('dataset', {
       ...dataset,
@@ -102,7 +101,7 @@ describe('PermissionsSidebarComponent', () => {
       acltype: AclType.Nfs4,
     } as NfsAcl;
 
-    spectator.inject(MockWebsocketService).mockCallOnce('filesystem.getacl', of(acl));
+    spectator.inject(MockWebsocketService).mockCallOnce('filesystem.getacl', acl);
 
     spectator.setInput('dataset', {
       ...dataset,
