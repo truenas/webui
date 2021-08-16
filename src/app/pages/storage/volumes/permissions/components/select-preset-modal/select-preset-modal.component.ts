@@ -10,7 +10,7 @@ import { RelationAction } from 'app/pages/common/entity/entity-form/models/relat
 import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
 import { SelectPresetModalConfig } from 'app/pages/storage/volumes/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/stores/dataset-acl-editor.store';
-import { WebSocketService } from 'app/services';
+import { AppLoaderService, WebSocketService } from 'app/services';
 
 const usePresetFieldName = 'usePreset';
 const presetFieldName = 'preset';
@@ -65,6 +65,7 @@ export class SelectPresetModalComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<SelectPresetModalComponent>,
     private ws: WebSocketService,
+    private loader: AppLoaderService,
     private aclEditorStore: DatasetAclEditorStore,
     private fieldRelationService: FieldRelationService,
     @Inject(MAT_DIALOG_DATA) public data: SelectPresetModalConfig,
@@ -85,10 +86,12 @@ export class SelectPresetModalComponent implements OnInit {
   }
 
   private loadOptions(): void {
+    this.loader.open();
     this.ws.call('filesystem.default_acl_choices', [this.data.datasetPath])
       .pipe(untilDestroyed(this))
       .subscribe((choices) => {
         this.presetFieldConfig.options = choices.map((choice) => ({ label: choice, value: choice }));
+        this.loader.close();
       });
   }
 
