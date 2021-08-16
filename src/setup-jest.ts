@@ -5,14 +5,20 @@ import { defineGlobalsInjections } from '@ngneat/spectator';
 import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
+import { NgxFilesizeModule } from 'ngx-filesize';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { MaterialModule } from 'app/app-material.module';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+
+jest.setTimeout(30 * 1000);
 
 defineGlobalsInjections({
   imports: [
     MaterialModule,
     RouterModule.forRoot([]),
+    CommonDirectivesModule,
+    NgxFilesizeModule,
     TranslateModule.forRoot({
       defaultLanguage: 'en',
       loader: {
@@ -36,4 +42,18 @@ defineGlobalsInjections({
       useValue: '',
     },
   ],
+});
+
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
 });
