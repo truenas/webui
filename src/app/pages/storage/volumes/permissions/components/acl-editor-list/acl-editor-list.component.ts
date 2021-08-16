@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { AclType } from 'app/enums/acl-type.enum';
+import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import { Acl, NfsAclItem, PosixAclItem } from 'app/interfaces/acl.interface';
 import { PermissionItem } from 'app/pages/storage/volumes/permissions/interfaces/permission-item.interface';
@@ -20,6 +21,8 @@ export class AclEditorListComponent implements OnChanges {
   @Input() acl: Acl;
   @Input() selectedAceIndex: number;
   @Input() acesWithError: number[];
+  @Input() owner: string;
+  @Input() ownerGroup: string;
 
   permissionItems: PermissionItem[] = [];
 
@@ -31,9 +34,27 @@ export class AclEditorListComponent implements OnChanges {
 
   ngOnChanges(): void {
     if (this.acl.acltype === AclType.Nfs4) {
-      this.permissionItems = this.acl.acl.map((ace) => nfsAceToPermissionItem(this.translate, ace));
+      this.permissionItems = this.acl.acl.map((ace) => {
+        if (ace.tag === NfsAclTag.Owner) {
+          return nfsAceToPermissionItem(this.translate, { ...ace, who: this.owner });
+        }
+        if (ace.tag === NfsAclTag.Group) {
+          return nfsAceToPermissionItem(this.translate, { ...ace, who: this.ownerGroup });
+        }
+
+        return nfsAceToPermissionItem(this.translate, ace);
+      });
     } else {
-      this.permissionItems = this.acl.acl.map((ace) => posixAceToPermissionItem(this.translate, ace));
+      this.permissionItems = this.acl.acl.map((ace) => {
+        if (ace.tag === PosixAclTag.UserObject) {
+          return posixAceToPermissionItem(this.translate, { ...ace, who: this.owner });
+        }
+        if (ace.tag === PosixAclTag.GroupObject) {
+          return posixAceToPermissionItem(this.translate, { ...ace, who: this.ownerGroup });
+        }
+
+        return posixAceToPermissionItem(this.translate, ace);
+      });
     }
   }
 

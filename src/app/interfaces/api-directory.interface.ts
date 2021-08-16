@@ -125,6 +125,7 @@ import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
+import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
 import {
   Disk, DiskQueryOptions, DiskUpdate, UnusedDisk,
@@ -350,7 +351,7 @@ export type ApiDirectory = {
   };
   'filesystem.listdir': { params: ListdirQueryParams; response: FileRecord[] };
   'filesystem.stat': { params: [/* path */ string]; response: FileSystemStat };
-  'filesystem.default_acl_choices': { params: void; response: DefaultAclType[] };
+  'filesystem.default_acl_choices': { params: [/* path */ string]; response: DefaultAclType[] };
   'filesystem.get_default_acl': { params: [DefaultAclType]; response: NfsAclItem[] | PosixAclItem[] };
   'filesystem.statfs': { params: [/* path */ string]; response: Statfs };
   'filesystem.getacl': { params: AclQueryParams; response: Acl };
@@ -388,6 +389,7 @@ export type ApiDirectory = {
   'keychaincredential.remote_ssh_host_key_scan': { params: any; response: any };
   'keychaincredential.delete': { params: any; response: any };
   'keychaincredential.remote_ssh_semiautomatic_setup': { params: any; response: any };
+  'keychaincredential.setup_ssh_connection': { params: [SshConnectionSetup]; response: any };
 
   // Kubernetes
   'kubernetes.config': { params: void; response: KubernetesConfig };

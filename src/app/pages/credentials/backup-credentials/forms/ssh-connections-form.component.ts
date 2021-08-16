@@ -5,11 +5,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
+import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import helptext from 'app/helptext/system/ssh-connections';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -22,11 +23,6 @@ import {
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 
-enum SetupMethod {
-  Manual = 'manual',
-  SemiAutomatic = 'semiautomatic',
-}
-
 @UntilDestroy()
 @Component({
   selector: 'app-ssh-connections-form',
@@ -36,11 +32,7 @@ enum SetupMethod {
 export class SshConnectionsFormComponent implements FormConfiguration {
   queryCall: 'keychaincredential.query' = 'keychaincredential.query';
   queryCallOption: [QueryFilter<KeychainCredential>];
-  protected sshCalls = {
-    [SetupMethod.Manual]: 'keychaincredential.create' as 'keychaincredential.create',
-    [SetupMethod.SemiAutomatic]: 'keychaincredential.remote_ssh_semiautomatic_setup' as 'keychaincredential.remote_ssh_semiautomatic_setup',
-  };
-  addCall: 'keychaincredential.create' | 'keychaincredential.remote_ssh_semiautomatic_setup' = this.sshCalls[SetupMethod.Manual];
+  addCall: 'keychaincredential.setup_ssh_connection' = 'keychaincredential.setup_ssh_connection';
   editCall: 'keychaincredential.update' = 'keychaincredential.update';
   isEntity = true;
   protected namesInUseConnection: string[] = [];
@@ -73,13 +65,13 @@ export class SshConnectionsFormComponent implements FormConfiguration {
           options: [
             {
               label: 'Manual',
-              value: SetupMethod.Manual,
+              value: SshConnectionsSetupMethod.Manual,
             }, {
               label: 'Semi-automatic (TrueNAS only)',
-              value: SetupMethod.SemiAutomatic,
+              value: SshConnectionsSetupMethod.SemiAutomatic,
             },
           ],
-          value: SetupMethod.SemiAutomatic,
+          value: SshConnectionsSetupMethod.SemiAutomatic,
           isHidden: false,
         },
       ],
@@ -100,7 +92,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
             action: RelationAction.Show,
             when: [{
               name: 'setup_method',
-              value: SetupMethod.Manual,
+              value: SshConnectionsSetupMethod.Manual,
             }],
           }],
         }, {
@@ -114,7 +106,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
             action: RelationAction.Show,
             when: [{
               name: 'setup_method',
-              value: SetupMethod.Manual,
+              value: SshConnectionsSetupMethod.Manual,
             }],
           }],
         }, {
@@ -128,7 +120,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
             action: RelationAction.Show,
             when: [{
               name: 'setup_method',
-              value: SetupMethod.SemiAutomatic,
+              value: SshConnectionsSetupMethod.SemiAutomatic,
             }],
           }],
         }, {
@@ -152,7 +144,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
             action: RelationAction.Show,
             when: [{
               name: 'setup_method',
-              value: SetupMethod.SemiAutomatic,
+              value: SshConnectionsSetupMethod.SemiAutomatic,
             }],
           }],
         }, {
@@ -174,7 +166,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
             action: RelationAction.Show,
             when: [{
               name: 'setup_method',
-              value: SetupMethod.Manual,
+              value: SshConnectionsSetupMethod.Manual,
             }],
           }],
         }, {
@@ -282,13 +274,11 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     this.fieldConfig = entityForm.fieldConfig;
     this.updateDiscoverButtonDisabled();
     if (this.entityForm.isNew) {
-      this.addCall = this.sshCalls[this.entityForm.formGroup.controls['setup_method'].value as keyof SshConnectionsFormComponent['sshCalls']];
-      this.entityForm.formGroup.controls['setup_method'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: SetupMethod) => {
-        this.addCall = this.sshCalls[res as keyof SshConnectionsFormComponent['sshCalls']];
+      this.entityForm.formGroup.controls['setup_method'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
         this.updateDiscoverButtonDisabled();
       });
     } else {
-      this.entityForm.formGroup.controls['setup_method'].setValue(SetupMethod.Manual);
+      this.entityForm.formGroup.controls['setup_method'].setValue(SshConnectionsSetupMethod.Manual);
     }
 
     const nameCtrl = this.entityForm.formGroup.controls['name'];
@@ -315,7 +305,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
   }
 
   updateDiscoverButtonDisabled(): void {
-    if (this.entityForm.formGroup.controls['setup_method'].value === SetupMethod.Manual) {
+    if (this.entityForm.formGroup.controls['setup_method'].value === SshConnectionsSetupMethod.Manual) {
       this.setDisabled(this.fieldSets[1].config, 'remote_host_key_button', !this.isManualAuthFormValid(), false);
     } else {
       this.setDisabled(this.fieldSets[1].config, 'remote_host_key_button', true, true);
@@ -372,62 +362,67 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     return transformed;
   }
 
-  async customSubmit(data: any): Promise<any> {
-    delete data.remote_host_key_button;
-    this.loader.open();
-    if (data['private_key'] == 'NEW') {
-      await this.replicationService.genSSHKeypair().then(
-        async (keyPair) => {
-          const payload = {
-            name: data['name'] + ' Key',
-            type: KeychainCredentialType.SshKeyPair,
-            attributes: keyPair,
-          };
-          await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
-            (sshKey) => {
-              data['private_key'] = sshKey.id;
-            },
-            (sshKey_err) => {
-              this.loader.close();
-              new EntityUtils().handleWSError(this, sshKey_err, this.dialogService);
-            },
-          );
-        },
-        (err) => {
-          this.loader.close();
-          new EntityUtils().handleWSError(this, err, this.dialogService);
-        },
-      );
+  clean(value: any): any {
+    if (!this.entityForm.isNew) {
+      const data = { ...value };
+      delete data.remote_host_key_button;
+      this.loader.open();
+      if (data['setup_method'] === SshConnectionsSetupMethod.Manual) {
+        const attributes: any = {};
+        for (const item in this.manualMethodFields) {
+          attributes[this.manualMethodFields[item]] = data[this.manualMethodFields[item]];
+          delete data[this.manualMethodFields[item]];
+        }
+        data['attributes'] = attributes;
+        if (this.entityForm.isNew) {
+          data['type'] = KeychainCredentialType.SshCredentials;
+        }
+      }
+      delete data['setup_method'];
+
+      return data;
     }
 
-    if (data['setup_method'] === SetupMethod.Manual) {
+    const payload: SshConnectionSetup = {
+      setup_type: value.setup_method,
+      connection_name: value.name,
+      private_key: value.private_key === 'NEW'
+        ? { generate_key: true, name: value.name + ' Key' }
+        : { generate_key: false, existing_key_id: value.private_key },
+    };
+
+    if (value.setup_method === SshConnectionsSetupMethod.Manual) {
       const attributes: any = {};
       for (const item in this.manualMethodFields) {
-        attributes[this.manualMethodFields[item]] = data[this.manualMethodFields[item]];
-        delete data[this.manualMethodFields[item]];
+        attributes[this.manualMethodFields[item]] = value[this.manualMethodFields[item]];
       }
-      data['attributes'] = attributes;
-      if (this.entityForm.isNew) {
-        data['type'] = KeychainCredentialType.SshCredentials;
-      }
+      payload['manual_setup'] = attributes;
+    } else {
+      payload['semi_automatic_setup'] = {
+        url: value.url,
+        password: value.password,
+        username: value.username,
+        connect_timeout: value.connect_timeout,
+        cipher: value.cipher,
+      };
     }
-    delete data['setup_method'];
 
-    this.entityForm.submitFunction(data).pipe(untilDestroyed(this)).subscribe(
-      () => {
-        this.loader.close();
-        this.modalService.close('slide-in-form');
-        this.modalService.refreshTable();
-      },
-      (err: WebsocketError) => {
-        this.loader.close();
-        this.modalService.refreshTable();
-        if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace'))) {
-          new EntityUtils().handleWSError(this, err, this.dialogService);
-        } else {
-          new EntityUtils().handleError(this, err);
-        }
-      },
-    );
+    return payload;
+  }
+
+  responseOnSubmit(): void {
+    this.loader.close();
+    this.modalService.close('slide-in-form');
+    this.modalService.refreshTable();
+  }
+
+  errorReport(err: any): void {
+    this.loader.close();
+    this.modalService.refreshTable();
+    if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace'))) {
+      new EntityUtils().handleWSError(this, err, this.dialogService);
+    } else {
+      new EntityUtils().handleError(this, err);
+    }
   }
 }

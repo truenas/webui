@@ -21,6 +21,7 @@ import { CopyPasteMessageComponent } from './copy-paste-message.component';
   templateUrl: './shell.component.html',
   styleUrls: ['./shell.component.scss'],
   providers: [ShellService],
+  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
 export class ShellComponent implements OnInit, OnDestroy {

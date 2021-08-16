@@ -17,6 +17,7 @@ export enum DefaultAclType {
   Nfs4Home = 'NFS4_HOME',
   Nfs4DomainHome = 'NFS4_DOMAIN_HOME',
   PosixOpen = 'POSIX_OPEN',
+  PosixHome = 'POSIX_HOME',
   PosixRestricted = 'POSIX_RESTRICTED',
   Open = 'OPEN',
   Restricted = 'RESTRICTED',

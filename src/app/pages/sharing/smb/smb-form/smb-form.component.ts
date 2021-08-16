@@ -381,7 +381,7 @@ export class SMBFormComponent implements FormConfiguration {
     ) {
       this.restartService(entityForm, 'allowdeny');
     } else {
-      this.checkACLactions(entityForm);
+      this.checkAclActions(entityForm);
     }
   }
 
@@ -409,7 +409,7 @@ export class SMBFormComponent implements FormConfiguration {
                 '250px',
               )
               .pipe(untilDestroyed(this)).subscribe(() => {
-                this.checkACLactions(entityForm);
+                this.checkAclActions(entityForm);
               });
           },
           (err) => {
@@ -418,21 +418,20 @@ export class SMBFormComponent implements FormConfiguration {
           },
         );
       } else {
-        source === 'timemachine' ? this.checkAllowDeny(entityForm) : this.checkACLactions(entityForm);
+        source === 'timemachine' ? this.checkAllowDeny(entityForm) : this.checkAclActions(entityForm);
       }
     });
   }
 
-  checkACLactions(entityForm: EntityFormComponent): void {
+  checkAclActions(entityForm: EntityFormComponent): void {
     const sharePath: string = entityForm.formGroup.get('path').value;
     const datasetId = sharePath.replace('/mnt/', '');
     const poolName = datasetId.split('/')[0];
     const homeShare = entityForm.formGroup.get('home').value;
-    // TODO: Incorrect url https://jira.ixsystems.com/browse/NAS-111465
-    const ACLRoute = ['storage', 'pools', 'id', poolName, 'dataset', 'acl', datasetId];
+    const aclRoute = ['storage', 'id', poolName, 'dataset', 'acl', datasetId];
 
     if (homeShare && entityForm.isNew) {
-      this.router.navigate(['/'].concat(ACLRoute), { queryParams: { homeShare: true } });
+      this.router.navigate(['/'].concat(aclRoute), { queryParams: { homeShare: true } });
       return;
     }
     // If this call returns true OR an [ENOENT] err comes back, just return to table
@@ -469,7 +468,7 @@ export class SMBFormComponent implements FormConfiguration {
               }),
               tap(([doConfigureACL]) => {
                 if (doConfigureACL) {
-                  this.router.navigate(['/'].concat(ACLRoute));
+                  this.router.navigate(['/'].concat(aclRoute));
                 } else {
                   this.dialog.closeAllDialogs();
                 }
