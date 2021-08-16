@@ -26,6 +26,7 @@ import { DialogService, ShellService, WebSocketService } from 'app/services';
   templateUrl: './pod-shell.component.html',
   styleUrls: ['./pod-shell.component.scss'],
   providers: [ShellService],
+  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
 export class PodShellComponent implements OnInit, OnDestroy {
