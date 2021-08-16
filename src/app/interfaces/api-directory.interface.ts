@@ -351,7 +351,7 @@ export type ApiDirectory = {
   };
   'filesystem.listdir': { params: ListdirQueryParams; response: FileRecord[] };
   'filesystem.stat': { params: [/* path */ string]; response: FileSystemStat };
-  'filesystem.default_acl_choices': { params: void; response: DefaultAclType[] };
+  'filesystem.default_acl_choices': { params: [/* path */ string]; response: DefaultAclType[] };
   'filesystem.get_default_acl': { params: [DefaultAclType]; response: NfsAclItem[] | PosixAclItem[] };
   'filesystem.statfs': { params: [/* path */ string]; response: Statfs };
   'filesystem.getacl': { params: AclQueryParams; response: Acl };
