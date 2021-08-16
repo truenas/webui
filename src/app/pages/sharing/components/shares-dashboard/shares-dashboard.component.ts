@@ -273,19 +273,18 @@ export class SharesDashboardComponent implements AfterViewInit {
             { prop: 'comment', name: helptext_sharing_webdav.column_comment },
             { prop: 'path', name: helptext_sharing_webdav.column_path },
             {
-              prop: 'ro',
-              name: helptext_sharing_webdav.column_ro,
-              width: '60px',
-              checkbox: true,
-              onChange: (row: WebDavShare) => this.onCheckboxToggle(ShareType.WebDAV, row, 'ro'),
-            },
-            {
               prop: 'perm',
               name: helptext_sharing_webdav.column_perm,
               checkbox: true,
               width: '70px',
               tooltip: helptext_sharing_webdav.column_perm_tooltip,
-              onChange: (row: WebDavShare) => this.onCheckboxToggle(ShareType.WebDAV, row, 'perm'),
+            },
+            {
+              prop: 'ro',
+              name: helptext_sharing_webdav.column_ro,
+              width: '60px',
+              checkbox: true,
+              onChange: (row: WebDavShare) => this.onCheckboxToggle(ShareType.WebDAV, row, 'ro'),
             },
             {
               prop: 'enabled',
