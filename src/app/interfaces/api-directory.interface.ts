@@ -44,6 +44,7 @@ import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { ConfigResetParams } from 'app/interfaces/config-reset-params.interface';
 import { ContainerConfig, ContainerConfigUpdate } from 'app/interfaces/container-config.interface';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
+import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import {
@@ -278,7 +279,7 @@ export type ApiDirectory = {
   'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };
   'core.get_jobs': { params: QueryParams<Job>; response: Job[] };
   'core.job_abort': { params: [/* jobId */ number]; response: void };
-  'core.bulk': { params: any; response: any };
+  'core.bulk': { params: CoreBulkQuery; response: CoreBulkResponse[] };
   'core.resize_shell': { params: ResizeShellRequest; response: void };
 
   // Config
