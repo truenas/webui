@@ -19,6 +19,7 @@ import { ShellService, WebSocketService } from 'app/services';
   templateUrl: './vmserial-shell.component.html',
   styleUrls: ['./vmserial-shell.component.scss'],
   providers: [ShellService],
+  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
 export class VMSerialShellComponent implements OnInit, OnDestroy {
