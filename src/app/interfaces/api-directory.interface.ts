@@ -125,6 +125,7 @@ import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
+import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
 import {
   Disk, DiskQueryOptions, DiskUpdate, UnusedDisk,
@@ -388,7 +389,7 @@ export type ApiDirectory = {
   'keychaincredential.remote_ssh_host_key_scan': { params: any; response: any };
   'keychaincredential.delete': { params: any; response: any };
   'keychaincredential.remote_ssh_semiautomatic_setup': { params: any; response: any };
-  'keychaincredential.setup_ssh_connection': { params: any; response: any };
+  'keychaincredential.setup_ssh_connection': { params: [SshConnectionSetup]; response: any };
 
   // Kubernetes
   'kubernetes.config': { params: void; response: KubernetesConfig };
