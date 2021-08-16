@@ -111,7 +111,7 @@ def the_user_edit_page_should_open(driver):
 @then('input the public key in the SSH Public Key field, then click save')
 def input_the_public_key_in_the_ssh_public_key_field_then_click_save(driver, ssh_key):
     """input the public key in the SSH Public Key field, then click save."""
-    assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]', 'clickable')
+    assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]', 'inputable')
     driver.find_element_by_xpath('//textarea[@placeholder="SSH Public Key"]').clear()
     driver.find_element_by_xpath('//textarea[@placeholder="SSH Public Key"]').send_keys(ssh_key)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
