@@ -120,8 +120,8 @@ def navigate_to_system_setting_and_click_advanced_to_open_the_advanced_page_shou
     """navigate to System Setting and click Advanced to open the Advanced page should open."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Advanced"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Advanced"]').click()
+    assert wait_on_element(driver, 7, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Advanced"]', 'clickable')
+    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Advanced"]').click()
 
 
 @then('click on System Dataset Configure button and close the popup')
