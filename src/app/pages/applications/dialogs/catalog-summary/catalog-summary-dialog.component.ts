@@ -10,6 +10,7 @@ import { LocaleService } from 'app/services/locale.service';
   selector: 'catalog-summary-dialog',
   styleUrls: ['./catalog-summary-dialog.component.scss'],
   templateUrl: './catalog-summary-dialog.component.html',
+  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
 

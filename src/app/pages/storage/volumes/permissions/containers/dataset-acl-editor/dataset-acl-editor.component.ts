@@ -9,12 +9,12 @@ import { filter } from 'rxjs/operators';
 import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl } from 'app/interfaces/acl.interface';
-import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { SelectPresetModalComponent } from 'app/pages/storage/volumes/permissions/components/select-preset-modal/select-preset-modal.component';
 import { SelectPresetModalConfig } from 'app/pages/storage/volumes/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/stores/dataset-acl-editor.store';
-import { DialogService } from 'app/services';
+import { getFormUserGroupLoaders } from 'app/pages/storage/volumes/permissions/utils/get-form-user-group-loaders.utils';
+import { DialogService, UserService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -29,11 +29,15 @@ export class DatasetAclEditorComponent implements OnInit {
   acl: Acl;
   selectedAceIndex: number;
   acesWithError: number[];
-  stat: FileSystemStat;
 
   saveParameters = new FormGroup({
     recursive: new FormControl(),
     traverse: new FormControl(),
+  });
+
+  ownerFormGroup = new FormGroup({
+    owner: new FormControl(),
+    ownerGroup: new FormControl(),
   });
 
   readonly recursiveFieldConfig: FieldConfig = {
@@ -51,6 +55,25 @@ export class DatasetAclEditorComponent implements OnInit {
     value: false,
   };
 
+  readonly ownerFieldConfig: FieldConfig = {
+    type: 'combobox',
+    name: 'owner',
+    options: [],
+    inlineFields: true,
+    searchOptions: [],
+    parent: this,
+    updateLocal: true,
+  };
+
+  readonly ownerGroupFieldConfig: FieldConfig = {
+    type: 'combobox',
+    name: 'ownerGroup',
+    options: [],
+    searchOptions: [],
+    parent: this,
+    updateLocal: true,
+  };
+
   get isNfsAcl(): boolean {
     return this.acl.acltype === AclType.Nfs4;
   }
@@ -65,6 +88,7 @@ export class DatasetAclEditorComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private matDialog: MatDialog,
+    private userService: UserService,
   ) {}
 
   ngOnInit(): void {
@@ -80,10 +104,14 @@ export class DatasetAclEditorComponent implements OnInit {
         this.acl = state.acl;
         this.selectedAceIndex = state.selectedAceIndex;
         this.acesWithError = state.acesWithError;
-        this.stat = state.stat;
 
         if (isFirstLoad) {
           this.onFirstLoad();
+
+          this.ownerFormGroup.setValue({
+            owner: state.stat.user,
+            ownerGroup: state.stat.group,
+          });
         }
 
         this.cdr.markForCheck();
@@ -104,6 +132,22 @@ export class DatasetAclEditorComponent implements OnInit {
         this.saveParameters.patchValue({ recursive: false });
       });
     });
+
+    const userGroupLoaders = getFormUserGroupLoaders(this.userService);
+    this.ownerFieldConfig.updater = userGroupLoaders.updateUserSearchOptions;
+    this.ownerFieldConfig.loadMoreOptions = userGroupLoaders.loadMoreUserOptions;
+    this.ownerGroupFieldConfig.updater = userGroupLoaders.updateGroupSearchOptions;
+    this.ownerGroupFieldConfig.loadMoreOptions = userGroupLoaders.loadMoreGroupOptions;
+
+    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((users) => {
+      const userOptions = users.map((user) => ({ label: user.username, value: user.username }));
+      this.ownerFieldConfig.options = userOptions;
+    });
+
+    this.userService.groupQueryDSCache().pipe(untilDestroyed(this)).subscribe((groups) => {
+      const groupOptions = groups.map((group) => ({ label: group.group, value: group.group }));
+      this.ownerGroupFieldConfig.options = groupOptions;
+    });
   }
 
   onAddItemPressed(): void {
@@ -118,6 +162,8 @@ export class DatasetAclEditorComponent implements OnInit {
     this.store.saveAcl({
       recursive: this.recursiveFieldConfig.value,
       traverse: this.recursiveFieldConfig.value && this.traverseFieldConfig.value,
+      owner: this.ownerFormGroup.get('owner').value,
+      ownerGroup: this.ownerFormGroup.get('ownerGroup').value,
     });
   }
 
@@ -126,13 +172,14 @@ export class DatasetAclEditorComponent implements OnInit {
       data: {
         allowCustom: false,
         isNfsAcl: this.isNfsAcl,
+        datasetPath: this.fullDatasetPath,
       } as SelectPresetModalConfig,
     });
   }
 
   private onFirstLoad(): void {
     if (this.isHomeShare) {
-      this.store.usePreset(DefaultAclType.Home);
+      this.store.usePreset(this.isNfsAcl ? DefaultAclType.Nfs4Home : DefaultAclType.PosixHome);
     } else {
       this.showPresetModalIfNeeded();
     }
@@ -152,6 +199,7 @@ export class DatasetAclEditorComponent implements OnInit {
       data: {
         allowCustom: true,
         isNfsAcl: this.isNfsAcl,
+        datasetPath: this.fullDatasetPath,
       } as SelectPresetModalConfig,
     });
   }

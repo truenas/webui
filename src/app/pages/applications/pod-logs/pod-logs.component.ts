@@ -32,6 +32,7 @@ interface PodLogEvent {
   templateUrl: './pod-logs.component.html',
   styleUrls: ['./pod-logs.component.scss'],
   providers: [ShellService],
+  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
 
