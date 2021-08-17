@@ -102,7 +102,6 @@ export interface ChartSchemaEnum {
 
 export interface ChartSchemaNodeConf {
   type: string;
-  variable: string;
   attrs?: ChartSchemaNode[];
   items?: ChartSchemaNode[];
   default?: any;
